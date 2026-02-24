@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -17,9 +19,13 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
@@ -34,6 +40,16 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.util.parentsWithSelf
+import org.jetbrains.kotlin.ir.util.setDeclarationsParent
+import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
+import org.jetbrains.kotlin.ir.validation.validateIr
+import org.jetbrains.kotlin.ir.validation.withBasicChecks
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
 class WasmComponentModelLowering(val context: WasmBackendContext) : FileLoweringPass {
@@ -44,8 +60,11 @@ class WasmComponentModelLowering(val context: WasmBackendContext) : FileLowering
 //        }
 //    }
 
+    // TODO with all of the names in this file, make them so that there can't be any conflicts
+
     override fun lower(irFile: IrFile) {
-        var toAddToTopLevel = mutableListOf<IrFunction>()
+        val toAddToTopLevel = mutableListOf<IrFunction>()
+        val toRemoveTopLevel: MutableList<IrClass> = mutableListOf()
         for (decl in irFile.declarations) {
             // TODO frontend checks for the annotation that doesn't match this, i.e. on a non-interface, or a non-external interface
             if (decl is IrClass && decl.isInterface && decl.isExternal && decl.hasAnnotation(context.wasmSymbols.witInterface)) {
@@ -82,7 +101,7 @@ class WasmComponentModelLowering(val context: WasmBackendContext) : FileLowering
 //                        topLevelFunction.copyFunctionSignatureFrom(functionDecl)
 
                         // TODO the restrictTo is unknown/not validated inc comp black magic to make the IC find the signature. Should kinda rather be irFile, but that's not a declaration
-                        val topLevelFunction = declareWitInteractionTopLevelFunction(functionDecl, irFile, witIfaceName, true)
+                        val topLevelFunction = declareWitAdapterTopLevelFunction(functionDecl, irFile, witIfaceName, true)
 
                         toAddToTopLevel += topLevelFunction
 
@@ -116,54 +135,105 @@ class WasmComponentModelLowering(val context: WasmBackendContext) : FileLowering
                 val isExport = correspondingExportImpl != null
 
                 if (isExport) {
-                    for (implFunction in correspondingExportImpl.declarations.mapNotNull { it as? IrFunction }
-                        .filterNot { it.isFakeOverride }) {
+                    // TODO for now, we don't allow anything in the export impl, as it's not really an object in the end
+                    //      -> if anything is in here that's not a function, error
+                    if (correspondingExportImpl.declarations.any { it !is IrFunction })
+                        error("TODO proper error handling")
+                    // TODO also need to check that every function doesn't use its dispatch parameter
+
+                    for (implFunction in correspondingExportImpl.declarations
+                        .mapNotNull { it as? IrFunction }
+                        .filterNot { it.isFakeOverride }
+                        .filterNot { it is IrConstructor }) {
+                        // verify that the function does not use the dispatch parameter
+                        checkDispatchReceiverNotUsed(implFunction)
+
+                        // we need 2 top level functions in this case, one that is just an exact copy of the implementation
+                        // TODO new try: just edit the impl function to make it a top level function
+//                        val topLevelImplFunction =
+//                            declareCorrespondingTopLevelFunction(implFunction, irFile, implFunction.name.asString() + "toplevel_impl")
+                        val topLevelImplFunction = implFunction as IrSimpleFunction
+                        topLevelImplFunction.parameters = topLevelImplFunction.parameters.filter { !it.isDispatchReceiver }
+                        topLevelImplFunction.visibility = DescriptorVisibilities.PUBLIC
+                        topLevelImplFunction.modality = Modality.FINAL
+                        topLevelImplFunction.overriddenSymbols = emptyList()
+                        topLevelImplFunction.parent = irFile
+
+                        // TODO this is just a stub
+//                        topLevelImplFunction.body = context.createIrBuilder(topLevelImplFunction.symbol).irBlockBody {
+//
+//                        }
+                        // TODO enough?
+//                        topLevelImplFunction.body = implFunction.body?.deepCopyWithSymbols(topLevelImplFunction)
+
                         // create top level function again, this time it needs to call the user-defined impl function
-                        val topLevelFunction = declareWitInteractionTopLevelFunction(implFunction, irFile, witIfaceName)
+                        val topLevelExportFunction = declareWitAdapterTopLevelFunction(implFunction, irFile, witIfaceName, false)
                         // doesn't have a body yet, so create it, and call the impl function
-                        topLevelFunction.body = context.createIrBuilder(topLevelFunction.symbol).irBlockBody {
-                            // TODO deduplicate with the import case
+                        // TODO remove, this is just for the cli export
+                        topLevelExportFunction.returnType = context.irBuiltIns.intType
+                        topLevelExportFunction.body = context.createIrBuilder(topLevelExportFunction.symbol).irBlockBody {
+                            // TODO deduplicate with the import case if possible
+                            /*
                             +irReturn(
-                                irCall(implFunction.symbol).apply {
-                                    insertDispatchReceiver(irGet(topLevelFunction.dispatchReceiverParameter!!))
-                                    topLevelFunction.parameters.forEach { param ->
+                                irCall(topLevelImplFunction.symbol).apply {
+                                    // TODO check that this actually makes sense
+                                    topLevelExportFunction.parameters.forEach { param ->
                                         arguments.add(irGet(param))
                                     }
                                 }
                             )
+                             */
+                            +irCall(topLevelImplFunction.symbol).apply {
+                                // TODO check that this actually makes sense
+                                topLevelExportFunction.parameters.forEach { param ->
+                                    arguments.add(irGet(param))
+                                }
+                            }
+                            +irReturn(IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, 0))
                         }
 
-                        toAddToTopLevel += topLevelFunction
+                        toAddToTopLevel += topLevelExportFunction
+                        toAddToTopLevel += topLevelImplFunction
                     }
+
+                    // basically delete the export impl object
+                    correspondingExportImpl.declarations.clear()
+                    // TODO need to correctly remove everything, also the export impl itself
+                    assert(correspondingExportImpl.parent == irFile) { "this needs to be changed" }
+                    toRemoveTopLevel += correspondingExportImpl
                 }
             }
         }
 
         irFile.declarations.addAll(toAddToTopLevel)
+        irFile.declarations.removeAll(toRemoveTopLevel)
+
+        validateIr(
+            irFile,
+            context.irBuiltIns,
+            IrValidatorConfig(true, true).withBasicChecks(),
+            context.messageCollector,
+            IrVerificationMode.ERROR
+        )
     }
 
+    // TODO reorganize these top level function helpers
+
     // TODO for now, this doesnt fill the body of the function
-    private fun declareWitInteractionTopLevelFunction(
+    private fun declareWitAdapterTopLevelFunction(
         functionBlueprint: IrFunction,
         irFile: IrFile,
         witIfaceName: String,
-        isImport: Boolean = false,
+        isImport: Boolean,
     ): IrSimpleFunction {
         // TODO this needs to do type translation in the parameter and return types obviously
-        val topLevelFunction = context.irFactory.stageController.restrictTo(functionBlueprint) {
-            context.irFactory.buildFun {
-                name = Name.identifier(functionBlueprint.name.asString() + if (isImport) "_imported" else "_exported")
-                returnType = functionBlueprint.returnType
-                visibility = DescriptorVisibilities.PUBLIC
-                modality = Modality.FINAL
-                isExternal = isImport // for imports, its external, for exports, its defined
-                // origin = IrDeclarationOrigin.DEFINED // optional, but good practice
-            }
-        }
+        val topLevelFunction = declareCorrespondingTopLevelFunction(
+            functionBlueprint,
+            irFile,
+            functionBlueprint.name.asString() + if (isImport) "_imported" else "_exported"
+        )
 
-        topLevelFunction.parent = irFile
-        topLevelFunction.copyFunctionSignatureFrom(functionBlueprint)
-        topLevelFunction.parameters = topLevelFunction.parameters.filter { !it.isDispatchReceiver }
+        topLevelFunction.isExternal = isImport // for imports, its external, for exports, its defined
 
         val annotationSymbolToApply = if (isImport) context.wasmSymbols.wasmImport else context.wasmSymbols.wasmExport
 
@@ -176,34 +246,92 @@ class WasmComponentModelLowering(val context: WasmBackendContext) : FileLowering
             // TODO find right thing here
             0
         ).apply {
-            arguments[0] = IrConstImpl.string(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, witIfaceName
-            )
-            arguments[1] = IrConstImpl.string(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                context.irBuiltIns.stringType,
-                // TODO more robust version of this
-                kebabCaseFromLowerCamelCase(functionBlueprint.name.asString())
-            )
+            if (isImport) {
+                arguments[0] = IrConstImpl.string(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, witIfaceName
+                )
+                arguments[1] = IrConstImpl.string(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    context.irBuiltIns.stringType,
+                    // TODO more robust version of this
+                    kebabCaseFromLowerCamelCase(functionBlueprint.name.asString())
+                )
+            } else { //is export
+                // TODO reduce code dup
+                arguments[0] = IrConstImpl.string(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    context.irBuiltIns.stringType,
+                    // TODO more robust version of this
+//                    kebabCaseFromLowerCamelCase(functionBlueprint.name.asString())
+                    // TODO obviously do this correctl
+                    "wasi:cli/run@0.2.9#run"
+//                    "cm32p2|_ex_wasi:cli/run@0.2.9|run"
+                )
+            }
         }
+        return topLevelFunction
+    }
+
+    private fun declareCorrespondingTopLevelFunction(
+        functionBlueprint: IrFunction,
+        irFile: IrFile,
+        newName: String,
+    ): IrSimpleFunction {
+//        val topLevelFunction = context.irFactory.stageController.restrictTo(functionBlueprint) {
+//            context.irFactory.buildFun {
+//                name = Name.identifier(newName)
+//                returnType = functionBlueprint.returnType
+//                visibility = DescriptorVisibilities.PUBLIC
+//                modality = Modality.FINAL
+//                // origin = IrDeclarationOrigin.DEFINED // optional, but good practice
+//            }
+//        }
+        val topLevelFunction = context.irFactory.stageController.restrictTo(functionBlueprint) {
+            functionBlueprint.deepCopyWithSymbols(irFile) as IrSimpleFunction
+        }
+        topLevelFunction.name = Name.identifier(newName)
+        topLevelFunction.visibility = DescriptorVisibilities.PUBLIC
+        topLevelFunction.modality = Modality.FINAL
+        topLevelFunction.overriddenSymbols = emptyList()
+
+        topLevelFunction.parent = irFile
+//        topLevelFunction.copyFunctionSignatureFrom(functionBlueprint)
+        topLevelFunction.parameters = topLevelFunction.parameters.filter { !it.isDispatchReceiver }
         return topLevelFunction
     }
 
     // TODO probably find a more robust alternative, maybe pass the fn names from wit-bindgen to here somehow
     private fun kebabCaseFromLowerCamelCase(lowerCamelCase: String): String {
-        assert(lowerCamelCase.get(0).isLowerCase()) { "using this function wrong, probably shouldn't be using it at all" }
+        assert(lowerCamelCase[0].isLowerCase()) { "using this function wrong, probably shouldn't be using it at all" }
 
-        val sb = StringBuilder()
-
-        for (c in lowerCamelCase) {
-            if (c.isUpperCase()) {
-                sb.append('-')
-                sb.append(c.lowercaseChar())
-            } else {
-                sb.append(c)
+        return buildString {
+            for (c in lowerCamelCase) {
+                if (c.isUpperCase()) {
+                    append('-')
+                    append(c.lowercaseChar())
+                } else {
+                    append(c)
+                }
             }
         }
+    }
 
-        return sb.toString()
+    // TODO this needs to be a frontend check later
+    private fun checkDispatchReceiverNotUsed(function: IrFunction) {
+        assert(function.dispatchReceiverParameter != null) { "function must have a dispatch receiver" }
+
+        // TODO verify that this is correct
+        function.body?.acceptChildrenVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement, data: Nothing?) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitGetValue(expression: IrGetValue, data: Nothing?) {
+                if (expression.symbol == function.dispatchReceiverParameter!!.symbol) {
+                    error("@WitExport implementation function '${function.name}' must not use 'this' dispatch receiver")
+                }
+                super.visitGetValue(expression, data)
+            }
+        })
     }
 }
