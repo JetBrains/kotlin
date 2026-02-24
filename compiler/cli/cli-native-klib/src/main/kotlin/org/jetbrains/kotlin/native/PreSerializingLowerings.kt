@@ -5,20 +5,16 @@
 
 package org.jetbrains.kotlin.native
 
-import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
-import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.inline.konan.nativeLoweringsOfTheFirstPhase
 
@@ -31,9 +27,8 @@ fun <T : NativePhaseContext> PhaseEngine<T>.runPreSerializationLowerings(
     fir2IrOutput: Fir2IrOutput,
     configuration: CompilerConfiguration
 ): Fir2IrOutput {
-    val diagnosticReporter = DiagnosticsCollectorImpl()
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-        diagnosticReporter,
+        configuration.diagnosticsCollector,
         configuration.languageVersionSettings
     )
     val loweringContext = NativePreSerializationLoweringContext(
@@ -56,14 +51,6 @@ fun <T : NativePhaseContext> PhaseEngine<T>.runPreSerializationLowerings(
         )
     }
     // TODO: After KT-73624, generate native diagnostic tests for `compiler/testData/diagnostics/irInliner/syntheticAccessors`
-    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-        diagnosticReporter,
-        configuration.messageCollector,
-        configuration.renderDiagnosticInternalName,
-    )
-    if (diagnosticReporter.hasErrors) {
-        throw CompilationErrorException("Compilation failed: there were some diagnostics during IR Inliner")
-    }
 
     return fir2IrOutput.copy(
         fir2irActualizedResult = preSerializationLowered,
