@@ -145,10 +145,15 @@ enabledTargets(platformManager).forEach { target ->
                 mustRunAfter(":kotlin-native:distInvalidateStaleCaches")
                 inputs.dir(dist.map { it.stdlibCache(targetName) }) // manually depend on the contents of stdlib cache
 
+                this.extraOpts.add("-no-default-libs")
+
                 // Also, all the depended upon platform libs must have installed their klibs and caches into the native distribution above.
                 df.config.depends.forEach { dep ->
                     inputs.dir(tasks.named<KonanCacheTask>(cacheTaskName(targetName, dep)).map { it.outputDirectory })
-                    inputs.dir(tasks.named<Sync>(defFileToLibName(targetName, dep)).map { it.destinationDir })
+
+                    val dependencyLibPath: Provider<File> = tasks.named<Sync>(defFileToLibName(targetName, dep)).map { it.destinationDir }
+                    inputs.dir(dependencyLibPath)
+                    this.extraOpts.addAll(provider { listOf("-l", dependencyLibPath.get().absolutePath) })
                 }
 
                 this.klib.fileProvider(libTask.map { it.outputs.files.singleFile })
