@@ -15616,11 +15616,57 @@
                                         }
                                     },
                                     {
+                                        "name": "Xwrite-dependencies-of-produced-binaries-to",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Dump paths of the dependencies that were used during binaries generation to the directory with the specified path (a file per each generated binary)",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "argumentType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "argumentTypeDescription": {
+                                            "current": "<path>",
+                                            "valueInVersions": []
+                                        },
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<path>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.4.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
                                         "name": "Xwrite-dependencies-of-produced-klib-to",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Write file containing the paths of dependencies used during klib compilation to the provided path",
+                                            "current": "Dump paths of the dependencies that were used during klib compilation to the file with the specified path",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,

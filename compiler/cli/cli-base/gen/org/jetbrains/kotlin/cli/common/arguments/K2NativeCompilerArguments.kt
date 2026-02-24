@@ -651,9 +651,20 @@ but they do not affect compilation at all.""",
         }
 
     @Argument(
+        value = "-Xwrite-dependencies-of-produced-binaries-to",
+        valueDescription = "<path>",
+        description = "Dump paths of the dependencies that were used during binaries generation to the directory with the specified path (a file per each generated binary)",
+    )
+    var writeDependenciesOfProducedBinariesTo: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xwrite-dependencies-of-produced-klib-to",
         valueDescription = "<path>",
-        description = "Write file containing the paths of dependencies used during klib compilation to the provided path",
+        description = "Dump paths of the dependencies that were used during klib compilation to the file with the specified path",
     )
     var writeDependenciesOfProducedKlibTo: String? = null
         set(value) {

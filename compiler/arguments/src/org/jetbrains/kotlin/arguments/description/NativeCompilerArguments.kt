@@ -657,12 +657,23 @@ The default value is 1.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xwrite-dependencies-of-produced-klib-to"
-        description = "Write file containing the paths of dependencies used during klib compilation to the provided path".asReleaseDependent()
+        description = "Dump paths of the dependencies that were used during klib compilation to the file with the specified path".asReleaseDependent()
         argumentType = StringType.defaultNull
         argumentTypeDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
+        )
+    }
+
+    compilerArgument {
+        name = "Xwrite-dependencies-of-produced-binaries-to"
+        description = "Dump paths of the dependencies that were used during binaries generation to the directory with the specified path (a file per each generated binary)".asReleaseDependent()
+        argumentType = StringType.defaultNull
+        argumentTypeDescription = "<path>".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
 
