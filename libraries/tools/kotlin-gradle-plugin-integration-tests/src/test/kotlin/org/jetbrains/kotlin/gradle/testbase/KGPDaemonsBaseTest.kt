@@ -9,6 +9,7 @@ import org.gradle.tooling.internal.consumer.ConnectorServices
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback
 import org.junit.jupiter.api.extension.RegisterExtension
 import java.nio.file.Path
+import kotlin.io.path.exists
 
 @DaemonsGradlePluginTests
 abstract class KGPDaemonsBaseTest : KGPBaseTest() {
@@ -26,6 +27,6 @@ abstract class KGPDaemonsBaseTest : KGPBaseTest() {
         AfterTestExecutionCallback { context ->
             println("[KGPDaemonsBaseTest] Test '${context.displayName}' completed. Terminating Gradle and Kotlin daemons.")
             ConnectorServices.reset()
-            awaitKotlinDaemonTermination(kotlinDaemonRunFilesDir)
+            if (kotlinDaemonRunFilesDir.exists()) awaitKotlinDaemonTermination(kotlinDaemonRunFilesDir)
         }
 }
