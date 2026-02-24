@@ -68,7 +68,9 @@ class ConeOverloadConflictResolver(
     private val specificityComparator: TypeSpecificityComparator,
     private val inferenceComponents: InferenceComponents,
     private val transformerComponents: BodyResolveComponents,
-) : ConeCallConflictResolver() {
+) : ConeCallConflictResolver(), SessionHolder {
+    override val session: FirSession
+        get() = transformerComponents.session
 
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
@@ -528,15 +530,14 @@ class ConeOverloadConflictResolver(
         called: FirCallableDeclaration,
     ): List<TypeWithConversion> {
         return buildList {
-            val session = inferenceComponents.session
-            addIfNotNull(called.receiverParameter?.typeRef?.coneType?.prepareType(session, call)?.let { TypeWithConversion(it) })
+            addIfNotNull(called.receiverParameter?.typeRef?.coneType?.prepareType(call)?.let { TypeWithConversion(it) })
             val typeForCallableReference = call.resultingTypeForCallableReference
             if (typeForCallableReference != null) {
                 // Return type isn't needed here       v
                 typeForCallableReference.typeArguments.dropLast(1)
                     .mapTo(this) {
                         TypeWithConversion(
-                            (it as ConeKotlinType).prepareType(session, call)
+                            (it as ConeKotlinType).prepareType(call)
                                 .removeTypeVariableTypes(session.typeContext, TypeVariableReplacement.TypeParameter)
                         )
                     }
@@ -555,7 +556,7 @@ class ConeOverloadConflictResolver(
         session: FirSession,
         call: Candidate,
     ): TypeWithConversion {
-        val argumentType = argumentType(argument).prepareType(session, call)
+        val argumentType = argumentType(argument).prepareType(call)
         val functionTypeForSam = toFunctionTypeForSamOrNull(call)
         return if (functionTypeForSam == null) {
             TypeWithConversion(argumentType)
@@ -564,8 +565,8 @@ class ConeOverloadConflictResolver(
         }
     }
 
-    private fun ConeKotlinType.prepareType(session: FirSession, candidate: Candidate): ConeKotlinType {
-        val expanded = fullyExpandedType(session)
+    private fun ConeKotlinType.prepareType(candidate: Candidate): ConeKotlinType {
+        val expanded = fullyExpandedType()
         if (!candidate.system.usesOuterCs) return expanded
         // For resolving overloads in PCLA of the following form:
         //  fun foo(vararg values: Tv)
