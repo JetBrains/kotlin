@@ -55,10 +55,10 @@ public final class IrSimpleType extends
           }
           case 10: {
             if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-              annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall>();
+              annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation>();
               mutable_bitField0_ |= 0x00000001;
             }
-            annotation_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.PARSER, extensionRegistry));
+            annotation_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation.PARSER, extensionRegistry));
             break;
           }
           case 16: {
@@ -140,36 +140,36 @@ public final class IrSimpleType extends
 
   private int bitField0_;
   public static final int ANNOTATION_FIELD_NUMBER = 1;
-  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> annotation_;
+  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation> annotation_;
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
    */
-  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> getAnnotationList() {
+  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation> getAnnotationList() {
     return annotation_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
    */
-  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCallOrBuilder> 
+  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationOrBuilder> 
       getAnnotationOrBuilderList() {
     return annotation_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
    */
   public int getAnnotationCount() {
     return annotation_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index) {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation getAnnotation(int index) {
     return annotation_.get(index);
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCallOrBuilder getAnnotationOrBuilder(
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotationOrBuilder getAnnotationOrBuilder(
       int index) {
     return annotation_.get(index);
   }
@@ -532,38 +532,38 @@ public final class IrSimpleType extends
     }
     private int bitField0_;
 
-    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> annotation_ =
+    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation> annotation_ =
       java.util.Collections.emptyList();
     private void ensureAnnotationIsMutable() {
       if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-        annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall>(annotation_);
+        annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation>(annotation_);
         bitField0_ |= 0x00000001;
        }
     }
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> getAnnotationList() {
+    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation> getAnnotationList() {
       return java.util.Collections.unmodifiableList(annotation_);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
      */
     public int getAnnotationCount() {
       return annotation_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index) {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation getAnnotation(int index) {
       return annotation_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
      */
     public Builder setAnnotation(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall value) {
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -573,19 +573,19 @@ public final class IrSimpleType extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
      */
     public Builder setAnnotation(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.Builder builderForValue) {
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation.Builder builderForValue) {
       ensureAnnotationIsMutable();
       annotation_.set(index, builderForValue.build());
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
      */
-    public Builder addAnnotation(org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall value) {
+    public Builder addAnnotation(org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -595,10 +595,10 @@ public final class IrSimpleType extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
      */
     public Builder addAnnotation(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall value) {
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -608,30 +608,30 @@ public final class IrSimpleType extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
      */
     public Builder addAnnotation(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation.Builder builderForValue) {
       ensureAnnotationIsMutable();
       annotation_.add(builderForValue.build());
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
      */
     public Builder addAnnotation(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.Builder builderForValue) {
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation.Builder builderForValue) {
       ensureAnnotationIsMutable();
       annotation_.add(index, builderForValue.build());
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
      */
     public Builder addAllAnnotation(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> values) {
+        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation> values) {
       ensureAnnotationIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
           values, annotation_);
@@ -639,7 +639,7 @@ public final class IrSimpleType extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
      */
     public Builder clearAnnotation() {
       annotation_ = java.util.Collections.emptyList();
@@ -648,7 +648,7 @@ public final class IrSimpleType extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation annotation = 1;</code>
      */
     public Builder removeAnnotation(int index) {
       ensureAnnotationIsMutable();

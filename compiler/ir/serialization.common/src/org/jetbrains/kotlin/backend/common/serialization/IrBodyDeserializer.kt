@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import kotlin.reflect.full.declaredMemberProperties
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation as ProtoAnnotation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock as ProtoInlinedFunctionBlock
@@ -301,7 +302,7 @@ class IrBodyDeserializer(
         }
     }
 
-    fun deserializeAnnotation(proto: ProtoConstructorCall): IrAnnotation {
+    fun deserializeAnnotation(proto: ProtoAnnotation): IrAnnotation {
         // TODO: use real coordinates
         val startOffset = 0
         val endOffset = 0
@@ -314,7 +315,7 @@ class IrBodyDeserializer(
         }
     }
 
-    private fun deserializeAnnotation(proto: ProtoConstructorCall, start: Int, end: Int, type: IrType): IrAnnotation {
+    private fun deserializeAnnotation(proto: ProtoAnnotation, start: Int, end: Int, type: IrType): IrAnnotation {
         val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
         return IrAnnotationImplRaw(
             start,

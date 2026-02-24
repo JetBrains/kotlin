@@ -36,6 +36,7 @@ import java.io.File
 import org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommon as ProtoFieldAccessCommon
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation as ProtoAnnotation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
@@ -354,7 +355,7 @@ open class IrFileSerializer(
     /* ------- IrTypes ---------------------------------------------------------- */
 
     // Serializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
-    private fun serializeAnnotations(annotations: List<IrConstructorCall>) =
+    private fun serializeAnnotations(annotations: List<IrAnnotation>) =
         annotations.map {
             for (param in it.arguments) {
                 if (param != null) {
@@ -363,7 +364,7 @@ open class IrFileSerializer(
                     }
                 }
             }
-            serializeConstructorCall(it)
+            serializeAnnotation(it)
         }
 
     private fun serializeFqName(fqName: String): List<Int> = fqName.split(".").map(::serializeString)
@@ -650,6 +651,19 @@ open class IrFileSerializer(
                 memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(call)
             }
             serializeIrStatementOrigin(call.origin, ::setOriginName)
+        }.build()
+
+    private fun serializeAnnotation(annotation: IrAnnotation): ProtoAnnotation =
+        ProtoAnnotation.newBuilder().apply {
+            symbol = serializeIrSymbol(annotation.symbol)
+            constructorTypeArgumentsCount = annotation.constructorTypeArgumentsCount
+            if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+                addAllArgument(serializeArguments(annotation))
+                addAllTypeArgument(serializeTypeArguments(annotation))
+            } else {
+                memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(annotation)
+            }
+            serializeIrStatementOrigin(annotation.origin, ::setOriginName)
         }.build()
 
     private fun serializeFunctionExpression(functionExpression: IrFunctionExpression): ProtoFunctionExpression =

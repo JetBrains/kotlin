@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
 import org.jetbrains.kotlin.backend.common.serialization.IrFlags as ProtoFlags
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation as ProtoAnnotation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase as ProtoDeclarationBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType as ProtoIrDefinitelyNotNullType
@@ -496,7 +496,7 @@ private class LibraryDeserializer(
         }
 
         private fun deserializeAnnotations(proto: ProtoDeclarationBase): AbiAnnotationListImpl {
-            fun deserialize(annotation: ProtoConstructorCall): AbiAnnotation {
+            fun deserialize(annotation: ProtoAnnotation): AbiAnnotation {
                 val idSignature = deserializeIdSignature(annotation.symbol)
                 val annotationClassName = when {
                     idSignature is CommonSignature -> idSignature

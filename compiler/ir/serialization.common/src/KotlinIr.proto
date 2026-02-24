@@ -27,7 +27,7 @@ message IrFile {
   optional FileEntry file_entry = 2; // Required: either `file_entry` or `file_entry_id` is present.
   optional int32 file_entry_id = 7;  // Required: either `file_entry` or `file_entry_id` is present.
   repeated int32 fq_name = 3 [packed=true];
-  repeated IrConstructorCall annotation = 4;
+  repeated IrAnnotation annotation = 4;
   repeated int64 explicitly_exported_to_compiler = 5 [packed=true];
 
   // WARNING: Don't occupy index 6 which was previously used for storing expect/actual table.
@@ -95,7 +95,7 @@ message IdSignature {
 // If x...xxx00 -> *
 
 message IrSimpleTypeLegacy {
-  repeated IrConstructorCall annotation = 1;
+  repeated IrAnnotation annotation = 1;
   required int64 classifier = 2;
   required bool has_question_mark = 3;
   repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
@@ -111,7 +111,7 @@ enum IrSimpleTypeNullability {
 }
 
 message IrSimpleType {
-  repeated IrConstructorCall annotation = 1;
+  repeated IrAnnotation annotation = 1;
   required int64 classifier = 2;
   optional IrSimpleTypeNullability nullability = 3 [default=NOT_SPECIFIED];
   repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
@@ -121,7 +121,7 @@ message IrSimpleType {
 }
 
 message IrDynamicType {
-  repeated IrConstructorCall annotation = 1;
+  repeated IrAnnotation annotation = 1;
 }
 
 message IrDefinitelyNotNullType {
@@ -130,7 +130,7 @@ message IrDefinitelyNotNullType {
 }
 
 message IrErrorType {
-  repeated IrConstructorCall annotation = 1;
+  repeated IrAnnotation annotation = 1;
 }
 
 message IrType {
@@ -195,6 +195,15 @@ message IrCall {
 }
 
 message IrConstructorCall {
+  required int64 symbol = 1;
+  required int32 constructor_type_arguments_count = 2;
+  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 3;
+  repeated IrExpression argument = 5;
+  repeated int32 type_argument = 6 [packed=true];
+  optional int32 origin_name = 4;
+}
+
+message IrAnnotation {
   required int64 symbol = 1;
   required int32 constructor_type_arguments_count = 2;
   optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 3;
@@ -600,7 +609,7 @@ message IrDeclarationBase {
   // For explanation of the default value, see the comment on IrExpression.coordinates.
   optional int64 coordinates = 3 [default=6148914691236517201];
   optional int64 flags = 4 [default = 0];
-  repeated IrConstructorCall annotation = 5;
+  repeated IrAnnotation annotation = 5;
 }
 
 message IrFunctionBase {

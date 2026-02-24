@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import kotlin.reflect.full.declaredMemberProperties
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation as ProtoAnnotation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructor as ProtoConstructor
@@ -109,7 +110,7 @@ class IrDeclarationDeserializer(
     }
 
     // Deserializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
-    internal fun deserializeAnnotations(annotations: List<ProtoConstructorCall>): List<IrAnnotation> {
+    internal fun deserializeAnnotations(annotations: List<ProtoAnnotation>): List<IrAnnotation> {
         return annotations.memoryOptimizedMap { bodyDeserializer.deserializeAnnotation(it) }
     }
 
