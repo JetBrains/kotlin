@@ -253,9 +253,9 @@ class WasmComponentModelLowering(val context: WasmBackendContext) : FileLowering
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     context.irBuiltIns.stringType,
                     // TODO more robust version of this
-//                    kebabCaseFromLowerCamelCase(functionBlueprint.name.asString())
+                    wasmExportNameForWitIfaceFunction(witIfaceName, functionBlueprint.name.asString())
                     // TODO obviously do this correctl
-                    "wasi:cli/run@0.2.9#run"
+//                    "wasi:cli/run@0.2.9#run"
 //                    "cm32p2|_ex_wasi:cli/run@0.2.9|run"
                 )
             }
@@ -289,6 +289,12 @@ class WasmComponentModelLowering(val context: WasmBackendContext) : FileLowering
 //        topLevelFunction.copyFunctionSignatureFrom(functionBlueprint)
         topLevelFunction.parameters = topLevelFunction.parameters.filter { !it.isDispatchReceiver }
         return topLevelFunction
+    }
+
+    // TODO this is just a bytecodealliance "convention" that "just works" with the existing tooling right now
+    //      see https://github.com/WebAssembly/component-model/issues/422 / https://github.com/WebAssembly/component-model/pull/378
+    private fun wasmExportNameForWitIfaceFunction(witIfaceName: String, functionName: String): String {
+        return "$witIfaceName#$functionName"
     }
 
     // TODO probably find a more robust alternative, maybe pass the fn names from wit-bindgen to here somehow
