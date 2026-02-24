@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
+import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -82,6 +83,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
         it.wasmGenerateWat = debugMode >= DebugMode.DEBUG
         it.useDebuggerCustomFormatters = debugMode >= DebugMode.DEBUG
         it.languageVersionSettings = languageSettings
+        it.testEnvironment = true
     }
 
     val input = ConfigurationPipelineArtifact(configuration) {}
@@ -94,10 +96,18 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
     )
 
     fun compileWasmModule(includes: String, libraries: List<String>, outputName: String, outputDir: File) {
-        val klibs = loadWebKlibsInTestPipeline(
+        with(configuration) {
+            this.outputDir = outputDir
+            this.outputName = outputName
+            wasmIncludedModuleOnly = true
+            wasmUseNewExceptionProposal = setup.newExceptionProposal
+            wasmForceDebugFriendlyCompilation = setup.debugFriendly
+            this.libraries = libraries
+            this.includes = includes
+        }
+
+        val klibs = loadWebKlibs(
             configuration = configuration,
-            includedPath = includes,
-            libraryPaths = libraries,
             platformChecker = KlibPlatformChecker.Wasm(WasmTarget.JS.alias),
         )
 
@@ -107,15 +117,6 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
             compilerConfiguration = configuration,
             klibs = klibs,
         )
-
-        with(configuration) {
-            this.outputDir = outputDir
-            this.outputName = outputName
-            wasmIncludedModuleOnly = true
-            wasmUseNewExceptionProposal = setup.newExceptionProposal
-            wasmForceDebugFriendlyCompilation = setup.debugFriendly
-            this.includes = includes
-        }
 
         val parametersForCompile = WasmBackendPipelinePhase.compileNonIncrementally(
             configuration = configuration,

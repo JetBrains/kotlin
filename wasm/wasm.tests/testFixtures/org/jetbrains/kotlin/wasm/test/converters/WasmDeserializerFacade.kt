@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,12 +11,9 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -24,10 +21,7 @@ import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.getKlibDependencies
 import org.jetbrains.kotlin.wasm.config.wasmTarget
-import java.io.File
 
 class WasmDeserializerSingleModuleFacade(testServices: TestServices) :
     WasmDeserializerFacadeBase(testServices) {
@@ -61,22 +55,9 @@ abstract class WasmDeserializerFacadeBase(
         MainModule.Klib(inputArtifact.outputFile.absolutePath)
 
     open fun loadKLibs(module: TestModule, mainModule: MainModule.Klib, configuration: CompilerConfiguration): LoadedKlibs {
-        val wasmTarget = configuration.wasmTarget
-
-        val runtimeKlibs: List<String> = WasmEnvironmentConfigurator.getRuntimePathsForModule(wasmTarget, testServices)
-        val klibDependencies: List<String> = getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)
-            .map { it.absolutePath }
-        val klibFriendDependencies: List<String> = getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)
-            .map { it.absolutePath }
-
-        val mainPath = File(mainModule.libPath).canonicalPath
-
-        return loadWebKlibsInTestPipeline(
+        return loadWebKlibs(
             configuration = configuration,
-            libraryPaths = runtimeKlibs + klibDependencies + klibFriendDependencies + mainPath,
-            friendPaths = klibFriendDependencies,
-            includedPath = mainPath,
-            platformChecker = KlibPlatformChecker.Wasm(wasmTarget.alias)
+            platformChecker = KlibPlatformChecker.Wasm(configuration.wasmTarget.alias)
         )
     }
 

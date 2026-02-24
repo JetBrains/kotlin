@@ -30,63 +30,21 @@ import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 fun loadWebKlibs(
     configuration: CompilerConfiguration,
     platformChecker: KlibPlatformChecker,
-): LoadedKlibs = loadWebKlibs(
-    configuration = configuration,
-    libraryPaths = configuration.libraries,
-    friendPaths = configuration.friendLibraries,
-    includedPath = configuration.includes,
-    platformChecker = platformChecker,
-    useStricterChecks = configuration.testEnvironment,
-)
-
-/**
- * This is the entry point to load Kotlin/JS or Kotlin/Wasm KLIBs in the test pipeline.
- *
- * @param configuration The current compiler configuration.
- * @param libraryPaths Paths of libraries to load.
- * @param friendPaths Paths of friend libraries to load.
- *   Note: It is assumed that [friendPaths] are already included in [libraryPaths].
- * @param includedPath Path of the library to process as the included module.
- *   Note: It is assumed that [includedPath] is already included in [libraryPaths].
- * @param platformChecker The platform checker (it's necessary to avoid loading KLIBs for the wrong platform).
- */
-fun loadWebKlibsInTestPipeline(
-    configuration: CompilerConfiguration,
-    libraryPaths: List<String>,
-    friendPaths: List<String> = emptyList(),
-    includedPath: String? = null,
-    platformChecker: KlibPlatformChecker,
-): LoadedKlibs = loadWebKlibs(
-    configuration = configuration,
-    libraryPaths = libraryPaths,
-    friendPaths = friendPaths,
-    includedPath = includedPath,
-    platformChecker = platformChecker,
-    useStricterChecks = true
-)
-
-private fun loadWebKlibs(
-    configuration: CompilerConfiguration,
-    libraryPaths: List<String>,
-    friendPaths: List<String>,
-    includedPath: String?,
-    platformChecker: KlibPlatformChecker,
-    useStricterChecks: Boolean,
 ): LoadedKlibs {
     val result = KlibLoader {
-        libraryPaths(libraryPaths)
+        libraryPaths(configuration.libraries)
         platformChecker(platformChecker)
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
         configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
     }.load()
-        .apply { reportLoadingProblemsIfAny(configuration, allAsErrors = useStricterChecks) }
+        .apply { reportLoadingProblemsIfAny(configuration, allAsErrors = configuration.testEnvironment) }
         // TODO (KT-76785): Handling of duplicated names is a workaround that needs to be removed in the future.
         .eliminateLibrariesWithDuplicatedUniqueNames(configuration)
 
     return LoadedKlibs(
         all = result.librariesStdlibFirst,
-        friends = result.loadFriendLibraries(friendPaths),
-        included = result.loadFriendLibraries(listOfNotNull(includedPath)).firstOrNull()
+        friends = result.loadFriendLibraries(configuration.friendLibraries),
+        included = result.loadFriendLibraries(listOfNotNull(configuration.includes)).firstOrNull()
     ).also { klibs ->
         if (!configuration.skipLibrarySpecialCompatibilityChecks) {
             val isWasm = platformChecker is KlibPlatformChecker.Wasm
@@ -95,3 +53,4 @@ private fun loadWebKlibs(
         }
     }
 }
+

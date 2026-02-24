@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,12 +7,8 @@ package org.jetbrains.kotlin.test
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
-import org.jetbrains.kotlin.cli.common.SessionWithSources
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.prepareJsSessions
-import org.jetbrains.kotlin.cli.common.prepareJvmSessions
-import org.jetbrains.kotlin.cli.common.prepareWasmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.MinimizedFrontendContext
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -25,7 +21,7 @@ import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttri
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.ClassId
@@ -51,15 +47,12 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
-import org.jetbrains.kotlin.test.frontend.fir.getAllWasmDependenciesPaths
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import java.io.File
 
@@ -124,9 +117,8 @@ class KlibJsLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoad
         moduleName: Name,
         libraryList: DependencyListForCliModule,
     ): List<SessionWithSources<KtFile>> {
-        val klibs = loadWebKlibsInTestPipeline(
+        val klibs = loadWebKlibs(
             configuration = configuration,
-            libraryPaths = getAllJsDependenciesPaths(module, testServices),
             platformChecker = KlibPlatformChecker.JS,
         )
 
@@ -162,9 +154,8 @@ class KlibWasmJsLoadedMetadataDumpHandler(testServices: TestServices) : Abstract
         moduleName: Name,
         libraryList: DependencyListForCliModule,
     ): List<SessionWithSources<KtFile>> {
-        val klibs = loadWebKlibsInTestPipeline(
+        val klibs = loadWebKlibs(
             configuration = configuration,
-            libraryPaths = getAllWasmDependenciesPaths(module, testServices, configuration.wasmTarget),
             platformChecker = KlibPlatformChecker.Wasm(WasmTarget.JS.alias),
         )
 

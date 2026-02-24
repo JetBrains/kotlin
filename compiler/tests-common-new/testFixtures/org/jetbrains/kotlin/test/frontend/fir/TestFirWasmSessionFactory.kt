@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.Name
@@ -75,9 +75,8 @@ fun loadWasmLibraries(
     testServices: TestServices,
     configuration: CompilerConfiguration,
 ): List<KotlinLibrary> {
-    return loadWebKlibsInTestPipeline(
+    return loadWebKlibs(
         configuration = configuration,
-        libraryPaths = getAllWasmDependenciesPaths(module, testServices, configuration.wasmTarget),
         platformChecker = KlibPlatformChecker.Wasm(configuration.wasmTarget.alias),
     ).all
 }

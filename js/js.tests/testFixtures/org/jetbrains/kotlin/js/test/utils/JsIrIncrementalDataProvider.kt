@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.JsSrcFileArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.rebuildCacheForDirtyFiles
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.deserializeJsIrProgramFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -130,10 +129,9 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
     }
 
     fun recordIncrementalData(module: TestModule, artifact: JsSerializedKlibPipelineArtifact) {
-        val klibs = loadWebKlibsInTestPipeline(
-            configuration = artifact.configuration,
-            libraryPaths = getAllJsDependenciesPaths(module, testServices) + listOf(artifact.outputKlibPath),
-            includedPath = artifact.outputKlibPath,
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.SECOND)
+        val klibs = loadWebKlibs(
+            configuration = configuration,
             platformChecker = KlibPlatformChecker.JS,
         )
 
@@ -144,7 +142,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
                 path = runtimePath,
                 dirtyFiles = null,
                 orderedLibraries = resolvedLibraries,
-                configuration = artifact.configuration,
+                configuration = configuration,
                 mainArguments = mainArguments,
             )
         }
@@ -153,7 +151,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
             path = artifact.outputKlibPath,
             dirtyFiles = module.files.map { it.realFilePath },
             orderedLibraries = resolvedLibraries,
-            configuration = artifact.configuration,
+            configuration = configuration,
             mainArguments = mainArguments
         )
     }

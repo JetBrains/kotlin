@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
+import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -26,9 +27,13 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmTarget
+import java.io.File
 
 abstract class WasmEnvironmentConfigurator(
     testServices: TestServices,
@@ -121,6 +126,20 @@ open class WasmSecondStageEnvironmentConfigurator(
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         super.configureCompilerConfiguration(configuration, module)
         val registeredDirectives = module.directives
+
+        val wasmTarget = configuration.wasmTarget
+
+        val runtimeKlibs: List<String> = getRuntimePathsForModule(wasmTarget, testServices)
+        val klibDependencies: List<String> = getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)
+            .map { it.absolutePath }
+        val klibFriendDependencies: List<String> = getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)
+            .map { it.absolutePath }
+        val klibArtifact = testServices.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
+        val mainModule = MainModule.Klib(klibArtifact.outputFile.absolutePath)
+        val mainPath = File(mainModule.libPath).canonicalPath
+        configuration.libraries = runtimeKlibs + klibDependencies + klibFriendDependencies + mainPath
+        configuration.friendLibraries = klibFriendDependencies
+        configuration.includes = mainPath
 
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, true)
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
