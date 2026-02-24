@@ -26,7 +26,9 @@ internal object OverriddenKotlinNativeHomeChecker : KotlinGradleProjectChecker {
         if (allKonanMainSubdirectoriesExist().get()) return
 
         collector.report(
-            project, KotlinToolingDiagnostics.BrokenKotlinNativeBundleError(
+            projectPath,
+            renderingOptions,
+            KotlinToolingDiagnostics.BrokenKotlinNativeBundleError(
                 project.nativeProperties.userProvidedNativeHome.orNull,
                 NativeProperties.NATIVE_HOME.name
             )

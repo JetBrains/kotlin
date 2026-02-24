@@ -60,7 +60,8 @@ internal object PreHmppDependenciesUsageChecker : KotlinGradleProjectChecker {
 
                     if (isPreHmppDependency(dependency) && reportedDependencies.add(dependencyId)) {
                         collector.reportOncePerGradleBuild(
-                            project,
+                            projectPath,
+                            renderingOptions,
                             KotlinToolingDiagnostics.PreHmppDependenciesUsedInBuild(dependencyId.displayName),
                             key = dependencyId.displayName
                         )

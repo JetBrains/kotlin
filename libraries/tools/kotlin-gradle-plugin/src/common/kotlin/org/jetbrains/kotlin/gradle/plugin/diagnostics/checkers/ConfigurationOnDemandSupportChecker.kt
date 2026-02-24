@@ -29,7 +29,8 @@ internal object ConfigurationOnDemandSupportChecker : KotlinGradleProjectChecker
 
             if (unsupportedTargets.isNotEmpty()) {
                 collector.reportOncePerGradleProject(
-                    project,
+                    projectPath,
+                    renderingOptions,
                     KotlinToolingDiagnostics.ConfigurationOnDemandNotSupported(
                         projectDisplayName = project.displayName,
                         namesOfUnsupportedTargets = unsupportedTargets.map { it.name }.toSet(),

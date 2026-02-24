@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 private typealias ToolingDiagnosticId = String
-private typealias GradleProjectPath = String
+internal typealias GradleProjectPath = String
 
 internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
     private val objects: ObjectFactory,
@@ -68,12 +68,9 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
         reportOnce: Boolean = false,
         key: ToolingDiagnosticId = diagnostic.id,
     ) {
-        if (reportOnce) {
-            if (!reportedIds.add(key)) return
-        } else {
-            reportedIds.add(key)
+        if (reportedIds.add(key) || !reportOnce) {
+            handleDiagnostic(project.path, ToolingDiagnosticRenderingOptions.forProject(project), diagnostic)
         }
-        handleDiagnostic(project.path, ToolingDiagnosticRenderingOptions.forProject(project), diagnostic)
     }
 
     fun report(

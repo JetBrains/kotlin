@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.utils.ConfigurationCacheOpaqueValueSource
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.Serializable
 
-internal class ToolingDiagnosticRenderingOptionsParameters(
+internal data class ToolingDiagnosticRenderingOptionsParameters(
     val isInIdeaSync: Boolean,
     val isInIdeaEnvironment: Boolean,
     val showStacktrace: ShowStacktrace,
@@ -141,6 +141,9 @@ private fun showColoredDiagnostics(consoleOutput: ConsoleOutput, isAttachedToTer
 internal val Project.isAttachedToTerminal
     get() = providers.isAttachedToTerminal()
 
+/**
+ * Returns [true] when current Gradle build is attached to a terminal.
+ */
 internal fun ProviderFactory.isAttachedToTerminal(): Provider<Boolean> =
     of(IsAttachedToTerminalValueSource::class.java) {}.map { it.value }
 
