@@ -211,6 +211,9 @@ object NativeConfigurationKeys {
     val KONAN_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO = CompilerConfigurationKey.create<String>("KONAN_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO")
 
     @JvmField
+    val KONAN_WRITE_DEPENDENCIES_OF_PRODUCED_BINARIES_TO = CompilerConfigurationKey.create<String>("KONAN_WRITE_DEPENDENCIES_OF_PRODUCED_BINARIES_TO")
+
+    @JvmField
     val DEBUG_INFO_VERSION = CompilerConfigurationKey.create<Int>("DEBUG_INFO_VERSION")
 
     // Write objc header with generics support.
@@ -507,6 +510,10 @@ var CompilerConfiguration.verifyCompiler: Boolean
 var CompilerConfiguration.konanWriteDependenciesOfProducedKlibTo: String?
     get() = get(NativeConfigurationKeys.KONAN_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO)
     set(value) { put(NativeConfigurationKeys.KONAN_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.konanWriteDependenciesOfProducedBinariesTo: String?
+    get() = get(NativeConfigurationKeys.KONAN_WRITE_DEPENDENCIES_OF_PRODUCED_BINARIES_TO)
+    set(value) { put(NativeConfigurationKeys.KONAN_WRITE_DEPENDENCIES_OF_PRODUCED_BINARIES_TO, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.debugInfoVersion: Int?
     get() = get(NativeConfigurationKeys.DEBUG_INFO_VERSION)

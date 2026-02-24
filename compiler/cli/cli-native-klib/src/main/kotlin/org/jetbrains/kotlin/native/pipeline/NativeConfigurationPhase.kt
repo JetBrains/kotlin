@@ -118,9 +118,8 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         arguments.konanDataDir?.let { configuration.konanDataDir = it }
 
         configuration.checkDependencies = arguments.checkDependencies
-        arguments.writeDependenciesOfProducedKlibTo?.let {
-            configuration.konanWriteDependenciesOfProducedKlibTo = it
-        }
+        arguments.writeDependenciesOfProducedKlibTo?.let { configuration.konanWriteDependenciesOfProducedKlibTo = it }
+        arguments.writeDependenciesOfProducedBinariesTo?.let { configuration.konanWriteDependenciesOfProducedBinariesTo = it }
         arguments.manifestNativeTargets?.let {
             configuration.konanManifestNativeTargets = parseManifestNativeTargets(it, configuration)
         }

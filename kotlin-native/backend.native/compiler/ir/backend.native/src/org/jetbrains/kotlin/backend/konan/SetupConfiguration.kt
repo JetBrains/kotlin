@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
 import org.jetbrains.kotlin.konan.config.konanRefinesModules
 import org.jetbrains.kotlin.konan.config.konanShortModuleName
 import org.jetbrains.kotlin.konan.config.konanTarget
+import org.jetbrains.kotlin.konan.config.konanWriteDependenciesOfProducedBinariesTo
 import org.jetbrains.kotlin.konan.config.konanWriteDependenciesOfProducedKlibTo
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -148,6 +149,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     konanPurgeUserLibs = arguments.purgeUserLibs
 
     arguments.writeDependenciesOfProducedKlibTo?.let { konanWriteDependenciesOfProducedKlibTo = it }
+    arguments.writeDependenciesOfProducedBinariesTo?.let { konanWriteDependenciesOfProducedBinariesTo = it }
 
     if (arguments.verifyCompiler != null)
         put(VERIFY_COMPILER, arguments.verifyCompiler == "true")

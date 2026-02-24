@@ -70,6 +70,7 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val VERIFY_BITCODE by key<Boolean>()
     val VERIFY_COMPILER by key<Boolean>()
     val KONAN_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO by key<String>()
+    val KONAN_WRITE_DEPENDENCIES_OF_PRODUCED_BINARIES_TO by key<String>()
     val DEBUG_INFO_VERSION by key<Int>()
     val OBJC_GENERICS by key<Boolean>("Write objc header with generics support.")
     val DEBUG_PREFIX_MAP by key<Map<String, String>>("Remap file source paths in debug info.")
