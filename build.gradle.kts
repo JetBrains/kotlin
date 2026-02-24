@@ -1259,19 +1259,6 @@ configure<IdeaModel> {
     }
 }
 
-val disableVerificationTasks = providers.gradleProperty("kotlin.build.disable.verification.tasks")
-    .orNull?.toBoolean() ?: false
-if (disableVerificationTasks) {
-    logger.info("Verification tasks are disabled because `kotlin.build.disable.verification.tasks` is true")
-    gradle.taskGraph.whenReady {
-        allTasks.forEach {
-            if (it is VerificationTask) {
-                logger.info("Task ${it.path} is disabled because `kotlin.build.disable.verification.tasks` is true")
-                it.enabled = false
-            }
-        }
-    }
-}
 
 gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
 
