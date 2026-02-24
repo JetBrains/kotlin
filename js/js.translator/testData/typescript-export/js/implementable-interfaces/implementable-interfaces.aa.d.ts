@@ -136,11 +136,39 @@ declare namespace JS_TESTS {
                 readonly "foo.MidNormal": unique symbol;
             } & foo.NoRuntimeBase["__doNotUseOrImplementIt"];
         }
+        interface WithSuspendOnly {
+            mid(): Promise<string>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.WithSuspendOnly": unique symbol;
+            };
+        }
+        interface WithSuspendOnlyButIgnored {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.WithSuspendOnlyButIgnored": unique symbol;
+            };
+        }
+        interface ImplementableChildOfSuspendOnlyButIgnored extends foo.WithSuspendOnlyButIgnored {
+            another(): Promise<number>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.ImplementableChildOfSuspendOnlyButIgnored": unique symbol;
+            } & foo.WithSuspendOnlyButIgnored["__doNotUseOrImplementIt"];
+        }
+        interface NotImplementableChildOfSuspendOnlyButIgnored extends foo.WithSuspendOnlyButIgnored {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.NotImplementableChildOfSuspendOnlyButIgnored": unique symbol;
+            } & foo.WithSuspendOnlyButIgnored["__doNotUseOrImplementIt"];
+        }
         interface NoRuntimeLeaf extends foo.MidNormal {
             leaf(): string;
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.NoRuntimeLeaf": unique symbol;
             } & foo.MidNormal["__doNotUseOrImplementIt"];
+        }
+        interface ShouldBeNotImplementable {
+            leaf(): string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.ShouldBeNotImplementable": unique symbol;
+            };
         }
     }
 }

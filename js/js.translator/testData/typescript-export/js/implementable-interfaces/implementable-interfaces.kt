@@ -201,7 +201,41 @@ interface MidNormal : NoRuntimeBase {
 }
 
 @JsExport
+interface WithSuspendOnly {
+    suspend fun mid(): String
+}
+
+
+@JsExport
+interface WithSuspendOnlyButIgnored {
+    @JsExport.Ignore
+    open suspend fun mid(): String
+}
+
+@JsExport
+interface ImplementableChildOfSuspendOnlyButIgnored : WithSuspendOnlyButIgnored {
+    override suspend fun mid(): String
+    suspend fun another(): Int
+}
+
+@JsExport
+interface NotImplementableChildOfSuspendOnlyButIgnored : WithSuspendOnlyButIgnored {
+    override suspend fun mid(): String
+    @JsExport.Ignore
+    suspend fun another(): Int
+}
+
+@JsExport
 @JsNoRuntime
 interface NoRuntimeLeaf : MidNormal {
     fun leaf(): String
+}
+
+@JsExport
+@JsNoRuntime
+interface ShouldBeNotImplementable {
+    fun leaf(): String
+
+    @JsExport.Ignore
+    val ignored: Boolean
 }
