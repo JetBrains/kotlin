@@ -592,6 +592,50 @@ fun calculateChecksum(file: File, algorithm: String): String {
 
 tasks.register("copySamples", CopySamples::class) {
     destinationDir = file("build/samples-under-test")
+
+    // Manually configure what CopySamples.configureReplacements() would do
+    // since Kotlin DSL doesn't trigger the Groovy configure(Closure) method
+    val samplesSourceDir = project.file("backend.native/tests/samples")
+
+    from(samplesSourceDir) {
+        exclude("**/*.gradle.kts")
+        exclude("**/*.gradle")
+        exclude("**/gradle.properties")
+    }
+    from(samplesSourceDir) {
+        include("**/*.gradle")
+        include("**/*.gradle.kts")
+        val replacements = listOf(
+            "https://plugins.gradle.org/m2" to "https://cache-redirector.jetbrains.com/plugins.gradle.org/m2",
+            "mavenCentral()" to "maven { setUrl(\"https://cache-redirector.jetbrains.com/maven-central\") }",
+        )
+        filter { line ->
+            var result = line
+            replacements.forEach { (repo, replacement) ->
+                if (result.contains(repo)) {
+                    result = result.replace(repo, replacement)
+                }
+            }
+            result
+        }
+    }
+    from(samplesSourceDir) {
+        include("**/gradle.properties")
+
+        val bootstrapKotlinVersion = project.property("bootstrapKotlinVersion") as? String
+            ?: throw IllegalArgumentException("Property bootstrapKotlinVersion should be specified in the root project")
+        val bootstrapKotlinRepo = project.property("bootstrapKotlinRepo") as? String
+            ?: throw IllegalArgumentException("Property bootstrapKotlinRepo should be specified in the root project")
+
+        filter { line ->
+            when {
+                line.startsWith("kotlin_version") -> "kotlin_version=$bootstrapKotlinVersion"
+                line.startsWith("#kotlinCompilerRepo") || line.startsWith("kotlinCompilerRepo") ->
+                    "kotlinCompilerRepo=$bootstrapKotlinRepo"
+                else -> line
+            }
+        }
+    }
 }
 
 configure<CompilationDatabaseExtension> {
