@@ -11,3 +11,4 @@ Another one representation is JSON-based that is bundled into a published jar as
 - `6`: Add `StringListType`
 - `7`: Add `JvmDefaultModeType`
 - `8`: Migrate compiler arguments to enum types: `AbiStabilityModeType`, `AssertionsModeType`, `JspecifyAnnotationsModeType`, `LambdasModeType`, `SamConversionsModeType`, `StringConcatModeType`, `CompatqualAnnotationsModeType`, `WhenExpressionsModeType`
+- `9`: Revert deprecation of `valueType` and `valueDescription`; mark `argumentType` as experimental
