@@ -10,12 +10,15 @@ import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.isArrayOfFunction
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
@@ -51,4 +54,8 @@ fun tryGetIntrinsicType(callSite: FirFunctionCall): IntrinsicType? {
     val value = literal?.value as? String ?: return null
 
     return runCatching { IntrinsicType.valueOf(value) }.getOrNull()
+}
+
+fun FirFunctionCall.isArrayOfCall(session: FirSession): Boolean {
+    return (toResolvedCallableSymbol() as? FirNamedFunctionSymbol)?.isArrayOfFunction(session, this.argumentList) == true
 }

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.isArrayOfCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 internal object FirNativeVariadicSpreadChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
