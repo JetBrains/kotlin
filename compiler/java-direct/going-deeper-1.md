@@ -56,6 +56,20 @@ I see the following options to make it work (but this list is not necessarily ex
 Analyze how the resolution of JavaClass related Types is organized and executed in FIR, which solutions are feasible (with the strong preference to the solution 3 from my list) and maybe some other important details or obstacles on the way.
 Summarize the findings in a separate markdown file that can be used to instruct the implementation agents to make further iterations.
 
+### 1.5
+
+The implementation progressed to iteration 3, see the @ITERATION_RESULTS.md for results. But I'm not sure that we achieved the right 
+state with the resolution. Please analyze the results and instructions, and tell me whether we're on the right track. In particular why the current seemingly correct implementation of the resolution do not result 
+in the more successful tests results. Do we really achieved the point, where we're handing over the resolution to the FIR code?
+
+A: No, the resolution fails on simple names, we cannot simply hand it over to FIR
+Option 1: Let Java Model Qualify More Names (Recommended for Now)
+Option 2: FIR Should Handle Simple Names Better (Ideal Long-Term)
+
+We probably need to implement option 1 in some way, at least because some of the type names are seen differently from kotlin. But how to do it correctly and flexible in regard to the JDK version, is not yet clear to me.
+But the real solution is likely option 2. We only need to make sure that fixing it in the `JavaTypeConversion.kt` will not interfere with other JavaModel implementations.
+In vestigate these concerns as well as the `compiler/javac-wrapper` directory/subproject. How the resolution is handled there?
+Present the analysis on how difficult and troublesome the option2 will be.
 
 ## 2 implementation prompts
 
