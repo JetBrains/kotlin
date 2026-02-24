@@ -34,6 +34,6 @@ fun box(): String {
         val channel: Channel<String> = AbstractChannel<String>()
         res = channel.receiveOrClosed().holder as String
     }
-    TailCallOptimizationChecker.checkStateMachineIn("receiveOrClosed")
+    TailCallOptimizationChecker.checkStateMachineIn("receiveOrClosed-s5I_7NE")
     return res
 }
