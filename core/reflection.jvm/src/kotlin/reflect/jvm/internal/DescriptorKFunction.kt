@@ -173,7 +173,9 @@ internal class DescriptorKFunction private constructor(
             DescriptorKFunction(containerClass.kotlin as KClassImpl<*>, it)
         }
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): DescriptorKFunction =
+    override fun replaceContainerForFakeOverride(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
+    ): DescriptorKFunction =
         DescriptorKFunction(container, descriptor, overriddenStorage)
 
     private fun getFunctionWithDefaultParametersForValueClassOverride(function: ReflectKFunction): ReflectKFunction? {

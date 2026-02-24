@@ -60,6 +60,8 @@ internal class JavaKConstructor(
 
     override val callerWithDefaults: Caller<*>? get() = null
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
+    override fun replaceContainerForFakeOverride(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
+    ): ReflectKCallable<Any?> =
         error("Constructors cannot be copied: $this")
 }

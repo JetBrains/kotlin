@@ -42,7 +42,7 @@ internal open class DescriptorKProperty1<T, out V> : KProperty1<T, V>, Descripto
 
     override fun invoke(receiver: T): V = get(receiver)
 
-    override fun shallowCopy(
+    override fun replaceContainerForFakeOverride(
         container: KDeclarationContainerImpl,
         overriddenStorage: KCallableOverriddenStorage,
     ): DescriptorKProperty1<T, V> =
@@ -68,7 +68,7 @@ internal class DescriptorKMutableProperty1<T, V> : DescriptorKProperty1<T, V>, K
 
     override fun set(receiver: T, value: V) = setter.call(receiver, value)
 
-    override fun shallowCopy(
+    override fun replaceContainerForFakeOverride(
         container: KDeclarationContainerImpl,
         overriddenStorage: KCallableOverriddenStorage,
     ): DescriptorKMutableProperty1<T, V> =

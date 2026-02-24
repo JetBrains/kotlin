@@ -24,7 +24,9 @@ internal open class KotlinKProperty1<T, out V>(
 
     override fun invoke(receiver: T): V = get(receiver)
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
+    override fun replaceContainerForFakeOverride(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
+    ): ReflectKCallable<V> =
         KotlinKProperty1<T, V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage)
 
     class Getter<T, out V>(override val property: KotlinKProperty1<T, V>) : KotlinKProperty.Getter<V>(), KProperty1.Getter<T, V> {
@@ -40,7 +42,9 @@ internal class KotlinKMutableProperty1<T, V>(
 
     override fun set(receiver: T, value: V): Unit = setter.call(receiver, value)
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
+    override fun replaceContainerForFakeOverride(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
+    ): ReflectKCallable<V> =
         KotlinKMutableProperty1<T, V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage)
 
     class Setter<T, V>(override val property: KotlinKMutableProperty1<T, V>) : KotlinKProperty.Setter<V>(), KMutableProperty1.Setter<T, V> {
