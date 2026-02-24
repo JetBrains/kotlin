@@ -78,5 +78,7 @@ Request my approval after analyzing the possible problems and implementing the t
 
 #### 2.1.2
 
+After reanalyzing the approaches to the external types resolution, the instructions for the iteration 2 is significantly changed. read the updated 
+@FIXING_ITERATIONS.md, in particular the "iteration 2" part, and all the linked document, check what has been done so far and update the code according to the Iteration 2.
 
 

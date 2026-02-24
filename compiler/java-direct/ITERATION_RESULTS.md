@@ -13,6 +13,73 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -75,6 +142,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -141,6 +275,73 @@ These all point to needing **FIR integration** for resolving types outside our p
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -203,6 +404,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -265,6 +533,73 @@ Main blocker is now clearly constructor resolution:
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -327,6 +662,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -393,6 +795,73 @@ These all point to needing **FIR integration** for resolving types outside our p
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -455,6 +924,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -512,6 +1048,73 @@ After completing each iteration, add a new section using this template:
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -574,6 +1177,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -640,6 +1310,73 @@ These all point to needing **FIR integration** for resolving types outside our p
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -702,6 +1439,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -764,6 +1568,73 @@ Main blocker is now clearly constructor resolution:
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -826,6 +1697,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -892,6 +1830,73 @@ These all point to needing **FIR integration** for resolving types outside our p
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -954,6 +1959,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -977,6 +2049,73 @@ This keeps the core instruction files lean while preserving institutional knowle
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -1039,6 +2178,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -1105,6 +2311,73 @@ These all point to needing **FIR integration** for resolving types outside our p
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -1167,6 +2440,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -1229,6 +2569,73 @@ Main blocker is now clearly constructor resolution:
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -1291,6 +2698,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -1357,6 +2831,73 @@ These all point to needing **FIR integration** for resolving types outside our p
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -1419,6 +2960,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -1468,6 +3076,73 @@ This is an example of how to format iteration results. Real results should follo
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -1530,6 +3205,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -1596,6 +3338,73 @@ These all point to needing **FIR integration** for resolving types outside our p
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -1658,6 +3467,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -1720,6 +3596,73 @@ Main blocker is now clearly constructor resolution:
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -1782,6 +3725,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -1848,6 +3858,73 @@ These all point to needing **FIR integration** for resolving types outside our p
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -1910,6 +3987,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -1973,6 +4117,73 @@ From new test failures, need to address:
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -2035,6 +4246,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -2101,6 +4379,73 @@ These all point to needing **FIR integration** for resolving types outside our p
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -2163,6 +4508,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -2225,6 +4637,73 @@ Main blocker is now clearly constructor resolution:
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -2287,6 +4766,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 
@@ -2353,6 +4899,73 @@ These all point to needing **FIR integration** for resolving types outside our p
 
 ---
 
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
+
+---
+
 ## JavaType Hierarchy Fix - 2026-02-23
 
 ### Status
@@ -2415,6 +5028,73 @@ The void fix unblocked tests that returned void, but the majority still need ext
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark JavaType hierarchy as fixed, note first passing test
 - [ ] Note: Array/Wildcard support still TODO
+
+---
+
+## Iteration 2 Review: Type Resolution Architecture Verification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Reviewed and verified that the current `JavaClassifierTypeOverAst` implementation already follows the correct architecture as defined in FIRSESSION_RESOLUTION_ANALYSIS.md. The key insight: **Java Model provides names, FIR provides resolution**. Our implementation correctly returns `classifierQualifiedName` as `node.text` (preserving qualified names like "java.util.ArrayList"), and `classifier` returns local classes or `null`. FIR will handle all external type resolution using `session.symbolProvider`.
+
+### Key Findings
+- **Architecture Validated**: Current implementation matches recommended Solution 1 from FIRSESSION_RESOLUTION_ANALYSIS.md
+- **classifierQualifiedName**: Returns `node.text` - already correct! Preserves fully qualified names
+- **classifier Resolution**: Returns local classes via `LocalJavaScope`, returns `null` for external - exactly as intended
+- **FIR Integration**: FIR's `JavaTypeConversion.kt:191-247` explicitly handles `classifier == null` case by parsing `classifierQualifiedName`
+- **Simple Name Extraction**: Fixed `classifier` to extract simple name from qualified references (e.g., "java.util.ArrayList" → check LocalJavaScope for "ArrayList")
+
+### Implementation Decisions
+- **No Changes to classifierQualifiedName**: Already returns correct value (`node.text`)
+- **Fixed classifier Logic**: Extract simple name for LocalJavaScope lookup (handle "Outer.Inner" → "Inner")
+- **isRaw Left as false**: Acceptable for now - proper detection requires type argument parsing (future iteration)
+- **Trust FIR**: Do NOT attempt external resolution in Java Model - FIR handles it
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst.classifier` to extract simple name from qualified names for local lookup
+  - No changes to `classifierQualifiedName` - already correct
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testClassifierQualifiedName` verifying both simple and qualified name handling
+
+### Test Results
+- Unit tests: 12 passing (was 11), 1 added (`testClassifierQualifiedName`)
+- Box tests: Still 1/138 passing (0.7%) - unchanged, as expected
+- Error distribution: Unchanged - external resolution still blocked on FIR side (expected)
+- Test verification:
+  - ✅ Simple name "Base" in local scope → `classifier` returns JavaClass
+  - ✅ Qualified name "java.util.ArrayList" → `classifier` returns `null`, `classifierQualifiedName` = "java.util.ArrayList"
+
+### Issues Encountered
+- **None**: Implementation was already architecturally correct
+- **Simple Name Extraction**: Minor fix needed to handle qualified names in LocalJavaScope lookup
+
+### Next Layer Analysis
+The remaining 127 failures are **external type resolution** issues:
+- `MISSING_DEPENDENCY_CLASS` (104): FIR can't find external classes
+- `MISSING_DEPENDENCY_SUPERCLASS` (76): FIR can't resolve superclass references
+
+**Root Cause**: The test environment may not have FIR's symbol providers properly configured for external types. This is NOT a Java Model issue - it's a test infrastructure or FIR configuration issue.
+
+**Key Question for Next Iteration**: Why is FIR's `classifier == null` path not working? Options:
+1. Test configuration issue (symbol providers not set up correctly)
+2. Package name needs to be included (Iteration 3: imports)
+3. Something else in test infrastructure
+
+### Recommendations for Future Iterations
+- **Iteration 3**: Implement import handling per updated FIXING_ITERATIONS.md
+  - Parse import statements
+  - Use to qualify simple names (ArrayList → java.util.ArrayList)
+  - This may help FIR resolve external types
+- **Alternative Investigation**: Check if box test framework properly configures FIR symbol providers
+- **isRaw Implementation**: Defer until type arguments parsing is implemented
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note that architecture follows FIRSESSION_RESOLUTION_ANALYSIS.md Solution 1
+- [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
 

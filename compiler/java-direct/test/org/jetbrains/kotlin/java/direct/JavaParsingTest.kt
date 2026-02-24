@@ -222,6 +222,40 @@ class JavaParsingTest {
     }
 
     @Test
+    fun testClassifierQualifiedName() {
+        val sourceSimpleName = """
+            class Base {}
+            class Derived extends Base {}
+        """.trimIndent()
+        val builder1 = parseJavaToSyntaxTreeBuilder(sourceSimpleName, 0)
+        val root1 = buildSyntaxTree(builder1, sourceSimpleName)
+        val localScope1 = LocalJavaScope(root1, sourceSimpleName)
+        
+        val derivedNode = root1.children.first { it.type.toString() == "CLASS" && it.findChildByType("IDENTIFIER")?.text == "Derived" }
+        val derived = JavaClassOverAst(derivedNode, sourceSimpleName, null, localScope1)
+        
+        assert(derived.supertypes.size == 1) { "Expected 1 supertype" }
+        val supertype = derived.supertypes.first()
+        assert(supertype.classifierQualifiedName == "Base") { "Expected 'Base', got '${supertype.classifierQualifiedName}'" }
+        assert(supertype.classifier != null) { "Base should be resolved via LocalJavaScope" }
+        
+        val sourceQualifiedName = """
+            class MyClass extends java.util.ArrayList {}
+        """.trimIndent()
+        val builder2 = parseJavaToSyntaxTreeBuilder(sourceQualifiedName, 0)
+        val root2 = buildSyntaxTree(builder2, sourceQualifiedName)
+        val localScope2 = LocalJavaScope(root2, sourceQualifiedName)
+        
+        val myClassNode = root2.children.first { it.type.toString() == "CLASS" }
+        val myClass = JavaClassOverAst(myClassNode, sourceQualifiedName, null, localScope2)
+        
+        assert(myClass.supertypes.size == 1) { "Expected 1 supertype" }
+        val supertype2 = myClass.supertypes.first()
+        assert(supertype2.classifierQualifiedName == "java.util.ArrayList") { "Expected 'java.util.ArrayList', got '${supertype2.classifierQualifiedName}'" }
+        assert(supertype2.classifier == null) { "java.util.ArrayList should NOT be in LocalJavaScope" }
+    }
+
+    @Test
     fun testKnownClassNamesInPackage(@TempDir tempDir: Path) {
         // Create test Java files in different packages
         val comExampleDir = tempDir.resolve("com/example")

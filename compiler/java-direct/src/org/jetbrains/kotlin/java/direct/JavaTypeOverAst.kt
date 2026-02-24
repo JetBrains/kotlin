@@ -24,8 +24,14 @@ class JavaClassifierTypeOverAst(
     private val localScope: LocalJavaScope? = null
 ) : JavaTypeOverAst(node, source), JavaClassifierType {
     override val classifier: JavaClassifier? by lazy {
-        val simpleName = Name.identifier(classifierQualifiedName)
-        localScope?.findClass(simpleName)
+        val typeName = node.text
+        // TODO: suspicious ad-hoc check. Review later and consider more robust approach.
+        val simpleName = if (typeName.contains('.')) {
+            typeName.substringAfterLast('.')
+        } else {
+            typeName
+        }
+        localScope?.findClass(Name.identifier(simpleName))
     }
     
     override val classifierQualifiedName: String get() = node.text
