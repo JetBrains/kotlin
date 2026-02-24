@@ -1,5 +1,8 @@
 // LANGUAGE: +ContextParameters
 // IGNORE_BACKEND_K1: ANY
+// ISSUE: KT-82579
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: ANY:2.2.0,2.3.0
+// ^^^ Context parameter specificity rules have been chaged in 2.3.20-Beta1, so `box()` function returns a different value starting with 2.3.20.
 
 open class A
 open class B : A()
