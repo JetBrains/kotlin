@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
+import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
@@ -62,6 +63,7 @@ abstract class BaseArgumentTest<T>(val argumentName: String) : BaseCompilationTe
         }
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     private fun KotlinCompilerArgument.defaultValueString(kotlinReleaseVersion: KotlinReleaseVersion): String? {
         @Suppress("UNCHECKED_CAST")
         val argumentType = argumentType as KotlinArgumentValueType<Any>

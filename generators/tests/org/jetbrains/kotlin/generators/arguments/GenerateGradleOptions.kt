@@ -944,6 +944,7 @@ context(_: KotlinCompilerArgumentsLevel)
 private val KotlinCompilerArgument.gradleDefaultValue: String
     get() = gradleValues.defaultValue
 
+@OptIn(ExperimentalArgumentApi::class)
 context(_: KotlinCompilerArgumentsLevel)
 private val KotlinCompilerArgument.gradleReturnType: String
     get() {

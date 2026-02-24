@@ -17,7 +17,7 @@ val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLe
         name = "Xuse-k2"
         description =
             "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,

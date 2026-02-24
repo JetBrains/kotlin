@@ -23,7 +23,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         deprecatedName = "enable_assertions"
         shortName = "ea"
         description = "Enable runtime assertions in generated code.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -35,7 +35,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "g"
         compilerName = "debug"
         description = "Enable the emission of debug information.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -48,7 +48,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         deprecatedName = "generate_test_runner"
         shortName = "tr"
         description = "Produce a runner for unit tests.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -60,7 +60,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "generate-worker-test-runner"
         shortName = "trw"
         description = "Produce a worker runner for unit tests.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -72,7 +72,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "generate-no-exit-test-runner"
         shortName = "trn"
         description = "Produce a runner for unit tests that doesn't force an exit.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -86,7 +86,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         deprecatedName = "includeBinary"
         shortName = "ib"
         description = "Pack the given external binary into the klib.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -100,7 +100,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         compilerName = "libraries"
         shortName = "l"
         description = "Link with the given library.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -114,7 +114,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "library-version"
         shortName = "lv"
         description = "The library version.\nNote: This option is deprecated and will be removed in one of the future releases.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<version>".asReleaseDependent()
 
         additionalAnnotations(
@@ -132,7 +132,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "list-targets"
         deprecatedName = "list_targets"
         description = "List available hardware targets.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -144,7 +144,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "manifest"
         compilerName = "manifestFile"
         description = "Provide a manifest addend file.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -156,7 +156,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
     compilerArgument {
         name = "memory-model"
         description = "Choose the memory model to be used – 'strict' and 'experimental' are currently supported.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<model>".asReleaseDependent()
 
         lifecycle(
@@ -169,7 +169,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "module-name"
         deprecatedName = "module_name"
         description = "Specify a name for the compilation module.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
         lifecycle(
@@ -185,7 +185,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         shortName = "nl"
         delimiter = KotlinCompilerArgument.Delimiter.None
         description = "Include the given native bitcode library.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -199,7 +199,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         compilerName = "nodefaultlibs"
         deprecatedName = "nodefaultlibs"
         description = "Don't link the libraries from dist/klib automatically.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -211,7 +211,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "no-endorsed-libs"
         compilerName = "noendorsedlibs"
         description = "Don't link endorsed libraries from the dist automatically. This option has been deprecated, as the dist no longer has any endorsed libraries.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         additionalAnnotations(
             Deprecated("This flag is deprecated")
@@ -227,7 +227,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
     compilerArgument {
         name = "nomain"
         description = "Assume the 'main' entry point will be provided by external libraries.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -238,7 +238,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
     compilerArgument {
         name = "nopack"
         description = "Don't pack the library into a klib file.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -251,7 +251,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         compilerName = "linkerArguments"
         deprecatedName = "linkerOpts"
         description = "Pass arguments to the linker.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<arg>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.Space
 
@@ -265,7 +265,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "linker-option"
         compilerName = "singleLinkerArguments"
         description = "Pass the given argument to the linker.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<arg>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -278,7 +278,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
     compilerArgument {
         name = "nostdlib"
         description = "Don't link with the stdlib.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -290,7 +290,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "opt"
         compilerName = "optimization"
         description = "Enable optimizations during compilation.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -303,7 +303,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         compilerName = "outputName"
         shortName = "o"
         description = "Output name.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
         lifecycle(
@@ -317,7 +317,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         compilerName = "mainPackage"
         shortName = "e"
         description = "Qualified entry point name.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
         lifecycle(
@@ -330,7 +330,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "produce"
         shortName = "p"
         description = "Specify the output file kind.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "{program|static|dynamic|framework|library|bitcode}".asReleaseDependent()
 
         lifecycle(
@@ -342,7 +342,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
     compilerArgument {
         name = "target"
         description = "Set the hardware target.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<target>".asReleaseDependent()
 
         lifecycle(
@@ -356,7 +356,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
     compilerArgument {
         name = "Xbundle-id"
         description = "Bundle ID to be set in the Info.plist file of the produced framework. This option is deprecated. Please use '-Xbinary=bundleId=<id>'.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<id>".asReleaseDependent()
 
         lifecycle(
@@ -368,7 +368,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "Xcache-directory"
         compilerName = "cacheDirectories"
         description = "Path to the directory containing caches.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -381,7 +381,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "Xcached-library"
         compilerName = "cachedLibraries"
         description = "Paths to a library and its cache, separated by a comma.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<library path>,<cache path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -395,7 +395,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         compilerName = "autoCacheableFrom"
         description = """Path to the root directory from which dependencies are to be cached automatically.
 By default caches will be placed into the kotlin-native system cache directory.""".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -407,7 +407,7 @@ By default caches will be placed into the kotlin-native system cache directory."
     compilerArgument {
         name = "Xauto-cache-dir"
         description = "Path to the directory where caches for auto-cacheable dependencies should be put.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -420,7 +420,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         name = "Xic-cache-dir"
         compilerName = "incrementalCacheDir"
         description = "Path to the directory where incremental build caches should be put.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -433,7 +433,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         name = "Xcheck-dependencies"
         deprecatedName = "-check_dependencies"
         description = "Check dependencies and download the missing ones.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -444,7 +444,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         name = "Xemit-lazy-objc-header"
         compilerName = "emitLazyObjCHeader"
         description = "".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -456,7 +456,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         compilerName = "exportedLibraries"
         description = """A library to be included in the produced framework API.
 This library must be one of the ones passed with '-library'.""".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -470,7 +470,7 @@ This library must be one of the ones passed with '-library'.""".asReleaseDepende
         description = """Path to the file containing external dependencies.
 External dependencies are required for verbose output in the event of IR linker errors,
 but they do not affect compilation at all.""".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -481,7 +481,7 @@ but they do not affect compilation at all.""".asReleaseDependent()
     compilerArgument {
         name = "Xfake-override-validator"
         description = "Enable the IR fake override validator.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -492,7 +492,7 @@ but they do not affect compilation at all.""".asReleaseDependent()
         name = "Xframework-import-header"
         compilerName = "frameworkImportHeaders"
         description = "Add an additional header import to the framework header.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<header>".asReleaseDependent()
 
         lifecycle(
@@ -506,7 +506,7 @@ but they do not affect compilation at all.""".asReleaseDependent()
         description = """Add light debug information for optimized builds. This option is skipped in debug builds.
 It's enabled by default on Darwin platforms where collected debug information is stored in a .dSYM file.
 Currently this option is disabled by default on other platforms.""".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "{disable|enable}".asReleaseDependent()
 
         lifecycle(
@@ -519,7 +519,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         name = "Xg0"
         compilerName = "lightDebugDeprecated"
         description = "Add light debug information. This option has been deprecated. Please use '-Xadd-light-debug=enable' instead.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         additionalAnnotations(
             Deprecated("This flag is deprecated")
@@ -535,7 +535,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         name = "Xg-generate-debug-trampoline"
         compilerName = "generateDebugTrampolineString"
         description = "Generate trampolines to make debugger breakpoint resolution more accurate (inlines, 'when', etc.).".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "{disable|enable}".asReleaseDependent()
 
         lifecycle(
@@ -547,7 +547,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         name = "Xadd-cache"
         compilerName = "libraryToAddToCache"
         description = "Path to a library to be added to the cache.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -560,7 +560,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         name = "Xfile-to-cache"
         compilerName = "filesToCache"
         description = "Path to the file to cache.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -572,7 +572,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
     compilerArgument {
         name = "Xmake-per-file-cache"
         description = "Force the compiler to produce per-file caches.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_0,
@@ -584,7 +584,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         description = """Run codegen by file in N parallel threads.
 0 means use one thread per processor core.
 The default value is 1.""".asReleaseDependent()
-        argumentType = IntType.defaultOne
+        valueType = IntType.defaultOne
         valueDescription = "<N>".asReleaseDependent()
 
         lifecycle(
@@ -596,7 +596,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xexport-kdoc"
         compilerName = "exportKDoc"
         description = "Export KDoc entries in the framework header.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -608,7 +608,7 @@ The default value is 1.""".asReleaseDependent()
         compilerName = "printBitCode"
         deprecatedName = "-print_bitcode"
         description = "Print LLVM bitcode.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -619,7 +619,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xcheck-state-at-external-calls"
         compilerName = "checkExternalCalls"
         description = "Ensure that all calls of possibly long external functions are done in the native thread state.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_0,
@@ -630,7 +630,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xprint-ir"
         deprecatedName = "-print_ir"
         description = "Print IR.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -640,7 +640,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xprint-files"
         description = "Print files.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -651,7 +651,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xpurge-user-libs"
         deprecatedName = "-purge_user_libs"
         description = "Don't link unused libraries even if explicitly specified.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -661,7 +661,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xwrite-dependencies-of-produced-klib-to"
         description = "Write file containing the paths of dependencies used during klib compilation to the provided path".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -674,7 +674,7 @@ The default value is 1.""".asReleaseDependent()
         compilerName = "runtimeFile"
         deprecatedName = "-runtime"
         description = "Override the standard 'runtime.bc' location.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -686,7 +686,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xinclude"
         compilerName = "includes"
         description = "A path to an intermediate library that should be processed in the same manner as source files.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -697,7 +697,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xshort-module-name"
         description = "A short name used to denote this library in the IDE and in a generated Objective-C header.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
         lifecycle(
@@ -708,7 +708,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xstatic-framework"
         description = "Create a framework with a static library instead of a dynamic one.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -719,7 +719,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xtemporary-files-dir"
         deprecatedName = "-temporary_files_dir"
         description = "Save temporary files to the given directory.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -730,7 +730,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xsave-llvm-ir-after"
         description = "Save the result of the Kotlin IR to LLVM IR translation to '-Xsave-llvm-ir-directory'.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,
@@ -742,7 +742,7 @@ The default value is 1.""".asReleaseDependent()
         compilerName = "verifyBitCode"
         deprecatedName = "-verify_bitcode"
         description = "Verify LLVM bitcode after each method.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -752,7 +752,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xverify-compiler"
         description = "Verify the compiler.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -762,7 +762,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "friend-modules"
         description = "Paths to friend modules.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -774,7 +774,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xrefines-paths"
         description = "Paths to output directories for refined modules (modules whose 'expect' declarations this module can actualize).".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -786,7 +786,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xdebug-info-version"
         compilerName = "debugInfoFormatVersion"
         description = "Generate debug info of the given version (1, 2).".asReleaseDependent()
-        argumentType = IntType.defaultOne
+        valueType = IntType.defaultOne
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -796,7 +796,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xno-objc-generics"
         description = "Disable generics support for framework header.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -807,7 +807,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xoverride-clang-options"
         compilerName = "clangOptions"
         description = "Explicit list of Clang options.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<arg1,arg2,...>".asReleaseDependent()
 
         lifecycle(
@@ -818,7 +818,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xallocator"
         description = "Allocator used at runtime.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "std | mimalloc | custom".asReleaseDependent()
 
         lifecycle(
@@ -829,7 +829,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xheader-klib-path"
         description = "Save a klib that only contains the public ABI to the given path.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_24
@@ -839,7 +839,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xdebug-prefix-map"
         description = "Remap file source directory paths in debug info.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<old1=new1,old2=new2,...>".asReleaseDependent()
 
         lifecycle(
@@ -850,7 +850,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xpre-link-caches"
         description = "Perform caches pre-linking.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "{disable|enable}".asReleaseDependent()
 
         lifecycle(
@@ -861,7 +861,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xoverride-konan-properties"
         description = "Override values from 'konan.properties' with the given ones.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "key1=value1;key2=value2;...".asReleaseDependent()
         // We use `;` as delimiter because properties may contain comma-separated values.
         // For example, target cpu features.
@@ -875,7 +875,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xdestroy-runtime-mode"
         description = "When to destroy the runtime – 'legacy' and 'on-shutdown' are currently supported. Note that 'legacy' mode is deprecated and will be removed.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<mode>".asReleaseDependent()
 
         lifecycle(
@@ -886,7 +886,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xgc"
         description = "GC to use – 'noop', 'stms', and 'cms' are currently supported. This works only with '-memory-model experimental'.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<gc>".asReleaseDependent()
 
         lifecycle(
@@ -898,7 +898,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xir-property-lazy-initialization"
         compilerName = "propertyLazyInitialization"
         description = "Initialize top level properties lazily per file.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "{disable|enable}".asReleaseDependent()
 
         lifecycle(
@@ -910,7 +910,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xworker-exception-handling"
         description = "Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<mode>".asReleaseDependent()
 
         lifecycle(
@@ -921,7 +921,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xllvm-variant"
         description = "Choose the LLVM distribution that will be used during compilation.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "{dev|user|absolute path to llvm}".asReleaseDependent()
 
         lifecycle(
@@ -933,7 +933,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xbinary"
         compilerName = "binaryOptions"
         description = "Specify a binary option.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<option=value>".asReleaseDependent()
 
         lifecycle(
@@ -944,7 +944,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xruntime-logs"
         description = "Enable logging of Native runtime internals.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<tag1=level1,tag2=level2,...>".asReleaseDependent()
 
         lifecycle(
@@ -956,7 +956,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xdump-tests-to"
         compilerName = "testDumpOutputPath"
         description = "Path to a file for dumping the list of all available tests.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -967,7 +967,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xomit-framework-binary"
         description = "Omit binary when compiling the framework.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_0,
@@ -977,7 +977,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xcompile-from-bitcode"
         description = "Continue compilation from the given bitcode file.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -989,7 +989,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xread-dependencies-from"
         compilerName = "serializedDependencies"
         description = "Serialized dependencies to use for linking.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -1001,7 +1001,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xwrite-dependencies-to"
         compilerName = "saveDependenciesPath"
         description = "Path for writing backend dependencies.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
@@ -1011,7 +1011,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xsave-llvm-ir-directory"
         description = "Directory that should contain the results of '-Xsave-llvm-ir-after=<phase>'.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
@@ -1021,7 +1021,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xkonan-data-dir"
         description = "Custom path to the location of konan distributions.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_20,
@@ -1031,7 +1031,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xllvm-module-passes"
         description = "Custom set of LLVM passes to run as the ModuleOptimizationPipeline.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
@@ -1042,7 +1042,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xllvm-lto-passes"
         compilerName = "llvmLTOPasses"
         description = "Custom set of LLVM passes to run as the LTOOptimizationPipeline.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
@@ -1053,7 +1053,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xmanifest-native-targets"
         description =
             "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,

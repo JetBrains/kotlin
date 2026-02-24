@@ -116,7 +116,6 @@ class CurrentArgumentsConsistencyTest {
                     "Stable argument '${stableArgument.name}' not found in current compiler arguments"
                 )
 
-                @Suppress("DEPRECATION")
                 assertEquals(
                     getSuperclassGenericType(stableArgument.valueType::class)?.name?.withoutStablePackage,
                     getSuperclassGenericType(currentArgument.valueType::class)?.name,

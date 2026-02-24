@@ -108,7 +108,6 @@ class DeprecatedArgumentsConsistencyTest {
             .forEach { stableArgument ->
                 val currentArgument = currentLevelCompilerArguments.single { it.name == stableArgument.name }
 
-                @Suppress("DEPRECATION")
                 assertEquals(
                     getSuperclassGenericType(stableArgument.valueType::class),
                     getSuperclassGenericType(currentArgument.valueType::class),
