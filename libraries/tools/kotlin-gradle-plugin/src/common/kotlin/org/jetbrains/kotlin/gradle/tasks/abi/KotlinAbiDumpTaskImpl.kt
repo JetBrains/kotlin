@@ -35,22 +35,13 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolin
     abstract val unsupportedTargets: SetProperty<KlibTarget>
 
     @get:Input
-    abstract val klibIsEnabled: Property<Boolean>
-
-    @get:Input
     abstract val keepLocallyUnsupportedTargets: Property<Boolean>
 
     @get:Nested
     abstract val jvm: ListProperty<JvmTargetInfo>
 
     /**
-     * An internal property to disable adding a dependency on klib build tasks if [klibIsEnabled] = false.
-     */
-    @get:Internal
-    abstract val klibInput: ListProperty<KlibTargetInfo>
-
-    /**
-     * A property that contains actual klib targets filtered by [klibIsEnabled].
+     * A property that contains actual klib targets.
      */
     @get:Nested
     abstract val klib: ListProperty<KlibTargetInfo>
@@ -124,7 +115,7 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolin
             }
         }
 
-        if (klibIsEnabled.get() && (klibTargets.isNotEmpty() || unsupported.isNotEmpty())) {
+        if (klibTargets.isNotEmpty() || unsupported.isNotEmpty()) {
             val mergedDump = tools.createKlibDump()
             klibTargets.forEach { suite ->
                 val klibDir = suite.klibFiles.files.first()

@@ -29,7 +29,6 @@ internal fun finalizeMultiplatformVariant(
     val taskSet = AbiValidationTaskSet(project)
     taskSet.setClasspath(abiClasspath)
     taskSet.keepLocallyUnsupportedTargets(keepLocallyUnsupportedTargets)
-    taskSet.klibEnabled(project.provider { true })
 
     project.processJvmKindTargets(targets, taskSet)
     project.processNonJvmTargets(targets, taskSet)

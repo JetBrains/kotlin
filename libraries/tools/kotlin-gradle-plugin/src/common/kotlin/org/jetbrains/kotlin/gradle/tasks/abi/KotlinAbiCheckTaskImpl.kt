@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.tasks.abi
 
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
@@ -14,9 +15,12 @@ import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY
 
 @DisableCachingByDefault(because = "No output")
 internal abstract class KotlinAbiCheckTaskImpl : AbiToolsTask() {
-    @get:InputFiles // InputFiles is used so as not to fall with an error if the reference directory does not exist https://github.com/gradle/gradle/issues/2016
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Internal
     abstract val referenceDir: DirectoryProperty
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val referenceDumps: ConfigurableFileCollection
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -44,14 +48,15 @@ internal abstract class KotlinAbiCheckTaskImpl : AbiToolsTask() {
             .filter { file -> file.isFile && file.name == jvmDumpName || file.name == klibDumpName }
             .toList()
 
-        val referenceDumps = referenceDir.walk()
-            .filter { file -> file.isFile && file.name == jvmDumpName || file.name == klibDumpName }
+        val referenceDumps = referenceDumps.files
+            .filter { it.exists() && it.isFile }
+            .map { it.absolutePath }
             .toMutableSet()
 
         actualDumps.forEach { actualDump ->
             val relative = actualDump.toRelativeString(actualDir)
             val referenceDump = referenceDir.resolve(relative)
-            if (referenceDumps.remove(referenceDump)) {
+            if (referenceDumps.remove(referenceDump.absolutePath)) {
 
                 val diffSet = mutableSetOf<String>()
                 val diff = tools.filesDiff(

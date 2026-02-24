@@ -6,11 +6,16 @@
 package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiCheckTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiDumpTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiUpdateTask
@@ -33,7 +38,7 @@ internal fun AbiValidationExtension.registerTasks(
     tasks: TaskContainer,
     layout: ProjectLayout
 ) {
-    val klibFileName = "$projectName${AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION}"
+    val klibFileName = "$projectName$LEGACY_KLIB_DUMP_EXTENSION"
 
     val referenceDir = referenceDumpDir
     val filters = filters
@@ -45,9 +50,6 @@ internal fun AbiValidationExtension.registerTasks(
             it.dumpDir.convention(dumpDir)
             it.referenceKlibDump.convention(referenceDir.map { dir -> dir.file(klibFileName) })
             it.keepLocallyUnsupportedTargets.convention(true)
-            it.klibIsEnabled.convention(true)
-
-            it.klib.convention(it.klibInput.map { targets -> if (it.klibIsEnabled.get()) targets else emptyList() })
 
             it.includedClasses.convention(filters.include.byNames)
             it.includedAnnotatedWith.convention(filters.include.annotatedWith)
@@ -59,9 +61,12 @@ internal fun AbiValidationExtension.registerTasks(
             it.group = null
         }
 
+    val referenceFiles = dumpTaskProvider.map { task -> task.referenceDumps(referenceDir, projectName) }
+
     val checkTaskProvider = tasks.register(KotlinAbiCheckTaskImpl.NAME, KotlinAbiCheckTaskImpl::class.java) {
         it.actualDir.convention(dumpTaskProvider.map { t -> t.dumpDir.get() })
         it.referenceDir.convention(referenceDir)
+        it.referenceDumps.from(referenceFiles)
 
         it.description = "Checks that the public Application Binary Interface (ABI) of the current project code matches" +
                 "the reference dump file"
@@ -71,6 +76,7 @@ internal fun AbiValidationExtension.registerTasks(
     val updateTaskProvider = tasks.register(KotlinAbiUpdateTask.NAME, KotlinAbiUpdateTask::class.java) {
         it.actualDir.convention(dumpTaskProvider.map { t -> t.dumpDir.get() })
         it.referenceDir.convention(referenceDir)
+        it.referenceDumps.from(referenceFiles)
 
         it.description = "Writes the public Application Binary Interface (ABI) of the current code to the reference dump file."
         it.group = LifecycleBasePlugin.VERIFICATION_GROUP
@@ -103,5 +109,28 @@ internal fun AbiValidationExtension.registerTasks(
             val projectPath = it.path.substringBeforeLast(":")
             it.logger.warn("Task ${it.path} is deprecated, use $projectPath:$updateTaskName instead")
         }
+    }
+}
+
+private fun KotlinAbiDumpTaskImpl.referenceDumps(
+    referenceDir: Provider<Directory>,
+    projectName: String,
+): Provider<List<RegularFile>> {
+    val jvmDumpName = projectName + LEGACY_JVM_DUMP_EXTENSION
+    val klibDumpName = projectName + LEGACY_KLIB_DUMP_EXTENSION
+
+    return jvm.zip(referenceDir) { items, dir ->
+        val result = items.fold(mutableListOf<RegularFile>()) { acc, jvmTargetInfo ->
+            if (jvmTargetInfo.subdirectoryName.isEmpty()) {
+                acc.add(dir.file(jvmDumpName))
+            } else {
+                acc.add(dir.dir(jvmTargetInfo.subdirectoryName).file(jvmDumpName))
+            }
+            acc
+        }
+        // always include klib dump file. Because klib dump can be inferred even if there are no any available Klib targets.
+        // It can be skipped during check if this file does not exist
+        result.add(dir.file(klibDumpName))
+        result.toList()
     }
 }
