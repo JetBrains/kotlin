@@ -9,6 +9,9 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
@@ -21,7 +24,6 @@ import java.io.File
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
 import java.nio.file.Files
-import java.nio.file.Path
 import javax.inject.Inject
 
 
@@ -73,6 +75,36 @@ private fun Test.cleanupInvalidExcludePatternsForTCParallelTests(excludesFilePat
     }
 
     filter.setExcludePatterns(*excludePatterns.toTypedArray())
+}
+
+abstract class GeneralTestArgumentProvider @Inject constructor() : CommandLineArgumentProvider {
+    @get:Inject
+    protected abstract val providers: ProviderFactory
+
+    @get:Internal
+    abstract val projectName: Property<String>
+
+    @get:Internal
+    abstract val taskName: Property<String>
+
+    @get:InputFile
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.NONE)
+    val excludesFile: Provider<File> = providers.environmentVariable("TEAMCITY_PARALLEL_TESTS_ARTIFACT_PATH")
+        .map { File(it) }
+        .filter { it.exists() }
+
+    @get:Internal
+    val tempDir: Provider<String> =
+        providers.environmentVariable("TMPDIR").orElse(providers.systemProperty("java.io.tmpdir"))
+
+    @get:Internal
+    val prefix = projectName.zip(taskName) { projectName, taskName -> "${projectName}Project_${taskName}_" }
+
+    override fun asArguments(): Iterable<String?> = listOfNotNull(
+        excludesFile.orNull?.let { "-Dteamcity.build.parallelTests.excludesFile=${excludesFile.get().path}" },
+        tempDir.orNull?.let { "-Djava.io.tmpdir=" + Files.createTempDirectory(File(it).toPath(), prefix.get()).toString() },
+    )
 }
 
 /**
@@ -234,36 +266,24 @@ internal fun Project.createGeneralTestTask(
             systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
             systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", n)
         }
-        val excludesFile = project.providers.gradleProperty("teamcity.build.parallelTests.excludesFile").orNull
-        if (excludesFile != null && File(excludesFile).exists()) {
-            systemProperty("teamcity.build.parallelTests.excludesFile", excludesFile)
+
+        val testArgumentProvider = objects.newInstance<GeneralTestArgumentProvider>().also {
+            it.projectName.set(project.name)
+            it.taskName.set(name)
         }
+        jvmArgumentProviders.add(testArgumentProvider)
 
         systemProperty("idea.ignore.disabled.plugins", "true")
 
-        var subProjectTempRoot: Path? = null
-        val projectName = project.name
-        val teamcity = project.rootProject.findProperty("teamcity") as? Map<*, *>
         doFirst {
-            if (excludesFile != null && File(excludesFile).exists()) {
-                cleanupInvalidExcludePatternsForTCParallelTests(excludesFile) // Workaround for TW-92736
-            }
-
-            val systemTempRoot =
-            // TC by default doesn't switch `teamcity.build.tempDir` to 'java.io.tmpdir' so it could cause to wasted disk space
-                // Should be fixed soon on Teamcity side
-                (teamcity?.get("teamcity.build.tempDir") as? String)
-                    ?: System.getProperty("java.io.tmpdir")
-            systemTempRoot.let {
-                val prefix = "${projectName}Project_${taskName}_"
-                subProjectTempRoot = Files.createTempDirectory(File(systemTempRoot).toPath(), prefix)
-                systemProperty("java.io.tmpdir", subProjectTempRoot.toString())
+            if (testArgumentProvider.excludesFile.isPresent) {
+                cleanupInvalidExcludePatternsForTCParallelTests(testArgumentProvider.excludesFile.get().path) // Workaround for TW-92736
             }
         }
 
         val fs = project.serviceOf<FileSystemOperations>()
         doLast {
-            subProjectTempRoot?.let {
+            File(testArgumentProvider.tempDir.get(), testArgumentProvider.prefix.get()).let {
                 try {
                     fs.delete {
                         delete(it)
