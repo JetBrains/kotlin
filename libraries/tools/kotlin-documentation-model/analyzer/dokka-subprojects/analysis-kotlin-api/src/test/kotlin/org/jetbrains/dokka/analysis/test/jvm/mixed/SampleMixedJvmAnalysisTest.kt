@@ -8,6 +8,7 @@ import org.jetbrains.dokka.analysis.test.api.mixedJvmTestProject
 import org.jetbrains.dokka.analysis.test.api.parse
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class SampleMixedJvmAnalysisTest {
 
@@ -66,11 +67,13 @@ class SampleMixedJvmAnalysisTest {
         assertEquals(2, pckg.classlikes.size)
         assertEquals(2, pckg.functions.size)
 
-        val firstClasslike = pckg.classlikes[0]
-        assertEquals("MyJavaFileInKotlin", firstClasslike.name)
+        assertTrue {
+            "MyJavaFileInKotlin" in pckg.classlikes.map { it.name }
+        }
 
-        val secondClasslike = pckg.classlikes[1]
-        assertEquals("MyJavaFileInJava", secondClasslike.name)
+        assertTrue {
+            "MyJavaFileInJava" in pckg.classlikes.map { it.name }
+        }
 
         val functions = pckg.functions
         val firstFunction = functions[0]

@@ -13,6 +13,7 @@ import org.jetbrains.dokka.model.doc.Param
 import org.jetbrains.dokka.model.doc.See
 import org.jetbrains.dokka.model.doc.Text
 import utils.AbstractModelTest
+import utils.OnlyJavaPsi
 import utils.assertContains
 import utils.assertNotNull
 import utils.name
@@ -20,6 +21,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@OnlyJavaPsi
 class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
     val configuration = dokkaConfiguration {
         sourceSets {

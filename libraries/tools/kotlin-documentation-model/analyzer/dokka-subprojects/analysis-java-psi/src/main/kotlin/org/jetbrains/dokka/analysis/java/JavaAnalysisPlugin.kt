@@ -22,6 +22,7 @@ import org.jetbrains.dokka.analysis.java.parsers.doctag.InheritDocTagResolver
 import org.jetbrains.dokka.analysis.java.parsers.doctag.PsiDocTagParser
 import org.jetbrains.dokka.analysis.java.util.NoopIntellijLoggerFactory
 import org.jetbrains.dokka.plugability.*
+import org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator
 import java.io.File
 
 
@@ -90,7 +91,8 @@ public class JavaAnalysisPlugin : DokkaPlugin() {
         }
     }
 
-    internal val psiToDocumentableTranslator by extending {
+    @InternalDokkaApi
+    public val psiToDocumentableTranslator: Extension<SourceToDocumentableTranslator, *, *> by extending {
         CoreExtensions.sourceToDocumentableTranslator providing { DefaultPsiToDocumentableTranslator() }
     }
 

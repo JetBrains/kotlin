@@ -1039,5 +1039,5 @@ class JavadocMarkdownTest : BaseAbstractTest() {
     }
 
     private fun getFirstClassDocumentationNodeChildren(modules: List<DModule>, childrenNumber: Int = 0) =
-        modules.first().packages.first().classlikes.single().documentation.values.first().children[childrenNumber]
+        modules.filterNot { it.packages.isEmpty() }.single().packages.first().classlikes.single().documentation.values.first().children[childrenNumber]
 }

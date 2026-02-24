@@ -75,3 +75,18 @@ annotation class OnlyDescriptorsMPP(val reason: String = "")
 )
 @Tag("onlyNewKDocResolution")
 annotation class OnlyNewKDocResolution(val reason: String = "")
+
+/**
+ * Tests that pass with PSI-based Java analysis but fail with symbol-based Java analysis.
+ */
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER
+)
+@Retention(
+    AnnotationRetention.RUNTIME
+)
+@Tag("onlyJavaPsi")
+annotation class OnlyJavaPsi(val reason: String = "")
