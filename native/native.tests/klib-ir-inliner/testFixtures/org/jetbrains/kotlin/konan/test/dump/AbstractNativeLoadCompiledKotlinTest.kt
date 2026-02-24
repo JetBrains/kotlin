@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.test.model.ArtifactKind
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 
 abstract class AbstractNativeLoadCompiledKotlinTest :
@@ -35,6 +36,7 @@ abstract class AbstractNativeLoadCompiledKotlinTest :
 {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useConfigurators(
+            ::CommonEnvironmentConfigurator,
             ::NativeFirstStageEnvironmentConfigurator,
         )
         globalDefaults {
