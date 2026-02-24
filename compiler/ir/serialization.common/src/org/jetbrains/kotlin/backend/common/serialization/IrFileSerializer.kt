@@ -664,6 +664,7 @@ open class IrFileSerializer(
                 memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(annotation)
             }
             serializeIrStatementOrigin(annotation.origin, ::setOriginName)
+            coordinates = serializeCoordinates(annotation.startOffset, annotation.endOffset)
         }.build()
 
     private fun serializeFunctionExpression(functionExpression: IrFunctionExpression): ProtoFunctionExpression =

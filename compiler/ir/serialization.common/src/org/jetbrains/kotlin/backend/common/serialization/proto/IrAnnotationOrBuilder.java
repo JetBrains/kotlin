@@ -69,4 +69,13 @@ public interface IrAnnotationOrBuilder extends
    * <code>optional int32 origin_name = 4;</code>
    */
   int getOriginName();
+
+  /**
+   * <code>optional int64 coordinates = 7;</code>
+   */
+  boolean hasCoordinates();
+  /**
+   * <code>optional int64 coordinates = 7;</code>
+   */
+  long getCoordinates();
 }

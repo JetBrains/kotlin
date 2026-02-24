@@ -110,6 +110,11 @@ public final class IrAnnotation extends
             input.popLimit(limit);
             break;
           }
+          case 56: {
+            bitField0_ |= 0x00000010;
+            coordinates_ = input.readInt64();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -268,6 +273,21 @@ public final class IrAnnotation extends
     return originName_;
   }
 
+  public static final int COORDINATES_FIELD_NUMBER = 7;
+  private long coordinates_;
+  /**
+   * <code>optional int64 coordinates = 7;</code>
+   */
+  public boolean hasCoordinates() {
+    return ((bitField0_ & 0x00000010) == 0x00000010);
+  }
+  /**
+   * <code>optional int64 coordinates = 7;</code>
+   */
+  public long getCoordinates() {
+    return coordinates_;
+  }
+
   private void initFields() {
     symbol_ = 0L;
     constructorTypeArgumentsCount_ = 0;
@@ -275,6 +295,7 @@ public final class IrAnnotation extends
     argument_ = java.util.Collections.emptyList();
     typeArgument_ = java.util.Collections.emptyList();
     originName_ = 0;
+    coordinates_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -331,6 +352,9 @@ public final class IrAnnotation extends
     for (int i = 0; i < typeArgument_.size(); i++) {
       output.writeInt32NoTag(typeArgument_.get(i));
     }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      output.writeInt64(7, coordinates_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -373,6 +397,10 @@ public final class IrAnnotation extends
             .computeInt32SizeNoTag(dataSize);
       }
       typeArgumentMemoizedSerializedSize = dataSize;
+    }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt64Size(7, coordinates_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -480,6 +508,8 @@ public final class IrAnnotation extends
       bitField0_ = (bitField0_ & ~0x00000010);
       originName_ = 0;
       bitField0_ = (bitField0_ & ~0x00000020);
+      coordinates_ = 0L;
+      bitField0_ = (bitField0_ & ~0x00000040);
       return this;
     }
 
@@ -529,6 +559,10 @@ public final class IrAnnotation extends
         to_bitField0_ |= 0x00000008;
       }
       result.originName_ = originName_;
+      if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+        to_bitField0_ |= 0x00000010;
+      }
+      result.coordinates_ = coordinates_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -566,6 +600,9 @@ public final class IrAnnotation extends
       }
       if (other.hasOriginName()) {
         setOriginName(other.getOriginName());
+      }
+      if (other.hasCoordinates()) {
+        setCoordinates(other.getCoordinates());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -958,6 +995,38 @@ public final class IrAnnotation extends
     public Builder clearOriginName() {
       bitField0_ = (bitField0_ & ~0x00000020);
       originName_ = 0;
+      
+      return this;
+    }
+
+    private long coordinates_ ;
+    /**
+     * <code>optional int64 coordinates = 7;</code>
+     */
+    public boolean hasCoordinates() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    /**
+     * <code>optional int64 coordinates = 7;</code>
+     */
+    public long getCoordinates() {
+      return coordinates_;
+    }
+    /**
+     * <code>optional int64 coordinates = 7;</code>
+     */
+    public Builder setCoordinates(long value) {
+      bitField0_ |= 0x00000040;
+      coordinates_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int64 coordinates = 7;</code>
+     */
+    public Builder clearCoordinates() {
+      bitField0_ = (bitField0_ & ~0x00000040);
+      coordinates_ = 0L;
       
       return this;
     }

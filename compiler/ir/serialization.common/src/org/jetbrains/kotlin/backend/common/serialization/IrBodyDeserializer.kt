@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
@@ -303,19 +304,23 @@ class IrBodyDeserializer(
     }
 
     fun deserializeAnnotation(proto: ProtoAnnotation): IrAnnotation {
-        // TODO: use real coordinates
-        val startOffset = 0
-        val endOffset = 0
-
         return if (settings.useNullableAnyAsAnnotationConstructorCallType)
-            deserializeAnnotation(proto, startOffset, endOffset, builtIns.anyNType)
+            deserializeAnnotation(proto, builtIns.anyNType)
         else {
             val irType = IrAnnotationType()
-            deserializeAnnotation(proto, startOffset, endOffset, irType).also { irType.irConstructorCall = it }
+            deserializeAnnotation(proto, irType).also { irType.irConstructorCall = it }
         }
     }
 
-    private fun deserializeAnnotation(proto: ProtoAnnotation, start: Int, end: Int, type: IrType): IrAnnotation {
+    private fun deserializeAnnotation(proto: ProtoAnnotation, type: IrType): IrAnnotation {
+        var start = UNDEFINED_OFFSET
+        var end = UNDEFINED_OFFSET
+        if (proto.hasCoordinates()) {
+            val coords = BinaryCoordinates.decode(proto.coordinates)
+            start = coords.startOffset
+            end = coords.endOffset
+        }
+
         val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
         return IrAnnotationImplRaw(
             start,

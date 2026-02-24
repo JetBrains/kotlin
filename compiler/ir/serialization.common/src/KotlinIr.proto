@@ -210,6 +210,7 @@ message IrAnnotation {
   repeated IrExpression argument = 5;
   repeated int32 type_argument = 6 [packed=true];
   optional int32 origin_name = 4;
+  optional int64 coordinates = 7;
 }
 
 message IrFunctionReference {
