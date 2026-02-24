@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
@@ -214,7 +217,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
                 "Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, " +
                 "and plain text for all other file types.").asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<path>".asReleaseDependent()
+        valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -229,7 +232,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
                 "Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, " +
                 "and plain text for all other file types.").asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<path>".asReleaseDependent()
+        valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,

@@ -5,22 +5,8 @@
 
 package org.jetbrains.kotlin.arguments.dsl
 
-import org.jetbrains.kotlin.arguments.description.removed.removedCommonCompilerArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedCommonToolsArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedJsArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedJvmCompilerArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedMetadataArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedNativeArguments
-import org.jetbrains.kotlin.arguments.description.removed.removedWasmArguments
+import org.jetbrains.kotlin.arguments.description.removed.*
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
-import org.jetbrains.kotlin.arguments.stable.description.removed.removedCommonToolsArguments as stableRemovedCommonToolsArguments
-import org.jetbrains.kotlin.arguments.stable.description.removed.removedCommonCompilerArguments as stableRemovedCommonCompilerArguments
-import org.jetbrains.kotlin.arguments.stable.description.removed.removedJsArguments as stableRemovedJsArguments
-import org.jetbrains.kotlin.arguments.stable.description.removed.removedJvmCompilerArguments as stableRemovedJvmCompilerArguments
-import org.jetbrains.kotlin.arguments.stable.description.removed.removedWasmArguments as stableRemovedWasmArguments
-import org.jetbrains.kotlin.arguments.stable.description.removed.removedNativeArguments as stableRemovedNativeArguments
-import org.jetbrains.kotlin.arguments.stable.description.removed.removedMetadataArguments as stableRemovedMetadataArguments
-import org.jetbrains.kotlin.arguments.stable.dsl.base.KotlinCompilerArgumentsLevel as StableKotlinCompilerArgumentsLevel
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -28,6 +14,14 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.jetbrains.kotlin.arguments.stable.description.removed.removedCommonCompilerArguments as stableRemovedCommonCompilerArguments
+import org.jetbrains.kotlin.arguments.stable.description.removed.removedCommonToolsArguments as stableRemovedCommonToolsArguments
+import org.jetbrains.kotlin.arguments.stable.description.removed.removedJsArguments as stableRemovedJsArguments
+import org.jetbrains.kotlin.arguments.stable.description.removed.removedJvmCompilerArguments as stableRemovedJvmCompilerArguments
+import org.jetbrains.kotlin.arguments.stable.description.removed.removedMetadataArguments as stableRemovedMetadataArguments
+import org.jetbrains.kotlin.arguments.stable.description.removed.removedNativeArguments as stableRemovedNativeArguments
+import org.jetbrains.kotlin.arguments.stable.description.removed.removedWasmArguments as stableRemovedWasmArguments
+import org.jetbrains.kotlin.arguments.stable.dsl.base.KotlinCompilerArgumentsLevel as StableKotlinCompilerArgumentsLevel
 
 class RemovedArgumentsConsistencyTest {
 
@@ -137,7 +131,6 @@ class RemovedArgumentsConsistencyTest {
             .forEach { stableArgument ->
                 val currentArgument = currentLevelCompilerArguments.single { it.name == stableArgument.name }
 
-                @Suppress("DEPRECATION")
                 assertTrue(
                     actual = stableArgument.valueDescription.current == currentArgument.valueDescription.current ||
                             stableArgument.valueDescription.current in currentArgument.valueDescription.valueInVersions.values,

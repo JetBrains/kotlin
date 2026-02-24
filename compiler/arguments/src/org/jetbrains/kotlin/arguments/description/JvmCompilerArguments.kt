@@ -22,7 +22,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         compilerName = "destination"
         description = "Destination for generated class files.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<directory|jar>".asReleaseDependent()
+        valueDescription = "<directory|jar>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
@@ -35,7 +35,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         shortName = "cp"
         description = "List of directories and JAR/ZIP archives to search for user class files.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<path>".asReleaseDependent()
+        valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
@@ -62,7 +62,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         @Suppress("DEPRECATION")
         valueType = StringType.defaultNull
         argumentType = PathType.defaultNull
-        argumentTypeDescription = "<path>".asReleaseDependent()
+        valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_3,
@@ -120,7 +120,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         name = "script-templates"
         description = "Script definition template classes.".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentTypeDescription = "<fully qualified class name[,]>".asReleaseDependent()
+        valueDescription = "<fully qualified class name[,]>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_0,
@@ -132,7 +132,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         name = "module-name"
         description = "Name of the generated '.kotlin_module' file.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<name>".asReleaseDependent()
+        valueDescription = "<name>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
@@ -155,7 +155,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         argumentType = KotlinJvmTargetType(
             defaultValue = null.asReleaseDependent(),
         )
-        argumentTypeDescription = "<version>".asReleaseDependent()
+        valueDescription = "<version>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_3,
@@ -184,7 +184,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
 -jvm-default=no-compatibility    Generate default methods for non-abstract interface declarations. Do not generate 'DefaultImpls' classes.
 -jvm-default=disable             Do not generate JVM default methods. This is the default behavior up to language version 2.1.""".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "{enable|no-compatibility|disable}".asReleaseDependent()
+        valueDescription = "{enable|no-compatibility|disable}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
@@ -212,7 +212,7 @@ to prevent diagnostics from being reported when using stable compilers at the ca
 When using the JVM IR backend, conversely, use 'unstable' to mark generated class files as unstable
 to force diagnostics to be reported.""".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "{stable|unstable}".asReleaseDependent()
+        valueDescription = "{stable|unstable}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_30,
@@ -236,7 +236,7 @@ to force diagnostics to be reported.""".asReleaseDependent()
 0 means use one thread per processor core.
 The default value is 1.""".asReleaseDependent()
         argumentType = IntType.defaultOne
-        argumentTypeDescription = "<N>".asReleaseDependent()
+        valueDescription = "<N>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_20,
@@ -248,7 +248,7 @@ The default value is 1.""".asReleaseDependent()
         compilerName = "javaModulePath"
         description = "Paths to Java 9+ modules.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<path>".asReleaseDependent()
+        valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,
@@ -261,7 +261,7 @@ The default value is 1.""".asReleaseDependent()
         description =
             "Root modules to resolve in addition to the initial modules, or all modules on the module path if <module> is ALL-MODULE-PATH.".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentTypeDescription = "<module[,]>".asReleaseDependent()
+        valueDescription = "<module[,]>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,
@@ -319,7 +319,7 @@ The default value is 1.""".asReleaseDependent()
 default: legacy""".asReleaseDependent()
         // TODO: change to JVMAssertionsMode type
         argumentType = StringType(defaultValue = "legacy".asReleaseDependent())
-        argumentTypeDescription = "{always-enable|always-disable|jvm|legacy}".asReleaseDependent()
+        valueDescription = "{always-enable|always-disable|jvm|legacy}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_60,
@@ -331,7 +331,7 @@ default: legacy""".asReleaseDependent()
         deprecatedName = "module"
         description = "Path to the .xml build file to compile.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<path>".asReleaseDependent()
+        valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,
@@ -396,7 +396,7 @@ This can be used in the event of problems with the new implementation.""".asRele
         name = "Xscript-resolver-environment"
         description = "Set the script resolver environment in key-value pairs (the value can be quoted and escaped).".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentTypeDescription = "<key=value[,]>".asReleaseDependent()
+        valueDescription = "<key=value[,]>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_2,
@@ -409,7 +409,7 @@ This can be used in the event of problems with the new implementation.""".asRele
         name = "Xjava-source-roots"
         description = "Paths to directories with Java source files.".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentTypeDescription = "<path>".asReleaseDependent()
+        valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_3_40,
@@ -438,7 +438,7 @@ Modes:
 * strict (experimental; treat like other supported nullability annotations)
 * warn (report a warning)""".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentTypeDescription =
+        valueDescription =
             "{ignore/strict/warn}|under-migration:{ignore/strict/warn}|@<fq.name>:{ignore/strict/warn}".asReleaseDependent()
 
         lifecycle(
@@ -454,7 +454,7 @@ Modes:
 * strict
 * warn (report a warning)""".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentTypeDescription = "@<fq.name>:{ignore/strict/warn}".asReleaseDependent()
+        valueDescription = "@<fq.name>:{ignore/strict/warn}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_30,
@@ -466,7 +466,7 @@ Modes:
         description = """Specify the behavior for Checker Framework 'compatqual' annotations ('NullableDecl'/'NonNullDecl').
 The default value is 'enable'.""".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "enable|disable".asReleaseDependent()
+        valueDescription = "enable|disable".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_20,
@@ -485,7 +485,7 @@ The default value is 'enable'.""".asReleaseDependent()
                        The default value is 'warn'.""".trimIndent()
         )
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "ignore|strict|warn".asReleaseDependent()
+        valueDescription = "ignore|strict|warn".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_30,
@@ -499,7 +499,7 @@ The default value is 'enable'.""".asReleaseDependent()
 -Xjvm-default=all-compatibility  -> -jvm-default=enable
 -Xjvm-default=all                -> -jvm-default=no-compatibility""".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "{all|all-compatibility|disable}".asReleaseDependent()
+        valueDescription = "{all|all-compatibility|disable}".asReleaseDependent()
 
         additionalAnnotations(
             Deprecated("This flag is deprecated. Use `-jvm-default` instead")
@@ -516,7 +516,7 @@ The default value is 'enable'.""".asReleaseDependent()
         description =
             "Compile expressions and unrecognized scripts passed with the -script argument as scripts with the given filename extension.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<script filename extension>".asReleaseDependent()
+        valueDescription = "<script filename extension>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_30,
@@ -560,7 +560,7 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
         name = "Xfriend-paths"
         description = "Paths to output directories for friend modules (modules whose internals should be visible).".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentTypeDescription = "<path>".asReleaseDependent()
+        valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_70,
@@ -606,7 +606,7 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
 -Xstring-concat=inline               Concatenate strings using 'StringBuilder'
 default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.""".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "{indy-with-constants|indy|inline}".asReleaseDependent()
+        valueDescription = "{indy-with-constants|indy|inline}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_20,
@@ -627,7 +627,7 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
             )
         )
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<version>".asReleaseDependent()
+        valueDescription = "<version>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,
@@ -641,7 +641,7 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
 -Xsam-conversions=class         Generate SAM conversions as explicit classes.
 The default value is 'indy'.""".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "{class|indy}".asReleaseDependent()
+        valueDescription = "{class|indy}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_0,
@@ -656,7 +656,7 @@ The default value is 'indy'.""".asReleaseDependent()
 -Xlambdas=class                 Generate lambdas as explicit classes.
 The default value is 'indy' if language version is 2.0+, and 'class' otherwise.""".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "{class|indy}".asReleaseDependent()
+        valueDescription = "{class|indy}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_0,
@@ -678,7 +678,7 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         compilerName = "klibLibraries"
         description = "Paths to cross-platform libraries in the .klib format.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<path>".asReleaseDependent()
+        valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
@@ -743,7 +743,7 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         @Suppress("DEPRECATION")
         valueType = StringType.defaultNull
         argumentType = ProfileCompilerCommandType
-        argumentTypeDescription = "<profilerPath:command:outputDir>".asReleaseDependent()
+        valueDescription = "<profilerPath:command:outputDir>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_20,
@@ -928,7 +928,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
 -Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
 The default value is 'inline'.""".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "{indy|inline}".asReleaseDependent()
+        valueDescription = "{indy|inline}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_20
@@ -939,7 +939,7 @@ The default value is 'inline'.""".asReleaseDependent()
         name = "Xignored-annotations-for-bridges"
         description = "Do not copy these annotations to the bridge methods from their targets.".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentTypeDescription = "<fq.name>|*".asReleaseDependent()
+        valueDescription = "<fq.name>|*".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_20,

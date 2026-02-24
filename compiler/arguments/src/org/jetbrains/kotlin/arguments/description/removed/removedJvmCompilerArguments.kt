@@ -77,7 +77,7 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
         name = "Xjavac-arguments"
         description = "Java compiler arguments.".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentTypeDescription = "<option[,]>".asReleaseDependent()
+        valueDescription = "<option[,]>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,
@@ -92,7 +92,7 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
             isNullable = false.asReleaseDependent(),
             defaultValue = "none".asReleaseDependent()
         )
-        argumentTypeDescription = "{none|inline|all}".asReleaseDependent()
+        valueDescription = "{none|inline|all}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_0,

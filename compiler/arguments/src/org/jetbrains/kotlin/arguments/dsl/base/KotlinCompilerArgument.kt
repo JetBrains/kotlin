@@ -19,10 +19,9 @@ import kotlin.properties.ReadOnlyProperty
  * The description text may have a different value for different Kotlin releases,
  * see [ReleaseDependent] on how to define the description for older versions.
  * @param delimiter if an argument accepts a list of file paths - defines an accepted delimiter between these paths.
- * @param valueType (Deprecated) Use [argumentType] instead; it provides a type-safe representation of the argument's type.
- * @param valueDescription (Deprecated) Use [argumentTypeDescription] instead (renamed for naming consistency).
  * @param argumentType the argument value type.
- * @param argumentTypeDescription describes which values are accepted by the argument.
+ * @param valueType (Deprecated) Use [argumentType] instead; it provides a type-safe representation of the argument's type.
+ * @param valueDescription describes which values are accepted by the argument.
  * The description text may have a different value for different Kotlin releases,
  * see [ReleaseDependent] on how to define the description for older versions.
  * @param additionalAnnotations additional annotations that should be added for the Kotlin compiler argument representation (e.g. [Deprecated]).
@@ -40,7 +39,6 @@ data class KotlinCompilerArgument(
     val delimiter: Delimiter?,
 
     val argumentType: KotlinArgumentValueType<*>,
-    val argumentTypeDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
 
     @Deprecated(
         message = "Use argumentType instead; it provides a type-safe representation of the argument's type. " +
@@ -48,12 +46,7 @@ data class KotlinCompilerArgument(
         replaceWith = ReplaceWith("argumentType")
     )
     val valueType: KotlinArgumentValueType<*> = argumentType,
-    @Deprecated(
-        message = "Renamed for naming consistency; use argumentTypeDescription instead. " +
-                "Will be promoted to an error in KT-84084.",
-        replaceWith = ReplaceWith("argumentTypeDescription")
-    )
-    val valueDescription: ReleaseDependent<String?> = argumentTypeDescription,
+    val valueDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
 
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 
@@ -87,7 +80,6 @@ data class KotlinCompilerArgument(
         valueType = valueType,
         valueDescription = valueDescription,
         argumentType = valueType,
-        argumentTypeDescription = valueDescription,
         releaseVersionsMetadata = releaseVersionsMetadata,
         additionalAnnotations = additionalAnnotations,
         compilerName = compilerName,
@@ -142,22 +134,12 @@ internal class KotlinCompilerArgumentBuilder {
     /**
      * @see KotlinCompilerArgument.valueDescription
      */
-    @Deprecated(
-        message = "Renamed for naming consistency; use argumentTypeDescription instead. " +
-                "Will be promoted to an error in KT-84084.",
-        replaceWith = ReplaceWith("argumentTypeDescription")
-    )
-    var valueDescription: ReleaseDependent<String?>? = null
+    var valueDescription: ReleaseDependent<String?> = null.asReleaseDependent()
 
     /**
      * @see KotlinCompilerArgument.argumentType
      */
     var argumentType: KotlinArgumentValueType<*>? = null
-
-    /**
-     * @see KotlinCompilerArgument.argumentTypeDescription
-     */
-    var argumentTypeDescription: ReleaseDependent<String?>? = null
 
     /**
      * @see KotlinCompilerArgument.compilerName
@@ -213,9 +195,8 @@ internal class KotlinCompilerArgumentBuilder {
         deprecatedName = deprecatedName,
         description = description,
         valueType = requireNotNull(valueType ?: argumentType),
-        valueDescription = valueDescription ?: argumentTypeDescription ?: null.asReleaseDependent(),
+        valueDescription = valueDescription,
         argumentType = requireNotNull(argumentType ?: valueType),
-        argumentTypeDescription = argumentTypeDescription ?: valueDescription ?: null.asReleaseDependent(),
         releaseVersionsMetadata = releaseVersionsMetadata,
         additionalAnnotations = additionalAnnotations,
         compilerName = compilerName,

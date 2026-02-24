@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
@@ -56,7 +59,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         compilerName = "partialLinkageMode"
         description = "Use partial linkage mode.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "{enable|disable}".asReleaseDependent()
+        valueDescription = "{enable|disable}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
@@ -68,7 +71,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         compilerName = "partialLinkageLogLevel"
         description = "Define the compile-time log level for partial linkage.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "{info|warning|error}".asReleaseDependent()
+        valueDescription = "{info|warning|error}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
@@ -80,7 +83,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         compilerName = "duplicatedUniqueNameStrategy"
         description = "Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "{deny|allow-all-with-warning|allow-first-with-warning}".asReleaseDependent()
+        valueDescription = "{deny|allow-all-with-warning|allow-first-with-warning}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
@@ -98,7 +101,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
 - `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
         """.asReleaseDependent()
         argumentType = KlibIrInlinerModeType()
-        argumentTypeDescription = ReleaseDependent(
+        valueDescription = ReleaseDependent(
             current = KlibIrInlinerMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}") { it.modeState }
         )
 
@@ -114,7 +117,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
 Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
 The only observable effect is that a custom ABI version is written to KLIB manifest file.""".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<version>".asReleaseDependent()
+        valueDescription = "<version>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,

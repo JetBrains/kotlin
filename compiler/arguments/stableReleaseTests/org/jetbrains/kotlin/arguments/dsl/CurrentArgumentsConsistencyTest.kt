@@ -5,25 +5,9 @@
 
 package org.jetbrains.kotlin.arguments.dsl
 
-import org.jetbrains.kotlin.arguments.description.actualCommonCompilerArguments
-import org.jetbrains.kotlin.arguments.description.actualCommonKlibBasedArguments
-import org.jetbrains.kotlin.arguments.description.actualCommonToolsArguments
-import org.jetbrains.kotlin.arguments.description.actualJsArguments
-import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
-import org.jetbrains.kotlin.arguments.description.actualMetadataArguments
-import org.jetbrains.kotlin.arguments.description.actualNativeArguments
-import org.jetbrains.kotlin.arguments.description.actualWasmArguments
+import org.jetbrains.kotlin.arguments.description.*
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.junit.jupiter.api.DisplayName
-import org.jetbrains.kotlin.arguments.stable.description.actualCommonToolsArguments as stableCommonToolsArguments
-import org.jetbrains.kotlin.arguments.stable.description.actualCommonKlibBasedArguments as stableCommonKlibBasedArguments
-import org.jetbrains.kotlin.arguments.stable.description.actualCommonCompilerArguments as stableCommonCompilerArguments
-import org.jetbrains.kotlin.arguments.stable.description.actualJsArguments as stableJsArguments
-import org.jetbrains.kotlin.arguments.stable.description.actualJvmCompilerArguments as stableJvmCompilerArguments
-import org.jetbrains.kotlin.arguments.stable.description.actualWasmArguments as stableWasmArguments
-import org.jetbrains.kotlin.arguments.stable.description.actualNativeArguments as stableNativeArguments
-import org.jetbrains.kotlin.arguments.stable.description.actualMetadataArguments as stableMetadataArguments
-import org.jetbrains.kotlin.arguments.stable.dsl.base.KotlinCompilerArgumentsLevel as StableKotlinCompilerArgumentsLevel
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -31,6 +15,15 @@ import java.util.stream.Stream
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import org.jetbrains.kotlin.arguments.stable.description.actualCommonCompilerArguments as stableCommonCompilerArguments
+import org.jetbrains.kotlin.arguments.stable.description.actualCommonKlibBasedArguments as stableCommonKlibBasedArguments
+import org.jetbrains.kotlin.arguments.stable.description.actualCommonToolsArguments as stableCommonToolsArguments
+import org.jetbrains.kotlin.arguments.stable.description.actualJsArguments as stableJsArguments
+import org.jetbrains.kotlin.arguments.stable.description.actualJvmCompilerArguments as stableJvmCompilerArguments
+import org.jetbrains.kotlin.arguments.stable.description.actualMetadataArguments as stableMetadataArguments
+import org.jetbrains.kotlin.arguments.stable.description.actualNativeArguments as stableNativeArguments
+import org.jetbrains.kotlin.arguments.stable.description.actualWasmArguments as stableWasmArguments
+import org.jetbrains.kotlin.arguments.stable.dsl.base.KotlinCompilerArgumentsLevel as StableKotlinCompilerArgumentsLevel
 
 class CurrentArgumentsConsistencyTest {
 
@@ -147,7 +140,6 @@ class CurrentArgumentsConsistencyTest {
             .forEach { stableArgument ->
                 val currentArgument = currentLevelCompilerArguments.single { it.name == stableArgument.name }
 
-                @Suppress("DEPRECATION")
                 assertTrue(
                     actual = stableArgument.valueDescription.current == currentArgument.valueDescription.current ||
                             stableArgument.valueDescription.current in currentArgument.valueDescription.valueInVersions.values,

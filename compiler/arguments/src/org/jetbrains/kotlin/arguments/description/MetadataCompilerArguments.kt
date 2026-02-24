@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
@@ -19,7 +21,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         compilerName = "destination"
         description = "Destination for generated .kotlin_metadata files.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<directory|jar>".asReleaseDependent()
+        valueDescription = "<directory|jar>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_0,
@@ -32,7 +34,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         shortName = "cp"
         description = "List of directories and JAR/ZIP archives to search for user .kotlin_metadata files.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<path>".asReleaseDependent()
+        valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_0,
@@ -44,7 +46,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         name = "module-name"
         description = "Name of the generated .kotlin_module file.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentTypeDescription = "<name>".asReleaseDependent()
+        valueDescription = "<name>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_20,
@@ -56,7 +58,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         name = "Xfriend-paths"
         description = "Paths to output directories for friend modules (modules whose internals should be visible).".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentTypeDescription = "<path>".asReleaseDependent()
+        valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_3_71
@@ -67,7 +69,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         name = "Xrefines-paths"
         description = "Paths to output directories for refined modules (modules whose expects this module can actualize).".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentTypeDescription = "<path>".asReleaseDependent()
+        valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
