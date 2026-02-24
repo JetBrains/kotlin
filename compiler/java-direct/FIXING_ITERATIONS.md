@@ -295,75 +295,235 @@ CONFIRMATION REQUIRED: Show import extraction logic before implementing.
 
 ---
 
-## Iteration 4: Validation and FIR Integration Check
+## Iteration 4: Star Import Resolution via Callback
 
-**Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules and `FIRSESSION_RESOLUTION_ANALYSIS.md`.
+**Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules and `TYPE_RESOLUTION_DESIGN.md`.
 
 ### Prompt
 
 ---
-TASK: Verify that FIR successfully resolves types using our classifierQualifiedName
+TASK: Implement star import and java.lang resolution using the callback approach
 
 CONTEXT:
-After Iterations 2-3:
-- Local classes are resolved via `classifier` (LocalJavaScope)
-- External classes return `classifier = null` with correct `classifierQualifiedName`
-- Simple imports are handled
+After Iterations 2-3, we handle:
+- ✅ Local classes (via `classifier`)
+- ✅ Fully qualified names (`java.util.ArrayList`)
+- ✅ Single-type imports (`import java.util.ArrayList;`)
+- ❌ Star imports (`import java.util.*;` then `List`)
+- ❌ java.lang automatic import (`Object` should resolve to `java.lang.Object`)
 
-Now verify FIR actually resolves external types correctly.
+Current state: 11/138 (7%) box tests pass
+Expected after this iteration: ~120-130/138 (87-94%) pass
 
-UNDERSTANDING THE FLOW:
-1. Java Model provides JavaClassifierType with `classifierQualifiedName`
-2. FIR wraps it in FirJavaTypeRef
-3. FIR calls `JavaTypeConversion.toConeKotlinTypeForFlexibleBound()`
-4. This uses `session.symbolProvider` to resolve the class
-5. Creates proper FirTypeRef with resolved type
+SOLUTION: Resolve callback approach per TYPE_RESOLUTION_DESIGN.md
+- Java Model implements resolution logic (knows Java rules)
+- FIR validates candidates (knows what types exist)
+
+CRITICAL UNDERSTANDING:
+
+Java resolution order (JLS):
+1. Types in current compilation unit (handled by `classifier`)
+2. Single-type imports (handled by `classifierQualifiedName`)
+3. Types in current package (handled by `classifier` via `localScope`)
+4. Star imports and java.lang.* (TO BE IMPLEMENTED)
+
+If a name appears in multiple star imports → AMBIGUOUS (compile error)
 
 IMPLEMENTATION STEPS:
 
-1. ADD DIAGNOSTIC LOGGING (temporary):
-   - Add logging in JavaClassifierTypeOverAst to see what names we provide
-   - This helps debug if FIR resolution fails
+### Phase 1: Add Interface Methods
 
-2. RUN BOX TESTS WITH STANDARD LIBRARY:
-   - Find tests that use java.lang.Object, java.lang.String
-   - Find tests that use java.util collections
-   - Run and check if they pass or fail differently
+1. READ javaTypes.kt:
+   - File: `core/compiler.common.jvm/src/org/jetbrains/kotlin/load/java/structure/javaTypes.kt`
+   - Find `interface JavaClassifierType`
 
-3. ANALYZE FAILURES:
-   - If tests still fail with "UNRESOLVED_REFERENCE", check:
-     * Is `classifierQualifiedName` correct?
-     * Is the type actually resolvable by FIR?
-     * Are there other issues (constructors, methods)?
-   - Group failures by type
+2. ADD TWO MEMBERS to JavaClassifierType:
+   ```kotlin
+   /**
+    * Whether this type is already resolved.
+    * Default: true (PSI/javac-wrapper are always resolved)
+    */
+   val isResolved: Boolean
+       get() = true
+   
+   /**
+    * Resolves unresolved simple type names using import context.
+    * 
+    * @param tryResolve Lambda that validates if a fully qualified name exists
+    * @return Resolved FQN, or null if not found/ambiguous
+    */
+   fun resolve(tryResolve: (String) -> Boolean): String? = null
+   ```
 
-4. VERIFY PACKAGE RESOLUTION:
-   - Test classes in same package referencing each other
-   - FIR should resolve using current package + class name
-   - Example: package `test`, classes `Base` and `Derived extends Base`
+3. VERIFY NO COMPILATION ERRORS:
+   - Build should succeed (default implementations provided)
+   - PSI/javac-wrapper implementations unchanged
 
-5. CHECK STAR IMPORTS:
-   - Test files with `import java.util.*` and using `ArrayList`
-   - `classifierQualifiedName` should be "ArrayList" (simple name)
-   - FIR should check star imports and resolve to java.util.ArrayList
+### Phase 2: Implement in java-direct
 
-6. DOCUMENT WHAT WORKS:
-   - List which resolution scenarios work
-   - List which still fail (and why)
-   - Estimate box test pass rate
+4. OPEN JavaClassifierTypeOverAst.kt:
+   - File: `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/model/ast/types/JavaClassifierTypeOverAst.kt`
+
+5. ADD isResolved PROPERTY:
+   ```kotlin
+   override val isResolved: Boolean
+       get() {
+           val typeName = node.text
+           // Resolved if local, fully qualified, or in single-type imports
+           return classifier != null 
+               || typeName.contains('.')
+               || imports?.simpleImports?.containsKey(typeName) == true
+       }
+   ```
+
+6. IMPLEMENT resolve() METHOD:
+   ```kotlin
+   override fun resolve(tryResolve: (String) -> Boolean): String? {
+       val simpleName = node.text
+       
+       // 1. Try java.lang.* (automatic import per JLS §7.5.5)
+       val javaLangFqn = "java.lang.$simpleName"
+       if (tryResolve(javaLangFqn)) {
+           return javaLangFqn
+       }
+       
+       // 2. Try explicit star imports in order (JLS §7.5.2)
+       val starImports = imports?.starImports ?: emptyList()
+       var foundFqn: String? = null
+       
+       for (packageFqName in starImports) {
+           val candidateFqn = "${packageFqName.asString()}.$simpleName"
+           if (tryResolve(candidateFqn)) {
+               if (foundFqn != null) {
+                   // Found in multiple packages - ambiguous!
+                   // Return null to signal ambiguity
+                   return null
+               }
+               foundFqn = candidateFqn
+           }
+       }
+       
+       return foundFqn  // null if not found
+   }
+   ```
+
+7. VERIFY JavaImports has starImports:
+   - Check that `imports?.starImports` is available
+   - If not, ensure Iteration 3 properly stores star imports
+
+### Phase 3: Use in FIR
+
+8. OPEN JavaTypeConversion.kt:
+   - File: `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt`
+   - Find `toConeKotlinTypeForFlexibleBound()` function (~line 183)
+
+9. FIND THE `null ->` BRANCH (around line 248-251):
+   ```kotlin
+   null -> {
+       val classId = ClassId.topLevel(FqName(this.classifierQualifiedName))
+       classId.constructClassLikeType(emptyArray(), isMarkedNullable = lowerBound != null, attributes)
+   }
+   ```
+
+10. REPLACE WITH RESOLUTION LOGIC:
+   ```kotlin
+   null -> {
+       val qualifiedName = this.classifierQualifiedName
+       
+       val classId = if (!isResolved && !qualifiedName.contains('.')) {
+           // Unresolved simple name - use callback
+           resolveSimpleName(qualifiedName, this, session, source)
+       } else {
+           // Already resolved or fully qualified
+           ClassId.topLevel(FqName(qualifiedName))
+       }
+       
+       classId.constructClassLikeType(emptyArray(), isMarkedNullable = lowerBound != null, attributes)
+   }
+   ```
+
+11. ADD HELPER FUNCTION (before or after toConeKotlinTypeForFlexibleBound):
+   ```kotlin
+   private fun resolveSimpleName(
+       simpleName: String,
+       javaType: JavaClassifierType,
+       session: FirSession,
+       source: KtSourceElement?
+   ): ClassId {
+       // Ask JavaModel to resolve using FIR's symbol provider
+       val resolvedFqn = javaType.resolve { candidateFqn ->
+           val classId = ClassId.topLevel(FqName(candidateFqn))
+           session.symbolProvider.getClassLikeSymbolByClassId(classId) != null
+       }
+       
+       return when {
+           resolvedFqn != null -> {
+               // Successfully resolved
+               ClassId.topLevel(FqName(resolvedFqn))
+           }
+           else -> {
+               // Not found or ambiguous - fall back
+               ClassId.topLevel(FqName(simpleName))
+           }
+       }
+   }
+   ```
+
+### Phase 4: Test and Validate
+
+12. BUILD THE PROJECT:
+   ```bash
+   ./gradlew :compiler:java-direct:build
+   ```
+
+13. RUN BOX TESTS:
+   ```bash
+   ./gradlew :compiler:tests-for-compiler-generator:test \
+     --tests "org.jetbrains.kotlin.test.runners.codegen.BlackBoxCodegenForJavaDirectSuppressionTestGenerated" \
+     -q
+   ```
+
+14. ANALYZE RESULTS:
+   - Count passing tests (expect ~120-130 out of 138)
+   - Identify patterns in remaining failures
+   - Check if java.lang types now resolve (Object, String, etc.)
+   - Check if star-imported types resolve (List, ArrayList, etc.)
+
+15. TEST SPECIFIC SCENARIOS:
+   - Create small test with `Object obj;` - should resolve to java.lang.Object
+   - Create test with `import java.util.*; List list;` - should resolve to java.util.List
+   - Create test with ambiguous import - should handle gracefully
+
+16. UPDATE ITERATION_RESULTS.md:
+   - Document test results
+   - List types that now resolve
+   - List remaining failure categories
+   - Estimate completion percentage
 
 DELIVERABLE:
-- Box test results analysis
-- List of working resolution scenarios
-- List of remaining issues (for future iterations)
-- Updated success metrics
+- Modified `javaTypes.kt` with new interface members
+- Enhanced `JavaClassifierTypeOverAst.kt` with isResolved and resolve()
+- Modified `JavaTypeConversion.kt` with resolution callback usage
+- Box test results showing ~87-94% pass rate
+- Analysis of remaining failures
 
-CHALLENGES:
-- Some failures may not be resolution issues but other problems
-  (constructors, generics, annotations, etc.)
-- Need to distinguish resolution failures from other failures
+VALIDATION CHECKLIST:
+- [ ] Interface compiles with default implementations
+- [ ] java-direct implements isResolved correctly
+- [ ] java-direct implements resolve() with java.lang check
+- [ ] java-direct implements resolve() with star import iteration
+- [ ] FIR calls resolve() when isResolved == false
+- [ ] Box tests improve from 11/138 to ~120-130/138
+- [ ] java.lang types resolve (Object, String, Integer, etc.)
+- [ ] Star-imported types resolve (List, ArrayList, etc.)
 
-CONFIRMATION REQUIRED: Show analysis approach and test selection.
+DEBUGGING TIPS:
+- If resolve() never called: Check isResolved logic
+- If wrong types resolved: Check resolution order (java.lang first, then star imports)
+- If ambiguity not detected: Verify foundFqn != null check
+- If tests still fail: Check if failures are resolution or other issues (generics, etc.)
+
+CONFIRMATION REQUIRED: Confirm understanding of callback approach before starting.
 
 ---
 
