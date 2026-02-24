@@ -7,17 +7,13 @@ package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.disableCompatibilityModeForNewInference
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedCallableReferenceAtom
@@ -39,7 +35,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -68,7 +63,9 @@ class ConeOverloadConflictResolver(
     private val specificityComparator: TypeSpecificityComparator,
     private val inferenceComponents: InferenceComponents,
     private val transformerComponents: BodyResolveComponents,
-) : ConeCallConflictResolver() {
+) : ConeCallConflictResolver(), SessionHolder {
+    override val session: FirSession
+        get() = transformerComponents.session
 
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
@@ -528,15 +525,14 @@ class ConeOverloadConflictResolver(
         called: FirCallableDeclaration,
     ): List<TypeWithConversion> {
         return buildList {
-            val session = inferenceComponents.session
-            addIfNotNull(called.receiverParameter?.typeRef?.coneType?.prepareType(session, call)?.let { TypeWithConversion(it) })
+            addIfNotNull(called.receiverParameter?.typeRef?.coneType?.prepareType(call)?.let { TypeWithConversion(it) })
             val typeForCallableReference = call.resultingTypeForCallableReference
             if (typeForCallableReference != null) {
                 // Return type isn't needed here       v
                 typeForCallableReference.typeArguments.dropLast(1)
                     .mapTo(this) {
                         TypeWithConversion(
-                            (it as ConeKotlinType).prepareType(session, call)
+                            (it as ConeKotlinType).prepareType(call)
                                 .removeTypeVariableTypes(session.typeContext, TypeVariableReplacement.TypeParameter)
                         )
                     }
@@ -555,7 +551,7 @@ class ConeOverloadConflictResolver(
         session: FirSession,
         call: Candidate,
     ): TypeWithConversion {
-        val argumentType = argumentType(argument).prepareType(session, call)
+        val argumentType = argumentType(argument).prepareType(call)
         val functionTypeForSam = toFunctionTypeForSamOrNull(call)
         return if (functionTypeForSam == null) {
             TypeWithConversion(argumentType)
@@ -564,8 +560,8 @@ class ConeOverloadConflictResolver(
         }
     }
 
-    private fun ConeKotlinType.prepareType(session: FirSession, candidate: Candidate): ConeKotlinType {
-        val expanded = fullyExpandedType(session)
+    private fun ConeKotlinType.prepareType(candidate: Candidate): ConeKotlinType {
+        val expanded = fullyExpandedType()
         if (!candidate.system.usesOuterCs) return expanded
         // For resolving overloads in PCLA of the following form:
         //  fun foo(vararg values: Tv)
