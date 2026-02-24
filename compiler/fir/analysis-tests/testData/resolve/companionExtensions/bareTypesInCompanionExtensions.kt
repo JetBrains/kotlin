@@ -14,25 +14,25 @@ typealias TA2<T> = C<T>
 <!WRONG_MODIFIER_TARGET!>companion<!> fun TA2<String>.incorrect3() {}
 
 fun test() {
-    C.<!UNRESOLVED_REFERENCE!>correct1<!>()
-    C.<!UNRESOLVED_REFERENCE!>correct2<!>()
-    C.<!UNRESOLVED_REFERENCE!>correct2<!>()
+    C.correct1()
+    C.correct2()
+    C.correct2()
 
-    TA.<!UNRESOLVED_REFERENCE!>correct1<!>()
-    TA.<!UNRESOLVED_REFERENCE!>correct2<!>()
-    TA.<!UNRESOLVED_REFERENCE!>correct2<!>()
+    TA.correct1()
+    TA.correct2()
+    TA.correct2()
 
-    TA2.<!UNRESOLVED_REFERENCE!>correct1<!>()
-    TA2.<!UNRESOLVED_REFERENCE!>correct2<!>()
-    TA2.<!UNRESOLVED_REFERENCE!>correct2<!>()
+    TA2.correct1()
+    TA2.correct2()
+    TA2.correct2()
 
-    C<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.<!UNRESOLVED_REFERENCE!>correct1<!>()
-    C<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.<!UNRESOLVED_REFERENCE!>correct2<!>()
-    C<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.<!UNRESOLVED_REFERENCE!>correct2<!>()
+    C<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.correct1()
+    C<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.correct2()
+    C<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.correct2()
 
-    TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.<!UNRESOLVED_REFERENCE!>correct1<!>()
-    TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.<!UNRESOLVED_REFERENCE!>correct2<!>()
-    TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.<!UNRESOLVED_REFERENCE!>correct2<!>()
+    TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.correct1()
+    TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.correct2()
+    TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.correct2()
 }
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType,
 typeAliasDeclaration, typeParameter */

@@ -123,6 +123,8 @@ class InapplicableWrongReceiver(
     val actualType: ConeKotlinType? = null,
 ) : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)
 
+object ReceiverIsNotAClass : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)
+
 class DynamicReceiverExpectedButWasNonDynamic(
     val actualType: ConeKotlinType,
 ) : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)

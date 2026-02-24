@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInfix
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -76,6 +77,12 @@ object CheckExtensionReceiver : ResolutionStage() {
         }
 
         val expectedReceiverType = candidate.getExpectedReceiverType() ?: return
+
+        if ((candidate.symbol as? FirCallableSymbol)?.isCompanionExtension == true) {
+            checkCompanionExtensionReceiver(candidate, expectedReceiverType)
+            return
+        }
+
         val expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType)
 
         // Probably, we should add an assertion here since we check consistency on the level of scope tower levels
@@ -84,6 +91,33 @@ object CheckExtensionReceiver : ResolutionStage() {
         val preparedReceiver = prepareImplicitArgument(candidate.givenExtensionReceiver, expectedType, context.session)
 
         resolveExtensionReceiver(preparedReceiver, candidate, expectedType)
+    }
+
+    context(sink: CheckerSink, context: ResolutionContext)
+    private fun checkCompanionExtensionReceiver(
+        candidate: Candidate,
+        expectedReceiverType: ConeKotlinType,
+    ) {
+        val extensionReceiver = candidate.givenExtensionReceiver
+            ?: error("Candidate for companion extension without extension receiver.")
+        val resolvedQualifier = extensionReceiver.expression as? FirResolvedQualifier
+            ?: error("Candidate for companion extension has non-qualifier extension receiver")
+
+        val receiverClassSymbol = resolvedQualifier.symbol?.fullyExpandedClass()
+
+        if (receiverClassSymbol == null) {
+            sink.reportDiagnostic(ReceiverIsNotAClass)
+            return
+        }
+
+        if (receiverClassSymbol != expectedReceiverType.toClassSymbol()) {
+            sink.reportDiagnostic(
+                InapplicableWrongReceiver(
+                    expectedReceiverType,
+                    receiverClassSymbol.toLookupTag().constructClassType()
+                )
+            )
+        }
     }
 
     context(sink: CheckerSink, context: ResolutionContext)
