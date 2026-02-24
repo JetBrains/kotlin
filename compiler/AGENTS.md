@@ -31,3 +31,7 @@ Backend implementations:
 ## Inference
 
 For type inference implementation details, read [inference.md](../docs/fir/inference.md).
+
+## Testing
+
+For FIR analysis test data format (directives, diagnostic markers, file structure), see [analysis-tests/AGENTS.md](fir/analysis-tests/AGENTS.md).
