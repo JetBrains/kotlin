@@ -9,6 +9,7 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.TypeName
+import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
@@ -29,6 +30,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
     val removedSinceVersion: KotlinReleaseVersion?,
 ) {
 
+    @OptIn(ExperimentalArgumentApi::class)
     class SSoTCompilerArgument(
         val effectiveCompilerName: String,
         origin: KotlinCompilerArgument,

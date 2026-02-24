@@ -20,7 +20,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         name = "d"
         compilerName = "destination"
         description = "Destination for generated .kotlin_metadata files.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<directory|jar>".asReleaseDependent()
 
         lifecycle(
@@ -33,7 +33,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         name = "classpath"
         shortName = "cp"
         description = "List of directories and JAR/ZIP archives to search for user .kotlin_metadata files.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -45,7 +45,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
     compilerArgument {
         name = "module-name"
         description = "Name of the generated .kotlin_module file.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
         lifecycle(
@@ -57,7 +57,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
     compilerArgument {
         name = "Xfriend-paths"
         description = "Paths to output directories for friend modules (modules whose internals should be visible).".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -68,7 +68,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
     compilerArgument {
         name = "Xrefines-paths"
         description = "Paths to output directories for refined modules (modules whose expects this module can actualize).".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         lifecycle(
@@ -80,7 +80,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         name = "Xlegacy-metadata-jar-k2"
         compilerName = "legacyMetadataJar"
         description = "Produce a legacy metadata jar instead of metadata klib. Suitable only for K2 compilation".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
@@ -90,7 +90,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
     compilerArgument {
         name = "Xtarget-platform"
         description = "Target platform for metadata generation. Possible values: JVM, JS, WasmJs, WasmWasi, Native".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        valueType = StringArrayType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_20,
@@ -100,7 +100,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
     compilerArgument {
         name = "Xklib-zip-file-accessor-cache-limit"
         description = "Maximum number of klibs that can be cached during compilation. Default is 64.".asReleaseDependent()
-        argumentType = IntType(
+        valueType = IntType(
             defaultValue = 64.asReleaseDependent()
         )
 
