@@ -40,6 +40,23 @@ excessive context? Should we add some instructions for the agens to dump some fi
 
 (fixing commenting style)
 
+### 1.4
+
+This going good so far. The @ITERATON_RESULTS.md file contains the latest updated.
+
+Now before we can go to the iteration 3, we need to understand how the resolution will access the FitSession - the only proper handle to access the symbol providers.
+This is non-trivial, because the JavaClassFinder is created before the FitSession is created, and in general so far considered to be independent, staying above the FIR pipeline.
+To evaluate possible solutions we need to understand the pattern or call tree in which we need to execute the resolution: where the request for a resolved symbol is initiated,
+what data is available at this point, and what interfaces are used to call the resolution.
+I see the following options to make it work (but this list is not necessarily exhaustive):
+1. Create a wrapper around JavaClassFinder, that stores the session and performs the resolution, and use this wrapper in all relevant places in FIR, instead of the original JavaClassFinder. The wrapper could be named SessionAearedJavaClassFinder, and it should store the session to the JavaClassOverAstImpl and related instances, where it is necessary for the resolution.
+2. Similar as above, but instead of storing the session in the JavaClassOverAstImpl, the resolution functions could just use the session.
+3. Probably the cleanest solution from the FIR pipeline perspective - move all resolution tasks to the FirJavaClass (or its implementation). It is already aware of the session, so it can access available symbols.
+
+Analyze how the resolution of JavaClass related Types is organized and executed in FIR, which solutions are feasible (with the strong preference to the solution 3 from my list) and maybe some other important details or obstacles on the way.
+Summarize the findings in a separate markdown file that can be used to instruct the implementation agents to make further iterations.
+
+
 ## 2 implementation prompts
 
 Read @AGENT_INSTRUCTIONS.md and @FIXING_ITERATIONS.md,
@@ -58,5 +75,8 @@ Proceed to Iteration 2: Type Resolution Implementation.
 Good job!
 Now before going to the iteration 3, let's try to analyze the problems with constructors you outlined above. Analyze what may be missing in the implementation, add the test case for it, and try to find the solution.
 Request my approval after analyzing the possible problems and implementing the test, but before trying the solution in the code.
+
+#### 2.1.2
+
 
 

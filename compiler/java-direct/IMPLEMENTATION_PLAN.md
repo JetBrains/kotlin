@@ -5,7 +5,9 @@
 This document describes the implementation approach for the `java-direct` module, which replaces the IntelliJ platform-based Java parsing and resolution with a custom implementation. The goal is to eliminate the IntelliJ platform dependency in the Kotlin compiler while maintaining full Java-Kotlin bidirectional interoperability.
 
 **Status**: Implementation in progress  
-**Last Updated**: 2026-02-10
+**Last Updated**: 2026-02-23
+
+**Important**: See `FIRSESSION_RESOLUTION_ANALYSIS.md` for critical architectural decision about type resolution.
 
 ---
 
@@ -189,120 +191,116 @@ fun findClass(request: JavaClassFinder.Request): JavaClass? {
 - Lazy member initialization
 - FIR integration for external types
 
-#### 3.2.2 Lazy Type Resolution Architecture
+#### 3.2.2 Type Resolution Architecture
 
-**Problem**: When parsing `class Foo extends Bar<Baz>`, we encounter type references (`Bar`, `Baz`) that need resolution.
+**Key Decision**: Type resolution happens in the **FIR layer**, not in the Java Model layer.
 
-**Solution**: Two-phase approach
+See `FIRSESSION_RESOLUTION_ANALYSIS.md` for detailed rationale.
 
-##### Phase 1: Store Unresolved References
+**Problem**: When parsing `class Foo extends Bar<Baz>`, we encounter type references (`Bar`, `Baz`) that need resolution. However, `FirSession` doesn't exist yet when `JavaClass` is created.
+
+**Solution**: Java Model provides **names** and **local structure**, FIR performs **resolution**
+
+##### Java Model Responsibilities
 
 ```kotlin
 class JavaClassOverAst(
     private val node: JavaSyntaxNode,
     private val source: CharSequence,
-    private val localScope: LocalJavaScope,  // NEW
-    private val resolver: JavaTypeResolver,   // NEW
+    private val localScope: LocalJavaScope,  // For local classes only
+    private val imports: JavaImports?,        // For name qualification
     override val outerClass: JavaClass? = null
 ) : JavaClass {
     
-    // Lazy resolution of supertypes
+    // Lazy extraction of supertypes (NOT resolution!)
     override val supertypes: Collection<JavaClassifierType> by lazy {
         node.findChildByType("EXTENDS_LIST")
             ?.getChildrenByType("JAVA_CODE_REFERENCE")
-            ?.map { resolveTypeReference(it) }
+            ?.map { createClassifierType(it) }
             ?: emptyList()
     }
     
-    private fun resolveTypeReference(refNode: JavaSyntaxNode): JavaClassifierType {
-        val name = refNode.text
-        
-        // 1. Try local scope (same file)
-        localScope.findClass(name)?.let { return it.toClassifierType() }
-        
-        // 2. Delegate to resolver (uses FIR)
-        return resolver.resolveType(name, contextClass = this)
+    private fun createClassifierType(refNode: JavaSyntaxNode): JavaClassifierType {
+        return JavaClassifierTypeOverAst(refNode, source, localScope, imports)
     }
 }
 ```
 
-##### Phase 2: Resolution via FIR
+##### JavaClassifierType Implementation
 
 ```kotlin
-class JavaTypeResolver(
-    private val firSession: FirSession,
-    private val currentPackage: FqName,
-    private val localScope: LocalJavaScope
-) {
-    fun resolveType(
-        name: String, 
-        contextClass: JavaClass
-    ): JavaClassifierType {
-        // Parse qualified name (may have dots for nested classes)
-        val segments = name.split('.')
-        val firstName = segments.first()
+class JavaClassifierTypeOverAst(
+    node: JavaSyntaxNode,
+    source: CharSequence,
+    private val localScope: LocalJavaScope?,
+    private val imports: JavaImports?
+) : JavaClassifierType {
+    
+    // Resolves LOCAL classes only, returns null otherwise
+    override val classifier: JavaClassifier? by lazy {
+        val simpleName = node.text
+        localScope?.findClass(Name.identifier(simpleName))
+    }
+    
+    // Returns fully qualified name when possible, simple name otherwise
+    // FIR will use this for resolution if classifier is null
+    override val classifierQualifiedName: String by lazy {
+        val typeName = node.text
         
-        // 1. Check type parameters of context class
-        contextClass.typeParameters.find { it.name.asString() == firstName }
-            ?.let { return JavaTypeParameterTypeOverAst(it) }
+        // Already qualified (contains dot)?
+        if (typeName.contains('.')) return typeName
         
-        // 2. Check current class and enclosing classes
-        var enclosing: JavaClass? = contextClass
-        while (enclosing != null) {
-            if (enclosing.name.asString() == firstName) {
-                return navigateNestedPath(enclosing, segments.drop(1))
-            }
-            enclosing.findInnerClass(Name.identifier(firstName))?.let {
-                return navigateNestedPath(it, segments.drop(1))
-            }
-            enclosing = enclosing.outerClass
+        // Check simple imports
+        imports?.simpleImports?.get(typeName)?.asString()
+            ?: typeName  // Return simple name, FIR will handle star imports and java.lang
+    }
+    
+    override val typeArguments: List<JavaType> 
+        get() = emptyList()  // TODO: parse type arguments
+    
+    override val isRaw: Boolean 
+        get() = false  // TODO: detect raw types
+    
+    override val presentableText: String 
+        get() = node.text
+}
+```
+
+##### FIR Layer Resolution
+
+The FIR layer handles all external resolution via `JavaTypeConversion.kt`:
+
+```kotlin
+// In compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt (EXISTING CODE)
+private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
+    session: FirSession,
+    javaTypeParameterStack: JavaTypeParameterStack,
+    // ...
+): ConeLookupTagBasedType {
+    return when (val classifier = classifier) {
+        is JavaClass -> {
+            // Use classifier.classId directly
+            val classId = classifier.classId!!
+            // ... resolve via session.symbolProvider
         }
-        
-        // 3. Try simple imports (would need import tracking)
-        // TODO: extract imports during parsing
-        
-        // 4. Try current package
-        tryResolveInPackage(currentPackage, segments)?.let { return it }
-        
-        // 5. Try star imports
-        // TODO: extract star imports during parsing
-        
-        // 6. Try java.lang
-        tryResolveInPackage(FqName("java.lang"), segments)?.let { return it }
-        
-        // 7. Try as fully qualified
-        tryResolveFullyQualified(segments)?.let { return it }
-        
-        // 8. Return error type
-        return JavaErrorType(name)
-    }
-    
-    private fun tryResolveInPackage(
-        packageFqName: FqName, 
-        segments: List<String>
-    ): JavaClassifierType? {
-        val classId = ClassId(packageFqName, Name.identifier(segments.first()))
-        
-        // Query FIR symbol provider
-        val symbol = firSession.symbolProvider.getClassLikeSymbolByClassId(classId)
-            ?: return null
-        
-        // Convert FirRegularClassSymbol back to JavaClass if needed
-        return symbolToJavaType(symbol, segments.drop(1))
-    }
-    
-    private fun symbolToJavaType(
-        symbol: FirRegularClassSymbol,
-        remainingPath: List<String>
-    ): JavaClassifierType {
-        // Wrap FIR symbol as JavaClass or return directly
-        // Details depend on whether we need full JavaClass interface
-        val javaClass = JavaClassFromFirSymbol(symbol)
-        
-        // Navigate to nested class if needed
-        return navigateNestedPath(javaClass, remainingPath)
+        is JavaTypeParameter -> {
+            // Resolve via javaTypeParameterStack
+        }
+        null -> {
+            // FALLBACK: Parse classifierQualifiedName
+            val classId = ClassId.topLevel(FqName(this.classifierQualifiedName))
+            classId.constructClassLikeType(...)
+        }
     }
 }
+```
+
+**Key Points**:
+1. ✅ Java Model returns `classifier = null` for external types
+2. ✅ Java Model provides correct `classifierQualifiedName` 
+3. ✅ FIR uses `session.symbolProvider` to resolve external types
+4. ✅ FIR handles star imports, java.lang, and package resolution
+5. ✅ No FirSession access needed in Java Model!
 ```
 
 #### 3.2.3 Local Scope Management
@@ -337,74 +335,65 @@ class LocalJavaScope {
 }
 ```
 
-#### 3.2.4 Wrapper for FIR Symbols
+#### 3.2.4 No FIR Symbol Wrappers Needed
 
-For external symbols resolved through FIR:
+**Previous approach** (now obsolete): Wrap FirRegularClassSymbol as JavaClass.
 
-```kotlin
-class JavaClassFromFirSymbol(
-    private val symbol: FirRegularClassSymbol
-) : JavaClass {
-    override val name: Name get() = symbol.classId.shortClassName
-    override val fqName: FqName? get() = symbol.classId.asSingleFqName()
-    
-    override val supertypes: Collection<JavaClassifierType> by lazy {
-        // Convert FIR supertypes to JavaClassifierType
-        symbol.fir.superTypeRefs.map { firTypeRefToJavaType(it) }
-    }
-    
-    // Convert FIR members to Java model
-    override val methods: Collection<JavaMethod> by lazy {
-        symbol.fir.declarations.filterIsInstance<FirSimpleFunction>()
-            .map { JavaMethodFromFirFunction(it) }
-    }
-    
-    // ... similar for other members
-}
-```
+**Current approach**: Not needed! FIR handles resolution internally without round-tripping through Java Model.
 
-**Note**: This wrapper may be heavyweight. Alternative: extend Java model to accept FIR symbols directly in some contexts.
+**Why**:
+- Java Model provides type names via `classifierQualifiedName`
+- FIR resolves types to FirTypeRef directly
+- No need to convert FirRegularClassSymbol back to JavaClass
+- Eliminates circular dependency and complexity
+
+**Exception**: If Java Model needs to query FIR symbols for validation/diagnostics, use FIR APIs directly (not through Java Model wrapper).
 
 ### 3.3 Type Parameter Stack
 
-**Purpose**: Track type parameters during nested class traversal
+**Purpose**: Track type parameters during nested class traversal for FIR conversion.
 
-The current FIR implementation uses `MutableJavaTypeParameterStack` (in `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/MutableJavaTypeParameterStack.kt`).
+The FIR implementation uses `MutableJavaTypeParameterStack` (in `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/MutableJavaTypeParameterStack.kt`).
 
 **Integration**: 
-- Build stack during Java Model construction
-- Pass to type resolution mechanism
-- Maps `JavaTypeParameter` → `FirTypeParameterSymbol`
+- Stack is built in **FIR layer** during `FirJavaFacade.convertJavaClassToFir()`
+- Java Model just needs to expose `typeParameters` correctly
+- FIR maps `JavaTypeParameter` → `FirTypeParameterSymbol`
 
 ```kotlin
-class JavaClassOverAst(
-    // ...
-    private val javaTypeParameterStack: MutableJavaTypeParameterStack
-) : JavaClass {
+// In FirJavaFacade (EXISTING CODE - no changes needed)
+fun convertJavaClassToFir(
+    classSymbol: FirRegularClassSymbol,
+    parentClassSymbol: FirRegularClassSymbol?,
+    javaClass: JavaClass,
+): FirJavaClass {
+    val javaTypeParameterStack = MutableJavaTypeParameterStack()
     
-    init {
-        // Add this class's type parameters to stack
-        typeParameters.forEach { typeParam ->
-            val firSymbol = FirTypeParameterSymbol()
-            javaTypeParameterStack.addParameter(typeParam, firSymbol)
-        }
+    if (parentClassSymbol != null) {
+        val parentStack = (parentClassSymbol.fir as FirJavaClass).classJavaTypeParameterStack
+        javaTypeParameterStack.addStack(parentStack)
     }
     
-    override fun findInnerClass(name: Name): JavaClass? {
-        val innerNode = node.children.find { 
-            it.type.toString() == "CLASS" && 
-            it.findChildByType("IDENTIFIER")?.text == name.asString()
-        } ?: return null
-        
-        // Pass stack to inner class
-        return JavaClassOverAst(
-            innerNode, 
-            source, 
-            localScope,
-            resolver,
-            this,
-            javaTypeParameterStack  // Same stack, will add its own parameters
-        )
+    // Add this class's type parameters
+    javaClass.typeParameters.forEach { javaTypeParam ->
+        val firTypeParam = javaTypeParam.toFirTypeParameter(classSymbol, moduleData)
+        javaTypeParameterStack.addParameter(javaTypeParam, firTypeParam.symbol)
+    }
+    
+    // Stack is now available for type resolution
+    // ...
+}
+```
+
+**Java Model responsibility**: Simply return type parameters from AST
+
+```kotlin
+class JavaClassOverAst {
+    override val typeParameters: List<JavaTypeParameter> by lazy {
+        node.findChildByType("TYPE_PARAMETER_LIST")
+            ?.getChildrenByType("TYPE_PARAMETER")
+            ?.map { JavaTypeParameterOverAst(it, source) }
+            ?: emptyList()
     }
 }
 ```
@@ -443,33 +432,29 @@ fun extractImports(root: JavaSyntaxNode): JavaImports {
 }
 ```
 
-**Usage in resolver**:
+**Usage in Java Model**:
 ```kotlin
-class JavaTypeResolver(
-    private val firSession: FirSession,
-    private val imports: JavaImports,
-    // ...
-) {
-    fun resolveType(name: String, contextClass: JavaClass): JavaClassifierType {
-        // ... check type parameters, local classes ...
+class JavaClassifierTypeOverAst(
+    node: JavaSyntaxNode,
+    source: CharSequence,
+    private val localScope: LocalJavaScope?,
+    private val imports: JavaImports?
+) : JavaClassifierType {
+    
+    override val classifierQualifiedName: String by lazy {
+        val typeName = node.text
         
-        // 3. Check simple imports
-        imports.simpleImports[name]?.let { fqName ->
-            val classId = ClassId.topLevel(fqName)
-            return resolveClassId(classId)
-        }
+        // Already qualified?
+        if (typeName.contains('.')) return typeName
         
-        // ... check current package ...
-        
-        // 5. Check star imports
-        for (packageFqName in imports.starImports) {
-            tryResolveInPackage(packageFqName, listOf(name))?.let { return it }
-        }
-        
-        // ... rest of resolution ...
+        // Check simple imports
+        imports?.simpleImports?.get(typeName)?.asString()
+            ?: typeName  // Keep simple name, FIR will resolve
     }
 }
 ```
+
+**FIR handles star imports automatically** - no need to implement in Java Model.
 
 ---
 
@@ -1098,6 +1083,10 @@ val superTypes = myClass.supertypes  // NOW resolution happens
 
 ## Document Change Log
 
+- 2026-02-23: Major update to section 3.2.2-3.2.4: Type resolution now happens in FIR layer, not Java Model (see FIRSESSION_RESOLUTION_ANALYSIS.md for detailed rationale)
+- 2026-02-23: Updated section 3.3: Type parameter stack is built in FIR layer during conversion
+- 2026-02-23: Removed obsolete JavaTypeResolver and JavaClassFromFirSymbol wrapper descriptions
+- 2026-02-23: Updated section 3.4: Import handling simplified - Java Model qualifies names, FIR resolves
 - 2026-02-10: Updated terminology to match FIR naming conventions (`singleTypeImports` → `simpleImports`, `onDemandImports` → `starImports`); removed time estimates from milestones
 - 2026-02-09: Initial version created based on interview with requirements provider
 

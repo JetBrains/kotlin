@@ -105,229 +105,268 @@ CONFIRMATION REQUIRED: Present your analysis and wait for approval before procee
 
 ---
 
-## Iteration 2: Type Resolution Implementation
+## Iteration 2: Type Resolution - classifierQualifiedName
 
-**Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules and `IMPLEMENTATION_PLAN.md` section 3.2.
-
-### Prompt
-
-```
-TASK: Implement basic type resolution for Java sources
-
-CONTEXT:
-Based on Iteration 1 analysis, type resolution is likely a major issue. Java types 
-referenced in source files (in supertypes, field types, method return types) are not 
-being resolved correctly. This iteration implements the resolution mechanism.
-
-BACKGROUND:
-- See IMPLEMENTATION_PLAN.md section 3.2.2 "Lazy Type Resolution Architecture"
-- Resolution needs two layers:
-  1. Local scope: Classes defined in the same Java file
-  2. FIR delegation: External classes via FirSession.symbolProvider
-
-IMPLEMENTATION STEPS:
-
-1. CREATE TEST CASE:
-   - Create `compiler/java-direct/test/.../TypeResolutionTest.kt`
-   - Start with simplest case:
-     ```kotlin
-     @Test
-     fun testSimpleInheritance() {
-         val source = """
-             package test;
-             class Base {}
-             class Derived extends Base {}
-         """.trimIndent()
-         
-         // Parse and verify Derived.supertypes contains Base
-     }
-     ```
-
-2. IMPLEMENT LOCAL SCOPE:
-   - Create `LocalJavaScope` class (see IMPLEMENTATION_PLAN.md section 3.2.3)
-   - Extract class names while parsing
-   - Build map: className -> JavaClass
-   - Make scope available to JavaClassOverAst
-
-3. ENHANCE JavaClassOverAst:
-   - Add `localScope: LocalJavaScope` parameter
-   - Modify `supertypes` getter to resolve references:
-     ```kotlin
-     override val supertypes: Collection<JavaClassifierType> by lazy {
-         // Extract type names from AST
-         // Try local scope first
-         // Fall back to unresolved type (for now)
-     }
-     ```
-
-4. TEST AND VERIFY:
-   - Run TypeResolutionTest
-   - Verify local inheritance works
-   - Check that some box tests start passing
-
-5. DOCUMENT LIMITATIONS:
-   - List what still doesn't work (FIR delegation, imports, etc.)
-   - These will be fixed in next iterations
-
-DELIVERABLE:
-- LocalJavaScope class
-- Enhanced JavaClassOverAst with lazy resolution
-- TypeResolutionTest with passing tests
-- Report of box test improvements
-
-CONFIRMATION REQUIRED: Show your implementation plan and test cases before coding.
-```
-
----
-
-## Iteration 3: FIR Symbol Provider Integration
-
-**Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules and `IMPLEMENTATION_PLAN.md` section 3.2.
+**Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules, `IMPLEMENTATION_PLAN.md` section 3.2.2, and `FIRSESSION_RESOLUTION_ANALYSIS.md`.
 
 ### Prompt
 
 ```
-TASK: Integrate FIR symbol provider for resolving external Java types
+TASK: Fix JavaClassifierType to provide correct classifierQualifiedName for FIR resolution
 
 CONTEXT:
-After Iteration 2, local type resolution works. Now we need to resolve types from:
-- Java standard library (java.lang.*, java.util.*, etc.)
-- Other packages in the project
-- Dependencies (external jars)
+Type resolution happens in the FIR layer, NOT in Java Model. Java Model's job is to:
+1. Resolve LOCAL classes (same file) via LocalJavaScope → return in `classifier`
+2. Provide correct type names via `classifierQualifiedName` → FIR resolves external types
 
-These are resolved via FirSession.symbolProvider, not by our parser.
+See FIRSESSION_RESOLUTION_ANALYSIS.md for detailed rationale.
+
+CRITICAL UNDERSTANDING:
+FIR's JavaTypeConversion.kt (line 191-247) handles the case when `classifier == null`:
+```kotlin
+when (val classifier = classifier) {
+    is JavaClass -> // Use classifier.classId
+    is JavaTypeParameter -> // Use type parameter stack
+    null -> {
+        // Parse classifierQualifiedName as FqName
+        val classId = ClassId.topLevel(FqName(this.classifierQualifiedName))
+        classId.constructClassLikeType(...)
+    }
+}
+```
 
 IMPLEMENTATION STEPS:
 
-1. CREATE TEST CASE:
-   - Add test in TypeResolutionTest:
-     ```kotlin
-     @Test
-     fun testStandardLibraryTypes() {
-         val source = """
-             package test;
-             import java.util.List;
-             class MyClass {
-                 public List<String> items;
-             }
-         """.trimIndent()
-         
-         // Parse and verify field type resolves to java.util.List
-     }
-     ```
+1. REVIEW CURRENT STATE:
+   - Read current `JavaClassifierTypeOverAst` implementation
+   - Understand that `classifier` returns local classes only (via LocalJavaScope)
+   - Understand that `classifierQualifiedName` must return correct FQN
 
-2. CREATE JavaTypeResolver:
-   - See IMPLEMENTATION_PLAN.md section 3.2.2 "Phase 2: Resolution via FIR"
-   - Implement resolution hierarchy:
-     1. Type parameters of current class
-     2. Local scope (same file)
-     3. Current package
-     4. java.lang package
-     5. Imports (to be implemented later)
-
-3. INTEGRATE WITH FIR:
-   - Get FirSession from context (needs plumbing)
-   - Query `firSession.symbolProvider.getClassLikeSymbolByClassId(classId)`
-   - Handle null results gracefully (return error type)
-
-4. CREATE FIR SYMBOL WRAPPER:
-   - Implement `JavaClassFromFirSymbol` (see IMPLEMENTATION_PLAN.md section 3.2.4)
-   - This wraps FirRegularClassSymbol as JavaClass
-   - Implement minimum needed: name, fqName, basic members
-
-5. WIRE EVERYTHING:
-   - Pass FirSession to JavaClassFinderOverAstImpl (via factory)
-   - Pass to JavaClassOverAst during construction
-   - Use in type resolution
-
-6. TEST AND VERIFY:
-   - Unit tests pass
-   - Box tests with java.lang types start passing
-   - Check for regressions
-
-CHALLENGES:
-- Getting FirSession to JavaClassFinderOverAstImpl may require changes to factory
-- Circular dependency risk: FIR needs Java model, Java model needs FIR
-- Solution: Lazy resolution breaks the cycle
-
-DELIVERABLE:
-- JavaTypeResolver class
-- JavaClassFromFirSymbol wrapper
-- Modified factory to pass FirSession
-- Updated tests
-- Box test improvement report
-
-CONFIRMATION REQUIRED: Discuss FirSession plumbing approach before implementing.
-```
-
----
-
-## Iteration 4: Import Handling
-
-**Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules and `IMPLEMENTATION_PLAN.md` section 3.4.
-
-### Prompt
-
-```
-TASK: Implement import statement tracking and resolution
-
-CONTEXT:
-Java classes use imports to reference types from other packages. Currently these 
-are not tracked, so resolution fails for imported types.
-
-IMPLEMENTATION STEPS:
-
-1. CREATE TEST CASE:
+2. CREATE TEST CASES:
    ```kotlin
    @Test
-   fun testImports() {
+   fun testClassifierQualifiedName() {
+       // Simple name (not qualified)
+       val source1 = "class Derived extends Base {}"
+       // classifierQualifiedName should be "Base"
+       
+       // Qualified name
+       val source2 = "class MyClass extends java.util.ArrayList {}"
+       // classifierQualifiedName should be "java.util.ArrayList"
+       
+       // Nested class reference
+       val source3 = "class MyClass extends Outer.Inner {}"
+       // classifierQualifiedName should be "Outer.Inner"
+   }
+   ```
+
+3. FIX JavaClassifierTypeOverAst.classifierQualifiedName:
+   - Current implementation just returns `node.text`
+   - This is correct! No changes needed for simple/qualified names
+   - Just verify it handles nested classes correctly (e.g., "Outer.Inner")
+
+4. VERIFY JavaClassifierTypeOverAst.classifier:
+   - Should return `localScope?.findClass(Name.identifier(simpleName))`
+   - Returns null for external types (correct!)
+   - Only resolves local classes
+
+5. ADD isRaw DETECTION:
+   - Check if type has type arguments in source
+   - If declaration has type parameters but usage has none → raw type
+   - Example: `List` (raw) vs `List<String>` (not raw)
+
+6. TEST WITH BOX TESTS:
+   - Run box tests with local inheritance (should pass)
+   - Run box tests with java.lang types (should improve - FIR will resolve)
+   - Document which tests now pass
+
+DELIVERABLE:
+- Fixed/verified JavaClassifierTypeOverAst.classifierQualifiedName
+- Unit tests for qualified name extraction
+- Report of box test improvements
+
+CONSTRAINTS:
+- DO NOT attempt to resolve external types in Java Model
+- DO NOT try to access FirSession
+- DO trust FIR to handle resolution for `classifier == null`
+
+CONFIRMATION REQUIRED: Show your understanding of the approach before coding.
+```
+
+---
+
+## Iteration 3: Import Handling and Name Qualification
+
+**Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules, `IMPLEMENTATION_PLAN.md` section 3.4, and `FIRSESSION_RESOLUTION_ANALYSIS.md`.
+
+### Prompt
+
+```
+TASK: Implement import statement tracking to improve classifierQualifiedName accuracy
+
+CONTEXT:
+After Iteration 2, we can extract type names but they're not qualified. When source says:
+```
+import java.util.ArrayList;
+class MyClass extends ArrayList {}
+```
+We need `classifierQualifiedName` to return "java.util.ArrayList", not "ArrayList".
+
+FIR will then resolve "java.util.ArrayList" using session.symbolProvider.
+
+CRITICAL: We are NOT implementing resolution here, just name qualification!
+
+IMPLEMENTATION STEPS:
+
+1. CREATE TEST CASES:
+   ```kotlin
+   @Test
+   fun testImportExtraction() {
        val source = """
            package test;
            import java.util.ArrayList;
            import java.util.concurrent.atomic.*;
            
-           class MyClass {
-               public ArrayList<String> list;
-               public AtomicInteger counter;
+           class MyClass extends ArrayList {
+               AtomicInteger counter;
            }
        """.trimIndent()
        
-       // Verify both single-type and star imports work
+       // Verify imports extracted correctly
+       // Verify ArrayList qualified to "java.util.ArrayList"
+       // Verify AtomicInteger kept as "AtomicInteger" (star import)
    }
    ```
 
 2. IMPLEMENT IMPORT EXTRACTION:
-   - See IMPLEMENTATION_PLAN.md section 3.4 "Import Handling"
-   - Use correct FIR terminology (MANDATORY):
-     * `simpleImports` (not singleTypeImports)
-     * `starImports` (not onDemandImports)
-   - Extract during initial parsing
-   - Store in `JavaImports` data class
+   - Create `JavaImports` data class:
+     ```kotlin
+     data class JavaImports(
+         val simpleImports: Map<String, FqName>,  // "ArrayList" -> "java.util.ArrayList"
+         val starImports: List<FqName>             // ["java.util.concurrent.atomic"]
+     )
+     ```
+   - Parse import statements from AST
+   - Handle both single-type and star imports
+   - Skip static imports for now (not critical)
 
-3. INTEGRATE WITH RESOLUTION:
-   - Pass JavaImports to JavaTypeResolver
-   - Check simpleImports before current package
-   - Check starImports after current package
-   - Maintain correct resolution order per Java spec
+3. ENHANCE JavaClassifierTypeOverAst:
+   - Add `imports: JavaImports?` parameter
+   - Update `classifierQualifiedName` to check simple imports:
+     ```kotlin
+     override val classifierQualifiedName: String by lazy {
+         val typeName = node.text
+         
+         // Already qualified?
+         if (typeName.contains('.')) return typeName
+         
+         // Check simple imports
+         imports?.simpleImports?.get(typeName)?.asString()
+             ?: typeName  // Keep simple name, FIR will check star imports
+     }
+     ```
 
-4. HANDLE EDGE CASES:
-   - Static imports (skip for now - not critical)
-   - Import of inner classes (e.g., `import outer.Outer.Inner`)
-   - Conflicts between imports
+4. WIRE IMPORTS THROUGH PARSING:
+   - Extract imports when parsing file
+   - Pass to LocalJavaScope or store separately
+   - Pass to JavaClassifierTypeOverAst during construction
 
-5. TEST AND VERIFY:
-   - Unit tests with various import patterns
-   - Box tests with imports should start passing
-   - Verify no regressions
+5. TEST WITH BOX TESTS:
+   - Run box tests with imports
+   - Verify types are qualified correctly
+   - FIR should now resolve imported types
+
+6. DOCUMENT STAR IMPORTS:
+   - Store star imports in JavaImports
+   - DO NOT attempt to resolve them in Java Model
+   - FIR will handle: check current package, then star imports, then java.lang
 
 DELIVERABLE:
-- Import extraction logic
 - JavaImports data class (with simpleImports and starImports)
-- Updated JavaTypeResolver
-- Test cases
+- Import extraction logic
+- Enhanced JavaClassifierTypeOverAst
+- Unit tests
 - Box test improvement report
 
-CONFIRMATION REQUIRED: Present import extraction strategy before coding.
+CONSTRAINTS:
+- DO use correct FIR terminology: `simpleImports`, `starImports` (not singleType/onDemand)
+- DO NOT attempt to resolve star imports in Java Model
+- DO trust FIR to handle star imports and java.lang
+
+CONFIRMATION REQUIRED: Show import extraction logic before implementing.
+```
+
+---
+
+## Iteration 4: Validation and FIR Integration Check
+
+**Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules and `FIRSESSION_RESOLUTION_ANALYSIS.md`.
+
+### Prompt
+
+```
+TASK: Verify that FIR successfully resolves types using our classifierQualifiedName
+
+CONTEXT:
+After Iterations 2-3:
+- Local classes are resolved via `classifier` (LocalJavaScope)
+- External classes return `classifier = null` with correct `classifierQualifiedName`
+- Simple imports are handled
+
+Now verify FIR actually resolves external types correctly.
+
+UNDERSTANDING THE FLOW:
+1. Java Model provides JavaClassifierType with `classifierQualifiedName`
+2. FIR wraps it in FirJavaTypeRef
+3. FIR calls `JavaTypeConversion.toConeKotlinTypeForFlexibleBound()`
+4. This uses `session.symbolProvider` to resolve the class
+5. Creates proper FirTypeRef with resolved type
+
+IMPLEMENTATION STEPS:
+
+1. ADD DIAGNOSTIC LOGGING (temporary):
+   - Add logging in JavaClassifierTypeOverAst to see what names we provide
+   - This helps debug if FIR resolution fails
+
+2. RUN BOX TESTS WITH STANDARD LIBRARY:
+   - Find tests that use java.lang.Object, java.lang.String
+   - Find tests that use java.util collections
+   - Run and check if they pass or fail differently
+
+3. ANALYZE FAILURES:
+   - If tests still fail with "UNRESOLVED_REFERENCE", check:
+     * Is `classifierQualifiedName` correct?
+     * Is the type actually resolvable by FIR?
+     * Are there other issues (constructors, methods)?
+   - Group failures by type
+
+4. VERIFY PACKAGE RESOLUTION:
+   - Test classes in same package referencing each other
+   - FIR should resolve using current package + class name
+   - Example: package `test`, classes `Base` and `Derived extends Base`
+
+5. CHECK STAR IMPORTS:
+   - Test files with `import java.util.*` and using `ArrayList`
+   - `classifierQualifiedName` should be "ArrayList" (simple name)
+   - FIR should check star imports and resolve to java.util.ArrayList
+
+6. DOCUMENT WHAT WORKS:
+   - List which resolution scenarios work
+   - List which still fail (and why)
+   - Estimate box test pass rate
+
+DELIVERABLE:
+- Box test results analysis
+- List of working resolution scenarios
+- List of remaining issues (for future iterations)
+- Updated success metrics
+
+CHALLENGES:
+- Some failures may not be resolution issues but other problems
+  (constructors, generics, annotations, etc.)
+- Need to distinguish resolution failures from other failures
+
+CONFIRMATION REQUIRED: Show analysis approach and test selection.
 ```
 
 ---
@@ -667,5 +706,9 @@ CONFIRMATION REQUIRED: N/A (final iteration)
 
 ## Document Change Log
 
+- 2026-02-23: Updated Iterations 2-4 to reflect FIR-based resolution approach (see FIRSESSION_RESOLUTION_ANALYSIS.md)
+- 2026-02-23: Iteration 2 now focuses on classifierQualifiedName correctness, not FirSession access
+- 2026-02-23: Iteration 3 now focuses on import tracking for name qualification
+- 2026-02-23: Iteration 4 now validates FIR resolution integration, not FirSession plumbing
 - 2026-02-23: Split from ITERATIVE_FIXING_PLAN.md into separate iteration prompts
 - 2026-02-10: Original content created in ITERATIVE_FIXING_PLAN.md
