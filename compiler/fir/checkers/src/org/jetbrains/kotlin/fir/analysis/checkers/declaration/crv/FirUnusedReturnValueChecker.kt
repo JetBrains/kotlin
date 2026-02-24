@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.cfa.util.previousCfgNodes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirUnusedCheckerBase
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasSideEffect
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.mustUseReturnValueStatusComponent
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 
 object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
@@ -32,14 +30,14 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
     override fun isEnabled(): Boolean =
         context.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) != ReturnValueCheckerMode.DISABLED
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun reportUnusedExpressionIfNeeded(
+    context(context: CheckerContext, reporter: DiagnosticReporter, visitor: UsageVisitor)
+    private fun checkIfExpressionUnused(
         expression: FirExpression,
         hasSideEffects: Boolean,
         data: UsageState,
-        source: KtSourceElement?,
     ): Boolean {
-        if (!hasSideEffects) return false // Do not report anything FirUnusedExpressionChecker already reported
+        if (!hasSideEffects && data !is UsageState.UsedInReturn) return false // Do not report anything FirUnusedExpressionChecker already reported
+        if (data == UsageState.Used) return false
 
         if (expression.resolvedType.isIgnorable()) return false
 
@@ -50,7 +48,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
             if (expression.origin == FirFunctionCallOrigin.Operator && resolvedSymbol?.name?.asString() == "set") return false
 
             // returnsResultOf contracts:
-            if (resolvedSymbol != null && hasContractAndPropagatesIgnorable(expression, resolvedSymbol)) return false
+            if (resolvedSymbol != null && hasContractAndPropagatesIgnorable(expression, resolvedSymbol, data)) return false
             // TODO(KT-84198): technically, this whole shouldUse thing should be recursive, because we may have x?.let { a[b] = c } or x?.let { y?.let { ... }}
         }
 
@@ -60,8 +58,8 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         return reportForSymbol(expression, resolvedSymbol, data)
     }
 
-    context(context: CheckerContext)
-    private fun FirAnonymousFunction.allReturnPointsAreIgnorable(): Boolean {
+    context(context: CheckerContext, visitor: UsageVisitor)
+    private fun FirAnonymousFunction.allReturnPointsAreIgnorable(originalFunctionCall: FirFunctionCall, data: UsageState): Boolean {
         if (body == null) return false
 
         val cfg = (this.controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return false
@@ -71,28 +69,34 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
                 // BlockExit node contains the whole block expression:
                 is FirBlock -> (exp.statements.lastOrNull() as? FirReturnExpression)?.takeIf { it.target.labeledElement == this@allReturnPointsAreIgnorable }
                 else -> null
-            }?.result
-        }
-
-        for (result in returns) {
-            val ignorableType = result.resolvedType.isIgnorable()
-            val ignorableSymbol = result.toResolvedCallableSymbol(context.session)?.isSubjectToCheck() == false
-            // Function only is ignorable if all its return points are ignorable, so we do not need to check everything if we already found must-use return point
-            if (!ignorableType && !ignorableSymbol) return false
+            }
         }
 
         // NB: If we never encountered any `return`s, it means that all possible exits are `throw`s or some other Nothings (see ResolveUtils/addReturnToLastStatementIfNeeded),
         // and our judgement that lambda result is ignorable is still correct.
+        if (returns.isEmpty()) return true
+
+        val functionToReportOn = if (data is UsageState.UsedInReturn) {
+            // No key in map => already reported or not a propagating return
+            visitor.returnsToCheck[data.returnExpression] ?: return true
+        } else originalFunctionCall
+
+        for (result in returns) {
+            if (result.result.resolvedType.isIgnorable()) continue
+            // Save to analyze later:
+            visitor.returnsToCheck[result] = functionToReportOn
+        }
+        // Treat function as ignorable, because we'll check return expressions when we visit all their branches.
         return true
     }
 
-    context(context: CheckerContext)
-    private fun hasContractAndPropagatesIgnorable(functionCall: FirFunctionCall, resolvedSymbol: FirCallableSymbol<*>): Boolean {
+    context(context: CheckerContext, visitor: UsageVisitor)
+    private fun hasContractAndPropagatesIgnorable(functionCall: FirFunctionCall, resolvedSymbol: FirCallableSymbol<*>, data: UsageState): Boolean {
         val fpIndices = resolvedSymbol.indicesOfPropagatingFunctionalParameters()
         val functionalArguments = fpIndices.mapNotNull { functionCall.arguments.getOrNull(it) }
         functionalArguments.forEach { functionalArgument ->
             val isIgnorable = when (functionalArgument) {
-                is FirAnonymousFunctionExpression -> functionalArgument.anonymousFunction.allReturnPointsAreIgnorable()
+                is FirAnonymousFunctionExpression -> functionalArgument.anonymousFunction.allReturnPointsAreIgnorable(functionCall, data)
                 is FirCallableReferenceAccess -> functionalArgument.calleeReference.toResolvedCallableSymbol(discardErrorReference = true)
                     ?.let { refSymbol ->
                         refSymbol.resolvedReturnType.isIgnorable() || !refSymbol.isSubjectToCheck()
@@ -113,7 +117,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
                 !context.session.mustUseReturnValueStatusComponent.hasIgnorableLikeAnnotation(resolvedAnnotationClassIds)
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter, visitor: UsageVisitor)
     private fun reportForSymbol(
         expression: FirExpression,
         resolvedSymbol: FirCallableSymbol<*>?,
@@ -121,9 +125,17 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
     ): Boolean {
         if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck()) return false
         val functionName = resolvedSymbol?.name
+        val targetExpression = if (data is UsageState.UsedInReturn) {
+            // Not in map => not inside contracted function call => no need to report
+            val value = visitor.returnsToCheck[data.returnExpression] ?: return false
+            visitor.returnsToCheck.values.removeAll { it == value } // Remove all the keys to avoid multiple UNUSED reports on [value]
+            value
+        } else {
+            expression
+        }
         reporter.reportOn(
-            expression.source,
-            if (data == UsageState.Unused) FirErrors.RETURN_VALUE_NOT_USED else FirErrors.RETURN_VALUE_NOT_USED_COERCION,
+            targetExpression.source,
+            if (data != UsageState.UnusedFromCoercion) FirErrors.RETURN_VALUE_NOT_USED else FirErrors.RETURN_VALUE_NOT_USED_COERCION,
             functionName
         )
         return true
@@ -137,6 +149,14 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) : UsageVisitorBase(context, reporter) {
+        val returnsToCheck: MutableMap<FirReturnExpression, FirFunctionCall> = hashMapOf()
+
+        override fun checkExpression(expression: FirExpression, data: UsageState): Boolean {
+            context(context, reporter) {
+                return checkIfExpressionUnused(expression, expression.hasSideEffect(), data)
+            }
+        }
+
         override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: UsageState) {
             elvisExpression.lhs.accept(this, data)
             elvisExpression.rhs.accept(this, data)
@@ -154,10 +174,15 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
             typeOperatorCall.arguments.forEach { it.accept(this, data) }
         }
 
+        override fun visitReturnExpression(returnExpression: FirReturnExpression, data: UsageState) {
+            returnExpression.acceptChildren(this, UsageState.UsedInReturn(returnExpression))
+        }
+
         override fun visitCallableReferenceAccess(
             callableReferenceAccess: FirCallableReferenceAccess,
             data: UsageState,
         ) {
+            if (data is UsageState.UsedInReturn) return
             if (!callableReferenceAccess.resolvedType.isFunctionalTypeThatReturnsUnit(context.session)) return
             val referencedSymbol = callableReferenceAccess.calleeReference.toResolvedCallableSymbol(discardErrorReference = true) ?: return
 
