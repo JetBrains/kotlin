@@ -140,10 +140,11 @@ class JavaClassFinderOverAstImpl(
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
         val localScope = LocalJavaScope(root, source)
+        val imports = extractImports(root, source)
         val node = root.getChildrenByType("CLASS").firstOrNull { n ->
             n.findChildByType("IDENTIFIER")?.text == simpleName
         } ?: return null
-        return JavaClassOverAst(node, source, null, localScope)
+        return JavaClassOverAst(node, source, null, localScope, imports)
     }
 
     private fun tryReadFile(path: Path): CharSequence? = try {

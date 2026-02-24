@@ -17,7 +17,8 @@ class JavaClassOverAst(
     node: JavaSyntaxNode,
     source: CharSequence,
     override val outerClass: JavaClass? = null,
-    private val localScope: LocalJavaScope? = null
+    private val localScope: LocalJavaScope? = null,
+    private val imports: JavaImports = JavaImports.EMPTY
 ) : JavaElementOverAst(node, source), JavaClass {
 
     override val name: Name
@@ -73,10 +74,10 @@ class JavaClassOverAst(
         get() {
             val result = mutableListOf<JavaClassifierType>()
             node.findChildByType("EXTENDS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
-                result.add(JavaClassifierTypeOverAst(it, source, localScope))
+                result.add(JavaClassifierTypeOverAst(it, source, localScope, imports))
             }
             node.findChildByType("IMPLEMENTS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
-                result.add(JavaClassifierTypeOverAst(it, source, localScope))
+                result.add(JavaClassifierTypeOverAst(it, source, localScope, imports))
             }
             return result
         }
@@ -89,7 +90,7 @@ class JavaClassOverAst(
         val innerClassNode = node.children.find { 
             it.type.toString() == "CLASS" && it.findChildByType("IDENTIFIER")?.text == name.asString()
         }
-        return innerClassNode?.let { JavaClassOverAst(it, source, this, localScope) }
+        return innerClassNode?.let { JavaClassOverAst(it, source, this, localScope, imports) }
     }
 
     override val isInterface: Boolean get() = node.findChildByType("INTERFACE_KEYWORD") != null
@@ -101,10 +102,10 @@ class JavaClassOverAst(
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
     override val methods: Collection<JavaMethod>
-        get() = node.getChildrenByType("METHOD").filter { it.findChildByType("TYPE") != null }.map { JavaMethodOverAst(it, source, this) }
+        get() = node.getChildrenByType("METHOD").filter { it.findChildByType("TYPE") != null }.map { JavaMethodOverAst(it, source, this, imports) }
 
     override val fields: Collection<JavaField>
-        get() = node.getChildrenByType("FIELD").map { JavaFieldOverAst(it, source, this) }
+        get() = node.getChildrenByType("FIELD").map { JavaFieldOverAst(it, source, this, imports) }
 
     override val constructors: Collection<JavaConstructor>
         get() = node.getChildrenByType("METHOD").filter { it.findChildByType("TYPE") == null }.map { JavaConstructorOverAst(it, source, this) }

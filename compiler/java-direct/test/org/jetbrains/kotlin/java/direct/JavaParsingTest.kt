@@ -256,6 +256,53 @@ class JavaParsingTest {
     }
 
     @Test
+    fun testImportExtraction() {
+        val source = """
+            package test;
+            import java.util.ArrayList;
+            import java.util.List;
+            import java.util.concurrent.atomic.*;
+            
+            class MyClass extends ArrayList {
+                List list;
+                AtomicInteger counter;
+            }
+        """.trimIndent()
+        
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        
+        val imports = extractImports(root, source)
+        
+        assert(imports.simpleImports.size == 2) { "Expected 2 simple imports, got ${imports.simpleImports.size}: ${imports.simpleImports}" }
+        assert(imports.simpleImports["ArrayList"]?.asString() == "java.util.ArrayList") { "Expected ArrayList -> java.util.ArrayList, got ${imports.simpleImports["ArrayList"]}" }
+        assert(imports.simpleImports["List"]?.asString() == "java.util.List") { "Expected List -> java.util.List, got ${imports.simpleImports["List"]}" }
+        
+        assert(imports.starImports.size == 1) { "Expected 1 star import, got ${imports.starImports.size}: ${imports.starImports}" }
+        assert(imports.starImports[0].asString() == "java.util.concurrent.atomic") { "Expected java.util.concurrent.atomic (without asterisk), got ${imports.starImports[0]}" }
+        
+        val pathSegments = imports.starImports[0].pathSegments()
+        assert(pathSegments.size == 4) { "Expected 4 path segments, got ${pathSegments.size}: $pathSegments" }
+        assert(pathSegments[0].asString() == "java") { "Expected 'java' as first segment" }
+        assert(pathSegments[3].asString() == "atomic") { "Expected 'atomic' as last segment, got ${pathSegments[3]}" }
+        
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val javaClass = JavaClassOverAst(classNode, source, null, LocalJavaScope(root, source), imports)
+        
+        assert(javaClass.supertypes.size == 1) { "Expected 1 supertype" }
+        val supertype = javaClass.supertypes.first()
+        assert(supertype.classifierQualifiedName == "java.util.ArrayList") { "Expected qualified name java.util.ArrayList, got ${supertype.classifierQualifiedName}" }
+        
+        val listField = javaClass.fields.first { it.name.asString() == "list" }
+        val listType = listField.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(listType.classifierQualifiedName == "java.util.List") { "Expected qualified name java.util.List for list field, got ${listType.classifierQualifiedName}" }
+        
+        val counterField = javaClass.fields.first { it.name.asString() == "counter" }
+        val counterType = counterField.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(counterType.classifierQualifiedName == "AtomicInteger") { "Expected simple name AtomicInteger for star import, got ${counterType.classifierQualifiedName}" }
+    }
+
+    @Test
     fun testKnownClassNamesInPackage(@TempDir tempDir: Path) {
         // Create test Java files in different packages
         val comExampleDir = tempDir.resolve("com/example")

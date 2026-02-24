@@ -21,11 +21,11 @@ abstract class JavaTypeOverAst(
 class JavaClassifierTypeOverAst(
     node: JavaSyntaxNode,
     source: CharSequence,
-    private val localScope: LocalJavaScope? = null
+    private val localScope: LocalJavaScope? = null,
+    private val imports: JavaImports = JavaImports.EMPTY
 ) : JavaTypeOverAst(node, source), JavaClassifierType {
     override val classifier: JavaClassifier? by lazy {
         val typeName = node.text
-        // TODO: suspicious ad-hoc check. Review later and consider more robust approach.
         val simpleName = if (typeName.contains('.')) {
             typeName.substringAfterLast('.')
         } else {
@@ -34,7 +34,22 @@ class JavaClassifierTypeOverAst(
         localScope?.findClass(Name.identifier(simpleName))
     }
     
-    override val classifierQualifiedName: String get() = node.text
+    override val classifierQualifiedName: String
+        get() {
+            val typeName = node.text
+            
+            if (typeName.contains('.')) {
+                return typeName
+            }
+            
+            val qualified = imports.simpleImports[typeName]
+            if (qualified != null) {
+                return qualified.asString()
+            }
+            
+            return typeName
+        }
+    
     override val presentableText: String get() = node.text
     override val isRaw: Boolean get() = false
     override val typeArguments: List<JavaType> get() = emptyList()
@@ -72,7 +87,12 @@ class JavaWildcardTypeOverAst(
     override val isExtends: Boolean
 ) : JavaTypeOverAst(node, source), JavaWildcardType
 
-fun createJavaType(node: JavaSyntaxNode, source: CharSequence, localScope: LocalJavaScope? = null): JavaType {
+fun createJavaType(
+    node: JavaSyntaxNode,
+    source: CharSequence,
+    localScope: LocalJavaScope? = null,
+    imports: JavaImports = JavaImports.EMPTY
+): JavaType {
     val typeNode = node.findChildByType("TYPE") ?: node
     val primitiveNode = typeNode.children.find { it.type.toString().endsWith("_KEYWORD") }
     if (primitiveNode != null) {
@@ -80,9 +100,9 @@ fun createJavaType(node: JavaSyntaxNode, source: CharSequence, localScope: Local
     }
     val referenceNode = typeNode.findChildByType("JAVA_CODE_REFERENCE")
     if (referenceNode != null) {
-        return JavaClassifierTypeOverAst(referenceNode, source, localScope)
+        return JavaClassifierTypeOverAst(referenceNode, source, localScope, imports)
     }
-    return JavaClassifierTypeOverAst(typeNode, source, localScope)
+    return JavaClassifierTypeOverAst(typeNode, source, localScope, imports)
 }
 
 class JavaTypeParameterOverAst(

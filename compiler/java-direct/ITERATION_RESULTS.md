@@ -9,7 +9,119 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 **Usage**: After completing each iteration, the agent MUST append a results section below.
 
-**Last Updated**: 2026-02-23
+**Last Updated**: 2026-02-24
+
+---
+
+## Iteration 3: Import Handling and Name Qualification - 2026-02-24
+
+### Status
+- ✅ Completed
+
+### Summary
+Implemented import statement tracking to qualify simple type names. Created `JavaImports` data class and `extractImports()` function to parse Java import statements from AST. Enhanced `JavaClassifierTypeOverAst.classifierQualifiedName` to use imports for automatic type qualification (e.g., `ArrayList` → `java.util.ArrayList` when `import java.util.ArrayList;` is present). Box tests improved from **1/138 passing (0.7%)** to **11/138 passing (7%)** - a **10x improvement**!
+
+### Key Findings
+- **Import Structure**: Imports are under `IMPORT_LIST` node (not direct children of root)
+- **FqName Handling**: CRITICAL - `FqName` must contain package path WITHOUT asterisk (e.g., `java.util.concurrent.atomic`, not `java.util.concurrent.atomic.*`)
+- **AST Structure**: `JAVA_CODE_REFERENCE` node contains package path, `ASTERISK` is a sibling node
+- **Star Imports**: Currently tracked but not used for resolution (deferred to FIR)
+- **Simple Imports**: Fully functional, automatically qualify simple names to FqNames
+
+### Implementation Decisions
+- **JavaImports Data Class**: Two fields - `simpleImports: Map<String, FqName>` and `starImports: List<FqName>`
+- **Import Extraction**: Parse `IMPORT_LIST` → `IMPORT_STATEMENT` nodes, extract `JAVA_CODE_REFERENCE.text` for package path
+- **Star Import Detection**: Check for `ASTERISK` node as sibling, store package FqName (not the full `package.*` string)
+- **Qualification Strategy**: Check simple imports map first, return qualified name if found, otherwise return original name
+- **Already Qualified Names**: Names containing `.` pass through unchanged (avoid double-qualification)
+- **Thread Imports Through Chain**: Pass imports from `JavaClassFinderOverAstImpl` → `JavaClassOverAst` → `JavaMemberOverAst` → `JavaTypeOverAst`
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaImports.kt` (NEW):
+  - Created `JavaImports` data class with `simpleImports` map and `starImports` list
+  - Implemented `extractImports(root, source)` function to parse imports from AST
+  - Added `JavaImports.EMPTY` companion for default parameter values
+
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Modified `JavaClassifierTypeOverAst` to accept `imports: JavaImports` parameter
+  - Enhanced `classifierQualifiedName` getter to check `imports.simpleImports` map
+  - Updated `createJavaType()` function to accept and pass imports parameter
+
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt`:
+  - Added `imports: JavaImports` parameter to constructor
+  - Updated `supertypes` to pass imports when creating `JavaClassifierTypeOverAst`
+  - Updated `findInnerClass()` to pass imports to nested class construction
+  - Modified `methods` and `fields` getters to pass imports to member construction
+
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt`:
+  - Added `imports: JavaImports` parameter to `JavaFieldOverAst` constructor
+  - Added `imports: JavaImports` parameter to `JavaMethodOverAst` constructor
+  - Updated `type` and `returnType` calls to pass imports to `createJavaType()`
+
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt`:
+  - Modified `parseTopLevelClassFromFile()` to extract imports from root node
+  - Pass extracted imports when creating `JavaClassOverAst` instances
+
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testImportExtraction()` with comprehensive import parsing verification
+  - Tests both single-type imports and star imports
+  - Verifies FqName creation (no asterisk in FqName)
+  - Tests type qualification for supertype, field types with simple imports
+  - Added FqName path segment verification to ensure correct structure
+
+### Test Results
+- Unit tests: All passing, including new `testImportExtraction`
+- Box tests: **11/138 passing (7%)** - UP from 1/138 (0.7%)
+- **10 additional tests now pass** due to import-based type qualification
+- Success rate: 0.7% → 7% (10x improvement)
+
+**Test Verification**:
+- ✅ Simple imports extracted correctly: `ArrayList` → `java.util.ArrayList`
+- ✅ Star imports extracted correctly: `java.util.concurrent.atomic.*` → `FqName("java.util.concurrent.atomic")`
+- ✅ FqName has correct structure (4 path segments: `["java", "util", "concurrent", "atomic"]`)
+- ✅ Type qualification works: `class MyClass extends ArrayList` → `classifierQualifiedName = "java.util.ArrayList"`
+- ✅ Already-qualified names pass through: `java.util.ArrayList` remains `java.util.ArrayList`
+
+### Issues Encountered
+1. **Import AST Structure**: Initially tried `root.getChildrenByType("IMPORT_STATEMENT")` but imports are under `IMPORT_LIST` node
+   - **Resolution**: Use `root.findChildByType("IMPORT_LIST")?.getChildrenByType("IMPORT_STATEMENT")`
+
+2. **FqName Asterisk Concern**: User correctly identified potential issue with creating `FqName` from string with `*`
+   - **Resolution**: Verified that `JAVA_CODE_REFERENCE.text` extracts package path WITHOUT asterisk
+   - Added explicit test verification of FqName path segments
+   - Asterisk is detected separately via sibling node check
+
+### Next Layer Analysis
+Remaining 127 failures (down from 137) are due to:
+1. **External type resolution** (java.lang.*, java.io.*, etc.) - FIR must resolve via symbol providers
+2. **Star import resolution** - Currently tracked but not used (FIR responsibility)
+3. **Missing features**: Generics, type arguments, wildcards, method parameters, annotations
+4. **Complex Java features**: Inner classes, nested generics, method overloading, etc.
+
+**Progress Distribution**:
+- Tests fixed by imports: 10 tests (now use qualified names correctly)
+- Tests still failing: 127 tests (need more features or FIR configuration)
+
+### Recommendations for Future Iterations
+- **Iteration 4**: Consider type arguments and generics parsing
+  - Parse `<T>`, `<? extends Foo>`, etc.
+  - Implement `JavaClassifierType.typeArguments`
+  - Handle raw types vs parameterized types
+  - Update `isRaw` detection
+
+- **Method Parameters**: Many tests likely need parameter type parsing
+  - Parse parameter lists
+  - Create `JavaValueParameter` instances
+  - Critical for method overload resolution
+
+- **Investigate Test Configuration**: Some external types may need test environment setup
+  - Check if FIR symbol providers are properly configured
+  - Verify classpath includes JDK classes
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note import handling implementation
+- [ ] Document FqName structure requirement (no asterisk)
 
 ---
 
