@@ -885,13 +885,44 @@ fun test39(a: Any): Int {
     return a.x
 }
 
-// CHECK-LABEL: define internal void @"kfun:Test40.$init_global#internal"()
-// CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
-// CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
-// CHECK-LABEL: epilogue:
-object Test40 {
-    val z = test39(A("zzz", 42, 117)) // To deny possibility of placing into static data.
+inline class IntWrapper(val x: Int)
+
+fun test40(o: IntWrapper?): Int {
+    return o?.x ?: -1
 }
+
+// CHECK-LABEL: define internal void @"kfun:Test40.<init>#internal"
+object Test40 {
+    // CHECK: call void @"kfun:A#<init>(kotlin.String;kotlin.Int;kotlin.Int){}"
+    // CHECK: call i32 @"kfun:#test39(kotlin.Any){}kotlin.Int
+    // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+    // CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+    // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
+    // CHECK: getelementptr inbounds %"kclassbody:Test40#internal"
+    val z1 = test39(A("zzz", 42, 117)) // To deny possibility of placing into static data.
+
+    // CHECK: call void @"kfun:IntWrapper#<constructor>#static(kotlin.Int){}"
+    // CHECK: call i32 @"kfun:#test40(IntWrapper?){}kotlin.Int
+    // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+    // CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+    // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
+    // CHECK: getelementptr inbounds %"kclassbody:Test40#internal"
+    val z2 = test40(IntWrapper(42)) // To deny possibility of placing into static data.
+
+    // CHECK: call i32 @"kfun:#test40(IntWrapper?){}kotlin.Int
+    // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+    // CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+    // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
+    // CHECK: getelementptr inbounds %"kclassbody:Test40#internal"
+    val z3 = test40(kotlin.native.internal.createUninitializedInstance<IntWrapper>()) // To deny possibility of placing into static data.
+
+    // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+    // CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+    // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
+    // CHECK: getelementptr inbounds %"kclassbody:Test40#internal"
+    val z4: IntWrapper = kotlin.native.internal.createUninitializedInstance<IntWrapper>() // To deny possibility of placing into static data.
+}
+// CHECK-LABEL: epilogue:
 
 // CHECK-LABEL: define i32 @"kfun:#test41(B?;kotlin.Any){}kotlin.Int
 fun test41(b: B?, o: Any): Int {
@@ -1018,7 +1049,10 @@ fun box(): String {
     println(test38(a))
     println(test39(a))
     println(Test40)
-    println(Test40.z)
+    println(Test40.z1)
+    println(Test40.z2)
+    println(Test40.z3)
+    println(Test40.z4)
     println(test41(b, b))
     println(test42(c, b))
     println(test43(listOf("zzz")))
