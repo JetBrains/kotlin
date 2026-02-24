@@ -48,6 +48,7 @@ testing {
             val onlyDescriptorTags = listOf("onlyDescriptors", "onlyDescriptorsMPP")
             val onlySymbolsTags = listOf("onlySymbols")
             val onlyNewKdocResolutionTags = listOf("onlyNewKDocResolution")
+            val onlyJavaPsiTags = listOf("onlyJavaPsi")
 
             // Create a new target for _only_ running test compatible with descriptor-analysis (K1).
             val testDescriptorsTarget = targets.register("testDescriptors") {
@@ -94,6 +95,23 @@ testing {
                 }
             }
 
+            // Create a new target for running tests with enabled experimental symbols java analysis.
+            val testJavaSymbolsTarget = targets.register("testJavaSymbols") {
+                testTask.configure {
+                    val excludedTags = onlyDescriptorTags + onlyNewKdocResolutionTags + onlyJavaPsiTags
+                    description = "Runs tests using symbols-analysis (K2) for java (excluding tags: $excludedTags)"
+                    useJUnitPlatform {
+                        excludeTags.addAll(excludedTags)
+                    }
+                    // Analysis dependencies from `symbolsTestImplementation` should precede all other dependencies
+                    // in order to use the shadowed stdlib from the analysis dependencies
+                    classpath = symbolsTestImplementationResolver.incoming.files + classpath
+
+                    // Enable experimental symbols java analysis
+                    systemProperty("org.jetbrains.dokka.analysis.enableExperimentalSymbolsJavaAnalysis", "true")
+                }
+            }
+
             // Run both K1 and K2, when running :test
             // don't run the task itself, as it's just an aggregate for K1/K2 tests.
             // Ideally, we don't really need this `test` target, but it's not possible to remove it.
@@ -103,6 +121,7 @@ testing {
                     dependsOn(testDescriptorsTarget.map { it.testTask })
                     dependsOn(testSymbolsTarget.map { it.testTask })
                     dependsOn(testSymbolsWithNewKDocResolutionTarget.map { it.testTask })
+                    dependsOn(testJavaSymbolsTarget.map { it.testTask })
                 }
             }
         }

@@ -23,7 +23,7 @@ class JavadocParserTest : BaseAbstractTest() {
     private val configuration = dokkaConfiguration {
         sourceSets {
             sourceSet {
-                sourceRoots = listOf("src/")
+                sourceRoots = listOf("src/main/java")
                 analysisPlatform = "jvm"
             }
         }
@@ -40,7 +40,7 @@ class JavadocParserTest : BaseAbstractTest() {
 
         testInline(
             """
-            |/src/main/java/sample/Date2.java
+            |/src/main/java/docs/AnEnumType.java
             |
             |package docs
             |/**
@@ -75,7 +75,7 @@ class JavadocParserTest : BaseAbstractTest() {
     @Test
     fun `code tag`() {
         val source = """
-            |/src/main/kotlin/test/Test.java
+            |/src/main/java/example/Test.java
             |package example
             |
             | /**
@@ -99,8 +99,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
-                val root = docs.children.first().root
+                val root = modules.docs().children.first().root
 
                 assertEquals(
                     listOf(
@@ -128,7 +127,7 @@ class JavadocParserTest : BaseAbstractTest() {
     @Test
     fun `literal tag`() {
         val source = """
-            |/src/main/kotlin/test/Test.java
+            |/src/main/java/example/Test.java
             |package example
             |
             | /**
@@ -143,8 +142,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
-                val root = docs.children.first().root
+                val root = modules.docs().children.first().root
 
                 assertEquals(
                     listOf(
@@ -161,7 +159,7 @@ class JavadocParserTest : BaseAbstractTest() {
     @Test
     fun `literal tag nested under pre tag`() {
         val source = """
-            |/src/main/kotlin/test/Test.java
+            |/src/main/java/example/Test.java
             |package example
             |
             | /**
@@ -178,8 +176,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
-                val root = docs.children.first().root
+                val root = modules.docs().children.first().root
 
                 assertEquals(
                     listOf(
@@ -202,7 +199,7 @@ class JavadocParserTest : BaseAbstractTest() {
     @Test
     fun `literal tag containing angle brackets`() {
         val source = """
-            |/src/main/kotlin/test/Test.java
+            |/src/main/java/example/Test.java
             |package example
             |
             | /**
@@ -216,8 +213,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
-                val root = docs.children.first().root
+                val root = modules.docs().children.first().root
 
                 assertEquals(
                     listOf(
@@ -237,7 +233,7 @@ class JavadocParserTest : BaseAbstractTest() {
     @Test
     fun `html img tag`() {
         val source = """
-            |/src/main/kotlin/test/Test.java
+            |/src/main/java/example/Test.java
             |package example
             |
             | /**
@@ -250,8 +246,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
-                val root = docs.children.first().root
+                val root = modules.docs().children.first().root
 
                 assertEquals(
                     listOf(
@@ -275,7 +270,7 @@ class JavadocParserTest : BaseAbstractTest() {
     @Test
     fun `description list tag`() {
         val source = """
-            |/src/main/kotlin/test/Test.java
+            |/src/main/java/example/Test.java
             |package example
             |
             | /**
@@ -370,8 +365,7 @@ class JavadocParserTest : BaseAbstractTest() {
 
         testInline(source, configuration) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
-                assertEquals(expected, docs.children.first().root.children)
+                assertEquals(expected, modules.docs().children.first().root.children)
             }
         }
     }
@@ -379,7 +373,7 @@ class JavadocParserTest : BaseAbstractTest() {
     @Test
     fun `header tags are handled properly`() {
         val source = """
-            |/src/main/kotlin/test/Test.java
+            |/src/main/java/example/Test.java
             |package example
             |
             | /**
@@ -398,8 +392,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
-                val root = docs.children.first().root
+                val root = modules.docs().children.first().root
 
                 assertEquals(
                     listOf(
@@ -545,7 +538,7 @@ class JavadocParserTest : BaseAbstractTest() {
     @Test
     fun `tags are case-sensitive`() {
         val source = """
-            |/src/main/kotlin/test/Test.java
+            |/src/main/java/example/Test.java
             |package example
             |
             | /**
@@ -560,8 +553,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
-                val root = docs.children.first().root
+                val root = modules.docs().children.first().root
 
                 assertEquals(
                     listOf(
@@ -578,7 +570,7 @@ class JavadocParserTest : BaseAbstractTest() {
         expectedDocTag: (List<DocTag>) -> DocTag
     ) {
         val source = """
-            |/src/main/kotlin/test/Test.java
+            |/src/main/java/example/Test.java
             |package example
             |
             | /**
@@ -591,8 +583,7 @@ class JavadocParserTest : BaseAbstractTest() {
             configuration,
         ) {
             documentablesCreationStage = { modules ->
-                val docs = modules.first().packages.first().classlikes.single().documentation.values.first()
-                val root = docs.children.first().root
+                val root = modules.docs().children.first().root
 
                 assertEquals(
                     listOf(
@@ -608,6 +599,8 @@ class JavadocParserTest : BaseAbstractTest() {
             }
         }
     }
+
+    private fun List<DModule>.docs() = this.filterNot { it.packages.isEmpty() }.single().packages.first().classlikes.single().documentation.values.first()
 
     // TODO [beresnev] move to java-analysis
 //    @Test

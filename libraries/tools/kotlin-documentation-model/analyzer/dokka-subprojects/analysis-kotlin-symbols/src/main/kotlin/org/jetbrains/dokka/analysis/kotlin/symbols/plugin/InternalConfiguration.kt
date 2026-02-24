@@ -10,6 +10,8 @@ internal object InternalConfiguration {
 
     private const val ENABLE_EXPERIMENTAL_KDOC_RESOLUTION = "org.jetbrains.dokka.analysis.enableExperimentalKDocResolution"
 
+    private const val ENABLE_EXPERIMENTAL_SYMBOLS_JAVA_ANALYSIS = "org.jetbrains.dokka.analysis.enableExperimentalSymbolsJavaAnalysis"
+
     /**
      * Allow analysing code in the 'kotlin' package
      *
@@ -27,6 +29,14 @@ internal object InternalConfiguration {
      */
     val experimentalKDocResolutionEnabled: Boolean
         get() = getBooleanProperty(ENABLE_EXPERIMENTAL_KDOC_RESOLUTION)
+
+    /**
+     * Enable java analysis using [DefaultSymbolToDocumentableTranslator][org.jetbrains.dokka.analysis.kotlin.symbols.translators.DefaultSymbolToDocumentableTranslator]
+     *
+     * Default: false
+     */
+    val enableExperimentalSymbolsJavaAnalysis: Boolean
+        get() = getBooleanProperty(ENABLE_EXPERIMENTAL_SYMBOLS_JAVA_ANALYSIS)
 
     private fun getBooleanProperty(propertyName: String): Boolean {
         return System.getProperty(propertyName) in setOf("1", "true")
