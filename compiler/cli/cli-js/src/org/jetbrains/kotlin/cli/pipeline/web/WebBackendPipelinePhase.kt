@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
 import org.jetbrains.kotlin.ir.backend.js.ic.acquireAndRelease
 import org.jetbrains.kotlin.ir.backend.js.ic.tryAcquireAndRelease
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInProductionPipeline
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
@@ -134,7 +134,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
             configFiles
         )
 
-        val klibs = loadWebKlibsInProductionPipeline(configuration, configuration.platformChecker)
+        val klibs = loadWebKlibs(configuration, configuration.platformChecker)
 
         val module = ModulesStructure(
             project = environment.project,

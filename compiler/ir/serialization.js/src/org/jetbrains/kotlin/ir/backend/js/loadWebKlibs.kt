@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,28 +9,25 @@ import org.jetbrains.kotlin.backend.common.LoadedKlibs
 import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqueNames
 import org.jetbrains.kotlin.backend.common.loadFriendLibraries
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.klibAbiCompatibilityLevel
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.config.skipLibrarySpecialCompatibilityChecks
+import org.jetbrains.kotlin.cli.common.testEnvironment
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.ir.backend.js.checkers.WasmLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
-import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 
 /**
- * This is the entry point to load Kotlin/JS or Kotlin/Wasm KLIBs in the production pipeline.
+ * This is the entry point to load Kotlin/JS or Kotlin/Wasm KLIBs.
  * All library paths are read from the corresponding parameters of [CompilerConfiguration].
  *
  * @param configuration The current compiler configuration.
  * @param platformChecker The platform checker (it's necessary to avoid loading KLIBs for the wrong platform).
  */
-fun loadWebKlibsInProductionPipeline(
+fun loadWebKlibs(
     configuration: CompilerConfiguration,
     platformChecker: KlibPlatformChecker,
 ): LoadedKlibs = loadWebKlibs(
@@ -39,7 +36,7 @@ fun loadWebKlibsInProductionPipeline(
     friendPaths = configuration.friendLibraries,
     includedPath = configuration.includes,
     platformChecker = platformChecker,
-    useStricterChecks = false // That's only necessary in tests. So, false.
+    useStricterChecks = configuration.testEnvironment,
 )
 
 /**
