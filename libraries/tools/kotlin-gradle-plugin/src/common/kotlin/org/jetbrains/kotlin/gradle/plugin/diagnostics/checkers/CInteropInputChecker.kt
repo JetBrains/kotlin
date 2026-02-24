@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 
 /**
@@ -25,7 +24,7 @@ internal object CInteropInputChecker : KotlinGradleProjectChecker {
 
         project.tasks.withType(CInteropProcess::class.java).configureEach {
             if (!it.definitionFile.isPresent && it.packageName.isNullOrBlank()) {
-                project.reportDiagnostic(KotlinToolingDiagnostics.CInteropRequiredParametersNotSpecifiedError())
+                collector.report(projectPath, renderingOptions, KotlinToolingDiagnostics.CInteropRequiredParametersNotSpecifiedError())
             }
         }
     }

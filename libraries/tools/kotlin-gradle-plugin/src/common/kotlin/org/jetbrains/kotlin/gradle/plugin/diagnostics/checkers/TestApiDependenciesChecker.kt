@@ -54,10 +54,12 @@ internal object TestApiDependenciesChecker : KotlinGradleProjectChecker {
             .toList()
 
         if (testCompilationsWithApiDependencies.any { it.dependencyCoords.isNotEmpty() }) {
-            project.reportDiagnostic(
+            collector.report(
+                projectPath,
+                renderingOptions,
                 KotlinToolingDiagnostics.TestApiDependencyWarning(
                     testCompilationsWithApiDependencies = testCompilationsWithApiDependencies,
-                )
+                ),
             )
         }
     }

@@ -18,6 +18,7 @@ internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
     tasks.withType(UsesKotlinToolingDiagnostics::class.java).configureEach {
         it.usesService(collectorProvider)
         it.toolingDiagnosticsCollector.value(collectorProvider)
+        it.projectPath.set(project.path)
         it.diagnosticRenderingOptions.set(diagnosticRenderingOptions)
     }
 

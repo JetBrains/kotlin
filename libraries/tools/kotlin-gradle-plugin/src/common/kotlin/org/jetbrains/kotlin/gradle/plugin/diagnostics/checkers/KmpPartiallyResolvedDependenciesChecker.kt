@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticRenderingOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpMultiVariantModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyTransformationTask
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
 import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.isAllGradleProjectsEvaluated
 import org.jetbrains.kotlin.gradle.utils.multiplatformAndroidLibraryPluginId
-import java.util.concurrent.atomic.AtomicBoolean
 
 @DisableCachingByDefault(because = "This task is not intended for execution")
 internal abstract class KmpPartiallyResolvedDependenciesCheckerProjectsEvaluated : DefaultTask() {
@@ -84,7 +83,10 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
                 }.getOrNull() ?: return@configure
                 val validate = {
                     metadataTransformations.forEach { transformationParameters ->
-                        project.validateNoTargetPlatformsResolvedPartially(
+                        validateNoTargetPlatformsResolvedPartially(
+                            collector,
+                            projectPath,
+                            renderingOptions,
                             sourceSetName = transformationParameters.sourceSetName,
                             dependingPlatformCompilations = transformationParameters.dependingPlatformCompilations,
                             metadataConfiguration = transformationParameters.resolvedMetadataConfiguration,
@@ -92,7 +94,8 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
                     }
                 }
                 val isMultiplatformAndroidLibraryPluginApplied = project.pluginManager.hasPlugin(multiplatformAndroidLibraryPluginId)
-                val isAndroidPluginApplied = (project.findAppliedAndroidPluginIdOrNull() != null) || isMultiplatformAndroidLibraryPluginApplied
+                val isAndroidPluginApplied =
+                    project.findAppliedAndroidPluginIdOrNull() != null || isMultiplatformAndroidLibraryPluginApplied
                 /**
                  * AGP adds a checker that emits a diagnostic if a configuration is resolved before taskGraph.whenReady. Delay the check to
                  * execution in this case
@@ -119,7 +122,10 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
                     return@configureEach
                 }
                 val validate = {
-                    project.validateNoTargetPlatformsResolvedPartially(
+                    validateNoTargetPlatformsResolvedPartially(
+                        collector,
+                        projectPath,
+                        renderingOptions,
                         sourceSetName = it.transformationParameters.sourceSetName,
                         dependingPlatformCompilations = it.transformationParameters.dependingPlatformCompilations,
                         metadataConfiguration = it.transformationParameters.resolvedMetadataConfiguration,
@@ -160,7 +166,10 @@ internal data class UnresolvedKmpDependency(
     )
 }
 
-private fun Project.validateNoTargetPlatformsResolvedPartially(
+private fun validateNoTargetPlatformsResolvedPartially(
+    collector: KotlinToolingDiagnosticsCollector,
+    projectPath: String,
+    renderingOptions: ToolingDiagnosticRenderingOptions,
     sourceSetName: String,
     dependingPlatformCompilations: List<PlatformCompilationData>,
     metadataConfiguration: LazyResolvedConfigurationWithArtifacts,
@@ -172,11 +181,13 @@ private fun Project.validateNoTargetPlatformsResolvedPartially(
 
     if (partiallyUnresolvedDependencies.isEmpty()) return
 
-    project.reportDiagnostic(
+    collector.report(
+        projectPath,
+        renderingOptions,
         KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies(
             sourceSetName,
             partiallyUnresolvedDependencies,
-        )
+        ),
     )
 }
 
@@ -213,8 +224,7 @@ internal fun partiallyUnresolvedPlatformDependencies(
             if (visitedDependencies.add(kmpIdentifier)) {
                 unresolvedDependenciesMap.getOrPut(
                     unresolvedDependency.attempted.kmpMultiVariantModuleIdentifier(),
-                    { UnresolvedKmpDependency() }
-                ).unresolvedComponents.add(
+                ) { UnresolvedKmpDependency() }.unresolvedComponents.add(
                     UnresolvedKmpDependency.UnresolvedComponent(
                         targetName = platformCompilation.targetName,
                         compilationName = platformCompilation.compilationName,

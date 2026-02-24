@@ -43,7 +43,7 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
     private val reportedIds: MutableSet<ToolingDiagnosticId> = Collections.newSetFromMap(ConcurrentHashMap())
 
     fun getDiagnosticsForProject(projectPath: GradleProjectPath): Collection<ToolingDiagnostic> {
-        return rawDiagnosticsFromProject[projectPath] ?: return emptyList()
+        return rawDiagnosticsFromProject[projectPath] ?: emptyList()
     }
 
     fun getDiagnosticsForProject(project: Project): Collection<ToolingDiagnostic> {
@@ -84,7 +84,10 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
     ) {
         if (reportedIds.add(key) || !reportOnce) {
             val options = from.diagnosticRenderingOptions.get()
-            problemsReporter.reportProblemDiagnostic(diagnostic, options)
+            val projectPath = from.projectPath.get()
+            // Execution-phase reporters must render immediately: with configuration cache, Gradle can
+            // deserialize a fresh BuildService instance where transparent mode is not yet enabled.
+            handleDiagnostic(projectPath, options, diagnostic, forceRender = true)
         }
     }
 
@@ -92,14 +95,21 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
         isTransparent = true
     }
 
-    private fun handleDiagnostic(projectPath: GradleProjectPath, options: ToolingDiagnosticRenderingOptions, diagnostic: ToolingDiagnostic) {
+    private fun handleDiagnostic(
+        projectPath: GradleProjectPath,
+        options: ToolingDiagnosticRenderingOptions,
+        diagnostic: ToolingDiagnostic,
+        // Force immediate rendering for execution-phase reporters; configuration cache may
+        // deserialize a fresh BuildService instance before transparent mode is enabled.
+        forceRender: Boolean = false,
+    ) {
         if (diagnostic.isSuppressed(options)) return
 
         rawDiagnosticsFromProject.compute(projectPath) { _, previousListIfAny ->
             previousListIfAny?.apply { add(diagnostic) } ?: mutableListOf(diagnostic)
         }
 
-        if (isTransparent) {
+        if (isTransparent || forceRender) {
             problemsReporter.reportProblemDiagnostic(diagnostic, options)
             return
         }
