@@ -33,7 +33,7 @@ internal class DiscoverScriptExtensionsOperationImpl private constructor(
         check(executionPolicy is ExecutionPolicy.InProcess) { "Only in-process execution policy is supported for this operation." }
         val definitions = ScriptDefinitionsFromClasspathDiscoverySource(
             classpath.map(Path::toFile), defaultJvmScriptingHostConfiguration, KotlinLoggerMessageCollectorAdapter(
-                logger ?: DefaultKotlinLogger, this[COMPILER_MESSAGE_RENDERER]
+                logger ?: DefaultKotlinLogger, this[COMPILER_MESSAGE_RENDERER], warningsAsErrors = false
             ).reporter
         ).definitions
 

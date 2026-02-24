@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 
-internal class CompilerMessageRendererAdapter(private val compilerMessageRenderer: CompilerMessageRenderer) : MessageRenderer {
+internal class CompilerMessageRendererAdapter(
+    private val compilerMessageRenderer: CompilerMessageRenderer,
+) : MessageRenderer {
 
     override fun render(
         severity: CompilerMessageSeverity,
