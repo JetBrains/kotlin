@@ -58,8 +58,8 @@ class JvmModule(
      */
     private val dependencyFiles: List<Path>
         get() = dependencies.map { it.location }.plus(stdlibLocation)
-    val compileClasspath: String
-        get() = dependencyFiles.joinToString(File.pathSeparator)
+    val compileClasspath: List<Path>
+        get() = dependencyFiles
 
     override fun compileImpl(
         strategyConfig: ExecutionPolicy,

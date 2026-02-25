@@ -68,8 +68,7 @@ internal class AddModulesConversionTest : BaseArgumentTest<Array<String>>("Xadd-
         val modules = jvmOperation.compilerArguments[X_ADD_MODULES]
 
         assertEquals(
-            getDefaultValueString(),
-            getValueString(modules)
+            getDefaultValueString(), getValueString(modules)
         )
     }
 
@@ -80,15 +79,11 @@ internal class AddModulesConversionTest : BaseArgumentTest<Array<String>>("Xadd-
         val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
-            expectedArgumentStringsFor(
-                getValueString(expectedModules),
-
-                )
+            expectedArgumentStringsFor(getValueString(expectedModules))
         )
 
         assertArrayEquals(
-            expectedModules,
-            operation.compilerArguments[X_ADD_MODULES]
+            expectedModules, operation.compilerArguments[X_ADD_MODULES]
         )
     }
 
@@ -100,8 +95,7 @@ internal class AddModulesConversionTest : BaseArgumentTest<Array<String>>("Xadd-
         operation.compilerArguments.applyArgumentStrings(listOf())
 
         assertEquals(
-            getDefaultValueString(),
-            getValueString(operation.compilerArguments[X_ADD_MODULES])
+            getDefaultValueString(), getValueString(operation.compilerArguments[X_ADD_MODULES])
         )
     }
 

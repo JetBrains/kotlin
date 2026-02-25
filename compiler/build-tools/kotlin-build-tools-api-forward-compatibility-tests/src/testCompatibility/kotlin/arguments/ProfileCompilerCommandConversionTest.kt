@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.absolutePathString
 
@@ -22,12 +23,11 @@ internal class ProfileCompilerCommandConversionTest : BaseArgumentTest<String>("
     @DisplayName("ProfileCompilerCommand is converted to '-Xprofile' argument")
     @Test
     fun testXprofileToArgumentString() {
-        val profileCompilerCommand =
-            workingDirectory.resolve("path/to/libasyncProfiler.so").absolutePathString() +
-                    "${File.pathSeparatorChar}" +
-                    "event=cpu,interval=1ms,threads,start" +
-                    "${File.pathSeparatorChar}" +
-                    workingDirectory.resolve("path/to/snapshots").absolutePathString()
+        val profileCompilerCommand = createProfileCompilerCommandStringRepresentation(
+            workingDirectory.resolve("path/to/libasyncProfiler.so"),
+            "event=cpu,interval=1ms,threads,start",
+            workingDirectory.resolve("path/to/snapshots")
+        )
         val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
             compilerArguments[X_PROFILE] = profileCompilerCommand
         }
@@ -56,12 +56,11 @@ internal class ProfileCompilerCommandConversionTest : BaseArgumentTest<String>("
     @DisplayName("ProfileCompilerCommand can be set and retrieved")
     @Test
     fun testXprofileGetWhenSet() {
-        val expectedProfileCommand =
-            workingDirectory.resolve("path/to/libasyncProfiler.so").absolutePathString() +
-                    "${File.pathSeparatorChar}" +
-                    "event=cpu,interval=1ms,threads,start" +
-                    "${File.pathSeparatorChar}" +
-                    workingDirectory.resolve("path/to/snapshots").absolutePathString()
+        val expectedProfileCommand = createProfileCompilerCommandStringRepresentation(
+            workingDirectory.resolve("path/to/libasyncProfiler.so"),
+            "event=cpu,interval=1ms,threads,start",
+            workingDirectory.resolve("path/to/snapshots")
+        )
         val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
             compilerArguments[X_PROFILE] = expectedProfileCommand
         }
@@ -79,27 +78,22 @@ internal class ProfileCompilerCommandConversionTest : BaseArgumentTest<String>("
         val profileCompilerCommand = jvmOperation.compilerArguments[X_PROFILE]
 
         assertEquals(
-            getDefaultValueString(),
-            getValueString(profileCompilerCommand)
+            getDefaultValueString(), getValueString(profileCompilerCommand)
         )
     }
 
     @DisplayName("Raw argument strings '-Xprofile=<value>' are converted to ProfileCompilerCommand")
     @Test
     fun testRawArgumentsXprofileConversion() {
-        val expectedProfileCommand =
-            workingDirectory.resolve("path/to/libasyncProfiler.so").absolutePathString() +
-                    "${File.pathSeparatorChar}" +
-                    "event=cpu,interval=1ms,threads,start" +
-                    "${File.pathSeparatorChar}" +
-                    workingDirectory.resolve("path/to/snapshots").absolutePathString()
+        val expectedProfileCommand = createProfileCompilerCommandStringRepresentation(
+            workingDirectory.resolve("path/to/libasyncProfiler.so"),
+            "event=cpu,interval=1ms,threads,start",
+            workingDirectory.resolve("path/to/snapshots")
+        )
         val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
-            expectedArgumentStringsFor(
-                getValueString(expectedProfileCommand),
-
-                )
+            expectedArgumentStringsFor(getValueString(expectedProfileCommand))
         )
         val actualProfileCommand = operation.compilerArguments[X_PROFILE]
 
@@ -114,8 +108,7 @@ internal class ProfileCompilerCommandConversionTest : BaseArgumentTest<String>("
         operation.compilerArguments.applyArgumentStrings(listOf())
 
         assertEquals(
-            getDefaultValueString(),
-            getValueString(operation.compilerArguments[X_PROFILE])
+            getDefaultValueString(), getValueString(operation.compilerArguments[X_PROFILE])
         )
     }
 
@@ -124,4 +117,10 @@ internal class ProfileCompilerCommandConversionTest : BaseArgumentTest<String>("
     }
 
     override fun getValueString(argument: String?): String? = argument
+
+    private fun createProfileCompilerCommandStringRepresentation(
+        profilerPath: Path,
+        command: String,
+        outputDir: Path,
+    ) = profilerPath.absolutePathString() + File.pathSeparatorChar + command + File.pathSeparatorChar + outputDir.absolutePathString()
 }

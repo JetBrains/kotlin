@@ -79,10 +79,7 @@ internal class JdkHomeConversionTest : BaseArgumentTest<String>("jdk-home") {
         val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
-            expectedArgumentStringsFor(
-                getValueString(expectedJdkHomePath),
-
-                )
+            expectedArgumentStringsFor(getValueString(expectedJdkHomePath))
         )
 
         assertEquals(
