@@ -59,7 +59,7 @@ public final class IrStatement extends
           }
           case 8: {
             bitField0_ |= 0x00000001;
-            coordinates_ = input.readInt64();
+            globalCoordinates_ = input.readInt64();
             break;
           }
           case 18: {
@@ -213,29 +213,29 @@ public final class IrStatement extends
         statementCase_);
   }
 
-  public static final int COORDINATES_FIELD_NUMBER = 1;
-  private long coordinates_;
+  public static final int GLOBAL_COORDINATES_FIELD_NUMBER = 1;
+  private long globalCoordinates_;
   /**
-   * <code>optional int64 coordinates = 1 [default = 6148914691236517201];</code>
+   * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
    *
    * <pre>
    * Was required before 2.4.0.
    * For explanation of the default value, see the comment on IrExpression.coordinates.
    * </pre>
    */
-  public boolean hasCoordinates() {
+  public boolean hasGlobalCoordinates() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>optional int64 coordinates = 1 [default = 6148914691236517201];</code>
+   * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
    *
    * <pre>
    * Was required before 2.4.0.
    * For explanation of the default value, see the comment on IrExpression.coordinates.
    * </pre>
    */
-  public long getCoordinates() {
-    return coordinates_;
+  public long getGlobalCoordinates() {
+    return globalCoordinates_;
   }
 
   public static final int DECLARATION_FIELD_NUMBER = 2;
@@ -341,7 +341,7 @@ public final class IrStatement extends
   }
 
   private void initFields() {
-    coordinates_ = 6148914691236517201L;
+    globalCoordinates_ = 6148914691236517201L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -393,7 +393,7 @@ public final class IrStatement extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeInt64(1, coordinates_);
+      output.writeInt64(1, globalCoordinates_);
     }
     if (statementCase_ == 2) {
       output.writeMessage(2, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration) statement_);
@@ -424,7 +424,7 @@ public final class IrStatement extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(1, coordinates_);
+        .computeInt64Size(1, globalCoordinates_);
     }
     if (statementCase_ == 2) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -548,7 +548,7 @@ public final class IrStatement extends
 
     public Builder clear() {
       super.clear();
-      coordinates_ = 6148914691236517201L;
+      globalCoordinates_ = 6148914691236517201L;
       bitField0_ = (bitField0_ & ~0x00000001);
       statementCase_ = 0;
       statement_ = null;
@@ -578,7 +578,7 @@ public final class IrStatement extends
       if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
         to_bitField0_ |= 0x00000001;
       }
-      result.coordinates_ = coordinates_;
+      result.globalCoordinates_ = globalCoordinates_;
       if (statementCase_ == 2) {
         result.statement_ = statement_;
       }
@@ -604,8 +604,8 @@ public final class IrStatement extends
 
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.getDefaultInstance()) return this;
-      if (other.hasCoordinates()) {
-        setCoordinates(other.getCoordinates());
+      if (other.hasGlobalCoordinates()) {
+        setGlobalCoordinates(other.getGlobalCoordinates());
       }
       switch (other.getStatementCase()) {
         case DECLARATION: {
@@ -714,54 +714,54 @@ public final class IrStatement extends
 
     private int bitField0_;
 
-    private long coordinates_ = 6148914691236517201L;
+    private long globalCoordinates_ = 6148914691236517201L;
     /**
-     * <code>optional int64 coordinates = 1 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
      * For explanation of the default value, see the comment on IrExpression.coordinates.
      * </pre>
      */
-    public boolean hasCoordinates() {
+    public boolean hasGlobalCoordinates() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int64 coordinates = 1 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
      * For explanation of the default value, see the comment on IrExpression.coordinates.
      * </pre>
      */
-    public long getCoordinates() {
-      return coordinates_;
+    public long getGlobalCoordinates() {
+      return globalCoordinates_;
     }
     /**
-     * <code>optional int64 coordinates = 1 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
      * For explanation of the default value, see the comment on IrExpression.coordinates.
      * </pre>
      */
-    public Builder setCoordinates(long value) {
+    public Builder setGlobalCoordinates(long value) {
       bitField0_ |= 0x00000001;
-      coordinates_ = value;
+      globalCoordinates_ = value;
       
       return this;
     }
     /**
-     * <code>optional int64 coordinates = 1 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
      * For explanation of the default value, see the comment on IrExpression.coordinates.
      * </pre>
      */
-    public Builder clearCoordinates() {
+    public Builder clearGlobalCoordinates() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      coordinates_ = 6148914691236517201L;
+      globalCoordinates_ = 6148914691236517201L;
       
       return this;
     }

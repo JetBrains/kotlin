@@ -8,23 +8,23 @@ public interface IrStatementOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>optional int64 coordinates = 1 [default = 6148914691236517201];</code>
+   * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
    *
    * <pre>
    * Was required before 2.4.0.
    * For explanation of the default value, see the comment on IrExpression.coordinates.
    * </pre>
    */
-  boolean hasCoordinates();
+  boolean hasGlobalCoordinates();
   /**
-   * <code>optional int64 coordinates = 1 [default = 6148914691236517201];</code>
+   * <code>optional int64 global_coordinates = 1 [default = 6148914691236517201];</code>
    *
    * <pre>
    * Was required before 2.4.0.
    * For explanation of the default value, see the comment on IrExpression.coordinates.
    * </pre>
    */
-  long getCoordinates();
+  long getGlobalCoordinates();
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 2;</code>

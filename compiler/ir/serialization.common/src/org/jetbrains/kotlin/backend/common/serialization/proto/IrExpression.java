@@ -74,7 +74,7 @@ public final class IrExpression extends
           }
           case 24: {
             bitField1_ |= 0x00000400;
-            coordinates_ = input.readInt64();
+            globalCoordinates_ = input.readInt64();
             break;
           }
           case 42: {
@@ -1493,10 +1493,10 @@ public final class IrExpression extends
     return type_;
   }
 
-  public static final int COORDINATES_FIELD_NUMBER = 3;
-  private long coordinates_;
+  public static final int GLOBAL_COORDINATES_FIELD_NUMBER = 3;
+  private long globalCoordinates_;
   /**
-   * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+   * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
    *
    * <pre>
    * Was required before 2.4.0.
@@ -1504,11 +1504,11 @@ public final class IrExpression extends
    * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
    * </pre>
    */
-  public boolean hasCoordinates() {
+  public boolean hasGlobalCoordinates() {
     return ((bitField1_ & 0x00000400) == 0x00000400);
   }
   /**
-   * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+   * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
    *
    * <pre>
    * Was required before 2.4.0.
@@ -1516,14 +1516,14 @@ public final class IrExpression extends
    * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
    * </pre>
    */
-  public long getCoordinates() {
-    return coordinates_;
+  public long getGlobalCoordinates() {
+    return globalCoordinates_;
   }
 
   private void initFields() {
     operationPre240_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0.getDefaultInstance();
     type_ = -1;
-    coordinates_ = 6148914691236517201L;
+    globalCoordinates_ = 6148914691236517201L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -1779,7 +1779,7 @@ public final class IrExpression extends
       output.writeInt32(2, type_);
     }
     if (((bitField1_ & 0x00000400) == 0x00000400)) {
-      output.writeInt64(3, coordinates_);
+      output.writeInt64(3, globalCoordinates_);
     }
     if (operationCase_ == 5) {
       output.writeMessage(5, (org.jetbrains.kotlin.backend.common.serialization.proto.IrConst) operation_);
@@ -1920,7 +1920,7 @@ public final class IrExpression extends
     }
     if (((bitField1_ & 0x00000400) == 0x00000400)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(3, coordinates_);
+        .computeInt64Size(3, globalCoordinates_);
     }
     if (operationCase_ == 5) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -2180,7 +2180,7 @@ public final class IrExpression extends
       bitField1_ = (bitField1_ & ~0x00000100);
       type_ = -1;
       bitField1_ = (bitField1_ & ~0x00000200);
-      coordinates_ = 6148914691236517201L;
+      globalCoordinates_ = 6148914691236517201L;
       bitField1_ = (bitField1_ & ~0x00000400);
       operationCase_ = 0;
       operation_ = null;
@@ -2340,7 +2340,7 @@ public final class IrExpression extends
       if (((from_bitField1_ & 0x00000400) == 0x00000400)) {
         to_bitField1_ |= 0x00000400;
       }
-      result.coordinates_ = coordinates_;
+      result.globalCoordinates_ = globalCoordinates_;
       result.bitField0_ = to_bitField0_;
       result.bitField1_ = to_bitField1_;
       result.operationCase_ = operationCase_;
@@ -2355,8 +2355,8 @@ public final class IrExpression extends
       if (other.hasType()) {
         setType(other.getType());
       }
-      if (other.hasCoordinates()) {
-        setCoordinates(other.getCoordinates());
+      if (other.hasGlobalCoordinates()) {
+        setGlobalCoordinates(other.getGlobalCoordinates());
       }
       switch (other.getOperationCase()) {
         case OP_CONST: {
@@ -5564,9 +5564,9 @@ public final class IrExpression extends
       return this;
     }
 
-    private long coordinates_ = 6148914691236517201L;
+    private long globalCoordinates_ = 6148914691236517201L;
     /**
-     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
@@ -5574,11 +5574,11 @@ public final class IrExpression extends
      * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
      * </pre>
      */
-    public boolean hasCoordinates() {
+    public boolean hasGlobalCoordinates() {
       return ((bitField1_ & 0x00000400) == 0x00000400);
     }
     /**
-     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
@@ -5586,11 +5586,11 @@ public final class IrExpression extends
      * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
      * </pre>
      */
-    public long getCoordinates() {
-      return coordinates_;
+    public long getGlobalCoordinates() {
+      return globalCoordinates_;
     }
     /**
-     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
@@ -5598,14 +5598,14 @@ public final class IrExpression extends
      * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
      * </pre>
      */
-    public Builder setCoordinates(long value) {
+    public Builder setGlobalCoordinates(long value) {
       bitField1_ |= 0x00000400;
-      coordinates_ = value;
+      globalCoordinates_ = value;
       
       return this;
     }
     /**
-     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
@@ -5613,9 +5613,9 @@ public final class IrExpression extends
      * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
      * </pre>
      */
-    public Builder clearCoordinates() {
+    public Builder clearGlobalCoordinates() {
       bitField1_ = (bitField1_ & ~0x00000400);
-      coordinates_ = 6148914691236517201L;
+      globalCoordinates_ = 6148914691236517201L;
       
       return this;
     }

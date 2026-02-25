@@ -65,7 +65,7 @@ public final class IrDeclarationBase extends
           }
           case 24: {
             bitField0_ |= 0x00000004;
-            coordinates_ = input.readInt64();
+            globalCoordinates_ = input.readInt64();
             break;
           }
           case 32: {
@@ -148,29 +148,29 @@ public final class IrDeclarationBase extends
     return originName_;
   }
 
-  public static final int COORDINATES_FIELD_NUMBER = 3;
-  private long coordinates_;
+  public static final int GLOBAL_COORDINATES_FIELD_NUMBER = 3;
+  private long globalCoordinates_;
   /**
-   * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+   * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
    *
    * <pre>
    * Was required before 2.4.0.
    * For explanation of the default value, see the comment on IrExpression.coordinates.
    * </pre>
    */
-  public boolean hasCoordinates() {
+  public boolean hasGlobalCoordinates() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+   * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
    *
    * <pre>
    * Was required before 2.4.0.
    * For explanation of the default value, see the comment on IrExpression.coordinates.
    * </pre>
    */
-  public long getCoordinates() {
-    return coordinates_;
+  public long getGlobalCoordinates() {
+    return globalCoordinates_;
   }
 
   public static final int FLAGS_FIELD_NUMBER = 4;
@@ -226,7 +226,7 @@ public final class IrDeclarationBase extends
   private void initFields() {
     symbol_ = 0L;
     originName_ = 0;
-    coordinates_ = 6148914691236517201L;
+    globalCoordinates_ = 6148914691236517201L;
     flags_ = 0L;
     annotation_ = java.util.Collections.emptyList();
   }
@@ -264,7 +264,7 @@ public final class IrDeclarationBase extends
       output.writeInt32(2, originName_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeInt64(3, coordinates_);
+      output.writeInt64(3, globalCoordinates_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       output.writeInt64(4, flags_);
@@ -291,7 +291,7 @@ public final class IrDeclarationBase extends
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(3, coordinates_);
+        .computeInt64Size(3, globalCoordinates_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -399,7 +399,7 @@ public final class IrDeclarationBase extends
       bitField0_ = (bitField0_ & ~0x00000001);
       originName_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
-      coordinates_ = 6148914691236517201L;
+      globalCoordinates_ = 6148914691236517201L;
       bitField0_ = (bitField0_ & ~0x00000004);
       flags_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000008);
@@ -439,7 +439,7 @@ public final class IrDeclarationBase extends
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000004;
       }
-      result.coordinates_ = coordinates_;
+      result.globalCoordinates_ = globalCoordinates_;
       if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
         to_bitField0_ |= 0x00000008;
       }
@@ -461,8 +461,8 @@ public final class IrDeclarationBase extends
       if (other.hasOriginName()) {
         setOriginName(other.getOriginName());
       }
-      if (other.hasCoordinates()) {
-        setCoordinates(other.getCoordinates());
+      if (other.hasGlobalCoordinates()) {
+        setGlobalCoordinates(other.getGlobalCoordinates());
       }
       if (other.hasFlags()) {
         setFlags(other.getFlags());
@@ -583,54 +583,54 @@ public final class IrDeclarationBase extends
       return this;
     }
 
-    private long coordinates_ = 6148914691236517201L;
+    private long globalCoordinates_ = 6148914691236517201L;
     /**
-     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
      * For explanation of the default value, see the comment on IrExpression.coordinates.
      * </pre>
      */
-    public boolean hasCoordinates() {
+    public boolean hasGlobalCoordinates() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
      * For explanation of the default value, see the comment on IrExpression.coordinates.
      * </pre>
      */
-    public long getCoordinates() {
-      return coordinates_;
+    public long getGlobalCoordinates() {
+      return globalCoordinates_;
     }
     /**
-     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
      * For explanation of the default value, see the comment on IrExpression.coordinates.
      * </pre>
      */
-    public Builder setCoordinates(long value) {
+    public Builder setGlobalCoordinates(long value) {
       bitField0_ |= 0x00000004;
-      coordinates_ = value;
+      globalCoordinates_ = value;
       
       return this;
     }
     /**
-     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
      * For explanation of the default value, see the comment on IrExpression.coordinates.
      * </pre>
      */
-    public Builder clearCoordinates() {
+    public Builder clearGlobalCoordinates() {
       bitField0_ = (bitField0_ & ~0x00000004);
-      coordinates_ = 6148914691236517201L;
+      globalCoordinates_ = 6148914691236517201L;
       
       return this;
     }

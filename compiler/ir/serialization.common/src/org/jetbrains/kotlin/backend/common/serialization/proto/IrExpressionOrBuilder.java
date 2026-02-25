@@ -430,7 +430,7 @@ public interface IrExpressionOrBuilder extends
   int getType();
 
   /**
-   * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+   * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
    *
    * <pre>
    * Was required before 2.4.0.
@@ -438,9 +438,9 @@ public interface IrExpressionOrBuilder extends
    * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
    * </pre>
    */
-  boolean hasCoordinates();
+  boolean hasGlobalCoordinates();
   /**
-   * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+   * <code>optional int64 global_coordinates = 3 [default = 6148914691236517201];</code>
    *
    * <pre>
    * Was required before 2.4.0.
@@ -448,5 +448,5 @@ public interface IrExpressionOrBuilder extends
    * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
    * </pre>
    */
-  long getCoordinates();
+  long getGlobalCoordinates();
 }

@@ -137,7 +137,7 @@ class IrBodyDeserializer(
     }
 
     internal fun deserializeStatement(proto: ProtoStatement, parentStart: Int?): IrElement {
-        val coords = declarationDeserializer.deserializeCoordinates(proto.coordinates, parentStart)
+        val coords = declarationDeserializer.deserializeCoordinates(proto.globalCoordinates, parentStart)
         val element = when (proto.statementCase) {
             StatementCase.BLOCK_BODY //proto.hasBlockBody()
             -> deserializeBlockBody(proto.blockBody, coords.startOffset, coords.endOffset)
@@ -313,8 +313,8 @@ class IrBodyDeserializer(
     private fun deserializeAnnotation(proto: ProtoAnnotation, type: IrType, parentStart: Int?): IrAnnotation {
         var start = UNDEFINED_OFFSET
         var end = UNDEFINED_OFFSET
-        if (proto.hasCoordinates()) {
-            val coords = BinaryCoordinatesEncoding.decode(proto.coordinates)
+        if (proto.hasGlobalCoordinates()) {
+            val coords = BinaryCoordinatesEncoding.decode(proto.globalCoordinates)
             start = coords.startOffset
             end = coords.endOffset
         }
@@ -661,7 +661,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeSpreadElement(proto: ProtoSpreadElement, parentStart: Int): IrSpreadElement {
-        val coords = declarationDeserializer.deserializeCoordinates(proto.coordinates, parentStart)
+        val coords = declarationDeserializer.deserializeCoordinates(proto.globalCoordinates, parentStart)
         val expression = deserializeExpression(proto.expression, coords.startOffset)
         return IrSpreadElementImpl(coords.startOffset, coords.endOffset, expression)
     }
@@ -999,7 +999,7 @@ class IrBodyDeserializer(
             return null
         }
 
-        val coords = declarationDeserializer.deserializeCoordinates(proto.coordinates, parentStart)
+        val coords = declarationDeserializer.deserializeCoordinates(proto.globalCoordinates, parentStart)
         val type = declarationDeserializer.deserializeIrType(proto.type)
 
         val expression = if (proto.operationCase != ProtoExpression.OperationCase.OPERATION_NOT_SET) {

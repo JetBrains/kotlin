@@ -210,7 +210,7 @@ message IrAnnotation {
   repeated IrExpression argument = 5;
   repeated int32 type_argument = 6 [packed=true];
   optional int32 origin_name = 4;
-  optional int64 coordinates = 7;
+  optional int64 global_coordinates = 7;
 }
 
 message IrFunctionReference {
@@ -367,7 +367,7 @@ message IrSpreadElement {
   required IrExpression expression = 1;
   // Was required before 2.4.0.
   // For explanation of the default value, see the comment on IrExpression.coordinates.
-  optional int64 coordinates = 2 [default=6148914691236517201];
+  optional int64 global_coordinates = 2 [default=6148914691236517201];
 }
 
 message IrStringConcat {
@@ -592,7 +592,7 @@ message IrExpression {
   // Was required before 2.4.0.
   // The bizarre default value is an encoded form of coordinates [-3, -3]. Such coordinates will never be set (it's enforced),
   // so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
-  optional int64 coordinates = 3 [default=6148914691236517201];
+  optional int64 global_coordinates = 3 [default=6148914691236517201];
 }
 
 message NullableIrExpression {
@@ -608,7 +608,7 @@ message IrDeclarationBase {
   required int32 origin_name = 2;
   // Was required before 2.4.0.
   // For explanation of the default value, see the comment on IrExpression.coordinates.
-  optional int64 coordinates = 3 [default=6148914691236517201];
+  optional int64 global_coordinates = 3 [default=6148914691236517201];
   optional int64 flags = 4 [default = 0];
   repeated IrAnnotation annotation = 5;
 }
@@ -762,7 +762,7 @@ message IrSyntheticBody {
 message IrStatement {
   // Was required before 2.4.0.
   // For explanation of the default value, see the comment on IrExpression.coordinates.
-  optional int64 coordinates = 1 [default=6148914691236517201];
+  optional int64 global_coordinates = 1 [default=6148914691236517201];
   oneof statement {
     IrDeclaration declaration = 2;
     IrExpression expression = 3;

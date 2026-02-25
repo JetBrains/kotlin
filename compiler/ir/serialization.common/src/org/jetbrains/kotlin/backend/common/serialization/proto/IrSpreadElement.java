@@ -68,7 +68,7 @@ public final class IrSpreadElement extends
           }
           case 16: {
             bitField0_ |= 0x00000002;
-            coordinates_ = input.readInt64();
+            globalCoordinates_ = input.readInt64();
             break;
           }
         }
@@ -120,34 +120,34 @@ public final class IrSpreadElement extends
     return expression_;
   }
 
-  public static final int COORDINATES_FIELD_NUMBER = 2;
-  private long coordinates_;
+  public static final int GLOBAL_COORDINATES_FIELD_NUMBER = 2;
+  private long globalCoordinates_;
   /**
-   * <code>optional int64 coordinates = 2 [default = 6148914691236517201];</code>
+   * <code>optional int64 global_coordinates = 2 [default = 6148914691236517201];</code>
    *
    * <pre>
    * Was required before 2.4.0.
    * For explanation of the default value, see the comment on IrExpression.coordinates.
    * </pre>
    */
-  public boolean hasCoordinates() {
+  public boolean hasGlobalCoordinates() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>optional int64 coordinates = 2 [default = 6148914691236517201];</code>
+   * <code>optional int64 global_coordinates = 2 [default = 6148914691236517201];</code>
    *
    * <pre>
    * Was required before 2.4.0.
    * For explanation of the default value, see the comment on IrExpression.coordinates.
    * </pre>
    */
-  public long getCoordinates() {
-    return coordinates_;
+  public long getGlobalCoordinates() {
+    return globalCoordinates_;
   }
 
   private void initFields() {
     expression_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
-    coordinates_ = 6148914691236517201L;
+    globalCoordinates_ = 6148914691236517201L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -174,7 +174,7 @@ public final class IrSpreadElement extends
       output.writeMessage(1, expression_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeInt64(2, coordinates_);
+      output.writeInt64(2, globalCoordinates_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -191,7 +191,7 @@ public final class IrSpreadElement extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(2, coordinates_);
+        .computeInt64Size(2, globalCoordinates_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -289,7 +289,7 @@ public final class IrSpreadElement extends
       super.clear();
       expression_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      coordinates_ = 6148914691236517201L;
+      globalCoordinates_ = 6148914691236517201L;
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
@@ -321,7 +321,7 @@ public final class IrSpreadElement extends
       if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.coordinates_ = coordinates_;
+      result.globalCoordinates_ = globalCoordinates_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -331,8 +331,8 @@ public final class IrSpreadElement extends
       if (other.hasExpression()) {
         mergeExpression(other.getExpression());
       }
-      if (other.hasCoordinates()) {
-        setCoordinates(other.getCoordinates());
+      if (other.hasGlobalCoordinates()) {
+        setGlobalCoordinates(other.getGlobalCoordinates());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -430,54 +430,54 @@ public final class IrSpreadElement extends
       return this;
     }
 
-    private long coordinates_ = 6148914691236517201L;
+    private long globalCoordinates_ = 6148914691236517201L;
     /**
-     * <code>optional int64 coordinates = 2 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 2 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
      * For explanation of the default value, see the comment on IrExpression.coordinates.
      * </pre>
      */
-    public boolean hasCoordinates() {
+    public boolean hasGlobalCoordinates() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int64 coordinates = 2 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 2 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
      * For explanation of the default value, see the comment on IrExpression.coordinates.
      * </pre>
      */
-    public long getCoordinates() {
-      return coordinates_;
+    public long getGlobalCoordinates() {
+      return globalCoordinates_;
     }
     /**
-     * <code>optional int64 coordinates = 2 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 2 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
      * For explanation of the default value, see the comment on IrExpression.coordinates.
      * </pre>
      */
-    public Builder setCoordinates(long value) {
+    public Builder setGlobalCoordinates(long value) {
       bitField0_ |= 0x00000002;
-      coordinates_ = value;
+      globalCoordinates_ = value;
       
       return this;
     }
     /**
-     * <code>optional int64 coordinates = 2 [default = 6148914691236517201];</code>
+     * <code>optional int64 global_coordinates = 2 [default = 6148914691236517201];</code>
      *
      * <pre>
      * Was required before 2.4.0.
      * For explanation of the default value, see the comment on IrExpression.coordinates.
      * </pre>
      */
-    public Builder clearCoordinates() {
+    public Builder clearGlobalCoordinates() {
       bitField0_ = (bitField0_ & ~0x00000002);
-      coordinates_ = 6148914691236517201L;
+      globalCoordinates_ = 6148914691236517201L;
       
       return this;
     }

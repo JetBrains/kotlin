@@ -112,7 +112,7 @@ public final class IrAnnotation extends
           }
           case 56: {
             bitField0_ |= 0x00000010;
-            coordinates_ = input.readInt64();
+            globalCoordinates_ = input.readInt64();
             break;
           }
         }
@@ -273,19 +273,19 @@ public final class IrAnnotation extends
     return originName_;
   }
 
-  public static final int COORDINATES_FIELD_NUMBER = 7;
-  private long coordinates_;
+  public static final int GLOBAL_COORDINATES_FIELD_NUMBER = 7;
+  private long globalCoordinates_;
   /**
-   * <code>optional int64 coordinates = 7;</code>
+   * <code>optional int64 global_coordinates = 7;</code>
    */
-  public boolean hasCoordinates() {
+  public boolean hasGlobalCoordinates() {
     return ((bitField0_ & 0x00000010) == 0x00000010);
   }
   /**
-   * <code>optional int64 coordinates = 7;</code>
+   * <code>optional int64 global_coordinates = 7;</code>
    */
-  public long getCoordinates() {
-    return coordinates_;
+  public long getGlobalCoordinates() {
+    return globalCoordinates_;
   }
 
   private void initFields() {
@@ -295,7 +295,7 @@ public final class IrAnnotation extends
     argument_ = java.util.Collections.emptyList();
     typeArgument_ = java.util.Collections.emptyList();
     originName_ = 0;
-    coordinates_ = 0L;
+    globalCoordinates_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -353,7 +353,7 @@ public final class IrAnnotation extends
       output.writeInt32NoTag(typeArgument_.get(i));
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeInt64(7, coordinates_);
+      output.writeInt64(7, globalCoordinates_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -400,7 +400,7 @@ public final class IrAnnotation extends
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(7, coordinates_);
+        .computeInt64Size(7, globalCoordinates_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -508,7 +508,7 @@ public final class IrAnnotation extends
       bitField0_ = (bitField0_ & ~0x00000010);
       originName_ = 0;
       bitField0_ = (bitField0_ & ~0x00000020);
-      coordinates_ = 0L;
+      globalCoordinates_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000040);
       return this;
     }
@@ -562,7 +562,7 @@ public final class IrAnnotation extends
       if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
         to_bitField0_ |= 0x00000010;
       }
-      result.coordinates_ = coordinates_;
+      result.globalCoordinates_ = globalCoordinates_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -601,8 +601,8 @@ public final class IrAnnotation extends
       if (other.hasOriginName()) {
         setOriginName(other.getOriginName());
       }
-      if (other.hasCoordinates()) {
-        setCoordinates(other.getCoordinates());
+      if (other.hasGlobalCoordinates()) {
+        setGlobalCoordinates(other.getGlobalCoordinates());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -999,34 +999,34 @@ public final class IrAnnotation extends
       return this;
     }
 
-    private long coordinates_ ;
+    private long globalCoordinates_ ;
     /**
-     * <code>optional int64 coordinates = 7;</code>
+     * <code>optional int64 global_coordinates = 7;</code>
      */
-    public boolean hasCoordinates() {
+    public boolean hasGlobalCoordinates() {
       return ((bitField0_ & 0x00000040) == 0x00000040);
     }
     /**
-     * <code>optional int64 coordinates = 7;</code>
+     * <code>optional int64 global_coordinates = 7;</code>
      */
-    public long getCoordinates() {
-      return coordinates_;
+    public long getGlobalCoordinates() {
+      return globalCoordinates_;
     }
     /**
-     * <code>optional int64 coordinates = 7;</code>
+     * <code>optional int64 global_coordinates = 7;</code>
      */
-    public Builder setCoordinates(long value) {
+    public Builder setGlobalCoordinates(long value) {
       bitField0_ |= 0x00000040;
-      coordinates_ = value;
+      globalCoordinates_ = value;
       
       return this;
     }
     /**
-     * <code>optional int64 coordinates = 7;</code>
+     * <code>optional int64 global_coordinates = 7;</code>
      */
-    public Builder clearCoordinates() {
+    public Builder clearGlobalCoordinates() {
       bitField0_ = (bitField0_ & ~0x00000040);
-      coordinates_ = 0L;
+      globalCoordinates_ = 0L;
       
       return this;
     }

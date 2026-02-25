@@ -674,7 +674,7 @@ open class IrFileSerializer(
                 memberAccessPre240 = serializeMemberAccessCommonPre2_4_0(annotation)
             }
             serializeIrStatementOrigin(annotation.origin, ::setOriginName)
-            coordinates = serializeCoordinates(annotation.startOffset, annotation.endOffset)
+            globalCoordinates = serializeCoordinates(annotation.startOffset, annotation.endOffset)
         }.build()
 
     private fun serializeFunctionExpression(functionExpression: IrFunctionExpression): ProtoFunctionExpression =
@@ -883,7 +883,7 @@ open class IrFileSerializer(
         val coordinates = serializeCoordinates(element.startOffset, element.endOffset)
         return ProtoSpreadElement.newBuilder()
             .setExpression(serializeExpression(element.expression, element))
-            .setCoordinates(coordinates)
+            .setGlobalCoordinates(coordinates)
             .build()
     }
 
@@ -1119,7 +1119,7 @@ open class IrFileSerializer(
         val proto = ProtoExpression.newBuilder()
         if (expression != null) {
             val coordinates = serializeCoordinates(expression.startOffset, expression.endOffset)
-            proto.setCoordinates(coordinates)
+            proto.setGlobalCoordinates(coordinates)
             proto.setType(serializeIrType(expression.type))
         }
 
@@ -1226,7 +1226,7 @@ open class IrFileSerializer(
             if (statement is IrExpression || statement is IrDeclaration || statement is IrExpressionBody) 0
             else serializeCoordinates(statement.startOffset, statement.endOffset)
         val proto = ProtoStatement.newBuilder()
-            .setCoordinates(coordinates)
+            .setGlobalCoordinates(coordinates)
 
         when (statement) {
             is IrDeclaration -> {
@@ -1260,7 +1260,7 @@ open class IrFileSerializer(
     private fun serializeIrDeclarationBase(declaration: IrDeclaration, parent: IrElement?, flags: Long?): ProtoDeclarationBase {
         return with(ProtoDeclarationBase.newBuilder()) {
             symbol = serializeIrSymbol((declaration as IrSymbolOwner).symbol, isDeclared = true)
-            coordinates = serializeCoordinates(declaration.startOffset, declaration.endOffset)
+            globalCoordinates = serializeCoordinates(declaration.startOffset, declaration.endOffset)
             addAllAnnotation(serializeAnnotations(declaration.annotations, declaration))
             flags?.let { setFlags(it) }
             originName = serializeIrDeclarationOrigin(declaration.origin)
