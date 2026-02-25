@@ -27,13 +27,8 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         if (expression.reportPackageOrNoCompanion()) return
 
         if (!expression.typeArguments.any { it.isExplicit }) return
-        if (preForbidUselessTypeArgumentsIn25Implementation(expression)) return
 
-        val diagnostic = when {
-            LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled() -> FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS
-            else -> FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS_WARNING
-        }
-        reporter.reportOn(expression.source, diagnostic, "Object")
+        expression.reportTypeArguments()
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -61,19 +56,29 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
     private val FirResolvedQualifier.isTypeAliasToClassWithCompanion: Boolean
         get() = symbol?.fullyExpandedClass()?.resolvedCompanionObjectSymbol != null
 
-    /**
-     * Implementation before [LanguageFeature.ForbidUselessTypeArgumentsIn25] which missed some cases
-     * (see KT-84280, KT-84281) of [FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS].
-     * TODO: KT-84254. Once [LanguageFeature.ForbidUselessTypeArgumentsIn25] becomes obsolete, remove this implementation fully.
-     *
-     * @return true if [FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS] was reported.
-     */
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun preForbidUselessTypeArgumentsIn25Implementation(expression: FirResolvedQualifier): Boolean {
-        if (!expression.resolvedType.isUnit || expression.isTypeAliasToClassWithCompanion) {
-            reporter.reportOn(expression.source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Object")
-            return true
+    private fun FirResolvedQualifier.reportTypeArguments() {
+        /**
+         * Implementation before [LanguageFeature.ForbidUselessTypeArgumentsIn25] which missed some cases
+         * (see KT-84280, KT-84281) of [FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS].
+         * TODO: KT-84254. Once [LanguageFeature.ForbidUselessTypeArgumentsIn25] becomes obsolete, remove this implementation fully.
+         *
+         * @return true if [FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS] was reported.
+         */
+        fun preForbidUselessTypeArgumentsIn25Implementation(): Boolean {
+            if (!resolvedType.isUnit || isTypeAliasToClassWithCompanion) {
+                reporter.reportOn(source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Object")
+                return true
+            }
+            return false
         }
-        return false
+
+        if (preForbidUselessTypeArgumentsIn25Implementation()) return
+
+        val diagnostic = when {
+            LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled() -> FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS
+            else -> FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS_WARNING
+        }
+        reporter.reportOn(source, diagnostic, "Object")
     }
 }
