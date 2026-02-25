@@ -23,8 +23,10 @@ internal const val API_ARGUMENTS_PACKAGE = "$API_PACKAGE.arguments"
 internal const val API_ENUMS_PACKAGE = "$API_ARGUMENTS_PACKAGE.enums"
 internal const val API_TYPES_PACKAGE = "$API_ARGUMENTS_PACKAGE.types"
 
+internal const val JAVA_IO = "java.io"
 internal const val KOTLIN_IO_PATH = "kotlin.io.path"
 internal const val KOTLIN_COLLECTIONS = "kotlin.collections"
+internal const val KOTLIN_TEXT = "kotlin.text"
 
 internal val ANNOTATION_EXPERIMENTAL = ClassName(API_ARGUMENTS_PACKAGE, "ExperimentalCompilerArgument")
 internal val ANNOTATION_USE_FROM_IMPL_RESTRICTED = ClassName("org.jetbrains.kotlin.buildtools.internal", "UseFromImplModuleRestricted")

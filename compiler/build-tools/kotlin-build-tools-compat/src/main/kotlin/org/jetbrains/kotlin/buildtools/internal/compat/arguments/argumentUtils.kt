@@ -50,4 +50,6 @@ internal fun String.toXprofile(): ProfileCompilerCommand {
     return ProfileCompilerCommand(Path(parts[0]), parts[1], Path(parts[2]))
 }
 
-internal fun <T> Array<T>?.toListOrEmpty(): List<T> = this?.toList() ?: emptyList()
+internal fun <T> Array<out T>?.toListOrEmpty(): List<T> = this?.toList() ?: emptyList()
+
+internal fun <T, R> Array<out T>?.mapOrEmpty(transform: (T) -> R): List<R> = this?.map(transform) ?: emptyList()

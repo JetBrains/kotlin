@@ -9,10 +9,7 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
-import org.jetbrains.kotlin.arguments.dsl.types.IntType
-import org.jetbrains.kotlin.arguments.dsl.types.PathType
-import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
-import org.jetbrains.kotlin.arguments.dsl.types.StringListType
+import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
 import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -365,6 +362,21 @@ internal class BtaImplGenerator(
                     MemberName(KOTLIN_COLLECTIONS, "toTypedArray")
                 )
             }
+            argument.valueType.origin is SystemPathType -> {
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M(%T.pathSeparator)",
+                    MemberName(KOTLIN_COLLECTIONS, "joinToString"),
+                    ClassName(JAVA_IO, "File")
+                )
+            }
+            argument.valueType.origin is LiteralPathType -> {
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M { it.%M() }" + maybeGetNullabilitySign(argument) + ".%M() ?: emptyArray()",
+                    MemberName(KOTLIN_COLLECTIONS, "map"),
+                    MemberName(targetPackage, "absolutePathStringOrThrow", true),
+                    MemberName(KOTLIN_COLLECTIONS, "toTypedArray")
+                )
+            }
             else -> add("")
         }
     }.build()
@@ -438,6 +450,22 @@ internal class BtaImplGenerator(
                 add(
                     maybeGetNullabilitySign(argument) + ".%M()",
                     MemberName(targetPackage, "toListOrEmpty", true)
+                )
+            }
+            argument.valueType.origin is SystemPathType -> {
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M(%T.pathSeparator)" + maybeGetNullabilitySign(argument) + ".%M { %M(it) }",
+                    MemberName(KOTLIN_TEXT, "split", true),
+                    ClassName(JAVA_IO, "File"),
+                    MemberName(KOTLIN_COLLECTIONS, "map"),
+                    MemberName(KOTLIN_IO_PATH, "Path")
+                )
+            }
+            argument.valueType.origin is LiteralPathType -> {
+                add(
+                    ".%M { %M(it) }",
+                    MemberName(targetPackage, "mapOrEmpty", true),
+                    MemberName(KOTLIN_IO_PATH, "Path")
                 )
             }
             else -> add("")
