@@ -71,7 +71,7 @@ But the real solution is likely option 2. We only need to make sure that fixing 
 In vestigate these concerns as well as the `compiler/javac-wrapper` directory/subproject. How the resolution is handled there?
 Present the analysis on how difficult and troublesome the option2 will be.
 
-## 2 implementation prompts
+## 2 implementation prompts (CC)
 
 Read @AGENT_INSTRUCTIONS.md and @FIXING_ITERATIONS.md,
 then execute Iteration 1
@@ -94,5 +94,33 @@ Request my approval after analyzing the possible problems and implementing the t
 
 After reanalyzing the approaches to the external types resolution, the instructions for the iteration 2 is significantly changed. read the updated 
 @FIXING_ITERATIONS.md, in particular the "iteration 2" part, and all the linked document, check what has been done so far and update the code according to the Iteration 2.
+
+## 3 implementation prompts (Junie)
+
+### 3.1
+
+Read @AGENT_INSTRUCTIONS.md and @FIXING_ITERATIONS.md, then check the current progress logged to the @ITERATION_RESULTS.md, especially the "iteration 4" part.
+Then check the current status of test and recheck the implementation of the names resolution, to understand, what is preventing it to enable more tests to pass.
+Propose the changes and ask for approval.
+Then implement an isolated test in the compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt file, implement changes and make the test pass.
+After it check the box tests in compiler/java-direct/build/tests-gen to verify if imporvements are achieved.
+Iterate if needed.
+
+A:
+
+I have analyzed the current implementation of name resolution in the java-direct module. The recent Iteration 4 implemented star import resolution via a callback to FIR, but box test results haven't improved (still 11/138 passing).
+I've identified several gaps in the current implementation that are likely blocking many tests:
+  1. Nested Class Resolution: LocalJavaScope only indexes top-level classes. References to nested classes (like Outer.Inner) fail to resolve in the Java Model.
+  2. Missing Context in Members: JavaClassOverAst doesn't consistently pass LocalJavaScope and JavaImports to its methods and fields, causing their types to be incorrectly resolved (or not resolved at all).
+  3. Incomplete Classifier Logic: JavaClassifierTypeOverAst.classifier only handles simple names and doesn't know how to resolve qualified names through nested classes.
+Proposed Changes:
+  1. Enhance LocalJavaScope: Change it to recursively collect all classes (including nested ones) within the file, indexing them by their simple names (for now, to support simple name resolution) or full paths within the file.
+  2. Improve JavaClassifierTypeOverAst:
+   - Update classifier to handle names with dots (e.g., Outer.Inner) by resolving the first part in the local scope and then traversing inner classes.
+   - Update classifierQualifiedName to be consistent with classifier.
+  3. Fix JavaClassOverAst: Ensure localScope and imports are passed to all createJavaType calls in supertypes, methods, and fields.
+  4. Fix JavaMemberOverAst Subclasses: Ensure they use the containingClass's localScope when creating types for fields and methods.
+Does this approach sound correct to you? If so, I will proceed with implementing a reproduction test and then the fixes.
+
 
 

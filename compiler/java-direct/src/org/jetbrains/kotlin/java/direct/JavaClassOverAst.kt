@@ -17,8 +17,8 @@ class JavaClassOverAst(
     node: JavaSyntaxNode,
     source: CharSequence,
     override val outerClass: JavaClass? = null,
-    private val localScope: LocalJavaScope? = null,
-    private val imports: JavaImports = JavaImports.EMPTY
+    internal val localScope: LocalJavaScope? = null,
+    internal val imports: JavaImports = JavaImports.EMPTY
 ) : JavaElementOverAst(node, source), JavaClass {
 
     override val name: Name
@@ -102,10 +102,9 @@ class JavaClassOverAst(
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
     override val methods: Collection<JavaMethod>
-        get() = node.getChildrenByType("METHOD").filter { it.findChildByType("TYPE") != null }.map { JavaMethodOverAst(it, source, this, imports) }
-
+        get() = node.getChildrenByType("METHOD").filter { it.findChildByType("TYPE") != null }.map { JavaMethodOverAst(it, source, this) }
     override val fields: Collection<JavaField>
-        get() = node.getChildrenByType("FIELD").map { JavaFieldOverAst(it, source, this, imports) }
+        get() = node.getChildrenByType("FIELD").map { JavaFieldOverAst(it, source, this) }
 
     override val constructors: Collection<JavaConstructor>
         get() = node.getChildrenByType("METHOD").filter { it.findChildByType("TYPE") == null }.map { JavaConstructorOverAst(it, source, this) }

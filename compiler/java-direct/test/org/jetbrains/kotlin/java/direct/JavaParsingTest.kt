@@ -386,4 +386,30 @@ class JavaParsingTest {
         println("resolved = '$resolved'")
         assert(resolved == "java.lang.Object") { "Expected resolution to 'java.lang.Object', got '$resolved'" }
     }
+
+    @Test
+    fun testLocalTypeResolutionInMembers() {
+        val source = """
+            public class A {
+                public class B {}
+                public B field;
+                public B method() { return null; }
+            }
+        """.trimIndent()
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        val localScope = LocalJavaScope(root, source)
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val javaClass = JavaClassOverAst(classNode, source, null, localScope)
+
+        val field = javaClass.fields.first { it.name.asString() == "field" }
+        val fieldType = field.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(fieldType.classifier != null) { "Field type 'B' should have resolved classifier" }
+        assert(fieldType.classifier?.name?.asString() == "B") { "Field type classifier should be 'B'" }
+
+        val method = javaClass.methods.first { it.name.asString() == "method" }
+        val returnType = method.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(returnType.classifier != null) { "Method return type 'B' should have resolved classifier" }
+        assert(returnType.classifier?.name?.asString() == "B") { "Method return type classifier should be 'B'" }
+    }
 }

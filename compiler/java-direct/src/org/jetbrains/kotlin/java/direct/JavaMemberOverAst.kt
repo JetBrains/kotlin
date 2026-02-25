@@ -46,11 +46,15 @@ abstract class JavaMemberOverAst(
 class JavaFieldOverAst(
     node: JavaSyntaxNode,
     source: CharSequence,
-    containingClass: JavaClass,
-    private val imports: JavaImports = JavaImports.EMPTY
+    containingClass: JavaClass
 ) : JavaMemberOverAst(node, source, containingClass), JavaField {
     override val isEnumEntry: Boolean get() = node.type.toString() == "ENUM_CONSTANT"
-    override val type: JavaType get() = createJavaType(node, source, imports = imports)
+    override val type: JavaType
+        get() = createJavaType(
+            node, source,
+            localScope = (containingClass as? JavaClassOverAst)?.localScope,
+            imports = (containingClass as? JavaClassOverAst)?.imports ?: JavaImports.EMPTY
+        )
     override val initializerValue: Any? get() = null
     override val hasConstantNotNullInitializer: Boolean get() = false
     override val isFromSource: Boolean get() = true
@@ -59,11 +63,15 @@ class JavaFieldOverAst(
 class JavaMethodOverAst(
     node: JavaSyntaxNode,
     source: CharSequence,
-    containingClass: JavaClass,
-    private val imports: JavaImports = JavaImports.EMPTY
+    containingClass: JavaClass
 ) : JavaMemberOverAst(node, source, containingClass), JavaMethod {
     override val valueParameters: List<JavaValueParameter> get() = emptyList()
-    override val returnType: JavaType get() = createJavaType(node, source, imports = imports)
+    override val returnType: JavaType
+        get() = createJavaType(
+            node, source,
+            localScope = (containingClass as? JavaClassOverAst)?.localScope,
+            imports = (containingClass as? JavaClassOverAst)?.imports ?: JavaImports.EMPTY
+        )
     override val annotationParameterDefaultValue: JavaAnnotationArgument? get() = null
     override val hasAnnotationParameterDefaultValue: Boolean get() = false
     override val isNative: Boolean get() = false
