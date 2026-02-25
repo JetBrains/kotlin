@@ -1,0 +1,17 @@
+KT element: KtValueArgument
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] callableReferenceWithArgument.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val lam: R|() -> kotlin/String| = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(lam)
+    }
+
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|() -> kotlin/String|
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        ::R|/lam|
+    }
