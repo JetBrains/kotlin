@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.ConstantArgumentKind
 import org.jetbrains.kotlin.fir.expressions.canBeUsedForConstVal
@@ -54,7 +55,11 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
         val initializer = declaration.initializer
         if (initializer == null) {
-            reporter.reportOn(declaration.source, FirErrors.CONST_VAL_WITHOUT_INITIALIZER)
+            val diagnostic = when {
+                declaration.hasExplicitBackingField -> FirErrors.CONST_VAL_WITH_EBF
+                else -> FirErrors.CONST_VAL_WITHOUT_INITIALIZER
+            }
+            reporter.reportOn(declaration.source, diagnostic)
             return
         }
 
