@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
@@ -25,11 +26,13 @@ import java.util.Objects;
  * <pre>{@code
  * enum class Color {
  *     RED,
- * //  ^_^
+ * //  ^__^
  *     GREEN,
  *     BLUE
  * }
  * }</pre>
+ *
+ * Note that this node contains the trailing separator as well (comma / semicolon).
  */
 public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType {
     public KtEnumEntry(@NotNull ASTNode node) {
@@ -64,6 +67,48 @@ public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType 
     @SuppressWarnings("deprecation") // KT-78356
     public KtInitializerList getInitializerList() {
         return getStubOrPsiChild(KtStubBasedElementTypes.INITIALIZER_LIST);
+    }
+
+    @Nullable
+    private PsiElement getSemicolon() {
+        return this.findLastChildByType(KtTokens.SEMICOLON);
+    }
+
+    @Nullable
+    private PsiElement getComma() {
+        return this.findLastChildByType(KtTokens.COMMA);
+    }
+
+    @Override
+    public void delete() {
+        if (getSemicolon() != null) {
+            PsiElement prevEntry = getPrevSibling();
+
+            while (prevEntry != null && !(prevEntry instanceof KtEnumEntry)) {
+                prevEntry = prevEntry.getPrevSibling();
+            }
+
+            PsiElement semi = new KtPsiFactory(getProject()).createSemicolon();
+            if (prevEntry == null) {
+                PsiElement parent = getParent();
+
+                parent.addAfter(semi, this);
+            }
+            else {
+                PsiElement comma = ((KtEnumEntry) prevEntry).getComma();
+
+                if (comma != null) {
+                    comma.replace(semi);
+                }
+                else {
+                    // if we have a class body like `A B;`
+                    // (the comma in A was deleted by some other code)
+                    prevEntry.addAfter(semi, prevEntry.getLastChild());
+                }
+            }
+        }
+
+        super.delete();
     }
 
     @Override
