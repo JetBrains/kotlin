@@ -98,14 +98,6 @@ fun main(args: Array<String>) {
                 model("debug/localVariables")
             }
 
-            testClass<AbstractFirPsiWithInterpreterDiagnosticsTest> {
-                model("diagnostics/irInterpreter")
-            }
-
-            testClass<AbstractFirLightTreeWithInterpreterDiagnosticsTest> {
-                model("diagnostics/irInterpreter")
-            }
-
             testClass<AbstractFirPsiDiagnosticsTestWithConverter> {
                 model(
                     "diagnostics/testsWithConverter",

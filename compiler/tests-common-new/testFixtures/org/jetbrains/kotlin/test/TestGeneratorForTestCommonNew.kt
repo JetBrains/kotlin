@@ -137,14 +137,6 @@ fun main(args: Array<String>) {
                 model("codegen/asmLike")
             }
 
-            testClass<AbstractJvmIrInterpreterAfterFirPsi2IrTest> {
-                model("ir/interpreter", excludeDirs = listOf("helpers"))
-            }
-
-            testClass<AbstractJvmIrInterpreterAfterPsi2IrTest> {
-                model("ir/interpreter", excludeDirs = listOf("helpers"))
-            }
-
             testClass<AbstractClassicJvmIntegrationDiagnosticTest> {
                 model("diagnostics/jvmIntegration", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
