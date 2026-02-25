@@ -447,6 +447,7 @@ include ":compiler:fir",
         ":compiler:fir:checkers:checkers.wasm",
         ":compiler:fir:checkers:checkers.web.common",
         ":compiler:fir:checkers:checkers-component-generator",
+        ":compiler:fir:diagnostic-renderers",
         ":compiler:fir:entrypoint",
         ":compiler:fir:analysis-tests",
         ":compiler:fir:analysis-tests:legacy-fir-tests"

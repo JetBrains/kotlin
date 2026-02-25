@@ -13,6 +13,7 @@ dependencies {
     api(project(":core:compiler.common"))
     api(project(":core:util.runtime"))
     api(project(":kotlin-stdlib"))
+    implementation(project(":compiler:fir:diagnostic-renderers"))
     implementation(project(":compiler:fir:semantics"))
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:util"))

@@ -40,6 +40,7 @@ dependencies {
     compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":compiler:ir.serialization.js"))
     compileOnly(project(":compiler:backend.jvm.codegen"))
+    compileOnly(project(":compiler:fir:diagnostic-renderers"))
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":native:native.config"))
 

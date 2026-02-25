@@ -10,6 +10,7 @@ dependencies {
     api(project(":kotlin-util-klib"))
     api(project(":kotlin-util-klib-metadata"))
     api(project(":compiler:util"))
+    implementation(project(":compiler:fir:diagnostic-renderers"))
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-frontend-utils"))

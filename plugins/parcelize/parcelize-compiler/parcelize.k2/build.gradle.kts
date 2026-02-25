@@ -14,6 +14,7 @@ dependencies {
     compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:fir:checkers"))
     compileOnly(project(":compiler:fir:checkers:checkers.jvm"))
+    compileOnly(project(":compiler:fir:diagnostic-renderers"))
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:fir:entrypoint"))
