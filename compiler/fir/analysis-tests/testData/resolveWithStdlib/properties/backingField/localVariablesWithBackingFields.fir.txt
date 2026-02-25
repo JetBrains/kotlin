@@ -34,5 +34,5 @@ FILE: localVariablesWithBackingFields.kt
         private final backing field field: R|kotlin/Int| = Int(10)
         public get(): R|kotlin/Number|
     public final fun R|A|.cc(): R|kotlin/Unit| {
-        lval it: <ERROR TYPE REF: Ambiguity: plus, [kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus]> = <Unresolved name: a>#.<Ambiguity: plus, [kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus]>#(Int(2))
+        lval it: <ERROR TYPE REF: Ambiguity: plus, [kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus]> = <Unresolved name: a>#.<Ambiguity: plus, [kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus]>#(Int(2))
     }

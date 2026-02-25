@@ -208,10 +208,14 @@ class ConeOverloadConflictResolver(
             )?.let { return it }
         }
 
-        findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
+        findMaximallySpecificCall(candidates, useOriginalSamTypes = false)?.let { return setOf(it) }
 
         if (discriminationFlags.generics) {
-            findMaximallySpecificCall(candidates, true)?.let { return setOf(it) }
+            filterCandidatesByDiscriminationFlag(
+                candidates,
+                { !createFlatSignature(it).isGeneric },
+                { discriminationFlags.copy(generics = false) },
+            )?.let { return it }
         }
 
         if (discriminationFlags.SAMs) {
@@ -275,7 +279,7 @@ class ConeOverloadConflictResolver(
 
         val filtered = candidates.filterTo(mutableSetOf()) { it.usesSamConversionOrSamConstructor }
         if (filtered.isNotEmpty()) {
-            findMaximallySpecificCall(candidates, discriminateGenerics = false, useOriginalSamTypes = true)?.let { return setOf(it) }
+            findMaximallySpecificCall(candidates, useOriginalSamTypes = true)?.let { return setOf(it) }
         }
 
         return candidates
@@ -303,7 +307,6 @@ class ConeOverloadConflictResolver(
 
     private fun findMaximallySpecificCall(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean,
         useOriginalSamTypes: Boolean = false
     ): Candidate? {
         if (candidates.size <= 1) return candidates.singleOrNull()
@@ -314,7 +317,7 @@ class ConeOverloadConflictResolver(
 
         val bestCandidatesByParameterTypes = candidateSignatures.filter { signature ->
             candidateSignatures.all { other ->
-                signature === other || isEquallyOrMoreSpecificCallWithArgumentMapping(signature, other, discriminateGenerics, useOriginalSamTypes)
+                signature === other || isEquallyOrMoreSpecificCallWithArgumentMapping(signature, other, useOriginalSamTypes)
             }
         }
 
@@ -327,10 +330,9 @@ class ConeOverloadConflictResolver(
     private fun isEquallyOrMoreSpecificCallWithArgumentMapping(
         call1: CandidateSignature,
         call2: CandidateSignature,
-        discriminateGenerics: Boolean,
         useOriginalSamTypes: Boolean = false
     ): Boolean {
-        return compareCallsByUsedArguments(call1, call2, discriminateGenerics, useOriginalSamTypes)
+        return compareCallsByUsedArguments(call1, call2, useOriginalSamTypes)
     }
 
     private fun List<CandidateSignature>.exactMaxWith(): CandidateSignature? {
@@ -373,24 +375,8 @@ class ConeOverloadConflictResolver(
     private fun compareCallsByUsedArguments(
         call1: FlatSignature<Candidate>,
         call2: FlatSignature<Candidate>,
-        discriminateGenerics: Boolean,
         useOriginalSamTypes: Boolean
     ): Boolean {
-        if (discriminateGenerics) {
-            val isGeneric1 = call1.isGeneric
-            val isGeneric2 = call2.isGeneric
-
-            when {
-                // non-generic wins over generic
-                !isGeneric1 && isGeneric2 -> return true
-                // generic loses to non-generic and incomparable with another generic,
-                // thus doesn't matter what is `isGeneric2`
-                isGeneric1 -> return false
-                // !isGeneric1 && !isGeneric2 -> continue as usual
-                else -> {}
-            }
-        }
-
         return createEmptyConstraintSystem().also {
             inferenceComponents.session.inferenceLogger?.logStage("Some compareCallsByUsedArguments() call", it.constraintSystemMarker)
         }.isSignatureEquallyOrMoreSpecific(
