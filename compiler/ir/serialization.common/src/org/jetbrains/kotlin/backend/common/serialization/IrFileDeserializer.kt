@@ -42,7 +42,7 @@ class IrFileDeserializer(
     private var protoAnnotationsPendingDeserialization: List<ProtoAnnotation>? = fileProto.annotationList
 
     fun deserializeDeclaration(idSig: IdSignature): IrDeclaration {
-        return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(idSig)).also {
+        return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(idSig), file.startOffset).also {
             file.declarations += it
         }
     }
@@ -62,7 +62,7 @@ class IrFileDeserializer(
      */
     fun deserializeFileImplicitDataIfFirstUse(): Boolean {
         protoAnnotationsPendingDeserialization?.let {
-            file.annotations += declarationDeserializer.deserializeAnnotations(it)
+            file.annotations += declarationDeserializer.deserializeAnnotations(it, file.startOffset)
             protoAnnotationsPendingDeserialization = null
 
             return true

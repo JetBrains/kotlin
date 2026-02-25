@@ -157,7 +157,6 @@ class NonLinkingIrInlineFunctionDeserializer(
             deserializedFunctionCache.getOrPut(signature) {
                 val idSigIndex = reversedSignatureIndex[signature] ?: return@getOrPut null
                 val functionProto = fileReader.declaration(idSigIndex)
-                val function = declarationDeserializer.deserializeDeclaration(functionProto) as IrSimpleFunction
 
                 val fileEntry = fileEntryDeserializer.fileEntry(fileReader, functionProto.irFunction.preparedInlineFunctionFileEntryId)
                 val file = IrFileImpl(
@@ -166,6 +165,7 @@ class NonLinkingIrInlineFunctionDeserializer(
                     fileEntry = fileEntry,
                 )
 
+                val function = declarationDeserializer.deserializeDeclaration(functionProto, file.startOffset) as IrSimpleFunction
                 function.parent = file
                 file.declarations += function
 

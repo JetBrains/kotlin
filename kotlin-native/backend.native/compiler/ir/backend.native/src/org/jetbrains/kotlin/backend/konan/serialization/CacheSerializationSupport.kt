@@ -125,11 +125,11 @@ internal class InlineFunctionDeserializer(
 
         with(declarationDeserializer) {
             function.withDeserializeBodies {
-                body = (deserializeStatementBody(inlineFunctionReference.body) as IrBody)
+                body = (deserializeStatementBody(inlineFunctionReference.body, inlineFunctionReference.startOffset) as IrBody)
                 parameters.filter { it.kind == IrParameterKind.Regular }.forEachIndexed { index, parameter ->
                     val defaultValueIndex = inlineFunctionReference.defaultValues[index]
                     if (defaultValueIndex != INVALID_INDEX)
-                        parameter.defaultValue = deserializeExpressionBody(defaultValueIndex)
+                        parameter.defaultValue = deserializeExpressionBody(defaultValueIndex, parameter.startOffset)
                 }
             }
         }
