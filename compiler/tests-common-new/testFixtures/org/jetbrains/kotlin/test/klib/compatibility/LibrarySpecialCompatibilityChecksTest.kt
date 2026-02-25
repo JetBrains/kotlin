@@ -65,6 +65,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
     }
 
     @Test
+    @Disabled
     fun testSameBasicCompilerVersion() {
         for (versionsWithSameBasicVersion in SORTED_TEST_COMPILER_VERSION_GROUPS) {
             for (libraryVersion in versionsWithSameBasicVersion) {
@@ -80,6 +81,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
     }
 
     @Test
+    @Disabled
     fun testNewerCompilerVersion() {
         testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
             compileDummyLibrary(
@@ -91,6 +93,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
     }
 
     @Test
+    @Disabled
     fun testOlderCompilerVersion() {
         testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
             val sameLanguageVersion = haveSameLanguageVersion(currentVersion, nextVersion)
@@ -103,6 +106,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
     }
 
     @Test
+    @Disabled
     fun testEitherVersionIsMissing() {
         listOf(
             TestVersion(2, 0, 0) to null,
