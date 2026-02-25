@@ -16,10 +16,10 @@ fun myUnitBar(u: MyUnit) { }
 
 fun test() {
     Unit<Any>
-    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>MyUnit<!><Any>
+    MyUnit<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Any><!>
 
     Unit<<!UNRESOLVED_REFERENCE!>Unresolved<!>>
-    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>MyUnit<!><<!UNRESOLVED_REFERENCE!>Unresolved<!>>
+    MyUnit<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><<!UNRESOLVED_REFERENCE!>Unresolved<!>><!>
 
     Unit<Int>.<!UNRESOLVED_REFERENCE!>foo<!>()
     MyUnit<Int>.<!UNRESOLVED_REFERENCE!>foo<!>()
@@ -28,10 +28,10 @@ fun test() {
     MyUnit<String>.<!UNRESOLVED_REFERENCE!>myUnitFoo<!>()
 
     bar(Unit<Int>)
-    bar(<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>MyUnit<!><Int>)
+    bar(MyUnit<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Int><!>)
 
     unitBar(Unit<Int>)
-    myUnitBar(<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>MyUnit<!><Int>)
+    myUnitBar(MyUnit<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Int><!>)
 
     Unit<Int>::<!UNRESOLVED_REFERENCE!>foo<!>
     MyUnit<Int>::<!UNRESOLVED_REFERENCE!>foo<!>
@@ -43,7 +43,7 @@ fun test() {
     MyUnit<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>::class
 
     Unit<Int, Char, String>
-    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>MyUnit<!><Int, Char, String>
+    MyUnit<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Int, Char, String><!>
 }
 
 fun testTypeAlias() {

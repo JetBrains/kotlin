@@ -65,8 +65,8 @@ fun rain() {
     <!EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>a.maybeB?.c<!>::class
     a.maybeB?.c::<!UNSAFE_CALLABLE_REFERENCE!>foo<!>
 
-    a.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>b<!><Int>.c::class
-    a.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>b<!><Int>.c::foo
+    a.b<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Int><!>.c::class
+    a.b<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Int><!>.c::foo
 
     <!EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>a.b.maybeC<!>::class
     a.b.maybeC::<!UNSAFE_CALLABLE_REFERENCE!>foo<!>
