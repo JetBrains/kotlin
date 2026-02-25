@@ -527,126 +527,491 @@ CONFIRMATION REQUIRED: Confirm understanding of callback approach before startin
 
 ---
 
-## Iteration 5: Package and Multi-File Resolution
+## Iteration 5: Basic Type Arguments Parsing
 
-**Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules and `IMPLEMENTATION_PLAN.md` section 3.1.
-
-### Prompt
-
----
-TASK: Handle Java files in different packages referencing each other
-
-CONTEXT:
-Tests often have multiple Java files in different packages. These need to find 
-each other via qualified names or imports.
-
-IMPLEMENTATION STEPS:
-
-1. CREATE TEST CASE:
-   ```kotlin
-   @Test
-   fun testMultiPackage() {
-       // Simulate two files:
-       // com/example/Base.java: public class Base {}
-       // test/Derived.java: import com.example.Base; class Derived extends Base {}
-       
-       // This requires proper indexing and package-based lookup
-   }
-   ```
-
-2. VERIFY INDEXING:
-   - Check JavaClassFinderOverAstImpl.buildIndex()
-   - Ensure all packages are indexed
-   - Verify package names extracted correctly
-
-3. VERIFY PACKAGE LOOKUP:
-   - Check JavaPackageOverAst implementation
-   - Ensure findClass works across packages
-   - Handle package hierarchies correctly
-
-4. TEST WITH BOX TESTS:
-   - Find box tests with multiple packages
-   - Run and verify they pass
-   - Fix any remaining issues
-
-DELIVERABLE:
-- Fixed package handling (if needed)
-- Multi-package test cases
-- Box test improvement report
-
-CONFIRMATION REQUIRED: Check if package handling already works, or if fixes needed.
-
----
-
-## Iteration 6: Generic Types and Type Parameters
-
-**Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules and `IMPLEMENTATION_PLAN.md` section 3.3.
+**Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md` section 3.3.
 
 ### Prompt
 
 ---
-TASK: Implement proper handling of Java generic types
+TASK: Implement basic type argument parsing for parameterized types
 
 CONTEXT:
-Many box tests use generics: `List<String>`, `Map<K, V>`, type parameters, wildcards.
-These need proper representation and resolution.
+**Current Status: 30/138 (21.7%) tests passing**
+
+Recent improvements:
+- ✅ Parameters parsing (+18 tests)
+- ✅ Java-to-Kotlin mapping
+- ✅ Raw type name stripping (foundation laid)
+
+**Key Finding**: `typeArguments` currently returns empty list, blocking many generic-using tests.
+
+**Incremental Approach**: Start with **simple type arguments only** (no wildcards, no bounds yet).
+
+CRITICAL UNDERSTANDING:
+
+Many Java interop tests use generics:
+```java
+List<String> list;              // Simple type argument
+Map<String, Integer> map;       // Multiple type arguments
+ArrayList<Object> objects;      // Type argument with java.lang type
+```
+
+Currently these parse but `JavaClassifierType.typeArguments` returns empty, causing type mismatches in FIR.
 
 IMPLEMENTATION STEPS:
 
-1. REVIEW EXISTING CODE:
-   - Check JavaTypeParameterOverAst
-   - Check JavaClassifierTypeOverAst
-   - Understand current limitations
+### Phase 1: Review Current State
 
-2. CREATE TEST CASES:
+1. CHECK RAW TYPE STRIPPING:
+   - Verify `rawTypeName` helper exists in `JavaTypeOverAst.kt`
+   - Confirm it strips `<...>` and `[]` suffixes
+   - This was added in "Iteration 4 update: Raw Type Name Stripping"
+
+2. EXAMINE AST STRUCTURE:
+   - Find how type arguments appear in AST (likely under `TYPE_ARGUMENT_LIST`)
+   - Look at existing javac-wrapper or PSI implementations for reference
+   - Understand `JAVA_CODE_REFERENCE` node structure with type arguments
+
+### Phase 2: Implement Simple Type Arguments
+
+3. CREATE TEST CASES:
    ```kotlin
    @Test
-   fun testTypeParameters() {
-       val source = """
-           class Generic<T> {
-               public T value;
-           }
-       """.trimIndent()
-       // Verify type parameter extraction
-   }
-   
-   @Test
-   fun testParameterizedTypes() {
+   fun testSimpleTypeArguments() {
        val source = """
            import java.util.List;
            class MyClass {
                public List<String> items;
+               public List<Object> objects;
            }
        """.trimIndent()
-       // Verify type arguments
+       
+       // Parse class, get field types
+       val items = javaClass.fields.find { it.name.asString() == "items" }
+       val itemsType = items.type as JavaClassifierType
+       
+       // Verify type arguments parsed
+       assertEquals(1, itemsType.typeArguments.size)
+       val arg = itemsType.typeArguments[0]
+       assertFalse(arg.isWildcard)  // Not a wildcard
+       // Verify it's String type
+   }
+   
+   @Test
+   fun testMultipleTypeArguments() {
+       val source = """
+           import java.util.Map;
+           class MyClass {
+               public Map<String, Integer> map;
+           }
+       """.trimIndent()
+       
+       // Verify 2 type arguments parsed
+       val mapType = ... as JavaClassifierType
+       assertEquals(2, mapType.typeArguments.size)
    }
    ```
 
-3. IMPLEMENT TYPE PARAMETER RESOLUTION:
-   - Type parameters should be checked first in resolution
-   - Use MutableJavaTypeParameterStack (see IMPLEMENTATION_PLAN.md section 3.3)
-   - Handle bounds: `<T extends Comparable<T>>`
+4. MODIFY JavaClassifierTypeOverAst:
+   - Add `TYPE_ARGUMENT_LIST` parsing
+   - For each `TYPE_ARGUMENT`:
+     - Extract `JAVA_CODE_REFERENCE` (the type)
+     - Create `JavaType` recursively (reuse `createJavaType()`)
+     - Wrap in `JavaTypeArgument` (check existing implementations)
+   - Handle empty case: `List` (raw type) → empty typeArguments
+   - Handle present case: `List<String>` → 1 type argument
 
-4. IMPLEMENT PARAMETERIZED TYPES:
-   - Extract type arguments from AST
-   - Recursively resolve each argument
-   - Handle wildcards: `?`, `? extends T`, `? super T`
+5. IMPLEMENT JavaTypeArgument:
+   - Check if `JavaTypeArgument` interface exists
+   - Likely needs: `type: JavaType` property
+   - For now: assume NOT wildcard (simple case)
+   - Reference PSI or javac-wrapper implementation
 
-5. TEST AND VERIFY:
-   - Unit tests pass
-   - Box tests with generics start passing
+### Phase 3: Integration
+
+6. UPDATE RELATED CODE:
+   - Ensure `createJavaType()` can handle recursive calls
+   - Pass `localScope`, `imports` to nested type arguments
+   - Verify no infinite recursion (type parameters referring to themselves)
+
+7. HANDLE COMMON PATTERNS:
+   - `List<String>`: String should resolve via java.lang
+   - `List<Object>`: Object should resolve via java.lang
+   - `ArrayList<String>`: ArrayList should resolve via imports
+   - `Map<String, Integer>`: Both arguments should resolve
+
+### Phase 4: Test and Validate
+
+8. RUN UNIT TESTS:
+   - Verify type arguments parsed correctly
+   - Check count, type resolution
+
+9. RUN BOX TESTS:
+   ```bash
+   ./gradlew :compiler:tests-for-compiler-generator:test \
+     --tests "org.jetbrains.kotlin.test.runners.codegen.BlackBoxCodegenForJavaDirectSuppressionTestGenerated" \
+     -q
+   ```
+
+10. ANALYZE RESULTS:
+   - Expected: 10-20 additional tests pass (tests using simple generics)
+   - Target: 40-50/138 (29-36%) pass rate
+   - Categorize remaining failures
+
+11. UPDATE ITERATION_RESULTS.md:
+   - Document test improvement
+   - List patterns that now work
+   - Identify next blockers
 
 DELIVERABLE:
-- Enhanced generic type handling
-- Type parameter resolution
-- Test cases
-- Box test improvement report
+- `JavaClassifierTypeOverAst.typeArguments` returns parsed list
+- Unit tests for simple type arguments
+- Box test improvement (target: +10-20 tests)
+- Analysis of remaining failures
 
-CONFIRMATION REQUIRED: Review current generic handling before making changes.
+SCOPE LIMITATIONS (For This Iteration):
+- ❌ **No wildcards yet**: `? extends Foo`, `? super Bar` - defer to Iteration 6
+- ❌ **No complex bounds**: `<T extends Comparable<T>>` - defer to Iteration 7
+- ❌ **No variance annotations**: @Nullable, @NotNull on type args - defer
+- ✅ **Yes simple types**: `List<String>`, `Map<String, Integer>`
+- ✅ **Yes nested**: `List<List<String>>` (recursive createJavaType)
+- ✅ **Yes raw detection**: `List` vs `List<String>`
+
+VALIDATION CHECKLIST:
+- [ ] TYPE_ARGUMENT_LIST node found in AST
+- [ ] Type arguments extracted and counted correctly
+- [ ] Each type argument creates JavaType recursively
+- [ ] Imports/localScope passed to nested types
+- [ ] Raw types (no <>) return empty typeArguments
+- [ ] Parameterized types return non-empty typeArguments
+- [ ] Unit tests verify List<String> parses 1 argument
+- [ ] Unit tests verify Map<K,V> parses 2 arguments
+- [ ] Box tests improve by 10-20 tests
+
+DEBUGGING TIPS:
+- If no TYPE_ARGUMENT_LIST: Check AST structure, may be named differently
+- If infinite recursion: Add depth limit or visited set
+- If resolution fails: Ensure imports propagated to nested types
+- If tests don't improve: Check FIR uses typeArguments (may need FIR changes)
+
+CONFIRMATION REQUIRED: Confirm understanding before starting. Check if TYPE_ARGUMENT_LIST exists in AST.
 
 ---
 
-## Iteration 7: Annotation Support
+## Iteration 6: Wildcards and Upper Bounds
+
+**Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md` section 3.3.
+
+### Prompt
+
+---
+TASK: Implement wildcard type arguments and simple upper bounds
+
+CONTEXT:
+**Expected Status After Iteration 5: ~40-50/138 (29-36%) tests passing**
+
+After simple type arguments work, many tests will need:
+- Wildcards: `List<?>`, `List<? extends Number>`
+- Upper bounds: `<T extends Comparable<T>>`
+
+**Incremental Approach**: Handle wildcards and upper bounds, defer lower bounds (`? super`) to later.
+
+IMPLEMENTATION STEPS:
+
+### Phase 1: Wildcard Support
+
+1. IDENTIFY WILDCARD IN AST:
+   - Look for `QUESTION` or `WILDCARD` node in TYPE_ARGUMENT
+   - Check for `EXTENDS_KEYWORD` following wildcard
+   - Example AST: `List<? extends Number>`
+
+2. CREATE TEST CASES:
+   ```kotlin
+   @Test
+   fun testWildcards() {
+       val source = """
+           import java.util.List;
+           class MyClass {
+               public List<?> wildcardList;
+               public List<? extends Number> boundedList;
+           }
+       """.trimIndent()
+       
+       // Verify wildcard detected
+       // Verify bound extracted
+   }
+   ```
+
+3. IMPLEMENT WILDCARD PARSING:
+   - Update type argument parsing to detect wildcard marker
+   - Extract bound type if `extends` present
+   - Create appropriate `JavaWildcardType` representation
+   - Reference javac-wrapper/PSI for correct structure
+
+### Phase 2: Type Parameter Bounds
+
+4. PARSE TYPE PARAMETER BOUNDS:
+   - In `JavaTypeParameterOverAst`, parse `EXTENDS_BOUND_LIST`
+   - Extract bound types (usually one, can be multiple for interfaces)
+   - Store as `upperBounds` collection
+
+5. TEST TYPE PARAMETERS:
+   ```kotlin
+   @Test
+   fun testTypeParameterBounds() {
+       val source = """
+           class Generic<T extends Number> {
+               public T value;
+           }
+       """.trimIndent()
+       
+       // Verify type parameter has bound
+       val typeParam = javaClass.typeParameters[0]
+       assertEquals(1, typeParam.upperBounds.size)
+   }
+   ```
+
+### Phase 3: Validate and Test
+
+6. RUN TESTS:
+   - Unit tests for wildcards
+   - Unit tests for bounded type parameters
+   - Box tests (expect +5-15 more tests)
+
+7. TARGET: 50-65/138 (36-47%) pass rate
+
+DELIVERABLE:
+- Wildcard parsing
+- Type parameter bounds
+- Box test improvement report
+
+CONFIRMATION REQUIRED: Complete Iteration 5 first, then assess if this is the right next step.
+
+---
+
+## Iteration 7: Array Types
+
+**Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md`.
+
+### Prompt
+
+---
+TASK: Implement proper array type support
+
+CONTEXT:
+**Expected Status After Iteration 6: ~40-50/138 (29-36%) tests passing**
+
+Java arrays are common in test code and API boundaries. Proper array type handling may unlock additional tests.
+
+IMPLEMENTATION STEPS:
+
+1. VERIFY CURRENT STATE:
+   - Check if `isArray()` is implemented in JavaTypeOverAst
+   - Verify component type extraction works
+   - Test primitive arrays vs reference arrays
+
+2. IMPLEMENT ARRAY TYPE PARSING:
+   - Parse array dimensions (`String[]`, `int[][]`)
+   - Return correct component types
+   - Handle multi-dimensional arrays
+
+3. FIR INTEGRATION:
+   - Ensure FIR creates correct array types
+   - Verify kotlin.Array vs primitive arrays mapping
+   - Test array type variance
+
+4. CREATE TESTS:
+   ```kotlin
+   @Test
+   fun testArrayTypes() {
+       val source = """
+           class ArrayTest {
+               public String[] names;
+               public int[][] matrix;
+           }
+       """.trimIndent()
+       // Verify array type parsing
+   }
+   ```
+
+5. RUN BOX TESTS:
+   - Expect +5-10 tests with array usage
+
+6. TARGET: 45-60/138 (33-43%) pass rate
+
+DELIVERABLE:
+- Array type support
+- Multi-dimensional arrays
+- Test improvements
+
+CONFIRMATION REQUIRED: Assess after Iteration 6 if arrays are blocking tests.
+
+---
+
+## Iteration 8: Lower Bounds and Complex Generics
+
+**Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md`.
+
+### Prompt
+
+---
+TASK: Implement lower bounds (`super`) and complex generic patterns
+
+CONTEXT:
+**Expected Status After Iteration 7: ~45-60/138 (33-43%) tests passing**
+
+After implementing wildcards, upper bounds, and arrays, tackle remaining generic complexity.
+
+IMPLEMENTATION STEPS:
+
+1. IMPLEMENT LOWER BOUNDS:
+   - Parse `? super T` syntax
+   - Create appropriate type variance in FIR
+   - Test with consumer patterns like `List<? super Integer>`
+
+2. HANDLE COMPLEX NESTED GENERICS:
+   - `Map<String, List<Integer>>`
+   - `Function<List<String>, Map<Integer, String>>`
+   - Recursive generic bounds
+
+3. TEST VARIANCE COMBINATIONS:
+   - `List<? extends List<? super Number>>`
+   - Mixed variance in multi-parameter types
+
+4. CREATE COMPREHENSIVE TESTS:
+   ```kotlin
+   @Test
+   fun testLowerBounds() {
+       val source = """
+           import java.util.*;
+           class Consumer {
+               void accept(List<? super Integer> list) {}
+           }
+       """.trimIndent()
+       // Verify lower bound parsing
+   }
+   ```
+
+5. RUN BOX TESTS:
+   - Expect +5-10 additional tests
+
+6. TARGET: 50-65/138 (36-47%) pass rate
+
+SCOPE LIMITATIONS:
+- Focus on type representation, not full variance checking
+- Complex recursive bounds may have limitations
+
+DELIVERABLE:
+- Lower bound support
+- Complex generics handling
+- Test improvements
+
+CONFIRMATION REQUIRED: Assess after Iteration 7 completion.
+
+---
+
+## Iteration 9: Annotations and Nullability
+
+**Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md` section 3.5.
+
+### Prompt
+
+---
+TASK: Improve annotation support, especially nullability annotations
+
+CONTEXT:
+**Expected Status After Iteration 8: ~50-65/138 (36-47%) tests passing**
+
+Nullability annotations (`@Nullable`, `@NotNull`) affect type checking. Better annotation parsing may unlock more tests.
+
+IMPLEMENTATION STEPS:
+
+1. REVIEW CURRENT ANNOTATIONS:
+   - Check what `JavaAnnotationOwner.annotations` returns
+   - Verify annotation arguments parsed
+
+2. FOCUS ON NULLABILITY:
+   - Parse `@Nullable`, `@NotNull` annotations
+   - Attach to appropriate declarations
+   - FIR uses these for null-safety checks
+
+3. CREATE TESTS:
+   ```kotlin
+   @Test
+   fun testNullabilityAnnotations() {
+       val source = """
+           import org.jetbrains.annotations.NotNull;
+           class MyClass {
+               public @NotNull String name;
+           }
+       """.trimIndent()
+       
+       // Verify annotation present on field
+   }
+   ```
+
+4. RUN BOX TESTS:
+   - Expect +5-10 tests with nullability checks
+
+5. TARGET: 60-75/138 (43-54%) pass rate
+
+DELIVERABLE:
+- Enhanced annotation support
+- Nullability annotations working
+- Box test improvements
+
+CONFIRMATION REQUIRED: Assess after Iteration 6 if this is next priority.
+
+---
+
+## Iteration 10: Inner Classes and Nested Types
+
+**Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md`.
+
+### Prompt
+
+---
+TASK: Implement proper inner class and nested type support
+
+CONTEXT:
+Some tests use inner classes, nested classes, or reference types as `Outer.Inner`.
+
+IMPLEMENTATION STEPS:
+
+1. VERIFY CURRENT STATE:
+   - `findInnerClass()` exists
+   - Check if nested class references work
+
+2. TEST PATTERNS:
+   ```java
+   class Outer {
+       class Inner { }
+       static class Nested { }
+   }
+   
+   class Usage extends Outer.Inner { }
+   ```
+
+3. FIX ISSUES:
+   - Qualified name resolution for nested classes
+   - Proper inner vs static nested distinction
+   - Outer class references
+
+4. RUN BOX TESTS:
+   - Expect +5-10 tests
+
+5. TARGET: 70-85/138 (51-62%) pass rate
+
+DELIVERABLE:
+- Inner class support
+- Test improvements
+
+CONFIRMATION REQUIRED: Assess priority after earlier iterations.
+
+---
+
+## Iteration 11: Annotation Support
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules and `IMPLEMENTATION_PLAN.md` section 3.5.
 
@@ -704,7 +1069,7 @@ CONFIRMATION REQUIRED: Verify current state of annotation support first.
 
 ---
 
-## Iteration 8: Error Handling and Diagnostics
+## Iteration 12: Error Handling and Diagnostics
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules.
 
@@ -755,7 +1120,7 @@ CONFIRMATION REQUIRED: Discuss error handling strategy.
 
 ---
 
-## Iteration 9: Performance and Caching
+## Iteration 13: Performance and Caching
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` for common pitfalls about laziness.
 
@@ -802,7 +1167,7 @@ CONFIRMATION REQUIRED: Profile first to find actual bottlenecks.
 
 ---
 
-## Iteration 10: Final Validation and Documentation
+## Iteration 14: Final Validation and Documentation
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` for success metrics.
 
