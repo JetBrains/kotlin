@@ -263,7 +263,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_FRIEND_PATHS: JvmCompilerArgument<Array<String>?> =
+    public val X_FRIEND_PATHS: JvmCompilerArgument<List<Path>?> =
         JvmCompilerArgument("X_FRIEND_PATHS", KotlinReleaseVersion(1, 2, 70))
 
     /**
@@ -336,7 +336,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_JAVA_SOURCE_ROOTS: JvmCompilerArgument<Array<String>?> =
+    public val X_JAVA_SOURCE_ROOTS: JvmCompilerArgument<List<Path>?> =
         JvmCompilerArgument("X_JAVA_SOURCE_ROOTS", KotlinReleaseVersion(1, 3, 40))
 
     /**
@@ -423,7 +423,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_KLIB: JvmCompilerArgument<String?> =
+    public val X_KLIB: JvmCompilerArgument<List<Path>?> =
         JvmCompilerArgument("X_KLIB", KotlinReleaseVersion(1, 4, 0))
 
     /**
@@ -463,7 +463,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_MODULE_PATH: JvmCompilerArgument<String?> =
+    public val X_MODULE_PATH: JvmCompilerArgument<List<Path>?> =
         JvmCompilerArgument("X_MODULE_PATH", KotlinReleaseVersion(1, 1, 4))
 
     /**
@@ -804,7 +804,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * List of directories and JAR/ZIP archives to search for user class files.
      */
     @JvmField
-    public val CLASSPATH: JvmCompilerArgument<String?> =
+    public val CLASSPATH: JvmCompilerArgument<List<Path>?> =
         JvmCompilerArgument("CLASSPATH", KotlinReleaseVersion(1, 0, 0))
 
     /**
