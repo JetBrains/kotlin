@@ -4423,6 +4423,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CONST_VAL_WITH_EBF) { firDiagnostic ->
+        ConstValWithEbfImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER) { firDiagnostic ->
         ConstValWithNonConstInitializerImpl(
             firDiagnostic as KtPsiDiagnostic,
