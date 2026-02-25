@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
-import kotlin.io.path.absolutePathString
 import kotlin.io.path.toPath
 import kotlin.io.path.writeText
 
@@ -69,7 +68,7 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
         jvmOperation.compilerArguments[NO_REFLECT] = true
         jvmOperation.compilerArguments[NO_STDLIB] = true
         jvmOperation.compilerArguments[CLASSPATH] =
-            KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath().absolutePathString()
+            listOf(KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath())
         val icOptions = jvmOperation.createSnapshotBasedIcOptions()
         icOptions[JvmSnapshotBasedIncrementalCompilationOptions.ROOT_PROJECT_DIR] = workingDirectory
         icOptions[JvmSnapshotBasedIncrementalCompilationOptions.FORCE_RECOMPILATION] = true
