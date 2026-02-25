@@ -1084,6 +1084,9 @@ class FirRenderer(
             }
             print("::")
             callableReferenceAccess.calleeReference.accept(this)
+            callableReferenceAccess.errorArgumentList?.let {
+                callArgumentsRenderer?.renderArguments(it.arguments)
+            }
         }
 
         override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {

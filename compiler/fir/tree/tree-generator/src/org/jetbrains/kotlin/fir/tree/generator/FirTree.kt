@@ -1150,6 +1150,12 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("calleeReference", namedReference, withReplace = true, withTransform = true)
         +field("hasQuestionMarkAtLHS", boolean, withReplace = true)
+        +field("errorArgumentList", argumentList, nullable = true, withReplace = true, withTransform = true) {
+            kDoc = """
+                The erroneous argument list that may be present after the callable reference.
+                This syntax is invalid (`::foo(args)`).
+            """.trimIndent()
+        }
     }
 
     val propertyAccessExpression: Element by element(Expression) {

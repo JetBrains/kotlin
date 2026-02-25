@@ -618,12 +618,25 @@ class LightTreeRawFirExpressionBuilder(
         var hasQuestionMarkAtLHS = false
         var firReceiverExpression: FirExpression? = null
         lateinit var namedReference: FirNamedReference
+        var errorArgumentListNode: LighterASTNode? = null
 
         for (child in callableReferenceExpression.getChildrenAsArray()) {
             if (child == null) break
             when (child.tokenType) {
                 COLONCOLON -> isReceiver = false
                 QUEST -> hasQuestionMarkAtLHS = true
+
+                // In invalid code like `::foo(args)`, the argument list is parsed
+                // inside an ERROR_ELEMENT child of the callable reference expression
+                TokenType.ERROR_ELEMENT -> {
+                    for (errorChild in child.getChildrenAsArray()) {
+                        if (errorChild?.tokenType == VALUE_ARGUMENT_LIST) {
+                            errorArgumentListNode = errorChild
+                            break
+                        }
+                    }
+                }
+
                 else -> if (child.isExpression()) {
                     if (isReceiver) {
                         firReceiverExpression = getAsFirExpression(child, "Incorrect receiver expression")
@@ -639,6 +652,12 @@ class LightTreeRawFirExpressionBuilder(
             calleeReference = namedReference
             explicitReceiver = firReceiverExpression
             this.hasQuestionMarkAtLHS = hasQuestionMarkAtLHS
+            errorArgumentListNode?.let {
+                errorArgumentList = buildArgumentList {
+                    source = it.toFirSourceElement()
+                    arguments += convertValueArguments(it)
+                }
+            }
         }
     }
 

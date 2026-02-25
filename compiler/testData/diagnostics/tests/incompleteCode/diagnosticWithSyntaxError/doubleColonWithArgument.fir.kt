@@ -6,11 +6,11 @@ class C {
 }
 
 fun foo() {
-    ::lam<!SYNTAX!>(unresolved)<!>
+    ::lam<!SYNTAX!>(<!UNRESOLVED_REFERENCE!>unresolved<!>)<!>
     ::lam<!SYNTAX!>(::lam)<!>
     ::lam<!SYNTAX!>(fun() {})<!>
 
-    C::lam<!SYNTAX!>(unresolved)<!>
+    C::lam<!SYNTAX!>(<!UNRESOLVED_REFERENCE!>unresolved<!>)<!>
     C::lam<!SYNTAX!>(::lam)<!>
     C::lam<!SYNTAX!>(fun() {})<!>
 

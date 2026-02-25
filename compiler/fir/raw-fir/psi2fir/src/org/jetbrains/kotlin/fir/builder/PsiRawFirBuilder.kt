@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.childrenOfType
 import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -3788,8 +3790,31 @@ open class PsiRawFirBuilder(
                 }
                 explicitReceiver = expression.receiverExpression?.toFirExpression("Incorrect receiver expression")
                 hasQuestionMarkAtLHS = expression.hasQuestionMarks
+
+                expression.errorValueArgumentList?.let {
+                    errorArgumentList = buildArgumentList {
+                        source = it.toFirSourceElement()
+                        for (argument in it.arguments) {
+                            arguments += buildOrLazyExpression(argument.toFirSourceElement()) { argument.toFirExpression() }
+                        }
+                    }
+                }
             }
         }
+
+        /**
+         * Returns the erroneous value argument list that may be present after the callable reference.
+         * This syntax is invalid: `::foo(args)`.
+         */
+        private val KtCallableReferenceExpression.errorValueArgumentList: KtValueArgumentList?
+            get() {
+                for (errorElement in childrenOfType<PsiErrorElement>()) {
+                    errorElement.childrenOfType<KtValueArgumentList>().firstOrNull()?.let {
+                        return it
+                    }
+                }
+                return null
+            }
 
         override fun visitCollectionLiteralExpression(expression: KtCollectionLiteralExpression, data: FirElement?): FirElement {
             val arguments = buildArgumentList {
