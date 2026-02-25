@@ -435,6 +435,7 @@ fun Project.configureTests() {
         val disableVerificationTasks: Provider<Boolean> = providers.gradleProperty("kotlin.build.disable.verification.tasks")
             .map { it.toBoolean() }
             .orElse(false)
+        inputs.property("kotlin.build.disable.verification.tasks", disableVerificationTasks)
         doFirst {
             if (disableVerificationTasks.get()) {
                 logger.warn("Task $path is disabled because `kotlin.build.disable.verification.tasks` is true")
