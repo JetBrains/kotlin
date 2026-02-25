@@ -371,6 +371,62 @@ class WhenExpressionsModeType(
     }
 }
 
+/**
+ * A value which accepts a list of [Path] type.
+ */
+@Serializable
+class PathListType(
+    private val renderer: Renderer,
+    override val defaultValue: ReleaseDependent<List<Path>?> = ReleaseDependent(null),
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+) : KotlinArgumentValueType<List<Path>> {
+
+    override fun stringRepresentation(value: List<Path>?): String? {
+        if (value == null) return null
+
+        return renderer.render(value)
+    }
+
+    /**
+     * Defines how a list of [Path] values should be rendered as a string.
+     */
+    @Serializable
+    sealed interface Renderer {
+        fun render(paths: List<Path>): String
+
+        /**
+         * Renders as a single quoted string using the OS path separator.
+         * Example: `"/usr/bin:/usr/local/bin"` (Unix) or `"C:\bin;D:\bin"` (Windows)
+         */
+        @Serializable
+        data object OsPath : Renderer {
+            override fun render(paths: List<Path>): String {
+                return "\"${paths.joinToString($$"${File.pathSeparator}") { it.absolutePathStringOrThrow() }}\""
+            }
+        }
+
+        /**
+         * Renders as individually quoted paths separated by commas.
+         * Example: `"/usr/bin", "/usr/local/bin"`
+         */
+        @Serializable
+        data object ListFormat : Renderer {
+            override fun render(paths: List<Path>): String {
+                return paths.joinToString { it.absolutePathStringOrThrow().valueOrNullStringLiteral }
+            }
+        }
+    }
+
+    companion object {
+        // @see Renderer.OsPath
+        val OS_PATH: Renderer = Renderer.OsPath
+
+        // @see Renderer.ListFormat
+        val LIST_FORMAT: Renderer = Renderer.ListFormat
+
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 
