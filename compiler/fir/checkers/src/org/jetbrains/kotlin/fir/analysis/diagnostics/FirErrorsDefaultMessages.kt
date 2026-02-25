@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CAND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_FQ_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FOR_OPTIONAL_OPERATOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FOR_OPTIONAL_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FUNCTIONAL_TYPE_KINDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.IGNORABILITY_STATUS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.KOTLIN_TARGETS
@@ -1009,10 +1010,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Unresolved
         map.put(
             UNRESOLVED_REFERENCE,
-            "Unresolved reference ''{0}''{1}.{2}",
+            "Unresolved reference ''{0}''{1}{2}.",
             NULLABLE_STRING,
             FOR_OPTIONAL_OPERATOR,
-            OPTIONAL_SENTENCE,
+            FOR_OPTIONAL_RECEIVER,
         )
         map.put(
             UNRESOLVED_REFERENCE_WRONG_RECEIVER,

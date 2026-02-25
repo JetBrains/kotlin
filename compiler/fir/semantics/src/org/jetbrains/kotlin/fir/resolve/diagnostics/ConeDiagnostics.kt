@@ -92,12 +92,6 @@ class ConeUnresolvedNameError(
             null -> name.toString()
             else -> "$name ($token)"
         }
-
-    val receiverTypeMessage: String
-        get() = when (receiverType) {
-            null -> ""
-            else -> "With receiver of type '${receiverType.renderReadable()}'"
-        }
 }
 
 class ConeFunctionCallExpectedError(
