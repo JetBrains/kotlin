@@ -24,9 +24,22 @@ class JavaClassifierTypeOverAst(
     private val localScope: LocalJavaScope? = null,
     private val imports: JavaImports = JavaImports.EMPTY
 ) : JavaTypeOverAst(node, source), JavaClassifierType {
+    private val rawTypeName: String by lazy {
+        var text = node.text.trim()
+        while (text.endsWith("]")) {
+            val bracketIndex = text.lastIndexOf('[')
+            if (bracketIndex < 0) break
+            text = text.substring(0, bracketIndex).trimEnd()
+        }
+        val genericIndex = text.indexOf('<')
+        if (genericIndex >= 0) {
+            text = text.substring(0, genericIndex).trimEnd()
+        }
+        text
+    }
+
     override val classifier: JavaClassifier? by lazy {
-        val typeName = node.text
-        val parts = typeName.split('.')
+        val parts = rawTypeName.split('.')
         
         var current: JavaClassifier? = localScope?.findClass(Name.identifier(parts[0]))
         
@@ -51,8 +64,7 @@ class JavaClassifierTypeOverAst(
     
     override val classifierQualifiedName: String
         get() {
-            val typeName = node.text
-            val parts = typeName.split('.')
+            val parts = rawTypeName.split('.')
             
             val localBase = localScope?.findClass(Name.identifier(parts[0]))
             if (localBase != null) {
@@ -60,7 +72,7 @@ class JavaClassifierTypeOverAst(
                 for (i in 1 until parts.size) {
                     current = current?.findInnerClass(Name.identifier(parts[i]))
                 }
-                return current?.fqName?.asString() ?: typeName
+                return current?.fqName?.asString() ?: rawTypeName
             }
             
             val qualified = imports.simpleImports[parts[0]]
@@ -72,7 +84,7 @@ class JavaClassifierTypeOverAst(
                 return result
             }
             
-            return typeName
+            return rawTypeName
         }
     
     override val presentableText: String get() = node.text
@@ -81,14 +93,13 @@ class JavaClassifierTypeOverAst(
 
     override val isResolved: Boolean
         get() {
-            val typeName = node.text
             return classifier != null 
-                || typeName.contains('.')
-                || imports.simpleImports.containsKey(typeName)
+                || rawTypeName.contains('.')
+                || imports.simpleImports.containsKey(rawTypeName)
         }
 
     override fun resolve(tryResolve: (String) -> Boolean): String? {
-        val simpleName = node.text
+        val simpleName = rawTypeName
 
         val javaLangFqn = "java.lang.$simpleName"
         if (tryResolve(javaLangFqn)) {

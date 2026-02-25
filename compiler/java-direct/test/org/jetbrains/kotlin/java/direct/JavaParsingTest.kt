@@ -303,6 +303,42 @@ class JavaParsingTest {
     }
 
     @Test
+    fun testTypeNameStripsTypeArguments() {
+        val source = """
+            import java.util.List;
+            class A {
+                List<String> a;
+                java.util.Map<String, Integer> b;
+                Object[] c;
+            }
+        """.trimIndent()
+
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        val imports = extractImports(root, source)
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val javaClass = JavaClassOverAst(classNode, source, null, LocalJavaScope(root, source), imports)
+
+        val fieldA = javaClass.fields.first { it.name.asString() == "a" }
+        val typeA = fieldA.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(typeA.classifierQualifiedName == "java.util.List") {
+            "Expected qualified name java.util.List for List<String>, got ${typeA.classifierQualifiedName}"
+        }
+
+        val fieldB = javaClass.fields.first { it.name.asString() == "b" }
+        val typeB = fieldB.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(typeB.classifierQualifiedName == "java.util.Map") {
+            "Expected qualified name java.util.Map for java.util.Map<String, Integer>, got ${typeB.classifierQualifiedName}"
+        }
+
+        val fieldC = javaClass.fields.first { it.name.asString() == "c" }
+        val typeC = fieldC.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(typeC.classifierQualifiedName == "Object") {
+            "Expected raw name Object for Object[], got ${typeC.classifierQualifiedName}"
+        }
+    }
+
+    @Test
     fun testKnownClassNamesInPackage(@TempDir tempDir: Path) {
         // Create test Java files in different packages
         val comExampleDir = tempDir.resolve("com/example")
