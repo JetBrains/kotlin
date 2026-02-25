@@ -48,10 +48,9 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     @Test
     fun nonIncrementalWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
-        val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
+        assumeTrue(hasCancellationSupport(kotlinToolchains.getCompilerVersion()))
         project(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
             val module1 = module("jvm-module-1")
-            assumeTrue(hasCancellationSupport)
             module1.compileAndThrow(compilationAction = { operation ->
                 operation.cancel()
             }) { ex: Throwable ->
@@ -69,9 +68,8 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     @Test
     fun daemonWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
-        val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
+        assumeTrue(hasCancellationSupport(kotlinToolchains.getCompilerVersion()))
         val daemonRunPath: Path = createTempDirectory("test-daemon-files")
-        assumeTrue(hasCancellationSupport)
         val daemonPolicy = kotlinToolchains.daemonExecutionPolicyBuilder().apply {
             this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = listOf(
                 "Dkotlin.daemon.wait.before.compilation.for.tests=true"
@@ -144,10 +142,9 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     @Test
     fun incrementalWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
-        val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
+        assumeTrue(hasCancellationSupport(kotlinToolchains.getCompilerVersion()))
         project(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
             val module1 = module("jvm-module-1")
-            assumeTrue(hasCancellationSupport)
             assertThrows<OperationCancelledException> {
                 module1.compileIncrementally(SourcesChanges.Unknown, compilationAction = { operation ->
                     operation.cancel()
@@ -161,10 +158,9 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     @Test
     fun nonIncrementalWithoutCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
-        val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
+        assumeFalse(hasCancellationSupport(kotlinToolchains.getCompilerVersion()))
         project(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
             val module1 = module("jvm-module-1")
-            assumeFalse(hasCancellationSupport)
             val exception = assertThrows<IllegalStateException> {
                 module1.compile(compilationAction = { operation ->
                     operation.cancel()
@@ -173,4 +169,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
             assertEquals("Cancellation is supported from compiler version 2.3.20.", exception.message)
         }
     }
+
+    private fun hasCancellationSupport(compilerVersion: String) =
+        KotlinToolingVersion(compilerVersion) >= KotlinToolingVersion(2, 3, 20, "dev-6665")
 }

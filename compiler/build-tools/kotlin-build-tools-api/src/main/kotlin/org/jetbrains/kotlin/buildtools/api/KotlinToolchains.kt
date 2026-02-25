@@ -157,7 +157,7 @@ public interface KotlinToolchains {
             val baseImplementation = loadImplementation(KotlinToolchains::class, classLoader)
             val kotlinCompilerVersion = KotlinCompilerVersion(baseImplementation.getCompilerVersion())
             when {
-                kotlinCompilerVersion <= KotlinCompilerVersion(2, 3, 0, null) -> {
+                kotlinCompilerVersion < KotlinCompilerVersion(2, 3, 20, "snapshot") -> {
                     Kotlin230AndBelowWrapper(baseImplementation)
                 }
                 else -> baseImplementation

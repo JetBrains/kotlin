@@ -40,9 +40,7 @@ class DifferentCompilerVersionsTest : BaseCompilationTest() {
     @TestMetadata("jvm-module-1")
     fun cancellationExceptionTest() {
         val kotlinToolchains = createToolchain()
-        println(kotlinToolchains.getCompilerVersion())
-        val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
-        assumeTrue(hasCancellationSupport)
+        assumeTrue(hasCancellationSupport(kotlinToolchains.getCompilerVersion()))
         project(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
             val module1 = module("jvm-module-1")
             module1.compileAndThrow(compilationAction = { operation ->
@@ -66,3 +64,6 @@ class DifferentCompilerVersionsTest : BaseCompilationTest() {
     private val stdlibClasspath =
         System.getProperty("kotlin.build-tools-api.test.stdlibClasspath").split(File.pathSeparator).map { Paths.get(it) }
 }
+
+private fun hasCancellationSupport(compilerVersion: String) =
+    KotlinToolingVersion(compilerVersion) >= KotlinToolingVersion(2, 3, 20, null)
