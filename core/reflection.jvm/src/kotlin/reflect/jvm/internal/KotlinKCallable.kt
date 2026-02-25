@@ -40,7 +40,7 @@ internal fun KotlinKCallable<*>.computeParameters(
                 }
             } else {
                 require(isLocalDelegatedProperty) {
-                    "Only top-level callables are supported for now: ${this@computeParameters}"
+                    "Only top-level callables are supported for now: $container/$name"
                 }
             }
         }

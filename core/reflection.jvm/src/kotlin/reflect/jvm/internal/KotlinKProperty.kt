@@ -60,7 +60,7 @@ internal abstract class KotlinKProperty<out V>(
     override val javaField: Field? by lazy(PUBLICATION) {
         if (isLocalDelegated) return@lazy null
         val fieldSignature = kmProperty.fieldSignature ?: return@lazy null
-        require(container is KPackageImpl) { "javaField is only supported for top-level properties for now: $this" }
+        require(container is KPackageImpl) { "javaField is only supported for top-level properties for now: $container/$name $signature" }
         val owner = container.jClass
         try {
             owner.getDeclaredField(fieldSignature.name)
@@ -91,7 +91,9 @@ internal abstract class KotlinKProperty<out V>(
             }
 
             // For annotations in classes, we should also support $annotations methods in DefaultImpls, and properties in companion objects.
-            require(container is KPackageImpl) { "Annotations are only supported for top-level properties for now: $this" }
+            require(container is KPackageImpl) {
+                "Annotations are only supported for top-level properties for now: $container/$name $signature"
+            }
 
             val syntheticMethod = kmProperty.syntheticMethodForAnnotations ?: return emptyList()
             val annotations = container.findMethodBySignature(syntheticMethod.name, syntheticMethod.descriptor)?.annotations?.toList()
@@ -215,7 +217,7 @@ internal fun KotlinKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: B
 
     fun isJvmStaticProperty(): Boolean {
         // For class properties, we'll need to check if the synthetic `$annotations` method contains `@JvmStatic`.
-        require(container is KPackageImpl) { "Only top-level properties are supported for now: $this" }
+        require(container is KPackageImpl) { "Only top-level properties are supported for now: $container/$name" }
         return false
     }
 
