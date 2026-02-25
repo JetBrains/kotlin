@@ -234,7 +234,7 @@ KtValueArgument(199,210): 'WrongEnum.X'
 KtDotQualifiedExpression(199,210): 'WrongEnum.X'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'. With receiver of type 'Unit'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X' on receiver of type 'Unit'.>
 
 KtNameReferenceExpression(199,208): 'WrongEnum'
   null
@@ -242,7 +242,7 @@ KtNameReferenceExpression(199,208): 'WrongEnum'
 KtNameReferenceExpression(209,210): 'X'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'. With receiver of type 'Unit'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X' on receiver of type 'Unit'.>
 
 KtClass(215,248): '@DslMarker'
   null

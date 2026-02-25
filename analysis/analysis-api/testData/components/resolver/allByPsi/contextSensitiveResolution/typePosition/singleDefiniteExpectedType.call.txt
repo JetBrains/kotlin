@@ -892,7 +892,7 @@ KtNameReferenceExpression(869,885): 'SealedInheritor1'
 KtDotQualifiedExpression(889,903): 'instance.prop1'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'. With receiver of type 'T'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T (of fun <T : SealedClass, OtherI> testTypeParams)'.>
 
 KtNameReferenceExpression(889,897): 'instance'
   KaSuccessCallInfo:
@@ -914,7 +914,7 @@ KtNameReferenceExpression(889,897): 'instance'
 KtNameReferenceExpression(898,903): 'prop1'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'. With receiver of type 'T'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T (of fun <T : SealedClass, OtherI> testTypeParams)'.>
 
 KtWhenEntry(908,989): '!is SealedInheritor1 if instance is SealedInheritor2 -> instance.prop2.toString()'
   null
@@ -993,7 +993,7 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
 KtDotQualifiedExpression(964,978): 'instance.prop2'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'. With receiver of type 'T'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'T (of fun <T : SealedClass, OtherI> testTypeParams)'.>
 
 KtNameReferenceExpression(964,972): 'instance'
   KaSuccessCallInfo:
@@ -1015,7 +1015,7 @@ KtNameReferenceExpression(964,972): 'instance'
 KtNameReferenceExpression(973,978): 'prop2'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'. With receiver of type 'T'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'T (of fun <T : SealedClass, OtherI> testTypeParams)'.>
 
 KtCallExpression(979,989): 'toString()'
   KaCallResolutionSuccess:
@@ -1982,7 +1982,7 @@ KtNameReferenceExpression(1870,1885): 'NestedInheritor'
 KtDotQualifiedExpression(1889,1902): 'instance.prop'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'. With receiver of type 'SealedInterface.NestedInheritor'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'SealedInterface.NestedInheritor'.>
 
 KtNameReferenceExpression(1889,1897): 'instance'
   KaSuccessCallInfo:
@@ -2004,7 +2004,7 @@ KtNameReferenceExpression(1889,1897): 'instance'
 KtNameReferenceExpression(1898,1902): 'prop'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'. With receiver of type 'SealedInterface.NestedInheritor'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'SealedInterface.NestedInheritor'.>
 
 KtWhenEntry(1915,1962): 'is NestedNestedInheritor -> instance.propNested'
   null
@@ -2026,7 +2026,7 @@ KtNameReferenceExpression(1918,1939): 'NestedNestedInheritor'
 KtDotQualifiedExpression(1943,1962): 'instance.propNested'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested'. With receiver of type 'SealedInterface.NestedInheritor'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested' on receiver of type 'SealedInterface.NestedInheritor'.>
 
 KtNameReferenceExpression(1943,1951): 'instance'
   KaSuccessCallInfo:
@@ -2048,7 +2048,7 @@ KtNameReferenceExpression(1943,1951): 'instance'
 KtNameReferenceExpression(1952,1962): 'propNested'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested'. With receiver of type 'SealedInterface.NestedInheritor'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested' on receiver of type 'SealedInterface.NestedInheritor'.>
 
 KtWhenEntry(1975,1988): 'else -> "100"'
   null
@@ -2221,7 +2221,7 @@ KtNameReferenceExpression(2176,2191): 'NestedInheritor'
 KtDotQualifiedExpression(2195,2208): 'instance.prop'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'. With receiver of type 'SealedInterface.NestedInheritor'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'SealedInterface.NestedInheritor'.>
 
 KtNameReferenceExpression(2195,2203): 'instance'
   KaSuccessCallInfo:
@@ -2243,7 +2243,7 @@ KtNameReferenceExpression(2195,2203): 'instance'
 KtNameReferenceExpression(2204,2208): 'prop'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'. With receiver of type 'SealedInterface.NestedInheritor'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'SealedInterface.NestedInheritor'.>
 
 KtWhenEntry(2221,2268): 'is NestedNestedInheritor -> instance.propNested'
   null
@@ -2265,7 +2265,7 @@ KtNameReferenceExpression(2224,2245): 'NestedNestedInheritor'
 KtDotQualifiedExpression(2249,2268): 'instance.propNested'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested'. With receiver of type 'SealedInterface'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested' on receiver of type 'SealedInterface'.>
 
 KtNameReferenceExpression(2249,2257): 'instance'
   KaSuccessCallInfo:
@@ -2287,7 +2287,7 @@ KtNameReferenceExpression(2249,2257): 'instance'
 KtNameReferenceExpression(2258,2268): 'propNested'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested'. With receiver of type 'SealedInterface'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested' on receiver of type 'SealedInterface'.>
 
 KtWhenEntry(2281,2294): 'else -> "100"'
   null
@@ -2413,7 +2413,7 @@ KtNameReferenceExpression(2452,2467): 'NestedInheritor'
 KtDotQualifiedExpression(2471,2484): 'instance.prop'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'. With receiver of type 'T'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'T (of fun <T : SealedInterface, SealedClass> testRegularIntersection)'.>
 
 KtNameReferenceExpression(2471,2479): 'instance'
   KaSuccessCallInfo:
@@ -2435,7 +2435,7 @@ KtNameReferenceExpression(2471,2479): 'instance'
 KtNameReferenceExpression(2480,2484): 'prop'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'. With receiver of type 'T'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'T (of fun <T : SealedInterface, SealedClass> testRegularIntersection)'.>
 
 KtWhenEntry(2489,2526): 'is SealedInheritor1 -> instance.prop1'
   null
@@ -2457,7 +2457,7 @@ KtNameReferenceExpression(2492,2508): 'SealedInheritor1'
 KtDotQualifiedExpression(2512,2526): 'instance.prop1'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'. With receiver of type 'T'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T (of fun <T : SealedInterface, SealedClass> testRegularIntersection)'.>
 
 KtNameReferenceExpression(2512,2520): 'instance'
   KaSuccessCallInfo:
@@ -2479,7 +2479,7 @@ KtNameReferenceExpression(2512,2520): 'instance'
 KtNameReferenceExpression(2521,2526): 'prop1'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'. With receiver of type 'T'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'T (of fun <T : SealedInterface, SealedClass> testRegularIntersection)'.>
 
 KtWhenEntry(2531,2544): 'else -> "100"'
   null

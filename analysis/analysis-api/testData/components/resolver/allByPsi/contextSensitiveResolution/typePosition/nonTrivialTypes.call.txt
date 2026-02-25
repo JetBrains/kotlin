@@ -825,7 +825,7 @@ KtNameReferenceExpression(861,865): 'Left'
 KtDotQualifiedExpression(869,873): 'cs.x'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'. With receiver of type 'MyGenericSealed<String> & CharSequence'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 
 KtNameReferenceExpression(869,871): 'cs'
   KaSuccessCallInfo:
@@ -847,7 +847,7 @@ KtNameReferenceExpression(869,871): 'cs'
 KtNameReferenceExpression(872,873): 'x'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'. With receiver of type 'MyGenericSealed<String> & CharSequence'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 
 KtWhenEntry(882,898): 'is Right -> cs.y'
   null
@@ -869,7 +869,7 @@ KtNameReferenceExpression(885,890): 'Right'
 KtDotQualifiedExpression(894,898): 'cs.y'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'. With receiver of type 'MyGenericSealed<String> & CharSequence'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 
 KtNameReferenceExpression(894,896): 'cs'
   KaSuccessCallInfo:
@@ -891,4 +891,4 @@ KtNameReferenceExpression(894,896): 'cs'
 KtNameReferenceExpression(897,898): 'y'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'. With receiver of type 'MyGenericSealed<String> & CharSequence'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y' on receiver of type 'MyGenericSealed<String> & CharSequence'.>

@@ -661,7 +661,7 @@ KtNameReferenceExpression(1107,1112): 'prop1'
 KtCallExpression(1113,1123): 'hashCode()'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtNameReferenceExpression(1113,1121): 'hashCode'
   null
@@ -714,7 +714,7 @@ KtNameReferenceExpression(1180,1185): 'prop1'
 KtCallExpression(1186,1196): 'hashCode()'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtNameReferenceExpression(1186,1194): 'hashCode'
   null
@@ -767,7 +767,7 @@ KtNameReferenceExpression(1258,1263): 'prop1'
 KtCallExpression(1264,1274): 'hashCode()'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtNameReferenceExpression(1264,1272): 'hashCode'
   null
@@ -975,7 +975,7 @@ KtNameReferenceExpression(1515,1520): 'prop2'
 KtCallExpression(1522,1527): 'dec()'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'dec'. With receiver of type '??? (Unresolved name: prop2)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'dec'.>
 
 KtNameReferenceExpression(1522,1525): 'dec'
   null
@@ -1076,7 +1076,7 @@ KtNameReferenceExpression(1648,1653): 'prop1'
 KtCallExpression(1655,1665): 'hashCode()'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtNameReferenceExpression(1655,1663): 'hashCode'
   null
@@ -1132,7 +1132,7 @@ KtNameReferenceExpression(1730,1735): 'prop1'
 KtCallExpression(1737,1747): 'hashCode()'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtNameReferenceExpression(1737,1745): 'hashCode'
   null

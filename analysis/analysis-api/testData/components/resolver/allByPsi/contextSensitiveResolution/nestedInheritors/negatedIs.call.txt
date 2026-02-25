@@ -120,12 +120,12 @@ KtWhenConditionWithExpression(230,230): ''
 KtPrefixExpression(231,248): '!USELESS_IS_CHECK'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'. With receiver of type '??? (Unresolved name: USELESS_IS_CHECK)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
 
 KtOperationReferenceExpression(231,232): '!'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'. With receiver of type '??? (Unresolved name: USELESS_IS_CHECK)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
 
 KtNameReferenceExpression(232,248): 'USELESS_IS_CHECK'
   KaErrorCallInfo:
@@ -144,12 +144,12 @@ KtIsExpression(248,262): '!>!is Right<!>'
 KtPrefixExpression(248,250): '!>'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'. With receiver of type '??? (No operand)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
 
 KtOperationReferenceExpression(248,249): '!'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'. With receiver of type '??? (No operand)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
 
 KtOperationReferenceExpression(250,253): '!is'
   null
@@ -189,12 +189,12 @@ KtWhenConditionWithExpression(284,284): ''
 KtPrefixExpression(285,308): '!REDUNDANT_ELSE_IN_WHEN'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'. With receiver of type '??? (Unresolved name: REDUNDANT_ELSE_IN_WHEN)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
 
 KtOperationReferenceExpression(285,286): '!'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'. With receiver of type '??? (Unresolved name: REDUNDANT_ELSE_IN_WHEN)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
 
 KtNameReferenceExpression(286,308): 'REDUNDANT_ELSE_IN_WHEN'
   KaErrorCallInfo:
@@ -210,12 +210,12 @@ KtWhenConditionWithExpression(308,310): '!>'
 KtPrefixExpression(308,310): '!>'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'. With receiver of type '??? (No operand)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
 
 KtOperationReferenceExpression(308,309): '!'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'. With receiver of type '??? (No operand)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
 
 KtWhenEntry(310,323): 'else<!> -> ""'
   null

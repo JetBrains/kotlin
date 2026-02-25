@@ -3,7 +3,7 @@ KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'. With receiver of type 'GenericDelegate<String>'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue' on receiver of type 'GenericDelegate<String>'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
