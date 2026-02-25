@@ -255,7 +255,7 @@ class FirCallResolver(
         val candidateFactory = CandidateFactory(resolutionContext, info)
 
         val resultCollector: CandidateCollector = towerResolver.runResolver(info, resolutionContext, collector, candidateFactory)
-        var (reducedCandidates, applicability) = reduceCandidates(resultCollector, explicitReceiver, resolutionContext)
+        var (reducedCandidates, applicability) = reduceCandidates(resultCollector, resolutionContext)
         reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
 
         return ResolutionResult(info, applicability, reducedCandidates, resultCollector.forwardedDiagnostics())
@@ -266,13 +266,11 @@ class FirCallResolver(
      */
     private fun reduceCandidates(
         collector: CandidateCollector,
-        explicitReceiver: FirExpression? = null,
         resolutionContext: ResolutionContext = transformer.resolutionContext,
     ): Pair<Set<Candidate>, CandidateApplicability> {
         fun chooseMostSpecific(list: List<Candidate>): Set<Candidate> {
             list.singleOrNull()?.let { return setOf(it) }
-            val onSuperReference = explicitReceiver is FirSuperReceiverExpression
-            return conflictResolver.chooseMaximallySpecificCandidates(list, discriminateAbstracts = onSuperReference)
+            return conflictResolver.chooseMaximallySpecificCandidates(list)
         }
 
         val candidates = collector.bestCandidates()
@@ -523,7 +521,7 @@ class FirCallResolver(
             )
         }
 
-        val (reducedCandidates, applicability) = reduceCandidates(result, callableReferenceAccess.explicitReceiver)
+        val (reducedCandidates, applicability) = reduceCandidates(result)
 
         (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.unsetResolvedToCompanionIf(
             reducedCandidates.isEmpty() || !reducedCandidates.all { it.isFromCompanionObjectTypeScope }

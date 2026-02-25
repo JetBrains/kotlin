@@ -72,13 +72,11 @@ class ConeOverloadConflictResolver(
 
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateAbstracts: Boolean,
     ): Set<Candidate> = chooseMaximallySpecificCandidates(
         candidates,
-        discriminateAbstracts,
         // We don't discriminate against generics for callable references because, other than in regular calls,
         // there is no syntax for specifying generic type arguments.
-        discriminateGenerics = candidates.first().callInfo.callSite !is FirCallableReferenceAccess
+        discriminateGenerics = candidates.first().callInfo.callSite !is FirCallableReferenceAccess,
     )
 
     /**
@@ -86,7 +84,6 @@ class ConeOverloadConflictResolver(
      */
     private fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateAbstracts: Boolean,
         // Set to 'false' only for property-for-invoke case
         discriminateGenerics: Boolean,
     ): Set<Candidate> {
@@ -107,7 +104,6 @@ class ConeOverloadConflictResolver(
                 lowPrioritySAMs = noCompatibilityMode,
                 adaptationsInPostponedAtoms = noCompatibilityMode,
                 generics = discriminateGenerics,
-                abstracts = discriminateAbstracts,
                 SAMs = true,
                 suspendConversions = true,
                 byUnwrappedSmartCastOrigin = true,
@@ -172,7 +168,7 @@ class ConeOverloadConflictResolver(
         }
 
         val bestInvokeReceiver =
-            chooseMaximallySpecificCandidates(propertyReceiverCandidates, discriminateGenerics = false, discriminateAbstracts = false)
+            chooseMaximallySpecificCandidates(propertyReceiverCandidates, discriminateGenerics = false)
                 .singleOrNull() ?: return candidates
 
         return candidates.filterTo(mutableSetOf()) { it.callInfo.candidateForCommonInvokeReceiver == bestInvokeReceiver }
@@ -182,7 +178,6 @@ class ConeOverloadConflictResolver(
         val lowPrioritySAMs: Boolean,
         val adaptationsInPostponedAtoms: Boolean,
         val generics: Boolean,
-        val abstracts: Boolean,
         val SAMs: Boolean,
         val suspendConversions: Boolean,
         val byUnwrappedSmartCastOrigin: Boolean,
@@ -227,14 +222,6 @@ class ConeOverloadConflictResolver(
                 candidates,
                 { !it.usesFunctionKindConversion },
                 { discriminationFlags.copy(suspendConversions = false) },
-            )?.let { return it }
-        }
-
-        if (discriminationFlags.abstracts) {
-            filterCandidatesByDiscriminationFlag(
-                candidates,
-                { (it.symbol.fir as? FirMemberDeclaration)?.modality != Modality.ABSTRACT },
-                { discriminationFlags.copy(abstracts = false) },
             )?.let { return it }
         }
 

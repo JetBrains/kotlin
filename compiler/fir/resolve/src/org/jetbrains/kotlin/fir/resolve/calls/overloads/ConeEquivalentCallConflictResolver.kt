@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 class ConeEquivalentCallConflictResolver(private val session: FirSession) : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateAbstracts: Boolean
     ): Set<Candidate> {
         return filterOutEquivalentCalls(candidates)
     }
