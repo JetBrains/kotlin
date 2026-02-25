@@ -49,6 +49,30 @@ object MockLibraryUtil : AbstractMockLibraryUtil() {
             Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null
         )
     }
+
+    /**
+     * The method is left for compatibility with the old JPS artifacts.
+     * Don't use it anywhere other than in the JPS tests – use [compileKotlinSources] instead.
+     *
+     * JPS tests are run in the IDE with mixed classpath. The Kotlin JPS plugin itself and its tests come from artifacts of the stable
+     * Kotlin version (the "default" compiler bundled in the Kotlin IDE plugin), while common compiler components are taken from a more
+     * later 'kt-master'. Such an inconsistency makes it easy to introduce occasional ABI breakages that are only discovered during the
+     * consequent 'kt-master' merge.
+     *
+     * As a long-term solution, there should appear a binary checker (KT-84534), or, alternatively, JPS tests themselves should be run
+     * in the Kotlin repository (KT-84535).
+     */
+    @JvmStatic
+    @JvmOverloads
+    @Deprecated("Use 'compileKotlinSources()' instead", level = DeprecationLevel.HIDDEN)
+    fun compileKotlin(
+        sourcesPath: String,
+        outDir: File,
+        extraOptions: List<String> = emptyList(),
+        vararg extraClasspath: String,
+    ) {
+        super.compileKotlinSources(sourcesPath, outDir, extraOptions, *extraClasspath)
+    }
 }
 
 object NoPreloadingMockLibraryUtil : AbstractMockLibraryUtil() {
@@ -148,7 +172,7 @@ abstract class AbstractMockLibraryUtil {
         val kotlinFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), srcFile)
         if (srcFile.isFile || kotlinFiles.isNotEmpty()) {
             assertTrue("Only java files are expected", allowKotlinSources)
-            compileKotlin(sourcesPath, classesDir, extraOptions, *extraClasspath.toTypedArray())
+            compileKotlinSources(sourcesPath, classesDir, extraOptions, *extraClasspath.toTypedArray())
         }
 
         val javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), srcFile)
@@ -220,7 +244,7 @@ abstract class AbstractMockLibraryUtil {
         KtAssert.assertEquals(String(outStream.toByteArray()), ExitCode.OK.name, invocationResult.name)
     }
 
-    fun compileKotlin(
+    fun compileKotlinSources(
         sourcesPath: String,
         outDir: File,
         extraOptions: List<String> = emptyList(),
