@@ -9,7 +9,138 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 **Usage**: After completing each iteration, the agent MUST append a results section below.
 
-**Last Updated**: 2026-02-24
+**Last Updated**: 2026-02-25
+
+---
+
+## Iteration 4: Parameter Parsing and Java-to-Kotlin Type Mapping - 2026-02-25
+
+### Status
+- ✅ Completed
+
+### Summary
+Implemented method/constructor parameter parsing and fixed Java-to-Kotlin type mapping for external types. Created `JavaValueParameterOverAst` class to parse parameter lists from method/constructor declarations. Modified FIR's `JavaTypeConversion.kt` to apply `JavaToKotlinClassMap` mapping for unresolved classifier types (e.g., `java.lang.String` → `kotlin.String`). **Box tests improved from 12/138 (8.7%) to 30/138 (21.7%)** - a 2.5x improvement!
+
+### Key Findings
+- **Method Signature Matching**: Tests like `abstractMethodsOfAny.kt` were failing with `ABSTRACT_MEMBER_NOT_IMPLEMENTED` because `equals()` didn't match `equals(Object)` - parameters were missing
+- **Return Type Mismatch**: Tests showed `RETURN_TYPE_MISMATCH: expected 'kotlin.String', actual 'java.lang.String!'` - Java types weren't being mapped to Kotlin equivalents
+- **Java-to-Kotlin Mapping Location**: The mapping must happen in FIR's `JavaTypeConversion.kt`, specifically in the `null ->` branch where unresolved classifiers are processed
+- **Dynamic Type Resolution**: Instead of hardcoding java.lang types, use `JavaToKotlinClassMap.mapJavaToKotlin(FqName)` to dynamically check if a type has a Kotlin mapping
+- **Architecture Insight**: `javac-wrapper` has full classpath access via javac's Elements API, while `java-direct` only has source files, so must rely on `JavaToKotlinClassMap` for validation
+
+### Implementation Decisions
+- **JavaValueParameterOverAst**: Created new class implementing `JavaValueParameter` interface
+  - Parses PARAMETER nodes from PARAMETER_LIST
+  - Extracts parameter name, type, and vararg status
+  - Passes imports/localScope for type resolution
+- **Parameter List Parsing**: Both `JavaMethodOverAst` and `JavaConstructorOverAst` find PARAMETER_LIST node and create parameter instances
+- **Return Type Fix**: Fixed `JavaMethodOverAst.returnType` to correctly parse TYPE node (was incorrectly using full method node)
+- **FIR Type Mapping**: Modified `toConeKotlinTypeForFlexibleBound()` in `JavaTypeConversion.kt`:
+  - In `null ->` branch, after resolving ClassId, apply `JavaToKotlinClassMap.mapJavaToKotlin()`
+  - Also apply `readOnlyToMutable()` transformation for collections
+  - Matches the logic used in the `is JavaClass ->` branch
+- **No Hardcoding**: Rejected initial approach of hardcoding `ASSUMED_JAVA_LANG_TYPES` set
+  - User correctly identified this as unnecessary
+  - Proper solution: use existing `JavaToKotlinClassMap` infrastructure dynamically
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt`:
+  - Created `JavaValueParameterOverAst` class implementing full `JavaValueParameter` interface
+  - Modified `JavaMethodOverAst.valueParameters` to parse PARAMETER_LIST and create parameter instances
+  - Modified `JavaConstructorOverAst.valueParameters` to parse PARAMETER_LIST and create parameter instances
+  - Fixed `JavaMethodOverAst.returnType` to use TYPE node instead of full method node
+
+- `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt`:
+  - Modified `toConeKotlinTypeForFlexibleBound()` in the `null ->` classifier branch (lines 249-268)
+  - Added Java-to-Kotlin mapping: `JavaToKotlinClassMap.mapJavaToKotlin()` or `mapJavaToKotlinIncludingClassMapping()` for annotations
+  - Added mutable collection transformation: `classId.readOnlyToMutable()`
+  - Ensures external Java types map to their Kotlin equivalents (String → kotlin.String, etc.)
+
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Investigated and removed temporary `ASSUMED_JAVA_LANG_TYPES` hardcoded set
+  - Added dynamic check: `JavaToKotlinClassMap.mapJavaToKotlin(FqName(javaLangFqn)) != null` in `resolve()` method
+  - Cleaner solution that leverages existing compiler infrastructure
+
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testMethodParameters()` verifying parameter parsing for methods with 0, 1, and 3 parameters
+  - Added `testMethodParametersWithObjectType()` verifying Object parameter type resolution
+
+### Test Results
+- Unit tests: All passing, including new parameter parsing tests
+- Box tests: **30/138 passing (21.7%)** - UP from 12/138 (8.7%)
+- **18 additional tests now pass** due to parameter parsing + Java-to-Kotlin mapping
+- Success rate: 8.7% → 21.7% (2.5x improvement)
+
+**Progression**:
+- Before parameter parsing: 12/138 passing
+- After parameter parsing: 12/138 passing (no change - needed type mapping too)
+- After Java-to-Kotlin mapping: 29/138 passing (141% improvement)
+- After dynamic JavaToKotlinClassMap check: 30/138 passing (final result)
+
+**Test Verification**:
+- ✅ Method with no parameters: `method1()` → `valueParameters.isEmpty() == true`
+- ✅ Method with primitive parameter: `method2(int a)` → `valueParameters[0].name == "a"`, type is int
+- ✅ Method with multiple parameters: `method3(String a, int b, List<String> c)` → 3 parameters parsed correctly
+- ✅ Method with Object parameter: `equals(Object o)` → parameter type resolves correctly
+- ✅ Constructor parameters: `A(int x)` → constructor has 1 parameter
+- ✅ Return types: `java.lang.String` → mapped to `kotlin.String` in FIR
+- ✅ Dynamic type check: `JavaToKotlinClassMap.mapJavaToKotlin(FqName("java.lang.String"))` returns `kotlin.String`
+
+### Issues Encountered
+1. **Initial Approach - Hardcoded Types**: First attempted to add `ASSUMED_JAVA_LANG_TYPES` set in `JavaTypeOverAst`
+   - **User Challenge**: "I still have doubts that we need such explicit hardcoding. I believe that kotlin symbol provider should contain the whole JDK"
+   - **Investigation**: Discovered the real issue - `JavaToKotlinClassMap.mapJavaToKotlin()` needs fully-qualified names
+   - **Resolution**: Use existing `JavaToKotlinClassMap` infrastructure dynamically instead of hardcoding
+
+2. **Symbol Provider Behavior**: Initially misunderstood why `session.symbolProvider.getClassLikeSymbolByClassId(ClassId("java.lang.String"))` returns null
+   - **Reality**: Symbol provider returns null for java.lang.String because it expects kotlin.String
+   - **The mapping happens in JavaTypeConversion**: After ClassId creation, FIR applies Java-to-Kotlin mapping
+   - **Not a bug**: This is the correct architecture - FIR handles the transformation
+
+3. **Return Type Parsing**: `JavaMethodOverAst.returnType` was using full method node instead of TYPE child node
+   - **Symptom**: Couldn't parse return types correctly
+   - **Fix**: Find TYPE child node specifically
+
+### Next Layer Analysis
+Remaining 108 failures are due to:
+1. **Type Arguments/Generics**: Many tests use generic types (`List<String>`, `Map<K,V>`, etc.) - not yet implemented
+2. **Annotations**: Nullability annotations, other annotations affect type checking
+3. **Complex Inheritance**: Multi-level inheritance, interface implementation
+4. **Inner Classes**: Nested/inner class support
+5. **Method Overloading**: Complex overload resolution scenarios
+
+**Progress Distribution**:
+- Tests fixed by parameter parsing: ~3 tests (method signature matching)
+- Tests fixed by Java-to-Kotlin mapping: ~15 tests (type mismatches resolved)
+- Tests still failing: 108 tests (need generics, annotations, etc.)
+
+### Key Learnings
+- **Architecture Understanding**: Java Model provides qualified names, FIR applies transformations (Java-to-Kotlin mapping, nullability, etc.)
+- **Avoid Premature Hardcoding**: User's challenge led to discovering the proper solution using existing infrastructure
+- **javac-wrapper vs java-direct**: Different approaches are correct for their constraints:
+  - `javac-wrapper`: Has full classpath, can verify types exist via Elements API
+  - `java-direct`: Only has sources, must trust FIR and use `JavaToKotlinClassMap` for validation
+- **Proper Layering**: Don't replicate FIR's job in Java Model - provide the data, let FIR do the transformations
+
+### Recommendations for Future Iterations
+- **Iteration 5**: Implement type arguments/generics parsing (high priority)
+  - Parse `<T>`, `<? extends Foo>`, `<? super Bar>`
+  - Implement `JavaClassifierType.typeArguments`
+  - Many tests blocked on generics support
+
+- **Annotations**: Better annotation parsing and propagation
+  - Nullability annotations (`@Nullable`, `@NotNull`)
+  - Other JVM annotations
+
+- **Test Analysis**: Systematically analyze the 108 failing tests
+  - Categorize by failure type
+  - Identify most common blockers
+  - Prioritize features with highest impact
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: Note parameter parsing and Java-to-Kotlin mapping implementations
+- [ ] Update IMPLEMENTATION_PLAN.md: Mark parameter parsing as complete, note dynamic type resolution approach
 
 ---
 
@@ -123,6 +254,32 @@ The implementation is architecturally sound and functionally correct. The issue 
 - [x] Update ITERATION_RESULTS.md: This entry
 - [ ] Update TYPE_RESOLUTION_DESIGN.md: Note that expected results (87-94%) were not achieved, likely due to other missing features
 - [ ] Update AGENT_INSTRUCTIONS.md: Mark star import resolution as implemented but note it didn't significantly improve tests
+
+---
+
+## Iteration 4 update: Raw Type Name Stripping for Generics - 2026-02-25
+
+### Status
+- ✅ Completed
+
+### Summary
+Fixed name resolution for generic and array types by stripping type arguments and array suffixes before resolving/import qualification. Added an isolated unit test to verify that `List<String>` resolves to `java.util.List`, `java.util.Map<String, Integer>` resolves to `java.util.Map`, and `Object[]` resolves to `Object`. This addresses a concrete blocker where `classifierQualifiedName` previously contained generics (e.g., `List<String>`) and could never resolve.
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`: Added `rawTypeName` helper; updated `classifier`, `classifierQualifiedName`, `isResolved`, and `resolve()` to use it.
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`: Added `testTypeNameStripsTypeArguments` to validate stripping behavior and import qualification.
+
+### Test Results
+- Unit tests: `JavaParsingTest` passes (new test added).
+- Box tests: `JavaUsingAstLegacyBoxTestGenerated` now 12/138 passing (was 11/138).
+
+### Key Findings
+- Generic type arguments embedded in `node.text` were poisoning name resolution and FIR lookup.
+- Stripping generics and array suffixes is necessary before applying import qualification and resolution callback.
+
+### Next Steps
+- Implement real type argument parsing so `typeArguments` is meaningful instead of empty.
+- Investigate remaining failures related to method parameters and generics.
 
 ---
 
@@ -5322,5 +5479,3 @@ The remaining 127 failures are **external type resolution** issues:
 - [ ] Clarify that external resolution is FIR's responsibility, not Java Model's
 
 ---
-
-

@@ -450,6 +450,99 @@ class JavaParsingTest {
     }
 
     @Test
+    fun testMethodParametersWithObjectType() {
+        val source = """
+            public class JI {
+                public abstract boolean equals(Object o);
+            }
+        """.trimIndent()
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val javaClass = JavaClassOverAst(classNode, source)
+        
+        val equalsMethod = javaClass.methods.first { it.name.asString() == "equals" }
+        assert(equalsMethod.valueParameters.size == 1) { "equals should have 1 parameter, got ${equalsMethod.valueParameters.size}" }
+        
+        val param = equalsMethod.valueParameters.first()
+        assert(param.name?.asString() == "o") { "Expected parameter name 'o', got ${param.name}" }
+        
+        val paramType = param.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(paramType.classifierQualifiedName == "Object") { "Expected 'Object', got '${paramType.classifierQualifiedName}'" }
+        assert(!paramType.isResolved) { "Object should not be pre-resolved" }
+        assert(paramType.classifier == null) { "Object should have null classifier (external type)" }
+        
+        var resolveCalled = false
+        val resolved = paramType.resolve { candidateFqn ->
+            resolveCalled = true
+            println("  resolve() called with: '$candidateFqn'")
+            candidateFqn == "java.lang.Object"
+        }
+        
+        assert(resolveCalled) { "resolve() should have been called" }
+        assert(resolved == "java.lang.Object") { "Expected 'java.lang.Object', got '$resolved'" }
+    }
+
+    @Test
+    fun testMethodParameters() {
+        val source = """
+            import java.util.List;
+            public class A {
+                public void method1() {}
+                public void method2(int a) {}
+                public void method3(String a, int b, List<String> c) {}
+                public A() {}
+                public A(int x) {}
+                public A(String s, Object o) {}
+            }
+        """.trimIndent()
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        val imports = extractImports(root, source)
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val javaClass = JavaClassOverAst(classNode, source, null, LocalJavaScope(root, source), imports)
+        
+        val method1 = javaClass.methods.first { it.name.asString() == "method1" }
+        assert(method1.valueParameters.size == 0) { "method1 should have 0 parameters, got ${method1.valueParameters.size}" }
+        
+        val method2 = javaClass.methods.first { it.name.asString() == "method2" }
+        assert(method2.valueParameters.size == 1) { "method2 should have 1 parameter, got ${method2.valueParameters.size}" }
+        val param2 = method2.valueParameters.first()
+        assert(param2.name?.asString() == "a") { "Expected parameter name 'a', got ${param2.name}" }
+        assert(param2.type is org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType) { "Expected int to be JavaPrimitiveType" }
+        
+        val method3 = javaClass.methods.first { it.name.asString() == "method3" }
+        assert(method3.valueParameters.size == 3) { "method3 should have 3 parameters, got ${method3.valueParameters.size}" }
+        val params3 = method3.valueParameters.toList()
+        assert(params3[0].name?.asString() == "a") { "Expected parameter name 'a', got ${params3[0].name}" }
+        assert(params3[1].name?.asString() == "b") { "Expected parameter name 'b', got ${params3[1].name}" }
+        assert(params3[2].name?.asString() == "c") { "Expected parameter name 'c', got ${params3[2].name}" }
+        
+        val paramAType = params3[0].type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(paramAType.classifierQualifiedName == "String") { "Expected String, got ${paramAType.classifierQualifiedName}" }
+        
+        val paramBType = params3[1].type as org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
+        assert(paramBType.type == org.jetbrains.kotlin.builtins.PrimitiveType.INT) { "Expected INT primitive type" }
+        
+        val paramCType = params3[2].type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(paramCType.classifierQualifiedName == "java.util.List") { "Expected java.util.List, got ${paramCType.classifierQualifiedName}" }
+        
+        val constructor0 = javaClass.constructors.first { it.valueParameters.size == 0 }
+        assert(constructor0.valueParameters.size == 0) { "Constructor should have 0 parameters" }
+        
+        val constructor1 = javaClass.constructors.first { it.valueParameters.size == 1 }
+        assert(constructor1.valueParameters.size == 1) { "Constructor should have 1 parameter, got ${constructor1.valueParameters.size}" }
+        val constParam1 = constructor1.valueParameters.first()
+        assert(constParam1.name?.asString() == "x") { "Expected parameter name 'x', got ${constParam1.name}" }
+        
+        val constructor2 = javaClass.constructors.first { it.valueParameters.size == 2 }
+        assert(constructor2.valueParameters.size == 2) { "Constructor should have 2 parameters, got ${constructor2.valueParameters.size}" }
+        val constParams2 = constructor2.valueParameters.toList()
+        assert(constParams2[0].name?.asString() == "s") { "Expected parameter name 's', got ${constParams2[0].name}" }
+        assert(constParams2[1].name?.asString() == "o") { "Expected parameter name 'o', got ${constParams2[1].name}" }
+    }
+
+    @Test
     fun testNestedClassResolution() {
         val source = """
             public class Outer {

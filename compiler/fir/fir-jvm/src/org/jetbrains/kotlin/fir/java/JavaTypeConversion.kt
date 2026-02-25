@@ -249,10 +249,20 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         null -> {
             val qualifiedName = this.classifierQualifiedName
 
-            val classId = if (!isResolved && !qualifiedName.contains('.')) {
+            var classId = if (!isResolved && !qualifiedName.contains('.')) {
                 resolveSimpleName(qualifiedName, this, session, source)
             } else {
                 ClassId.topLevel(FqName(qualifiedName))
+            }
+
+            classId = if (mode.insideAnnotation) {
+                JavaToKotlinClassMap.mapJavaToKotlinIncludingClassMapping(classId.asSingleFqName())
+            } else {
+                JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName())
+            } ?: classId
+
+            if (lowerBound == null || argumentsMakeSenseOnlyForMutableContainer(classId, session)) {
+                classId = classId.readOnlyToMutable() ?: classId
             }
 
             classId.constructClassLikeType(isMarkedNullable = lowerBound != null, attributes = attributes)

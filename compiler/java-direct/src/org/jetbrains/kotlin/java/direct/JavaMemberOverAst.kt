@@ -67,13 +67,22 @@ class JavaMethodOverAst(
     source: CharSequence,
     containingClass: JavaClass
 ) : JavaMemberOverAst(node, source, containingClass), JavaMethod {
-    override val valueParameters: List<JavaValueParameter> get() = emptyList()
+    override val valueParameters: List<JavaValueParameter>
+        get() {
+            val parameterList = node.findChildByType("PARAMETER_LIST") ?: return emptyList()
+            val parameters = parameterList.getChildrenByType("PARAMETER")
+            return parameters.map { JavaValueParameterOverAst(it, source, containingClass) }
+        }
+
     override val returnType: JavaType
-        get() = createJavaType(
-            node, source,
-            localScope = (containingClass as? JavaClassOverAst)?.localScope,
-            imports = (containingClass as? JavaClassOverAst)?.imports ?: JavaImports.EMPTY
-        )
+        get() {
+            val typeNode = node.findChildByType("TYPE") ?: return JavaPrimitiveTypeOverAst(node, source)
+            return createJavaType(
+                typeNode, source,
+                localScope = (containingClass as? JavaClassOverAst)?.localScope,
+                imports = (containingClass as? JavaClassOverAst)?.imports ?: JavaImports.EMPTY
+            )
+        }
     override val annotationParameterDefaultValue: JavaAnnotationArgument? get() = null
     override val hasAnnotationParameterDefaultValue: Boolean get() = false
     override val isNative: Boolean get() = false
@@ -86,7 +95,46 @@ class JavaConstructorOverAst(
     source: CharSequence,
     containingClass: JavaClass
 ) : JavaMemberOverAst(node, source, containingClass), JavaConstructor {
-    override val valueParameters: List<JavaValueParameter> get() = emptyList()
+    override val valueParameters: List<JavaValueParameter>
+        get() {
+            val parameterList = node.findChildByType("PARAMETER_LIST") ?: return emptyList()
+            val parameters = parameterList.getChildrenByType("PARAMETER")
+            return parameters.map { JavaValueParameterOverAst(it, source, containingClass) }
+        }
     override val typeParameters: List<JavaTypeParameter> get() = emptyList()
+    override val isFromSource: Boolean get() = true
+}
+
+class JavaValueParameterOverAst(
+    node: JavaSyntaxNode,
+    source: CharSequence,
+    private val containingClass: JavaClass
+) : JavaElementOverAst(node, source), JavaValueParameter {
+    override val name: Name?
+        get() = node.findChildByType("IDENTIFIER")?.text?.let { Name.identifier(it) }
+
+    override val type: JavaType
+        get() {
+            val typeNode = node.findChildByType("TYPE") ?: node
+            return createJavaType(
+                typeNode, source,
+                localScope = (containingClass as? JavaClassOverAst)?.localScope,
+                imports = (containingClass as? JavaClassOverAst)?.imports ?: JavaImports.EMPTY
+            )
+        }
+
+    private val modifierList: JavaSyntaxNode?
+        get() = node.findChildByType("MODIFIER_LIST")
+
+    private fun hasModifier(modifier: String): Boolean {
+        return modifierList?.children?.any { it.type.toString() == modifier } ?: false
+    }
+
+    override val isVararg: Boolean
+        get() = node.findChildByType("ELLIPSIS") != null
+
+    override val annotations: Collection<JavaAnnotation> get() = emptyList()
+    override val isDeprecatedInJavaDoc: Boolean get() = false
+    override fun findAnnotation(fqName: org.jetbrains.kotlin.name.FqName): JavaAnnotation? = null
     override val isFromSource: Boolean get() = true
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -42,13 +43,6 @@ class JavaClassifierTypeOverAst(
         val parts = rawTypeName.split('.')
         
         var current: JavaClassifier? = localScope?.findClass(Name.identifier(parts[0]))
-        
-        if (current == null) {
-            val simpleImport = imports.simpleImports[parts[0]]
-            // If it's a simple import, we can't easily resolve it to a JavaClassifier here 
-            // because we don't have access to the full class finder.
-            // But if it's a local class, we can traverse.
-        }
 
         if (current is JavaClass) {
             for (i in 1 until parts.size) {
@@ -102,6 +96,10 @@ class JavaClassifierTypeOverAst(
         val simpleName = rawTypeName
 
         val javaLangFqn = "java.lang.$simpleName"
+
+        if (JavaToKotlinClassMap.mapJavaToKotlin(FqName(javaLangFqn)) != null) {
+            return javaLangFqn
+        }
         if (tryResolve(javaLangFqn)) {
             return javaLangFqn
         }
