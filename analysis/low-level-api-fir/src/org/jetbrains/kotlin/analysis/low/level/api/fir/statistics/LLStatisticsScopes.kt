@@ -29,6 +29,38 @@ internal object LLStatisticsScopes : LLStatisticsScope("kotlin.analysis") {
         object LowMemoryCacheCleanup : LLStatisticsScope("$name.lowMemoryCacheCleanup") {
             object Invocations : LLStatisticsScope("$name.invocations")
         }
+
+        object Caches {
+            object ResolveCallCache : LLStatisticsScope("$name.resolveCallCache"), LLCaffeineStatisticsScope {
+                object Hits : LLStatisticsScope("$name.hits")
+                object Misses : LLStatisticsScope("$name.misses")
+                object Evictions : LLStatisticsScope("$name.evictions")
+
+                override val hits: LLStatisticsScope get() = Hits
+                override val misses: LLStatisticsScope get() = Misses
+                override val evictions: LLStatisticsScope get() = Evictions
+            }
+
+            object ResolveSymbolCache : LLStatisticsScope("$name.resolveSymbolCache"), LLCaffeineStatisticsScope {
+                object Hits : LLStatisticsScope("$name.hits")
+                object Misses : LLStatisticsScope("$name.misses")
+                object Evictions : LLStatisticsScope("$name.evictions")
+
+                override val hits: LLStatisticsScope get() = Hits
+                override val misses: LLStatisticsScope get() = Misses
+                override val evictions: LLStatisticsScope get() = Evictions
+            }
+
+            object ResolveToSymbolsCache : LLStatisticsScope("$name.resolveToSymbolsCache"), LLCaffeineStatisticsScope {
+                object Hits : LLStatisticsScope("$name.hits")
+                object Misses : LLStatisticsScope("$name.misses")
+                object Evictions : LLStatisticsScope("$name.evictions")
+
+                override val hits: LLStatisticsScope get() = Hits
+                override val misses: LLStatisticsScope get() = Misses
+                override val evictions: LLStatisticsScope get() = Evictions
+            }
+        }
     }
 
     object SymbolProviders : LLStatisticsScope("$name.symbolProviders") {

@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains
 
+import com.github.benmanes.caffeine.cache.stats.StatsCounter
 import io.opentelemetry.api.metrics.LongCounter
+import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLCaffeineStatsCounter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsScopes
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.getMeter
@@ -20,4 +22,13 @@ class LLAnalysisSessionStatistics(statisticsService: LLStatisticsService) : LLSt
 
     val lowMemoryCacheCleanupInvocationCounter: LongCounter =
         meter.counterBuilder(LLStatisticsScopes.AnalysisSessions.LowMemoryCacheCleanup.Invocations.name).build()
+
+    val resolveCallCacheStatsCounter: StatsCounter =
+        LLCaffeineStatsCounter(meter, LLStatisticsScopes.AnalysisSessions.Caches.ResolveCallCache)
+
+    val resolveSymbolCacheStatsCounter: StatsCounter =
+        LLCaffeineStatsCounter(meter, LLStatisticsScopes.AnalysisSessions.Caches.ResolveSymbolCache)
+
+    val resolveToSymbolsCacheStatsCounter: StatsCounter =
+        LLCaffeineStatsCounter(meter, LLStatisticsScopes.AnalysisSessions.Caches.ResolveToSymbolsCache)
 }
