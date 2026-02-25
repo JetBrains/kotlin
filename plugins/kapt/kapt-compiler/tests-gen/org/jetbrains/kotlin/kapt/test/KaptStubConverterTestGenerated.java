@@ -299,6 +299,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("explicitAnnotationParameter.kt")
+  public void testExplicitAnnotationParameter() {
+    run("explicitAnnotationParameter.kt");
+  }
+
+  @Test
   @TestMetadata("fileFacadeJvmName.kt")
   public void testFileFacadeJvmName() {
     run("fileFacadeJvmName.kt");

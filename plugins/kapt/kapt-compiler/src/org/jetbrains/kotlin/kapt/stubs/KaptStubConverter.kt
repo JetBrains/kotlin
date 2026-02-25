@@ -1352,6 +1352,9 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     ): JCExpression? {
         if (constantValue is List<*>) {
             if (args.size > constantValue.size) {
+                if (args.size == 1 && args[0] is FirSpreadArgumentExpression)
+                    return treeMaker.NewArray(null, null, convertFirSpreadArgumentExpression(args[0] as FirSpreadArgumentExpression))
+
                 val literalExpression = mapJList(args, ::convertFirGetClassCall)
                 if (literalExpression.size == args.size) {
                     return treeMaker.NewArray(null, null, literalExpression)
@@ -1383,6 +1386,11 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val containingClass = field.containingClassLookupTag() ?: return null
         val fqName = containingClass.classId.asSingleFqName().child(field.name)
         return treeMaker.FqName(fqName)
+    }
+
+    private fun convertFirSpreadArgumentExpression(argumentExpression: FirSpreadArgumentExpression): JavacList<JCExpression> {
+        val literal = argumentExpression.expression as? FirCollectionLiteral ?: return JavacList.nil()
+        return mapJList(literal.arguments, ::convertFirGetClassCall)
     }
 
     private fun convertFirGetClassCall(expression: FirExpression): JCExpression? {
