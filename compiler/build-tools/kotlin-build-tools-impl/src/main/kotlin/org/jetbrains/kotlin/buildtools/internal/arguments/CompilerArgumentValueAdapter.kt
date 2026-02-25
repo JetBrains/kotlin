@@ -65,10 +65,10 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
             JvmCompilerArguments.X_PROFILE -> {
                 val profileCompilerCommand = value as ProfileCompilerCommand
                 with(profileCompilerCommand) {
-                    "${profilerPath.toFile().absolutePath}" +
+                    profilerPath.absolutePathStringOrThrow() +
                             "${File.pathSeparator}${command}" +
                             "${File.pathSeparator}" +
-                            "${outputDir.toFile().absolutePath}"
+                            outputDir.absolutePathStringOrThrow()
                 } as T
             }
 
@@ -125,6 +125,31 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
             JvmCompilerArguments.X_ADD_MODULES -> {
                 val listValue: List<String> = value as List<String>
                 listValue.toTypedArray() as T
+            }
+
+            JvmCompilerArguments.CLASSPATH -> {
+                val listValue = value as List<Path>
+                listValue.joinToString(File.pathSeparator) { it.absolutePathStringOrThrow() } as T
+            }
+
+            JvmCompilerArguments.X_KLIB -> {
+                val listValue = value as List<Path>
+                listValue.joinToString(File.pathSeparator) { it.absolutePathStringOrThrow() } as T
+            }
+
+            JvmCompilerArguments.X_MODULE_PATH -> {
+                val listValue = value as List<Path>
+                listValue.joinToString(File.pathSeparator) { it.absolutePathStringOrThrow() } as T
+            }
+
+            JvmCompilerArguments.X_FRIEND_PATHS -> {
+                val listValue = value as List<Path>
+                listValue.map { it.absolutePathStringOrThrow() }.toTypedArray() as T
+            }
+
+            JvmCompilerArguments.X_JAVA_SOURCE_ROOTS -> {
+                val listValue = value as List<Path>
+                listValue.map { it.absolutePathStringOrThrow() }.toTypedArray() as T
             }
 
             else -> value as T
@@ -225,6 +250,31 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
             JvmCompilerArguments.X_ADD_MODULES -> {
                 val arrayValue = value as Array<String>
                 arrayValue.toList() as T
+            }
+
+            JvmCompilerArguments.CLASSPATH -> {
+                val stringValue = value as String
+                stringValue.split(File.pathSeparator).map { Path(it) } as T
+            }
+
+            JvmCompilerArguments.X_KLIB -> {
+                val stringValue = value as String
+                stringValue.split(File.pathSeparator).map { Path(it) } as T
+            }
+
+            JvmCompilerArguments.X_MODULE_PATH -> {
+                val stringValue = value as String
+                stringValue.split(File.pathSeparator).map { Path(it) } as T
+            }
+
+            JvmCompilerArguments.X_FRIEND_PATHS -> {
+                val arrayValue = value as Array<String>
+                arrayValue.map { Path(it) } as T
+            }
+
+            JvmCompilerArguments.X_JAVA_SOURCE_ROOTS -> {
+                val arrayValue = value as Array<String>
+                arrayValue.map { Path(it) } as T
             }
 
             else -> value as T

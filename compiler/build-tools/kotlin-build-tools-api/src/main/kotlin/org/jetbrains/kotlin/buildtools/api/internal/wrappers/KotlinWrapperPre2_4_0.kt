@@ -260,6 +260,41 @@ internal class KotlinWrapperPre2_4_0(
                     arrayValue.toList() as V
                 }
 
+                JvmCompilerArguments.CLASSPATH -> {
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
+                    stringValue.split(File.pathSeparator).map { Path(it) } as V
+                }
+
+                JvmCompilerArguments.X_KLIB -> {
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
+                    stringValue.split(File.pathSeparator).map { Path(it) } as V
+                }
+
+                JvmCompilerArguments.X_MODULE_PATH -> {
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
+                    stringValue.split(File.pathSeparator).map { Path(it) } as V
+                }
+
+                JvmCompilerArguments.X_FRIEND_PATHS -> {
+                    if (delegate[key] == null) return null as V
+
+                    val arrayValue = delegate[key] as Array<String>
+                    arrayValue.map { Path(it) } as V
+                }
+
+                JvmCompilerArguments.X_JAVA_SOURCE_ROOTS -> {
+                    if (delegate[key] == null) return null as V
+
+                    val arrayValue = delegate[key] as Array<String>
+                    arrayValue.map { Path(it) } as V
+                }
+
                 else -> delegate[key]
             }
         }
@@ -368,6 +403,51 @@ internal class KotlinWrapperPre2_4_0(
                     @Suppress("UNCHECKED_CAST")
                     val listValue: List<String>? = (value as? List<*>)?.takeIf { it.all { item -> item is String } } as List<String>?
                     val arrayValue = listValue?.toTypedArray()
+                    val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
+
+                    delegate[arrayKey] = arrayValue
+                }
+
+                JvmCompilerArguments.CLASSPATH -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<Path>? = (value as? List<*>)?.takeIf { it.all { item -> item is Path } } as List<Path>?
+                    val stringValue = listValue?.joinToString(File.pathSeparator) { it.toFile().absolutePath }
+                    val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                    delegate[stringKey] = stringValue
+                }
+
+                JvmCompilerArguments.X_KLIB -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<Path>? = (value as? List<*>)?.takeIf { it.all { item -> item is Path } } as List<Path>?
+                    val stringValue = listValue?.joinToString(File.pathSeparator) { it.toFile().absolutePath }
+                    val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                    delegate[stringKey] = stringValue
+                }
+
+                JvmCompilerArguments.X_MODULE_PATH -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<Path>? = (value as? List<*>)?.takeIf { it.all { item -> item is Path } } as List<Path>?
+                    val stringValue = listValue?.joinToString(File.pathSeparator) { it.toFile().absolutePath }
+                    val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                    delegate[stringKey] = stringValue
+                }
+
+                JvmCompilerArguments.X_FRIEND_PATHS -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<Path>? = (value as? List<*>)?.takeIf { it.all { item -> item is Path } } as List<Path>?
+                    val arrayValue = listValue?.map { it.toFile().absolutePath }?.toTypedArray()
+                    val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
+
+                    delegate[arrayKey] = arrayValue
+                }
+
+                JvmCompilerArguments.X_JAVA_SOURCE_ROOTS -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<Path>? = (value as? List<*>)?.takeIf { it.all { item -> item is Path } } as List<Path>?
+                    val arrayValue = listValue?.map { it.toFile().absolutePath }?.toTypedArray()
                     val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
 
                     delegate[arrayKey] = arrayValue
