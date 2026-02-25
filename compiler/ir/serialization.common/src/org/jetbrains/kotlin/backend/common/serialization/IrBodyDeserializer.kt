@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.IrSymbolTypeMismatchException
-import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryCoordinates
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.RichFunctionReferenceFlags
@@ -138,20 +137,20 @@ class IrBodyDeserializer(
     }
 
     internal fun deserializeStatement(proto: ProtoStatement, parentStart: Int?): IrElement {
-        val (start, end) = declarationDeserializer.deserializeCoordinates(proto.coordinates, parentStart)
+        val coords = declarationDeserializer.deserializeCoordinates(proto.coordinates, parentStart)
         val element = when (proto.statementCase) {
             StatementCase.BLOCK_BODY //proto.hasBlockBody()
-            -> deserializeBlockBody(proto.blockBody, start, end)
+            -> deserializeBlockBody(proto.blockBody, coords.startOffset, coords.endOffset)
             StatementCase.BRANCH //proto.hasBranch()
-            -> deserializeBranch(proto.branch, start, end)
+            -> deserializeBranch(proto.branch, coords.startOffset, coords.endOffset)
             StatementCase.CATCH //proto.hasCatch()
-            -> deserializeCatch(proto.catch, start, end)
+            -> deserializeCatch(proto.catch, coords.startOffset, coords.endOffset)
             StatementCase.DECLARATION // proto.hasDeclaration()
             -> declarationDeserializer.deserializeDeclaration(proto.declaration, parentStart)
             StatementCase.EXPRESSION // proto.hasExpression()
             -> deserializeExpression(proto.expression, parentStart)
             StatementCase.SYNTHETIC_BODY // proto.hasSyntheticBody()
-            -> deserializeSyntheticBody(proto.syntheticBody, start, end)
+            -> deserializeSyntheticBody(proto.syntheticBody, coords.startOffset, coords.endOffset)
             else
             -> TODO("Statement deserialization not implemented: ${proto.statementCase}")
         }
@@ -315,7 +314,7 @@ class IrBodyDeserializer(
         var start = UNDEFINED_OFFSET
         var end = UNDEFINED_OFFSET
         if (proto.hasCoordinates()) {
-            val coords = BinaryCoordinates.decode(proto.coordinates)
+            val coords = BinaryCoordinatesEncoding.decode(proto.coordinates)
             start = coords.startOffset
             end = coords.endOffset
         }
@@ -662,9 +661,9 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeSpreadElement(proto: ProtoSpreadElement, parentStart: Int): IrSpreadElement {
-        val (startOffset, endOffset) = declarationDeserializer.deserializeCoordinates(proto.coordinates, parentStart)
-        val expression = deserializeExpression(proto.expression, startOffset)
-        return IrSpreadElementImpl(startOffset, endOffset, expression)
+        val coords = declarationDeserializer.deserializeCoordinates(proto.coordinates, parentStart)
+        val expression = deserializeExpression(proto.expression, coords.startOffset)
+        return IrSpreadElementImpl(coords.startOffset, coords.endOffset, expression)
     }
 
     private fun deserializeStringConcat(proto: ProtoStringConcat, start: Int, end: Int, type: IrType): IrStringConcatenation {
@@ -1000,13 +999,13 @@ class IrBodyDeserializer(
             return null
         }
 
-        val (start, end) = declarationDeserializer.deserializeCoordinates(proto.coordinates, parentStart)
+        val coords = declarationDeserializer.deserializeCoordinates(proto.coordinates, parentStart)
         val type = declarationDeserializer.deserializeIrType(proto.type)
 
         val expression = if (proto.operationCase != ProtoExpression.OperationCase.OPERATION_NOT_SET) {
-            deserializeOperation(proto, start, end, type)
+            deserializeOperation(proto, coords.startOffset, coords.endOffset, type)
         } else {
-            deserializeOperationPre240(proto.operationPre240, start, end, type)
+            deserializeOperationPre240(proto.operationPre240, coords.startOffset, coords.endOffset, type)
         }
 
         return expression

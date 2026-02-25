@@ -5,19 +5,20 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.encodings
 
-@JvmInline
-value class BinaryCoordinates(private val decoded: BinaryLattice) {
-    private fun diff(): Int = decoded.second
+internal object BinaryCoordinatesEncoding {
+    fun encode(startOffset: Int, endOffset: Int): Long {
+        assert(startOffset <= endOffset)
+        return BinaryLattice.encode(startOffset, endOffset - startOffset)
+    }
 
-    val startOffset: Int get() = decoded.first
-    val endOffset: Int get() = startOffset + diff()
-
-    companion object {
-        fun encode(startOffset: Int, endOffset: Int): Long {
-            assert(startOffset <= endOffset)
-            return BinaryLattice.encode(startOffset, endOffset - startOffset)
-        }
-
-        fun decode(code: Long) = BinaryCoordinates(BinaryLattice.decode(code))
+    fun decode(code: Long): IrElementCoordinates {
+        val decoded = BinaryLattice.decode(code)
+        val start = decoded.first
+        return IrElementCoordinates(start, start + decoded.second)
     }
 }
+
+internal data class IrElementCoordinates(
+    val startOffset: Int,
+    val endOffset: Int,
+)
