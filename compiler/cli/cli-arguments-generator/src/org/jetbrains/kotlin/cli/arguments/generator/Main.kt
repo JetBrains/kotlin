@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.types.*
+import org.jetbrains.kotlin.arguments.dsl.types.PathListType.Renderer.ListFormat
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -392,6 +393,22 @@ private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
         }
         is StringListType -> "Array<String>?"
         is StringArrayType -> "Array<String>?"
+        is PathListType -> {
+            when (type.renderer) {
+                PathListType.Renderer.OsPath -> {
+                    when (type.isNullable.current) {
+                        true -> "String?"
+                        false -> "String"
+                    }
+                }
+                ListFormat -> {
+                    when (type.isNullable.current) {
+                        true -> "Array<String>?"
+                        false -> "Array<String>"
+                    }
+                }
+            }
+        }
         else -> when (type.isNullable.current) {
             true -> "String?"
             false -> "String"
@@ -482,6 +499,8 @@ private val KotlinCompilerArgument.defaultValueInArgs: String
         return when (@Suppress("UNCHECKED_CAST") val valueType = argumentType as KotlinArgumentValueType<Any>) {
             is StringListType if valueType.defaultValue.current == null -> "null"
             is StringListType -> "arrayOf(${valueType.stringRepresentation(valueType.defaultValue.current)})"
+            is PathListType if valueType.defaultValue.current == null -> "null"
+            is PathListType if valueType.renderer is ListFormat -> "arrayOf(${valueType.stringRepresentation(valueType.defaultValue.current)})"
             else -> valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
         }
     }

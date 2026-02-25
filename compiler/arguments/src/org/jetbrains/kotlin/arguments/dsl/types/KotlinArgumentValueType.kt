@@ -376,7 +376,7 @@ class WhenExpressionsModeType(
  */
 @Serializable
 class PathListType(
-    private val renderer: Renderer,
+    val renderer: Renderer = OS_PATH,
     override val defaultValue: ReleaseDependent<List<Path>?> = ReleaseDependent(null),
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
 ) : KotlinArgumentValueType<List<Path>> {
