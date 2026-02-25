@@ -208,3 +208,88 @@ internal fun <T> applyWhenExpressionsGeneration(
 
     return compilerArgs.whenExpressionsGeneration as T
 }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> K2JVMCompilerArguments.applyFriendPaths(paths: T?) {
+    require(paths is Array<*>? && paths?.all { it is String } == true) { "Xfriend-paths must be an array of strings, but was $paths" }
+
+    this.friendPaths = paths as Array<String>?
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applyFriendPaths(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is Array<*>? && currentValue?.all { it is String } == true) { "Xfriend-paths must be an array of strings, but was $currentValue" }
+
+    return compilerArgs.friendPaths as T
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> K2JVMCompilerArguments.applyJavaSourceRoots(paths: T?) {
+    require(paths is Array<*>? && paths?.all { it is String } == true) { "Xjava-source-roots must be an array of strings, but was $paths" }
+
+    this.javaSourceRoots = paths as Array<String>?
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applyJavaSourceRoots(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is Array<*>? && currentValue?.all { it is String } == true) { "Xjava-source-roots must be an array of strings, but was $currentValue" }
+
+    return compilerArgs.javaSourceRoots as T
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> K2JVMCompilerArguments.applyKlibLibraries(paths: T?) {
+    require(paths is String) { "Xklib must be a string, but was $paths" }
+
+    this.klibLibraries = paths as String?
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applyKlibLibraries(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is String) { "Xklib must be a string, but was $currentValue" }
+
+    return compilerArgs.klibLibraries as T
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> K2JVMCompilerArguments.applyClasspath(paths: T?) {
+    require(paths is String) { "classpath must be a string, but was $paths" }
+
+    this.classpath = paths as String?
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applyClasspath(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is String) { "classpath must be a string, but was $currentValue" }
+
+    return compilerArgs.classpath as T
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> K2JVMCompilerArguments.applyJavaModulePath(paths: T?) {
+    require(paths is String) { "Xmodule-path must be a string, but was $paths" }
+
+    this.javaModulePath = paths as String?
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applyJavaModulePath(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is String) { "Xmodule-path must be a string, but was $currentValue" }
+
+    return compilerArgs.classpath as T
+}
