@@ -105,7 +105,7 @@ internal fun Project.createGeneralTestTask(
         evaluationDependsOn(":test-instrumenter")
     }
     return getOrCreateTask<Test>(taskName) {
-        if (taskName != "test" && !project.pluginManager.hasPlugin("jvm-test-suite")) {
+        if (taskName != "test" && classpath.isEmpty) {
             classpath = sourceSets.getByName("test").runtimeClasspath
             testClassesDirs = sourceSets.getByName("test").output.classesDirs
         }
