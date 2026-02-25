@@ -1465,12 +1465,12 @@ KtNameReferenceExpression(1084,1100): 'SealedInheritor1'
 KtDotQualifiedExpression(1105,1123): 'v.prop1.hashCode()'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtDotQualifiedExpression(1105,1112): 'v.prop1'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'. With receiver of type '??? (Unresolved qualified name: SealedInheritor1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtNameReferenceExpression(1105,1106): 'v'
   KaCallResolutionSuccess:
@@ -1492,17 +1492,17 @@ KtNameReferenceExpression(1105,1106): 'v'
 KtNameReferenceExpression(1107,1112): 'prop1'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'. With receiver of type '??? (Unresolved qualified name: SealedInheritor1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtCallExpression(1113,1123): 'hashCode()'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtNameReferenceExpression(1113,1121): 'hashCode'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtValueArgumentList(1121,1123): '()'
   null
@@ -1556,7 +1556,7 @@ KtNameReferenceExpression(1156,1172): 'SealedInheritor1'
 KtDotQualifiedExpression(1177,1196): 'v2.prop1.hashCode()'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtDotQualifiedExpression(1177,1185): 'v2.prop1'
   KaCallResolutionError:
@@ -1588,12 +1588,12 @@ KtNameReferenceExpression(1180,1185): 'prop1'
 KtCallExpression(1186,1196): 'hashCode()'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtNameReferenceExpression(1186,1194): 'hashCode'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtValueArgumentList(1194,1196): '()'
   null
@@ -1649,12 +1649,12 @@ KtNameReferenceExpression(1234,1250): 'SealedInheritor1'
 KtDotQualifiedExpression(1255,1274): 'v3.prop1.hashCode()'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtDotQualifiedExpression(1255,1263): 'v3.prop1'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'. With receiver of type '??? (Unresolved qualified name: SealedInheritor1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtNameReferenceExpression(1255,1257): 'v3'
   KaCallResolutionSuccess:
@@ -1676,17 +1676,17 @@ KtNameReferenceExpression(1255,1257): 'v3'
 KtNameReferenceExpression(1258,1263): 'prop1'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'. With receiver of type '??? (Unresolved qualified name: SealedInheritor1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtCallExpression(1264,1274): 'hashCode()'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtNameReferenceExpression(1264,1272): 'hashCode'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtValueArgumentList(1272,1274): '()'
   null
@@ -2153,7 +2153,7 @@ KtNameReferenceExpression(1491,1507): 'SealedInheritor2'
 KtSafeQualifiedExpression(1512,1527): 'i?.prop2?.dec()'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'dec'. With receiver of type '??? (Unresolved name: prop2)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'dec'.>
 
 KtSafeQualifiedExpression(1512,1520): 'i?.prop2'
   KaCallResolutionError:
@@ -2185,12 +2185,12 @@ KtNameReferenceExpression(1515,1520): 'prop2'
 KtCallExpression(1522,1527): 'dec()'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'dec'. With receiver of type '??? (Unresolved name: prop2)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'dec'.>
 
 KtNameReferenceExpression(1522,1525): 'dec'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'dec'. With receiver of type '??? (Unresolved name: prop2)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'dec'.>
 
 KtValueArgumentList(1525,1527): '()'
   null
@@ -2400,7 +2400,7 @@ KtNameReferenceExpression(1623,1639): 'SealedInheritor1'
 KtSafeQualifiedExpression(1644,1665): 'v2?.prop1?.hashCode()'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtSafeQualifiedExpression(1644,1653): 'v2?.prop1'
   KaCallResolutionError:
@@ -2432,12 +2432,12 @@ KtNameReferenceExpression(1648,1653): 'prop1'
 KtCallExpression(1655,1665): 'hashCode()'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtNameReferenceExpression(1655,1663): 'hashCode'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtValueArgumentList(1663,1665): '()'
   null
@@ -2494,12 +2494,12 @@ KtNameReferenceExpression(1705,1721): 'SealedInheritor1'
 KtSafeQualifiedExpression(1726,1747): 'v3?.prop1?.hashCode()'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtSafeQualifiedExpression(1726,1735): 'v3?.prop1'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'. With receiver of type '??? (Unresolved qualified name: SealedInheritor1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtNameReferenceExpression(1726,1728): 'v3'
   KaCallResolutionSuccess:
@@ -2521,17 +2521,17 @@ KtNameReferenceExpression(1726,1728): 'v3'
 KtNameReferenceExpression(1730,1735): 'prop1'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'. With receiver of type '??? (Unresolved qualified name: SealedInheritor1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtCallExpression(1737,1747): 'hashCode()'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtNameReferenceExpression(1737,1745): 'hashCode'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'. With receiver of type '??? (Unresolved name: prop1)'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtValueArgumentList(1745,1747): '()'
   null
