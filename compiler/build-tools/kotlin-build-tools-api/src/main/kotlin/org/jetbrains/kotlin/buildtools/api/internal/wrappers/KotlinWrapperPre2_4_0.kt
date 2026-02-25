@@ -10,15 +10,7 @@ package org.jetbrains.kotlin.buildtools.api.internal.wrappers
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.CompatqualAnnotationsMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JspecifyAnnotationsMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
@@ -250,6 +242,41 @@ internal class KotlinWrapperPre2_4_0(
                     WhenExpressionsMode.values().first { it.stringValue == stringValue } as V
                 }
 
+                JvmCompilerArguments.CLASSPATH -> {
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
+                    stringValue.split(File.pathSeparator).toList() as V
+                }
+
+                JvmCompilerArguments.X_FRIEND_PATHS -> {
+                    if (delegate[key] == null) return null as V
+
+                    val arrayValue = delegate[key] as Array<String>
+                    arrayValue.toList() as V
+                }
+
+                JvmCompilerArguments.X_JAVA_SOURCE_ROOTS -> {
+                    if (delegate[key] == null) return null as V
+
+                    val arrayValue = delegate[key] as Array<String>
+                    arrayValue.toList() as V
+                }
+
+                JvmCompilerArguments.X_KLIB -> {
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
+                    stringValue.split(File.pathSeparator).toList() as V
+                }
+
+                JvmCompilerArguments.X_MODULE_PATH -> {
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
+                    stringValue.split(File.pathSeparator).toList() as V
+                }
+
                 else -> delegate[key]
             }
         }
@@ -350,6 +377,51 @@ internal class KotlinWrapperPre2_4_0(
                 JvmCompilerArguments.X_WHEN_EXPRESSIONS -> {
                     val mode = value as WhenExpressionsMode?
                     val stringValue = mode?.stringValue
+                    val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                    delegate[stringKey] = stringValue
+                }
+
+                JvmCompilerArguments.CLASSPATH -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<Path>? = (value as? List<*>)?.takeIf { it.all { item -> item is Path } } as List<Path>?
+                    val stringValue = listValue?.joinToString(File.pathSeparator) { it.toFile().absolutePath }
+                    val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                    delegate[stringKey] = stringValue
+                }
+
+                JvmCompilerArguments.X_FRIEND_PATHS -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<Path>? = (value as? List<*>)?.takeIf { it.all { item -> item is Path } } as List<Path>?
+                    val arrayValue = listValue?.map { it.toFile().absolutePath }?.toTypedArray()
+                    val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
+
+                    delegate[arrayKey] = arrayValue
+                }
+
+                JvmCompilerArguments.X_JAVA_SOURCE_ROOTS -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<Path>? = (value as? List<*>)?.takeIf { it.all { item -> item is Path } } as List<Path>?
+                    val arrayValue = listValue?.map { it.toFile().absolutePath }?.toTypedArray()
+                    val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
+
+                    delegate[arrayKey] = arrayValue
+                }
+
+                JvmCompilerArguments.X_KLIB -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<Path>? = (value as? List<*>)?.takeIf { it.all { item -> item is Path } } as List<Path>?
+                    val stringValue = listValue?.joinToString(File.pathSeparator) { it.toFile().absolutePath }
+                    val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                    delegate[stringKey] = stringValue
+                }
+
+                JvmCompilerArguments.X_MODULE_PATH -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<Path>? = (value as? List<*>)?.takeIf { it.all { item -> item is Path } } as List<Path>?
+                    val stringValue = listValue?.joinToString(File.pathSeparator) { it.toFile().absolutePath }
                     val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
 
                     delegate[stringKey] = stringValue
