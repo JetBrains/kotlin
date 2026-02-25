@@ -412,4 +412,47 @@ class JavaParsingTest {
         assert(returnType.classifier != null) { "Method return type 'B' should have resolved classifier" }
         assert(returnType.classifier?.name?.asString() == "B") { "Method return type classifier should be 'B'" }
     }
+
+    @Test
+    fun testNestedClassResolution() {
+        val source = """
+            public class Outer {
+                public class Inner {
+                    public class Deep {
+                    }
+                }
+                
+                public Inner field1;
+                public Outer.Inner field2;
+                public Outer.Inner.Deep field3;
+                public Inner.Deep field4;
+            }
+        """.trimIndent()
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        val localScope = LocalJavaScope(root, source)
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val javaClass = JavaClassOverAst(classNode, source, null, localScope)
+
+        val field1 = javaClass.fields.first { it.name.asString() == "field1" }
+        val type1 = field1.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(type1.classifier != null) { "field1 type 'Inner' should resolve" }
+        assert(type1.classifier?.name?.asString() == "Inner") { "field1 type should be 'Inner'" }
+
+        val field2 = javaClass.fields.first { it.name.asString() == "field2" }
+        val type2 = field2.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        // This will currently fail because 'Outer.Inner' is not handled
+        assert(type2.classifier != null) { "field2 type 'Outer.Inner' should resolve" }
+        assert(type2.classifier?.name?.asString() == "Inner") { "field2 type should be 'Inner'" }
+
+        val field3 = javaClass.fields.first { it.name.asString() == "field3" }
+        val type3 = field3.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(type3.classifier != null) { "field3 type 'Outer.Inner.Deep' should resolve" }
+        assert(type3.classifier?.name?.asString() == "Deep") { "field3 type should be 'Deep'" }
+
+        val field4 = javaClass.fields.first { it.name.asString() == "field4" }
+        val type4 = field4.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(type4.classifier != null) { "field4 type 'Inner.Deep' should resolve" }
+        assert(type4.classifier?.name?.asString() == "Deep") { "field4 type should be 'Deep'" }
+    }
 }

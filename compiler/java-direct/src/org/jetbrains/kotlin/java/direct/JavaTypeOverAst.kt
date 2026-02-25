@@ -26,25 +26,50 @@ class JavaClassifierTypeOverAst(
 ) : JavaTypeOverAst(node, source), JavaClassifierType {
     override val classifier: JavaClassifier? by lazy {
         val typeName = node.text
-        val simpleName = if (typeName.contains('.')) {
-            typeName.substringAfterLast('.')
-        } else {
-            typeName
+        val parts = typeName.split('.')
+        
+        var current: JavaClassifier? = localScope?.findClass(Name.identifier(parts[0]))
+        
+        if (current == null) {
+            val simpleImport = imports.simpleImports[parts[0]]
+            // If it's a simple import, we can't easily resolve it to a JavaClassifier here 
+            // because we don't have access to the full class finder.
+            // But if it's a local class, we can traverse.
         }
-        localScope?.findClass(Name.identifier(simpleName))
+
+        if (current is JavaClass) {
+            for (i in 1 until parts.size) {
+                val nextPart = parts[i]
+                val prev = current as JavaClass
+                current = prev.findInnerClass(Name.identifier(nextPart))
+                if (current == null) return@lazy null
+            }
+        }
+        
+        current
     }
     
     override val classifierQualifiedName: String
         get() {
             val typeName = node.text
+            val parts = typeName.split('.')
             
-            if (typeName.contains('.')) {
-                return typeName
+            val localBase = localScope?.findClass(Name.identifier(parts[0]))
+            if (localBase != null) {
+                var current: JavaClass? = localBase
+                for (i in 1 until parts.size) {
+                    current = current?.findInnerClass(Name.identifier(parts[i]))
+                }
+                return current?.fqName?.asString() ?: typeName
             }
             
-            val qualified = imports.simpleImports[typeName]
+            val qualified = imports.simpleImports[parts[0]]
             if (qualified != null) {
-                return qualified.asString()
+                var result = qualified.asString()
+                for (i in 1 until parts.size) {
+                    result += "." + parts[i]
+                }
+                return result
             }
             
             return typeName

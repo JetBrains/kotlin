@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 
@@ -32,11 +33,12 @@ abstract class JavaMemberOverAst(
 
     override val visibility: Visibility
         get() = when {
-            hasModifier("PUBLIC_KEYWORD") -> org.jetbrains.kotlin.descriptors.Visibilities.Public
-            hasModifier("PROTECTED_KEYWORD") -> org.jetbrains.kotlin.descriptors.Visibilities.Protected
-            hasModifier("PRIVATE_KEYWORD") -> org.jetbrains.kotlin.descriptors.Visibilities.Private
-            else -> JavaDescriptorVisibilities.PACKAGE_VISIBILITY
-        } as Visibility
+            containingClass.isInterface -> Visibilities.Public
+            hasModifier("PUBLIC_KEYWORD") -> Visibilities.Public
+            hasModifier("PROTECTED_KEYWORD") -> Visibilities.Protected
+            hasModifier("PRIVATE_KEYWORD") -> Visibilities.Private
+            else -> JavaVisibilities.PackageVisibility
+        }
 
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
     override val isDeprecatedInJavaDoc: Boolean get() = false

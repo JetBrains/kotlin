@@ -13,13 +13,33 @@ class LocalJavaScope(
     private val source: CharSequence
 ) {
     private val classMap: Map<Name, JavaClass> by lazy {
-        val classes = root.getChildrenByType("CLASS")
-        classes.mapNotNull { classNode ->
-            val identifier = classNode.findChildByType("IDENTIFIER")?.text ?: return@mapNotNull null
-            val name = Name.identifier(identifier)
-            val javaClass = JavaClassOverAst(classNode, source)
-            name to javaClass
-        }.toMap()
+        val result = mutableMapOf<Name, JavaClass>()
+        
+        fun collectClasses(node: JavaSyntaxNode, outerClass: JavaClass?) {
+            for (child in node.children) {
+                if (child.type.toString() == "CLASS") {
+                    val identifier = child.findChildByType("IDENTIFIER")?.text
+                    if (identifier != null) {
+                        val name = Name.identifier(identifier)
+                        val javaClass = JavaClassOverAst(child, source, outerClass, this, JavaImports.EMPTY)
+                        // For now, index by simple name to support simple name resolution within the file.
+                        // If there are multiple classes with the same simple name (e.g. in different methods, 
+                        // but Java only allows one top-level class with a given name in a file, 
+                        // and nested classes have different paths), we might need a better indexing.
+                        // But for now, simple name resolution is what's requested.
+                        if (!result.containsKey(name)) {
+                            result[name] = javaClass
+                        }
+                        collectClasses(child, javaClass)
+                    }
+                } else {
+                    collectClasses(child, outerClass)
+                }
+            }
+        }
+        
+        collectClasses(root, null)
+        result
     }
 
     fun findClass(name: Name): JavaClass? = classMap[name]
