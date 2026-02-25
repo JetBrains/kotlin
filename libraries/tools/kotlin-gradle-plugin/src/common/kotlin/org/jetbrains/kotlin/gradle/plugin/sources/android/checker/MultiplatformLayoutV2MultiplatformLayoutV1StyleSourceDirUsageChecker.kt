@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources.android.checker
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfo
@@ -45,7 +46,7 @@ internal object MultiplatformLayoutV2MultiplatformLayoutV1StyleSourceDirUsageChe
         if (v1KotlinSourceDir.exists()) {
             val v2SourceDirToUse = target.project.file("src/${kotlinSourceSet.name}/kotlin")
             diagnosticsCollector.report(
-                target.project,
+                target.project.toolingDiagnosticsContext,
                 KotlinToolingDiagnostics.SourceSetLayoutV1StyleDirUsageWarning(
                     v1KotlinSourceDir.relativeTo(rootDirPath).toString(),
                     layout.name,

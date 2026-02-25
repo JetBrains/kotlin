@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources.android.checker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportOncePerGradleBuild
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout
 
@@ -21,7 +22,8 @@ internal object MultiplatformLayoutV1DeprecationChecker : KotlinAndroidSourceSet
         layout: KotlinAndroidSourceSetLayout
     ) {
         diagnosticsCollector.reportOncePerGradleBuild(
-            target.project, KotlinToolingDiagnostics.AndroidSourceSetLayoutV1Deprecation()
+            target.project.toolingDiagnosticsContext,
+            KotlinToolingDiagnostics.AndroidSourceSetLayoutV1Deprecation()
         )
     }
 }

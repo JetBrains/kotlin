@@ -38,9 +38,7 @@ internal object AndroidPublicationNotConfiguredChecker : KotlinGradleProjectChec
             // then neither of the components should be `KotlinTargetComponent`
             if (component !is KotlinTargetSoftwareComponent) return@configureEach
 
-            collector.report(
-                projectPath,
-                renderingOptions,
+            collector.report(diagnosticsContext,
                 KotlinToolingDiagnostics.AndroidPublicationNotConfigured(
                     // cast is needed to avoid ambiguity on getName()
                     componentName = component.name,

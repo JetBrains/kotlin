@@ -34,16 +34,12 @@ internal object KotlinTargetAlreadyDeclaredChecker : KotlinGradleProjectChecker 
             when (targetsGroup.first().internal.targetPreset) {
                 // For JS targets fire WARNING for now
                 // FIXME: https://youtrack.jetbrains.com/issue/KT-59316/Deprecate-multiple-same-targets#focus=Comments-27-9992405.0-0
-                is KotlinJsIrTargetPreset -> collector.report(
-                    projectPath,
-                    renderingOptions,
+                is KotlinJsIrTargetPreset -> collector.report(diagnosticsContext,
                     KotlinToolingDiagnostics.KotlinTargetAlreadyDeclaredWarning(
                         targetDslFunctionName
                     )
                 )
-                else -> collector.report(
-                    projectPath,
-                    renderingOptions,
+                else -> collector.report(diagnosticsContext,
                     KotlinToolingDiagnostics.KotlinTargetAlreadyDeclaredError(
                         targetDslFunctionName
                     )

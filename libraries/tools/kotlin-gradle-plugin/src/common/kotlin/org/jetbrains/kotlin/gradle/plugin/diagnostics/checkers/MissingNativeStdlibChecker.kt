@@ -30,9 +30,7 @@ internal object MissingNativeStdlibChecker : KotlinGradleProjectChecker {
             checkThatStdlibExists().get()
         ) return
 
-        collector.report(
-            projectPath,
-            renderingOptions,
+        collector.report(diagnosticsContext,
             KotlinToolingDiagnostics.NativeStdlibIsMissingDiagnostic(
                 project.nativeProperties.userProvidedNativeHome.map { NativeProperties.NATIVE_HOME.name }.orNull
             )

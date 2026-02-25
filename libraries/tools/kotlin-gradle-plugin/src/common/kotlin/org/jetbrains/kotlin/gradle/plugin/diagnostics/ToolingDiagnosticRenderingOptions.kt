@@ -23,46 +23,6 @@ import org.jetbrains.kotlin.gradle.utils.ConfigurationCacheOpaqueValueSource
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.Serializable
 
-internal data class ToolingDiagnosticRenderingOptionsParameters(
-    val isInIdeaSync: Boolean,
-    val isInIdeaEnvironment: Boolean,
-    val showStacktrace: ShowStacktrace,
-    val warningMode: WarningMode,
-    val consoleOutput: ConsoleOutput,
-    val isAttachedToTerminal: Boolean,
-    val internalDiagnosticsShowStacktrace: Boolean?,
-    val internalDiagnosticsUseParsableFormat: Boolean,
-    val suppressedGradlePluginWarnings: List<String>,
-    val suppressedGradlePluginErrors: List<String>,
-    val internalDiagnosticsIgnoreWarningMode: Boolean?,
-    val displayDiagnosticsInIdeBuildLog: Boolean,
-) {
-    companion object {
-        fun create(
-            providerFactory: ProviderFactory,
-            startParameter: StartParameter,
-            propertiesProvider: PropertiesProvider,
-        ): ToolingDiagnosticRenderingOptionsParameters =
-            ToolingDiagnosticRenderingOptionsParameters(
-                isInIdeaSync = providerFactory.isInIdeaSync().get(),
-                isInIdeaEnvironment = providerFactory.isInIdeaEnvironment().get(),
-                showStacktrace = startParameter.showStacktrace,
-                warningMode = startParameter.warningMode,
-                consoleOutput = startParameter.consoleOutput,
-                isAttachedToTerminal = providerFactory.isAttachedToTerminal().get(),
-                internalDiagnosticsShowStacktrace = propertiesProvider.internalDiagnosticsShowStacktrace,
-                internalDiagnosticsUseParsableFormat = propertiesProvider.internalDiagnosticsUseParsableFormat,
-                suppressedGradlePluginWarnings = propertiesProvider.suppressedGradlePluginWarnings,
-                suppressedGradlePluginErrors = propertiesProvider.suppressedGradlePluginErrors,
-                internalDiagnosticsIgnoreWarningMode = propertiesProvider.internalDiagnosticsIgnoreWarningMode,
-                displayDiagnosticsInIdeBuildLog = propertiesProvider.displayDiagnosticsInIdeBuildLog,
-            )
-
-        fun fromProject(project: Project): ToolingDiagnosticRenderingOptionsParameters =
-            create(project.providers, project.gradle.startParameter, project.kotlinPropertiesProvider)
-    }
-}
-
 internal class ToolingDiagnosticRenderingOptions(
     val useParsableFormat: Boolean,
     val suppressedWarningIds: List<String>,
@@ -75,33 +35,41 @@ internal class ToolingDiagnosticRenderingOptions(
     val displayDiagnosticsInIdeBuildLog: Boolean,
 ) : Serializable {
     companion object {
-        fun create(params: ToolingDiagnosticRenderingOptionsParameters): ToolingDiagnosticRenderingOptions {
+        const val serialVersionUID: Long = 1L
+
+        fun create(
+            providerFactory: ProviderFactory,
+            startParameter: StartParameter,
+            propertiesProvider: PropertiesProvider,
+        ): ToolingDiagnosticRenderingOptions {
+            val isInIdeaSync = providerFactory.isInIdeaSync().get()
+            val isInIdeaEnvironment = providerFactory.isInIdeaEnvironment().get()
             val showStacktrace = when {
                 // if the internal property is specified, it takes the highest priority
-                params.internalDiagnosticsShowStacktrace != null -> params.internalDiagnosticsShowStacktrace
+                propertiesProvider.internalDiagnosticsShowStacktrace != null -> propertiesProvider.internalDiagnosticsShowStacktrace!!
 
                 // IDEA launches sync with `--stacktrace` option, but we don't want to
                 // spam stacktraces in build toolwindow
-                params.isInIdeaSync -> false
+                isInIdeaSync -> false
 
-                else -> params.showStacktrace > ShowStacktrace.INTERNAL_EXCEPTIONS
+                else -> startParameter.showStacktrace > ShowStacktrace.INTERNAL_EXCEPTIONS
             }
 
             return ToolingDiagnosticRenderingOptions(
-                useParsableFormat = params.internalDiagnosticsUseParsableFormat,
-                suppressedWarningIds = params.suppressedGradlePluginWarnings,
-                suppressedErrorIds = params.suppressedGradlePluginErrors,
+                useParsableFormat = propertiesProvider.internalDiagnosticsUseParsableFormat,
+                suppressedWarningIds = propertiesProvider.suppressedGradlePluginWarnings,
+                suppressedErrorIds = propertiesProvider.suppressedGradlePluginErrors,
                 showStacktrace = showStacktrace,
-                showSeverityEmoji = !params.isInIdeaEnvironment && !HostManager.hostIsMingw,
-                coloredOutput = showColoredDiagnostics(params.consoleOutput, params.isAttachedToTerminal),
-                ignoreWarningMode = params.internalDiagnosticsIgnoreWarningMode == true,
-                warningMode = params.warningMode,
-                displayDiagnosticsInIdeBuildLog = params.displayDiagnosticsInIdeBuildLog && params.isInIdeaEnvironment,
+                showSeverityEmoji = !isInIdeaEnvironment && !HostManager.hostIsMingw,
+                coloredOutput = showColoredDiagnostics(startParameter.consoleOutput, providerFactory.isAttachedToTerminal().get()),
+                ignoreWarningMode = propertiesProvider.internalDiagnosticsIgnoreWarningMode == true,
+                warningMode = startParameter.warningMode,
+                displayDiagnosticsInIdeBuildLog = propertiesProvider.displayDiagnosticsInIdeBuildLog && isInIdeaEnvironment,
             )
         }
 
         fun forProject(project: Project): ToolingDiagnosticRenderingOptions {
-            return create(ToolingDiagnosticRenderingOptionsParameters.fromProject(project))
+            return create(project.providers, project.gradle.startParameter, project.kotlinPropertiesProvider)
         }
     }
 
@@ -138,11 +106,8 @@ private fun showColoredDiagnostics(consoleOutput: ConsoleOutput, isAttachedToTer
     }
 }
 
-internal val Project.isAttachedToTerminal
-    get() = providers.isAttachedToTerminal()
-
 /**
- * Returns [true] when current Gradle build is attached to a terminal.
+ * Returns `true` when current Gradle build is attached to a terminal.
  */
 internal fun ProviderFactory.isAttachedToTerminal(): Provider<Boolean> =
     of(IsAttachedToTerminalValueSource::class.java) {}.map { it.value }

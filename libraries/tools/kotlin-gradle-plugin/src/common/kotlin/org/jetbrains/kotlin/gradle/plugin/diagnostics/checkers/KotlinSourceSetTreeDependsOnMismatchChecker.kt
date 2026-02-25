@@ -113,9 +113,7 @@ internal object KotlinSourceSetTreeDependsOnMismatchChecker : KotlinGradleProjec
         for (leafSourceSet in leafSourceSets) {
             val dependents = reverseSourceSetDependencies[leafSourceSet].orEmpty()
             for (dependent in dependents) {
-                collector.report(
-                    projectPath,
-                    renderingOptions,
+                collector.report(diagnosticsContext,
                     KotlinSourceSetDependsOnDefaultCompilationSourceSet(dependent.name, leafSourceSet.name)
                 )
             }
@@ -133,7 +131,7 @@ internal object KotlinSourceSetTreeDependsOnMismatchChecker : KotlinGradleProjec
             ?.single()
             ?: return false
 
-        collector.report(projectPath, renderingOptions, KotlinSourceSetTreeDependsOnMismatch(singleDependee.name, badSourceSet.name))
+        collector.report(diagnosticsContext, KotlinSourceSetTreeDependsOnMismatch(singleDependee.name, badSourceSet.name))
         return true
     }
 
@@ -146,6 +144,6 @@ internal object KotlinSourceSetTreeDependsOnMismatchChecker : KotlinGradleProjec
             .mapKeys { it.key?.name ?: "null" }
             .mapValues { it.value.map(KotlinSourceSet::getName) }
 
-        collector.report(projectPath, renderingOptions, KotlinSourceSetTreeDependsOnMismatch(dependentsGroup, badSourceSet.name))
+        collector.report(diagnosticsContext, KotlinSourceSetTreeDependsOnMismatch(dependentsGroup, badSourceSet.name))
     }
 }

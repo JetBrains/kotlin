@@ -30,7 +30,7 @@ internal object WasmSourceSetsNotFoundChecker : KotlinGradleProjectChecker {
             .map { it.value }
 
         unknownWasmSourceSetNames.forEach { unknownWasmSourceSetName ->
-            collector.report(projectPath, renderingOptions, KotlinToolingDiagnostics.WasmSourceSetsNotFoundError(unknownWasmSourceSetName))
+            collector.report(diagnosticsContext, KotlinToolingDiagnostics.WasmSourceSetsNotFoundError(unknownWasmSourceSetName))
         }
     }
 }

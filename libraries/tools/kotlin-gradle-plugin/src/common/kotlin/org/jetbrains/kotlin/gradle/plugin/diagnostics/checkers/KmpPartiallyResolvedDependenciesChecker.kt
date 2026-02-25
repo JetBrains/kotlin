@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticRenderingOptions
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpMultiVariantModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyTransformationTask
@@ -85,8 +85,7 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
                     metadataTransformations.forEach { transformationParameters ->
                         validateNoTargetPlatformsResolvedPartially(
                             collector,
-                            projectPath,
-                            renderingOptions,
+                            diagnosticsContext,
                             sourceSetName = transformationParameters.sourceSetName,
                             dependingPlatformCompilations = transformationParameters.dependingPlatformCompilations,
                             metadataConfiguration = transformationParameters.resolvedMetadataConfiguration,
@@ -124,8 +123,7 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
                 val validate = {
                     validateNoTargetPlatformsResolvedPartially(
                         collector,
-                        projectPath,
-                        renderingOptions,
+                        diagnosticsContext,
                         sourceSetName = it.transformationParameters.sourceSetName,
                         dependingPlatformCompilations = it.transformationParameters.dependingPlatformCompilations,
                         metadataConfiguration = it.transformationParameters.resolvedMetadataConfiguration,
@@ -168,8 +166,7 @@ internal data class UnresolvedKmpDependency(
 
 private fun validateNoTargetPlatformsResolvedPartially(
     collector: KotlinToolingDiagnosticsCollector,
-    projectPath: String,
-    renderingOptions: ToolingDiagnosticRenderingOptions,
+    diagnosticsContext: ToolingDiagnosticsContext,
     sourceSetName: String,
     dependingPlatformCompilations: List<PlatformCompilationData>,
     metadataConfiguration: LazyResolvedConfigurationWithArtifacts,
@@ -182,8 +179,7 @@ private fun validateNoTargetPlatformsResolvedPartially(
     if (partiallyUnresolvedDependencies.isEmpty()) return
 
     collector.report(
-        projectPath,
-        renderingOptions,
+        diagnosticsContext,
         KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies(
             sourceSetName,
             partiallyUnresolvedDependencies,

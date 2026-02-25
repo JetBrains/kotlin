@@ -27,7 +27,7 @@ internal object DuplicateSourceSetChecker : KotlinGradleProjectChecker {
             .filter { (_, values) -> values.size > 1 }
 
         if (duplicateSourceSets.isNotEmpty()) {
-            collector.report(projectPath, renderingOptions, KotlinToolingDiagnostics.DuplicateSourceSetsError(duplicateSourceSets))
+            collector.report(diagnosticsContext, KotlinToolingDiagnostics.DuplicateSourceSetsError(duplicateSourceSets))
         }
     }
 }

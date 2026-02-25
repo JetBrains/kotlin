@@ -26,9 +26,7 @@ internal object SupportedNativeHostChecker : KotlinGradleProjectChecker {
         if (nativeTargets.isEmpty()) return
 
         if (HostManager.hostIsSupported) return
-        collector.reportOncePerGradleProject(
-            projectPath,
-            renderingOptions,
+        collector.reportOncePerGradleProject(diagnosticsContext,
             KotlinToolingDiagnostics.NativeHostNotSupportedError(
                 HostManager.platformName(),
                 HostManager().supportedHosts

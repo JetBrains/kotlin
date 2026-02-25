@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticRenderingOptions
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportOncePerGradleProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
@@ -25,23 +25,21 @@ internal object NativeBinaryConfigurationChecker : KotlinGradleProjectChecker {
         multiplatformExtension.targets
             .withType(KotlinNativeTarget::class.java)
             .configureEach { target ->
-                checkTarget(projectPath, renderingOptions, target, collector)
+                checkTarget(diagnosticsContext, target, collector)
             }
     }
 
     private fun checkTarget(
-        projectPath: String,
-        renderingOptions: ToolingDiagnosticRenderingOptions,
+        diagnosticsContext: ToolingDiagnosticsContext,
         target: KotlinNativeTarget,
         collector: KotlinToolingDiagnosticsCollector,
     ) {
         target.binaries.configureEach { binary ->
             if (!binary.hasIncompatibleConfiguration) return@configureEach
             collector.reportOncePerGradleProject(
-                projectPath,
-                renderingOptions,
+                diagnosticsContext,
                 KotlinToolingDiagnostics.IncompatibleBinaryConfiguration(
-                    projectPath,
+                    diagnosticsContext.projectPath,
                     binary.name,
                     binary.debuggable,
                     binary.optimized

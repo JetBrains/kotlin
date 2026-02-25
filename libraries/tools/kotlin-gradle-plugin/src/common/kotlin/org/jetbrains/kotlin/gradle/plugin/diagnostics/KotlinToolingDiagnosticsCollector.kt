@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 private typealias ToolingDiagnosticId = String
-internal typealias GradleProjectPath = String
+private typealias GradleProjectPath = String
 
 internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
     private val objects: ObjectFactory,
@@ -46,30 +46,14 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
         return rawDiagnosticsFromProject[projectPath] ?: emptyList()
     }
 
-    fun getDiagnosticsForProject(project: Project): Collection<ToolingDiagnostic> {
-        return getDiagnosticsForProject(project.path)
-    }
-
     fun report(
-        projectPath: GradleProjectPath,
-        renderingOptions: ToolingDiagnosticRenderingOptions,
+        context: ToolingDiagnosticsContext,
         diagnostic: ToolingDiagnostic,
         reportOnce: Boolean = false,
         key: ToolingDiagnosticId = diagnostic.id,
     ) {
         if (reportedIds.add(key) || !reportOnce) {
-            handleDiagnostic(projectPath, renderingOptions, diagnostic)
-        }
-    }
-
-    fun report(
-        project: Project,
-        diagnostic: ToolingDiagnostic,
-        reportOnce: Boolean = false,
-        key: ToolingDiagnosticId = diagnostic.id,
-    ) {
-        if (reportedIds.add(key) || !reportOnce) {
-            handleDiagnostic(project.path, ToolingDiagnosticRenderingOptions.forProject(project), diagnostic)
+            handleDiagnostic(context, diagnostic)
         }
     }
 
@@ -80,11 +64,9 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
         key: ToolingDiagnosticId = diagnostic.id,
     ) {
         if (reportedIds.add(key) || !reportOnce) {
-            val options = from.diagnosticRenderingOptions.get()
-            val projectPath = from.projectPath.get()
             // Execution-phase reporters must render immediately: with configuration cache, Gradle can
             // deserialize a fresh BuildService instance where transparent mode is not yet enabled.
-            handleDiagnostic(projectPath, options, diagnostic, forceRender = true)
+            handleDiagnostic(from.toolingDiagnosticsContext.get(), diagnostic, forceRender = true)
         }
     }
 
@@ -93,17 +75,20 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
     }
 
     private fun handleDiagnostic(
-        projectPath: GradleProjectPath,
-        options: ToolingDiagnosticRenderingOptions,
+        context: ToolingDiagnosticsContext,
         diagnostic: ToolingDiagnostic,
         // Force immediate rendering for execution-phase reporters; configuration cache may
         // deserialize a fresh BuildService instance before transparent mode is enabled.
         forceRender: Boolean = false,
     ) {
+        val projectPath = context.projectPath
+        val options = context.renderingOptions
         if (diagnostic.isSuppressed(options)) return
 
-        rawDiagnosticsFromProject.compute(projectPath) { _, previousListIfAny ->
-            previousListIfAny?.apply { add(diagnostic) } ?: mutableListOf(diagnostic)
+        if (!forceRender) {
+            rawDiagnosticsFromProject.compute(projectPath) { _, previousListIfAny ->
+                previousListIfAny?.apply { add(diagnostic) } ?: mutableListOf(diagnostic)
+            }
         }
 
         if (isTransparent || forceRender) {
@@ -126,54 +111,39 @@ internal val Project.kotlinToolingDiagnosticsCollector: KotlinToolingDiagnostics
     get() = kotlinToolingDiagnosticsCollectorProvider.get()
 
 internal fun Project.reportDiagnostic(diagnostic: ToolingDiagnostic) {
-    kotlinToolingDiagnosticsCollector.report(this, diagnostic)
+    kotlinToolingDiagnosticsCollector.report(toolingDiagnosticsContext, diagnostic)
 }
 
 internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(
-    projectPath: GradleProjectPath,
-    renderingOptions: ToolingDiagnosticRenderingOptions,
+    context: ToolingDiagnosticsContext,
     diagnostic: ToolingDiagnostic,
     key: ToolingDiagnosticId = diagnostic.id,
 ) {
-    report(projectPath, renderingOptions, diagnostic, reportOnce = true, ":#$key")
-}
-
-internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(
-    fromProject: Project,
-    diagnostic: ToolingDiagnostic,
-    key: ToolingDiagnosticId = diagnostic.id,
-) {
-    report(fromProject, diagnostic, reportOnce = true, ":#$key")
+    report(context, diagnostic, reportOnce = true, ":#$key")
 }
 
 internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleProject(
-    projectPath: GradleProjectPath,
-    renderingOptions: ToolingDiagnosticRenderingOptions,
+    context: ToolingDiagnosticsContext,
     diagnostic: ToolingDiagnostic,
     key: ToolingDiagnosticId = diagnostic.id,
 ) {
-    report(projectPath, renderingOptions, diagnostic, reportOnce = true, "${projectPath}#$key")
-}
-
-internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleProject(
-    fromProject: Project,
-    diagnostic: ToolingDiagnostic,
-    key: ToolingDiagnosticId = diagnostic.id,
-) {
-    report(fromProject, diagnostic, reportOnce = true, "${fromProject.path}#$key")
+    report(context, diagnostic, reportOnce = true, "${context.projectPath}#$key")
 }
 
 internal fun Project.reportDiagnosticOncePerProject(diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
-    kotlinToolingDiagnosticsCollector.reportOncePerGradleProject(this, diagnostic, key)
+    kotlinToolingDiagnosticsCollector.reportOncePerGradleProject(toolingDiagnosticsContext, diagnostic, key)
 }
 
 internal fun Project.reportDiagnosticOncePerBuild(diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
-    kotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(this, diagnostic, key)
+    kotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(toolingDiagnosticsContext, diagnostic, key)
 }
 
 @RequiresOptIn("Usage of immediate diagnostic reporting is discouraged. Please use the regular diagnostics pipeline.")
 internal annotation class ImmediateDiagnosticReporting
 
+/**
+ * Renders [diagnostic] immediately using the provided logger and rendering options.
+ */
 @ImmediateDiagnosticReporting
 internal fun reportDiagnosticImmediately(
     logger: Logger,

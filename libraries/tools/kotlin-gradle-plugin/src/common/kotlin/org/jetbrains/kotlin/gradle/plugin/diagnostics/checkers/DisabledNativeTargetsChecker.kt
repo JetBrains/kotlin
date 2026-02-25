@@ -18,8 +18,7 @@ internal object DisabledNativeTargetsChecker : KotlinGradleProjectChecker {
             .map { it.name }
 
         if (disabledTargets.isNotEmpty()) {
-            collector.reportOncePerGradleProject(
-                projectPath, renderingOptions,
+            collector.reportOncePerGradleProject(diagnosticsContext,
                 KotlinToolingDiagnostics.DisabledKotlinNativeTargets(disabledTargets),
             )
         }

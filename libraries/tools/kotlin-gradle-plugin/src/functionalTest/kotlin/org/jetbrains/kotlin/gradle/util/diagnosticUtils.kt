@@ -52,7 +52,7 @@ internal fun Project.checkDiagnostics(
     ),
 ) {
     val diagnosticsPerProject = rootProject.allprojects.mapNotNull {
-        val diagnostics = it.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(it)
+        val diagnostics = it.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(it.path)
         if (diagnostics.isEmpty() && compactRendering)
             null
         else
@@ -95,7 +95,7 @@ internal val defaultFilteredDiagnostics =
 
 internal fun Project.assertNoDiagnostics(filterDiagnosticIds: List<ToolingDiagnosticFactory> = defaultFilteredDiagnostics) {
     val actualDiagnostics =
-        kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filterNot { diagnostic ->
+        kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(path).filterNot { diagnostic ->
             diagnostic.isFilteredBy(filterDiagnosticIds)
         }
     assertTrue(
@@ -108,11 +108,11 @@ internal fun Project.assertNoDiagnostics(filterDiagnosticIds: List<ToolingDiagno
  * are ignored. If you need to compare the parameters, refer to the overload accepting [ToolingDiagnostic]
  */
 internal fun Project.assertContainsDiagnostic(factory: ToolingDiagnosticFactory, idSuffix: String = "") {
-    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertContainsDiagnostic(factory, idSuffix)
+    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(path).assertContainsDiagnostic(factory, idSuffix)
 }
 
 internal fun Project.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ignoreThrowable: Boolean = false) {
-    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
+    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(path)
         .assertContainsDiagnostic(diagnostic, ignoreThrowable)
 }
 
@@ -163,7 +163,7 @@ internal fun Collection<ToolingDiagnostic>.assertDiagnostics(vararg diagnostics:
 }
 
 internal fun Project.assertNoDiagnostics(factory: ToolingDiagnosticFactory) {
-    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertNoDiagnostics(factory.id)
+    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(path).assertNoDiagnostics(factory.id)
 }
 
 internal fun Collection<ToolingDiagnostic>.assertNoDiagnostics(id: String) {

@@ -37,7 +37,7 @@ class KotlinSourceSetTreeDependsOnMismatchTest {
             KotlinSourceSetDependsOnDefaultCompilationSourceSet.id
         )
         return project.kotlinToolingDiagnosticsCollector
-            .getDiagnosticsForProject(project)
+            .getDiagnosticsForProject(project.path)
             .filter { it.id in expectedDiagnosticsIds } // ignore other diagnostics that can appear as well
     }
 

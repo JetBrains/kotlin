@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.MultipleSourceSetRootsInCompilation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -83,7 +84,7 @@ internal object MultipleSourceSetRootsInCompilationChecker : KotlinGradleProject
                     )
                 }
 
-                report(compilation.project, diagnostic)
+                report(compilation.project.toolingDiagnosticsContext, diagnostic)
             }
         }
     }
@@ -97,7 +98,7 @@ internal object MultipleSourceSetRootsInCompilationChecker : KotlinGradleProject
             // where no dependsOn relations don't have to be declared.
             if (compilation.target.platformType == KotlinPlatformType.androidJvm) continue
             val diagnostic = MultipleSourceSetRootsInCompilation(compilation, compilation.sourceSetRoots().map { it.name })
-            report(compilation.project, diagnostic)
+            report(compilation.project.toolingDiagnosticsContext, diagnostic)
         }
     }
 }

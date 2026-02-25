@@ -23,8 +23,7 @@ internal abstract class PreparedKotlinToolingDiagnosticsCollector(
 
         fun create(project: Project): PreparedKotlinToolingDiagnosticsCollector =
             PreparedForConfigurationPhaseDiagnosticCollector(
-                project.path,
-                ToolingDiagnosticRenderingOptions.forProject(project),
+                project.toolingDiagnosticsContext,
                 project.kotlinToolingDiagnosticsCollector,
             )
     }
@@ -39,11 +38,10 @@ private class PreparedForExecutionPhaseDiagnosticsCollector(
 }
 
 private class PreparedForConfigurationPhaseDiagnosticCollector(
-    private val projectPath: String,
-    private val renderingOptions: ToolingDiagnosticRenderingOptions,
+    private val context: ToolingDiagnosticsContext,
     collector: KotlinToolingDiagnosticsCollector,
 ) : PreparedKotlinToolingDiagnosticsCollector(collector) {
     override fun report(diagnostic: ToolingDiagnostic, reportOnce: Boolean, key: String) {
-        collector.report(projectPath, renderingOptions, diagnostic, reportOnce, key)
+        collector.report(context, diagnostic, reportOnce, key)
     }
 }

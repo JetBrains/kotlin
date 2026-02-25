@@ -13,21 +13,21 @@ import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.gradle.utils.ConfigurationCacheOpaqueValueSource
 
 /**
- * Returns [true] only when Gradle build is invoked during IDEA Project Sync
- * i.e. regular Task Execution via IDEA it will be [false].
+ * Returns `true` only when Gradle build is invoked during IDEA Project Sync
+ * i.e. regular Task Execution via IDEA it will be `false`.
  */
 internal val Project.isInIdeaSync
     get() = providers.isInIdeaSync()
 
 /**
- * Returns [true] when Gradle build is invoked in any sort of IDEA environment: sync or task execution
+ * Returns `true` only when Gradle build is invoked during IDEA project sync.
  */
-internal val Project.isInIdeaEnvironment
-    get() = providers.isInIdeaEnvironment()
-
 internal fun ProviderFactory.isInIdeaSync(): Provider<Boolean> =
     of(IsInIdeaSyncValueSource::class.java) {}
 
+/**
+ * Returns `true` when Gradle build is invoked in any IDEA environment: sync or task execution.
+ */
 internal fun ProviderFactory.isInIdeaEnvironment(): Provider<Boolean> =
     of(IsInIdeaEnvironmentValueSource::class.java) {}.map { it.value }
 

@@ -20,10 +20,7 @@ internal interface UsesKotlinToolingDiagnosticsParameters {
     val toolingDiagnosticsCollector: Property<KotlinToolingDiagnosticsCollector>
 
     @get:Internal
-    val projectPath: Property<String>
-
-    @get:Internal
-    val diagnosticRenderingOptions: Property<ToolingDiagnosticRenderingOptions>
+    val toolingDiagnosticsContext: Property<ToolingDiagnosticsContext>
 }
 
 internal interface UsesKotlinToolingDiagnostics : UsesKotlinToolingDiagnosticsParameters, Task {
@@ -58,20 +55,23 @@ internal interface BuildServiceUsingKotlinToolingDiagnostics<P : BuildServiceUsi
     }
 }
 
+/**
+ * Initializes diagnostics parameters without passing a [Project] reference.
+ */
 internal fun UsesKotlinToolingDiagnosticsParameters.setupKotlinToolingDiagnosticsParameters(
     collectorProvider: Provider<KotlinToolingDiagnosticsCollector>,
-    projectPath: String,
-    renderingOptions: ToolingDiagnosticRenderingOptions,
+    context: ToolingDiagnosticsContext,
 ) {
     toolingDiagnosticsCollector.set(collectorProvider)
-    this.projectPath.set(projectPath)
-    diagnosticRenderingOptions.set(renderingOptions)
+    toolingDiagnosticsContext.set(context)
 }
 
+/**
+ * Initializes diagnostics parameters from [project].
+ */
 internal fun UsesKotlinToolingDiagnosticsParameters.setupKotlinToolingDiagnosticsParameters(project: Project) {
     setupKotlinToolingDiagnosticsParameters(
         project.kotlinToolingDiagnosticsCollectorProvider,
-        project.path,
-        ToolingDiagnosticRenderingOptions.forProject(project),
+        project.toolingDiagnosticsContext,
     )
 }

@@ -35,9 +35,7 @@ internal object IncorrectCompileOnlyDependenciesChecker : KotlinGradleProjectChe
             .flatMap { target -> compileOnlyDependencies(target) }
 
         if (compilationsWithCompileOnlyDependencies.any { it.dependencyCoords.isNotEmpty() }) {
-            collector.report(
-                projectPath,
-                renderingOptions,
+            collector.report(diagnosticsContext,
                 KotlinToolingDiagnostics.IncorrectCompileOnlyDependencyWarning(
                     compilationsWithCompileOnlyDependencies = compilationsWithCompileOnlyDependencies,
                 ),

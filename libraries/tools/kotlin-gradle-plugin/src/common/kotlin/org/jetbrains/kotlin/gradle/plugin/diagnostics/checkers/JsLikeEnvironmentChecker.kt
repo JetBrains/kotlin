@@ -20,9 +20,7 @@ internal abstract class JsLikeEnvironmentChecker(
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         multiplatformExtension?.findMisconfiguredTargetIfAny() ?: return
 
-        collector.reportOncePerGradleBuild(
-            projectPath,
-            renderingOptions,
+        collector.reportOncePerGradleBuild(diagnosticsContext,
             diagnostic(
                 availableEnvironments = environments
             )

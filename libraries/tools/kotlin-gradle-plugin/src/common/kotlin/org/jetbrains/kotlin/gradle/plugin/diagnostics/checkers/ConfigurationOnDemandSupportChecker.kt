@@ -28,9 +28,7 @@ internal object ConfigurationOnDemandSupportChecker : KotlinGradleProjectChecker
             val unsupportedTargets = kotlinExtension.targets.filter { !it.supportsCod() }
 
             if (unsupportedTargets.isNotEmpty()) {
-                collector.reportOncePerGradleProject(
-                    projectPath,
-                    renderingOptions,
+                collector.reportOncePerGradleProject(diagnosticsContext,
                     KotlinToolingDiagnostics.ConfigurationOnDemandNotSupported(
                         projectDisplayName = project.displayName,
                         namesOfUnsupportedTargets = unsupportedTargets.map { it.name }.toSet(),
