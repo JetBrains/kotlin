@@ -19,8 +19,7 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_ABI_VERSION
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.io.TempDir
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
+import org.junit.jupiter.api.parallel.Isolated
 import java.io.File
 import java.util.*
 import java.util.jar.Manifest
@@ -37,7 +36,7 @@ data class CompilerInvocationContext(
     val expectedExitCode: ExitCode,
 )
 
-@Execution(ExecutionMode.SAME_THREAD)
+@Isolated
 abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
     /**
      * Since the ABI version is bumped after the language version, it may happen that after bumping the language version
