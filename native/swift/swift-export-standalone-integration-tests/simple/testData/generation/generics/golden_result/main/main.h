@@ -93,4 +93,8 @@ NSArray<id> * __root___customFilter__TypesOfArguments__Swift_Array_Swift_Optiona
 
 void * _Nullable __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * _Nullable param1, void * _Nullable param2);
 
+void * __root___returnBoxFun();
+
+void * main_internal_functional_type_caller_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToBlock);
+
 NS_ASSUME_NONNULL_END

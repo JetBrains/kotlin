@@ -86,6 +86,10 @@ class Holder<T>(val xs: Array<T>) {
 // Make sure arrays appear in both public signatures and bodies.
 fun takeAndReturn(a: Array<String>): Array<String> = a
 
+typealias BoxFun<T> = () -> Box<T>
+
+fun returnBoxFun(): BoxFun<String> = TODO()
+
 // MODULE: f_bounded_type
 // EXPORT_TO_SWIFT
 // FILE: f_bounded_type.kt
@@ -99,4 +103,3 @@ open class SelfReferencing<T : SelfReferencing<T>>: MyComparable<T> {
 }
 
 class ConcreteSelfReferencing() : SelfReferencing<ConcreteSelfReferencing>()
-

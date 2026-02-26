@@ -329,3 +329,16 @@ public fun __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSup
     val _result = foo(__param1, __param2) as? kotlin.Any?
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
+
+@ExportedBridge("__root___returnBoxFun")
+public fun __root___returnBoxFun(): kotlin.native.internal.NativePtr {
+    val _result = returnBoxFun()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("main_internal_functional_type_caller_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun main_internal_functional_type_caller_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
+    val _result = (__pointerToBlock as Function0<Box<*>>).invoke()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
