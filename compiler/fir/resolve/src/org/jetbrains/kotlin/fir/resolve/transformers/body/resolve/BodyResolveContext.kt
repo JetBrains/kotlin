@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
@@ -327,13 +328,23 @@ class BodyResolveContext(
         replaceTowerDataContext(towerDataContext.addContextGroups(contextParameters))
 
         if (type != null) {
-            val receiver = ImplicitExtensionReceiverValue(
-                owner.receiverParameter!!.symbol,
-                type,
-                holder.session,
-                holder.scopeSession
-            )
-            addReceiver(labelName, receiver)
+            if (owner.isCompanionExtension) {
+                context(holder) {
+                    val classSymbol = type.fullyExpandedType().toRegularClassSymbol()
+                    val staticScope = classSymbol?.staticScope(holder)
+                    if (staticScope != null) {
+                        addNonLocalTowerDataElement(staticScope.asTowerDataElementForStaticScope(classSymbol))
+                    }
+                }
+            } else {
+                val receiver = ImplicitExtensionReceiverValue(
+                    owner.receiverParameter!!.symbol,
+                    type,
+                    holder.session,
+                    holder.scopeSession
+                )
+                addReceiver(labelName, receiver)
+            }
         }
 
         f()
