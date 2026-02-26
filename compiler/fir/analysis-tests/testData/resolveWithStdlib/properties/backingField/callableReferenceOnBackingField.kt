@@ -11,5 +11,10 @@ class CallableReference {
     }
 }
 
+fun outsideOfScope() {
+    val x: KProperty<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> CallableReference::a
+    val y: KProperty<Any> = CallableReference::a
+}
+
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, explicitBackingField, functionDeclaration, localProperty,
 propertyDeclaration, stringLiteral */

@@ -23,6 +23,25 @@ class Test {
         set(value) {
             a.<!UNRESOLVED_REFERENCE!>length<!>
         }
+
+    private inline var privateInlineProperty: Any
+        get() {
+            a.length
+            return ""
+        }
+        set(value) {
+            a.length
+        }
+
+    inline var privateInlineSetProperty: Any
+        get() {
+            a.<!UNRESOLVED_REFERENCE!>length<!>
+            return ""
+        }
+        private set(value) {
+            a.length
+        }
 }
 
-/* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, getter, propertyDeclaration, setter, stringLiteral */
+/* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, getter, propertyDeclaration, setter, smartcast,
+stringLiteral */
