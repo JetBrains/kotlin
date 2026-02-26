@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// LANGUAGE: +PreciseSimplificationToFlexibleLowerConstraint
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-78621
 
