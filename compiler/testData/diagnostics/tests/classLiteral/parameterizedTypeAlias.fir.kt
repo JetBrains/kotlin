@@ -95,14 +95,14 @@ fun test() {
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Array<*>::class<!>
 
     SimpleArrayAlias::class
-    SimpleArrayAlias<Int>::class
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>SimpleArrayAlias<Int>::class<!>
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>SimpleArrayAlias<*>::class<!>
 
     SpecificArrayAlias::class
 
     UnusedArrayAlias::class
-    UnusedArrayAlias<Int>::class
-    UnusedArrayAlias<*>::class
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>UnusedArrayAlias<Int>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>UnusedArrayAlias<*>::class<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, in, nullableType, out,

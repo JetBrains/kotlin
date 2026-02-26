@@ -19,7 +19,7 @@ fun test() {
 
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Yes<Int>::class<!>
     <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>Yes2<Int>::class<!>
-    Yes3<Int>::class
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>Yes3<Int>::class<!>
 
     Yes<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, String><!>::class
     Yes2<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_GET_CLASS_WARNING!><Int, String><!>::class

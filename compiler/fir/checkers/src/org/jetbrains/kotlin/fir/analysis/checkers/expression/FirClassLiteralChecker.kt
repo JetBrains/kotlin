@@ -155,9 +155,12 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         } else if (argument is FirResolvedQualifier) {
             if (argument.typeArguments.isEmpty()) return
             val symbol = argument.symbol ?: return
+
             val isAllowedGenericArray = fullyExpandedType.isAllowedGenericArrayTypeInClassLiteral()
-            val isDeprecationCase = symbol.isTypeAliasToNonGeneric || (symbol is FirTypeAliasSymbol && isAllowedGenericArray)
-            if (!reportWrongNumberOfTypeArguments(argument, isDeprecationCase) && !isAllowedGenericArray) {
+            val isTypeAliasToAllowedArray = symbol is FirTypeAliasSymbol && isAllowedGenericArray
+            val isDeprecationCase = symbol.isTypeAliasToNonGeneric || isTypeAliasToAllowedArray
+
+            if (!reportWrongNumberOfTypeArguments(argument, isDeprecationCase) && (!isAllowedGenericArray || isTypeAliasToAllowedArray)) {
                 val diagnostic = if (isDeprecationCase && !areUselessTypeArgumentsForbidden) {
                     FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING
                 } else {
