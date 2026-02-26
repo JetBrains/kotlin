@@ -3730,8 +3730,8 @@ public inline fun UShortArray.copyOf(newSize: Int): UShortArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOfUIntArrayWithInitializer
  */
-@SinceKotlin("2.2")
-@ExperimentalStdlibApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.copyOf(newSize: Int, init: (Int) -> UInt): UIntArray {
@@ -3758,8 +3758,8 @@ public inline fun UIntArray.copyOf(newSize: Int, init: (Int) -> UInt): UIntArray
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOfULongArrayWithInitializer
  */
-@SinceKotlin("2.2")
-@ExperimentalStdlibApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.copyOf(newSize: Int, init: (Int) -> ULong): ULongArray {
@@ -3786,8 +3786,8 @@ public inline fun ULongArray.copyOf(newSize: Int, init: (Int) -> ULong): ULongAr
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOfUByteArrayWithInitializer
  */
-@SinceKotlin("2.2")
-@ExperimentalStdlibApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.copyOf(newSize: Int, init: (Int) -> UByte): UByteArray {
@@ -3814,8 +3814,8 @@ public inline fun UByteArray.copyOf(newSize: Int, init: (Int) -> UByte): UByteAr
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOfUShortArrayWithInitializer
  */
-@SinceKotlin("2.2")
-@ExperimentalStdlibApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.copyOf(newSize: Int, init: (Int) -> UShort): UShortArray {

@@ -1145,8 +1145,8 @@ object ArrayOps : TemplateGroupBase() {
             sample("samples.collections.Arrays.CopyOfOperations.copyOfArrayWithInitializer")
         }
 
-        sinceAtLeast("2.2")
-        annotation("@ExperimentalStdlibApi")
+        sinceAtLeast("2.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
         specialFor(ArraysOfUnsigned) {
             annotation("@ExperimentalUnsignedTypes")
         }

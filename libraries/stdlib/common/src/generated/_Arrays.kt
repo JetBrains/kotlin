@@ -7692,8 +7692,8 @@ public expect fun <T> Array<T>.copyOf(newSize: Int): Array<T?>
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOfArrayWithInitializer
  */
-@SinceKotlin("2.2")
-@ExperimentalStdlibApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<T>.copyOf(newSize: Int, init: (Int) -> T): Array<T> {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
@@ -7719,8 +7719,8 @@ public inline fun <T> Array<T>.copyOf(newSize: Int, init: (Int) -> T): Array<T> 
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOfByteArrayWithInitializer
  */
-@SinceKotlin("2.2")
-@ExperimentalStdlibApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.copyOf(newSize: Int, init: (Int) -> Byte): ByteArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
@@ -7746,8 +7746,8 @@ public inline fun ByteArray.copyOf(newSize: Int, init: (Int) -> Byte): ByteArray
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOfShortArrayWithInitializer
  */
-@SinceKotlin("2.2")
-@ExperimentalStdlibApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.copyOf(newSize: Int, init: (Int) -> Short): ShortArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
@@ -7773,8 +7773,8 @@ public inline fun ShortArray.copyOf(newSize: Int, init: (Int) -> Short): ShortAr
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOfIntArrayWithInitializer
  */
-@SinceKotlin("2.2")
-@ExperimentalStdlibApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun IntArray.copyOf(newSize: Int, init: (Int) -> Int): IntArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
@@ -7800,8 +7800,8 @@ public inline fun IntArray.copyOf(newSize: Int, init: (Int) -> Int): IntArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOfLongArrayWithInitializer
  */
-@SinceKotlin("2.2")
-@ExperimentalStdlibApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun LongArray.copyOf(newSize: Int, init: (Int) -> Long): LongArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
@@ -7827,8 +7827,8 @@ public inline fun LongArray.copyOf(newSize: Int, init: (Int) -> Long): LongArray
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOfFloatArrayWithInitializer
  */
-@SinceKotlin("2.2")
-@ExperimentalStdlibApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.copyOf(newSize: Int, init: (Int) -> Float): FloatArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
@@ -7854,8 +7854,8 @@ public inline fun FloatArray.copyOf(newSize: Int, init: (Int) -> Float): FloatAr
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOfDoubleArrayWithInitializer
  */
-@SinceKotlin("2.2")
-@ExperimentalStdlibApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.copyOf(newSize: Int, init: (Int) -> Double): DoubleArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
@@ -7881,8 +7881,8 @@ public inline fun DoubleArray.copyOf(newSize: Int, init: (Int) -> Double): Doubl
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOfBooleanArrayWithInitializer
  */
-@SinceKotlin("2.2")
-@ExperimentalStdlibApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.copyOf(newSize: Int, init: (Int) -> Boolean): BooleanArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
@@ -7908,8 +7908,8 @@ public inline fun BooleanArray.copyOf(newSize: Int, init: (Int) -> Boolean): Boo
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOfCharArrayWithInitializer
  */
-@SinceKotlin("2.2")
-@ExperimentalStdlibApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun CharArray.copyOf(newSize: Int, init: (Int) -> Char): CharArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
