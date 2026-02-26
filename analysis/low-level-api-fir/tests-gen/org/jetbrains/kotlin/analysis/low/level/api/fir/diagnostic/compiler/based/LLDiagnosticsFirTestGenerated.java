@@ -12209,6 +12209,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("explicitBackingFieldsInInlineWithPublishedApi.kt")
+        public void testExplicitBackingFieldsInInlineWithPublishedApi() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldsInInlineWithPublishedApi.kt");
+        }
+
+        @Test
         @TestMetadata("explicitBackingFieldsInInlineWithVisibilityFromOverriddenFun.kt")
         public void testExplicitBackingFieldsInInlineWithVisibilityFromOverriddenFun() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldsInInlineWithVisibilityFromOverriddenFun.kt");
