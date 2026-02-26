@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 open class KonanIrFileSerializer(
     settings: IrSerializationSettings,
-    declarationTable: KonanDeclarationTable,
+    declarationTable: KonanTablelessLocalSignatureComputer,
 ) : IrFileSerializer(settings, declarationTable) {
     private val fakeOverrideClassFilter =
         if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.TablelessGlobalSignatureComputer
+import org.jetbrains.kotlin.backend.common.serialization.TablelessLocalSignatureComputer
 import org.jetbrains.kotlin.backend.common.serialization.signature.DescToIrIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -28,4 +30,21 @@ class KonanDeclarationTable(globalTable: KonanGlobalDeclarationTable) : Declarat
             if (declaration.isFromCInteropLibrary()) {
                 signatureIdComposer.computeSignature(declaration)
             } else null
+}
+
+class KonanTablelessGlobalSignatureComputer(builtIns: IrBuiltIns) : TablelessGlobalSignatureComputer(KonanManglerIr) {
+    init {
+        loadKnownBuiltins(builtIns)
+    }
+}
+
+class KonanTablelessLocalSignatureComputer(globalSignatureComputer: KonanTablelessGlobalSignatureComputer) :
+    TablelessLocalSignatureComputer(globalSignatureComputer) {
+    private val signatureIdComposer = DescToIrIdSignatureComputer(KonanIdSignaturer(KonanManglerDesc))
+
+    // TODO: We should get rid of this extension point in favor of proper support in IR-based mangler.
+    override fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? =
+        if (declaration.isFromCInteropLibrary()) {
+            signatureIdComposer.computeSignature(declaration)
+        } else null
 }
