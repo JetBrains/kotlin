@@ -113,7 +113,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_
 
 open class IrFileSerializer(
     protected val settings: IrSerializationSettings,
-    private val declarationTable: DeclarationTable<*>,
+    private val declarationTable: TablelessLocalSignatureComputer,
 ) {
     private val loopIndex = hashMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0

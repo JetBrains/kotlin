@@ -29,7 +29,7 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
     protected open fun backendSpecificFileFilter(file: IrFile): Boolean =
         true
 
-    protected abstract val globalDeclarationTable: GlobalDeclarationTable
+    protected abstract val globalDeclarationTable: TablelessGlobalSignatureComputer
 
     private fun serializeIrFile(file: IrFile): SerializedIrFile {
         val fileSerializer = createFileSerializer()
