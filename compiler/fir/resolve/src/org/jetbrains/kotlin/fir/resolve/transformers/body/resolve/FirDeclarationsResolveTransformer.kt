@@ -1235,7 +1235,7 @@ open class FirDeclarationsResolveTransformer(
         }
 
         if (result.containingDeclarationSymbol.isAnnotationConstructor(session)) {
-            result.evaluatedInitializer = FirExpressionEvaluator.evaluateParameterDefaultValue(result, session)
+            result.evaluatedInitializer = FirExpressionEvaluator.evaluateParameterDefaultValue(result, session, file)
         }
 
         return result

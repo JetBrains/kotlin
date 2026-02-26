@@ -1569,7 +1569,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     private fun evaluateAndReplaceArgumentMapping(annotationCall: FirAnnotationCall) {
-        val evaluationResult = FirExpressionEvaluator.evaluateAnnotationArguments(annotationCall, session)
+        val evaluationResult = FirExpressionEvaluator.evaluateAnnotationArguments(annotationCall, session, file)
         annotationCall.replaceArgumentMapping(
             buildAnnotationArgumentMapping {
                 source = annotationCall.argumentMapping.source
