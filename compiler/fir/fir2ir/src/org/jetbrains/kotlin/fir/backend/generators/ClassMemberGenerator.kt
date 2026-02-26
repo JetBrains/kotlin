@@ -41,7 +41,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -121,7 +125,24 @@ internal class ClassMemberGenerator(
                 }
                 annotationGenerator.generate(irFunction, firFunction)
             }
-            if (firFunction is FirConstructor && irFunction is IrConstructor && !firFunction.isExpect && !irFunction.isExternal) {
+            // TODO make this nicer overall
+            // Special case: still generate bodies for companion objects of external interfaces with @WitInterface, as they will be turned
+            // into non-external interfaces by the Wasm lowerings.
+            val allowExternalCompanionInit = if (irFunction is IrConstructor && irFunction.isExternal
+                // TODO better and more comprehensive (i.e., also surrounding interface) check
+                && containingClass?.hasAnnotation(ClassId(FqName("kotlin"), Name.identifier("WitImport")), session) == true
+            ) {
+                val parent = irFunction.parent as? IrClass
+                val parentParent = parent?.parent as? IrClass
+
+                parent?.isCompanion == true &&
+                        parentParent?.isInterface == true &&
+                        parentParent.isExternal
+            } else false
+
+            if (firFunction is FirConstructor && irFunction is IrConstructor && !firFunction.isExpect &&
+                (!irFunction.isExternal || allowExternalCompanionInit)
+            ) {
                 if (!configuration.skipBodies) {
                     val body = factory.createBlockBody(startOffset, endOffset)
                     val delegatedConstructor = firFunction.delegatedConstructor
@@ -250,7 +271,7 @@ internal class ClassMemberGenerator(
 
     private fun IrProperty.initializeBackingField(
         property: FirProperty,
-        initializerExpression: FirExpression?
+        initializerExpression: FirExpression?,
     ) {
         val irField = backingField ?: return
         val isAnnotationParameter = (irField.parent as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS
@@ -280,7 +301,7 @@ internal class ClassMemberGenerator(
         propertyAccessor: FirPropertyAccessor?,
         correspondingProperty: IrProperty,
         fieldType: IrType,
-        isDefault: Boolean
+        isDefault: Boolean,
     ) {
         conversionScope.withFunction(this) {
             applyParentFromStackTo(this)

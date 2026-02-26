@@ -3,18 +3,23 @@ external interface Run {
   /**
   Run the program.
   */
-  fun run(): Int
+  fun run(): /* Result<Unit> */ Int // cheating a bit, normally this returns a Result<Unit>, but as we don't have abi translation for that yet, I manually changed the signature to the correctly lowered one: i32
 }
 
-var x = 1
+@WitInterface("example:trivial-import/im-imported@1.0.0")
+external interface ImImported {
+  @WitImport
+  companion object Import : ImImported
+  fun foo(): Int
+}
+
+
 
 @WitExport/*(TODO)*/
 object RunImpl : Run{
   override fun run(): Int{
-    // no observable side effects yet sadge
-    x = 42
-
-    return 0
+    return ImImported.foo() % 2
+    // -> run should return 1
   }
 }
 

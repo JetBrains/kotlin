@@ -93,6 +93,14 @@ external interface ImImported {
   fun foo(): Int
 }
 
+//fun abc(){}
+//
+//interface ImJustANormalInterface {
+//  companion object ImJustANormalCompObj : ImJustANormalInterface
+//
+//  fun bar() : Int = 43
+//}
+
 //@WasmImport("example:trivial-import/im-imported@1.0.0", "foo")
 //external fun foo() : Int
 
