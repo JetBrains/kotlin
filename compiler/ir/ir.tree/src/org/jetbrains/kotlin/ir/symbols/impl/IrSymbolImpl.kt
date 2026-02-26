@@ -36,8 +36,7 @@ abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor, Owner : IrSy
         get() = _owner // Please keep `_owner` and `?: error()` at separate lines to make it easier to set different breakpoints.
             ?: error("${javaClass.simpleName} is unbound. Signature: $signature")
 
-    override val signature: IdSignature?
-        get() = null
+    override var signature: IdSignature? = null
 
     final override var privateSignature: IdSignature? = null
 
@@ -81,5 +80,5 @@ abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor, Owner : IrSy
 
 abstract class IrSymbolWithSignature<out Descriptor : DeclarationDescriptor, Owner : IrSymbolOwner>(
     descriptor: Descriptor?,
-    override val signature: IdSignature?,
+    override var signature: IdSignature?,
 ) : IrSymbolBase<Descriptor, Owner>(descriptor)

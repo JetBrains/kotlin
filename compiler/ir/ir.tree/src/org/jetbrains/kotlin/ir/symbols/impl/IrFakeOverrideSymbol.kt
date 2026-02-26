@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 abstract class IrFakeOverrideSymbolBase<S : IrBindableSymbol<D, I>, I : IrDeclaration, D : CallableDescriptor>(
     val originalSymbol: S,
     val containingClassSymbol: IrClassSymbol,
-    override val signature: IdSignature?
+    override var signature: IdSignature?
 ) : IrBindableSymbol<D, I> {
     @ObsoleteDescriptorBasedAPI
     override val hasDescriptor: Boolean
