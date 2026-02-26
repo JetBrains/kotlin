@@ -86,3 +86,73 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
 // This is what we pre-populate tables with
 val IrBuiltIns.knownBuiltins: List<IrDeclaration>
     get() = operatorsPackageFragment.declarations
+
+open class TablelessLocalSignatureComputer(val globalSignatureComputer: TablelessGlobalSignatureComputer) {
+    private val mangler = globalSignatureComputer.mangler
+
+    private val fileLocalIdSignatureComputer = FileLocalIdSignatureComputer(mangler) { declaration, compatibleMode ->
+        signatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector = false)
+    }
+
+    fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean, recordInSignatureClashDetector: Boolean): IdSignature {
+        tryComputeBackendSpecificSignature(declaration)?.let { return it }
+        declaration.symbol.signature?.let { return it }
+
+        val idSig = if (declaration.shouldHaveLocalSignature(compatibleMode)) {
+            fileLocalIdSignatureComputer.computeFileLocalIdSignature(declaration, compatibleMode)
+        } else {
+            globalSignatureComputer.computeSignatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector)
+        }
+        return idSig.also { declaration.symbol.signature = it }
+    }
+
+    fun signatureByReturnableBlock(returnableBlock: IrReturnableBlock): IdSignature {
+        returnableBlock.symbol.signature?.let { return it }
+        return fileLocalIdSignatureComputer.generateScopeLocalSignature().also {
+            returnableBlock.symbol.signature = it
+        }
+    }
+
+    fun <R> inFile(file: IrFile?, block: () -> R): R =
+        globalSignatureComputer.publicIdSignatureComputer.inFile(file?.symbol, block)
+
+    // TODO: override
+    open fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? = null
+
+    private fun IrDeclaration.shouldHaveLocalSignature(compatibleMode: Boolean): Boolean {
+        return with(mangler) { !this@shouldHaveLocalSignature.isExported(compatibleMode) }
+    }
+}
+
+open class TablelessGlobalSignatureComputer(val mangler: IrMangler) {
+    val publicIdSignatureComputer = PublicIdSignatureComputer(mangler)
+    internal val clashDetector = IdSignatureClashDetector()
+
+    fun computeSignatureByDeclaration(
+        declaration: IrDeclaration,
+        compatibleMode: Boolean,
+        recordInSignatureClashDetector: Boolean,
+    ): IdSignature {
+        declaration.symbol.signature?.let { return it }
+        return publicIdSignatureComputer.computePublicIdSignature(declaration, compatibleMode)
+            .also {
+                declaration.symbol.signature = it
+                if (recordInSignatureClashDetector && it.isPubliclyVisible && !it.isLocal) {
+                    clashDetector.trackDeclaration(declaration, it)
+                }
+            }
+    }
+
+    protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
+        builtIns.knownBuiltins.forEach {
+            val symbol = (it as IrSymbolOwner).symbol
+            when (val signature = symbol.signature) {
+                null -> computeSignatureByDeclaration(it, compatibleMode = false, recordInSignatureClashDetector = true)
+                else -> {
+//                    table[it] = signature
+                    clashDetector.trackDeclaration(it, signature)
+                }
+            }
+        }
+    }
+}
