@@ -46,6 +46,54 @@ public expect enum class DurationUnit {
     DAYS;
 }
 
+/**
+ * Converts the given time duration [value] expressed in the duration unit specified by the receiver into the specified [targetUnit].
+ *
+ * The part of the [value] that is smaller than the specified [targetUnit]
+ * becomes a fractional part of the result and then is truncated (rounded towards zero).
+ *
+ * If the result doesn't fit in the range of [Long] type, it is coerced into that range:
+ * - [Long.MIN_VALUE] is returned if it's less than `Long.MIN_VALUE`,
+ * - [Long.MAX_VALUE] is returned if it's greater than `Long.MAX_VALUE`.
+ *
+ * @sample samples.time.Durations.convertUnitLong
+ */
+@SinceKotlin("2.4")
+@ExperimentalTime
+public fun DurationUnit.convert(value: Long, targetUnit: DurationUnit): Long = convertDurationUnit(value, this, targetUnit)
+
+/**
+ * Converts the given time duration [value] expressed in the duration unit specified by the receiver into the specified [targetUnit].
+ *
+ * The part of the [value] that is smaller than the specified [targetUnit]
+ * becomes a fractional part of the result and then is truncated (rounded towards zero).
+ *
+ * If the result doesn't fit in the range of [Int] type, it is coerced into that range:
+ * - [Int.MIN_VALUE] is returned if it's less than `Int.MIN_VALUE`,
+ * - [Int.MAX_VALUE] is returned if it's greater than `Int.MAX_VALUE`.
+ *
+ * @sample samples.time.Durations.convertUnitInt
+ */
+@SinceKotlin("2.4")
+@ExperimentalTime
+public fun DurationUnit.convert(value: Int, targetUnit: DurationUnit): Int =
+    convert(value.toLong(), targetUnit).coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt()
+
+/**
+ * Converts the given time duration [value] expressed in the duration unit specified by the receiver into the specified [targetUnit].
+ *
+ * If the result doesn't fit in the range of finite values representable by [Double] type, an infinite value is returned:
+ * - [Double.NEGATIVE_INFINITY] is returned if it's less than `-Double.MAX_VALUE`,
+ * - [Double.POSITIVE_INFINITY] is returned if it's greater than `Double.MAX_VALUE`.
+ *
+ * If the [value] is infinite, or not a number, the result will be the same, no matter what source or target units are.
+ *
+ * @sample samples.time.Durations.convertUnitDouble
+ */
+@SinceKotlin("2.4")
+@ExperimentalTime
+public fun DurationUnit.convert(value: Double, targetUnit: DurationUnit): Double = Duration.convert(value, this, targetUnit)
+
 /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
 @SinceKotlin("1.3")
 internal expect fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double

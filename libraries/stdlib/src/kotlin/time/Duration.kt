@@ -68,7 +68,11 @@ internal constructor(private val rawValue: Long) :
         @Suppress("DEPRECATION_ERROR") // A temporary workaround for KT-81995.
         internal val INVALID = Duration(INVALID_RAW_VALUE)
 
-        /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
+        /**
+         * Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit].
+         *
+         * @see DurationUnit.convert
+         */
         @ExperimentalTime
         public fun convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
             convertDurationUnit(value, sourceUnit, targetUnit)
