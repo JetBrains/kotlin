@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.test.klib.compatibility
 
 import org.jetbrains.kotlin.test.klib.compatibility.LibrarySpecialCompatibilityChecksTest.Companion.SORTED_TEST_COMPILER_VERSION_GROUPS
 import org.jetbrains.kotlin.test.klib.compatibility.LibrarySpecialCompatibilityChecksTest.Companion.SORTED_TEST_OLD_LIBRARY_VERSION_GROUPS
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 interface StdlibSpecialCompatibilityChecksTest : DummyLibraryCompiler {
     @Test
-    @Disabled
     fun testExportToOlderAbiVersionWithOlderLibrary() {
         for (compilerVersion in SORTED_TEST_COMPILER_VERSION_GROUPS.flatten()) {
             for (libraryVersion in SORTED_TEST_OLD_LIBRARY_VERSION_GROUPS) {
@@ -27,7 +25,6 @@ interface StdlibSpecialCompatibilityChecksTest : DummyLibraryCompiler {
     }
 
     @Test
-    @Disabled
     fun testExportToOlderAbiVersionWithCurrentLibrary() {
         for (compilerVersion in SORTED_TEST_COMPILER_VERSION_GROUPS.flatten()) {
             for (libraryVersion in SORTED_TEST_COMPILER_VERSION_GROUPS.flatten()) {
