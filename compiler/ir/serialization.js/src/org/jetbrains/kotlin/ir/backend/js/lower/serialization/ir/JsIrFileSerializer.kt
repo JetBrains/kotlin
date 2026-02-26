@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
+import org.jetbrains.kotlin.backend.common.serialization.TablelessLocalSignatureComputer
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 
@@ -21,7 +22,7 @@ object JsIrFileEmptyMetadataFactory : JsIrFileMetadataFactory {
 
 class JsIrFileSerializer(
     settings: IrSerializationSettings,
-    declarationTable: DeclarationTable.Default,
+    declarationTable: TablelessLocalSignatureComputer,
     private val jsIrFileMetadataFactory: JsIrFileMetadataFactory
 ) : IrFileSerializer(settings, declarationTable) {
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer) = node.isJsExportDeclaration()

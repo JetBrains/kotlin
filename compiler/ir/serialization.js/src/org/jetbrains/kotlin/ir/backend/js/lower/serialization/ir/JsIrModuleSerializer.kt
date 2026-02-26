@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
+import org.jetbrains.kotlin.backend.common.serialization.TablelessLocalSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 
@@ -18,8 +19,8 @@ class JsIrModuleSerializer(
     private val jsIrFileMetadataFactory: JsIrFileMetadataFactory = JsIrFileEmptyMetadataFactory,
 ) : IrModuleSerializer<JsIrFileSerializer>(settings, diagnosticReporter) {
 
-    override val globalDeclarationTable = JsGlobalDeclarationTable(irBuiltIns)
+    override val globalDeclarationTable = JsTablelessGlobalSignatureComputer(irBuiltIns)
 
     override fun createFileSerializer(settings: IrSerializationSettings): JsIrFileSerializer =
-        JsIrFileSerializer(settings, DeclarationTable.Default(globalDeclarationTable), jsIrFileMetadataFactory)
+        JsIrFileSerializer(settings, TablelessLocalSignatureComputer(globalDeclarationTable), jsIrFileMetadataFactory)
 }
