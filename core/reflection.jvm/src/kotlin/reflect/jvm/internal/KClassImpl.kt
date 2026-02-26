@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.scopes.GivenFunctionsMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.compact
 import java.io.Serializable
 import java.lang.reflect.GenericDeclaration
@@ -316,16 +317,15 @@ internal class KClassImpl<T : Any>(
                     result += StandardKTypes.SERIALIZABLE
                 }
             } else {
-                jClass.genericSuperclass?.takeUnless { it == Any::class.java }?.let {
-                    result += it.toKType(
+                val purelyImplementedSupertype = getPurelyImplementedSupertype(this@KClassImpl)
+                for (superClass in listOf(jClass.genericSuperclass, *jClass.genericInterfaces)) {
+                    if (superClass == null || superClass == Any::class.java || superClass == purelyImplementedSupertype?.classifier)
+                        continue
+                    result += superClass.toKType(
                         knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL, howThisTypeIsUsed = TypeUsage.SUPERTYPE,
                     )
                 }
-                jClass.genericInterfaces.mapTo(result) {
-                    it.toKType(
-                        knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL, howThisTypeIsUsed = TypeUsage.SUPERTYPE,
-                    )
-                }
+                result.addIfNotNull(purelyImplementedSupertype)
             }
 
             if (result.all {
@@ -464,7 +464,7 @@ internal class KClassImpl<T : Any>(
 
     override val annotations: List<Annotation> get() = data.value.annotations
 
-    private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
+    internal val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
     internal val classKind: ClassKind
         get() = kmClass?.kind ?: when {

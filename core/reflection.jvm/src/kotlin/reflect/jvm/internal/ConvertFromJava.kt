@@ -5,10 +5,17 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
+import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import java.lang.reflect.*
 import kotlin.reflect.*
+import kotlin.reflect.full.createType
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 import kotlin.reflect.jvm.internal.types.FlexibleKType
 import kotlin.reflect.jvm.internal.types.SimpleKType
@@ -268,3 +275,37 @@ internal fun Member.isEnumValuesValueOfMethod(): Boolean =
             (name == "values" && parameterTypes.size == 0) ||
                     (name == "valueOf" && parameterTypes.singleOrNull() == String::class.java)
             )
+
+internal fun getPurelyImplementedSupertype(kClass: KClassImpl<*>): KType? {
+    val annotatedPurelyImplementedClassId =
+        kClass.findAnnotation<PurelyImplements>()?.value?.let(::FqName)?.takeIf { fqName ->
+            !fqName.isRoot && fqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
+        }?.let(ClassId::topLevel)
+
+    val purelyImplementedClassId =
+        annotatedPurelyImplementedClassId
+            ?: FakePureImplementationsProvider.getPurelyImplementedInterface(kClass.classId)
+            ?: return null
+
+    val superClass = kClass.java.safeClassLoader.loadClass(purelyImplementedClassId) ?: return null
+
+    val supertypeParameterCount = superClass.allTypeParameters().size
+    val typeParameters = kClass.typeParameters
+    val typeParameterCount = typeParameters.size
+
+    @Suppress("IntroduceWhenSubject")
+    val typeArguments = when {
+        typeParameterCount == supertypeParameterCount ->
+            typeParameters.map { parameter ->
+                KTypeProjection.invariant(parameter.createType())
+            }
+        typeParameterCount == 1 && supertypeParameterCount > 1 && annotatedPurelyImplementedClassId == null -> {
+            val parameter = KTypeProjection.invariant(typeParameters.single().createType())
+            List(supertypeParameterCount) { parameter }
+        }
+        else -> return null
+    }
+
+    val result = createJavaSimpleType(superClass, superClass.kotlin, typeArguments, isMarkedNullable = false)
+    return result.createMutableCollectionType(superClass) ?: result
+}
