@@ -618,15 +618,17 @@ class LightTreeRawFirExpressionBuilder(
         var hasQuestionMarkAtLHS = false
         var firReceiverExpression: FirExpression? = null
         lateinit var namedReference: FirNamedReference
-        callableReferenceExpression.forEachChildren {
-            when (it.tokenType) {
+
+        for (child in callableReferenceExpression.getChildrenAsArray()) {
+            if (child == null) break
+            when (child.tokenType) {
                 COLONCOLON -> isReceiver = false
                 QUEST -> hasQuestionMarkAtLHS = true
-                else -> if (it.isExpression()) {
+                else -> if (child.isExpression()) {
                     if (isReceiver) {
-                        firReceiverExpression = getAsFirExpression(it, "Incorrect receiver expression")
+                        firReceiverExpression = getAsFirExpression(child, "Incorrect receiver expression")
                     } else {
-                        namedReference = createSimpleNamedReference(it.toFirSourceElement(), it)
+                        namedReference = createSimpleNamedReference(child.toFirSourceElement(), child)
                     }
                 }
             }
