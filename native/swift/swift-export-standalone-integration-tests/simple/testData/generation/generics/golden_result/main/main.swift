@@ -3,6 +3,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinStdlib
 
+public typealias BoxFun = () -> main.Box
 public protocol A: KotlinRuntime.KotlinBase {
     var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get
@@ -317,6 +318,12 @@ public func foo(
     param2: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
     return { switch __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(param1.map { it in it.__externalRCRef() } ?? nil, param2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+}
+public func returnBoxFun() -> main.BoxFun {
+    return {
+        let pointerToBlock = __root___returnBoxFun()
+        return { return main.Box.__createClassWrapper(externalRCRef: main_internal_functional_type_caller_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock)) }
+    }()
 }
 extension main.A where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {

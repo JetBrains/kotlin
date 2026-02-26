@@ -112,8 +112,12 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
                 }
             }
 
-            else -> declaration.kaSymbolOrNull<KaClassLikeSymbol>()?.classId?.asFqNameString()
-                ?: error("Unnameable declaration $declaration")
+            else -> declaration.kaSymbolOrNull<KaClassLikeSymbol>()?.let { symbol ->
+                val fqName = symbol.classId?.asFqNameString() ?: return@let null
+                // Generics aren't supported yet, so we don't have the actual typeArguments, fallback to the upperbound
+                val typeArgs = symbol.typeParameters.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") { "*" } ?: ""
+                "$fqName$typeArgs"
+            } ?: error("Unnameable declaration $declaration")
         }
     }
 
