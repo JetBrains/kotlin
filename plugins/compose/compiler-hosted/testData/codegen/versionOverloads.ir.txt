@@ -1,7 +1,7 @@
 MODULE_FRAGMENT
   FILE fqName:example fileName:versionOverloads.kt
     annotations:
-      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
+      OptIn(markerClass = [ExperimentalStdlibApi::class] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
     CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
       annotations:
         StabilityInferred(parameters = 1)
@@ -33,7 +33,7 @@ MODULE_FRAGMENT
         VALUE_PARAMETER kind:Regular name:$changed index:3 type:kotlin.Int
         annotations:
           Composable
-          Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", replaceWith = <null>, level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:HIDDEN' type=kotlin.DeprecationLevel)
+          Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", replaceWith = <null>, level = DeprecationLevel.HIDDEN)
         BLOCK_BODY
           CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.C.foo' type=androidx.compose.runtime.Composer? origin=null
@@ -83,7 +83,7 @@ MODULE_FRAGMENT
         VALUE_PARAMETER MASK_FOR_DEFAULT_FUNCTION kind:Regular name:$default index:5 type:kotlin.Int
         annotations:
           Composable
-          Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", replaceWith = <null>, level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:HIDDEN' type=kotlin.DeprecationLevel)
+          Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", replaceWith = <null>, level = DeprecationLevel.HIDDEN)
         BLOCK_BODY
           CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.C.foo' type=androidx.compose.runtime.Composer? origin=null
@@ -203,7 +203,7 @@ MODULE_FRAGMENT
       VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
       annotations:
         Composable
-        Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", replaceWith = <null>, level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:HIDDEN' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", replaceWith = <null>, level = DeprecationLevel.HIDDEN)
       BLOCK_BODY
         CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.bar' type=androidx.compose.runtime.Composer? origin=null
@@ -245,7 +245,7 @@ MODULE_FRAGMENT
       VALUE_PARAMETER MASK_FOR_DEFAULT_FUNCTION kind:Regular name:$default index:4 type:kotlin.Int
       annotations:
         Composable
-        Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", replaceWith = <null>, level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:HIDDEN' type=kotlin.DeprecationLevel)
+        Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", replaceWith = <null>, level = DeprecationLevel.HIDDEN)
       BLOCK_BODY
         CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.bar' type=androidx.compose.runtime.Composer? origin=null

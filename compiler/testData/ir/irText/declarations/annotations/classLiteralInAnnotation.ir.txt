@@ -51,5 +51,5 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
   FUN name:test1 visibility:public modality:FINAL returnType:kotlin.Unit
     annotations:
-      A(klass = CLASS_REFERENCE 'CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.C>)
+      A(klass = C::class)
     BLOCK_BODY
