@@ -183,7 +183,7 @@ FILE fqName:<root> fileName:/kt45236.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
     VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.NetRequestStatus<T of <root>.isError>
     annotations:
-      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalContracts modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.contracts.ExperimentalContracts>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
+      OptIn(markerClass = [ExperimentalContracts::class] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
     BLOCK_BODY
       CALL 'public final fun contract (builder: @[ExtensionFunctionType] kotlin.Function1<kotlin.contracts.ContractBuilder, kotlin.Unit>): kotlin.Unit declared in kotlin.contracts' type=kotlin.Unit origin=null
         ARG builder: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<kotlin.contracts.ContractBuilder, kotlin.Unit> origin=LAMBDA

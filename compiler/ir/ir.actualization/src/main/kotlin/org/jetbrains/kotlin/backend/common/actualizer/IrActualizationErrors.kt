@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.RenderIrElementVisitorForDiagnosticText
+import org.jetbrains.kotlin.ir.util.RenderIrElementVisitor
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
@@ -131,7 +131,7 @@ internal object IrActualizationDiagnosticRenderers {
         }
 
     private val ANNOTATION = Renderer<IrConstructorCall> {
-        "@" + RenderIrElementVisitorForDiagnosticText.renderAsAnnotation(it)
+        "@" + RenderIrElementVisitor().renderAsAnnotation(it)
     }
 
     @JvmField

@@ -220,25 +220,25 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
     VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Byte
     annotations:
       SinceKotlin(version = "1.9")
-      WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
+      WasExperimental(markerClass = [ExperimentalStdlibApi::class] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
   FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL returnType:kotlin.ranges.IntRange [operator]
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Int
     annotations:
       SinceKotlin(version = "1.9")
-      WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
+      WasExperimental(markerClass = [ExperimentalStdlibApi::class] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
   FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL returnType:kotlin.ranges.LongRange [operator]
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Long
     annotations:
       SinceKotlin(version = "1.9")
-      WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
+      WasExperimental(markerClass = [ExperimentalStdlibApi::class] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
   FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL returnType:kotlin.ranges.IntRange [operator]
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Short
     annotations:
       SinceKotlin(version = "1.9")
-      WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
+      WasExperimental(markerClass = [ExperimentalStdlibApi::class] type=kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> varargElementType=kotlin.reflect.KClass<out kotlin.Annotation>)
   FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL returnType:kotlin.Int [operator]
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Byte

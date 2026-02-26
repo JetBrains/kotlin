@@ -96,5 +96,5 @@ FILE fqName:<root> fileName:/enumsInAnnotationArguments.kt
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
   FUN name:test1 visibility:public modality:FINAL returnType:kotlin.Unit
     annotations:
-      TestAnn(x = GET_ENUM 'ENUM_ENTRY name:A' type=<root>.En)
+      TestAnn(x = En.A)
     BLOCK_BODY
