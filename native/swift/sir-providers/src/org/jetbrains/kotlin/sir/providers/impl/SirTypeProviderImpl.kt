@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.*
@@ -118,7 +119,11 @@ public class SirTypeProviderImpl(
                         ?: SirUnsupportedType
                 }
                 is KaFunctionType -> {
+                    @OptIn(KaExperimentalApi::class)
                     SirFunctionalType(
+                        contextTypes = kaType.contextReceivers.map {
+                            it.type.translateType(ctx.copy(currentPosition = ctx.currentPosition.flip())).withEscapingIfNeeded()
+                        },
                         parameterTypes = listOfNotNull(
                             kaType.receiverType?.translateType(ctx.copy(currentPosition = ctx.currentPosition.flip()))
                                 ?.withEscapingIfNeeded()

@@ -47,3 +47,11 @@ object Foo {
         get() = TODO()
         set(value) = TODO()
 }
+
+fun contextBlockA(block: context(ContextA, ContextB) Int.(String) -> Unit): Unit = TODO()
+
+fun contextBlockB(): context(ContextB, ContextA) String.(Int) -> Unit = TODO()
+
+fun contextBlockC(block: context(Context) (String) -> Unit): Unit = TODO()
+
+fun contextBlockD(): context(Context) (Int) -> Unit = TODO()

@@ -739,6 +739,7 @@ internal sealed class Bridge(
 
     class AsContravariantBlock private constructor(
         override val swiftType: SirFunctionalType,
+        private val contextParameters: List<KotlinToSwiftBridge>,
         private val parameters: List<KotlinToSwiftBridge>,
         private val returnType: SwiftToKotlinBridge,
     ) : SwiftToKotlinBridgeWithSingleType(
@@ -746,12 +747,12 @@ internal sealed class Bridge(
         kotlinType = KotlinType.KotlinObject,
         cType = CType.BlockPointer(
             // TODO: think about it, as types like ranges seems possible here making first() call illegal (?)
-            parameters = parameters.map { it.typeList.first().cType },
+            parameters = (contextParameters + parameters).map { it.typeList.first().cType },
             returnType = returnType.typeList.first().cType,
         )
     ) {
         private val kotlinFunctionTypeRendered =
-            "(${parameters.joinToString { it.typeList.single().kotlinType.repr }})->${returnType.typeList.single().kotlinType.repr}"
+            "(${(contextParameters + parameters).joinToString { it.typeList.single().kotlinType.repr }})->${returnType.typeList.single().kotlinType.repr}"
 
         companion object {
             context(session: SirSession)
@@ -759,6 +760,7 @@ internal sealed class Bridge(
                 swiftType: SirFunctionalType,
             ): AsContravariantBlock = AsContravariantBlock(
                 swiftType,
+                contextParameters = swiftType.contextTypes.map { bridgeReturnType(it) },
                 parameters = swiftType.parameterTypes.map { bridgeReturnType(it) },
                 returnType = bridgeParameterType(swiftType.returnType),
             )
@@ -771,6 +773,7 @@ internal sealed class Bridge(
                     parameterTypes = parameters.map { it.swiftType.escaping },
                     returnType = returnType.swiftType,
                 ),
+                emptyList(),
                 parameters,
                 returnType,
             )
@@ -779,8 +782,10 @@ internal sealed class Bridge(
         override val inKotlinSources: SwiftToKotlinValueConversion
             get() = object : ValueConversion {
                 override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                    val argsInClosure = parameters
-                        .mapIndexed { idx, el -> "arg${idx}" to el }.takeIf { it.isNotEmpty() }
+                    val argsInClosure = buildList {
+                        addAll(contextParameters.mapIndexed { idx, el -> "ctx${idx}" to el })
+                        addAll(parameters.mapIndexed { idx, el -> "arg${idx}" to el })
+                    }.takeIf { it.isNotEmpty() }
                     val defineArgs = argsInClosure
                         ?.let {
                             " ${
@@ -808,16 +813,16 @@ internal sealed class Bridge(
 
         override val inSwiftSources = object : SwiftToKotlinValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                val argsInClosure = parameters
-                    .mapIndexed { idx, el -> "arg${idx}" to el }.takeIf { it.isNotEmpty() }
-                val defineArgs = argsInClosure
-                    ?.let { " ${it.joinToString { it.first }} in" } ?: ""
-                val callArgs = argsInClosure
-                    ?.let {
-                        it.joinToString { param ->
-                            param.second.inSwiftSources.kotlinToSwift(typeNamer, param.first)
-                        }
-                    } ?: ""
+                val contextArgs = contextParameters.mapIndexed { idx, el -> "ctx${idx}" to el }
+                val regularArgs = parameters.mapIndexed { idx, el -> "arg${idx}" to el }
+                val defineArgs = (contextArgs + regularArgs).takeIf { it.isNotEmpty() }?.let { " ${it.joinToString { it.first }} in" } ?: ""
+                val callContextArg = contextArgs.map { param ->
+                    param.second.inSwiftSources.kotlinToSwift(typeNamer, param.first)
+                }.takeIf { it.isNotEmpty() }?.joinToString(separator = ",", prefix = "(", postfix = ")")
+                val callRegularArgs = regularArgs.map { param ->
+                    param.second.inSwiftSources.kotlinToSwift(typeNamer, param.first)
+                }
+                val callArgs = (listOfNotNull(callContextArg) + callRegularArgs).takeIf { it.isNotEmpty() }?.joinToString() ?: ""
                 return """{
                 |    let originalBlock = $valueExpression
                 |    return {$defineArgs ${"return ${returnType.inSwiftSources.swiftToKotlin(typeNamer, "originalBlock($callArgs)")}"} }
@@ -852,7 +857,9 @@ internal sealed class Bridge(
                             argumentName = "pointerToBlock",
                             type = SirSwiftModule.unsafeMutableRawPointer.nominalType()
                         )
-                    ) + swiftType.parameterTypes.map { SirParameter(type = it) },
+                    ) + swiftType.contextTypes.mapIndexed { idx, type ->
+                        SirParameter(argumentName = "ctx${idx}", type = type)
+                    } + swiftType.parameterTypes.map { SirParameter(type = it) },
                     returnType = swiftType.returnType,
                     kotlinFqName = FqName(""),
                     selfParameter = null,
@@ -884,12 +891,19 @@ internal sealed class Bridge(
         override val inSwiftSources = object : KotlinToSwiftValueConversion {
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 val allArgs = bridgeProxy.argumentsForInvocation().applyIf(swiftType.isAsync) { dropLast(3) }
-                val defineArgs = allArgs
-                    .drop(1).takeIf { it.isNotEmpty() }
-                    ?.let { " ${it.joinToString()} in" } ?: ""
+                val defineArgs = buildList {
+                    if (swiftType.contextType != null) add("context")
+                    addAll(allArgs.drop(1 + swiftType.contextTypes.size))
+                }.takeIf { it.isNotEmpty() }?.let { " ${it.joinToString()} in" } ?: ""
+                val swiftInvocation = buildList {
+                    if (swiftType.contextType != null) {
+                        add(List(swiftType.contextTypes.size) { idx -> "ctx$idx" }.joinToString(prefix = "let (", postfix = ") = context"))
+                    }
+                    addAll(bridgeProxy.createSwiftInvocation({ "return $it" }))
+                }
                 return """{
                 |    let ${allArgs.first()} = $valueExpression
-                |    return {$defineArgs ${bridgeProxy.createSwiftInvocation({ "return $it" }).joinToString(";")} }
+                |    return {$defineArgs ${swiftInvocation.joinToString(";")} }
                 |}()""".trimMargin()
             }
         }
