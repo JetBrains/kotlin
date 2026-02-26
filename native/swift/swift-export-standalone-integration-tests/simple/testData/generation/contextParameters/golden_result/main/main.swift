@@ -136,6 +136,34 @@ public func complexContextFunction(
     let (context, contextA, contextB) = context
     return __root___complexContextFunction__TypesOfArguments__Swift_String_Swift_Bool_main_Context_main_ContextA_main_ContextB__(receiver, yes, context.__externalRCRef(), contextA.__externalRCRef(), contextB.__externalRCRef())
 }
+public func contextBlockA(
+    block: @escaping ((main.ContextA, main.ContextB), Swift.Int32, Swift.String) -> Swift.Void
+) -> Swift.Void {
+    return __root___contextBlockA__TypesOfArguments__U28Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__({
+        let originalBlock = block
+        return { ctx0, ctx1, arg0, arg1 in return originalBlock((main.ContextA.__createClassWrapper(externalRCRef: ctx0),main.ContextB.__createClassWrapper(externalRCRef: ctx1)), arg0, arg1) }
+    }())
+}
+public func contextBlockB() -> ((main.ContextB, main.ContextA), Swift.String, Swift.Int32) -> Swift.Void {
+    return {
+        let pointerToBlock = __root___contextBlockB()
+        return { context, _3, _4 in let (ctx0, ctx1) = context;return main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextB_main_ContextA_Swift_String_Swift_Int32__(pointerToBlock, ctx0.__externalRCRef(), ctx1.__externalRCRef(), _3, _4) }
+    }()
+}
+public func contextBlockC(
+    block: @escaping (main.Context, Swift.String) -> Swift.Void
+) -> Swift.Void {
+    return __root___contextBlockC__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void__({
+        let originalBlock = block
+        return { ctx0, arg0 in return originalBlock((main.Context.__createClassWrapper(externalRCRef: ctx0)), arg0) }
+    }())
+}
+public func contextBlockD() -> (main.Context, Swift.Int32) -> Swift.Void {
+    return {
+        let pointerToBlock = __root___contextBlockD()
+        return { context, _2 in let (ctx0) = context;return main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_Int32__(pointerToBlock, ctx0.__externalRCRef(), _2) }
+    }()
+}
 public func foo(
     _ context: main.Context
 ) -> Swift.Void {

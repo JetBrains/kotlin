@@ -45,6 +45,14 @@ _Bool __root___complexContextProperty_get__TypesOfArguments__Swift_String_main_C
 
 void __root___complexContextProperty_set__TypesOfArguments__Swift_String_Swift_Bool_main_ContextA_main_ContextB__(NSString * receiver, _Bool value, void * contextA, void * contextB);
 
+void __root___contextBlockA__TypesOfArguments__U28Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__(void (^block)(void *, void *, int32_t, NSString *));
+
+void * __root___contextBlockB();
+
+void __root___contextBlockC__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void__(void (^block)(void *, NSString *));
+
+void * __root___contextBlockD();
+
 void __root___foo__TypesOfArguments__main_Context__(void * ctx);
 
 void __root___unnamedContextParametersFunction__TypesOfArguments__main_Context_main_ContextB__(void * ctx, void * _1);
@@ -52,5 +60,9 @@ void __root___unnamedContextParametersFunction__TypesOfArguments__main_Context_m
 int32_t __root___unnamedContextParametersProperty_get__TypesOfArguments__main_ContextA_main_Context__(void * _0, void * ctx);
 
 void __root___unnamedContextParametersProperty_set__TypesOfArguments__Swift_Int32_main_ContextA_main_Context__(int32_t value, void * _1, void * ctx);
+
+void main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextB_main_ContextA_Swift_String_Swift_Int32__(void * pointerToBlock, void * ctx0, void * ctx1, NSString * _3, int32_t _4);
+
+void main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_Int32__(void * pointerToBlock, void * ctx0, int32_t _2);
 
 NS_ASSUME_NONNULL_END
