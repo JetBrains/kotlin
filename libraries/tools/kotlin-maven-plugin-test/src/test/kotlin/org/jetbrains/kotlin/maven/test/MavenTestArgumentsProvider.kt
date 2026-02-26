@@ -48,5 +48,5 @@ class MavenTestArgumentsProvider : ArgumentsProvider {
 annotation class MavenVersions(
     val min: String = TestVersions.Maven.MIN_SUPPORTED,
     val max: String = TestVersions.Maven.MAX_SUPPORTED,
-    val additional: Array<String> = [],
+    val additional: Array<String> = [TestVersions.Maven.MAVEN_4_0_0_RC4],
 )

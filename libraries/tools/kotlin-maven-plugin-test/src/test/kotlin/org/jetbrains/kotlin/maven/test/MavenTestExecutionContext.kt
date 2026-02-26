@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.maven.plugin.test
 
-import org.jetbrains.kotlin.maven.test.JdkProvider
 import org.jetbrains.kotlin.maven.test.TestVersions
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -20,29 +19,69 @@ class MavenTestExecutionContext(
     val verifyCommonBshLocation: Path,
 )
 
-fun createMavenTestExecutionContextFromEnvironment(
+class ConfigMapFromEnvironment {
+    /**
+     * Replaces all non-word characters (anything except letters, digits, and underscores)
+     * with underscores and converts the result to uppercase.
+     * 
+     * Examples:
+     * - "kotlin.version" → "KOTLIN_VERSION"
+     */
+    private fun String.toEnvironmentKey() = replace("\\W".toRegex(), "_").uppercase()
+    
+    fun get(
+        propertyKey: String,
+        environmentKey: String = propertyKey.toEnvironmentKey(),
+        defaultValue: String? = null
+    ): String? {
+        return System.getProperty(propertyKey)
+            ?: System.getenv(environmentKey)
+            // ?: localProperties?.getProperty(propertyKey)
+            ?: defaultValue
+    }
+}
+
+fun createMavenTestExecutionContext(
     tmpDir: Path,
+    configMap: ConfigMapFromEnvironment = ConfigMapFromEnvironment(),
 ): MavenTestExecutionContext {
-    val jdkProvider = JdkProvider()
     val javaHomeProvider = { version: TestVersions.Java ->
-        jdkProvider.jdkHome(version) ?: Path(System.getProperty("java.home"))
+        val systemPropertyName = "jdk${version.numericVersion}Home"
+        val environmentVariableName = "JDK_${version.numericVersion}"
+
+        val jdkHome = configMap.get(
+            systemPropertyName,
+            environmentVariableName
+        )?.let { Path(it) }
+
+        jdkHome ?: Path(System.getProperty("java.home"))
     }
 
-    val testProjectsDir = System.getProperty("kotlin.it.testDirs")
-        ?: error("kotlin.it.testDirs system property is not set, set it to location with test projects")
+    val testProjectsDir = configMap.get(
+        "kotlin.it.testDirs",
+        defaultValue = "${System.getProperty("user.dir")}/src/it/"
+    ) ?: error("kotlin.it.testDirs system property is not set, set it to location with test projects")
 
-    val mavenRepoLocal = System.getProperty("kotlin.maven.local.repo.for.tests") ?: error("kotlin.maven.local.repo.for.tests system property is not set")
+    val mavenRepoLocal = configMap.get(
+        "kotlin.it.localRepo",
+        defaultValue = "${System.getProperty("user.dir")}/local-repo"
+    ) ?: error("kotlin.it.localRepo system property is not set")
 
-    val kotlinVersion = System.getProperty("kotlin.version") ?: error("kotlin.version system property is not set")
-    val kotlinBuildRepo = System.getProperty("kotlin.build.repo")
+    val kotlinVersion = configMap.get("kotlin.version",
+        defaultValue = KotlinVersion.CURRENT.toString() + "-SNAPSHOT"
+    ) ?: error("kotlin.version system property is not set")
+
+    val kotlinBuildRepo = configMap.get("kotlin.build.repo", defaultValue = "${System.getProperty("user.dir")}/../../../build/repo")
         ?: error("""
             "kotlin.build.repo system property is not set.
              It should point to maven repository created after ./gradlew publish in kotlin.git"
              By default it is '{kotlinProjectDir}/build/repo'
         """.trimIndent())
 
-    val verifyCommonBshLocation = System.getProperty("kotlin.it.verify-common.bsh")
-        ?: error("kotlin.it.verify-common.bsh system property is not set")
+    val verifyCommonBshLocation = configMap.get(
+        "kotlin.it.verify-common.bsh",
+        defaultValue = "${System.getProperty("user.dir")}/verify-common.bsh"
+    ) ?: error("kotlin.it.verify-common.bsh system property is not set")
 
     return MavenTestExecutionContext(
         javaHomeProvider = javaHomeProvider,

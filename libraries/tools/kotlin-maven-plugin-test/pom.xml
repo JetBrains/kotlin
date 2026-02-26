@@ -13,6 +13,9 @@
     <artifactId>kotlin-maven-plugin-test</artifactId>
 
     <properties>
+        <!-- By default use the current java home as the default JDK for the tests. It gets changed by profile if needed. -->
+        <defaultBuildJdk>${java.home}</defaultBuildJdk>
+
         <jdk8Home>${env.JDK_1_8}</jdk8Home>
         <jdk11Home>${env.JDK_11_0}</jdk11Home>
         <jdk17Home>${env.JDK_17_0}</jdk17Home>
@@ -35,6 +38,13 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -115,7 +125,7 @@
                         <id>default-compile</id>
                         <phase>compile</phase>
                         <configuration>
-                            <jdkHome>${jdk17Home}</jdkHome>
+                            <jdkHome>${defaultBuildJdk}</jdkHome>
                             <sourceDirs>
                                 <sourceDir>src/main/kotlin</sourceDir>
                                 <sourceDir>src/main/java</sourceDir>
@@ -126,7 +136,7 @@
                         <id>default-test-compile</id>
                         <phase>test-compile</phase>
                         <configuration>
-                            <jdkHome>${jdk17Home}</jdkHome>
+                            <jdkHome>${defaultBuildJdk}</jdkHome>
                             <sourceDirs>
                                 <sourceDir>src/test/kotlin</sourceDir>
                                 <sourceDir>src/test/java</sourceDir>
@@ -159,6 +169,18 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>autoConfigureDefaultBuildJdkFromEnv</id>
+            <activation>
+                <property>
+                    <name>env.JDK_17_0</name>
+                </property>
+            </activation>
+            <properties>
+                <defaultBuildJdk>${env.JDK_17_0}</defaultBuildJdk>
+            </properties>
+        </profile>
+
         <!--
         moved the integration test into a profile so we can disable this
         for example this integration test doesn't work if offline
@@ -180,14 +202,15 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <jvm>${jdk17Home}/bin/java</jvm>
+<!--                                    <jvm>${jdk17Home}/bin/java</jvm>-->
                                     <systemPropertyVariables>
-                                        <maven.home>${maven.home}</maven.home>
-                                        <kotlin.version>${project.version}</kotlin.version>
-                                        <kotlin.maven.local.repo.for.tests>${project.basedir}/local-repo</kotlin.maven.local.repo.for.tests>
-                                        <kotlin.it.testDirs>${project.basedir}/src/it</kotlin.it.testDirs>
-                                        <!-- ./libraries/tools/kotlin-maven-plugin-test/pom.xml -->
+                                        <!-- Properties required for integration tests run -->
+                                        <!-- Path to maven repo with kotlin artifacts (i.e. kotlin-maven-plugin)
+                                        Can be provisioned with ./gradlew mvnPublish -->
                                         <kotlin.build.repo>${settings.localRepository}</kotlin.build.repo>
+                                        <kotlin.version>${project.version}</kotlin.version>
+                                        <kotlin.it.localRepo>${project.basedir}/local-repo</kotlin.it.localRepo>
+                                        <kotlin.it.testDirs>${project.basedir}/src/it</kotlin.it.testDirs>
                                         <kotlin.it.verify-common.bsh>${project.basedir}/verify-common.bsh</kotlin.it.verify-common.bsh>
 
                                         <!-- JDK configuration must follow this rule jdk\d+Home -->
