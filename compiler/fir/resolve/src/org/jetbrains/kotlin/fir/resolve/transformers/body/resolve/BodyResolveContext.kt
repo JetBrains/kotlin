@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.computeImportingScopes
@@ -166,7 +167,10 @@ class BodyResolveContext(
     }
 
     inline fun <T> withPublicApiInlineFunctionIfApplicable(function: FirFunction, block: () -> T): T =
-        withPublicApiInlineFunction(function.takeIf { it.isInline && it.effectiveVisibility.publicApi } ?: publicApiInlineFunction, block)
+        withPublicApiInlineFunction(function.takeIf { it.isPublicInline } ?: publicApiInlineFunction, block)
+
+    val FirFunction.isPublicInline: Boolean
+        get() = isInline && (publishedApiEffectiveVisibility ?: effectiveVisibility).publicApi
 
     @PrivateForInline
     inline fun <T> withContainer(declaration: FirDeclaration, f: () -> T): T {

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.references.FirPropertyWithExplicitBackingFieldResolvedNamedReference
@@ -24,23 +23,15 @@ private fun FirPropertySymbol.isEffectivelyFinal(session: FirSession): Boolean {
 }
 
 fun FirPropertySymbol.tryAccessExplicitFieldSymbol(
-    closestInlineFunction: FirFunction?,
+    closestPublicApiInlineFunction: FirFunction?,
     session: FirSession,
     hasVisibleBackingField: Boolean,
-): FirBackingFieldSymbol? {
-    if (closestInlineFunction?.effectiveVisibility?.publicApi == true) {
-        return null
+): FirBackingFieldSymbol? =
+    fir.backingField?.symbol?.takeIf {
+        closestPublicApiInlineFunction == null
+                && hasVisibleBackingField
+                && isEffectivelyFinal(session)
     }
-
-    if (
-        hasVisibleBackingField &&
-        isEffectivelyFinal(session)
-    ) {
-        return fir.backingField?.symbol
-    }
-
-    return null
-}
 
 fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.tryAccessExplicitFieldSymbol(
     closestInlineFunction: FirFunction?,
