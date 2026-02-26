@@ -132,7 +132,7 @@ abstract class WasmBoxRunnerBase(
             !System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
         }
 
-        return listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey, jscOfNotWindows)
+        return listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey)
             .mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
