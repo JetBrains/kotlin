@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
 internal fun WasmCompilerResult.writeTo(outputDir: File, outputFilenameBase: String, debugMode: DebugMode, mode: String = "") {
@@ -25,7 +26,7 @@ internal fun WasmCompilerResult.writeTo(outputDir: File, outputFilenameBase: Str
     }
 }
 
-class WasmBoxRunner(
+open class WasmBoxRunner(
     testServices: TestServices
 ) : WasmBoxRunnerBase(testServices) {
 
@@ -82,4 +83,10 @@ class WasmBoxRunner(
 
         processExceptions(allExceptions)
     }
+}
+
+class WasmBoxRunnerV8(testServices: TestServices) : WasmBoxRunner(testServices) {
+    // JavaScriptCore may glitch on Linux CI: `libglib-2.0.so.0: file too short`
+    // so only the most reliable engine is used for not-thorough executions use cases, like klib compatibility tests.
+    override val wasmEngines = listOfNotNull(WasmVM.V8)
 }

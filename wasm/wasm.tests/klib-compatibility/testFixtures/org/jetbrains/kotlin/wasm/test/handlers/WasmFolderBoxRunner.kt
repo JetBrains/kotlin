@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 
-class WasmFolderBoxRunner(
+open class WasmFolderBoxRunner(
     testServices: TestServices
 ) : WasmBoxRunnerBase(testServices) {
 
@@ -24,4 +25,10 @@ class WasmFolderBoxRunner(
         if (throwables.isNotEmpty())
             throw throwables.first()
     }
+}
+
+class WasmFolderBoxRunnerV8(
+    testServices: TestServices
+) : WasmFolderBoxRunner(testServices) {
+    override val wasmEngines = listOfNotNull(WasmVM.V8)
 }

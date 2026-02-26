@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSource
 import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmSecondStageTest
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
-import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerV8
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDtsHandler
 import org.jetbrains.kotlin.wasm.test.handlers.WasmIrHandler
 import org.junit.jupiter.api.Tag
@@ -81,7 +81,7 @@ open class AbstractCustomWasmJsCompilerFirstStageTest(val testDataRoot: String =
         facadeStep(::WasmBackendFacade)
 
         wasmArtifactsHandlersStep {
-            useHandlers(::WasmBoxRunner)
+            useHandlers(::WasmBoxRunnerV8)
             useHandlers(::WasmIrHandler)
             useHandlers(::WasmDtsHandler)
         }

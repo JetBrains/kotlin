@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.wasm.test.blackbox.CustomWasmJsCompilerSecondStageFa
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmFirstStageTest
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmSecondStageTest
 import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
-import org.jetbrains.kotlin.wasm.test.handlers.WasmFolderBoxRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasmFolderBoxRunnerV8
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -115,7 +115,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
         facadeStep(::CustomWasmJsCompilerSecondStageFacade)
 
         wasmArtifactsHandlersStep {
-            useHandlers(::WasmFolderBoxRunner)
+            useHandlers(::WasmFolderBoxRunnerV8)
         }
 
         useAfterAnalysisCheckers(
