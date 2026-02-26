@@ -49,6 +49,12 @@ fun ShadowJar.configureEmbeddableCompilerRelocation(withJavaxInject: Boolean = t
     relocate("org.fusesource", "$kotlinEmbeddableRootPackage.org.fusesource") {
         exclude("org.fusesource.jansi.internal.CLibrary")
     }
+
+    /**
+     * Workaround for
+     * https://github.com/GradleUp/shadow/issues/1929
+     */
+    enableKotlinModuleRemapping.set(false)
 }
 
 private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Unit): TaskProvider<ShadowJar> {
