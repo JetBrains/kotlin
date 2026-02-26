@@ -95,7 +95,11 @@ public class StandaloneAnalysisAPISessionBuilder(
 
     private lateinit var projectStructureProvider: KotlinStaticProjectStructureProvider
 
+    @OptIn(ExperimentalContracts::class)
     public fun buildKtModuleProvider(init: KtModuleProviderBuilder.() -> Unit) {
+        contract {
+            callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+        }
         projectStructureProvider = buildProjectStructureProvider(kotlinCoreProjectEnvironment.environment, project, init)
     }
 
