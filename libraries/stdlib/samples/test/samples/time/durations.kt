@@ -311,4 +311,56 @@ class Durations {
         val kotlinMinutes: Duration = javaMinutes.toKotlinDuration()
         assertPrints(kotlinMinutes, "30m")
     }
+
+    @Sample
+    fun convertUnitLong() {
+        assertPrints(DurationUnit.DAYS.convert(1L, DurationUnit.HOURS), "24")
+        assertPrints(DurationUnit.HOURS.convert(-1L, DurationUnit.MINUTES), "-60")
+        assertPrints(DurationUnit.MILLISECONDS.convert(1000L, DurationUnit.SECONDS), "1")
+
+        // The value is always truncated to the target unit's value closest to zero
+        assertPrints(DurationUnit.MILLISECONDS.convert(1999L, DurationUnit.SECONDS), "1")
+        assertPrints(DurationUnit.MILLISECONDS.convert(-1999L, DurationUnit.SECONDS), "-1")
+
+        // When converting from a larger unit to a smaller unit, the resulting value may not fit
+        // into the Long's range of values and Long.MIN_VALUE, or Long.MAX_VALUE is returned instead.
+        val tooManyDays = 110_000L
+        assertTrue(DurationUnit.DAYS.convert(tooManyDays, DurationUnit.NANOSECONDS) == Long.MAX_VALUE)
+        assertTrue(DurationUnit.DAYS.convert(-tooManyDays, DurationUnit.NANOSECONDS) == Long.MIN_VALUE)
+    }
+
+    @Sample
+    fun convertUnitInt() {
+        assertPrints(DurationUnit.DAYS.convert(1, DurationUnit.HOURS), "24")
+        assertPrints(DurationUnit.HOURS.convert(-1, DurationUnit.MINUTES), "-60")
+        assertPrints(DurationUnit.MILLISECONDS.convert(1000, DurationUnit.SECONDS), "1")
+
+        // The value is always truncated to the target unit's value closest to zero
+        assertPrints(DurationUnit.MILLISECONDS.convert(1999, DurationUnit.SECONDS), "1")
+        assertPrints(DurationUnit.MILLISECONDS.convert(-1999, DurationUnit.SECONDS), "-1")
+
+        // When converting from a larger unit to a smaller unit, the resulting value may not fit
+        // into the Int's range of values and Int.MIN_VALUE, or Int.MAX_VALUE is returned instead.
+        val tooManyDays = 1
+        assertTrue(DurationUnit.DAYS.convert(tooManyDays, DurationUnit.NANOSECONDS) == Int.MAX_VALUE)
+        assertTrue(DurationUnit.DAYS.convert(-tooManyDays, DurationUnit.NANOSECONDS) == Int.MIN_VALUE)
+    }
+
+    @Sample
+    fun convertUnitDouble() {
+        assertPrints(DurationUnit.DAYS.convert(1.0, DurationUnit.HOURS), "24.0")
+        assertPrints(DurationUnit.HOURS.convert(-1.0, DurationUnit.MINUTES), "-60.0")
+        assertPrints(DurationUnit.MILLISECONDS.convert(1500.0, DurationUnit.SECONDS), "1.5")
+
+        // When converting from a larger unit to a smaller unit, the resulting value may not fit
+        // into the range of finite values and an infinite value is returned instead.
+        val tooManyDays = 1e300
+        assertPrints(DurationUnit.DAYS.convert(tooManyDays, DurationUnit.NANOSECONDS), "Infinity")
+        assertPrints(DurationUnit.DAYS.convert(-tooManyDays, DurationUnit.NANOSECONDS), "-Infinity")
+
+        // Special cases
+        assertPrints(DurationUnit.DAYS.convert(Double.NaN, DurationUnit.NANOSECONDS), "NaN")
+        assertPrints(DurationUnit.NANOSECONDS.convert(Double.POSITIVE_INFINITY, DurationUnit.DAYS), "Infinity")
+        assertPrints(DurationUnit.NANOSECONDS.convert(Double.NEGATIVE_INFINITY, DurationUnit.DAYS), "-Infinity")
+    }
 }
