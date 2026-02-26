@@ -57,6 +57,7 @@
 # USER_OWNER: dmitry.nekrasov@jetbrains.com DmitryNekrasov
 # USER_OWNER: artem.olkov@jetbrains.com mMaxy
 # USER_OWNER: gleb.lukianets@jetbrains.com glukianets
+# USER_OWNER: sebastian.sellmair@jetbrains.com sellmair
 
 # SPACE_TO_GITHUB_OWNER: "Google Compose" ShikaSD bentrengrove andrewbailey chuckjaz derekxu16
 # SPACE_TO_GITHUB_OWNER: "Parcelize" troelsbjerre blueshiftlabs jsjeon ting-yuan jaschdoc
@@ -267,8 +268,8 @@
 /compiler/tests-different-jdk/ "Kotlin JVM"
 /compiler/tests-gen/ "Kotlin Compiler"
 /compiler/tests-java8/ "Kotlin JVM"
-/compiler/tests-mutes/ "Kotlin Build Infrastructure"
-/compiler/test-security-manager/ "Kotlin Build Infrastructure"
+/compiler/tests-mutes/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+/compiler/test-security-manager/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 /compiler/tests-spec/ "Kotlin Frontend"
 /compiler/util/ "Kotlin Frontend"
 /compiler/util/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt "Kotlin Language Evolution"
@@ -316,7 +317,7 @@
 /generators/tree-generator-common/ "Kotlin Frontend" "Kotlin Common Backend" sergej.jaskiewicz@jetbrains.com
 /generators/wasm/ "Kotlin Wasm"
 
-/gradle/ "Kotlin Build Infrastructure"
+/gradle/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 
 # UNKNOWN: /idea/
 
@@ -474,9 +475,9 @@
 /plugins/kotlin-dataframe/ "Kotlin for Data Science"
 /plugins/test-plugins/ "Kotlin Frontend"
 
-/prepare/ "Kotlin Build Infrastructure"
+/prepare/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 
-/repo/ "Kotlin Build Infrastructure"
+/repo/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 
 /resources/ "Kotlin Build Infrastructure"
 
@@ -508,8 +509,8 @@
 /AGENTS.md "Kotlin Build Infrastructure"
 
 # Build files
-**.gradle.kts "Kotlin Build Infrastructure"
-**.gradle "Kotlin Build Infrastructure"
+**.gradle.kts "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+**.gradle "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/**/*.gradle.kts "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/**/*.gradle "Kotlin Build Tools"
 /kotlin-native/backend.native/tests/**.gradle "Kotlin Native"
@@ -518,10 +519,10 @@
 /kotlin-native/performance/**/*.gradle.kts "Kotlin Native"
 /native/native.tests/*.gradle.kts "Kotlin Native"
 /native/swift/**/*.gradle.kts "Kotlin Native"
-.gitignore "Kotlin Build Infrastructure"
-gradlew "Kotlin Build Infrastructure"
-gradlew.bat "Kotlin Build Infrastructure"
+.gitignore "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+gradlew "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+gradlew.bat "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 
-/gradle.properties "Kotlin Build Infrastructure"
+/gradle.properties "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 
 /.space/CODEOWNERS "Kotlin Build Infrastructure"
