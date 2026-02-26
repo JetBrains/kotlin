@@ -54,6 +54,7 @@ internal abstract class CoroutineImpl<T, R>(private val resultContinuation: Cont
             if (rethrowExceptions && !wasSuspended) throw exception!!
             completion.resumeWithException(exception!!)
         } else {
+            if (rethrowExceptions && !wasSuspended) return // prevent double-completion
             completion.resume(this.result as R)
         }
         return
