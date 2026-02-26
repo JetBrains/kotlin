@@ -45,7 +45,10 @@ import androidx.compose.runtime.NonRestartableComposable
 
 @StabilityInferred(parameters = 1)
 class Foo {
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @Composable
 fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): Foo {
@@ -75,7 +78,10 @@ class FooDelegate {
     sourceInformationMarkerEnd(%composer)
     return tmp0
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class Bar {
@@ -86,14 +92,17 @@ class Bar {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
-      val tmp0 = <this>.foo%delegate.getValue(<this>, ::foo, %composer, 0b01110000 and %changed shl 0b0011)
+      val tmp0 = field.getValue(<this>, ::foo, %composer, 0b01110000 and %changed shl 0b0011)
       if (isTraceInProgress()) {
         traceEventEnd()
       }
       sourceInformationMarkerEnd(%composer)
       return tmp0
     }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @Composable
 fun test(%composer: Composer?, %changed: Int) {

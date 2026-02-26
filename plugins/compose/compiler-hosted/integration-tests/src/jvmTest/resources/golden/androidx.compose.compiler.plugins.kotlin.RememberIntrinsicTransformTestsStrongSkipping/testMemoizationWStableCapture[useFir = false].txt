@@ -4,7 +4,7 @@
 
 import androidx.compose.runtime.*
 
-@Composable fun Test(param: String, unstable: List<*>) {
+@Composable fun Test(param: String, unknown: List<*>) {
     Wrapper {
         println(param)
     }
@@ -15,7 +15,7 @@ import androidx.compose.runtime.*
 // ------------------------------------------
 
 @Composable
-fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) {
+fun Test(param: String, unknown: List<*>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<{>,<Wrappe...>:Test.kt")
   val %dirty = %changed
@@ -43,6 +43,6 @@ fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) 
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    Test(param, unstable, %composer, updateChangedFlags(%changed or 0b0001))
+    Test(param, unknown, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }

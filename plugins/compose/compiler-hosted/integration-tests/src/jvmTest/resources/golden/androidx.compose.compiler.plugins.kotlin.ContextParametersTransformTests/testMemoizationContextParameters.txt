@@ -62,7 +62,7 @@ fun <T: Any> TypeCrossfade(state: T, content: @[ExtensionFunctionType] Function4
           traceEventStart(<>, %dirty, -1, <>)
         }
         with(BoxScope) {
-          content(%this%with, it, %composer, 0b1000 and %dirty shl 0b0011 or 0b01110000 and %dirty shl 0b0011)
+          content(%this%with, it, %composer, BoxScope.%stable or 0b1000 and %dirty shl 0b0011 or 0b01110000 and %dirty shl 0b0011)
         }
         if (isTraceInProgress()) {
           traceEventEnd()
@@ -89,7 +89,7 @@ fun App(%composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    TypeCrossfade(A(), ComposableSingletons%TestKt.lambda%-1203334793, %composer, 0b00110000)
+    TypeCrossfade(A(), ComposableSingletons%TestKt.lambda%-1203334793, %composer, 0b00110000 or States.A.%stable)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
@@ -105,7 +105,12 @@ internal object ComposableSingletons%TestKt {
     sourceInformation(%composer, "C<Text(t...>:Test.kt")
     val %dirty = %changed
     if (%changed and 0b00110000 == 0) {
-      %dirty = %dirty or if (%composer.changed(%this%TypeCrossfade)) 0b00100000 else 0b00010000
+      %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+        %composer.changed(%this%TypeCrossfade)
+      } else {
+        %composer.changedInstance(%this%TypeCrossfade)
+      }
+      ) 0b00100000 else 0b00010000
     }
     if (%composer.shouldExecute(%dirty and 0b10010001 != 0b10010000, %dirty and 0b0001)) {
       if (isTraceInProgress()) {

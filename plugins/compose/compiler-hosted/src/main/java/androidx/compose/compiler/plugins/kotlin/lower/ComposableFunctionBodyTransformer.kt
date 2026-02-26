@@ -664,15 +664,19 @@ class ComposableFunctionBodyTransformer(
                     readonly = false
                 )
 
+                val fileContainingDeclaration = declaration.fileOrNull
                 scope.allTrackedParams.forEach {
-                    val stability = stabilityInferencer.stabilityOf(it.varargElementType ?: it.type)
+                    val stability = stabilityInferencer.stabilityOf(
+                        it.varargElementType ?: it.type,
+                        fileContainingDependent = fileContainingDeclaration
+                    )
                     val default = it.defaultValue?.expression
                     scope.metrics.recordParameter(
                         declaration = it,
                         type = it.type,
                         stability = stability,
                         default = default,
-                        defaultStatic = default?.isStatic() == true,
+                        defaultStatic = default?.isStatic(fileContainingDependent = fileContainingDeclaration) == true,
                         used = true,
                     )
                 }
@@ -925,9 +929,12 @@ class ComposableFunctionBodyTransformer(
         }
 
         // we start off assuming that we *can* skip execution of the function
+        val fileContainingDeclaration = declaration.fileOrNull
         var canSkipExecution = declaration.returnType.isUnit() &&
                 !isInlineLambda &&
-                scope.allTrackedParams.none { stabilityInferencer.stabilityOf(it.type).knownUnstable() }
+                scope.allTrackedParams.none {
+                    stabilityInferencer.stabilityOf(it.type, fileContainingDependent = fileContainingDeclaration).knownUnstable()
+                }
 
         // if the function can never skip, or there are no parameters to test, then we
         // don't need to have the dirty parameter locally since it will never be different from
@@ -1195,8 +1202,12 @@ class ComposableFunctionBodyTransformer(
             // also use the value parameter index.
             val realParams = declaration.namedParameters.take(scope.realValueParamCount)
 
+            val fileContainingDeclaration = declaration.fileOrNull
             val unstableMask = realParams.map {
-                stabilityInferencer.stabilityOf((it.varargElementType ?: it.type)).knownUnstable()
+                stabilityInferencer.stabilityOf(
+                    (it.varargElementType ?: it.type),
+                    fileContainingDependent = fileContainingDeclaration
+                ).knownUnstable()
             }.toBooleanArray()
 
             val hasAnyUnstableParams = unstableMask.any { it }
@@ -1396,6 +1407,7 @@ class ComposableFunctionBodyTransformer(
         defaultScope: Scope.ParametersScope,
     ): Boolean {
         val parameters = scope.allTrackedParams
+        val fileContainingParameters = scope.function.fileOrNull
         // we default to true because the absence of a default expression we want to consider as
         // "static"
         val defaultExprIsStatic = BooleanArray(parameters.size) { true }
@@ -1413,7 +1425,7 @@ class ComposableFunctionBodyTransformer(
                 if (defaultParam != null && defaultValue != null) {
 
                     // we want to call this on the transformed version.
-                    defaultExprIsStatic[slotIndex] = defaultValue.isStatic()
+                    defaultExprIsStatic[slotIndex] = defaultValue.isStatic(fileContainingDependent = fileContainingParameters)
                     defaultExpr[slotIndex] = defaultValue
                     val hasStaticDefaultExpr = defaultExprIsStatic[slotIndex]
                     when {
@@ -1458,7 +1470,8 @@ class ComposableFunctionBodyTransformer(
         }
 
         parameters.fastForEachIndexed { slotIndex, param ->
-            val stability = stabilityInferencer.stabilityOf(param.varargElementType ?: param.type)
+            val stability =
+                stabilityInferencer.stabilityOf(param.varargElementType ?: param.type, fileContainingDependent = fileContainingParameters)
 
             stabilities[slotIndex] = stability
 
@@ -1629,7 +1642,11 @@ class ComposableFunctionBodyTransformer(
                         slotIndex,
                         irIfThenElse(
                             context.irBuiltIns.intType,
-                            irChanged(irMethodCall(irGet(param), sizeGetter), compareInstanceForFunctionTypes = true),
+                            irChanged(
+                                irMethodCall(irGet(param), sizeGetter),
+                                fileContainingValue = fileContainingParameters,
+                                compareInstanceForFunctionTypes = true
+                            ),
                             thenPart = irConst(ParamState.Different.bitsForSlot(slotIndex)),
                             elsePart = irConst(ParamState.Uncertain.bitsForSlot(slotIndex))
                         )
@@ -1637,11 +1654,12 @@ class ComposableFunctionBodyTransformer(
                 )
                 statements.add(
                     irForLoop(
+                        parent = scope.function,
                         varargElementType,
                         irGet(param)
                     ) { loopVar ->
                         val changedCall = irCallChanged(
-                            stabilityInferencer.stabilityOf(varargElementType),
+                            stabilityInferencer.stabilityOf(varargElementType, fileContainingDependent = fileContainingParameters),
                             changedParam,
                             slotIndex,
                             loopVar
@@ -1729,30 +1747,36 @@ class ComposableFunctionBodyTransformer(
         changedParam: IrChangedBitMaskValue,
         slotIndex: Int,
         param: IrValueDeclaration,
-    ) = if (FeatureFlag.StrongSkipping.enabled && stability.isUncertain()) {
-        irIfThenElse(
-            type = context.irBuiltIns.booleanType,
-            condition = irIsStable(changedParam, slotIndex),
-            thenPart = irChanged(
-                irCurrentComposer(),
-                irGet(param),
-                inferredStable = true,
-                compareInstanceForFunctionTypes = true,
-                compareInstanceForUnstableValues = true
-            ),
-            elsePart = irChanged(
-                irCurrentComposer(),
-                irGet(param),
-                inferredStable = false,
-                compareInstanceForFunctionTypes = true,
-                compareInstanceForUnstableValues = true
+    ): IrExpression {
+        val fileContainingParam = param.fileOrNull
+        return if (FeatureFlag.StrongSkipping.enabled && stability.isUncertain()) {
+            irIfThenElse(
+                type = context.irBuiltIns.booleanType,
+                condition = irIsStable(changedParam, slotIndex),
+                thenPart = irChanged(
+                    irCurrentComposer(),
+                    irGet(param),
+                    fileContainingValue = fileContainingParam,
+                    inferredStable = true,
+                    compareInstanceForFunctionTypes = true,
+                    compareInstanceForUnstableValues = true
+                ),
+                elsePart = irChanged(
+                    irCurrentComposer(),
+                    irGet(param),
+                    fileContainingValue = fileContainingParam,
+                    inferredStable = false,
+                    compareInstanceForFunctionTypes = true,
+                    compareInstanceForUnstableValues = true
+                )
             )
-        )
-    } else {
-        irChanged(
-            irGet(param),
-            compareInstanceForFunctionTypes = true
-        )
+        } else {
+            irChanged(
+                irGet(param),
+                fileContainingValue = fileContainingParam,
+                compareInstanceForFunctionTypes = true
+            )
+        }
     }
 
     private fun irEndRestartGroupAndUpdateScope(
@@ -2259,11 +2283,13 @@ class ComposableFunctionBodyTransformer(
 
     private fun irChanged(
         value: IrExpression,
+        fileContainingValue: IrFile?,
         compareInstanceForFunctionTypes: Boolean,
         compareInstanceForUnstableValues: Boolean = FeatureFlag.StrongSkipping.enabled,
     ): IrExpression = irChanged(
         irCurrentComposer(),
         value,
+        fileContainingValue,
         inferredStable = false,
         compareInstanceForFunctionTypes = compareInstanceForFunctionTypes,
         compareInstanceForUnstableValues = compareInstanceForUnstableValues
@@ -2807,7 +2833,11 @@ class ComposableFunctionBodyTransformer(
      * Argument information extracted from the call site and argument expression itself.
      */
     data class CallArgumentMeta(
-        /** stability of argument expression */
+        var fileContainingArg: IrFile?,
+        /**
+         * The stability of the argument expression. Only elements within [fileContainingArg] may
+         * depend on this value.
+         */
         var stability: Stability = Stability.Unstable,
         /** whether argument is vararg */
         var isVararg: Boolean = false,
@@ -2834,16 +2864,16 @@ class ComposableFunctionBodyTransformer(
         val hasNonStaticDefault: Boolean = false,
     )
 
-    private fun argumentMetaOf(arg: IrExpression, isProvided: Boolean): CallArgumentMeta {
-        val meta = CallArgumentMeta(isProvided = isProvided)
+    private fun argumentMetaOf(arg: IrExpression, fileContainingArg: IrFile?, isProvided: Boolean): CallArgumentMeta {
+        val meta = CallArgumentMeta(fileContainingArg, isProvided = isProvided)
         populateArgumentMeta(arg, meta)
         return meta
     }
 
     private fun populateArgumentMeta(arg: IrExpression, meta: CallArgumentMeta) {
-        meta.stability = stabilityInferencer.stabilityOf(arg)
+        meta.stability = stabilityInferencer.stabilityOf(arg, fileContainingDependent = meta.fileContainingArg)
         when {
-            arg.isStatic() -> meta.isStatic = true
+            arg.isStatic(fileContainingDependent = meta.fileContainingArg) -> meta.isStatic = true
             arg is IrGetValue -> {
                 when (val owner = arg.symbol.owner) {
                     is IrValueParameter -> {
@@ -2870,7 +2900,7 @@ class ComposableFunctionBodyTransformer(
                 }
             }
             arg is IrVararg -> {
-                meta.stability = stabilityInferencer.stabilityOf(arg.varargElementType)
+                meta.stability = stabilityInferencer.stabilityOf(arg.varargElementType, fileContainingDependent = meta.fileContainingArg)
             }
         }
     }
@@ -2889,7 +2919,7 @@ class ComposableFunctionBodyTransformer(
                                     maskSlot = slotIndex,
                                     maskParam = scope.dirty,
                                     hasNonStaticDefault = if (param is IrValueParameter) {
-                                        param.defaultValue?.expression?.isStatic() == false
+                                        param.defaultValue?.expression?.isStatic(fileContainingDependent = scope.function.fileOrNull) == false
                                     } else {
                                         // No default for this parameter
                                         false
@@ -3145,6 +3175,7 @@ class ComposableFunctionBodyTransformer(
             }
         }
 
+        val fileContainingExpression = currentScope.fileScope?.declaration
         var dispatchMeta: CallArgumentMeta? = null
         val argsMeta = mutableListOf<CallArgumentMeta>()
         var valueParamIndex = 0
@@ -3158,24 +3189,28 @@ class ComposableFunctionBodyTransformer(
                     // missed something.
                     error("Unexpected null argument for composable call: ${expression.dump()}")
                 } else {
-                    argsMeta.add(CallArgumentMeta(isVararg = true))
+                    argsMeta.add(CallArgumentMeta(fileContainingArg = fileContainingExpression, isVararg = true))
                     continue
                 }
             }
             when (param.kind) {
                 IrParameterKind.DispatchReceiver -> {
-                    dispatchMeta = argumentMetaOf(arg, isProvided = true)
+                    dispatchMeta = argumentMetaOf(arg, fileContainingArg = fileContainingExpression, isProvided = true)
                 }
                 IrParameterKind.Context,
                 IrParameterKind.ExtensionReceiver -> {
-                    val meta = argumentMetaOf(arg, isProvided = true)
+                    val meta = argumentMetaOf(arg, fileContainingArg = fileContainingExpression, isProvided = true)
                     argsMeta.add(meta)
                 }
                 IrParameterKind.Regular -> {
                     val index = valueParamIndex++
                     val bitIndex = defaultsBitIndex(index)
                     val maskValue = if (hasDefaultArgs) defaultMasks[defaultsParamIndex(index)] else 0
-                    val meta = argumentMetaOf(arg, isProvided = maskValue and (0b1 shl bitIndex) == 0)
+                    val meta = argumentMetaOf(
+                        arg,
+                        fileContainingArg = fileContainingExpression,
+                        isProvided = maskValue and (0b1 shl bitIndex) == 0
+                    )
                     argsMeta.add(meta)
                 }
             }
@@ -3203,6 +3238,7 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun visitRememberCall(expression: IrCall): IrExpression {
+        val fileContainingRememberCall = currentScope.fileScope?.declaration
         val inputArgs = mutableListOf<IrExpression>()
         var hasSpreadArgs = false
         var calculationArg: IrExpression? = null
@@ -3257,9 +3293,12 @@ class ComposableFunctionBodyTransformer(
 
         // Build the change parameters as if this was a call to remember to ensure the
         // use of the $dirty flags are calculated correctly.
-        val inputArgMetas = inputArgs.map { argumentMetaOf(it, isProvided = true) }.also {
-            buildChangedArgumentsForCall(it)
-        }
+        val inputArgMetas =
+            inputArgs.map {
+                argumentMetaOf(it, fileContainingArg = fileContainingRememberCall, isProvided = true)
+            }.also {
+                buildChangedArgumentsForCall(it)
+            }
 
         // If intrinsic remember uses $dirty, we are not sure if it is going to be populated,
         // so we have to apply fixups after function body is transformed
@@ -3289,9 +3328,10 @@ class ComposableFunctionBodyTransformer(
         val metaMaskConsistent = updateChangedFlagsFunction != null
         val changedFunction: (Boolean, IrExpression, CallArgumentMeta) -> IrExpression? =
             if (usesDirty || !metaMaskConsistent) {
-                { _, arg, _ ->
+                { _, arg, meta ->
                     irChanged(
                         arg,
+                        meta.fileContainingArg,
                         compareInstanceForFunctionTypes = false,
                         compareInstanceForUnstableValues = isMemoizedLambda
                     )
@@ -3366,7 +3406,7 @@ class ComposableFunctionBodyTransformer(
             }
         }.also { expr ->
             if (
-                stabilityInferencer.stabilityOf(expr.type).knownStable() &&
+                stabilityInferencer.stabilityOf(expr.type, fileContainingDependent = fileContainingRememberCall).knownStable() &&
                 inputArgMetas.all { it.isStatic }
             ) {
                 context.irTrace.record(ComposeWritableSlices.IS_STATIC_EXPRESSION, expr, true)
@@ -3455,6 +3495,7 @@ class ComposableFunctionBodyTransformer(
                     irNotEqual(stableBits, irConst(0)),
                     irChanged(
                         arg,
+                        argInfo.fileContainingArg,
                         compareInstanceForFunctionTypes = false,
                         compareInstanceForUnstableValues = isMemoizedLambda
                     )
@@ -3489,6 +3530,7 @@ class ComposableFunctionBodyTransformer(
                         maskIsUnstableOrUncertain,
                         irChanged(
                             arg,
+                            argInfo.fileContainingArg,
                             compareInstanceForFunctionTypes = false,
                             compareInstanceForUnstableValues = isMemoizedLambda
                         )
@@ -3501,6 +3543,7 @@ class ComposableFunctionBodyTransformer(
             }
             else -> irChanged(
                 arg,
+                argInfo.fileContainingArg,
                 compareInstanceForFunctionTypes = false,
                 compareInstanceForUnstableValues = isMemoizedLambda
             )

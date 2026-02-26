@@ -22,6 +22,7 @@ import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.lower.annotationClass
 import androidx.compose.compiler.plugins.kotlin.lower.isSyntheticComposableFunction
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -128,7 +129,7 @@ fun Stability.normalize(): Stability {
         is Stability.Parameter,
         is Stability.Runtime,
         is Stability.Unknown,
-        -> return this
+            -> return this
 
         is Stability.Combined -> {
             // if combined, we perform the more expensive normalization process
@@ -194,9 +195,20 @@ private fun IrAnnotationContainer.stabilityParamBitmask(): Int? =
 private data class SymbolForAnalysis(
     val symbol: IrClassifierSymbol,
     val typeParameters: List<IrTypeArgument?>,
+    /**
+     * The file containing the element that initiated the `stabilityOf` request tree that led to
+     * the request associated with this object.
+     *
+     * This file is used to determine whether the response to the request associated with this
+     * [SymbolForAnalysis] must be [Stability.Runtime]. See
+     * `stabilityOf(IrClass, Map<IrTypeParameterSymbol, IrTypeArgument>, Set<SymbolForAnalysis>, IrFile?)`
+     * for more details.
+     */
+    val analysisEntryFile: IrFile?,
 )
 
 class StabilityInferencer(
+    private val isTargetJvm: Boolean,
     private val currentModule: ModuleDescriptor,
     externalStableTypeMatchers: Set<FqNameMatcher>,
 ) {
@@ -204,30 +216,81 @@ class StabilityInferencer(
 
     private val cache = mutableMapOf<SymbolForAnalysis, Stability>()
 
-    fun stabilityOf(irType: IrType): Stability =
-        stabilityOf(irType, emptyMap(), emptySet())
+    /**
+     * Returns the stability of [irType].
+     *
+     * @param fileContainingDependent The file containing the element that depends on the returned
+     * result.
+     */
+    fun stabilityOf(irType: IrType, fileContainingDependent: IrFile?): Stability =
+        stabilityOf(irType, emptyMap(), emptySet(), fileContainingDependent)
 
+    /**
+     * Returns the stability of [declaration].
+     *
+     * Note that to support incremental compilation, we are forced to use runtime stability when
+     * [declaration] is `public` or `internal`, is contained in a different file than
+     * [analysisEntryFile], and has a stability bitmask attached to it. When those conditions are
+     * not all met, the stability of [declaration] will be inferred.
+     *
+     * @param analysisEntryFile The file containing the element that initiated the `stabilityOf`
+     *   call tree that led to this call.
+     */
     private fun stabilityOf(
         declaration: IrClass,
         substitutions: Map<IrTypeParameterSymbol, IrTypeArgument>,
         currentlyAnalyzing: Set<SymbolForAnalysis>,
+        analysisEntryFile: IrFile?,
     ): Stability {
         val symbol = declaration.symbol
         val typeArguments = declaration.typeParameters.map { substitutions[it.symbol] }
-        val fullSymbol = SymbolForAnalysis(symbol, typeArguments)
+        val fullSymbol = SymbolForAnalysis(symbol, typeArguments, analysisEntryFile)
 
         if (fullSymbol in cache) return cache[fullSymbol]!!
 
         val result = stabilityOf(declaration, fullSymbol, substitutions, currentlyAnalyzing)
-        cache[fullSymbol] = result
+        if (declaration.fileOrNull == analysisEntryFile) {
+            cache[fullSymbol] = result
+        }
         return result
+    }
+
+    /**
+     * Returns the result of combining [this] with the stability of specified type parameters.
+     *
+     * @param mask If the i-th least significant bit of [mask] is set, then the stability of
+     *   `typeParameters.get(i)` will be included in the result. If [mask] is null, then the
+     *   stability of all elements of [typeParameters] will be included in the result.
+     */
+    private fun Stability.applyTypeParameterMask(
+        mask: Int?,
+        typeParameters: List<IrTypeParameter>,
+        substitutions: Map<IrTypeParameterSymbol, IrTypeArgument>,
+        currentlyAnalyzing: Set<SymbolForAnalysis>,
+        analysisEntryFile: IrFile?,
+    ): Stability {
+        return when {
+            mask == 0 || typeParameters.isEmpty() -> this
+            else -> this + Stability.Combined(
+                typeParameters.mapIndexedNotNull { index, irTypeParameter ->
+                    if (index >= 32) return@mapIndexedNotNull null
+                    if (mask == null || mask and (0b1 shl index) != 0) {
+                        val sub = substitutions[irTypeParameter.symbol]
+                        if (sub != null)
+                            stabilityOf(sub, substitutions, currentlyAnalyzing, analysisEntryFile)
+                        else
+                            Stability.Parameter(irTypeParameter)
+                    } else null
+                }
+            )
+        }
     }
 
     private fun stabilityOf(
         declaration: IrClass,
         symbol: SymbolForAnalysis,
         substitutions: Map<IrTypeParameterSymbol, IrTypeArgument>,
-        currentlyAnalyzing: Set<SymbolForAnalysis>
+        currentlyAnalyzing: Set<SymbolForAnalysis>,
     ): Stability {
         if (currentlyAnalyzing.contains(symbol)) return Stability.Unstable
         if (declaration.hasStableMarkedDescendant()) return Stability.Stable
@@ -240,59 +303,87 @@ class StabilityInferencer(
         }
 
         val analyzing = currentlyAnalyzing + symbol
+        val fqName = declaration.fqNameWhenAvailable?.toString() ?: ""
+        val typeParameters = declaration.typeParameters
+        val fileContainingDeclaration = declaration.fileOrNull
+        val analysisEntryFile = symbol.analysisEntryFile
 
-        if (canInferStability(declaration) || declaration.isExternalStableType()) {
-            val fqName = declaration.fqNameWhenAvailable?.toString() ?: ""
-            val typeParameters = declaration.typeParameters
-            val stability: Stability
-            val mask: Int
-            if (KnownStableConstructs.stableTypes.contains(fqName)) {
-                mask = KnownStableConstructs.stableTypes[fqName] ?: 0
-                stability = Stability.Stable
-            } else if (declaration.isExternalStableType()) {
+        if (KnownStableConstructs.stableTypes.contains(fqName)) {
+            val baseStability = Stability.Stable
+            return baseStability.applyTypeParameterMask(
+                mask = KnownStableConstructs.stableTypes[fqName] ?: 0,
+                typeParameters = typeParameters,
+                substitutions,
+                analyzing,
+                analysisEntryFile,
+            )
+        }
+
+        if (declaration.isExternalStableType()) {
+            val baseStability = Stability.Stable
+            return baseStability.applyTypeParameterMask(
                 mask = externalTypeMatcherCollection
-                    .maskForName(declaration.fqNameWhenAvailable) ?: 0
-                stability = Stability.Stable
-            } else if (declaration.isInterface) {
-                // `Stability.Unknown` is always used for interfaces because stability bitmasks aren't populated for them.
-                return Stability.Unknown(declaration)
-            } else {
-                val bitmask = declaration.stabilityParamBitmask() ?: return Stability.Unstable
+                    .maskForName(declaration.fqNameWhenAvailable) ?: 0,
+                typeParameters = typeParameters,
+                substitutions,
+                analyzing,
+                analysisEntryFile,
+            )
+        }
 
-                val knownStableMask =
-                    if (typeParameters.size < 32) 0b1 shl typeParameters.size else 0
-                val isKnownStable = bitmask and knownStableMask != 0
-                mask = bitmask and knownStableMask.inv()
-
-                // supporting incremental compilation, where declaration stubs can be
-                // in the same module, so we need to use already inferred values
-                stability = if (isKnownStable && declaration.isInCurrentModule()) {
-                    Stability.Stable
-                } else {
-                    Stability.Runtime(declaration)
-                }
-            }
-            return when {
-                mask == 0 || typeParameters.isEmpty() -> stability
-                else -> stability + Stability.Combined(
-                    typeParameters.mapIndexedNotNull { index, irTypeParameter ->
-                        if (index >= 32) return@mapIndexedNotNull null
-                        if (mask and (0b1 shl index) != 0) {
-                            val sub = substitutions[irTypeParameter.symbol]
-                            if (sub != null)
-                                stabilityOf(sub, substitutions, analyzing)
-                            else
-                                Stability.Parameter(irTypeParameter)
-                        } else null
-                    }
-                )
-            }
-        } else if (declaration.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) {
+        if (declaration.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) {
             return Stability.Unstable
         }
 
         if (declaration.isInterface) {
+            // `Stability.Unknown` is always used for interfaces because stability bitmasks aren't populated for them.
             return Stability.Unknown(declaration)
+        }
+
+        if (declaration.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB && declaration.stabilityParamBitmask() == null) {
+            return Stability.Unstable
+        }
+
+        val forcedToUseRuntimeStability = isTargetJvm &&
+                (declaration.visibility.isPublicAPI || declaration.visibility == DescriptorVisibilities.INTERNAL) &&
+                (fileContainingDeclaration == null || fileContainingDeclaration != analysisEntryFile)
+        if (forcedToUseRuntimeStability) {
+            if (typeParameters.isEmpty()) {
+                return Stability.Runtime(declaration)
+            } else {
+                val baseStability = Stability.Runtime(declaration)
+                return baseStability.applyTypeParameterMask(
+                    mask = null,
+                    typeParameters = typeParameters,
+                    substitutions,
+                    analyzing,
+                    analysisEntryFile,
+                )
+            }
+        }
+
+        if (declaration.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB) {
+            val bitmask = declaration.stabilityParamBitmask() ?: return Stability.Unstable
+
+            val knownStableMask =
+                if (typeParameters.size < 32) 0b1 shl typeParameters.size else 0
+            val isKnownStable = bitmask and knownStableMask != 0
+
+            // supporting incremental compilation, where declaration stubs can be
+            // in the same module, so we need to use already inferred values
+            val baseStability = if (isKnownStable && declaration.isInCurrentModule()) {
+                Stability.Stable
+            } else {
+                Stability.Runtime(declaration)
+            }
+            val mask = bitmask and knownStableMask.inv()
+            return baseStability.applyTypeParameterMask(
+                mask,
+                typeParameters = typeParameters,
+                substitutions,
+                analyzing,
+                analysisEntryFile,
+            )
         }
 
         var stability = Stability.Stable
@@ -302,18 +393,18 @@ class StabilityInferencer(
                 is IrProperty -> {
                     member.backingField?.let {
                         if (member.isVar && !member.isDelegated) return Stability.Unstable
-                        stability += stabilityOf(it.type, substitutions, analyzing)
+                        stability += stabilityOf(it.type, substitutions, analyzing, analysisEntryFile)
                     }
                 }
 
                 is IrField -> {
-                    stability += stabilityOf(member.type, substitutions, analyzing)
+                    stability += stabilityOf(member.type, substitutions, analyzing, analysisEntryFile)
                 }
             }
         }
 
         declaration.superClass?.let {
-            stability += stabilityOf(it, substitutions, analyzing)
+            stability += stabilityOf(it, substitutions, analyzing, analysisEntryFile)
         }
 
         return stability
@@ -337,42 +428,57 @@ class StabilityInferencer(
         return externalTypeMatcherCollection.matches(fqNameWhenAvailable, superTypes)
     }
 
-    private fun canInferStability(declaration: IrClass): Boolean {
-        val fqName = declaration.fqNameWhenAvailable?.toString() ?: ""
-        return KnownStableConstructs.stableTypes.contains(fqName) ||
-                declaration.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
-    }
-
+    /**
+     * Returns the stability of [classifier].
+     *
+     * @param analysisEntryFile The file containing the element that initiated the `stabilityOf`
+     *   call tree that led to this call.
+     */
     private fun stabilityOf(
         classifier: IrClassifierSymbol,
         substitutions: Map<IrTypeParameterSymbol, IrTypeArgument>,
         currentlyAnalyzing: Set<SymbolForAnalysis>,
+        analysisEntryFile: IrFile?,
     ): Stability {
         // if isEnum, return true
         // class hasStableAnnotation()
         return when (val owner = classifier.owner) {
-            is IrClass -> stabilityOf(owner, substitutions, currentlyAnalyzing)
+            is IrClass -> stabilityOf(owner, substitutions, currentlyAnalyzing, analysisEntryFile)
             is IrTypeParameter -> Stability.Unstable
             is IrScript -> Stability.Stable
             else -> error("Unexpected IrClassifier: $owner")
         }
     }
 
+    /**
+     * Returns the stability of [argument].
+     *
+     * @param analysisEntryFile The file containing the element that initiated the `stabilityOf`
+     *   call tree that led to this call.
+     */
     private fun stabilityOf(
         argument: IrTypeArgument,
         substitutions: Map<IrTypeParameterSymbol, IrTypeArgument>,
         currentlyAnalyzing: Set<SymbolForAnalysis>,
+        analysisEntryFile: IrFile?,
     ): Stability {
         return when (argument) {
             is IrStarProjection -> Stability.Unstable
-            is IrTypeProjection -> stabilityOf(argument.type, substitutions, currentlyAnalyzing)
+            is IrTypeProjection -> stabilityOf(argument.type, substitutions, currentlyAnalyzing, analysisEntryFile)
         }
     }
 
+    /**
+     * Returns the stability of [type].
+     *
+     * @param analysisEntryFile The file containing the element that initiated the `stabilityOf`
+     *   call tree that led to this call.
+     */
     private fun stabilityOf(
         type: IrType,
         substitutions: Map<IrTypeParameterSymbol, IrTypeArgument>,
         currentlyAnalyzing: Set<SymbolForAnalysis>,
+        analysisEntryFile: IrFile?,
     ): Stability {
         return when {
             type is IrErrorType -> Stability.Unstable
@@ -387,9 +493,9 @@ class StabilityInferencer(
             type.isTypeParameter() -> {
                 val classifier = type.classifierOrFail
                 val arg = substitutions[classifier]
-                val symbol = SymbolForAnalysis(classifier, emptyList())
+                val symbol = SymbolForAnalysis(classifier, emptyList(), analysisEntryFile)
                 if (arg != null && symbol !in currentlyAnalyzing) {
-                    stabilityOf(arg, substitutions, currentlyAnalyzing + symbol)
+                    stabilityOf(arg, substitutions, currentlyAnalyzing + symbol, analysisEntryFile)
                 } else {
                     Stability.Parameter(
                         classifier.owner as IrTypeParameter
@@ -400,7 +506,8 @@ class StabilityInferencer(
             type.isNullable() -> stabilityOf(
                 type.makeNotNull(),
                 substitutions,
-                currentlyAnalyzing
+                currentlyAnalyzing,
+                analysisEntryFile
             )
 
             type.isInlineClassType() -> {
@@ -413,7 +520,8 @@ class StabilityInferencer(
                     stabilityOf(
                         type = getInlineClassUnderlyingType(inlineClassDeclaration),
                         substitutions = substitutions,
-                        currentlyAnalyzing = currentlyAnalyzing
+                        currentlyAnalyzing = currentlyAnalyzing,
+                        analysisEntryFile
                     )
                 }
             }
@@ -422,7 +530,8 @@ class StabilityInferencer(
                 stabilityOf(
                     type.classifier,
                     substitutions + type.substitutionMap(),
-                    currentlyAnalyzing
+                    currentlyAnalyzing,
+                    analysisEntryFile
                 )
             }
 
@@ -439,7 +548,17 @@ class StabilityInferencer(
         }.toMap()
     }
 
-    private fun stabilityOf(expr: IrCall, baseStability: Stability): Stability {
+    /**
+     * Returns the stability of [expr].
+     *
+     * @param fileContainingDependent The file containing the element that depends on the returned
+     * result.
+     */
+    private fun stabilityOf(
+        expr: IrCall,
+        baseStability: Stability,
+        fileContainingDependent: IrFile?,
+    ): Stability {
         val function = expr.symbol.owner
         val fqName = function.kotlinFqName
 
@@ -451,7 +570,7 @@ class StabilityInferencer(
                     if (mask and (0b1 shl index) != 0) {
                         val sub = expr.typeArguments[index]
                         if (sub != null)
-                            stabilityOf(sub)
+                            stabilityOf(sub, fileContainingDependent)
                         else
                             Stability.Unstable
                     } else null
@@ -460,17 +579,23 @@ class StabilityInferencer(
         }
     }
 
-    fun stabilityOf(expr: IrExpression): Stability {
+    /**
+     * Returns the stability of [expr].
+     *
+     * @param fileContainingDependent The file containing the element that depends on the returned
+     * result.
+     */
+    fun stabilityOf(expr: IrExpression, fileContainingDependent: IrFile?): Stability {
         // look at type first. if type is stable, whole expression is
-        val stability = stabilityOf(expr.type)
+        val stability = stabilityOf(expr.type, fileContainingDependent)
         if (stability.knownStable()) return stability
         return when (expr) {
             is IrConst -> Stability.Stable
-            is IrCall -> stabilityOf(expr, stability)
+            is IrCall -> stabilityOf(expr, stability, fileContainingDependent)
             is IrGetValue -> {
                 val owner = expr.symbol.owner
                 if (owner is IrVariable && !owner.isVar) {
-                    owner.initializer?.let { stabilityOf(it) } ?: stability
+                    owner.initializer?.let { stabilityOf(it, fileContainingDependent) } ?: stability
                 } else {
                     stability
                 }
@@ -479,7 +604,7 @@ class StabilityInferencer(
             is IrLocalDelegatedPropertyReference -> Stability.Stable
             // some default parameters and consts can be wrapped in composite
             is IrComposite -> {
-                if (expr.statements.all { it is IrExpression && stabilityOf(it).knownStable() }) {
+                if (expr.statements.all { it is IrExpression && stabilityOf(it, fileContainingDependent).knownStable() }) {
                     Stability.Stable
                 } else {
                     stability

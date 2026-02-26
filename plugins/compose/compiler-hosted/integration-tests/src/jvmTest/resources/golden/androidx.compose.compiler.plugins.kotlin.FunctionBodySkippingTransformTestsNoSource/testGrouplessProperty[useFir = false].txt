@@ -41,7 +41,10 @@ open class Foo {
     val tmp0 = %composer.hashCode()
     return tmp0
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @ReadOnlyComposable
 @Composable

@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.name.Name
 import org.junit.Assert.assertEquals
@@ -192,19 +193,6 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         "interface Foo",
         "Uncertain(Foo)"
     )
-
-    @Test
-    fun testInterfacesAreUncertainOnIncrementalCompilation() {
-        assertStability(
-            classDefSrc = """
-                interface Foo
-            """,
-            transform = {
-                it.origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
-            },
-            stability = "Uncertain(Foo)"
-        )
-    }
 
     @Test
     fun testInterfaceWithStableValAreUncertain() = assertStability(
@@ -606,10 +594,10 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
                         error("")
                     }
                 }
-                class Bar
+
+                class Foo { var p1 by StableDelegate<Unstable>() }
             """,
-            "class Foo { var p1 by StableDelegate<Bar>() }",
-            "Runtime(StableDelegate)"
+            "Stable"
         )
 
     @Test
@@ -897,7 +885,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             class A<T>(val b: B<T>, val c: T)
         """,
         "class Foo(val a: A<String>)",
-        "Runtime(A)"
+        "Runtime(A),Stable"
     )
 
     @Test
@@ -1693,6 +1681,9 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         )
     }
 
+    /**
+     * Asserts that the stability of the last type declared in [classDefSrc] is [stability].
+     */
     private fun assertStability(
         @Language("kotlin")
         classDefSrc: String,
@@ -1709,19 +1700,19 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             import androidx.compose.runtime.State
             import kotlin.reflect.KProperty
 
-            $classDefSrc
-
             class Unstable { var value: Int = 0 }
+
+            $classDefSrc
         """.trimIndent()
 
         val files = listOf(SourceFile("Test.kt", source))
         val irModule = compileToIr(files, additionalPaths, registerExtensions = {
             it.put(ComposeConfiguration.TEST_STABILITY_CONFIG_KEY, externalTypes)
         })
-        val irClass = (irModule.files.last().declarations.first() as IrClass).apply(transform)
+        val irClass = (irModule.files.last().declarations.last() as IrClass).apply(transform)
         val externalTypeMatchers = externalTypes.map { FqNameMatcher(it) }.toSet()
-        val stabilityInferencer = StabilityInferencer(irModule.descriptor, externalTypeMatchers)
-        val classStability = stabilityInferencer.stabilityOf(irClass.defaultType as IrType)
+        val stabilityInferencer = StabilityInferencer(isTargetJvm = true, irModule.descriptor, externalTypeMatchers)
+        val classStability = stabilityInferencer.stabilityOf(irClass.defaultType as IrType, irClass.file)
 
         assertEquals(
             stability,
@@ -1729,6 +1720,9 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         )
     }
 
+    /**
+     * Asserts that the stability of the last type declared in [classDefSrc] is [stability].
+     */
     private fun assertStability(
         @Language("kotlin")
         externalSrc: String,
@@ -1746,11 +1740,11 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             packageName,
             externalTypes = externalTypes
         )
-        val irClass = irModule.files.last().declarations.first() as IrClass
+        val irClass = irModule.files.last().declarations.last() as IrClass
         val externalTypeMatchers = externalTypes.map { FqNameMatcher(it) }.toSet()
         val classStability =
-            StabilityInferencer(irModule.descriptor, externalTypeMatchers)
-                .stabilityOf(irClass.defaultType as IrType)
+            StabilityInferencer(isTargetJvm = true, irModule.descriptor, externalTypeMatchers)
+                .stabilityOf(irClass.defaultType as IrType, irClass.file)
 
         assertEquals(
             stability,
@@ -1761,17 +1755,33 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
     @Test
     fun testTransformCombinedClassWithUnstableParametrizedClass() {
         verifyCrossModuleComposeIrTransform(
-            dependencySource = """
+            dependencySource = "",
+            source = """
                 class SomeFoo(val value: Int)
                 class ParametrizedFoo<K>(var value: K)
-            """,
-            source = """
                 class CombinedUnstable<T>(val first: T, val second: ParametrizedFoo<SomeFoo>)
             """,
             expectedTransformed = """
                 @StabilityInferred(parameters = 1)
+                class SomeFoo(val value: Int) {
+                  val %stable: Int = 0
+                    get() {
+                      return field
+                    }
+                }
+                @StabilityInferred(parameters = 0)
+                class ParametrizedFoo<K> (var value: K) {
+                  val %stable: Int = 8
+                    get() {
+                      return field
+                    }
+                }
+                @StabilityInferred(parameters = 0)
                 class CombinedUnstable<T> (val first: T, val second: ParametrizedFoo<SomeFoo>) {
-                  static val %stable: Int = ParametrizedFoo.%stable
+                  val %stable: Int = 8
+                    get() {
+                      return field
+                    }
                 }
             """
         )
@@ -1790,7 +1800,10 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             expectedTransformed = """
             @StabilityInferred(parameters = 1)
             class CombinedStable<T> (val first: T, val second: ParametrizedFoo<SomeFoo>) {
-              static val %stable: Int = SomeFoo.%stable or ParametrizedFoo.%stable
+              val %stable: Int = SomeFoo.%stable or ParametrizedFoo.%stable
+                get() {
+                  return field
+                }
             }
         """
         )
@@ -1809,7 +1822,10 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             expectedTransformed = """
             @StabilityInferred(parameters = 3)
             class CombinedStable<T, K> (val first: T, val second: ParametrizedFoo<K>) {
-              static val %stable: Int = ParametrizedFoo.%stable
+              val %stable: Int = ParametrizedFoo.%stable
+                get() {
+                  return field
+                }
             }
         """
         )
@@ -1889,7 +1905,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         }
         val externalTypeMatchers = externalTypes.map { FqNameMatcher(it) }.toSet()
         val exprStability =
-            StabilityInferencer(irModule.descriptor, externalTypeMatchers).stabilityOf(irExpr)
+            StabilityInferencer(isTargetJvm = true, irModule.descriptor, externalTypeMatchers).stabilityOf(irExpr, irTestFn.file)
 
         assertEquals(
             stability,

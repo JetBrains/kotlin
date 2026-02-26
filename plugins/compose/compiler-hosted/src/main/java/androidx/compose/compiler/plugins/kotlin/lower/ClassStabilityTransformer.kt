@@ -129,7 +129,8 @@ class ClassStabilityTransformer(
             return cls
         }
 
-        val stability = stabilityInferencer.stabilityOf(declaration.defaultType).normalize()
+        val stability =
+            stabilityInferencer.stabilityOf(declaration.defaultType, fileContainingDependent = declaration.fileOrNull).normalize()
 
         // remove type parameters
 

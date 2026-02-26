@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -214,7 +215,7 @@ object EmptyFunctionMetrics : FunctionMetrics {
 class ModuleMetricsImpl(
     var name: String,
     val featureFlags: FeatureFlags,
-    val stabilityOf: (IrType) -> Stability,
+    val stabilityOf: (IrType, fileContainingDependent: IrFile?) -> Stability,
 ) : ModuleMetrics {
     private var skippableComposables = 0
     private var restartableComposables = 0
@@ -275,7 +276,7 @@ class ModuleMetricsImpl(
                 }
                 if (field.name == ComposeNames.StabilityFlag) continue
                 append("  ")
-                val fieldStability = stabilityOf(field.type)
+                val fieldStability = stabilityOf(field.type, field.fileOrNull)
                 append(fieldStability.simpleHumanReadable())
                 append(if (isVar) " var " else " val ")
                 append(field.name.asString())

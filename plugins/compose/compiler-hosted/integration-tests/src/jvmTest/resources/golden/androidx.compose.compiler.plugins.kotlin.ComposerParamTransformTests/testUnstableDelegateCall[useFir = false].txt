@@ -35,7 +35,10 @@ import androidx.compose.runtime.NonRestartableComposable
 @StabilityInferred(parameters = 0)
 class Foo {
   var unstableField: Int = 0
-  static val %stable: Int = 8
+  val %stable: Int = 8
+    get() {
+      return field
+    }
 }
 @Composable
 fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): Foo {

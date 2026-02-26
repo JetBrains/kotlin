@@ -33,7 +33,10 @@ class ScrollState {
   fun testExact(index: Int): Int {
     return 0
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 fun scrollState(): ScrollState {
   return TODO()

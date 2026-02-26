@@ -7,6 +7,9 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 
 
+class Foo(var value: Int = 0)
+class Bar(val value: Int = 0)
+
 @Composable
 fun Test(foo: Foo, bar: Bar) {
     val lambda: ()->Unit = { 
@@ -19,6 +22,20 @@ fun Test(foo: Foo, bar: Bar) {
 // Transformed IR
 // ------------------------------------------
 
+@StabilityInferred(parameters = 0)
+class Foo(var value: Int = 0) {
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
+@StabilityInferred(parameters = 1)
+class Bar(val value: Int = 0) {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
 @Composable
 fun Test(foo: Foo, bar: Bar, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)

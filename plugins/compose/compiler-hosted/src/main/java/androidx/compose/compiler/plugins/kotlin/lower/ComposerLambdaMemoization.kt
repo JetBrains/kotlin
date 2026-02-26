@@ -554,7 +554,8 @@ class ComposerLambdaMemoization(
         if (functionContext.canRemember) {
             // Memoize the reference for <expr>::<method>
             val argumentsAreNull = reference.arguments.all { it == null }
-            val argumentsAreNullOrStable = reference.arguments.all { it.isNullOrStable() }
+            val argumentsAreNullOrStable =
+                reference.arguments.all { it.isNullOrStable(fileContainingDependent = functionContext.declaration.fileOrNull) }
 
             val captures = mutableListOf<IrValueDeclaration>()
             if (localCaptures != null) {
@@ -1028,7 +1029,7 @@ class ComposerLambdaMemoization(
         return if (!FeatureFlag.IntrinsicRemember.enabled) {
             // generate cache directly only if strong skipping is enabled without intrinsic remember
             // otherwise, generated memoization won't benefit from capturing changed values
-            irCache(captureExpressions, expression)
+            irCache(captureExpressions, expression, fileContainingExpression = functionContext.declaration.fileOrNull)
         } else {
             irRemember(captureExpressions, expression)
         }.patchDeclarationParents(functionContext.declaration)
@@ -1037,9 +1038,10 @@ class ComposerLambdaMemoization(
     private fun irCache(
         captures: List<IrExpression>,
         expression: IrExpression,
+        fileContainingExpression: IrFile?,
     ): IrExpression {
         val invalidExpr = captures
-            .map(::irChanged)
+            .map { irChanged(it, fileContainingValue = fileContainingExpression) }
             .reduceOrNull { acc, changed -> irBooleanOr(acc, changed) }
             ?: irConst(false)
 
@@ -1146,9 +1148,10 @@ class ComposerLambdaMemoization(
         }
     }
 
-    private fun irChanged(value: IrExpression): IrExpression = irChanged(
+    private fun irChanged(value: IrExpression, fileContainingValue: IrFile?): IrExpression = irChanged(
         irCurrentComposer(),
         value,
+        fileContainingValue,
         inferredStable = false,
         compareInstanceForFunctionTypes = false,
         compareInstanceForUnstableValues = FeatureFlag.StrongSkipping.enabled
@@ -1158,7 +1161,7 @@ class ComposerLambdaMemoization(
         (this as? IrVariable)?.isVar == true
 
     private fun IrValueDeclaration.isStable(): Boolean =
-        stabilityInferencer.stabilityOf(type).knownStable()
+        stabilityInferencer.stabilityOf(type, fileContainingDependent = file).knownStable()
 
     private fun IrValueDeclaration.isInlinedLambda(): Boolean =
         isInlineableFunction() &&
@@ -1229,9 +1232,15 @@ class ComposerLambdaMemoization(
         get() = (this as? IrFunctionExpression)?.function?.hasAnnotation(ComposeFqNames.DontMemoize)
             ?: false
 
-    private fun IrExpression?.isNullOrStable() =
+    /**
+     * Returns whether this expression is null or stable.
+     *
+     * @param fileContainingDependent The file containing the element that depends on the returned
+     * result.
+     */
+    private fun IrExpression?.isNullOrStable(fileContainingDependent: IrFile?) =
         this == null ||
-                stabilityInferencer.stabilityOf(this).knownStable()
+                stabilityInferencer.stabilityOf(this, fileContainingDependent = fileContainingDependent).knownStable()
 
     // TODO(b/315869143): consider hoisting property reference receivers into a variable and memoizing based on them.
     private fun IrValueDeclaration.isPropertyReferenceDelegate() =

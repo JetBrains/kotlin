@@ -1,0 +1,56 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+internal fun Test(stable: Stable, unstable: Unstable) {
+    used(stable)
+    used(unstable)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+internal fun Test(stable: Stable, unstable: Unstable, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)N(stable,unstable):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(stable)
+    } else {
+      %composer.changedInstance(stable)
+    }
+    ) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (if (%changed and 0b01000000 == 0) {
+      %composer.changed(unstable)
+    } else {
+      %composer.changedInstance(unstable)
+    }
+    ) 0b00100000 else 0b00010000
+  }
+  if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(stable)
+    used(unstable)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(stable, unstable, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

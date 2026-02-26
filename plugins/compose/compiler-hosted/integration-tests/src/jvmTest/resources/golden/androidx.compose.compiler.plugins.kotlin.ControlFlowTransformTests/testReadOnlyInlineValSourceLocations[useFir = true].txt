@@ -51,7 +51,10 @@ class CurrentHolder {
       sourceInformationMarkerEnd(%composer)
       return tmp0
     }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class HolderHolder {
@@ -70,7 +73,10 @@ class HolderHolder {
       sourceInformationMarkerEnd(%composer)
       return tmp0
     }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 val holderHolder: HolderHolder = HolderHolder()
 @Composable

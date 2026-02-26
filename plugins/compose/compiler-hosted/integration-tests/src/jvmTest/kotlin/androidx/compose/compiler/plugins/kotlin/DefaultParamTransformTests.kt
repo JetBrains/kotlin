@@ -290,10 +290,10 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
 
     @Test
     fun test31ParametersWithSomeUnstable(): Unit = defaultParams(
+        "",
         """
-            class Foo
-        """,
-        """
+            class Foo(var x: Int)
+
             @Composable
             fun Example(
                 a00: Int = 0,
@@ -305,7 +305,7 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                 a06: Int = 0,
                 a07: Int = 0,
                 a08: Int = 0,
-                a09: Foo = Foo(),
+                a09: Foo = Foo(0),
                 a10: Int = 0,
                 a11: Int = 0,
                 a12: Int = 0,
@@ -327,7 +327,7 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                 a28: Int = 0,
                 a29: Int = 0,
                 a30: Int = 0,
-                a31: Foo = Foo()
+                a31: Foo = Foo(0)
             ) {
                 used(a00)
                 used(a01)

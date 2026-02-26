@@ -32,7 +32,10 @@ fun Calculate(condition: Boolean): Boolean {
 @StabilityInferred(parameters = 1)
 object obj {
   val condition: Boolean = false
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @Composable
 @ReadOnlyComposable

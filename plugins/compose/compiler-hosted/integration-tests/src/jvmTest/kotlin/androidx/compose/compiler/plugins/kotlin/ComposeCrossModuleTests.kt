@@ -1538,6 +1538,40 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
+    @Test
+    fun testStablePropertyCodegen() {
+        compile(
+            mapOf(
+                "Main" to mapOf(
+                    "extra.kt" to """
+                        package main
+                        
+                        class A
+                    """,
+                    "main.kt" to """
+                        package main
+                        
+                        class B(val a: A)
+                    """
+                )
+            ),
+            validate = {
+                assertFalse(
+                    it.contains("main_A%stableprop_getter()"),
+                    message = "Getters should not be generated for %stable fields",
+                )
+                assertFalse(
+                    it.contains("main_B%stableprop_getter()"),
+                    message = "Getters should not be generated for %stable fields",
+                )
+                assertTrue(
+                    "The B.%stable field initializer should directly access A.%stable",
+                    it.contains("GETSTATIC main/A.%stable : I"),
+                )
+            }
+        )
+    }
+
     private fun compile(
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,

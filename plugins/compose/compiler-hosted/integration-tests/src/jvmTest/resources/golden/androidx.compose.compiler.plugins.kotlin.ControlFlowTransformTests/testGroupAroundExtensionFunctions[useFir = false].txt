@@ -45,11 +45,11 @@ fun Test(start: Int, end: Int, %composer: Composer?, %changed: Int) {
     val <iterator> = start until end.iterator()
     while (<iterator>.hasNext()) {
       val i = <iterator>.next()
-      val b = a.get(bKey, %composer, 0b00110110)
+      val b = a.get(bKey, %composer, 0b00110000 or A.%stable)
       if (i == 0b0010) {
         %composer.startReplaceGroup(<>)
         sourceInformation(%composer, "<get(cK...>")
-        a.get(cKey, %composer, 0b00110110)
+        a.get(cKey, %composer, 0b00110000 or A.%stable)
         %composer.endReplaceGroup()
       } else {
         %composer.startReplaceGroup(<>)

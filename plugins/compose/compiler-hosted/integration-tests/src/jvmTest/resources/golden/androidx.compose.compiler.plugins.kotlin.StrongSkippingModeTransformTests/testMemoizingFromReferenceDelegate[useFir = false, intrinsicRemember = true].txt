@@ -30,7 +30,12 @@ fun StrongSkippingIssue(data: ClassWithData, %composer: Composer?, %changed: Int
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(data)) 0b0100 else 0b0010
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(data)
+    } else {
+      %composer.changedInstance(data)
+    }
+    ) 0b0100 else 0b0010
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {

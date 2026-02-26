@@ -65,6 +65,7 @@ class ComposeIrGenerationExtension(
         }
 
         val stabilityInferencer = StabilityInferencer(
+            pluginContext.platform.isJvm(),
             pluginContext.moduleDescriptor,
             stableTypeMatchers,
         )
@@ -76,8 +77,8 @@ class ComposeIrGenerationExtension(
         if (moduleMetricsFactory != null) {
             metrics = moduleMetricsFactory.invoke(stabilityInferencer, featureFlags)
         } else if (metricsDestination != null || reportsDestination != null) {
-            metrics = ModuleMetricsImpl(moduleFragment.name.asString(), featureFlags) {
-                stabilityInferencer.stabilityOf(it)
+            metrics = ModuleMetricsImpl(moduleFragment.name.asString(), featureFlags) { type, fileContainingDependent ->
+                stabilityInferencer.stabilityOf(type, fileContainingDependent)
             }
         }
 

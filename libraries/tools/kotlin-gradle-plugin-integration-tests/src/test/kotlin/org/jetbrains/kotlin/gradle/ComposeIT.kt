@@ -866,6 +866,84 @@ class ComposeIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName($$"Ensure that older versions of the compiler can access the backing field of a $stable property")
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.MAX_SUPPORTED)
+    @GradleTestVersions(minVersion = GRADLE_VERSION_FOR_STABLE_PROPERTY_TEST, maxVersion = GRADLE_VERSION_FOR_STABLE_PROPERTY_TEST)
+    @OtherGradlePluginTests
+    @TestMetadata("composeMultiModule")
+    fun testOlderCompilerCanAccessBackingFieldOfStableProperty(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk,
+    ) {
+        val composeSnapshotId = TestVersions.Compose.composeSnapshotId
+        val composeSnapshotVersion = TestVersions.Compose.composeSnapshotVersion
+        project(
+            projectName = "composeMultiModule/dep",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
+                setOf("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
+            )
+        ) {
+            buildGradleKts.appendComposePlugin()
+
+            kotlinSourcesDir().source("com/example/dep/A.kt") {
+                //language=kotlin
+                """
+                |package com.example.dep
+                |
+                |class A(val value: Int)
+                """.trimMargin()
+            }
+
+            build("publishToMavenLocal") {
+                assertOutputContains("kotlin-compose-compiler-plugin-embeddable-$KOTLIN_VERSION.jar")
+                assertTasksExecuted(":compileReleaseKotlin")
+            }
+        }
+
+        project(
+            projectName = "composeMultiModule",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, kotlinVersion = "2.3.10"),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
+                additionalRepos = setOf("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
+            )
+        ) {
+            buildGradleKts.appendComposePlugin()
+            buildScriptInjection {
+                dependencies.add("implementation", "com.example:dep:1.0")
+            }
+
+            projectPath.source("src/test/kotlin/com/example/ComposeTest.kt") {
+                //language=kotlin
+                """
+                |package com.example
+                |
+                |import org.junit.Test
+                |import com.example.dep.A
+                |
+                |class B(val a: A)
+                |
+                |class ComposeTest {
+                |    @Test
+                |    fun test() {
+                |       println(B(A(1)).a.value)
+                |    }
+                |}
+                """.trimMargin()
+            }
+
+            build("testReleaseUnitTest") {
+                assertTasksExecuted(":compileReleaseUnitTestKotlin")
+            }
+        }
+    }
+
     private fun Path.appendComposePlugin() {
         modify { originalBuildScript ->
             """
@@ -886,5 +964,8 @@ class ComposeIT : KGPBaseTest() {
         private const val LEGACY_OPEN_FUNCTION_WARNING =
             "Detected a @Composable function that overrides an open function compiled with older compiler that is known to crash " +
                     "at runtime."
+
+        // Gradle version known to be compatible with Kotlin 2.3.10
+        private const val GRADLE_VERSION_FOR_STABLE_PROPERTY_TEST = TestVersions.Gradle.G_9_3
     }
 }

@@ -176,5 +176,8 @@ interface B {
 interface Combined : A, B
 @StabilityInferred(parameters = 1)
 object Impl : Combined {
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }

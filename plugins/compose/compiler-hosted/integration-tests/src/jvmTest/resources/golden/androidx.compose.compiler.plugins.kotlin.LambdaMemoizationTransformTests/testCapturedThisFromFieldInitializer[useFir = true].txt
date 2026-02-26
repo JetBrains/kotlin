@@ -32,5 +32,8 @@ class A {
       %composer.skipToGroupEnd()
     }
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }

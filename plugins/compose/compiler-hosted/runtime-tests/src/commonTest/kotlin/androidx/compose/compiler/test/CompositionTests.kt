@@ -468,6 +468,14 @@ class CompositionTests {
         clicked = !clicked
         advance()
     }
+
+    // This test ensures that code that tries to access `Any.$stable` is never generated.
+    @Test
+    fun testAnyIsUnstable() = compositionTest {
+        compose {
+            AnyParameter(Any())
+        }
+    }
 }
 
 @Composable
@@ -614,3 +622,8 @@ private inline fun Modifier.thenIf(
 }
 
 private fun Modifier.clickable(f: () -> Unit): Modifier = this
+
+@Composable
+fun AnyParameter(any: Any = Any()) {
+    use(any)
+}

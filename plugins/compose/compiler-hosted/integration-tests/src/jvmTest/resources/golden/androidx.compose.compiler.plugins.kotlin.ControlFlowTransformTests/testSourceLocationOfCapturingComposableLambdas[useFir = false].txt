@@ -47,7 +47,10 @@ class SomeClass {
     }
     )
   }
-  static val %stable: Int = 8
+  val %stable: Int = 8
+    get() {
+      return field
+    }
 }
 fun Test() {
   var a = "Test"

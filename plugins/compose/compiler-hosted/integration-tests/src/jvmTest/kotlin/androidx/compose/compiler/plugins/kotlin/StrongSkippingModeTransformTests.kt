@@ -61,56 +61,52 @@ class StrongSkippingModeTransformTests(
 
     @Test
     fun testSingleStableParam(): Unit = verifyMemoization(
+        "",
         """
             class Foo(val value: Int = 0)
-            @Composable fun A(x: Foo) {}
-        """,
-        """
+
             @Composable
             fun Test(x: Foo) {
-                A(x)
+                used(x)
             }
         """
     )
 
     @Test
     fun testSingleUnstableParam(): Unit = verifyMemoization(
+        "",
         """
-            @Composable fun A(x: Foo) {}
             class Foo(var value: Int = 0)
-        """,
-        """
+
             @Composable
             fun Test(x: Foo) {
-                A(x)
+                used(x)
             }
         """
     )
 
     @Test
     fun testSingleNullableUnstableParam(): Unit = verifyMemoization(
+        "",
         """
-            @Composable fun A(x: Foo?) {}
             class Foo(var value: Int = 0)
-        """,
-        """
+
             @Composable
             fun Test(x: Foo?) {
-                A(x)
+                used(x)
             }
         """
     )
 
     @Test
     fun testSingleOptionalUnstableParam(): Unit = verifyMemoization(
+        "",
         """
-            @Composable fun A(x: Foo?) {}
             class Foo(var value: Int = 0)
-        """,
-        """
+
             @Composable
             fun Test(x: Foo? = Foo()) {
-                A(x)
+                used(x)
             }
         """
     )
@@ -132,11 +128,10 @@ class StrongSkippingModeTransformTests(
 
     @Test
     fun testStableUnstableParams(): Unit = verifyMemoization(
+        "",
         """
-            @Composable fun A(x: Int = 0, y: Int = 0): Int { return 10 }
             class Foo(var value: Int = 0)
-        """,
-        """
+
             @Composable fun CanSkip(a: Int = 0, b: Foo = Foo()) {
                 used(a)
                 used(b)
@@ -202,12 +197,11 @@ class StrongSkippingModeTransformTests(
 
     @Test
     fun testMemoizingUnstableFunctionParameterInLambda() = verifyMemoization(
+        "",
         """
-            @Composable fun A(x: Int = 0, y: Int = 0): Int { return 10 }
             class Foo(var value: Int = 0)
             class Bar(val value: Int = 0)
-        """,
-        """
+
             @Composable
             fun Test(foo: Foo, bar: Bar) {
                 val lambda: ()->Unit = { 
@@ -220,12 +214,11 @@ class StrongSkippingModeTransformTests(
 
     @Test
     fun testMemoizingComposableLambda() = verifyMemoization(
+        "",
         """
-            @Composable fun A(x: Int = 0, y: Int = 0): Int { return 10 }
             class Foo(var value: Int = 0)
             class Bar(val value: Int = 0)
-        """,
-        """
+
             @Composable
             fun Test(foo: Foo, bar: Bar) {
                 val lambda: @Composable ()->Unit = {
@@ -238,12 +231,11 @@ class StrongSkippingModeTransformTests(
 
     @Test
     fun testMemoizingStableAndUnstableCapturesInLambda() = verifyMemoization(
+        "",
         """
-            @Composable fun A(x: Int = 0, y: Int = 0): Int { return 10 }
             class Foo(var value: Int = 0)
             class Bar(val value: Int = 0)
-        """,
-        """
+
             @Composable
             fun Test() {
                 val foo = Foo(0)
@@ -339,12 +331,6 @@ class StrongSkippingModeTransformTests(
     @Test
     fun unstableCrossinline() = verifyMemoization(
         """
-            
-            // note: using var makes this class unstable (and this vm needs to be unstable for the crash to occur)
-            class MyUnstableViewModel(var text: String?) {
-                fun onClickyClicky() {}
-            }
-            
             @Composable
             fun Dialog(content: (@Composable () -> Unit)?) { content?.invoke() }
 
@@ -363,6 +349,11 @@ class StrongSkippingModeTransformTests(
             }
         """,
         """
+            // note: using var makes this class unstable (and this vm needs to be unstable for the crash to occur)
+            class MyUnstableViewModel(var text: String?) {
+                fun onClickyClicky() {}
+            }
+
             @Composable fun Scratch(vm: MyUnstableViewModel) {
                 Dialog(
                     content = slotIfNotNull(vm.text) {

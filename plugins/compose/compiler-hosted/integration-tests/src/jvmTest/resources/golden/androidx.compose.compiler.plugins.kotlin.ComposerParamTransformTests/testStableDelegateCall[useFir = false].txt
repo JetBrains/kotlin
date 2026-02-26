@@ -32,7 +32,10 @@ fun test(foo: Foo) {
 
 @StabilityInferred(parameters = 1)
 class Foo {
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @Composable
 fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): Foo {

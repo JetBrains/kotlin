@@ -27,7 +27,12 @@ fun Test(a: Int, b: Int, c: Bar, d: Boolean, %composer: Composer?, %changed: Int
     %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
   }
   if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or if (if (%changed and 0b001000000000 == 0) {
+      %composer.changed(c)
+    } else {
+      %composer.changedInstance(c)
+    }
+    ) 0b000100000000 else 0b10000000
   }
   if (%changed and 0b110000000000 == 0) {
     %dirty = %dirty or if (%composer.changed(d)) 0b100000000000 else 0b010000000000
@@ -38,7 +43,7 @@ fun Test(a: Int, b: Int, c: Bar, d: Boolean, %composer: Composer?, %changed: Int
     }
     val foo = <block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 or %dirty and 0b01110000 == 0b00100000 or %dirty and 0b001110000000 == 0b000100000000 or %dirty and 0b0001110000000000 == 0b100000000000) {
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 or %dirty and 0b01110000 == 0b00100000 or %dirty and 0b001110000000 == 0b000100000000 || %dirty and 0b001000000000 != 0 && %composer.changed(c) or %dirty and 0b0001110000000000 == 0b100000000000) {
         Foo()
       }
       sourceInformationMarkerEnd(%composer)

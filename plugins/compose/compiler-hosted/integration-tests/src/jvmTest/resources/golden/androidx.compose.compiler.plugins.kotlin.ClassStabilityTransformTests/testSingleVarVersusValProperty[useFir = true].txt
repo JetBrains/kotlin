@@ -11,9 +11,15 @@ class Unstable(var bar: Int)
 
 @StabilityInferred(parameters = 1)
 class Stable(val bar: Int) {
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 0)
 class Unstable(var bar: Int) {
-  static val %stable: Int = 8
+  val %stable: Int = 8
+    get() {
+      return field
+    }
 }

@@ -46,7 +46,10 @@ abstract class Base {
   @Composable
   @ComposableTarget(applier = "N")
   abstract fun Compose(%composer: Composer?, %changed: Int)
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @StabilityInferred(parameters = 1)
 class Valid : Base {
@@ -70,5 +73,8 @@ class Valid : Base {
       tmp0_rcvr.Compose(%composer, updateChangedFlags(%changed or 0b0001))
     }
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }

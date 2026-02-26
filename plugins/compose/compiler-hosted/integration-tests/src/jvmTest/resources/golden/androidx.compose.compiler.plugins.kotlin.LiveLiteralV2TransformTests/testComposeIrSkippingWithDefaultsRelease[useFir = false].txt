@@ -28,7 +28,10 @@ fun Ui.UiTextField(
 
 @StabilityInferred(parameters = 1)
 object Ui {
-  static val %stable: Int = LiveLiterals%TestKt.Int%class-Ui()
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @Composable
 @ComposableTarget(applier = "androidx.compose.ui.UiComposable")
@@ -84,26 +87,6 @@ fun Ui.UiTextField(isError: Boolean, keyboardActions2: Boolean, %composer: Compo
 @LiveLiteralFileInfo(file = "/Test.kt")
 internal object LiveLiterals%TestKt {
   val enabled: Boolean = false
-  val Int%class-Ui: Int = 0
-  var State%Int%class-Ui: State<Int>?
-  @LiveLiteralInfo(key = "Int%class-Ui", offset = -1)
-  fun Int%class-Ui(): Int {
-    if (!enabled) {
-      return Int%class-Ui
-    }
-    val tmp0 = State%Int%class-Ui
-    return when {
-      tmp0 == null -> {
-        val tmp1 = liveLiteral("Int%class-Ui", Int%class-Ui)
-        State%Int%class-Ui = tmp1
-        tmp1
-      }
-      else -> {
-        tmp0
-      }
-    }
-    .value
-  }
   val Boolean%param-isError%fun-UiTextField: Boolean = false
   var State%Boolean%param-isError%fun-UiTextField: State<Boolean>?
   @LiveLiteralInfo(key = "Boolean%param-isError%fun-UiTextField", offset = 257)

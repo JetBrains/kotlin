@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.junit.Assert.assertEquals
 
 abstract class AbstractLiveLiteralTransformTests(
@@ -56,6 +57,7 @@ abstract class AbstractLiveLiteralTransformTests(
                             ) {
                                 val keyVisitor = DurableKeyVisitor(builtKeys)
                                 val stabilityInferencer = StabilityInferencer(
+                                    pluginContext.platform.isJvm(),
                                     pluginContext.moduleDescriptor,
                                     emptySet()
                                 )
@@ -65,7 +67,12 @@ abstract class AbstractLiveLiteralTransformTests(
                                     liveLiteralsV2Enabled,
                                     keyVisitor,
                                     pluginContext,
-                                    ModuleMetricsImpl("temp", featureFlags) { stabilityInferencer.stabilityOf(it) },
+                                    ModuleMetricsImpl("temp", featureFlags) { type, fileContainingDependent ->
+                                        stabilityInferencer.stabilityOf(
+                                            type,
+                                            fileContainingDependent
+                                        )
+                                    },
                                     stabilityInferencer,
                                     featureFlags
                                 ) {

@@ -104,12 +104,12 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
 
     @Test
     fun testRestartableParameterInputsStableUnstableUncertain(): Unit = comparisonPropagation(
+        "",
         """
             class KnownStable
             class KnownUnstable(var x: Int)
             interface Uncertain
-        """,
-        """
+
             @Composable
             fun test1(x: KnownStable) {
                 remember(x) { 1 }
@@ -127,13 +127,13 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
 
     @Test
     fun testNonRestartableParameterInputsStableUnstableUncertain(): Unit = comparisonPropagation(
+        "",
         """
+            import androidx.compose.runtime.NonRestartableComposable
+
             class KnownStable
             class KnownUnstable(var x: Int)
             interface Uncertain
-        """,
-        """
-            import androidx.compose.runtime.NonRestartableComposable
 
             @Composable
             @NonRestartableComposable
@@ -655,6 +655,9 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
         source = """
             import androidx.compose.runtime.*
 
+            val count = 0
+            class SomeUnstableClass(val a: Any = "abc")
+
             val content: @Composable (a: SomeUnstableClass) -> Unit = {
                 for (index in 0 until count) {
                     val i = remember { index }
@@ -662,12 +665,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 val a = remember { 1 }
             }
         """,
-        extra = """
-            import androidx.compose.runtime.*
-
-            val count = 0
-            class SomeUnstableClass(val a: Any = "abc")
-        """
     )
 
     @Test // Regression test for b/267586102 to ensure the fix doesn't insert unnecessary groups
@@ -675,26 +672,23 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
         source = """
             import androidx.compose.runtime.*
 
+            val count = 0
+            class SomeUnstableClass(val a: Any = "abc")
+
             val content: @Composable (a: SomeUnstableClass) -> Unit = {
                 for (index in 0 until count) {
                     val i = remember { index }
                 }
             }
         """,
-        extra = """
-                import androidx.compose.runtime.*
-
-                val count = 0
-                class SomeUnstableClass(val a: Any = "abc")
-            """
     )
 
     @Test
-    fun testRememberWithUnstableUnused_InInlineLambda() = verifyGoldenComposeIrTransform(
+    fun testRememberWithUnknownUnused_InInlineLambda() = verifyGoldenComposeIrTransform(
         source = """
             import androidx.compose.runtime.*
 
-            @Composable fun Test(param: String, unstable: List<*>) {
+            @Composable fun Test(param: String, unknown: List<*>) {
                 InlineWrapper {
                     remember(param) { param }
                 }
@@ -712,7 +706,9 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
         source = """
             import androidx.compose.runtime.*
 
-            @Composable fun Test(param: String, unstable: List<*>) {
+            class Unstable(var x: Int)
+
+            @Composable fun Test(param: String, unstable: Unstable) {
                 println(unstable)
                 InlineWrapper {
                     remember(param) { param }
@@ -731,7 +727,9 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
         source = """
             import androidx.compose.runtime.*
 
-            @Composable fun Test(param: String, unstable: List<*>) {
+            class Unstable(var x: Int)
+
+            @Composable fun Test(param: String, unstable: Unstable) {
                 Wrapper {
                     remember(param, unstable) { param }
                 }
@@ -761,7 +759,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
         source = """
             import androidx.compose.runtime.*
 
-            @Composable fun Test(param: String, unstable: List<*>) {
+            @Composable fun Test(param: String, unknown: List<*>) {
                 Wrapper {
                     println(param)
                 }
@@ -779,7 +777,9 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
         source = """
             import androidx.compose.runtime.*
 
-            @Composable fun Test(param: String, unstable: List<*>) {
+            class Unstable(var x: Int)
+
+            @Composable fun Test(param: String, unstable: Unstable) {
                 Wrapper {
                     println(unstable)
                 }
@@ -813,7 +813,7 @@ class RememberIntrinsicTransformTestsStrongSkipping(
         source = """
             import androidx.compose.runtime.*
 
-            @Composable fun Test(param: String, unstable: List<*>) {
+            @Composable fun Test(param: String, unknown: List<*>) {
                 Wrapper {
                     println(param)
                 }
@@ -831,7 +831,9 @@ class RememberIntrinsicTransformTestsStrongSkipping(
         source = """
             import androidx.compose.runtime.*
 
-            @Composable fun Test(param: String, unstable: List<*>) {
+            class Unstable(var x: Int)
+
+            @Composable fun Test(param: String, unstable: Unstable) {
                 Wrapper {
                     println(unstable)
                 }
@@ -849,9 +851,11 @@ class RememberIntrinsicTransformTestsStrongSkipping(
         source = """
             import androidx.compose.runtime.*
 
-            @Composable fun Test(param: String, unstable: List<*>) {
+            class Unstable(var x: Int)
+
+            @Composable fun Test(param: String, unstable: Unstable) {
                 remember(unstable) {
-                    unstable[0]
+                    println(unstable)
                 }
             }
         """,

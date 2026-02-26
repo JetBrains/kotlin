@@ -21,9 +21,17 @@ MODULE_FRAGMENT
             SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:userNewsResourceRepository type:core.data.UserNewsResourceRepository visibility:private' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: home.MainActivity declared in home.MainActivity.<set-userNewsResourceRepository>' type=home.MainActivity origin=null
               value: GET_VAR '<set-?>: core.data.UserNewsResourceRepository declared in home.MainActivity.<set-userNewsResourceRepository>' type=core.data.UserNewsResourceRepository origin=null
-      FIELD name:$stable type:kotlin.Int visibility:public [final,static]
-        EXPRESSION_BODY
-          CONST Int type=kotlin.Int value=8
+      PROPERTY name:$stable visibility:public modality:FINAL [val]
+        FIELD name:$stable type:kotlin.Int visibility:public [final,static]
+          annotations:
+            JvmField
+          EXPRESSION_BODY
+            CONST Int type=kotlin.Int value=8
+        FUN GENERATED[androidx.compose.compiler.plugins.kotlin.lower.ComposeCompilerKey] name:home_MainActivity$stableprop_getter visibility:public modality:FINAL returnType:kotlin.Int
+          correspondingProperty: PROPERTY name:$stable visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun home_MainActivity$stableprop_getter (): kotlin.Int declared in home.MainActivity'
+              GET_FIELD 'FIELD name:$stable type:kotlin.Int visibility:public [final,static] declared in home.MainActivity' type=kotlin.Int origin=null
       CONSTRUCTOR visibility:public returnType:home.MainActivity [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'

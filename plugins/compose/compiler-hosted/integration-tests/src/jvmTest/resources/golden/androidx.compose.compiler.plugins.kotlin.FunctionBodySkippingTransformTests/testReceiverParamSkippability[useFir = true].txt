@@ -68,5 +68,8 @@ class Foo {
       tmp0_rcvr.B(%composer, updateChangedFlags(%changed or 0b0001))
     }
   }
-  static val %stable: Int = 8
+  val %stable: Int = 8
+    get() {
+      return field
+    }
 }

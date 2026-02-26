@@ -44,5 +44,8 @@ class PresenterImpl(val onCompose: Function0<Unit>) : Presenter {
       tmp0_rcvr.Content(%composer, updateChangedFlags(%changed or 0b0001))
     }
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }

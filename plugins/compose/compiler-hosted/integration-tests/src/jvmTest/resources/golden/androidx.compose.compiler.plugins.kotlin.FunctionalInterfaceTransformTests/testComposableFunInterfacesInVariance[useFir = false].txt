@@ -29,7 +29,10 @@ interface Consumer<T>  {
 @StabilityInferred(parameters = 2)
 class Repro<T: Any>  {
   fun test(consumer: Consumer<in T>) { }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 fun test() {
   Repro().test(<block>{

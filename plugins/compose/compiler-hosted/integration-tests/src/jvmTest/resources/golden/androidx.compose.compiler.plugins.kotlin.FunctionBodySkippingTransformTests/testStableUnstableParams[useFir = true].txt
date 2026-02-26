@@ -7,6 +7,8 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 
 
+class Foo(var value: Int = 0)
+
 @Composable fun CanSkip(a: Int = 0, b: Foo = Foo()) {
     used(a)
     used(b)
@@ -24,6 +26,13 @@ import androidx.compose.runtime.ReadOnlyComposable
 // Transformed IR
 // ------------------------------------------
 
+@StabilityInferred(parameters = 0)
+class Foo(var value: Int = 0) {
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
 @Composable
 fun CanSkip(a: Int, b: Foo?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)

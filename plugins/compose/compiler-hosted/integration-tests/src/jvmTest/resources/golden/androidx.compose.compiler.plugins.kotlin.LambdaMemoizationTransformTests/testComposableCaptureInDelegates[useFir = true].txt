@@ -12,7 +12,7 @@ class Test(val value: Int) : Delegate by Impl({
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 1)
+@StabilityInferred(parameters = 0)
 class Test(val value: Int) : Delegate {
   private val %%delegate_0: Impl = Impl(composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C:Test.kt")
@@ -33,5 +33,8 @@ class Test(val value: Int) : Delegate {
     get() {
       return <this>.%%delegate_0.content
     }
-  static val %stable: Int = 0
+  val %stable: Int = Impl.%stable
+    get() {
+      return field
+    }
 }

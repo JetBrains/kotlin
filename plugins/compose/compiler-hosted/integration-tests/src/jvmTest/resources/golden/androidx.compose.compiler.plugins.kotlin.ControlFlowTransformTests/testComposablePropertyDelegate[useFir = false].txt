@@ -35,7 +35,7 @@ interface ThemeToken<T>  {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    val tmp0 = MaterialTheme.resolve(%composer, 0b0110 or 0b01110000 and %changed shr 0b0011)
+    val tmp0 = MaterialTheme.resolve(%composer, MaterialTheme.%stable or 0b01110000 and %changed shr 0b0011)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
@@ -66,7 +66,7 @@ val background: ThemeToken<Int> = class <no name provided> : ThemeToken<Int> {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    val tmp0 = .background%delegate.getValue(null, ::background, %composer, 0b0110)
+    val tmp0 = field.getValue(null, ::background, %composer, 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

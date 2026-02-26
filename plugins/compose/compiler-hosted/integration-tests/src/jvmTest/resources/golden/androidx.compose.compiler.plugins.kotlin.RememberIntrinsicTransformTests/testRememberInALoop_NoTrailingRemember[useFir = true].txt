@@ -4,6 +4,9 @@
 
 import androidx.compose.runtime.*
 
+val count = 0
+class SomeUnstableClass(val a: Any = "abc")
+
 val content: @Composable (a: SomeUnstableClass) -> Unit = {
     for (index in 0 until count) {
         val i = remember { index }
@@ -14,10 +17,18 @@ val content: @Composable (a: SomeUnstableClass) -> Unit = {
 // Transformed IR
 // ------------------------------------------
 
+val count: Int = 0
+@StabilityInferred(parameters = 0)
+class SomeUnstableClass(val a: Any = "abc") {
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
 val content: Function3<@[ParameterName(name = 'a')] SomeUnstableClass, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda%613241577
 internal object ComposableSingletons%TestKt {
   val lambda%613241577: Function3<SomeUnstableClass, Composer, Int, Unit> = composableLambdaInstance(<>, false) { it: SomeUnstableClass, %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "invalid source info at 1: 'CN(it)*5@195L18:Test.kt'")
+    sourceInformation(%composer, "invalid source info at 1: 'CN(it)*8@278L18:Test.kt'")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }

@@ -53,7 +53,10 @@ open class Test {
     %composer.endReplaceGroup()
     return tmp0
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
   class ComposeDefaultImpls {
     @Composable
     fun foo%default(param: Int, %this%: Test, %composer: Composer?, %changed: Int, %default: Int) {
@@ -144,7 +147,10 @@ class TestImpl : Test {
     }
     %composer.endReplaceGroup()
   }
-  static val %stable: Int = 0
+  val %stable: Int = 0
+    get() {
+      return field
+    }
 }
 @Composable
 fun CallWithDefaults(test: Test, %composer: Composer?, %changed: Int) {

@@ -7,6 +7,10 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
 
 
+class Foo(var value: Int = 0)
+@Composable fun A(x: Int) {}
+@Composable fun B(y: Foo) {}
+
 val foo = @Composable { x: Int, y: Foo ->
     A(x)
     B(y)
@@ -16,10 +20,53 @@ val foo = @Composable { x: Int, y: Foo ->
 // Transformed IR
 // ------------------------------------------
 
+@StabilityInferred(parameters = 0)
+class Foo(var value: Int = 0) {
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
+@Composable
+fun A(x: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)N(x):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(x, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun B(y: Foo, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(B)N(y):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    B(y, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
 val foo: Function4<Int, Foo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda%529523933
 internal object ComposableSingletons%TestKt {
   val lambda%529523933: Function4<Int, Foo, Composer, Int, Unit> = composableLambdaInstance(<>, false) { x: Int, y: Foo, %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "invalid source info at 1: 'CN(x,y)6@199L4,7@208L4:Test.kt'")
+    sourceInformation(%composer, "invalid source info at 1: 'CN(x,y)10@288L4,11@297L4:Test.kt'")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
