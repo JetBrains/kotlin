@@ -354,7 +354,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
 
 class NoActiveThreadsAfterCompilerInvocationIT : KGPDaemonsBaseTest() {
     @DisplayName("KT-84152: [BTA] In-process compilation should not leave active threads")
-    @Disabled("Isn't fixed for BTA yet")
+    @Disabled("FIXME: cover with tests when KT-84566 is fixed")
     @GradleTest
     fun testBta(gradleVersion: GradleVersion) = test(gradleVersion, buildOptions = defaultBuildOptions.copy(runViaBuildToolsApi = true))
 
