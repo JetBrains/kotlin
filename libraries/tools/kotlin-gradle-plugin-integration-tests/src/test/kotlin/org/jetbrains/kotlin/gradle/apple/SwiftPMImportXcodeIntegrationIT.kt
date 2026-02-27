@@ -526,6 +526,111 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `integrateLinkagePackage cleanup subpackage dir after removing dependency`(version: GradleVersion) {
+        val includeSubprojectB = "includeSubprojectB"
+        project("emptyxcode", version) {
+            initDefaultKmpWithLocalSPM {
+                sourceSets.commonMain.dependencies {
+                    api(project(":subprojectA"))
+                    if (project.hasProperty(includeSubprojectB)) {
+                        api(project(":subprojectB"))
+                    }
+                }
+            }
+
+            val subprojectA = project("empty", version) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        iosSimulatorArm64()
+
+                        swiftPMDependencies {
+                            `package`(
+                                url = url("https://github.com/apple/swift-protobuf-subprojectA.git"),
+                                version = exact("1.32.0"),
+                                products = listOf(),
+                            )
+                        }
+                    }
+                }
+            }
+
+            val subprojectB = project("empty", version) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        iosSimulatorArm64()
+
+                        swiftPMDependencies {
+                            `package`(
+                                url = url("https://github.com/apple/swift-protobuf-subprojectB.git"),
+                                version = exact("1.32.0"),
+                                products = listOf(),
+                            )
+                        }
+                    }
+                }
+            }
+
+            include(subprojectA, "subprojectA")
+            include(subprojectB, "subprojectB")
+
+            build(
+                "integrateLinkagePackage", "-P$includeSubprojectB=true",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                )
+            ) {
+                val manifestFile = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/Package.swift")
+                val manifestDependencies = describeSwiftPackage(manifestFile.parent).dependencies
+
+                assertEquals(
+                    listOf("localswiftpackage", "_subprojecta", "_subprojectb"),
+                    manifestDependencies.map { it.identity },
+                    message = "Manifest should contain subprojectA and subprojectB dependencies"
+                )
+
+                assertTrue(
+                    projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/subpackages/_subprojectA").exists(),
+                    message = "Subpackage directory for subprojectA should exist"
+                )
+
+                assertTrue(
+                    projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/subpackages/_subprojectB").exists(),
+                    message = "Subpackage directory for subprojectB should exist"
+                )
+            }
+
+            build(
+                "integrateLinkagePackage",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                )
+            ) {
+                val manifestFile = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/Package.swift")
+                val manifestDependencies = describeSwiftPackage(manifestFile.parent).dependencies
+
+                assertEquals(
+                    listOf("localswiftpackage", "_subprojecta"),
+                    manifestDependencies.map { it.identity },
+                    message = "Manifest should contain subprojectA dependency"
+                )
+
+                assertTrue(
+                    projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/subpackages/_subprojectA").exists(),
+                    message = "Subpackage directory for subprojectA should exist"
+                )
+
+                // https://youtrack.jetbrains.com/issue/KT-82823
+                assertTrue(
+                    projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/subpackages/_subprojectB").exists(),
+                    message = "Subpackage directory for subprojectB exists, should be fixed in KT-82823"
+                )
+            }
+        }
+    }
+
+    @GradleTest
     fun `integrateLinkagePackage collects dependencies from multiple subprojects`(version: GradleVersion) {
         project("emptyxcode", version) {
             initDefaultKmpWithLocalSPM {
