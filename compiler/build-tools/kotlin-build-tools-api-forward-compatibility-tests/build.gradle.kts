@@ -89,6 +89,7 @@ testing {
                 implementation(project(":kotlin-tooling-core"))
                 implementation(project(":compiler:test-security-manager"))
                 implementation("org.jetbrains.kotlin:kotlin-build-tools-api:$btaApiVersion")
+                implementation(project(":compiler:arguments"))
             }
         }
     }
