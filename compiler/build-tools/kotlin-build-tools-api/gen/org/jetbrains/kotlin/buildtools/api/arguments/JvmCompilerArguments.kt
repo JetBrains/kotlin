@@ -257,6 +257,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_ENHANCED_COROUTINES_DEBUGGING", KotlinReleaseVersion(2, 2, 0))
 
     /**
+     * Force using lightweight stdlib Reflection implementation even if kotlin-reflect.jar is present in classpath at run time.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_FORCE_STDLIB_ONLY_REFLECTION: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_FORCE_STDLIB_ONLY_REFLECTION", KotlinReleaseVersion(2, 4, 0))
+
+    /**
      * Paths to output directories for friend modules (modules whose internals should be visible).
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

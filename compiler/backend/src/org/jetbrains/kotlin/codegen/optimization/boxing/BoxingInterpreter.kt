@@ -266,7 +266,7 @@ private fun MethodInsnNode.isBoxingMethodDescriptor() =
 
 fun AbstractInsnNode.isJavaLangClassBoxing() =
     isMethodInsnWith(Opcodes.INVOKESTATIC) {
-        owner == AsmTypes.REFLECTION &&
+        (owner == AsmTypes.REFLECTION || owner == AsmTypes.STDLIB_ONLY_REFLECTION) &&
                 name == "getOrCreateKotlinClass" &&
                 desc == JLCLASS_TO_KCLASS
     }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
@@ -81,4 +82,5 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION by directive("Use new reflection fake override implementation")
 
     val IGNORED_ANNOTATIONS_FOR_BRIDGES by stringDirective("Ignored annotations for bridges")
+    val FORCE_STDLIB_ONLY_REFLECTION by directive("Force using Stdlib Reflection instead of kotlin-reflect", DirectiveApplicability.Module)
 }

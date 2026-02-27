@@ -75,6 +75,8 @@ public val <T : Any> KClass<T>.javaObjectType: Class<T>
 
 /**
  * Returns a [KClass] instance corresponding to the given Java [Class] instance.
+ * Internally, this function is implemented as an intrinsic, that invokes either `Reflection.getOrCreateKotlinClass()` or
+ * `StdlibOnlyReflection.getOrCreateKotlinClass()` depending on the compiler options.
  */
 public val <T : Any> Class<T>.kotlin: KClass<T>
     @JvmName("getKotlinClass")

@@ -65,7 +65,8 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeO
 
     val methodName = if (type.isMarkedNullable()) "nullableTypeOf" else "typeOf"
     val signature = Type.getMethodDescriptor(K_TYPE, *methodArguments)
-    v.invokestatic(REFLECTION, methodName, signature, false)
+    val reflection = if (intrinsicsSupport.config.forceStdlibOnlyReflection) STDLIB_ONLY_REFLECTION else REFLECTION
+    v.invokestatic(reflection, methodName, signature, false)
 
     if (intrinsicsSupport.toKotlinType(type).isSuspendFunctionType) {
         intrinsicsSupport.reportSuspendTypeUnsupported()
@@ -73,9 +74,9 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeO
 
     if (intrinsicsSupport.config.stableTypeOf) {
         if (intrinsicsSupport.isMutableCollectionType(type)) {
-            v.invokestatic(REFLECTION, "mutableCollectionType", Type.getMethodDescriptor(K_TYPE, K_TYPE), false)
+            v.invokestatic(reflection, "mutableCollectionType", Type.getMethodDescriptor(K_TYPE, K_TYPE), false)
         } else if (type.typeConstructor().isNothingConstructor()) {
-            v.invokestatic(REFLECTION, "nothingType", Type.getMethodDescriptor(K_TYPE, K_TYPE), false)
+            v.invokestatic(reflection, "nothingType", Type.getMethodDescriptor(K_TYPE, K_TYPE), false)
         }
 
         if (type.isFlexible()) {
@@ -84,7 +85,7 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeO
             @Suppress("UNCHECKED_CAST")
             generateTypeOf(v, type.upperBoundIfFlexible() as KT, intrinsicsSupport, isTypeParameterBound)
 
-            v.invokestatic(REFLECTION, "platformType", Type.getMethodDescriptor(K_TYPE, K_TYPE, K_TYPE), false)
+            v.invokestatic(reflection, "platformType", Type.getMethodDescriptor(K_TYPE, K_TYPE, K_TYPE), false)
         }
     }
 }
@@ -102,8 +103,9 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateNonRe
     }
     v.getstatic(K_VARIANCE.internalName, variance.name, K_VARIANCE.descriptor)
     v.iconst(if (typeParameter.isReified()) 1 else 0)
+    val reflection = if (intrinsicsSupport.config.forceStdlibOnlyReflection) STDLIB_ONLY_REFLECTION else REFLECTION
     v.invokestatic(
-        REFLECTION, "typeParameter",
+        reflection, "typeParameter",
         Type.getMethodDescriptor(K_TYPE_PARAMETER, OBJECT_TYPE, JAVA_STRING_TYPE, K_VARIANCE, Type.BOOLEAN_TYPE),
         false,
     )
@@ -116,7 +118,7 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateNonRe
         generateTypeOf(v, typeParameter.getUpperBound(i) as KT, intrinsicsSupport, isTypeParameterBound = true)
     }
     v.invokestatic(
-        REFLECTION, "setUpperBounds", Type.getMethodDescriptor(Type.VOID_TYPE, K_TYPE_PARAMETER, *argumentsForBounds),
+        reflection, "setUpperBounds", Type.getMethodDescriptor(Type.VOID_TYPE, K_TYPE_PARAMETER, *argumentsForBounds),
         false
     )
 }

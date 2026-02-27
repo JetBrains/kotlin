@@ -13,7 +13,8 @@ import kotlin.reflect.jvm.internal.KTypeParameterOwnerImpl
  * A [kotlin.reflect.KClass] implementation for `kotlin.Nothing`.
  *
  * Currently, this class is only used in the type checker implementation for kotlin-reflect,
- * but one day it should probably be used to implement KT-15518.
+ * but one day it should probably be used to implement KT-15518. REMINDER: Make `equals` compatible with `KClass`/`ClassReference`
+ * when implementing it.
  */
 internal object NothingKClass : KClass<Void> by Void::class, TypeConstructorMarker, KTypeParameterOwnerImpl {
     override val simpleName: String

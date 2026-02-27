@@ -50,7 +50,7 @@ class IrInlineIntrinsicsSupport(
         require(typeParameter is IrTypeParameterSymbol)
 
         when (val parent = typeParameter.owner.parent) {
-            is IrClass -> putClassInstance(v, parent.defaultType).also { AsmUtil.wrapJavaClassIntoKClass(v) }
+            is IrClass -> putClassInstance(v, parent.defaultType).also { AsmUtil.wrapJavaClassIntoKClass(v, config.forceStdlibOnlyReflection) }
             is IrSimpleFunction -> {
                 val property = parent.correspondingPropertySymbol
                 if (property != null) {

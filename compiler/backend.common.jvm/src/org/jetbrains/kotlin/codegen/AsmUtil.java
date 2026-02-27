@@ -307,13 +307,26 @@ public class AsmUtil {
         return JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName();
     }
 
-
+    /** @deprecated Use wrapJavaClassIntoKClass(InstructionAdapter, boolean) instead */
+    @Deprecated
     public static void wrapJavaClassIntoKClass(@NotNull InstructionAdapter v) {
         v.invokestatic(REFLECTION, "getOrCreateKotlinClass", Type.getMethodDescriptor(K_CLASS_TYPE, getType(Class.class)), false);
     }
 
+    public static void wrapJavaClassIntoKClass(@NotNull InstructionAdapter v, boolean forceStdlibOnlyReflection) {
+        String reflection = forceStdlibOnlyReflection ? STDLIB_ONLY_REFLECTION : REFLECTION;
+        v.invokestatic(reflection, "getOrCreateKotlinClass", Type.getMethodDescriptor(K_CLASS_TYPE, getType(Class.class)), false);
+    }
+
+    /** @deprecated Use wrapJavaClassIntoKClasses(InstructionAdapter, boolean) instead */
+    @Deprecated
     public static void wrapJavaClassesIntoKClasses(@NotNull InstructionAdapter v) {
         v.invokestatic(REFLECTION, "getOrCreateKotlinClasses", Type.getMethodDescriptor(K_CLASS_ARRAY_TYPE, getType(Class[].class)), false);
+    }
+
+    public static void wrapJavaClassesIntoKClasses(@NotNull InstructionAdapter v, boolean forceStdlibOnlyReflection) {
+        String reflection = forceStdlibOnlyReflection ? STDLIB_ONLY_REFLECTION : REFLECTION;
+        v.invokestatic(reflection, "getOrCreateKotlinClasses", Type.getMethodDescriptor(K_CLASS_ARRAY_TYPE, getType(Class[].class)), false);
     }
 
     @Nullable

@@ -85,6 +85,9 @@ object JvmStandardClassIds {
     val TRANSIENT_ANNOTATION_CLASS_ID = ClassId.topLevel(TRANSIENT_ANNOTATION_FQ_NAME)
 
     @JvmField
+    val JAVA_LANG_CLASS_FQ_NAME = FqName("java.lang.Class")
+
+    @JvmField
     val ATOMIC_BOOLEAN_FQ_NAME = FqName("java.util.concurrent.atomic.AtomicBoolean")
 
     @JvmField

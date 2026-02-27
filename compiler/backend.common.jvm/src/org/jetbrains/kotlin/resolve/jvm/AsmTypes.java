@@ -67,6 +67,7 @@ public class AsmTypes {
     public static final Type SUSPEND_FUNCTION_TYPE = Type.getObjectType("kotlin/coroutines/jvm/internal/SuspendFunction");
 
     public static final String REFLECTION = "kotlin/jvm/internal/Reflection";
+    public static final String STDLIB_ONLY_REFLECTION = "kotlin/jvm/internal/StdlibOnlyReflection";
 
     private static final String REF_TYPE_PREFIX = "kotlin/jvm/internal/Ref$";
     public static final Type OBJECT_REF_TYPE = Type.getObjectType(REF_TYPE_PREFIX + "ObjectRef");

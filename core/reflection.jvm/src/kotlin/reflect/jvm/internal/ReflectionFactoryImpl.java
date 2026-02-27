@@ -7,6 +7,7 @@
 package kotlin.reflect.jvm.internal;
 
 import kotlin.Metadata;
+import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.jvm.internal.*;
 import kotlin.metadata.KmConstructor;
 import kotlin.metadata.KmFunction;
@@ -222,14 +223,20 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     @Override
     public KTypeParameter typeParameter(Object container, String name, KVariance variance, boolean isReified) {
         List<KTypeParameter> typeParameters;
-        if (container instanceof KClass) {
-            typeParameters = ((KClass<?>) container).getTypeParameters();
-        }
-        else if (container instanceof KCallable) {
-            typeParameters = ((KCallable<?>) container).getTypeParameters();
-        }
-        else {
-            throw new IllegalArgumentException("Type parameter container must be a class or a callable: " + container);
+        try {
+            if (container instanceof KClass) {
+                typeParameters = ((KClass<?>) container).getTypeParameters();
+            }
+            else if (container instanceof KCallable) {
+                typeParameters = ((KCallable<?>) container).getTypeParameters();
+            }
+            else {
+                throw new IllegalArgumentException("Type parameter container must be a class or a callable: " + container);
+            }
+        } catch (KotlinReflectionNotSupportedError e) {
+            // passing a container from Stdlib reflection is not expected in normal cases, but better be supported
+            // as a fallback for incorrect 3rd-party API usages
+            return super.typeParameter(container, name, variance, isReified);
         }
         for (KTypeParameter typeParameter : typeParameters) {
             if (typeParameter.getName().equals(name)) return typeParameter;
@@ -256,6 +263,10 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     // @Override // JPS
     public KType nothingType(KType type) {
         return TypeOfImplKt.createNothingType(type);
+    }
+
+    public boolean areTypesEqual(TypeReference reference, KType type) {
+        return TypeOfImplKt.areTypesEqual(reference, type);
     }
 
     // Misc

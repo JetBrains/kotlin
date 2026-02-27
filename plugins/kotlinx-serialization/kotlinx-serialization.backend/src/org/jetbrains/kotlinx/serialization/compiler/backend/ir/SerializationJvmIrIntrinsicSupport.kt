@@ -345,7 +345,7 @@ class SerializationJvmIrIntrinsicSupport(
         load(intrinsicType.storedIndex, serializersModuleType)
         // KClass
         aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
-        AsmUtil.wrapJavaClassIntoKClass(this)
+        AsmUtil.wrapJavaClassIntoKClass(this, false)
 
         val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
         // Generic args (if present)
@@ -370,7 +370,7 @@ class SerializationJvmIrIntrinsicSupport(
             load(intrinsicType.storedIndex, serializersModuleType)
             // KClass
             aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
-            AsmUtil.wrapJavaClassIntoKClass(this)
+            AsmUtil.wrapJavaClassIntoKClass(this, false)
 
             val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
             // Generic args (if present)
@@ -530,7 +530,7 @@ class SerializationJvmIrIntrinsicSupport(
                     // a special way to instantiate enum -- need a enum KClass reference
                     // GENERIC_ARGUMENT forces boxing in order to obtain KClass
                     aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
-                    AsmUtil.wrapJavaClassIntoKClass(this)
+                    AsmUtil.wrapJavaClassIntoKClass(this, false)
                     signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
                     if (serializer.owner.classId == contextSerializerId && hasNewContextSerializerSignature) {
                         // append new additional arguments
@@ -551,7 +551,7 @@ class SerializationJvmIrIntrinsicSupport(
                 referenceArraySerializerId -> {
                     // a special way to instantiate reference array serializer -- need an element KClass reference
                     aconst(typeMapper.mapTypeCommon(typeArgumentsAsTypes.first(), TypeMappingMode.GENERIC_ARGUMENT))
-                    AsmUtil.wrapJavaClassIntoKClass(this)
+                    AsmUtil.wrapJavaClassIntoKClass(this, false)
                     signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
                     // Reference array serializer still needs serializer for its argument type
                     generateSerializerForType(argSerializers[0].first, this, intrinsicType)
@@ -562,7 +562,7 @@ class SerializationJvmIrIntrinsicSupport(
                     aconst(serialName)
                     signature.append("Ljava/lang/String;")
                     aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
-                    AsmUtil.wrapJavaClassIntoKClass(this)
+                    AsmUtil.wrapJavaClassIntoKClass(this, false)
                     signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
                     val (subClasses, subSerializers) = emptyGenerator.allSealedSerializableSubclassesFor(
                         kType.classOrUpperBound()?.owner!!,
@@ -571,7 +571,7 @@ class SerializationJvmIrIntrinsicSupport(
                     // KClasses vararg
                     fillArray(AsmTypes.K_CLASS_TYPE, subClasses) { _, type ->
                         aconst(typeMapper.mapTypeCommon(type, TypeMappingMode.GENERIC_ARGUMENT))
-                        AsmUtil.wrapJavaClassIntoKClass(this)
+                        AsmUtil.wrapJavaClassIntoKClass(this, false)
                     }
                     signature.append(AsmTypes.K_CLASS_ARRAY_TYPE.descriptor)
                     // Serializers vararg

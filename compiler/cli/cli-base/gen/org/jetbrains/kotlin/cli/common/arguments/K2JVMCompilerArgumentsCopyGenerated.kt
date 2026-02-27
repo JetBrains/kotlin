@@ -29,6 +29,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.enhanceTypeParameterTypesToDefNotNull = from.enhanceTypeParameterTypesToDefNotNull
     to.enhancedCoroutinesDebugging = from.enhancedCoroutinesDebugging
     to.expression = from.expression
+    to.forceStdlibOnlyReflection = from.forceStdlibOnlyReflection
     to.friendPaths = from.friendPaths.copyOf()
     to.ignoredAnnotationsForBridges = from.ignoredAnnotationsForBridges.copyOf()
     to.includeRuntime = from.includeRuntime

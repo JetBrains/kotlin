@@ -946,6 +946,16 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         )
     }
 
+    compilerArgument {
+        name = "Xforce-stdlib-only-reflection"
+        description = "Force using lightweight stdlib Reflection implementation even if kotlin-reflect.jar is present in classpath at run time.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
+
     @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xwhen-expressions"

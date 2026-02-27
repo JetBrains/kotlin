@@ -618,11 +618,11 @@ class ExpressionCodegen(
                 unitValue
             }
             callee.parentAsClass.isAnnotationClass && callable.asmMethod.returnType == AsmTypes.JAVA_CLASS_TYPE -> {
-                wrapJavaClassIntoKClass(mv)
+                wrapJavaClassIntoKClass(mv, state.config.forceStdlibOnlyReflection)
                 MaterialValue(this, AsmTypes.K_CLASS_TYPE, expression.type)
             }
             callee.parentAsClass.isAnnotationClass && callable.asmMethod.returnType == AsmTypes.JAVA_CLASS_ARRAY_TYPE -> {
-                wrapJavaClassesIntoKClasses(mv)
+                wrapJavaClassesIntoKClasses(mv, state.config.forceStdlibOnlyReflection)
                 MaterialValue(this, AsmTypes.K_CLASS_ARRAY_TYPE, expression.type)
             }
             unboxedInlineClassIrType != null && !irFunction.isNonBoxingSuspendDelegation() ->
@@ -1525,7 +1525,7 @@ class ExpressionCodegen(
         }
 
         if (wrapIntoKClass) {
-            wrapJavaClassIntoKClass(mv)
+            wrapJavaClassIntoKClass(mv, state.config.forceStdlibOnlyReflection)
         }
         return classReference.onStack
     }

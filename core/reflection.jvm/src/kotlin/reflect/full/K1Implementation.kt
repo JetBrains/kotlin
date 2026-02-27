@@ -7,6 +7,8 @@ package kotlin.reflect.full
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.types.*
+import kotlin.jvm.internal.ClassReference
+import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KTypeProjection
@@ -26,6 +28,7 @@ internal fun KClassifier.createK1KType(
             if (mutableCollectionClass != null) JavaToKotlinClassMapper.convertReadOnlyToMutable(descriptor) else descriptor
         }
         is KTypeParameterImpl -> descriptor
+        is ClassReference -> throw Reflection.notSupportedError()
         else -> throw KotlinReflectionInternalError("Cannot create type for an unsupported classifier: $this (${this.javaClass})")
     }
 

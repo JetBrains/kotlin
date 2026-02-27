@@ -4455,6 +4455,7 @@ public final class kotlin/jvm/internal/Ref$ShortRef : java/io/Serializable {
 
 public class kotlin/jvm/internal/Reflection {
 	public fun <init> ()V
+	public static fun areTypesEqual (Lkotlin/jvm/internal/TypeReference;Lkotlin/reflect/KType;)Z
 	public static fun createKotlinClass (Ljava/lang/Class;)Lkotlin/reflect/KClass;
 	public static fun createKotlinClass (Ljava/lang/Class;Ljava/lang/String;)Lkotlin/reflect/KClass;
 	public static fun function (Lkotlin/jvm/internal/FunctionReference;)Lkotlin/reflect/KFunction;
@@ -4467,6 +4468,7 @@ public class kotlin/jvm/internal/Reflection {
 	public static fun mutableProperty0 (Lkotlin/jvm/internal/MutablePropertyReference0;)Lkotlin/reflect/KMutableProperty0;
 	public static fun mutableProperty1 (Lkotlin/jvm/internal/MutablePropertyReference1;)Lkotlin/reflect/KMutableProperty1;
 	public static fun mutableProperty2 (Lkotlin/jvm/internal/MutablePropertyReference2;)Lkotlin/reflect/KMutableProperty2;
+	public static fun notSupportedError ()Lkotlin/jvm/KotlinReflectionNotSupportedError;
 	public static fun nothingType (Lkotlin/reflect/KType;)Lkotlin/reflect/KType;
 	public static fun nullableTypeOf (Ljava/lang/Class;)Lkotlin/reflect/KType;
 	public static fun nullableTypeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
@@ -4491,6 +4493,7 @@ public class kotlin/jvm/internal/Reflection {
 
 public class kotlin/jvm/internal/ReflectionFactory {
 	public fun <init> ()V
+	public fun areTypesEqual (Lkotlin/jvm/internal/TypeReference;Lkotlin/reflect/KType;)Z
 	public fun createKotlinClass (Ljava/lang/Class;)Lkotlin/reflect/KClass;
 	public fun createKotlinClass (Ljava/lang/Class;Ljava/lang/String;)Lkotlin/reflect/KClass;
 	public fun function (Lkotlin/jvm/internal/FunctionReference;)Lkotlin/reflect/KFunction;
@@ -4545,6 +4548,39 @@ public class kotlin/jvm/internal/SpreadBuilder {
 	public fun addSpread (Ljava/lang/Object;)V
 	public fun size ()I
 	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+}
+
+public class kotlin/jvm/internal/StdlibOnlyReflection {
+	public fun <init> ()V
+	public static fun createKotlinClass (Ljava/lang/Class;)Lkotlin/reflect/KClass;
+	public static fun createKotlinClass (Ljava/lang/Class;Ljava/lang/String;)Lkotlin/reflect/KClass;
+	public static fun function (Lkotlin/jvm/internal/FunctionReference;)Lkotlin/reflect/KFunction;
+	public static fun getOrCreateKotlinClass (Ljava/lang/Class;)Lkotlin/reflect/KClass;
+	public static fun getOrCreateKotlinClass (Ljava/lang/Class;Ljava/lang/String;)Lkotlin/reflect/KClass;
+	public static fun getOrCreateKotlinClasses ([Ljava/lang/Class;)[Lkotlin/reflect/KClass;
+	public static fun getOrCreateKotlinPackage (Ljava/lang/Class;)Lkotlin/reflect/KDeclarationContainer;
+	public static fun mutableCollectionType (Lkotlin/reflect/KType;)Lkotlin/reflect/KType;
+	public static fun mutableProperty0 (Lkotlin/jvm/internal/MutablePropertyReference0;)Lkotlin/reflect/KMutableProperty0;
+	public static fun mutableProperty1 (Lkotlin/jvm/internal/MutablePropertyReference1;)Lkotlin/reflect/KMutableProperty1;
+	public static fun mutableProperty2 (Lkotlin/jvm/internal/MutablePropertyReference2;)Lkotlin/reflect/KMutableProperty2;
+	public static fun nothingType (Lkotlin/reflect/KType;)Lkotlin/reflect/KType;
+	public static fun nullableTypeOf (Ljava/lang/Class;)Lkotlin/reflect/KType;
+	public static fun nullableTypeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun nullableTypeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun nullableTypeOf (Ljava/lang/Class;[Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun nullableTypeOf (Lkotlin/reflect/KClassifier;)Lkotlin/reflect/KType;
+	public static fun platformType (Lkotlin/reflect/KType;Lkotlin/reflect/KType;)Lkotlin/reflect/KType;
+	public static fun property0 (Lkotlin/jvm/internal/PropertyReference0;)Lkotlin/reflect/KProperty0;
+	public static fun property1 (Lkotlin/jvm/internal/PropertyReference1;)Lkotlin/reflect/KProperty1;
+	public static fun property2 (Lkotlin/jvm/internal/PropertyReference2;)Lkotlin/reflect/KProperty2;
+	public static fun setUpperBounds (Lkotlin/reflect/KTypeParameter;Lkotlin/reflect/KType;)V
+	public static fun setUpperBounds (Lkotlin/reflect/KTypeParameter;[Lkotlin/reflect/KType;)V
+	public static fun typeOf (Ljava/lang/Class;)Lkotlin/reflect/KType;
+	public static fun typeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun typeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun typeOf (Ljava/lang/Class;[Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
+	public static fun typeOf (Lkotlin/reflect/KClassifier;)Lkotlin/reflect/KType;
+	public static fun typeParameter (Ljava/lang/Object;Ljava/lang/String;Lkotlin/reflect/KVariance;Z)Lkotlin/reflect/KTypeParameter;
 }
 
 public final class kotlin/jvm/internal/StringCompanionObject {

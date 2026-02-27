@@ -175,6 +175,16 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         }
 
     @Argument(
+        value = "-Xforce-stdlib-only-reflection",
+        description = "Force using lightweight stdlib Reflection implementation even if kotlin-reflect.jar is present in classpath at run time.",
+    )
+    var forceStdlibOnlyReflection: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xfriend-paths",
         valueDescription = "<path>",
         description = "Paths to output directories for friend modules (modules whose internals should be visible).",

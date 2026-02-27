@@ -26,10 +26,15 @@ public class TypeReference @SinceKotlin("1.6") constructor(
     override val isMarkedNullable: Boolean
         get() = flags and IS_MARKED_NULLABLE != 0
 
-    override fun equals(other: Any?): Boolean =
-        other is TypeReference &&
-                classifier == other.classifier && arguments == other.arguments && platformTypeUpperBound == other.platformTypeUpperBound &&
-                flags == other.flags
+    override fun equals(other: Any?): Boolean = when {
+        other is TypeReference ->
+            classifier == other.classifier &&
+                    arguments == other.arguments &&
+                    platformTypeUpperBound == other.platformTypeUpperBound &&
+                    flags == other.flags
+        other !is KType -> false
+        else -> Reflection.areTypesEqual(this, other)
+    }
 
     override fun hashCode(): Int =
         (classifier.hashCode() * 31 + arguments.hashCode()) * 31 + flags.hashCode()

@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeArgumentListMarker
 import java.lang.reflect.Type
 import kotlin.jvm.internal.KTypeBase
+import kotlin.jvm.internal.Reflection
+import kotlin.jvm.internal.TypeReference
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.ReflectProperties
@@ -42,11 +44,28 @@ internal abstract class AbstractKType(
     abstract fun lowerBoundIfFlexible(): AbstractKType?
     abstract fun upperBoundIfFlexible(): AbstractKType?
 
-    override fun equals(other: Any?): Boolean =
-        other is AbstractKType && AbstractStrictEqualityTypeChecker.strictEqualTypes(ReflectTypeSystemContext, this, other)
+    override fun equals(other: Any?): Boolean = when (other) {
+        is AbstractKType -> AbstractStrictEqualityTypeChecker.strictEqualTypes(ReflectTypeSystemContext, this, other)
+        is TypeReference -> Reflection.areTypesEqual(other, this)
+        else -> false
+    }
 
-    override fun hashCode(): Int =
-        (31 * ((31 * classifier.hashCode()) + arguments.hashCode())) + isMarkedNullable.hashCode()
+    override fun hashCode(): Int {
+        // Keep this aligned with kotlin.jvm.internal.TypeReference.hashCode() so mixed
+        // Stdlib/full reflection equality also stays valid for hash-based collections.
+        var flags = 0
+        if (isMarkedNullable) {
+            flags = flags or 1
+        }
+        if (mutableCollectionClass != null) {
+            flags = flags or 2
+        }
+        if (isNothingType) {
+            flags = flags or 4
+        }
+
+        return (classifier.hashCode() * 31 + arguments.hashCode()) * 31 + flags.hashCode()
+    }
 
     override fun toString(): String =
         ReflectionObjectRenderer.renderType(this)

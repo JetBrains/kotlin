@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.DISABLE_OPTIMIZATION
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENABLE_DEBUG_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENHANCED_COROUTINES_DEBUGGING
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.FORCE_STDLIB_ONLY_REFLECTION
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.IGNORED_ANNOTATIONS_FOR_BRIDGES
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
@@ -202,6 +203,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         register(ALLOW_KOTLIN_PACKAGE, CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)
         register(DISABLE_OPTIMIZATION, JVMConfigurationKeys.DISABLE_OPTIMIZATION)
         register(WHEN_EXPRESSIONS, JVMConfigurationKeys.WHEN_GENERATION_SCHEME)
+        register(FORCE_STDLIB_ONLY_REFLECTION, JVMConfigurationKeys.FORCE_STDLIB_ONLY_REFLECTION)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {

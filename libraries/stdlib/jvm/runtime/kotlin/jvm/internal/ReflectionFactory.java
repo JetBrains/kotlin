@@ -119,4 +119,8 @@ public class ReflectionFactory {
                 typeRef.getFlags$kotlin_stdlib() | TypeReference.IS_NOTHING_TYPE
         );
     }
+
+    public boolean areTypesEqual(TypeReference reference, KType type) {
+        return type instanceof TypeReference && reference.equals(type);
+    }
 }

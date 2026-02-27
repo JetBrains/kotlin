@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JAVA_LANG_CLASS_FQ_NAME
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.jetbrains.org.objectweb.asm.Opcodes.*
@@ -49,6 +50,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 Key(kotlinJvmFqn, kClassFqn, "<get-javaObjectType>", emptyList()) to GetJavaObjectType,
                 Key(kotlinJvmFqn, kClassFqn, "<get-javaPrimitiveType>", emptyList()) to GetJavaPrimitiveType,
                 Key(kotlinJvmFqn, kClassFqn, "<get-java>", emptyList()) to KClassJavaProperty,
+                Key(kotlinJvmFqn, JAVA_LANG_CLASS_FQ_NAME, "<get-kotlin>", emptyList()) to JavaClassKotlinProperty,
                 Key(kotlinJvmInternalUnsafeFqn, null, "monitorEnter", listOf(anyFqn)) to MonitorInstruction.MONITOR_ENTER,
                 Key(kotlinJvmInternalUnsafeFqn, null, "monitorExit", listOf(anyFqn)) to MonitorInstruction.MONITOR_EXIT,
                 Key(kotlinJvmFqn, arrayFqn, "isArrayOf", emptyList()) to IsArrayOf,

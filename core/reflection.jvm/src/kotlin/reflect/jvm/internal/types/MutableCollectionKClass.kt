@@ -19,7 +19,8 @@ import kotlin.reflect.jvm.internal.StandardKTypes
  * A [kotlin.reflect.KClass] implementation for mutable collection classes (i.e. `kotlin.collections.MutableList`).
  *
  * Currently, this class is only used in the type checker implementation for kotlin-reflect,
- * but one day it should probably be used to implement KT-11754.
+ * but one day it should probably be used to implement KT-11754. REMINDER: Make `equals` compatible with `KClass`/`ClassReference`
+ * when implementing it.
  *
  * @param klass the read-only collection class (i.e. `kotlin.collections.List`)
  */

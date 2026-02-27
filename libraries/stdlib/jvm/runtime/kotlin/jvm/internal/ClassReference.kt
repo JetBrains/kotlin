@@ -86,12 +86,16 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
     override val isValue: Boolean
         get() = error()
 
-    private fun error(): Nothing = throw KotlinReflectionNotSupportedError()
+    private fun error(): Nothing = throw Reflection.notSupportedError()
 
     override fun findJavaDeclaration(): GenericDeclaration = jClass
 
-    override fun equals(other: Any?): Boolean =
-        other is ClassReference && javaObjectType == other.javaObjectType
+    override fun equals(other: Any?): Boolean = when {
+        this === other -> true
+        other !is KClass<*> -> false
+        other !is ClassBasedDeclarationContainer -> false
+        else -> javaObjectType == other.javaObjectType
+    }
 
     override fun hashCode(): Int =
         javaObjectType.hashCode()

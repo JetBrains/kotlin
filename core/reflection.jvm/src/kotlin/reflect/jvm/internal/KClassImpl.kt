@@ -49,6 +49,7 @@ import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
+import kotlin.jvm.internal.ClassBasedDeclarationContainer
 import kotlin.jvm.internal.KotlinGenericDeclaration
 import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.metadata.*
@@ -621,8 +622,12 @@ internal class KClassImpl<T : Any>(
     internal val moduleName: String?
         get() = kmClass?.moduleName
 
-    override fun equals(other: Any?): Boolean =
-        other is KClassImpl<*> && javaObjectType == other.javaObjectType
+    override fun equals(other: Any?): Boolean = when {
+        this === other -> true
+        other !is KClass<*> -> false
+        other !is ClassBasedDeclarationContainer -> false
+        else -> javaObjectType == other.javaObjectType
+    }
 
     override fun hashCode(): Int =
         javaObjectType.hashCode()

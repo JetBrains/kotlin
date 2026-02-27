@@ -820,7 +820,18 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
             }
 
         public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
-            ^equals (R|<local>/other| is R|kotlin/jvm/internal/TypeReference|) && ==(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier|, R|<local>/other|.R|kotlin/jvm/internal/TypeReference.classifier|) && ==(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|, R|<local>/other|.R|kotlin/jvm/internal/TypeReference.arguments|) && ==(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.platformTypeUpperBound|, R|<local>/other|.R|kotlin/jvm/internal/TypeReference.platformTypeUpperBound|) && ==(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.flags|, R|<local>/other|.R|kotlin/jvm/internal/TypeReference.flags|)
+            ^equals when () {
+                (R|<local>/other| is R|kotlin/jvm/internal/TypeReference|) ->  {
+                    ==(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier|, R|<local>/other|.R|kotlin/jvm/internal/TypeReference.classifier|) && ==(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|, R|<local>/other|.R|kotlin/jvm/internal/TypeReference.arguments|) && ==(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.platformTypeUpperBound|, R|<local>/other|.R|kotlin/jvm/internal/TypeReference.platformTypeUpperBound|) && ==(this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.flags|, R|<local>/other|.R|kotlin/jvm/internal/TypeReference.flags|)
+                }
+                (R|<local>/other| !is R|kotlin/reflect/KType|) ->  {
+                    Boolean(false)
+                }
+                else ->  {
+                    Q|kotlin/jvm/internal/Reflection|.R|kotlin/jvm/internal/Reflection.areTypesEqual|(this@R|kotlin/jvm/internal/TypeReference|, R|<local>/other|)
+                }
+            }
+
         }
 
         public open override [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int| {

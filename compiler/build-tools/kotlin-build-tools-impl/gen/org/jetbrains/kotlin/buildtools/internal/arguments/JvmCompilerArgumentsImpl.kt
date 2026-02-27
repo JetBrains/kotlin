@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_EMIT_JVM_TYPE_ANNOTATIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ENHANCED_COROUTINES_DEBUGGING
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_FORCE_STDLIB_ONLY_REFLECTION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_FRIEND_PATHS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_GENERATE_STRICT_METADATA_VERSION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_IGNORED_ANNOTATIONS_FOR_BRIDGES
@@ -191,6 +192,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_EMIT_JVM_TYPE_ANNOTATIONS in this) { arguments.emitJvmTypeAnnotations = get(X_EMIT_JVM_TYPE_ANNOTATIONS)}
     if (X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL in this) { arguments.enhanceTypeParameterTypesToDefNotNull = get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL)}
     if (X_ENHANCED_COROUTINES_DEBUGGING in this) { arguments.enhancedCoroutinesDebugging = get(X_ENHANCED_COROUTINES_DEBUGGING)}
+    if (X_FORCE_STDLIB_ONLY_REFLECTION in this) { arguments.forceStdlibOnlyReflection = get(X_FORCE_STDLIB_ONLY_REFLECTION)}
     if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (X_GENERATE_STRICT_METADATA_VERSION in this) { arguments.strictMetadataVersionSemantics = get(X_GENERATE_STRICT_METADATA_VERSION)}
     if (X_IGNORED_ANNOTATIONS_FOR_BRIDGES in this) { arguments.ignoredAnnotationsForBridges = get(X_IGNORED_ANNOTATIONS_FOR_BRIDGES) ?: emptyArray()}
@@ -277,6 +279,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_EMIT_JVM_TYPE_ANNOTATIONS] = arguments.emitJvmTypeAnnotations } catch (_: NoSuchMethodError) {  }
     try { this[X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL] = arguments.enhanceTypeParameterTypesToDefNotNull } catch (_: NoSuchMethodError) {  }
     try { this[X_ENHANCED_COROUTINES_DEBUGGING] = arguments.enhancedCoroutinesDebugging } catch (_: NoSuchMethodError) {  }
+    try { this[X_FORCE_STDLIB_ONLY_REFLECTION] = arguments.forceStdlibOnlyReflection } catch (_: NoSuchMethodError) {  }
     try { this[X_FRIEND_PATHS] = arguments.friendPaths.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_GENERATE_STRICT_METADATA_VERSION] = arguments.strictMetadataVersionSemantics } catch (_: NoSuchMethodError) {  }
     try { this[X_IGNORED_ANNOTATIONS_FOR_BRIDGES] = arguments.ignoredAnnotationsForBridges } catch (_: NoSuchMethodError) {  }
@@ -408,6 +411,9 @@ internal class JvmCompilerArgumentsImpl(
 
     public val X_ENHANCED_COROUTINES_DEBUGGING: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_ENHANCED_COROUTINES_DEBUGGING")
+
+    public val X_FORCE_STDLIB_ONLY_REFLECTION: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_FORCE_STDLIB_ONLY_REFLECTION")
 
     public val X_FRIEND_PATHS: JvmCompilerArgument<List<java.nio.`file`.Path>> =
         JvmCompilerArgument("X_FRIEND_PATHS")
