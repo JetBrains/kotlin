@@ -26,8 +26,9 @@ internal fun WasmCompilerResult.writeTo(outputDir: File, outputFilenameBase: Str
 }
 
 class WasmBoxRunner(
-    testServices: TestServices
-) : WasmBoxRunnerBase(testServices) {
+    testServices: TestServices,
+    executeWithV8Only: Boolean = false,
+) : WasmBoxRunnerBase(testServices, executeWithV8Only) {
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {

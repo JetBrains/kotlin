@@ -81,7 +81,7 @@ open class AbstractCustomWasmJsCompilerFirstStageTest(val testDataRoot: String =
         facadeStep(::WasmBackendFacade)
 
         wasmArtifactsHandlersStep {
-            useHandlers(::WasmBoxRunner)
+            useHandlers(::WasmBoxRunner.bind(/* executeWithV8Only */ true))
             useHandlers(::WasmIrHandler)
             useHandlers(::WasmDtsHandler)
         }

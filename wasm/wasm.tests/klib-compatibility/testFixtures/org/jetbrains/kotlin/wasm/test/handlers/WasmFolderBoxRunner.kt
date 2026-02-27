@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 class WasmFolderBoxRunner(
     testServices: TestServices
-) : WasmBoxRunnerBase(testServices) {
+) : WasmBoxRunnerBase(testServices, executeWithV8Only = true) {
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {

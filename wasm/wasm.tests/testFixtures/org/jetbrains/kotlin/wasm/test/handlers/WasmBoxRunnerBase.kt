@@ -16,8 +16,21 @@ import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
 abstract class WasmBoxRunnerBase(
-    testServices: TestServices
+    testServices: TestServices,
+    executeWithV8Only: Boolean = false,
 ) : AbstractWasmArtifactsCollector(testServices) {
+    private val wasmEngines = if (executeWithV8Only) {
+        // JavaScriptCore may glitch on Linux CI: `libglib-2.0.so.0: file too short`
+        // however this engine can be avoided for some testrunners like klib compatibility tests,
+        // where it's enough to execute an image only on any one of engine, which is the reliable and simple to setup, like V8.
+        listOfNotNull(WasmVM.V8)
+    } else {
+        // KT-82392 [Wasm] Investigate and fix JSC test run on windows
+        val jscOfNotWindows = WasmVM.JavaScriptCore.takeIf {
+            !System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
+        }
+        listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey, jscOfNotWindows)
+    }
 
     protected fun saveAdditionalFilesAndRun(
         outputDir: File,
@@ -127,12 +140,7 @@ abstract class WasmBoxRunnerBase(
 
         val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
 
-        // KT-82392 [Wasm] Investigate and fix JSC test run on windows
-        val jscOfNotWindows = WasmVM.JavaScriptCore.takeIf {
-            !System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
-        }
-
-        return listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey, jscOfNotWindows)
+        return wasmEngines
             .mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,

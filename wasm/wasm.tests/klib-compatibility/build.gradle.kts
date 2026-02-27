@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
 
@@ -25,8 +24,6 @@ node {
 }
 
 configureWasmEngineRepositories()
-project.setupJscTasks()
-project.setupSpiderMonkeyTasks()
 
 dependencies {
     testFixturesApi(platform(libs.junit.bom))
@@ -79,8 +76,6 @@ fun Project.customCompilerTest(
             property.set("kotlin.wasm.test.node.dir")
             buildDirectory.set(node.nodeProjectDir)
         }
-        setupJsc()
-        setupSpiderMonkey()
         with(binaryenKotlinBuild) {
             setupBinaryen()
         }
@@ -157,201 +152,7 @@ fun Project.configureWasmEngineRepositories() {
             metadataSources { artifact() }
             content { includeModule("org.mozilla", "jsshell") }
         }
-        ivy {
-            url = URI("https://packages.jetbrains.team/files/p/kt/kotlin-file-dependencies/javascriptcore/")
-            patternLayout {
-                artifact("[classifier]_[revision].zip")
-            }
-            metadataSources { artifact() }
-            content { includeModule("org.jsc", "jsc") }
-        }
         githubRelease("WasmEdge", "WasmEdge", groupAlias = "org.wasmedge", revisionPrefix = "")
         githubRelease("bytecodealliance", "wasmtime", groupAlias = "dev.wasmtime")
     }
 }
-
-abstract class CreateJscRunner : DefaultTask() {
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val inputDirectory: DirectoryProperty
-
-    @get:OutputFile
-    abstract val outputFile: RegularFileProperty
-
-    @get:Input
-    abstract val osTypeName: Property<OsName>
-
-    @TaskAction
-    fun action() {
-        val jscBinariesDir = inputDirectory.get().asFile.let { dir ->
-            when (osTypeName.get()) {
-                OsName.MAC -> dir.resolve("Release")
-                OsName.LINUX -> dir
-                OsName.WINDOWS -> dir.resolve("bin")
-                else -> error("unsupported os name")
-            }
-        }
-
-        val runnerContent = getJscRunnerContent(jscBinariesDir, osTypeName.get())
-        val outputFile = outputFile.get().asFile
-        with(outputFile) {
-            writeText(runnerContent)
-            setExecutable(true)
-        }
-    }
-
-    private fun getJscRunnerContent(jscBinariesDir: File, osTypeName: OsName) = when (osTypeName) {
-        OsName.MAC ->
-            """#!/usr/bin/env bash
-DYLD_FRAMEWORK_PATH="$jscBinariesDir" DYLD_LIBRARY_PATH="$jscBinariesDir" "$jscBinariesDir/jsc" "$@"
-"""
-        OsName.LINUX ->
-            """#!/usr/bin/env bash
-LD_LIBRARY_PATH="$jscBinariesDir/lib" exec "$jscBinariesDir/lib/ld-linux-x86-64.so.2" "$jscBinariesDir/bin/jsc" "$@"
-"""
-        OsName.WINDOWS ->
-            """@echo off
-"$jscBinariesDir\\jsc.exe" %*
-"""
-        else -> error("unsupported os type $osTypeName")
-    }
-}
-
-val Project.jslibs: VersionCatalog
-    get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
-
-fun Project.setupJscTasks() {
-    val jscOsDependentRevision = when (currentOsType.name) {
-        OsName.MAC -> jslibs.findVersion("jscSequoia")
-        OsName.LINUX -> jslibs.findVersion("jscLinux")
-        OsName.WINDOWS -> jslibs.findVersion("jscWindows")
-        else -> error("unsupported os type $currentOsType")
-    }.get().requiredVersion
-
-    val jscOsDependentClassifier = when (currentOsType.name) {
-        OsName.MAC -> "sequoia"
-        OsName.LINUX -> "linux64"
-        OsName.WINDOWS -> "win64"
-        else -> error("unsupported os type $currentOsType")
-    }
-
-    val jsc by configurations.creating {
-        isCanBeResolved = true
-        isCanBeConsumed = false
-    }
-
-    dependencies {
-        add("jsc", "org.jsc:jsc:$jscOsDependentRevision:$jscOsDependentClassifier")
-
-        add("implicitDependencies", "org.jsc:jsc:${jslibs.findVersion("jscSequoia").get().requiredVersion}:sequoia")
-        add("implicitDependencies", "org.jsc:jsc:${jslibs.findVersion("jscLinux").get().requiredVersion}:linux64")
-        add("implicitDependencies", "org.jsc:jsc:${jslibs.findVersion("jscWindows").get().requiredVersion}:win64")
-    }
-
-    val toolsDirectory = layout.buildDirectory.dir("tools")
-    val jscDirectory = toolsDirectory.map { it.dir("JavaScriptCore").asFile }
-    val unzipJsc by tasks.registering(org.gradle.api.tasks.Copy::class) {
-        dependsOn(jsc)
-        from({
-            zipTree(jsc.singleFile)
-        })
-
-        into(jscDirectory.map { it.resolve("jsc-$jscOsDependentClassifier-$jscOsDependentRevision") })
-    }
-
-    tasks.register<CreateJscRunner>("createJscRunner") {
-        osTypeName.set(currentOsType.name)
-
-        val runnerFileName = if (currentOsType.name == OsName.WINDOWS) "runJsc.cmd" else "runJsc"
-        val runnerFilePath = jscDirectory.map { it.resolve(runnerFileName) }
-        outputFile.fileProvider(runnerFilePath)
-
-        inputDirectory.set(project.layout.dir(unzipJsc.map { it.destinationDir }))
-    }
-}
-
-fun Project.setupSpiderMonkeyTasks() {
-    val jsShellVersion = jslibs.findVersion("jsShell").get()
-    val jsShellSuffix = when (currentOsType) {
-        OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
-        OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
-        OsType(OsName.MAC, OsArch.X86_64),
-        OsType(OsName.MAC, OsArch.ARM64) -> "mac"
-        OsType(OsName.WINDOWS, OsArch.X86_32) -> "win32"
-        OsType(OsName.WINDOWS, OsArch.X86_64) -> "win64"
-        else -> error("unsupported os type $currentOsType")
-    }
-
-    val jsShell by configurations.creating {
-        isCanBeResolved = true
-        isCanBeConsumed = false
-    }
-
-    dependencies {
-        add("jsShell", "org.mozilla:jsshell:${jsShellVersion.requiredVersion}:$jsShellSuffix@zip")
-
-        add("implicitDependencies", "org.mozilla:jsshell:${jsShellVersion.requiredVersion}:win64@zip")
-        add("implicitDependencies", "org.mozilla:jsshell:${jsShellVersion.requiredVersion}:linux-x86_64@zip")
-        add("implicitDependencies", "org.mozilla:jsshell:${jsShellVersion.requiredVersion}:mac@zip")
-    }
-
-    val toolsDirectory = layout.buildDirectory.dir("tools")
-    val jsShellDirectory = toolsDirectory.map { it.dir("JsShell").asFile }
-    val jsShellUnpackedDirectory = jsShellDirectory.map { it.resolve("jsshell-$jsShellSuffix-${jsShellVersion.requiredVersion}") }
-
-    tasks.register<org.gradle.api.tasks.Copy>("unzipJsShell") {
-        dependsOn(jsShell)
-        from({
-            zipTree(jsShell.singleFile)
-        })
-        into(jsShellUnpackedDirectory)
-    }
-}
-
-fun Test.setupJsc() {
-    val createJscRunner = project.tasks.named<CreateJscRunner>("createJscRunner")
-    val jscRunnerExecutablePath = createJscRunner.flatMap { it.outputFile }
-
-    jvmArgumentProviders += project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        classpath.from(jscRunnerExecutablePath)
-        property.set("javascript.engine.path.JavaScriptCore")
-    }
-}
-
-fun Test.setupSpiderMonkey() {
-    val unzipJsShell = project.tasks.named<Copy>("unzipJsShell")
-    val jsShellExecutablePath = unzipJsShell
-        .map { it.destinationDir }
-        .map { it.resolve("js") }
-
-    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        classpath.from(jsShellExecutablePath)
-        property.set("javascript.engine.path.SpiderMonkey")
-    }
-}
-
-enum class OsName { WINDOWS, MAC, LINUX, UNKNOWN }
-enum class OsArch { X86_32, X86_64, ARM64, UNKNOWN }
-data class OsType(val name: OsName, val arch: OsArch)
-
-val Project.currentOsType: OsType
-    get() = run {
-        val gradleOs = OperatingSystem.current()
-        val osName = when {
-            gradleOs.isMacOsX -> OsName.MAC
-            gradleOs.isWindows -> OsName.WINDOWS
-            gradleOs.isLinux -> OsName.LINUX
-            else -> OsName.UNKNOWN
-        }
-
-        val osArch = when (providers.systemProperty("sun.arch.data.model").get()) {
-            "32" -> OsArch.X86_32
-            "64" -> when (providers.systemProperty("os.arch").get().lowercase()) {
-                "aarch64" -> OsArch.ARM64
-                else -> OsArch.X86_64
-            }
-            else -> OsArch.UNKNOWN
-        }
-
-        OsType(osName, osArch)
-    }
