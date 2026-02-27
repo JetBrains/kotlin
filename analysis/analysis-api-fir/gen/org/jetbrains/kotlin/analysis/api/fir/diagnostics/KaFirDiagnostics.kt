@@ -3840,6 +3840,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val type: KaType
     }
 
+    interface UnsafeCastRelyingOnNull : KaFirDiagnostic<KtBinaryExpressionWithTypeRHS> {
+        override val diagnosticClass get() = UnsafeCastRelyingOnNull::class
+    }
+
+    interface SafeCastRelyingOnNull : KaFirDiagnostic<KtBinaryExpressionWithTypeRHS> {
+        override val diagnosticClass get() = SafeCastRelyingOnNull::class
+    }
+
     interface CastNeverSucceeds : KaFirDiagnostic<KtBinaryExpressionWithTypeRHS> {
         override val diagnosticClass get() = CastNeverSucceeds::class
     }
@@ -3861,6 +3869,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ImpossibleIsCheckWarning : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ImpossibleIsCheckWarning::class
+        val compileTimeCheckResult: Boolean
+    }
+
+    interface ImpossibleIsCheckRelyingOnNullError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ImpossibleIsCheckRelyingOnNullError::class
+        val compileTimeCheckResult: Boolean
+    }
+
+    interface ImpossibleIsCheckRelyingOnNullWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ImpossibleIsCheckRelyingOnNullWarning::class
         val compileTimeCheckResult: Boolean
     }
 

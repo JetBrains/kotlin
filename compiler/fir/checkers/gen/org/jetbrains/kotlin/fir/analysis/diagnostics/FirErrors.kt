@@ -917,10 +917,13 @@ object FirErrors : KtDiagnosticsContainer() {
 
     // Casts and is-checks
     val CANNOT_CHECK_FOR_ERASED: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("CANNOT_CHECK_FOR_ERASED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val UNSAFE_CAST_RELYING_ON_NULL: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNSAFE_CAST_RELYING_ON_NULL", WARNING, SourceElementPositioningStrategies.OPERATOR, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
+    val SAFE_CAST_RELYING_ON_NULL: KtDiagnosticFactory0 = KtDiagnosticFactory0("SAFE_CAST_RELYING_ON_NULL", WARNING, SourceElementPositioningStrategies.OPERATOR, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
     val CAST_NEVER_SUCCEEDS: KtDiagnosticFactory0 = KtDiagnosticFactory0("CAST_NEVER_SUCCEEDS", WARNING, SourceElementPositioningStrategies.OPERATOR, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
     val USELESS_CAST: KtDiagnosticFactory0 = KtDiagnosticFactory0("USELESS_CAST", WARNING, SourceElementPositioningStrategies.AS_TYPE, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
     val UNCHECKED_CAST: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("UNCHECKED_CAST", WARNING, SourceElementPositioningStrategies.AS_TYPE, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
     val IMPOSSIBLE_IS_CHECK: KtDiagnosticFactoryForDeprecation1<Boolean> = KtDiagnosticFactoryForDeprecation1("IMPOSSIBLE_IS_CHECK", TurnTypeCheckWarningsIntoErrors, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL: KtDiagnosticFactoryForDeprecation1<Boolean> = KtDiagnosticFactoryForDeprecation1("IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL", TurnTypeCheckWarningsIntoErrors, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val USELESS_IS_CHECK: KtDiagnosticFactory1<Boolean> = KtDiagnosticFactory1("USELESS_IS_CHECK", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val IS_ENUM_ENTRY: KtDiagnosticFactory0 = KtDiagnosticFactory0("IS_ENUM_ENTRY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val DYNAMIC_NOT_ALLOWED: KtDiagnosticFactory0 = KtDiagnosticFactory0("DYNAMIC_NOT_ALLOWED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())

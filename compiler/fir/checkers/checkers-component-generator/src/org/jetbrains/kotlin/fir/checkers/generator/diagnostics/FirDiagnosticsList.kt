@@ -1911,6 +1911,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CANNOT_CHECK_FOR_ERASED by error<PsiElement> {
             parameter<ConeKotlinType>("type")
         }
+        val UNSAFE_CAST_RELYING_ON_NULL by warning<KtBinaryExpressionWithTypeRHS>(PositioningStrategy.OPERATOR)
+        val SAFE_CAST_RELYING_ON_NULL by warning<KtBinaryExpressionWithTypeRHS>(PositioningStrategy.OPERATOR)
         val CAST_NEVER_SUCCEEDS by warning<KtBinaryExpressionWithTypeRHS>(PositioningStrategy.OPERATOR)
         val USELESS_CAST by warning<KtBinaryExpressionWithTypeRHS>(PositioningStrategy.AS_TYPE)
         val UNCHECKED_CAST by warning<KtBinaryExpressionWithTypeRHS>(PositioningStrategy.AS_TYPE) {
@@ -1918,6 +1920,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("targetType")
         }
         val IMPOSSIBLE_IS_CHECK by deprecationError<KtElement>(LanguageFeature.TurnTypeCheckWarningsIntoErrors) {
+            parameter<Boolean>("compileTimeCheckResult")
+        }
+        val IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL by deprecationError<KtElement>(LanguageFeature.TurnTypeCheckWarningsIntoErrors) {
             parameter<Boolean>("compileTimeCheckResult")
         }
         val USELESS_IS_CHECK by warning<KtElement> {

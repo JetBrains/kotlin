@@ -4602,6 +4602,16 @@ internal class CannotCheckForErasedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CannotCheckForErased
 
+internal class UnsafeCastRelyingOnNullImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtBinaryExpressionWithTypeRHS>(firDiagnostic, token), KaFirDiagnostic.UnsafeCastRelyingOnNull
+
+internal class SafeCastRelyingOnNullImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtBinaryExpressionWithTypeRHS>(firDiagnostic, token), KaFirDiagnostic.SafeCastRelyingOnNull
+
 internal class CastNeverSucceedsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -4630,6 +4640,18 @@ internal class ImpossibleIsCheckWarningImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImpossibleIsCheckWarning
+
+internal class ImpossibleIsCheckRelyingOnNullErrorImpl(
+    override val compileTimeCheckResult: Boolean,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImpossibleIsCheckRelyingOnNullError
+
+internal class ImpossibleIsCheckRelyingOnNullWarningImpl(
+    override val compileTimeCheckResult: Boolean,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImpossibleIsCheckRelyingOnNullWarning
 
 internal class UselessIsCheckImpl(
     override val compileTimeCheckResult: Boolean,

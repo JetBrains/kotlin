@@ -408,6 +408,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INACCESSIBLE_OUTER_CLASS_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
@@ -747,6 +748,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_VALUE_NOT_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_VALUE_NOT_USED_COERCION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ROOT_IDE_PACKAGE_DEPRECATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SAFE_CALLABLE_REFERENCE_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SAFE_CAST_RELYING_ON_NULL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_INHERITOR_IN_DIFFERENT_MODULE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_INHERITOR_IN_DIFFERENT_PACKAGE
@@ -835,6 +837,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_CALLABLE_REFERENCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_CAST_RELYING_ON_NULL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_INFIX_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_OPERATOR_CALL
@@ -3279,10 +3282,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         // Casts and is-checks
         map.put(CANNOT_CHECK_FOR_ERASED, "Cannot check for instance of erased type ''{0}''.", RENDER_TYPE)
+        map.put(UNSAFE_CAST_RELYING_ON_NULL, "This cast only succeeds when the expression is null. Consider rewriting it explicitly.")
+        map.put(SAFE_CAST_RELYING_ON_NULL, "This cast always returns null, even when it succeeds.")
         map.put(CAST_NEVER_SUCCEEDS, "This cast can never succeed.")
         map.put(USELESS_CAST, "No cast needed.")
         map.put(UNCHECKED_CAST, "Unchecked cast of ''{0}'' to ''{1}''.", RENDER_TYPE, RENDER_TYPE)
         map.put(IMPOSSIBLE_IS_CHECK, "Check for instance is always ''{0}''.", TO_STRING)
+        map.put(IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL, "This check only evaluates to ''{0}'' when the left-hand side is null. Consider rewriting it to an explicit null check.", TO_STRING)
         map.put(USELESS_IS_CHECK, "Check for instance is always ''{0}''.", TO_STRING)
         map.put(DYNAMIC_NOT_ALLOWED, "Dynamic types are not allowed in this position.")
         map.put(IS_ENUM_ENTRY, "'is' over enum entry is prohibited. Use comparison instead.")

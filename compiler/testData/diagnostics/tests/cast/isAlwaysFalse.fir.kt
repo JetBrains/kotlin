@@ -35,8 +35,8 @@ fun test_3(a: Any) {
         <!USELESS_IS_CHECK!>a is A<!> // always true
         a is B
 
-        <!USELESS_IS_CHECK!>a is AS<!> // always false
-        <!USELESS_IS_CHECK!>a is BS<!> // always false
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>a is AS<!> // always false
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>a is BS<!> // always false
 
         a is AI
         a is BI

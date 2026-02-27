@@ -14,7 +14,7 @@ inline fun <R> runIf(condition: Boolean, block: () -> R): R {
 fun returnsImpliesBeforeHoldsIn() {
     var a :Any? = materialize()
     require(a is Int)
-    runIf(<!USELESS_IS_CHECK!>a is String<!>) {
+    runIf(<!IMPOSSIBLE_IS_CHECK_WARNING!>a is String<!>) {
         a.length
     }
 }
@@ -22,7 +22,7 @@ fun returnsImpliesBeforeHoldsIn() {
 fun returnsImplesAfterHoldsIn() {
     var a: Any? = materialize()
     runIf(a is String) {
-        require(<!USELESS_IS_CHECK!>a is Int<!>)
+        require(<!IMPOSSIBLE_IS_CHECK_WARNING!>a is Int<!>)
         a.length
     }
 }
