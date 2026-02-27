@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.name.Name
 
 abstract class JavaTypeOverAst(
     val node: JavaSyntaxNode,
-    val source: CharSequence
+    val source: CharSequence,
 ) : JavaType, JavaAnnotationOwner {
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
     override val isDeprecatedInJavaDoc: Boolean get() = false
@@ -23,7 +23,7 @@ class JavaClassifierTypeOverAst(
     node: JavaSyntaxNode,
     source: CharSequence,
     private val localScope: LocalJavaScope? = null,
-    private val imports: JavaImports = JavaImports.EMPTY
+    private val imports: JavaImports = JavaImports.EMPTY,
 ) : JavaTypeOverAst(node, source), JavaClassifierType {
     private val rawTypeName: String by lazy {
         var text = node.text.trim()
@@ -41,7 +41,7 @@ class JavaClassifierTypeOverAst(
 
     override val classifier: JavaClassifier? by lazy {
         val parts = rawTypeName.split('.')
-        
+
         var current: JavaClassifier? = localScope?.findClass(Name.identifier(parts[0]))
 
         if (current is JavaClass) {
@@ -52,14 +52,14 @@ class JavaClassifierTypeOverAst(
                 if (current == null) return@lazy null
             }
         }
-        
+
         current
     }
-    
+
     override val classifierQualifiedName: String
         get() {
             val parts = rawTypeName.split('.')
-            
+
             val localBase = localScope?.findClass(Name.identifier(parts[0]))
             if (localBase != null) {
                 var current: JavaClass? = localBase
@@ -68,7 +68,7 @@ class JavaClassifierTypeOverAst(
                 }
                 return current?.fqName?.asString() ?: rawTypeName
             }
-            
+
             val qualified = imports.simpleImports[parts[0]]
             if (qualified != null) {
                 var result = qualified.asString()
@@ -77,19 +77,28 @@ class JavaClassifierTypeOverAst(
                 }
                 return result
             }
-            
+
             return rawTypeName
         }
-    
+
     override val presentableText: String get() = node.text
-    override val isRaw: Boolean get() = false
-    override val typeArguments: List<JavaType> get() = emptyList()
+    override val isRaw: Boolean by lazy {
+        val hasParameterList = node.findChildByType("REFERENCE_PARAMETER_LIST") != null
+        !hasParameterList && (classifier as? JavaClass)?.typeParameters?.isNotEmpty() == true
+    }
+    override val typeArguments: List<JavaType> by lazy {
+        val parameterList = node.findChildByType("REFERENCE_PARAMETER_LIST") ?: return@lazy emptyList()
+
+        parameterList.children
+            .filter { it.type.toString() == "TYPE" }
+            .map { typeNode -> createJavaType(typeNode, source, localScope, imports) }
+    }
 
     override val isResolved: Boolean
         get() {
-            return classifier != null 
-                || rawTypeName.contains('.')
-                || imports.simpleImports.containsKey(rawTypeName)
+            return classifier != null
+                    || rawTypeName.contains('.')
+                    || imports.simpleImports.containsKey(rawTypeName)
         }
 
     override fun resolve(tryResolve: (String) -> Boolean): String? {
@@ -97,10 +106,7 @@ class JavaClassifierTypeOverAst(
 
         val javaLangFqn = "java.lang.$simpleName"
 
-        if (JavaToKotlinClassMap.mapJavaToKotlin(FqName(javaLangFqn)) != null) {
-            return javaLangFqn
-        }
-        if (tryResolve(javaLangFqn)) {
+        if (JavaToKotlinClassMap.mapJavaToKotlin(FqName(javaLangFqn)) != null || tryResolve(javaLangFqn)) {
             return javaLangFqn
         }
 
@@ -116,14 +122,14 @@ class JavaClassifierTypeOverAst(
                 foundFqn = candidateFqn
             }
         }
-        
+
         return foundFqn
     }
 }
 
 class JavaPrimitiveTypeOverAst(
     node: JavaSyntaxNode,
-    source: CharSequence
+    source: CharSequence,
 ) : JavaTypeOverAst(node, source), JavaPrimitiveType {
     override val type: org.jetbrains.kotlin.builtins.PrimitiveType?
         get() = when (node.text) {
@@ -143,21 +149,21 @@ class JavaPrimitiveTypeOverAst(
 class JavaArrayTypeOverAst(
     node: JavaSyntaxNode,
     source: CharSequence,
-    override val componentType: JavaType
+    override val componentType: JavaType,
 ) : JavaTypeOverAst(node, source), JavaArrayType
 
 class JavaWildcardTypeOverAst(
     node: JavaSyntaxNode,
     source: CharSequence,
     override val bound: JavaType?,
-    override val isExtends: Boolean
+    override val isExtends: Boolean,
 ) : JavaTypeOverAst(node, source), JavaWildcardType
 
 fun createJavaType(
     node: JavaSyntaxNode,
     source: CharSequence,
     localScope: LocalJavaScope? = null,
-    imports: JavaImports = JavaImports.EMPTY
+    imports: JavaImports = JavaImports.EMPTY,
 ): JavaType {
     val typeNode = node.findChildByType("TYPE") ?: node
     val primitiveNode = typeNode.children.find { it.type.toString().endsWith("_KEYWORD") }
@@ -173,7 +179,7 @@ fun createJavaType(
 
 class JavaTypeParameterOverAst(
     node: JavaSyntaxNode,
-    source: CharSequence
+    source: CharSequence,
 ) : JavaElementOverAst(node, source), JavaTypeParameter {
     override val name: Name get() = Name.identifier(node.findChildByType("IDENTIFIER")?.text ?: "<error>")
     override val upperBounds: Collection<JavaClassifierType> get() = emptyList()

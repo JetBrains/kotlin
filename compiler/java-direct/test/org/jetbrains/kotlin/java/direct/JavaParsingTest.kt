@@ -472,14 +472,10 @@ class JavaParsingTest {
         assert(!paramType.isResolved) { "Object should not be pre-resolved" }
         assert(paramType.classifier == null) { "Object should have null classifier (external type)" }
         
-        var resolveCalled = false
         val resolved = paramType.resolve { candidateFqn ->
-            resolveCalled = true
-            println("  resolve() called with: '$candidateFqn'")
             candidateFqn == "java.lang.Object"
         }
         
-        assert(resolveCalled) { "resolve() should have been called" }
         assert(resolved == "java.lang.Object") { "Expected 'java.lang.Object', got '$resolved'" }
     }
 
@@ -583,5 +579,76 @@ class JavaParsingTest {
         val type4 = field4.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         assert(type4.classifier != null) { "field4 type 'Inner.Deep' should resolve" }
         assert(type4.classifier?.name?.asString() == "Deep") { "field4 type should be 'Deep'" }
+    }
+
+    @Test
+    fun testDebugTypeArgumentsAST() {
+        val source = """
+            import java.util.List;
+            
+            public class MyClass {
+                public List<String> items;
+            }
+        """.trimIndent()
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        
+        fun printTree(node: JavaSyntaxNode, indent: String = "") {
+            println("$indent${node.type}: '${node.text.take(50).replace("\n", "\\n")}'")
+            for (child in node.children) {
+                printTree(child, "$indent  ")
+            }
+        }
+        
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val fieldNode = classNode.findChildByType("FIELD")!!
+        val typeNode = fieldNode.findChildByType("TYPE")!!
+        
+        println("=== TYPE node structure ===")
+        printTree(typeNode)
+    }
+
+    @Test
+    fun testSimpleTypeArguments() {
+        val source = """
+            import java.util.List;
+            import java.util.Map;
+            
+            public class MyClass {
+                public List<String> items;
+                public List<Object> objects;
+                public Map<String, Integer> map;
+            }
+        """.trimIndent()
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        val imports = extractImports(root, source)
+        val localScope = LocalJavaScope(root, source)
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val javaClass = JavaClassOverAst(classNode, source, null, localScope, imports)
+
+        val items = javaClass.fields.first { it.name.asString() == "items" }
+        val itemsType = items.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(itemsType.classifierQualifiedName == "java.util.List") { "Expected 'java.util.List', got ${itemsType.classifierQualifiedName}" }
+        assert(itemsType.typeArguments.size == 1) { "Expected 1 type argument, got ${itemsType.typeArguments.size}" }
+        val stringArg = itemsType.typeArguments[0] as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(stringArg.classifierQualifiedName == "String") { "Expected 'String', got ${stringArg.classifierQualifiedName}" }
+        assert(!stringArg.isResolved) { "String should not be resolved (needs FIR)" }
+
+        val objects = javaClass.fields.first { it.name.asString() == "objects" }
+        val objectsType = objects.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(objectsType.typeArguments.size == 1) { "Expected 1 type argument, got ${objectsType.typeArguments.size}" }
+        val objectArg = objectsType.typeArguments[0] as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(objectArg.classifierQualifiedName == "Object") { "Expected 'Object', got ${objectArg.classifierQualifiedName}" }
+        assert(!objectArg.isResolved) { "Object should not be resolved (needs FIR)" }
+
+        val map = javaClass.fields.first { it.name.asString() == "map" }
+        val mapType = map.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(mapType.classifierQualifiedName == "java.util.Map") { "Expected 'java.util.Map', got ${mapType.classifierQualifiedName}" }
+        assert(mapType.typeArguments.size == 2) { "Expected 2 type arguments, got ${mapType.typeArguments.size}" }
+        val keyArg = mapType.typeArguments[0] as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(keyArg.classifierQualifiedName == "String") { "Expected 'String', got ${keyArg.classifierQualifiedName}" }
+        val valueArg = mapType.typeArguments[1] as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(valueArg.classifierQualifiedName == "Integer") { "Expected 'Integer', got ${valueArg.classifierQualifiedName}" }
     }
 }

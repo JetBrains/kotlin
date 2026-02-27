@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
@@ -64,8 +65,8 @@ class JavaClassOverAst(
             hasModifier("PUBLIC_KEYWORD") -> Visibilities.Public
             hasModifier("PROTECTED_KEYWORD") -> Visibilities.Protected
             hasModifier("PRIVATE_KEYWORD") -> Visibilities.Private
-            else -> JavaDescriptorVisibilities.PACKAGE_VISIBILITY
-        } as Visibility
+            else -> JavaVisibilities.PackageVisibility
+        }
 
     override val typeParameters: List<JavaTypeParameter>
         get() = node.findChildByType("TYPE_PARAMETER_LIST")?.getChildrenByType("TYPE_PARAMETER")?.map { JavaTypeParameterOverAst(it, source) } ?: emptyList()
