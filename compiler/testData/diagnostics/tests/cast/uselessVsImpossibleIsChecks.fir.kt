@@ -37,9 +37,9 @@ fun nullableUselessAs(a: A?) = a <!USELESS_CAST!>as A?<!>
 
 fun nullableUselessNullaleAs(a: A?) = a <!USELESS_CAST!>as? A?<!>
 
-fun nullableImpossibleAs(a: A?) = a <!USELESS_CAST!>as B?<!>
+fun nullableImpossibleAs(a: A?) = a <!CAST_NEVER_SUCCEEDS!>as<!> B?
 
-fun nullableImpossibleNullableAs(a: A?) = a <!USELESS_CAST!>as? B?<!>
+fun nullableImpossibleNullableAs(a: A?) = a <!CAST_NEVER_SUCCEEDS!>as?<!> B?
 
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, isExpression */
