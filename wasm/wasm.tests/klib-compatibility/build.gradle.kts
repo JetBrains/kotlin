@@ -1,35 +1,16 @@
-import org.gradle.internal.os.OperatingSystem
-import java.net.URI
-
 plugins {
     kotlin("jvm")
     alias(libs.plugins.gradle.node)
     id("java-test-fixtures")
     id("d8-configuration")
-    id("nodejs-configuration")
-    id("binaryen-configuration")
     id("project-tests-convention")
     id("test-inputs-check")
 }
-
-val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
-
-node {
-    download.set(true)
-    version.set(nodejsVersion)
-    nodeProjectDir.set(layout.buildDirectory.dir("node"))
-    if (cacheRedirectorEnabled) {
-        distBaseUrl.set("https://cache-redirector.jetbrains.com/nodejs.org/dist")
-    }
-}
-
-configureWasmEngineRepositories()
 
 dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(libs.junit.vintage.engine)
 
     testFixturesApi(testFixtures(project(":wasm:wasm.tests")))
 }
@@ -75,9 +56,6 @@ fun Project.customCompilerTest(
         jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
             property.set("kotlin.wasm.test.node.dir")
             buildDirectory.set(node.nodeProjectDir)
-        }
-        with(binaryenKotlinBuild) {
-            setupBinaryen()
         }
         body()
     }
@@ -137,22 +115,4 @@ projectTests {
 
     withWasmRuntime()
     withStdlibCommon()
-}
-
-
-// TODO KT-84080: unify the following duplicated code with `wasm/wasm.tests/build.gradle.kts`,
-//      probably by moving it to `repo/gradle-build-conventions/project-tests-convention/src/main/kotlin/wasmTest.kt`
-fun Project.configureWasmEngineRepositories() {
-    repositories {
-        ivy {
-            url = URI("https://archive.mozilla.org/pub/firefox/releases/")
-            patternLayout {
-                artifact("[revision]/jsshell/[artifact]-[classifier].[ext]")
-            }
-            metadataSources { artifact() }
-            content { includeModule("org.mozilla", "jsshell") }
-        }
-        githubRelease("WasmEdge", "WasmEdge", groupAlias = "org.wasmedge", revisionPrefix = "")
-        githubRelease("bytecodealliance", "wasmtime", groupAlias = "dev.wasmtime")
-    }
 }
