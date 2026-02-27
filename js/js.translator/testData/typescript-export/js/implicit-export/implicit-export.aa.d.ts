@@ -103,12 +103,12 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => TheNewException;
             }
         }
-        interface Service<Self extends foo.Service<Self, TEvent>, TEvent extends foo.Event<Self>> {
+        interface Service<Self extends foo.Service<Self, TEvent>, in TEvent extends foo.Event<Self>> {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.Service": unique symbol;
             };
         }
-        interface Event<TService extends foo.Service<TService, any /*UnknownType **/>> {
+        interface Event<out TService extends foo.Service<TService, any /*UnknownType **/>> {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.Event": unique symbol;
             };

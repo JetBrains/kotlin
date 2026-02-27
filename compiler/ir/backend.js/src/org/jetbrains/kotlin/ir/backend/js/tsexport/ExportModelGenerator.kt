@@ -874,7 +874,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         // First, create all the exported type parameters without constraints, because constraints may reference a type parameter
         // that we haven't yet met.
         for (tp in newTypeParameters) {
-            this[tp.symbol] = ExportedTypeParameter(nameTable.declareFreshName(tp.symbol, tp.name.identifier))
+            this[tp.symbol] = ExportedTypeParameter(nameTable.declareFreshName(tp.symbol, tp.name.identifier), tp.variance.exportedVariance)
         }
 
         var shouldRecomputeOuterConstraints = false

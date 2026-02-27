@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Primitive
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedTypeParameter
+import org.jetbrains.kotlin.ir.backend.js.tsexport.exportedVariance
 import org.jetbrains.kotlin.js.util.NameTable
 
 internal typealias TypeParameterScope = Map<KaTypeParameterSymbol, ExportedTypeParameter>
@@ -72,7 +73,7 @@ internal fun TypeParameterScope(
         // First, create all the exported type parameters without constraints, because constraints may reference a type parameter
         // that we haven't yet met.
         for (tp in newTypeParameters) {
-            this[tp] = ExportedTypeParameter(nameTable.declareFreshName(tp, tp.name.identifier))
+            this[tp] = ExportedTypeParameter(nameTable.declareFreshName(tp, tp.name.identifier), tp.variance.exportedVariance)
         }
 
         var shouldRecomputeOuterConstraints = false

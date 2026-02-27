@@ -1,6 +1,6 @@
 type Nullable<T> = T | null | undefined
 declare function KtSingleton<T>(): T & (abstract new() => any);
-export declare interface KtList<E> /* extends Collection<E> */ {
+export declare interface KtList<out E> /* extends Collection<E> */ {
     asJsReadonlyArrayView(): ReadonlyArray<E>;
     readonly __doNotUseOrImplementIt: {
         readonly "kotlin.collections.KtList": unique symbol;

@@ -2,7 +2,7 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace kotlin.collections {
-        interface KtList<E> /* extends kotlin.collections.Collection<E> */ {
+        interface KtList<out E> /* extends kotlin.collections.Collection<E> */ {
             asJsReadonlyArrayView(): ReadonlyArray<E>;
             readonly __doNotUseOrImplementIt: {
                 readonly "kotlin.collections.KtList": unique symbol;

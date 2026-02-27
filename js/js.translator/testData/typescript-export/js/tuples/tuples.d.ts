@@ -2,7 +2,7 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace kotlin {
-        class Pair<A, B> /* implements kotlin.io.Serializable */ {
+        class Pair<out A, out B> /* implements kotlin.io.Serializable */ {
             constructor(first: A, second: B);
             get first(): A;
             get second(): B;
@@ -17,7 +17,7 @@ declare namespace JS_TESTS {
                 const constructor: abstract new <A, B>() => Pair<A, B>;
             }
         }
-        class Triple<A, B, C> /* implements kotlin.io.Serializable */ {
+        class Triple<out A, out B, out C> /* implements kotlin.io.Serializable */ {
             constructor(first: A, second: B, third: C);
             get first(): A;
             get second(): B;

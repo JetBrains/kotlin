@@ -246,7 +246,12 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             )
             nonNullType.isNothing() -> ExportedType.Primitive.Nothing
 
-            classifier is IrTypeParameterSymbol -> ExportedType.TypeParameterRef(ExportedTypeParameter(classifier.owner.name.identifier))
+            classifier is IrTypeParameterSymbol -> ExportedType.TypeParameterRef(
+                ExportedTypeParameter(
+                    classifier.owner.name.identifier,
+                    classifier.owner.variance.exportedVariance
+                )
+            )
 
             classifier is IrClassSymbol -> {
                 val klass = classifier.owner
@@ -300,6 +305,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
 
         return ExportedTypeParameter(
             typeParameter.name.identifier,
+            typeParameter.variance.exportedVariance,
             constraint.run {
                 when (size) {
                     0 -> null

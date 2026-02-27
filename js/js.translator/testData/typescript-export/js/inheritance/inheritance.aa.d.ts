@@ -10,7 +10,7 @@ declare namespace JS_TESTS {
         function getC(): foo.I3;
         function acceptForthLike<T extends unknown/* foo.Forth<string> */>(forth: T): void;
         function acceptMoreGenericForthLike<T extends unknown/* foo.IB */ & unknown/* foo.IC */ & unknown/* foo.Second */>(forth: T): void;
-        interface I<T, S, U> {
+        interface I<T, out S, in U> {
             z(u: U): void;
             x?: T;
             readonly y?: S;
