@@ -526,6 +526,7 @@ private fun convertJavaFieldToFir(
             containingClassForStaticMemberAttr = classId.toLookupTag()
             // TODO: check if this works properly with annotations that take the enum class as an argument
             setAnnotationsFromJava(session, fakeSource, javaField)
+            replaceDeprecationsProvider(annotations.getDeprecationsProviderFromAnnotations(session, fromJava = true))
         }
         else -> buildJavaField {
             this.containingClassSymbol = containingClassSymbol

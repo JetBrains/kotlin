@@ -13,7 +13,7 @@ public enum MyJavaEnum {
 
 fun test() {
     MyJavaEnum.GOOD_JAVA_VALUE
-    MyJavaEnum.DEPRECATED_JAVA_VALUE
+    MyJavaEnum.<!DEPRECATION!>DEPRECATED_JAVA_VALUE<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, javaProperty, javaType */
