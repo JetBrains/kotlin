@@ -1,0 +1,27 @@
+$schema: subsystems.schema.json
+
+Compiler:
+  home: "compiler"
+  include:
+    - "compiler/**"
+    - "core/**"
+
+  subsystems:
+    Wasm:
+      home: "wasm"
+      include:
+        - "wasm/**"
+    Js:
+      home: "js"
+      include:
+        - "js/**"
+    Native:
+      home: "kotlin-native"
+      include:
+        - "native/**"
+        - "kotlin-native/**"
+
+Gradle:
+  home: "libraries/tools/kotlin-gradle-plugin"
+  include:
+    - "libraries/tools/*gradle*/**"

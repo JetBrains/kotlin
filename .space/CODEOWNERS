@@ -88,6 +88,7 @@
 
 /build-common/ "Kotlin Build Tools" "Build Tools API"
 
+/compiler/contracts/ "Kotlin Compiler"
 /compiler/AGENTS.md "Kotlin Compiler"
 /compiler/CLAUDE.md "Kotlin Compiler"
 /compiler/arguments.common/ "Kotlin Frontend" "Kotlin Build Tools"

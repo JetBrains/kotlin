@@ -1,0 +1,2 @@
+org/jetbrains/kotlin/gradle/IncrementalCompilationBaseIT
+org/jetbrains/kotlin/gradle/ScriptingIT

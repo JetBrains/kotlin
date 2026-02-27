@@ -1,0 +1,1 @@
+org/jetbrains/kotlin/testFederation/PseudoTest#compiler contract test()V

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.jetbrains.kotlin.testFederation.JsContract
+import org.jetbrains.kotlin.testFederation.NativeContract
 import org.junit.jupiter.api.Tag
 
 /**
@@ -41,6 +43,7 @@ annotation class JvmGradlePluginTests
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("JsKGP")
+@JsContract
 annotation class JsGradlePluginTests
 
 /**
@@ -53,6 +56,7 @@ annotation class JsGradlePluginTests
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("NativeKGP")
+@NativeContract
 annotation class NativeGradlePluginTests
 
 /**

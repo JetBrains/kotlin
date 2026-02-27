@@ -411,6 +411,7 @@ fun Project.configureTests() {
             ":tools:jdk-api-validator",
             ":wasm:wasm.ir",
             ":compiler:test-engine-sandbox",
+            ":repo:test-federation-runtime"
         )
         val projectPath = project.path
         val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check")
