@@ -106,15 +106,16 @@ private class IrLinkerFakeOverrideBuilderStrategy(
 
     override fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass) {
         if (!clazz.isEligibleForPartialLinkage()) return
-        val nonAbstractOverrides = fakeOverride.collectRealOverrides { it.modality == Modality.ABSTRACT }
+        val overridesWithImplementation =
+            fakeOverride.collectRealOverrides { it.modality == Modality.ABSTRACT && (it as? IrFunction)?.body != null }
 
         val problem = when {
-            nonAbstractOverrides.isEmpty() -> {
+            overridesWithImplementation.isEmpty() -> {
                 runIf(!clazz.delegatesToNothing && clazz.modality != Modality.ABSTRACT && clazz.modality != Modality.SEALED) {
                     PartiallyLinkedDeclarationOrigin.UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER
                 }
             }
-            nonAbstractOverrides.size > 1 -> {
+            overridesWithImplementation.size > 1 -> {
                 /**
                  * The function returns if fake override has unique implementation in super classes to be chosen on call
                  *
@@ -126,7 +127,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
                  * This is done to mimic jvm behaviour.
                  */
 
-                runIf(nonAbstractOverrides.all { it.parentAsClass.isInterface && !isMultipleInheritedImplementationsAllowed(it) }) {
+                runIf(overridesWithImplementation.all { it.parentAsClass.isInterface && !isMultipleInheritedImplementationsAllowed(it) }) {
                     PartiallyLinkedDeclarationOrigin.AMBIGUOUS_NON_OVERRIDDEN_CALLABLE_MEMBER
                 }
             }
