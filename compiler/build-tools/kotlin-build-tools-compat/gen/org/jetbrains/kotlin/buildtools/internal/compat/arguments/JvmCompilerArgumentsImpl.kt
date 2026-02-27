@@ -111,8 +111,12 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCompilerArguments,
-    JvmCompilerArguments.Builder, DeepCopyable<JvmCompilerArgumentsImpl> {
+internal class JvmCompilerArgumentsImpl(
+  private val adapter: JvmCompilerArgumentValueAdapter? = null,
+) : CommonCompilerArgumentsImpl(),
+    JvmCompilerArguments,
+    JvmCompilerArguments.Builder,
+    DeepCopyable<JvmCompilerArgumentsImpl> {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
   init {
     applyCompilerArguments(K2JVMCompilerArguments())
@@ -121,7 +125,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
   @Suppress("UNCHECKED_CAST")
   override operator fun <V> `get`(key: JvmCompilerArguments.JvmCompilerArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return optionsMap[key.id] as V
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
   }
 
   override operator fun <V> `set`(key: JvmCompilerArguments.JvmCompilerArgument<V>, `value`: V) {
@@ -129,7 +133,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     if (key.availableSinceVersion > KotlinReleaseVersion(currentKotlinVersion.major, currentKotlinVersion.minor, currentKotlinVersion.patch)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = `value`
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
   }
 
   override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
@@ -143,7 +147,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
 
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
-  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl().also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }
+  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(adapter).also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }
 
   override fun build(): JvmCompilerArguments = deepCopy()
 
@@ -199,7 +203,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     if (X_NO_UNIFIED_NULL_CHECKS in this) { arguments.noUnifiedNullChecks = get(X_NO_UNIFIED_NULL_CHECKS)}
     if (X_NULLABILITY_ANNOTATIONS in this) { arguments.nullabilityAnnotations = get(X_NULLABILITY_ANNOTATIONS)}
     try { if (X_OUTPUT_BUILTINS_METADATA in this) { arguments.outputBuiltinsMetadata = get(X_OUTPUT_BUILTINS_METADATA)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_OUTPUT_BUILTINS_METADATA. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
-    if (X_PROFILE in this) { try { arguments.profileCompilerCommand = get(X_PROFILE)?.toArgumentString() } catch(e: ClassCastException) { arguments.applyProfileCompilerCommand(get(X_PROFILE)) }}
+    if (X_PROFILE in this) { arguments.profileCompilerCommand = get(X_PROFILE)?.toArgumentString()}
     if (X_SAM_CONVERSIONS in this) { arguments.samConversions = get(X_SAM_CONVERSIONS)}
     if (X_SANITIZE_PARENTHESES in this) { arguments.sanitizeParentheses = get(X_SANITIZE_PARENTHESES)}
     if (X_SCRIPT_RESOLVER_ENVIRONMENT in this) { arguments.scriptResolverEnvironment = get(X_SCRIPT_RESOLVER_ENVIRONMENT)}
@@ -224,7 +228,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     if (EXPRESSION in this) { arguments.expression = get(EXPRESSION)}
     if (INCLUDE_RUNTIME in this) { arguments.includeRuntime = get(INCLUDE_RUNTIME)}
     if (JAVA_PARAMETERS in this) { arguments.javaParameters = get(JAVA_PARAMETERS)}
-    if (JDK_HOME in this) { try { arguments.jdkHome = get(JDK_HOME)?.absolutePathStringOrThrow() } catch(e: ClassCastException) { arguments.applyJdkHome(get(JDK_HOME)) }}
+    if (JDK_HOME in this) { arguments.jdkHome = get(JDK_HOME)?.absolutePathStringOrThrow()}
     try { if (JVM_DEFAULT in this) { arguments.jvmDefaultStable = get(JVM_DEFAULT)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: JVM_DEFAULT. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     if (JVM_TARGET in this) { arguments.jvmTarget = get(JVM_TARGET)?.stringValue}
     if (MODULE_NAME in this) { arguments.moduleName = get(MODULE_NAME)}
@@ -284,7 +288,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     try { this[X_NO_UNIFIED_NULL_CHECKS] = arguments.noUnifiedNullChecks } catch (_: NoSuchMethodError) {  }
     try { this[X_NULLABILITY_ANNOTATIONS] = arguments.nullabilityAnnotations } catch (_: NoSuchMethodError) {  }
     try { this[X_OUTPUT_BUILTINS_METADATA] = arguments.outputBuiltinsMetadata } catch (_: NoSuchMethodError) {  }
-    try { try { this[X_PROFILE] = arguments.profileCompilerCommand?.toXprofile() } catch (e: ClassCastException) { applyProfileCompilerCommand(this[X_PROFILE], arguments) } } catch (_: NoSuchMethodError) {  }
+    try { this[X_PROFILE] = arguments.profileCompilerCommand?.toXprofile() } catch (_: NoSuchMethodError) {  }
     try { this[X_SAM_CONVERSIONS] = arguments.samConversions } catch (_: NoSuchMethodError) {  }
     try { this[X_SANITIZE_PARENTHESES] = arguments.sanitizeParentheses } catch (_: NoSuchMethodError) {  }
     try { this[X_SCRIPT_RESOLVER_ENVIRONMENT] = arguments.scriptResolverEnvironment } catch (_: NoSuchMethodError) {  }
@@ -309,7 +313,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     try { this[EXPRESSION] = arguments.expression } catch (_: NoSuchMethodError) {  }
     try { this[INCLUDE_RUNTIME] = arguments.includeRuntime } catch (_: NoSuchMethodError) {  }
     try { this[JAVA_PARAMETERS] = arguments.javaParameters } catch (_: NoSuchMethodError) {  }
-    try { try { this[JDK_HOME] = arguments.jdkHome?.let { Path(it) } } catch (e: ClassCastException) { applyJdkHome(this[JDK_HOME], arguments) } } catch (_: NoSuchMethodError) {  }
+    try { this[JDK_HOME] = arguments.jdkHome?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[JVM_DEFAULT] = arguments.jvmDefaultStable } catch (_: NoSuchMethodError) {  }
     try { this[JVM_TARGET] = arguments.jvmTarget?.let { JvmTarget.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -jvm-target value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
