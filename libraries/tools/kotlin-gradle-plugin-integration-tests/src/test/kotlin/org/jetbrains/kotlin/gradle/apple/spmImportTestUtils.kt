@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.util.runProcess
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
@@ -55,6 +56,8 @@ fun createLocalSwiftPackage(
             """.trimIndent()
     )
 }
+
+// region swift package description DTOs
 
 @Serializable
 data class SwiftPackageDescription(
@@ -129,27 +132,33 @@ data class SwiftPackageTarget(
     val type: String,
 )
 
-private val swiftPackageJson = Json {
+// endregion
+
+private val appleToolJson = Json {
     ignoreUnknownKeys = true
 }
 
-private inline fun <reified T> runSwiftPackageCommand(
-    packagePath: Path,
+private inline fun <reified T> runAppleToolCommand(
+    workingDir: Path,
     command: List<String>,
+    outputFile: File? = null,
 ): T {
     val result = runProcess(
         cmd = command,
-        workingDir = packagePath.toFile(),
+        workingDir = workingDir.toFile(),
     )
     require(result.isSuccessful) {
-        "Failed to run swift package command at $packagePath: ${result.output}"
+        "Failed to run command ${command.joinToString(" ")} at $workingDir: ${result.output}"
     }
-    return swiftPackageJson.decodeFromString<T>(result.output)
+    val jsonContent = outputFile?.readText() ?: result.output
+    return appleToolJson.decodeFromString<T>(jsonContent)
 }
 
 fun describeSwiftPackage(packagePath: Path): SwiftPackageDescription {
-    return runSwiftPackageCommand(packagePath, listOf("swift", "package", "describe", "--type", "json"))
+    return runAppleToolCommand(packagePath, listOf("swift", "package", "describe", "--type", "json"))
 }
+
+// region swift package dump DTOs
 
 @Serializable
 data class SwiftPackageDump(
@@ -188,6 +197,86 @@ data class SwiftPackageDumpUnsafeFlags(
     @SerialName("_0") val flags: List<String> = emptyList(),
 )
 
+// endregion
+
 fun dumpSwiftPackage(packagePath: Path): SwiftPackageDump {
-    return runSwiftPackageCommand(packagePath, listOf("swift", "package", "dump-package"))
+    return runAppleToolCommand(packagePath, listOf("swift", "package", "dump-package"))
+}
+
+// region xcodebuild PIF dump DTOs
+
+@Serializable
+data class XcodebuildPIFEntry(
+    val signature: String,
+    val type: String,
+    val contents: XcodebuildPIFContents,
+)
+
+@Serializable
+data class XcodebuildPIFContents(
+    val guid: String,
+    val name: String? = null,
+    val path: String? = null,
+    val projectDirectory: String? = null,
+    val projectIsPackage: String? = null,
+    val projectName: String? = null,
+    val targets: List<String> = emptyList(),
+    val projects: List<String> = emptyList(),
+    val dependencies: List<XcodebuildPIFDependency> = emptyList(),
+    val buildConfigurations: List<XcodebuildPIFBuildConfiguration> = emptyList(),
+    val buildPhases: List<XcodebuildPIFBuildPhase> = emptyList(),
+    val productReference: XcodebuildPIFProductReference? = null,
+    val productTypeIdentifier: String? = null,
+    val type: String? = null,
+    val frameworksBuildPhase: XcodebuildPIFFrameworksBuildPhase? = null,
+)
+
+@Serializable
+data class XcodebuildPIFDependency(
+    val guid: String,
+    val name: String? = null,
+    val platformFilters: List<String> = emptyList(),
+)
+
+@Serializable
+data class XcodebuildPIFBuildConfiguration(
+    val guid: String,
+    val name: String,
+    val buildSettings: Map<String, kotlinx.serialization.json.JsonElement> = emptyMap(),
+)
+
+@Serializable
+data class XcodebuildPIFBuildPhase(
+    val guid: String,
+    val type: String,
+    val buildFiles: List<XcodebuildPIFBuildFile> = emptyList(),
+)
+
+@Serializable
+data class XcodebuildPIFBuildFile(
+    val guid: String,
+    val fileReference: String? = null,
+    val targetReference: String? = null,
+    val platformFilters: List<String> = emptyList(),
+)
+
+@Serializable
+data class XcodebuildPIFProductReference(
+    val guid: String,
+    val name: String,
+    val type: String,
+)
+
+@Serializable
+data class XcodebuildPIFFrameworksBuildPhase(
+    val guid: String,
+    val type: String,
+    val buildFiles: List<XcodebuildPIFBuildFile> = emptyList(),
+)
+
+// endregion
+
+fun dumpXcodebuildPIF(appPath: Path): List<XcodebuildPIFEntry> {
+    val outputFile = File.createTempFile("xcodebuild-pif", ".json")
+    return runAppleToolCommand(appPath, listOf("xcodebuild", "-dumpPIF", outputFile.absolutePath), outputFile)
 }
