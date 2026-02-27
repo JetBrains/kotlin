@@ -51,6 +51,8 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                 )
             ) {
                 assertTasksExecuted(":generateSyntheticLinkageSwiftPMImportProjectForLinkageForCli")
+                assertXcodeBuildDependencyChain(projectPath.resolve("iosApp"))
+
                 val pbxFileContent = pbxFile.readText()
                 assertTrue(
                     projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME").exists(),
@@ -824,3 +826,42 @@ private fun TestProject.initDefaultKmpWithLocalSPM(extra: KotlinMultiplatformExt
 
 private fun SwiftPackageDump.getFirstUnsafeFlag() =
     targets.first().settings.first().kind.unsafeFlags?.flags?.first()
+
+private fun assertXcodeBuildDependencyChain(iosAppPath: Path) {
+    val pifFileTargets = dumpXcodebuildPIF(iosAppPath).filter { it.type == "target" }
+    val iosAppTarget = pifFileTargets.single { it.contents.name == "iosApp" }
+
+    assertEquals(
+        listOf("PACKAGE-PRODUCT:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME"),
+        iosAppTarget.contents.dependencies.map { it.guid },
+        message = "iosApp target should depend on synthetic package product"
+    )
+
+    val syntheticPackageProduct = pifFileTargets.single { it.contents.guid == "PACKAGE-PRODUCT:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME" }
+    assertEquals(
+        listOf("PACKAGE-TARGET:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME", "PACKAGE-PRODUCT:LocalSwiftPackage"),
+        syntheticPackageProduct.contents.dependencies.map { it.guid },
+        message = "Synthetic package product should depend on synthetic package target and LocalSwiftPackage product"
+    )
+
+    val syntheticPackageTarget = pifFileTargets.single { it.contents.guid == "PACKAGE-TARGET:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME" }
+    assertEquals(
+        listOf("PACKAGE-PRODUCT:LocalSwiftPackage"),
+        syntheticPackageTarget.contents.dependencies.map { it.guid },
+        message = "Synthetic package target should depend on LocalSwiftPackage product"
+    )
+
+    val localSwiftPackageProduct = pifFileTargets.single { it.contents.guid == "PACKAGE-PRODUCT:LocalSwiftPackage" }
+    assertEquals(
+        listOf("PACKAGE-TARGET:LocalSwiftPackage"),
+        localSwiftPackageProduct.contents.dependencies.map { it.guid },
+        message = "LocalSwiftPackage product should depend on LocalSwiftPackage target"
+    )
+
+    val localSwiftPackageTarget = pifFileTargets.single { it.contents.guid == "PACKAGE-TARGET:LocalSwiftPackage" }
+    assertEquals(
+        emptyList(),
+        localSwiftPackageTarget.contents.dependencies.map { it.guid },
+        message = "LocalSwiftPackage target should not depend on anything"
+    )
+}
