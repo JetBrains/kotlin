@@ -667,7 +667,7 @@ fun Project.configureKotlinCompileTasksGradleCompatibility() {
  */
 @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
 fun Project.configureBuildToolsApiVersionForGradleCompatibility() {
-    if (extra.properties["avoidSettingCompilerVersionForBTA"].toString().toBoolean()) return
+    if (extra.has("avoidSettingCompilerVersionForBTA") && extra["avoidSettingCompilerVersionForBTA"].toString().toBoolean()) return
     val catalogs = extensions.getByType<VersionCatalogsExtension>()
     val libsCatalog = catalogs.named("libs")
     val kgpCompilerVersion = libsCatalog.findVersion("kotlin.for.gradle.plugins.compilation").get().requiredVersion

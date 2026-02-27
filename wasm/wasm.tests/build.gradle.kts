@@ -280,9 +280,10 @@ fun Test.setupGradlePropertiesForwarding() {
         }
     }
 
-    val allProperties = properties + rootLocalProperties
-
     val prefixForPropertiesToForward = "fd."
+    val filteredProperties: Provider<Map<String, String>> = providers.gradlePropertiesPrefixedBy(prefixForPropertiesToForward)
+    val allProperties = filteredProperties.get() + rootLocalProperties
+
     for ((key, value) in allProperties) {
         if (key is String && key.startsWith(prefixForPropertiesToForward)) {
             systemProperty(key.substring(prefixForPropertiesToForward.length), value!!)
