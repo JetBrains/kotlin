@@ -495,6 +495,114 @@ class MathSamples {
             assertTrue(max(Double.MIN_VALUE, 0.0) == Double.MIN_VALUE)
             assertPrints(max(Double.POSITIVE_INFINITY, Double.MAX_VALUE), "Infinity")
         }
+
+        @Sample
+        fun discreteValues() {
+            // Unlike true real numbers, Double can only represent a fixed set of discrete values.
+            // According to IEEE-754, Double uses a single bit for a sign, 11 bits for the exponent, and 52 for the fraction.
+            // The bigger the integer part of the floating point value, the less space remains for "fitting" fractional part.
+            // As a result, starting from 2⁵² and until 2⁵³-1 Double values are incremented by 1.0
+            // (meaning that there are no in-between values), values from 2⁵³ until 2⁵⁴-1 are incremented by 2.0,
+            // but values in between 2⁵¹ and 2⁵²-1 are incremented by 0.5.
+            //
+            // The "distance" between a current value and the next one (the "increment" mentioned above) is dynamic,
+            // it depends on the magnitude of the current value, and it could be checked using Double.ulp.
+            val v2_52_53 = 4503599627370498.0 // value in range [2⁵², 2⁵³-1]
+            assertPrints(v2_52_53.ulp, "1.0")
+
+            val v2_53_54 = 9007199254740998.0 // value in range [2⁵³, 2⁵⁴-1]
+            assertPrints(v2_53_54.ulp, "2.0")
+
+            val v2_51_52 = 4503599627370490.0 // value in range [2⁵¹, 2⁵²-1]
+            assertPrints(v2_51_52.ulp, "0.5")
+
+            // Instead of using ulp, you can also check the next and previous values representable with a Double
+            // using Double.nextUp and Double.nextDown correspondingly.
+            assertPrints(9007199254740998.0.nextUp() - 9007199254740998.0, "2.0")
+            assertPrints(9007199254740998.0 - 9007199254740998.0.nextDown(), "2.0")
+
+            // As a more flexible alternative to nextUp/nextDown, one may use nextTowards, which accepts a value
+            // that works as a direction to increase/decrease a given value towards.
+            assertPrints(4503599627370496.0.nextTowards(Double.POSITIVE_INFINITY) - 4503599627370496.0, "1.0")
+            assertPrints(4503599627370496.0 - 4503599627370496.0.nextTowards(Double.NEGATIVE_INFINITY), "0.5")
+        }
+
+        @Sample
+        fun nextUp() {
+            // Floating point numbers have discrete representation,
+            // so depending on the value's magnitude, the step towards
+            // the next representable value will be different
+            assertPrints(10000.0.nextUp(), "10000.000000000002")
+            assertPrints(100000.0.nextUp(), "100000.00000000001")
+
+            // -Infinity is any value large enough to no longer fit Double,
+            // so the next value after it towards 0.0 is -Double.MAX_VALUE
+            assertTrue(Double.NEGATIVE_INFINITY.nextUp() == -Double.MAX_VALUE)
+
+            // For 0.0, the next value is the Double.MIN_VALUE, the smallest representable Double value
+            assertTrue(0.0.nextUp() == Double.MIN_VALUE)
+
+            // special cases
+            assertPrints(Double.NaN.nextUp(), "NaN")
+            assertPrints(Double.POSITIVE_INFINITY.nextUp(), "Infinity")
+        }
+
+        @Sample
+        fun nextDown() {
+            // Floating point numbers have discrete representation,
+            // so depending on the value's magnitude, the step towards
+            // the previous representable value will be different
+            assertPrints(10000.0.nextDown(), "9999.999999999998")
+            assertPrints(100000.0.nextDown(), "99999.99999999999")
+
+            // Infinity is any value large enough to no longer fit Double,
+            // so the previous value towards 0.0 is Double.MAX_VALUE
+            assertTrue(Double.POSITIVE_INFINITY.nextDown() == Double.MAX_VALUE)
+
+            // For 0.0, the previous value is the -Double.MIN_VALUE, the smallest representable Double value
+            assertTrue(0.0.nextDown() == -Double.MIN_VALUE)
+
+            // special cases
+            assertPrints(Double.NaN.nextDown(), "NaN")
+            assertPrints(Double.NEGATIVE_INFINITY.nextDown(), "-Infinity")
+        }
+
+        @Sample
+        fun nextTowards() {
+            // Floating point numbers have discrete representation,
+            // so depending on the value's magnitude, the step towards
+            // the previous representable value will be different
+            assertPrints(10000.0.nextTowards(Double.POSITIVE_INFINITY), "10000.000000000002")
+            assertPrints(100000.0.nextTowards(Double.POSITIVE_INFINITY), "100000.00000000001")
+            assertPrints(10000.0.nextTowards(0.0), "9999.999999999998")
+            assertPrints(100000.0.nextTowards(0.0), "99999.99999999999")
+
+            // nextTowards is in fact a more flexible alternative to nextUp/nextDown
+            assertTrue(100.0.nextTowards(1000.0) == 100.0.nextUp())
+            assertTrue(100.0.nextTowards(-1000.0) == 100.0.nextDown())
+
+            // special cases
+            assertPrints(1.0.nextTowards(1.0), "1.0")
+            assertPrints(Double.POSITIVE_INFINITY.nextTowards(Double.POSITIVE_INFINITY), "Infinity")
+            assertPrints(Double.NEGATIVE_INFINITY.nextTowards(Double.NEGATIVE_INFINITY), "-Infinity")
+            assertPrints(Double.NaN.nextTowards(0.0), "NaN")
+            assertPrints(0.0.nextTowards(Double.NaN), "NaN")
+        }
+
+        @Sample
+        fun ulp() {
+            // the "distance" between two Double values 2ⁿ and 2ⁿ+1 is 2ⁿ⁻⁵²
+            // 2⁴⁹ = 562949953421312, 2⁴⁹⁻⁵² = 1/8 = 0.125
+            assertPrints(562949953421312.0.ulp, "0.125")
+            // 2⁴⁵ = 35184372088832, 2⁴⁹⁻⁵² = 1/128 = 0.0078125
+            assertPrints(35184372088832.0.ulp, "0.0078125")
+
+            // special cases
+            assertPrints(Double.NaN.ulp, "NaN")
+            assertPrints(Double.POSITIVE_INFINITY.ulp, "Infinity")
+            assertPrints(Double.NEGATIVE_INFINITY.ulp, "Infinity")
+            assertTrue(0.0.ulp == Double.MIN_VALUE)
+        }
     }
 
     class Floats {
@@ -981,6 +1089,114 @@ class MathSamples {
             // Note that MIN_VALUE has a different meaning compared to Long.MIN_VALUE or Int.MIN_VALUE
             assertTrue(max(Float.MIN_VALUE, 0.0f) == Float.MIN_VALUE)
             assertPrints(max(Float.POSITIVE_INFINITY, Float.MAX_VALUE), "Infinity")
+        }
+
+        @Sample
+        fun discreteValues() {
+            // Unlike true real numbers, Float can only represent a fixed set of discrete values.
+            // According to IEEE-754, Double uses a single bit for a sign, 8 bits for the exponent, and 23 for the fraction.
+            // The bigger the integer part of the floating point value, the less space remains for "fitting" fractional part.
+            // As a result, starting from 2²³ and until 2²⁴-1 Float values are incremented by 1.0
+            // (meaning that there are no in-between values), values from 2²³ until 2²⁵-1 are incremented by 2.0,
+            // but values in between 2²² and 2²³-1 are incremented by 0.5.
+            //
+            // The "distance" between a current value and the next one (the "increment" mentioned above) is dynamic,
+            // it depends on the magnitude of the current value, and it could be checked using Double.ulp.
+            val v2_23_24 = 8388618.0f // value in range [2²³, 2²⁴-1]
+            assertPrints(v2_23_24.ulp, "1.0")
+
+            val v2_24_25 = 16777226.0f // value in range [2²⁴, 2²⁵-1]
+            assertPrints(v2_24_25.ulp, "2.0")
+
+            val v2_22_23 = 4194306.0f // value in range [2²², 2²³-1]
+            assertPrints(v2_22_23.ulp, "0.5")
+
+            // Instead of using ulp, you can also check the next and previous values representable with a Double
+            // using Double.nextUp and Double.nextDown correspondingly.
+            assertPrints(16777226.0f.nextUp() - 16777226.0f, "2.0")
+            assertPrints(16777226.0f - 16777226.0f.nextDown(), "2.0")
+
+            // As a more flexible alternative to nextUp/nextDown, one may use nextTowards, which accepts a value
+            // that works as a direction to increase/decrease a given value towards.
+            assertPrints(8388608.0f.nextTowards(Float.POSITIVE_INFINITY) - 8388608.0f, "1.0")
+            assertPrints(8388608.0f - 8388608.0f.nextTowards(Float.NEGATIVE_INFINITY), "0.5")
+        }
+
+        @Sample
+        fun nextUp() {
+            // Floating point numbers have discrete representation,
+            // so depending on the value's magnitude, the step towards
+            // the next representable value will be different
+            assertPrints(10000.0f.nextUp(), "10000.001")
+            assertPrints(100000.0f.nextUp(), "100000.01")
+
+            // -Infinity is any value large enough to no longer fit Float,
+            // so the next value after it towards 0.0 is -Float.MAX_VALUE
+            assertTrue(Float.NEGATIVE_INFINITY.nextUp() == -Float.MAX_VALUE)
+
+            // For 0.0, the next value is the Float.MIN_VALUE, the smallest representable Float value
+            assertTrue(0.0f.nextUp() == Float.MIN_VALUE)
+
+            // special cases
+            assertPrints(Float.NaN.nextUp(), "NaN")
+            assertPrints(Float.POSITIVE_INFINITY.nextUp(), "Infinity")
+        }
+
+        @Sample
+        fun nextDown() {
+            // Floating point numbers have discrete representation,
+            // so depending on the value's magnitude, the step towards
+            // the previous representable value will be different
+            assertPrints(10000.0f.nextDown(), "9999.999")
+            assertPrints(100000.0f.nextDown(), "99999.99")
+
+            // Infinity is any value large enough to no longer fit Float,
+            // so the previous value towards 0.0 is Float.MAX_VALUE
+            assertTrue(Float.POSITIVE_INFINITY.nextDown() == Float.MAX_VALUE)
+
+            // For 0.0, the previous value is the -Float.MIN_VALUE, the smallest representable Double value
+            assertTrue(0.0f.nextDown() == -Float.MIN_VALUE)
+
+            // special cases
+            assertPrints(Float.NaN.nextDown(), "NaN")
+            assertPrints(Float.NEGATIVE_INFINITY.nextDown(), "-Infinity")
+        }
+
+        @Sample
+        fun nextTowards() {
+            // Floating point numbers have discrete representation,
+            // so depending on the value's magnitude, the step towards
+            // the previous representable value will be different
+            assertPrints(10000.0f.nextTowards(Float.POSITIVE_INFINITY), "10000.001")
+            assertPrints(100000.0f.nextTowards(Float.POSITIVE_INFINITY), "100000.01")
+            assertPrints(10000.0f.nextTowards(0.0f), "9999.999")
+            assertPrints(100000.0f.nextTowards(0.0f), "99999.99")
+
+            // nextTowards is in fact a more flexible alternative to nextUp/nextDown
+            assertTrue(100.0f.nextTowards(1000.0f) == 100.0f.nextUp())
+            assertTrue(100.0f.nextTowards(-1000.0f) == 100.0f.nextDown())
+
+            // special cases
+            assertPrints(1.0f.nextTowards(1.0f), "1.0")
+            assertPrints(Float.POSITIVE_INFINITY.nextTowards(Float.POSITIVE_INFINITY), "Infinity")
+            assertPrints(Float.NEGATIVE_INFINITY.nextTowards(Float.NEGATIVE_INFINITY), "-Infinity")
+            assertPrints(Float.NaN.nextTowards(0.0f), "NaN")
+            assertPrints(0.0f.nextTowards(Float.NaN), "NaN")
+        }
+
+        @Sample
+        fun ulp() {
+            // the "distance" between two Float values 2ⁿ and 2ⁿ+1 is 2ⁿ⁻²⁴
+            // 2²⁰ = 1048576, 2²⁰⁻²⁴ = 1/8 = 0.125
+            assertPrints(1048576.0f.ulp, "0.125")
+            // 2¹⁶ = 65536, 2¹⁶⁻²⁴ = 1/128 = 0.0078125
+            assertPrints(65536.0f.ulp, "0.0078125")
+
+            // special cases
+            assertPrints(Float.NaN.ulp, "NaN")
+            assertPrints(Float.POSITIVE_INFINITY.ulp, "Infinity")
+            assertPrints(Float.NEGATIVE_INFINITY.ulp, "Infinity")
+            assertTrue(0.0f.ulp == Float.MIN_VALUE)
         }
     }
 

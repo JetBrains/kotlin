@@ -546,10 +546,16 @@ public actual inline fun Double.withSign(sign: Int): Double = this.withSign(sign
  *
  * An ulp is a positive distance between this value and the next nearest [Double] value larger in magnitude.
  *
- * Special Cases:
+ * Special cases:
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
  *   - `0.0.ulp` is `Double.MIN_VALUE`
+ *
+ * @see nextUp
+ * @see nextDown
+ * @see nextTowards
+ * @sample samples.math.MathSamples.Doubles.ulp
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 public actual val Double.ulp: Double get() = when {
@@ -560,7 +566,18 @@ public actual val Double.ulp: Double get() = when {
 }
 
 /**
- * Returns the [Double] value nearest to this value in direction of positive infinity.
+ * Returns the [Double] value nearest to this value in a direction of positive infinity.
+ *
+ * Special cases:
+ *   - `NaN.nextUp() is `NaN`
+ *   - `Double.POSITIVE_INFINITY.nextUp() is `+Infinity`
+ *   - `0.0.nextUp()` is `Double.MIN_VALUE`
+ *
+ * @see nextTowards
+ * @see nextDown
+ * @see ulp
+ * @sample samples.math.MathSamples.Doubles.nextUp
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 public actual fun Double.nextUp(): Double = when {
@@ -570,7 +587,18 @@ public actual fun Double.nextUp(): Double = when {
 }
 
 /**
- * Returns the [Double] value nearest to this value in direction of negative infinity.
+ * Returns the [Double] value nearest to this value in a direction of negative infinity.
+ *
+ * Special cases:
+ *   - `NaN.nextDown() is `NaN`
+ *   - `Double.NEGATIVE_INFINITY.nextDown() is `-Infinity`
+ *   - `0.0.nextDown()` is `-Double.MIN_VALUE`
+ *
+ * @see nextUp
+ * @see nextTowards
+ * @see ulp
+ * @sample samples.math.MathSamples.Doubles.nextDown
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 public actual fun Double.nextDown(): Double = when {
@@ -581,12 +609,17 @@ public actual fun Double.nextDown(): Double = when {
 
 
 /**
- * Returns the [Double] value nearest to this value in direction from this value towards the value [to].
+ * Returns the [Double] value nearest to this value in a direction from this value towards the value [to].
  *
  * Special cases:
  *   - `x.nextTowards(y)` is `NaN` if either `x` or `y` are `NaN`
  *   - `x.nextTowards(x) == x`
  *
+ * @see nextUp
+ * @see nextDown
+ * @see ulp
+ * @sample samples.math.MathSamples.Doubles.nextTowards
+ * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 public actual fun Double.nextTowards(to: Double): Double = when {
