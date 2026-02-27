@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
@@ -50,11 +49,6 @@ internal class KaFe10DescValueParameterSymbol(
 
     override val hasDeclaredDefaultValue: Boolean
         get() = withValidityAssertion { descriptor.declaresDefaultValue() }
-
-    override val hasSynthesizedName: Boolean
-        get() = withValidityAssertion {
-            (descriptor.containingDeclaration as? FunctionDescriptor)?.hasSynthesizedParameterNames() == true
-        }
 
     override val isVararg: Boolean
         get() = withValidityAssertion { descriptor.isVararg }

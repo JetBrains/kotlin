@@ -118,7 +118,6 @@ KaNamedFunctionSymbol:
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
-      hasSynthesizedName: false
       isActual: false
       isCrossinline: false
       isExpect: false
@@ -258,4 +257,3 @@ KaSyntheticJavaPropertySymbol:
   setter: null
   typeParameters: []
   visibility: PUBLIC
-
