@@ -66,9 +66,32 @@ fun box(): String {
     check(js("Number"), "Double", 23.1F)
     check(js("Number"), "Double", 23.2)
 
+    // KT-84474
+    if (compileLongAsBigInt()) {
+        check(js("BigInt"), "Long", 23L)
+    }
+
     check(js("Number"), "Int", Int::class)
     check(js("Number"), "Byte", Byte::class)
     check(js("Number"), "Double", Double::class)
+
+    // KT-84474
+    if (compileLongAsBigInt()) {
+        check(js("BigInt"), "Long", Long::class)
+    }
+
+    // KT-84474
+    if (js("typeof BigInt !== 'undefined'")) {
+        val expecteClassName = when {
+            compileLongAsBigInt() -> "Long"
+            else -> "BigInt"
+        }
+
+        val maxLong = Long.MAX_VALUE.toString()
+
+        check(js("BigInt"), expecteClassName, js("BigInt(23)").unsafeCast<Any>())
+        check(js("BigInt"), "BigInt", (js("BigInt(maxLong)") * js("BigInt(2)")).unsafeCast<Any>())
+    }
 
     assertEquals("Long", Long::class.simpleName)
     assertEquals("Long", 23L::class.simpleName)
@@ -94,7 +117,7 @@ fun box(): String {
 
 private fun check(nativeClass: dynamic, simpleName: String, c: KClass<*>) {
     assertEquals(simpleName, c.simpleName, "Simple name of class has unexpected value")
-    assertEquals(nativeClass, c.js, "Kotlin class does not correspond native class ${nativeClass.name}")
+    assertEquals(nativeClass, c.js, "Kotlin class does not correspond native class ${nativeClass?.name}")
 }
 
 private fun check(nativeClass: dynamic, simpleName: String, value: Any) {
