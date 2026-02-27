@@ -9,8 +9,12 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.PublishedProject
+import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
+import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -609,6 +613,183 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun `integrateLinkagePackage with transitive published dependency`(version: GradleVersion) {
+        val producer = project("empty", version) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+
+                    swiftPMDependencies {
+                        `package`(
+                            url = url("https://github.com/apple/swift-protobuf.git"),
+                            version = exact("1.32.0"),
+                            products = listOf(),
+                        )
+                    }
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "dependency"))
+
+        project("emptyxcode", version) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            addPublishedProjectToRepositories(producer)
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    listOf(
+                        iosArm64(),
+                        iosSimulatorArm64()
+                    ).forEach {
+                        it.binaries.framework {
+                            baseName = "Shared"
+                            isStatic = true
+                        }
+                    }
+
+                    sourceSets.commonMain.dependencies {
+                        api(producer.rootCoordinate)
+                    }
+                }
+            }
+
+            build(
+                "integrateLinkagePackage",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                )
+            ) {
+                val rootManifest = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/Package.swift")
+                assertTrue(rootManifest.exists(), "synthetic project should be created")
+
+                val rootManifestDependencies = describeSwiftPackage(rootManifest.parent).dependencies
+                assertEquals(
+                    producer.spmRootCoordinates(),
+                    rootManifestDependencies.first().identity,
+                    "published dependency should be added to the manifest"
+                )
+
+                val subpackageManifest =
+                    projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/subpackages/${producer.spmRootCoordinates()}/Package.swift")
+                val subpackageManifestDependencies = describeSwiftPackage(subpackageManifest.parent).dependencies
+
+                assertEquals(
+                    "https://github.com/apple/swift-protobuf.git",
+                    subpackageManifestDependencies.first().url,
+                    "published dependency should be added to the manifest"
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `integrateLinkagePackage with transitive published dependency through project dependency`(version: GradleVersion) {
+        val transitive = project("empty", version) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+
+                    swiftPMDependencies {
+                        `package`(
+                            url = url("https://github.com/apple/swift-protobuf.git"),
+                            version = exact("1.32.0"),
+                            products = listOf(),
+                        )
+                    }
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "dependency"))
+
+        project("emptyxcode", version) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            addPublishedProjectToRepositories(transitive)
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    listOf(
+                        iosArm64(),
+                        iosSimulatorArm64()
+                    ).forEach {
+                        it.binaries.framework {
+                            baseName = "Shared"
+                            isStatic = true
+                        }
+                    }
+
+                    sourceSets.commonMain.dependencies {
+                        implementation(project(":direct"))
+                    }
+                }
+            }
+
+            val direct = project("empty", version) {
+                plugins {
+                    kotlin("multiplatform")
+                }
+
+                addPublishedProjectToRepositories(transitive)
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        iosSimulatorArm64()
+
+                        sourceSets.commonMain.dependencies {
+                            api(transitive.rootCoordinate)
+                        }
+                    }
+                }
+            }
+            include(direct, "direct", useSymlink = false)
+
+            build(
+                "integrateLinkagePackage",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                )
+            ) {
+                val rootManifest = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/Package.swift")
+                assertTrue(rootManifest.exists(), "synthetic project should be created")
+
+                val rootManifestDependencies = describeSwiftPackage(rootManifest.parent).dependencies
+                assertEquals(
+                    transitive.spmRootCoordinates(),
+                    rootManifestDependencies.first().identity,
+                    "published dependency should be added to the manifest"
+                )
+
+                val subpackageManifest =
+                    projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/subpackages/${transitive.spmRootCoordinates()}/Package.swift")
+                val subpackageManifestDependencies = describeSwiftPackage(subpackageManifest.parent).dependencies
+
+                assertEquals(
+                    "https://github.com/apple/swift-protobuf.git",
+                    subpackageManifestDependencies.first().url,
+                    "published dependency should be added to the manifest"
+                )
+            }
+        }
+    }
+
     @Ignore("TODO: investigate why packageRoot and SPM absolute path a differ")
     @GradleTest
     fun `integrateLinkagePackage with non root project`(version: GradleVersion) {
@@ -865,3 +1046,5 @@ private fun assertXcodeBuildDependencyChain(iosAppPath: Path) {
         message = "LocalSwiftPackage target should not depend on anything"
     )
 }
+
+private fun PublishedProject.spmRootCoordinates() = rootCoordinate.replace(":", "_").replace(".", "_")
