@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.ConstantArgumentKind
@@ -66,6 +68,12 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
         val type = declaration.returnTypeRef.coneType.fullyExpandedType()
         if ((type !is ConeErrorType) && !type.canBeUsedForConstVal()) {
             reporter.reportOn(declaration.source, FirErrors.TYPE_CANT_BE_USED_FOR_CONST_VAL, declaration.returnTypeRef.coneType)
+            return
+        }
+
+        if (declaration.evaluatedInitializer is FirEvaluatorResult.DivisionByZero) {
+            reporter.reportOn(initializer.source, FirErrors.DIVISION_BY_ZERO)
+            reporter.reportOn(initializer.source, FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER)
             return
         }
 

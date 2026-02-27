@@ -528,6 +528,8 @@ private fun evaluateBinary(
         else -> arg2.kind.toCompileTimeType()
     }
 
+    val leftType = arg1.kind.toCompileTimeType()
+
     val opr1 = arg1.kind.convertToGivenKind(arg1.value) ?: return null
     val opr2 = arg2.kind.convertToGivenKind(arg2.value) ?: return null
 
@@ -535,7 +537,7 @@ private fun evaluateBinary(
 
     // Check for division by zero
     if (functionName == "div" || functionName == "rem") {
-        if (rightType != CompileTimeType.FLOAT && rightType != CompileTimeType.DOUBLE && (opr2 as? Number)?.toInt() == 0) {
+        if (!leftType.isFloatingPoint() && !rightType.isFloatingPoint() && (opr2 as? Number)?.toInt() == 0) {
             // If expression is division by zero, then return the original expression as a result. We will handle on later steps.
             return DivisionByZero
         }
@@ -650,6 +652,8 @@ private fun ConstantValueKind.convertToGivenKind(value: Any?): Any? {
         else -> null
     }
 }
+
+private fun CompileTimeType.isFloatingPoint() = this == CompileTimeType.FLOAT || this == CompileTimeType.DOUBLE
 
 private fun Any?.toConstExpression(
     kind: ConstantValueKind,
