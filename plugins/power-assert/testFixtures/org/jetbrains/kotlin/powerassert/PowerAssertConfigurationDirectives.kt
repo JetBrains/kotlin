@@ -12,6 +12,10 @@ object PowerAssertConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Functions targeted by Power-Assert transformation",
         multiLine = true,
     )
+    val FUNCTION_REGEX by stringDirective(
+        description = "Regexes for functions targeted by Power-Assert transformation",
+        multiLine = true,
+    )
 
     val WITH_JUNIT5 by directive("Add JUnit5 to classpath")
 }

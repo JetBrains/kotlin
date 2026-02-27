@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.name.FqName
 class PowerAssertConfiguration(
     private val configuration: CompilerConfiguration,
     val functions: Set<FqName>,
+    val functionRegexes: Set<Regex>
 ) {
     val constTracker: EvaluatedConstTracker? get() = configuration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER]
     val messageCollector: MessageCollector get() = configuration.messageCollector

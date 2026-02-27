@@ -74,8 +74,10 @@ class PowerAssertEnvironmentConfigurator(testServices: TestServices) : Environme
         val functions = moduleStructure.allDirectives[PowerAssertConfigurationDirectives.FUNCTION]
             .ifEmpty { listOf("kotlin.assert") }
             .mapTo(mutableSetOf()) { FqName(it) }
+        val functionRegexs = moduleStructure.allDirectives[PowerAssertConfigurationDirectives.FUNCTION_REGEX]
+            .mapTo(mutableSetOf()) { Regex(it) }
 
-        IrGenerationExtension.registerExtension(PowerAssertIrGenerationExtension(PowerAssertConfiguration(configuration, functions)))
+        IrGenerationExtension.registerExtension(PowerAssertIrGenerationExtension(PowerAssertConfiguration(configuration, functions, functionRegexs)))
     }
 }
 
