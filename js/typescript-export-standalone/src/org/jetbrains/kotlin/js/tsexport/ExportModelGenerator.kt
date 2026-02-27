@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,12 +25,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
-import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.compactIfPossible
-import org.jetbrains.kotlin.utils.memoryOptimizedFilter
-import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 internal class ExportModelGenerator(private val config: TypeScriptExportConfig) {
     context(_: KaSession)
@@ -545,7 +541,6 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         }
 
         for (nested in memberScope.classifiers) {
-            if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(nested)) continue
             when (nested) {
                 is KaNamedClassSymbol -> {
                     if (nested.classKind == KaClassKind.COMPANION_OBJECT) {
@@ -564,12 +559,17 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                             }
                         }
                     }
+                    if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(nested)) continue
                     if (nested.isInner && (nested.modality == KaSymbolModality.OPEN || nested.modality == KaSymbolModality.FINAL)) {
                         members.add(nested.toFactoryPropertyForInnerClass(typeParameterScope))
                     }
                     nestedClasses.addIfNotNull(exportClass(nested, klass, typeParameterScope))
                 }
-                is KaTypeAliasSymbol -> continue // TODO(KT-49795): Export type aliases
+                is KaTypeAliasSymbol -> {
+                    if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(nested)) continue
+                    // TODO(KT-49795): Export type aliases
+                    continue
+                }
                 else -> continue
             }
         }
