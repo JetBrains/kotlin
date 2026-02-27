@@ -1,6 +1,7 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.testFederation.TestFederationInferAffectedSubsystemsTask
 
 buildscript {
     dependencies {
@@ -74,6 +75,7 @@ plugins {
     id("gradle-plugins-documentation") apply false
     id("com.autonomousapps.dependency-analysis") version "3.4.0"
     id("project-tests-convention") apply false
+    id("test-federation-convention") apply false
     id("test-data-manager-root")
 }
 
@@ -598,6 +600,7 @@ val dependencyOnSnapshotReflectWhitelist = setOf(
 allprojects {
     if (!project.path.startsWith(":kotlin-ide.")) {
         pluginManager.apply("common-configuration")
+        pluginManager.apply("test-federation-convention")
     }
     if (!project.path.startsWith(":compiler:build-tools")) {
         pluginManager.apply("com.autonomousapps.dependency-analysis")
@@ -1284,3 +1287,5 @@ afterEvaluate {
 tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>().configureEach {
     notCompatibleWithConfigurationCache("KotlinNpmInstallTask is not compatible with Configuration Cache")
 }
+
+tasks.register<TestFederationInferAffectedSubsystemsTask>("inferAffectedSubsystems")

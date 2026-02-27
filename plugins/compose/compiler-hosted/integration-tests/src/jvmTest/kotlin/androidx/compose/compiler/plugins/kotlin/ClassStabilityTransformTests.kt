@@ -43,8 +43,11 @@ import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.experimental.categories.Category
+import org.junit.jupiter.api.Tag
 
 class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
     @Test
@@ -71,7 +74,9 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         "Parameter(T)"
     )
 
-
+    @SmokeTest
+    @Category(SmokeTest::class)
+    @Tag("smoke")
     @Test
     fun testValTypeParam33Types() = assertStability(
         """

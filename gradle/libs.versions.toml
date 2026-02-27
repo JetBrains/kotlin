@@ -43,6 +43,7 @@ ant = "1.10.14"
 # This ensures additional verification that Gradle-related code does not get dependencies of higher LV
 kotlin-for-gradle-plugins-compilation = "2.2.21"
 intellij-asm = "9.6.1"
+asm = "9.9.1"
 diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
 fastutil = "8.5.14-jb1"
@@ -123,6 +124,7 @@ ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
 
 jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
+jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
@@ -160,6 +162,8 @@ xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
 
 ant = { module = "org.apache.ant:ant", version.ref = "ant" }
 intellij-asm = { module = "org.jetbrains.intellij.deps:asm-all", version.ref = "intellij-asm" }
+asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
+asm-tree = { module = "org.ow2.asm:asm-tree", version.ref = "asm" }
 diff-utils = { module = "io.github.java-diff-utils:java-diff-utils", version.ref = "diff-utils" }
 okhttp = { module  = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 opentelemetry-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "opentelemetry-api" }

@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.parseCompilerArguments
 import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
 import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
+@SmokeTest
 internal class CompilerOptionsIT : KGPBaseTest() {
     private val firstNonDeprecatedKotlinVersion = KotlinVersion.firstNonDeprecated
     private val latestStableKotlinVersion = KotlinVersion.DEFAULT

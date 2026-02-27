@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.gradle.util.assertNotNull
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.main
+import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.CompilerContract
 import kotlin.reflect.jvm.javaField
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -35,6 +37,18 @@ import kotlin.test.assertNotNull
 import kotlin.test.fail
 
 class KotlinCompileArgumentsTest {
+
+    @SmokeTest
+    @Test
+    fun `test - smoke`() {
+
+    }
+
+    @CompilerContract
+    @Test
+    fun `test - compiler contract`() {
+
+    }
 
     @Test
     fun `test - simple project - compare CompilerArgumentsAware with KotlinCompilerArgumentsAware implementations`() {
