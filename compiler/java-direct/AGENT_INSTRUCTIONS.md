@@ -149,28 +149,41 @@ Use correct FIR naming conventions throughout:
 
 Each iteration in FIXING_ITERATIONS.md follows this structure:
 
-### Phase 1: Analysis
-**Goal**: Understand the root cause of failures
+### Phase 1: Analysis - FOCUS ON SINGLE REPRESENTATIVE TEST
+**Goal**: Understand the root cause through ONE concrete failing test
+
+**CRITICAL**: Do NOT analyze all failures at once. Pick ONE representative test.
 
 **Tasks**:
-1. Run a subset of failing tests (start with simplest)
-2. Examine test output and error messages
-3. Identify common patterns in failures
-4. Trace through the code to find the root cause
+1. **Select ONE failing test** (pick simplest or most common error)
+   - Run ONLY this single test first
+   - Read its test data file (testData/codegen/box/javaInterop/)
+   - Understand what it's testing
+2. **Examine this test's specific failure**
+   - What is the exact error message?
+   - What line of code fails?
+   - What values/types are involved?
+3. **Trace through code for THIS test only**
+   - Add logging/debugging if needed
+   - Follow execution path step by step
+4. **Form hypothesis for THIS specific failure**
+   - Not a general pattern - this concrete case
 
 **Deliverable**: Analysis document with:
-- List of analyzed tests
-- Common error patterns
-- Root cause hypothesis
+- Selected test name and what it tests
+- Exact error message and location
+- Concrete root cause hypothesis
 - Proposed fix approach
 
+**Anti-pattern to AVOID**: Running all 138 tests and trying to categorize errors. This leads to analysis paralysis.
+
 ### Phase 2: Reproduction
-**Goal**: Create minimal reproducible test cases
+**Goal**: Create minimal reproducible test case for the ONE issue
 
 **Tasks**:
-1. Extract minimal failing example from box tests
+1. Extract minimal failing example from the ONE box test
 2. Create unit test in `compiler/java-direct/test/.../` directory
-3. Verify unit test fails with same error
+3. Verify unit test fails with SAME error
 4. Simplify test case as much as possible
 
 **Deliverable**: New unit test file demonstrating the issue
@@ -181,13 +194,16 @@ Each iteration in FIXING_ITERATIONS.md follows this structure:
 **Tasks**:
 1. Implement the fix in appropriate source file(s)
 2. Ensure unit test now passes
-3. Check that fix doesn't break existing passing tests
-4. Verify related box tests now pass
+3. Ensure the ONE selected box test now passes
+4. **Only after single test passes**: Run broader set (10-20 related tests)
+5. Check that fix doesn't break existing passing tests
 
 **Deliverable**: 
 - Modified source files
 - Passing unit test
-- Report of box test improvement
+- Report showing: single test → passes, related tests → improvement count
+
+**Anti-pattern to AVOID**: Implementing a fix and immediately running all 138 tests to see aggregate improvement. This wastes time and provides unclear feedback.
 
 ### Phase 4: Validation
 **Goal**: Confirm fix is correct and complete
@@ -195,13 +211,83 @@ Each iteration in FIXING_ITERATIONS.md follows this structure:
 **Tasks**:
 1. Run `mcp__jetbrains__get_file_problems` on modified files
 2. Fix any warnings related to changes
-3. Run broader test suite to check for regressions
+3. Run full test suite ONLY to measure overall progress (not for debugging)
 4. Document any limitations or partial fixes
 5. **MANDATORY**: Update `ITERATION_RESULTS.md` with your findings
 
 **Deliverable**: 
 - Validation report with test results
 - Updated `ITERATION_RESULTS.md` entry
+
+## Focus Strategy - How to Pick "The ONE Test"
+
+When starting an iteration:
+
+### Step 1: Run Full Suite ONCE (for statistics only)
+```bash
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q 2>&1 | tee test_output.txt
+```
+
+### Step 2: Categorize Error Types
+```bash
+# Extract unique error patterns
+grep "DIAGNOSTICS:" test_output.txt | sort | uniq -c | sort -rn | head -20
+```
+
+### Step 3: Pick Most Frequent Error Pattern
+Choose the error that appears most often. This represents the biggest blocker.
+
+### Step 4: Find Simplest Test With That Error
+From tests showing that error, pick the shortest/simplest one:
+- Fewest lines of Java code
+- Fewest features used (no generics, no annotations, etc.)
+- Most focused test scenario
+
+### Step 5: Work ONLY on That Test
+```bash
+# Run ONLY this test
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testSimpleInheritance" -q
+```
+
+### Step 6: After Fix Works, Verify Related Tests
+```bash
+# Find tests with similar characteristics
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.test*Inheritance*" -q
+```
+
+### Step 7: THEN Run Full Suite (to measure progress)
+
+## Example Focus Workflow
+
+**BAD Approach** (what to avoid):
+```
+Agent: "I'll analyze all 108 failing tests..."
+[Reads 108 test files]
+[Tries to categorize into 15 different patterns]
+[Gets overwhelmed, makes speculative changes]
+[Runs all tests again, sees no improvement]
+[Doesn't know which test to debug]
+```
+
+**GOOD Approach** (what to do):
+```
+Agent: "Running full suite to get error statistics..."
+[Finds MISSING_DEPENDENCY_CLASS appears 88 times]
+Agent: "Finding simplest test with MISSING_DEPENDENCY_CLASS..."
+[Identifies testAbstractMethodsOfAny.kt - 20 lines, uses Object only]
+Agent: "Running ONLY testAbstractMethodsOfAny..."
+[Test fails: "cannot find java.lang.Object"]
+Agent: "Let me trace why Object isn't found..."
+[Adds logging, discovers classifierQualifiedName returns "Object" not "java.lang.Object"]
+Agent: "I'll fix classifierQualifiedName to qualify java.lang names..."
+[Implements fix]
+Agent: "Testing ONLY testAbstractMethodsOfAny..."
+[Test passes!]
+Agent: "Now testing all tests with 'Object' in name..."
+[Finds 10 more tests pass]
+Agent: "Running full suite to measure overall improvement..."
+[38/138 → 48/138, documents in ITERATION_RESULTS.md]
+```
 
 ---
 

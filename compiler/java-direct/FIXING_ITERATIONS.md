@@ -45,62 +45,138 @@ See the template in `ITERATION_RESULTS.md` for the required format. This ensures
 ### Prompt
 
 ---
-TASK: Analyze failing tests in java-direct module to identify root causes
+TASK: Find and deeply analyze ONE representative failing test
 
 CONTEXT:
-You are working on the Kotlin compiler's java-direct module. The module replaces 
-IntelliJ platform-based Java parsing with a custom implementation. Tests are now 
-running through the new implementation, but most are failing.
+You are working on the Kotlin compiler's java-direct module. Many tests fail.
+Your job: Pick ONE test, understand it completely, fix it.
+
+CRITICAL MINDSET SHIFT:
+- ❌ Don't analyze "patterns across all failures"
+- ❌ Don't categorize 100+ test failures
+- ✅ Pick ONE concrete failing test
+- ✅ Make that ONE test pass
+- ✅ Measure how many similar tests also pass
 
 ANALYSIS STEPS:
 
-1. SELECT TEST SAMPLE:
-   - Look at generated tests in `compiler/java-direct/build/tests-gen/.../JavaUsingAstLegacyBoxTestGenerated.java`
-   - Start with the first 3-5 simple-looking test methods
-   - For each test, identify the test data location (shown in @TestMetadata annotation)
+### Step 1: Get Error Statistics (5 minutes max)
 
-2. EXAMINE TEST DATA:
-   - For each selected test, read the test data file from `compiler/testData/codegen/box/javaInterop/`
-   - Identify what Java classes are defined (look for `// FILE: ClassName.java` markers)
-   - Identify what Kotlin code is doing (usually has `fun box(): String` that returns "OK")
-   - Understand the test scenario: what Java features are being tested?
+Run full test suite ONCE to see what errors are most common:
 
-3. RUN TESTS (if possible):
-   - Try running one test via IDE or command line
-   - Capture error output, stack traces, FIR diagnostics
-   - Note: If running tests is difficult, proceed with code analysis
+```bash
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q 2>&1 | tee full_test_output.txt
+```
 
-4. CODE TRACE:
-   - Trace how `JavaClassFinderOverAstImpl` is invoked
-   - Check if files are being indexed correctly (use logging/debugging insights)
-   - Check if `findClass()` is returning `JavaClass` instances
-   - Check what happens when FIR tries to use the returned `JavaClass`
+Extract error frequency:
+```bash
+grep -E "(MISSING_DEPENDENCY|UNRESOLVED_REFERENCE|TYPE_MISMATCH|ABSTRACT_MEMBER)" full_test_output.txt | sort | uniq -c | sort -rn | head -10
+```
 
-5. IDENTIFY PATTERNS:
-   - Are failures happening at parsing, indexing, class finding, or type resolution?
-   - Are certain Java features causing more failures (generics, inheritance, annotations)?
-   - Is there a common error message or exception?
+**Pick the most frequent error type.** This is your target.
 
-6. ROOT CAUSE HYPOTHESIS:
-   - Based on the analysis, propose 1-3 most likely root causes
-   - For each root cause, explain the evidence supporting it
-   - Rank them by likelihood and impact
+### Step 2: Find Simplest Test With That Error (10 minutes max)
+
+Look through test output for the simplest test showing that error:
+- Shortest test file (fewest lines)
+- Fewest Java features (no generics, annotations, nested classes if possible)
+- Clear, focused scenario
+
+Example:
+```bash
+# If UNRESOLVED_REFERENCE '<init>' is most common (128 occurrences)
+# Find which test has shortest Java code with <init> error
+grep -B 5 "UNRESOLVED_REFERENCE: '<init>'" full_test_output.txt | grep "testData" | head -5
+```
+
+**Select ONE test.** Write it down. Example: `testAbstractMethodsOfAny`
+
+### Step 3: Run ONLY That Test (repeat as needed)
+
+```bash
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testAbstractMethodsOfAny" -q
+```
+
+### Step 4: Deep Dive Into That ONE Test (no time limit)
+
+1. **Read the test data file:**
+   ```bash
+   # Test metadata shows path like compiler/testData/codegen/box/javaInterop/abstractMethodsOfAny.kt
+   cat compiler/testData/codegen/box/javaInterop/abstractMethodsOfAny.kt
+   ```
+
+2. **Understand what it tests:**
+   - What Java class(es) are defined? (look for `// FILE: ClassName.java`)
+   - What Kotlin code uses them?
+   - What should happen? (usually `fun box()` returns "OK" if test passes)
+
+3. **Examine the exact error:**
+   - What line fails?
+   - What is the exact error message?
+   - What values are involved?
+
+4. **Trace execution for THIS test:**
+   - Add logging/print statements if needed
+   - Set breakpoints if using IDE
+   - Follow the code path step by step
+   - Find WHERE and WHY it fails
+
+5. **Form concrete hypothesis:**
+   - Not "type resolution doesn't work"
+   - But "When parsing class Foo, hasDefaultConstructor() returns false but should return true because..."
+
+### Step 5: Create Unit Test Reproducing the Issue
+
+Extract the minimal case:
+
+```kotlin
+@Test
+fun testReproduceAbstractMethodsOfAny() {
+    val source = """
+        // FILE: J.java
+        // Paste minimal Java code from the box test
+        public abstract class J {
+            public abstract Object foo();
+        }
+    """.trimIndent()
+    
+    // Parse and verify what goes wrong
+    val javaClass = parseJavaClass(source, "J")
+    
+    // The assertion that should pass but doesn't:
+    assertTrue(javaClass.hasDefaultConstructor())
+    // Or whatever specific thing is broken
+}
+```
+
+Run ONLY this unit test until you understand the issue.
+
+### Step 6: Fix and Verify
+
+1. Implement the fix
+2. Run your unit test → should pass
+3. Run the ONE box test → should pass
+4. Run ~10 similar box tests → count improvements
+5. Run full suite → measure overall progress
 
 DELIVERABLE:
-Write a structured analysis document covering:
-- Selected test cases and their scenarios
-- Observed failure modes
-- Code trace findings
-- Root cause hypotheses (ranked)
-- Recommended first fix to attempt
+Write a structured analysis focusing on THE ONE TEST:
+- Test name: `testAbstractMethodsOfAny`
+- What it tests: "Kotlin abstract class inherits from Java abstract class with Object methods"
+- Exact error: "UNRESOLVED_REFERENCE: '<init>' at line X"
+- Root cause: "hasDefaultConstructor() hardcoded to false, should check constructors.isEmpty()"
+- Fix: "Change line 113 in JavaClassOverAst.kt"
+- Verification: "testAbstractMethodsOfAny passes, 15 other <init> tests now pass, 12/138 → 27/138"
 
 CONSTRAINTS:
-- Focus on understanding, not fixing (yet)
-- Be thorough but concise
-- Use code references (file:line) for all findings
-- Ask questions if test execution is needed but unclear how
+- Spend 80% time on ONE test, 20% on measuring impact
+- Do NOT try to fix all patterns at once
+- Do NOT categorize all 138 test failures
+- DO make ONE test pass first
 
-CONFIRMATION REQUIRED: Present your analysis and wait for approval before proceeding.
+CONFIRMATION REQUIRED: 
+After Step 2, state: "I selected test X because Y. I will now focus exclusively on making this test pass."
+Wait for approval before proceeding to implementation.
 
 ---
 
@@ -534,7 +610,7 @@ CONFIRMATION REQUIRED: Confirm understanding of callback approach before startin
 ### Prompt
 
 ---
-TASK: Implement basic type argument parsing for parameterized types
+TASK: Find ONE test failing on type arguments, fix it, measure impact
 
 CONTEXT:
 **Current Status: 30/138 (21.7%) tests passing**
@@ -544,9 +620,12 @@ Recent improvements:
 - ✅ Java-to-Kotlin mapping
 - ✅ Raw type name stripping (foundation laid)
 
-**Key Finding**: `typeArguments` currently returns empty list, blocking many generic-using tests.
+**Hypothesis**: Many remaining failures likely involve generics (`List<String>`, `Map<K,V>`), since `typeArguments` returns empty list.
 
-**Incremental Approach**: Start with **simple type arguments only** (no wildcards, no bounds yet).
+**Incremental Approach**: 
+1. Find ONE test failing because of missing type arguments
+2. Make THAT test pass
+3. Count how many similar tests also pass
 
 CRITICAL UNDERSTANDING:
 
@@ -559,23 +638,94 @@ ArrayList<Object> objects;      // Type argument with java.lang type
 
 Currently these parse but `JavaClassifierType.typeArguments` returns empty, causing type mismatches in FIR.
 
-IMPLEMENTATION STEPS:
+FOCUSED APPROACH STEPS:
 
-### Phase 1: Review Current State
+### Step 0: Find ONE Representative Test (REQUIRED FIRST)
 
-1. CHECK RAW TYPE STRIPPING:
-   - Verify `rawTypeName` helper exists in `JavaTypeOverAst.kt`
-   - Confirm it strips `<...>` and `[]` suffixes
-   - This was added in "Iteration 4 update: Raw Type Name Stripping"
+**Before implementing anything:**
 
-2. EXAMINE AST STRUCTURE:
-   - Find how type arguments appear in AST (likely under `TYPE_ARGUMENT_LIST`)
-   - Look at existing javac-wrapper or PSI implementations for reference
-   - Understand `JAVA_CODE_REFERENCE` node structure with type arguments
+```bash
+# Run full suite to identify tests that might need generics
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q 2>&1 | tee test_output.txt
 
-### Phase 2: Implement Simple Type Arguments
+# Look for type mismatch errors that might involve generics
+grep -B 3 "TYPE_MISMATCH\|RETURN_TYPE_MISMATCH" test_output.txt | grep "testData" | head -10
+```
 
-3. CREATE TEST CASES:
+**Manual inspection:**
+- Look at 3-5 candidate tests
+- Find the simplest one that uses generic types
+- Read its test data file
+- Verify it's actually failing on type arguments (not something else)
+
+**Select ONE test and document:**
+```
+Selected test: testXXXXX
+Reason: Uses List<String>, only 30 lines, clear error about type argument mismatch
+Expected fix: Parse REFERENCE_PARAMETER_LIST to extract <String>
+```
+
+**STOP and get confirmation before proceeding.**
+
+---
+
+IMPLEMENTATION STEPS (ONLY AFTER TEST SELECTION):
+
+### Phase 1: Create Unit Test for YOUR Selected Test
+
+1. EXTRACT MINIMAL CASE from the selected box test:
+   ```kotlin
+   @Test
+   fun testYourSpecificCase() {
+       // Copy the Java code from the box test you selected
+       val source = """
+           // Paste minimal Java code here
+       """.trimIndent()
+       
+       // Parse and reproduce the EXACT issue
+       val javaClass = parseJavaClass(source, "ClassName")
+       val field = javaClass.fields.first()
+       val fieldType = field.type as JavaClassifierType
+       
+       // This assertion will fail - that's the issue to fix
+       assertEquals(1, fieldType.typeArguments.size)
+   }
+   ```
+
+2. RUN ONLY THIS UNIT TEST:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaParsingTest.testYourSpecificCase" -q
+   ```
+
+3. VERIFY IT FAILS WITH EXPECTED ERROR:
+   - Should fail because `typeArguments` returns empty
+   - Make sure you're reproducing the RIGHT issue
+
+### Phase 2: Investigate AST Structure for THIS Test
+
+4. ADD DEBUG TEST to understand AST:
+   ```kotlin
+   @Test
+   fun testDebugTypeArgumentsAST() {
+       val source = """ /* same as above */ """.trimIndent()
+       val parsed = KmpJavaParser.parse(source)
+       
+       // Print AST structure
+       printASTTree(parsed)  // or use debugger to inspect
+       
+       // Find TYPE node with type arguments
+       // Document what you find
+   }
+   ```
+
+5. DOCUMENT AST STRUCTURE:
+   - Where are type arguments in the tree?
+   - What node type? `REFERENCE_PARAMETER_LIST`? `TYPE_ARGUMENT_LIST`?
+   - How to extract them?
+
+### Phase 3: Implement for THIS Test
+
+6. FIX JavaClassifierTypeOverAst BASED ON YOUR FINDINGS:
    ```kotlin
    @Test
    fun testSimpleTypeArguments() {
@@ -643,26 +793,41 @@ IMPLEMENTATION STEPS:
 
 ### Phase 4: Test and Validate
 
-8. RUN UNIT TESTS:
-   - Verify type arguments parsed correctly
-   - Check count, type resolution
-
-9. RUN BOX TESTS:
+8. RUN YOUR UNIT TEST:
    ```bash
-   ./gradlew :compiler:tests-for-compiler-generator:test \
-     --tests "org.jetbrains.kotlin.test.runners.codegen.BlackBoxCodegenForJavaDirectSuppressionTestGenerated" \
-     -q
+   ./gradlew :compiler:java-direct:test --tests "JavaParsingTest.testYourSpecificCase" -q
    ```
+   - Should now PASS
 
-10. ANALYZE RESULTS:
-   - Expected: 10-20 additional tests pass (tests using simple generics)
-   - Target: 40-50/138 (29-36%) pass rate
-   - Categorize remaining failures
+9. RUN THE ONE BOX TEST YOU SELECTED:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testYourSelectedTest" -q
+   ```
+   - Should now PASS
+   - If it doesn't pass, debug further - maybe type arguments weren't the only issue
 
-11. UPDATE ITERATION_RESULTS.md:
-   - Document test improvement
-   - List patterns that now work
-   - Identify next blockers
+10. RUN ~10 SIMILAR TESTS:
+   ```bash
+   # Find tests likely using similar generics
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.test*List*" -q
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.test*Map*" -q
+   ```
+   - Count how many more pass
+   - Document which ones still fail and why
+
+11. RUN FULL SUITE (measurement only):
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q 2>&1 | tee new_test_output.txt
+   grep "tests completed" new_test_output.txt
+   ```
+   - Record new pass rate (e.g., 30/138 → 35/138)
+
+12. UPDATE ITERATION_RESULTS.md:
+   - Document your selected test
+   - Document why it was failing (concrete root cause)
+   - Document the fix
+   - Document impact: "5 additional tests pass, all using List<String> or Map<K,V>"
+   - Document remaining issues in the similar tests that still fail
 
 DELIVERABLE:
 - `JavaClassifierTypeOverAst.typeArguments` returns parsed list
