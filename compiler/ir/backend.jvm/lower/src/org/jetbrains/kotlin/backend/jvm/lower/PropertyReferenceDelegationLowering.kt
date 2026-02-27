@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -101,8 +102,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
     fun DeclarationIrBuilder.createGetterBody(
         getter: IrSimpleFunction,
         delegateReference: IrRichPropertyReference,
-        receiver: IrExpression?,
-        backingField: IrField?,
+        receiverProvider: IrBuilder.() -> IrExpression?,
     ): IrBody {
         val constInitializer = delegateReference.constInitializer
         return if (constInitializer != null) {
@@ -112,7 +112,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
             irExprBody(irBlock {
                 +delegateReference.getterFunction.inline(
                     getter,
-                    createAccessorArgumentsList(getter, delegateReference.getterFunction, isGetter = true, receiver, backingField)
+                    createAccessorArgumentsList(getter, delegateReference.getterFunction, isGetter = true, receiverProvider)
                 )
             })
         }
@@ -121,14 +121,13 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
     fun DeclarationIrBuilder.createSetterBody(
         setter: IrSimpleFunction,
         delegateReference: IrRichPropertyReference,
-        receiver: IrExpression?,
-        backingField: IrField?,
+        receiverProvider: IrBuilder.() -> IrExpression?,
     ): IrBody {
         val delegateSetter = delegateReference.setterFunction ?: error("delegate was expected to have a setter")
         return irExprBody(irBlock {
             +delegateSetter.inline(
                 setter,
-                createAccessorArgumentsList(setter, delegateSetter, isGetter = false, receiver, backingField)
+                createAccessorArgumentsList(setter, delegateSetter, isGetter = false, receiverProvider)
             )
         })
     }
@@ -140,10 +139,9 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         accessor: IrSimpleFunction,
         delegateAccessor: IrSimpleFunction,
         isGetter: Boolean,
-        remappedReceiver: IrExpression?,
-        backingField: IrField?,
+        receiverProvider: IrBuilder.() -> IrExpression?,
     ): List<IrValueDeclaration> {
-        val boundReceiverOrNull = createBoundReceiverExpr(accessor, backingField, remappedReceiver)
+        val boundReceiverOrNull = receiverProvider()
         val setterParam = if (isGetter) null else accessor.parameters.lastOrNull() ?: error("setter must have at least one parameter")
         return buildList {
             if (boundReceiverOrNull != null) add(createTmpVariable(boundReceiverOrNull.deepCopyWithSymbols(accessor)))
@@ -184,12 +182,24 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
 
         getter?.apply {
             body = with(context.createIrBuilder(symbol, startOffset, endOffset)) {
-                createGetterBody(this@apply, delegate, remapReceiverIfNeeded(this@apply), backingField)
+                createGetterBody(
+                    getter = this@apply,
+                    delegateReference = delegate,
+                    receiverProvider = {
+                        createBoundReceiverExpr(this@apply, backingField, remapReceiverIfNeeded(this@apply))
+                    }
+                )
             }
         }
         setter?.apply {
             body = with(context.createIrBuilder(symbol, startOffset, endOffset)) {
-                createSetterBody(this@apply, delegate, remapReceiverIfNeeded(this@apply), backingField)
+                createSetterBody(
+                    setter = this@apply,
+                    delegateReference = delegate,
+                    receiverProvider = {
+                        createBoundReceiverExpr(this@apply, backingField, remapReceiverIfNeeded(this@apply))
+                    }
+                )
             }
         }
 
@@ -234,18 +244,30 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
             !declaration.getter.returnsResultOfStdlibCall ||
             declaration.setter?.returnsResultOfStdlibCall == false
         ) return super.visitLocalDelegatedProperty(declaration)
-        // Variables are cheap, so optimizing them out is not really necessary.
-        val receiver = delegateInitializer.singleBoundValueOrNull?.transform(this@PropertyReferenceDelegationTransformer, null)
-        // TODO: just like in `PropertyReferenceLowering`, probably better to inline the getter/setter rather than
+        val receiver = delegateInitializer.singleBoundValueOrNull?.let { receiver ->
+            with(delegate) {
+                buildVariable(parent, startOffset, endOffset, origin, name, receiver.type)
+            }.apply {
+                initializer = receiver.transform(this@PropertyReferenceDelegationTransformer, null)
+            }
+        }        // TODO: just like in `PropertyReferenceLowering`, probably better to inline the getter/setter rather than
         //       generate them as local functions.
         val getter = declaration.getter.apply {
             with(context.createIrBuilder(symbol, startOffset, endOffset)) {
-                body = createGetterBody(this@apply, delegateInitializer, receiver, backingField = null)
+                body = createGetterBody(
+                    getter = this@apply,
+                    delegateReference = delegateInitializer,
+                    receiverProvider = { receiver?.let { irGet(it) } }
+                )
             }
         }
         val setter = declaration.setter?.apply {
             with(context.createIrBuilder(symbol, startOffset, endOffset)) {
-                body = createSetterBody(this@apply, delegateInitializer, receiver, backingField = null)
+                body = createSetterBody(
+                    setter = this@apply,
+                    delegateReference = delegateInitializer,
+                    receiverProvider = { receiver?.let { irGet(it) } }
+                )
             }
         }
         val statements = listOfNotNull(receiver, getter, setter)
