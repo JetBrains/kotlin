@@ -78,6 +78,12 @@ public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
     }
 
     @Test
+    @TestMetadata("KT67332.kt")
+    public void testKT67332() {
+      run("KT67332.kt");
+    }
+
+    @Test
     @TestMetadata("LambdaTest.kt")
     public void testLambdaTest() {
       run("LambdaTest.kt");
