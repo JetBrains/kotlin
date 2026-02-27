@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.java.direct
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -650,5 +651,55 @@ class JavaParsingTest {
         assert(keyArg.classifierQualifiedName == "String") { "Expected 'String', got ${keyArg.classifierQualifiedName}" }
         val valueArg = mapType.typeArguments[1] as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         assert(valueArg.classifierQualifiedName == "Integer") { "Expected 'Integer', got ${valueArg.classifierQualifiedName}" }
+    }
+
+    @Test
+    fun testPackageExtraction() {
+        val source = """
+            package example;
+            
+            public class Hello {
+                public void greet() {}
+            }
+        """.trimIndent()
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        
+        val packageStmt = root.findChildByType("PACKAGE_STATEMENT")
+        assert(packageStmt != null) { "Expected PACKAGE_STATEMENT node" }
+        val packageName = packageStmt?.findChildByType("JAVA_CODE_REFERENCE")?.text
+        assert(packageName == "example") { "Expected 'example', got $packageName" }
+    }
+
+    @Test
+    fun testClassFinderWithPackage() {
+        // Create temporary files with Java classes in packages
+        val tempDir = kotlin.io.path.createTempDirectory("java-direct-test")
+        try {
+            val helloFile = tempDir.resolve("Hello.java")
+            java.nio.file.Files.writeString(helloFile, """
+                package example;
+                
+                public class Hello {
+                    public void greet() {}
+                }
+            """.trimIndent())
+
+            val finder = JavaClassFinderOverAstImpl(listOf(helloFile))
+
+            // Try to find example.Hello
+            val classId = org.jetbrains.kotlin.name.ClassId(
+                FqName("example"),
+                Name.identifier("Hello")
+            )
+            val request = org.jetbrains.kotlin.load.java.JavaClassFinder.Request(classId)
+            val javaClass = finder.findClass(request)
+
+            assert(javaClass != null) { "Expected to find example.Hello class" }
+            assert(javaClass?.name?.asString() == "Hello") { "Expected class name 'Hello', got ${javaClass?.name?.asString()}" }
+            assert(javaClass?.fqName?.asString() == "example.Hello") { "Expected fqName 'example.Hello', got ${javaClass?.fqName?.asString()}" }
+        } finally {
+            tempDir.toFile().deleteRecursively()
+        }
     }
 }
