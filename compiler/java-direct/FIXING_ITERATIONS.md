@@ -864,7 +864,140 @@ CONFIRMATION REQUIRED: Confirm understanding before starting. Check if TYPE_ARGU
 
 ---
 
-## Iteration 6: Wildcards and Upper Bounds
+## Iteration 6: Resolution Debugging and JDK Class Access
+
+**Reference**: See `AGENT_INSTRUCTIONS.md`, `TYPE_RESOLUTION_DESIGN.md`, and `ITERATION_RESULTS.md` (Iteration 5).
+
+### Prompt
+
+---
+TASK: Investigate and fix the two primary blockers preventing test improvements
+
+CONTEXT:
+**Current Status: 31/138 (22.5%) tests passing**
+
+Iteration 5 implemented type arguments correctly but revealed that **type arguments are NOT the primary blocker**. Analysis of 107 failing tests shows:
+
+1. **MISSING_DEPENDENCY_CLASS** (36 errors): Classes in packages (e.g., `example.Hello`) aren't being found
+2. **UNRESOLVED_REFERENCE** for JDK classes (39 errors): `NullPointerException`, `RuntimeException` etc. fail to resolve
+
+These are fundamental resolution issues that must be fixed before other features (generics, wildcards) can have impact.
+
+### Investigation Strategy
+
+**CRITICAL: Follow FOCUS_STRATEGY.md approach - investigate ONE concrete failure at a time**
+
+### Phase 1: Diagnose Package-based Class Discovery
+
+1. SELECT A SIMPLE FAILING TEST with MISSING_DEPENDENCY_CLASS:
+   - Example: `testGenericSamProjectedOut` - has `example.Hello` class
+   - Find test in `compiler/testData/codegen/box/javaInterop/`
+
+2. ADD DIAGNOSTIC LOGGING to `JavaClassFinderOverAstImpl`:
+   ```kotlin
+   // In buildIndex()
+   println("JAVA-DIRECT: Indexing file $path -> package=$packageFqName, classes=$classNames")
+   
+   // In findClass()
+   println("JAVA-DIRECT: findClass request for $classId")
+   println("JAVA-DIRECT: index has packages: ${index.keys}")
+   println("JAVA-DIRECT: package ${classId.packageFqName} contains: ${index[classId.packageFqName]?.keys}")
+   ```
+
+3. RUN THE SINGLE TEST:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testGenericSamProjectedOut" -q 2>&1 | grep "JAVA-DIRECT"
+   ```
+
+4. ANALYZE OUTPUT:
+   - Are all Java files being indexed?
+   - Is the package name correctly extracted?
+   - Is `findClass` being called with the right ClassId?
+   - If yes to all, why is it returning null?
+
+### Phase 2: Diagnose JDK Class Resolution
+
+5. SELECT A SIMPLE FAILING TEST with UNRESOLVED_REFERENCE for JDK class:
+   - Example: `testPlatformToLateinit` - references `NullPointerException`
+
+6. ADD DIAGNOSTIC TO `JavaTypeConversion.kt` (FIR side):
+   ```kotlin
+   // In toConeKotlinTypeForFlexibleBound(), null -> branch
+   println("JAVA-DIRECT-FIR: Resolving classifier=$classifierQualifiedName, isResolved=$isResolved")
+   
+   // In resolveSimpleName()
+   println("JAVA-DIRECT-FIR: Trying to resolve simple name $simpleName")
+   println("JAVA-DIRECT-FIR: symbolProvider result for $candidateFqn = ${session.symbolProvider.getClassLikeSymbolByClassId(classId)}")
+   ```
+
+7. RUN THE SINGLE TEST and check:
+   - Is `NullPointerException` being looked up?
+   - What ClassId is being constructed?
+   - Does `session.symbolProvider` return null for JDK classes?
+
+8. IF symbolProvider returns null for JDK classes:
+   - This is likely a test infrastructure issue
+   - Check if `JvmClassFileBasedSymbolProvider` is in the provider chain
+   - Verify the library session has JDK on classpath
+   
+### Phase 3: Fix Identified Issues
+
+Based on diagnostics, implement fixes:
+
+**If package indexing is broken:**
+- Fix `tryBuildFileEntry` package name extraction
+- Verify `PACKAGE_STATEMENT` → `JAVA_CODE_REFERENCE` path
+- Test with unit test first
+
+**If findClass lookup is broken:**
+- Check `ClassId` structure (packageFqName vs relativeClassName)
+- Verify index key matching
+
+**If JDK classes aren't in symbolProvider:**
+- This may require test infrastructure changes
+- Check `AbstractJavaUsingAstBoxTest` configuration
+- Verify library session setup includes JDK
+
+**If symbolProvider IS queried but returns null:**
+- May be a composite provider ordering issue
+- Check provider chain in FirSession
+
+### Phase 4: Validate Fixes
+
+9. REMOVE DIAGNOSTIC LOGGING (or guard with flag)
+
+10. RUN PREVIOUSLY FAILING TESTS:
+    ```bash
+    ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testGenericSamProjectedOut" -q
+    ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testPlatformToLateinit" -q
+    ```
+
+11. RUN FULL TEST SUITE:
+    ```bash
+    ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q
+    ```
+
+EXPECTED RESULTS:
+- If package discovery fixed: +20-30 tests (MISSING_DEPENDENCY_CLASS resolved)
+- If JDK resolution fixed: +15-25 tests (UNRESOLVED_REFERENCE for JDK resolved)
+- Combined potential: 50-80/138 (36-58%) tests passing
+
+SCOPE LIMITATIONS:
+- Focus ONLY on these two specific blockers
+- Do NOT attempt to fix wildcards, annotations, etc. in this iteration
+- If fixes require test infrastructure changes, document clearly
+
+DELIVERABLE:
+- Diagnostic findings documented
+- Fixes implemented for identified issues
+- Test results showing improvement
+- If unable to fix (e.g., requires broader changes), document root cause precisely
+
+CONFIRMATION REQUIRED: Acknowledge the two-blocker focus before starting investigation.
+
+---
+
+## Iteration 7: Wildcards and Upper Bounds
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md` section 3.3.
 
@@ -955,7 +1088,7 @@ CONFIRMATION REQUIRED: Complete Iteration 5 first, then assess if this is the ri
 
 ---
 
-## Iteration 7: Array Types
+## Iteration 8: Array Types
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md`.
 
@@ -1014,7 +1147,7 @@ CONFIRMATION REQUIRED: Assess after Iteration 6 if arrays are blocking tests.
 
 ---
 
-## Iteration 8: Lower Bounds and Complex Generics
+## Iteration 9: Lower Bounds and Complex Generics
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md`.
 
@@ -1076,7 +1209,7 @@ CONFIRMATION REQUIRED: Assess after Iteration 7 completion.
 
 ---
 
-## Iteration 9: Annotations and Nullability
+## Iteration 10: Annotations and Nullability
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md` section 3.5.
 
@@ -1130,7 +1263,7 @@ CONFIRMATION REQUIRED: Assess after Iteration 6 if this is next priority.
 
 ---
 
-## Iteration 10: Inner Classes and Nested Types
+## Iteration 11: Inner Classes and Nested Types
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md`.
 
@@ -1176,7 +1309,7 @@ CONFIRMATION REQUIRED: Assess priority after earlier iterations.
 
 ---
 
-## Iteration 11: Annotation Support
+## Iteration 12: Annotation Support
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules and `IMPLEMENTATION_PLAN.md` section 3.5.
 
@@ -1234,7 +1367,7 @@ CONFIRMATION REQUIRED: Verify current state of annotation support first.
 
 ---
 
-## Iteration 12: Error Handling and Diagnostics
+## Iteration 13: Error Handling and Diagnostics
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules.
 
@@ -1285,7 +1418,7 @@ CONFIRMATION REQUIRED: Discuss error handling strategy.
 
 ---
 
-## Iteration 13: Performance and Caching
+## Iteration 14: Performance and Caching
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` for common pitfalls about laziness.
 
@@ -1332,7 +1465,7 @@ CONFIRMATION REQUIRED: Profile first to find actual bottlenecks.
 
 ---
 
-## Iteration 14: Final Validation and Documentation
+## Iteration 15: Final Validation and Documentation
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` for success metrics.
 
