@@ -46,24 +46,6 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
         constructor(origin: KotlinCompilerArgument) : this(origin.calculateName(), origin)
     }
 
-    class SSoTCompilerArgumentCompat(
-        origin: SSoTCompilerArgument,
-    ) : BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>(
-        name = origin.name,
-        description = origin.description,
-        valueType = origin.valueType,
-        introducedSinceVersion = origin.introducedSinceVersion,
-        deprecatedSinceVersion = origin.deprecatedSinceVersion,
-        removedSinceVersion = origin.removedSinceVersion
-    ) {
-        constructor(origin: KotlinCompilerArgument) : this(SSoTCompilerArgument(origin))
-
-        val effectiveCompilerName: String = origin.effectiveCompilerName
-        val applierSimpleName = "apply${
-            origin.effectiveCompilerName.replaceFirstChar { it.uppercase() }
-        }"
-    }
-
     class CustomCompilerArgument(
         name: String,
         description: String,

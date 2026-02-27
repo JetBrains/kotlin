@@ -17,7 +17,6 @@ sealed interface ArgumentTransform {
     object NoOp : ArgumentTransform
     object Drop : ArgumentTransform
     class CustomArgument(val argument: BtaCompilerArgument.CustomCompilerArgument) : ArgumentTransform
-    object Compat : ArgumentTransform
 //    data class Rename(val to: String) : ArgumentTransform // possible future operations
 }
 
@@ -69,8 +68,6 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("expression")
             drop("include-runtime") // we're only considering building into directories for now (not jars)
             drop("Xbuild-file")
-            compat("Xprofile")
-            compat("jdk-home")
         }
         with(removedJvmCompilerArguments) {
             drop("Xuse-javac")
@@ -92,12 +89,6 @@ private fun MutableMap<String, ArgumentTransform>.custom(argument: BtaCompilerAr
 }
 
 context(level: KotlinCompilerArgumentsLevel)
-private fun MutableMap<String, ArgumentTransform>.compat(name: String) {
-    require(level.arguments.any { it.name == name }) { "Argument $name is not found in level $level" }
-    put(name, ArgumentTransform.Compat)
-}
-
-context(level: KotlinCompilerArgumentsLevel)
 private fun KotlinCompilerArgument.transform(): ArgumentTransform =
     levelsToArgumentTransforms[level.name]?.get(name) ?: ArgumentTransform.NoOp
 
@@ -109,7 +100,7 @@ private fun KotlinCompilerArgumentsLevel.generateCustomArguments(): List<BtaComp
 internal fun KotlinCompilerArgumentsLevel.transformApiArguments(): List<BtaCompilerArgument<*>> {
     val transformedArguments = arguments.mapNotNull { argument ->
         when (argument.transform()) {
-            is ArgumentTransform.NoOp, is ArgumentTransform.Compat -> BtaCompilerArgument.SSoTCompilerArgument(argument)
+            is ArgumentTransform.NoOp -> BtaCompilerArgument.SSoTCompilerArgument(argument)
             is ArgumentTransform.Drop, is ArgumentTransform.CustomArgument -> null
         }
     }
@@ -121,7 +112,6 @@ internal fun KotlinCompilerArgumentsLevel.transformImplArguments(): List<BtaComp
     val transformedArguments = arguments.mapNotNull { argument ->
         when (argument.transform()) {
             is ArgumentTransform.NoOp, is ArgumentTransform.Drop -> BtaCompilerArgument.SSoTCompilerArgument(argument)
-            is ArgumentTransform.Compat -> BtaCompilerArgument.SSoTCompilerArgumentCompat(argument)
             is ArgumentTransform.CustomArgument -> null
         }
     }
