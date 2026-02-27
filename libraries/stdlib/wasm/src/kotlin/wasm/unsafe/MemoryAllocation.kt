@@ -197,7 +197,8 @@ public fun componentModelRealloc(
         }
         // Growing allocation on top of the bump allocator stack by allocating the size difference and returning the original address.
         lastReallocAllocatedAddress == originalPtr -> {
-            allocator.allocate(newSize - originalSize)
+            @Suppress("UNUSED_VARIABLE")
+            val unused = allocator.allocate(newSize - originalSize)
             originalPtr
         }
         // Allocation "in the middle" of bump allocator can't be grown in size in place.
