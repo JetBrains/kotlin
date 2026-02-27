@@ -19040,6 +19040,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("localDelegatedBoundValueWithSideEffect.kt")
+    public void testLocalDelegatedBoundValueWithSideEffect() {
+      runTest("compiler/testData/codegen/box/delegatedProperty/localDelegatedBoundValueWithSideEffect.kt");
+    }
+
+    @Test
     @TestMetadata("map.kt")
     public void testMap() {
       runTest("compiler/testData/codegen/box/delegatedProperty/map.kt");
