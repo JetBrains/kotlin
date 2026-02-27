@@ -95,10 +95,28 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
         compileAndRunProgram(KtTestUtil.getTestDataPathBase() + "/reflection/concurrentAccessToPrivateFunction")
     }
 
-    private fun compileAndRunProgram(root: String) {
+    // This test checks that we don't initialize full reflection (and specifically never read any metadata or parse protobuf) in case if
+    // delegated properties are used, whose `getValue`/`setValue` operators don't try to access anything from the `KProperty` parameter.
+    // Before Kotlin 2.3.20, where KT-81974 was fixed, bytecode of delegated properties contained unnecessary calls to
+    // `Reflection.property0/1/2` methods. If these methods start to read metadata or perform anything that can hurt performance, it will
+    // introduce performance regression in the old code (compiled by Kotlin < 2.3.20) if it has the new kotlin-reflect in classpath.
+    // So, effectively this test checks that `Reflection.property0/1/2` are still fast enough to be called from the old code.
+    fun testLazyInitializationForDelegatedProperty() {
+        // Run the program and print all classes loaded by the JVM.
+        val (stdout, stderr) = compileAndRunProgram(
+            KtTestUtil.getTestDataPathBase() + "/reflection/lazyInitializationForDelegatedProperty",
+            listOf("-verbose:class"),
+        )
+        if ("JvmProtoBuf" in stdout || "JvmProtoBuf" in stderr) {
+            fail("Full reflection should not be loaded for delegated properties:\n\n$stdout\n\n$stderr\n\n")
+        }
+    }
+
+    private fun compileAndRunProgram(root: String, jvmArgs: List<String> = emptyList()): TestOutput {
         val lib = CompilerTestUtil.compileJvmLibrary(File("$root/test.kt"))
 
-        runJava(
+        return runJava(
+            *jvmArgs.toTypedArray(),
             "-ea",
             "-classpath",
             listOf(
@@ -110,17 +128,27 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
         )
     }
 
-    private fun runJava(vararg args: String) {
+    private fun runJava(vararg args: String): TestOutput {
         val javaHome = System.getProperty("java.home")
         val javaExe = File(javaHome, "bin/java.exe").takeIf(File::exists)
             ?: File(javaHome, "bin/java").takeIf(File::exists)
             ?: error("Can't find 'java' executable in $javaHome")
 
-        val process = ProcessBuilder(javaExe.absolutePath, *args).start()
-        process.waitFor(1, TimeUnit.MINUTES)
-        val stderr = process.errorStream.reader().readText()
-        val stdout = process.inputStream.reader().readText()
+        val tmpdir = KotlinTestUtils.tmpDirForTest(this)
+        val stdoutFile = tmpdir.resolve("stdout.txt")
+        val stderrFile = tmpdir.resolve("stderr.txt")
+        val process = ProcessBuilder(javaExe.absolutePath, *args)
+            .redirectOutput(stdoutFile)
+            .redirectError(stderrFile)
+            .start()
+        val finished = process.waitFor(1, TimeUnit.MINUTES)
+        if (!finished) process.destroyForcibly()
+        val stdout = stdoutFile.readText()
+        val stderr = stderrFile.readText()
         val exitCode = process.exitValue()
         assertEquals("Program exited with exit code $exitCode.\nStdout:\n$stdout\nStderr:\n$stderr", 0, exitCode)
+        return TestOutput(stdout, stderr)
     }
+
+    private data class TestOutput(val stdout: String, val stderr: String)
 }

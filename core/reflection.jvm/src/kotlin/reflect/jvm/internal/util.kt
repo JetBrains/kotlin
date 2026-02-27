@@ -296,14 +296,16 @@ internal fun Any?.asReflectFunction(): ReflectKFunction? = when (this) {
 }
 
 internal fun Any?.asReflectProperty(): ReflectKProperty<*>? = when (this) {
+    is LazyKProperty<*, *> -> delegate.asReflectProperty()
     is ReflectKProperty<*> -> this
-    is PropertyReference -> compute() as? ReflectKProperty
+    is PropertyReference -> compute().takeUnless { it === this }?.asReflectProperty()
     else -> null
 }
 
 internal fun Any?.asReflectCallable(): ReflectKCallable<*>? = when (this) {
+    is LazyKProperty<*, *> -> delegate.asReflectCallable()
     is ReflectKCallable<*> -> this
-    is CallableReference -> compute() as? ReflectKCallable<*>
+    is CallableReference -> compute().takeUnless { it === this }?.asReflectCallable()
     else -> null
 }
 
