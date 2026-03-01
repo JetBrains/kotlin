@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources
 fun createPartialLinkageSupportForLowerings(
     partialLinkageConfig: PartialLinkageConfig,
     builtIns: IrBuiltIns,
-    messageCollector: MessageCollector
+    diagnosticReporter: IrDiagnosticReporter,
 ): PartialLinkageSupportForLowerings = if (partialLinkageConfig.isEnabled)
-    PartialLinkageSupportForLoweringsImpl(builtIns, PartialLinkageLogger(messageCollector, partialLinkageConfig.logLevel))
+    PartialLinkageSupportForLoweringsImpl(builtIns, PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel))
 else
     PartialLinkageSupportForLowerings.DISABLED
 
@@ -82,12 +82,17 @@ internal class PartialLinkageSupportForLoweringsImpl(
     else
         renderAndLogLinkageError(partialLinkageCase, element, file) // Render + log with the appropriate severity.
 
-    fun renderAndLogLinkageError(partialLinkageCase: PartialLinkageCase, element: IrElement, file: PLFile): String {
+    fun renderAndLogLinkageError(
+        partialLinkageCase: PartialLinkageCase,
+        element: IrElement,
+        file: PLFile,
+        significance: PartialLinkageIssueSignificance = PartialLinkageIssueSignificance.MAJOR,
+    ): String {
         val errorMessage = renderLinkageError(partialLinkageCase)
         val locationInSourceCode = file.computeLocationForOffset(element.startOffsetOfFirstDenotableIrElement())
 
         linkageIssuesLogged++ // Track each logged linkage issue.
-        logger.log(errorMessage, locationInSourceCode)
+        logger.log(errorMessage, locationInSourceCode, significance)
 
         return errorMessage
     }

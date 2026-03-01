@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterfac
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.FunctionTypeInterfacePackages
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
@@ -161,6 +163,10 @@ internal class JsIrLinkerLoader(
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
         val messageCollector = compilerConfiguration.messageCollector
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            compilerConfiguration.diagnosticsCollector,
+            compilerConfiguration.languageVersionSettings,
+        )
         val linker = JsIrLinker(
             currentModule = null,
             messageCollector = messageCollector,
@@ -169,7 +175,7 @@ internal class JsIrLinkerLoader(
             partialLinkageSupport = createPartialLinkageSupportForLinker(
                 partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
                 builtIns = irBuiltIns,
-                messageCollector = messageCollector,
+                diagnosticReporter = irDiagnosticReporter,
             ),
             friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
         )

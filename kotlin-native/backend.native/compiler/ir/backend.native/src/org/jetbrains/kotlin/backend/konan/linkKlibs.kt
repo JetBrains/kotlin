@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStruc
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -140,6 +142,12 @@ internal fun LinkKlibsContext.linkKlibs(
                         config.includedLibraries.map { it.uniqueName }
                 ).associateWith { friendModules }
 
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+                config.configuration.diagnosticsCollector,
+                config.languageVersionSettings,
+        )
+
+
         KonanIrLinker(
                 currentModule = moduleDescriptor,
                 messageCollector = messageCollector,
@@ -153,7 +161,7 @@ internal fun LinkKlibsContext.linkKlibs(
                 partialLinkageSupport = createPartialLinkageSupportForLinker(
                         partialLinkageConfig = partialLinkageConfig,
                         builtIns = generatorContext.irBuiltIns,
-                        messageCollector = messageCollector,
+                        diagnosticReporter = irDiagnosticReporter,
                 ),
                 libraryBeingCached = config.libraryToCache,
                 userVisibleIrModulesSupport = config.userVisibleIrModulesSupport,

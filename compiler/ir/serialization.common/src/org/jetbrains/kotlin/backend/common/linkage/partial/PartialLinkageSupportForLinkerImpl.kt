@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.backend.common.linkage.partial
 import org.jetbrains.kotlin.backend.common.linkage.issues.PartialLinkageErrorsLogged
 import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus.Unusable.*
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -21,12 +21,9 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 fun createPartialLinkageSupportForLinker(
     partialLinkageConfig: PartialLinkageConfig,
     builtIns: IrBuiltIns,
-    messageCollector: MessageCollector,
+    diagnosticReporter: IrDiagnosticReporter,
 ): PartialLinkageSupportForLinker = if (partialLinkageConfig.isEnabled)
-    PartialLinkageSupportForLinkerImpl(
-        builtIns = builtIns,
-        logger = PartialLinkageLogger(messageCollector, partialLinkageConfig.logLevel),
-    )
+    PartialLinkageSupportForLinkerImpl(builtIns, PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel))
 else
     PartialLinkageSupportForLinker.DISABLED
 
@@ -87,7 +84,7 @@ internal class PartialLinkageSupportForLinkerImpl(
         // Make sure that there are no linkage issues that have been reported with the 'error' severity.
         // If there are, abort the current compilation.
         if (logger.logLevel == PartialLinkageLogLevel.ERROR && patcher.linkageIssuesLogged > 0)
-            PartialLinkageErrorsLogged.raiseIssue(logger.messageCollector)
+            PartialLinkageErrorsLogged.raiseIssue(logger.diagnosticReporter)
     }
 
     override fun preprocessBeforeFakeOverridesBuilding(symbolTable: SymbolTable, fakeOverrideBuilder: IrLinkerFakeOverrideProvider) {
