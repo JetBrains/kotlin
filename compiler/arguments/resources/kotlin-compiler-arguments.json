@@ -9450,8 +9450,14 @@
                                     }
                                 },
                                 "valueDescription": {
-                                    "current": "{info|warning|error}",
-                                    "valueInVersions": []
+                                    "current": "{silent|info|warning|error}",
+                                    "valueInVersions": [
+                                        {
+                                            "minReleaseVersion": "2.0.20",
+                                            "maxReleaseVersion": "2.3.20",
+                                            "value": "{info|warning|error}"
+                                        }
+                                    ]
                                 },
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "2.0.20",

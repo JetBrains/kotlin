@@ -105,7 +105,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
 
     @Argument(
         value = "-Xpartial-linkage-loglevel",
-        valueDescription = "{info|warning|error}",
+        valueDescription = "{silent|info|warning|error}",
         description = "Define the compile-time log level for partial linkage.",
     )
     var partialLinkageLogLevel: String? = null

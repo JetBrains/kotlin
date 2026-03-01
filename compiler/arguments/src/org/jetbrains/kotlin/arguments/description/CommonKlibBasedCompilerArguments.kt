@@ -71,7 +71,10 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         compilerName = "partialLinkageLogLevel"
         description = "Define the compile-time log level for partial linkage.".asReleaseDependent()
         valueType = StringType.defaultNull
-        valueDescription = "{info|warning|error}".asReleaseDependent()
+        valueDescription = ReleaseDependent(
+            current = "{silent|info|warning|error}",
+            KotlinReleaseVersion.v2_0_20..KotlinReleaseVersion.v2_3_20 to "{info|warning|error}"
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,

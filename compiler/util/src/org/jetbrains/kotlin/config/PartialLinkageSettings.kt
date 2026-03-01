@@ -9,7 +9,7 @@ data class PartialLinkageConfig(val mode: PartialLinkageMode, val logLevel: Part
     val isEnabled get() = mode.isEnabled
 
     companion object {
-        val DEFAULT = PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR)
+        val DEFAULT = PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.DEFAULT)
     }
 }
 
@@ -26,10 +26,10 @@ enum class PartialLinkageMode(val isEnabled: Boolean) {
 }
 
 enum class PartialLinkageLogLevel {
-    INFO, WARNING, ERROR;
+    SILENT, INFO, WARNING, ERROR;
 
     companion object {
-        val DEFAULT = INFO
+        val DEFAULT = SILENT
 
         fun resolveLogLevel(key: String): PartialLinkageLogLevel? =
             entries.firstOrNull { entry -> entry.name.equals(key, ignoreCase = true) }
