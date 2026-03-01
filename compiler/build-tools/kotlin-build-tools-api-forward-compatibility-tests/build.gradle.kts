@@ -6,6 +6,8 @@ plugins {
     id("test-inputs-check")
 }
 
+val btaApiVersion = "2.3.0"
+
 val buildToolsApiImpl = configurations.dependencyScope("buildToolsApiImpl")
 val buildToolsApiImplResolvable = configurations.resolvable("buildToolsApiImplResolvable") {
     extendsFrom(buildToolsApiImpl.get())
@@ -14,16 +16,12 @@ val buildToolsApiImplResolvable = configurations.resolvable("buildToolsApiImplRe
 dependencies {
     api(kotlinStdlib())
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
-    compileOnly("org.jetbrains.kotlin:kotlin-build-tools-api:2.3.0")
-    compileOnly(project(":compiler:build-tools:kotlin-build-tools-compat")) {
-        isTransitive = false
-    }
+    compileOnly("org.jetbrains.kotlin:kotlin-build-tools-api:$btaApiVersion")
     api(testFixtures(project(":compiler:test-infrastructure-utils"))) // for `@TestDataPath`/`@TestMetadata`
     api(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
     compileOnly(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.platform.launcher)
-    buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-compat"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
 }
@@ -64,7 +62,15 @@ testing {
                             extraPermissions.set(
                                 listOfNotNull(
                                     "permission java.net.SocketPermission \"localhost\", \"connect,resolve,accept\";",
-                                    "permission java.util.PropertyPermission \"java.rmi.server.hostname\", \"write\";"
+                                    "permission java.util.PropertyPermission \"java.rmi.server.hostname\", \"write\";",
+
+                                    // paths below are not expected to exist,
+                                    // these are here to pass implicit `exists()` checks in the Kotlin compiler
+                                    "permission java.io.FilePermission \"<no_path>/lib\", \"read\";",
+                                    "permission java.io.FilePermission \"./kotlin-scripting-compiler.jar\", \"read\";",
+                                    "permission java.io.FilePermission \"./kotlin-scripting-compiler-impl.jar\", \"read\";",
+                                    "permission java.io.FilePermission \"./kotlin-scripting-common.jar\", \"read\";",
+                                    "permission java.io.FilePermission \"./kotlin-scripting-jvm.jar\", \"read\";"
                                 )
                             )
                         }
@@ -82,7 +88,7 @@ testing {
                 implementation(project())
                 implementation(project(":kotlin-tooling-core"))
                 implementation(project(":compiler:test-security-manager"))
-                implementation("org.jetbrains.kotlin:kotlin-build-tools-api:2.3.0")
+                implementation("org.jetbrains.kotlin:kotlin-build-tools-api:$btaApiVersion")
             }
         }
     }
