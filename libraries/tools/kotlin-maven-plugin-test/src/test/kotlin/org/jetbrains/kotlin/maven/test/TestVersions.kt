@@ -30,4 +30,8 @@ interface TestVersions {
             const val MAX_SUPPORTED = MAVEN_3_9_12
         }
     }
+
+    companion object {
+        val javaMapByNumericVersion: Map<Int, Java> = Java.entries.associateBy { it.numericVersion }
+    }
 }

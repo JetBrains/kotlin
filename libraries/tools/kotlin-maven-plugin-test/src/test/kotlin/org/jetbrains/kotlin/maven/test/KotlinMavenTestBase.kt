@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.maven.test
 
-import org.jetbrains.kotlin.maven.plugin.test.ConfigMapFromEnvironment
 import org.jetbrains.kotlin.maven.plugin.test.MavenTestExecutionContext
 import org.jetbrains.kotlin.maven.plugin.test.MavenTestProject
 import org.jetbrains.kotlin.maven.plugin.test.createMavenTestExecutionContext
