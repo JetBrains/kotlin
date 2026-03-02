@@ -15,6 +15,7 @@ import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -68,7 +69,9 @@ abstract class KtClassOrObject :
         @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChild(KtStubBasedElementTypes.CLASS_BODY)
 
+    @OptIn(KtImplementationDetail::class)
     inline fun <reified T : KtDeclaration> addDeclaration(declaration: T): T {
+        ensureSemicolonIsPresentAfterEnumEntriesIfNecessaryForDeclaration(declaration)
         val body = getOrCreateBody()
         val anchor = PsiTreeUtil.skipSiblingsBackward(body.rBrace ?: body.lastChild!!, PsiWhiteSpace::class.java)
         return if (anchor?.nextSibling is PsiErrorElement) {
@@ -78,13 +81,17 @@ abstract class KtClassOrObject :
         } as T
     }
 
+    @OptIn(KtImplementationDetail::class)
     inline fun <reified T : KtDeclaration> addDeclarationAfter(declaration: T, anchor: PsiElement?): T {
         val anchorBefore = anchor ?: declarations.lastOrNull() ?: return addDeclaration(declaration)
+        ensureSemicolonIsPresentAfterEnumEntriesIfNecessaryForDeclaration(declaration)
         return getOrCreateBody().addAfter(declaration, anchorBefore) as T
     }
 
+    @OptIn(KtImplementationDetail::class)
     inline fun <reified T : KtDeclaration> addDeclarationBefore(declaration: T, anchor: PsiElement?): T {
         val anchorAfter = anchor ?: declarations.firstOrNull() ?: return addDeclaration(declaration)
+        ensureSemicolonIsPresentAfterEnumEntriesIfNecessaryForDeclaration(declaration)
         return getOrCreateBody().addBefore(declaration, anchorAfter) as T
     }
 
@@ -177,6 +184,34 @@ abstract class KtClassOrObject :
 
     override fun getContextReceivers(): List<KtContextReceiver> =
         modifierList?.contextParameterList?.contextReceivers().orEmpty()
+
+    /**
+     * Ensures that a semicolon is present after the last enum entry in the class body, if this is an enum class.
+     */
+    @KtImplementationDetail
+    fun ensureSemicolonIsPresentAfterEnumEntriesIfNecessaryForDeclaration(declaration: KtDeclaration) {
+        if (declaration is KtEnumEntry) return
+        if (!(this is KtClass && isEnum())) return
+
+        val body = getOrCreateBody()
+        val lastEnumEntry = body.children.filterIsInstance<KtEnumEntry>().lastOrNull()
+
+        if (lastEnumEntry != null) {
+            @OptIn(KtExperimentalApi::class)
+            lastEnumEntry.addSemicolon()
+        } else {
+            val anchor = PsiTreeUtil.skipSiblingsBackward(body.rBrace ?: body.lastChild!!, PsiWhiteSpace::class.java)
+            if (anchor != null && anchor.elementType == KtTokens.SEMICOLON) {
+                // there's already a semicolon
+                return
+            }
+            val psiFactory = KtPsiFactory(project)
+            val semicolon = body.addAfter(psiFactory.createSemicolon(), anchor)
+            if (anchor == body.lBrace) {
+                body.addBefore(psiFactory.createNewLine(), semicolon)
+            }
+        }
+    }
 }
 
 
