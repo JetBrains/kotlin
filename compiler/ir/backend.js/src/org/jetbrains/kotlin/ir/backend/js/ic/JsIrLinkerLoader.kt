@@ -261,14 +261,14 @@ internal class JsIrLinkerLoader(
                             val topLevelSignature = loadingSignature.topLevelSignature()
                             moduleDeserializer.tryDeserializeIrSymbol(topLevelSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL)
                         } else if (loadingSignature in moduleDeserializer) {
-                            moduleDeserializer.addModuleReachableTopLevel(loadingSignature)
+                            moduleDeserializer.addModuleReachableTopLevel(loadingSignature.topLevelSignature())
                         }
                     }
                 }
 
                 for (stubbedSignature in stubbedSignatures) {
                     if (stubbedSignature in moduleDeserializer) {
-                        moduleDeserializer.addModuleReachableTopLevel(stubbedSignature)
+                        moduleDeserializer.addModuleReachableTopLevel(stubbedSignature.topLevelSignature())
                     }
                 }
             }

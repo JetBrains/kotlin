@@ -106,7 +106,7 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
 
     abstract val kind: IrModuleDeserializerKind
 
-    open fun fileDeserializers(): Collection<IrFileDeserializer> = error("Unsupported")
+    open fun fileDeserializers(): Collection<IrFileDeserializer> = emptyList()
 
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 

@@ -110,9 +110,14 @@ abstract class KotlinIrLinker(
             ).raiseIssue(messageCollector)
     }
 
-    fun resolveModuleDeserializer(module: ModuleDescriptor, idSignature: IdSignature?): IrModuleDeserializer {
-        return deserializersForModules[module.name.asString()]
-            ?: NoDeserializerForModule(module.name, idSignature).raiseIssue(messageCollector)
+    private fun resolveModuleDeserializer(irFile: IrFile): IrModuleDeserializer? {
+        return deserializersForModules.values.firstOrNull { moduleDeserializer ->
+            moduleDeserializer.fileDeserializers().any { it.file == irFile }
+        }
+    }
+
+    private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? {
+        return deserializersForModules.values.firstOrNull() { idSignature in it }
     }
 
     protected abstract fun createModuleDeserializer(
@@ -135,16 +140,17 @@ abstract class KotlinIrLinker(
         }
     }
 
-    private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): DeclarationDescriptor? {
-        if (!triedToDeserializeDeclarationForSymbol.add(symbol)) return null
-        val descriptor = if (symbol.hasDescriptor) symbol.descriptor else return null
+    private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): Boolean {
+        if (!triedToDeserializeDeclarationForSymbol.add(symbol)) return false
 
-        val moduleDeserializer = resolveModuleDeserializer(descriptor.module, symbol.signature)
+        val signature = symbol.signature ?: return false
+        val moduleDeserializer = resolveModuleDeserializer(signature)
+            ?: return false
         moduleDeserializer.declareIrSymbol(symbol)
 
         deserializeAllReachableTopLevels()
 
-        return if (symbol.isBound) descriptor else null
+        return symbol.isBound
     }
 
     protected open fun platformSpecificSymbol(symbol: IrSymbol): Boolean = false
@@ -161,7 +167,7 @@ abstract class KotlinIrLinker(
 
         if (!symbol.isBound) {
             try {
-                findDeserializedDeclarationForSymbol(symbol) ?: return null
+                if (!findDeserializedDeclarationForSymbol(symbol)) return null
             } catch (e: IrSymbolTypeMismatchException) {
                 SymbolTypeMismatch(e).raiseIssue(messageCollector)
             }
@@ -183,15 +189,13 @@ abstract class KotlinIrLinker(
     override fun tryReferencingSimpleFunctionByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrSimpleFunctionSymbol? {
         if (idSignature.isPubliclyVisible) return null
         val file = parent.file
-        val moduleDescriptor = file.moduleDescriptor
-        return resolveModuleDeserializer(moduleDescriptor, null).referenceSimpleFunctionByLocalSignature(file, idSignature)
+        return resolveModuleDeserializer(file)?.referenceSimpleFunctionByLocalSignature(file, idSignature)
     }
 
     override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrPropertySymbol? {
         if (idSignature.isPubliclyVisible) return null
         val file = parent.file
-        val moduleDescriptor = file.moduleDescriptor
-        return resolveModuleDeserializer(moduleDescriptor, null).referencePropertyByLocalSignature(file, idSignature)
+        return resolveModuleDeserializer(file)?.referencePropertyByLocalSignature(file, idSignature)
     }
 
     protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer =
@@ -200,7 +204,8 @@ abstract class KotlinIrLinker(
     override fun init(moduleFragment: IrModuleFragment?) {
         if (moduleFragment != null) {
             val currentModuleDependencies = moduleFragment.descriptor.allDependencyModules.map {
-                resolveModuleDeserializer(it, null)
+                deserializersForModules[it.name.asString()]
+                    ?: NoDeserializerForModule(it.name, null).raiseIssue(messageCollector)
             }
             val currentModuleDeserializer = createCurrentModuleDeserializer(moduleFragment, currentModuleDependencies)
             deserializersForModules[moduleFragment.name.asString()] =
