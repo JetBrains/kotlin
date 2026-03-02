@@ -142,24 +142,24 @@ fun maxStart(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.startVersion == null -> b.startVersion
         b.startVersion == null -> a.startVersion
-        else -> max(a.startVersion, b.startVersion)
+        else -> maxOf(a.startVersion, b.startVersion)
     }
 
 fun minStart(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.startVersion == null || b.startVersion == null -> null
-        else -> min(a.startVersion, b.startVersion)
+        else -> minOf(a.startVersion, b.startVersion)
     }
 
 fun maxEnd(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.endVersion == null || b.endVersion == null -> null
-        else -> max(a.endVersion, b.endVersion)
+        else -> maxOf(a.endVersion, b.endVersion)
     }
 
 fun minEnd(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.endVersion == null -> b.endVersion
         b.endVersion == null -> a.endVersion
-        else -> min(a.endVersion, b.endVersion)
+        else -> minOf(a.endVersion, b.endVersion)
     }
