@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.utils.SmartSet
 
 abstract class FirInlineCheckerPlatformSpecificComponent : FirComposableSessionComponent<FirInlineCheckerPlatformSpecificComponent> {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -37,14 +40,26 @@ abstract class FirInlineCheckerPlatformSpecificComponent : FirComposableSessionC
         overriddenSymbols: List<FirCallableSymbol<FirCallableDeclaration>>,
     ) {
         val paramHasDefault = BooleanArray(function.valueParameters.size)
-        overriddenSymbols.forEach {
-            if (it !is FirFunctionSymbol<*>) return@forEach
-            it.valueParameterSymbols.forEachIndexed { idx, param ->
+        val visited = SmartSet.create<FirCallableSymbol<*>>()
+
+        fun checkDefaultParamsRecursive(symbol: FirCallableSymbol<*>) {
+            if (!visited.add(symbol)) return
+            if (symbol !is FirFunctionSymbol<*>) return
+
+            symbol.valueParameterSymbols.forEachIndexed { idx, param ->
                 if (param.hasDefaultValue && idx < paramHasDefault.size) {
                     paramHasDefault[idx] = true
                 }
             }
+
+            (symbol as? FirNamedFunctionSymbol)?.processOverriddenFunctionsSafe {
+                checkDefaultParamsRecursive(it)
+                ProcessorAction.NEXT
+            }
         }
+
+        for (symbol in overriddenSymbols) checkDefaultParamsRecursive(symbol)
+
         val shouldReportError = shouldReportRegularOverridesWithDefaultParameters()
         function.valueParameters.forEachIndexed { idx, param ->
             if (param.defaultValue == null && paramHasDefault[idx]) {
