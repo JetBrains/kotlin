@@ -15,7 +15,6 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.File
-import kotlin.metadata.ExperimentalContextReceivers
 import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmAnnotationArgument
 import kotlin.metadata.KmClass
@@ -274,7 +273,7 @@ internal class ForeignClassUsageProcessor(nonPublicMarkers: Set<String>, private
         doProcessJavaMethod(methodNode)
     }
 
-    @OptIn(ExperimentalContextReceivers::class)
+    @OptIn(ExperimentalContextParameters::class)
     private fun processKotlinFunction(kmFunction: KmFunction, classNode: ClassNode) {
         if (!kmFunction.visibility.isPublicApi) {
             return
@@ -288,15 +287,12 @@ internal class ForeignClassUsageProcessor(nonPublicMarkers: Set<String>, private
 
         doProcessJavaMethod(methodNode)
 
-        @Suppress("DEPRECATION_ERROR")
         kmFunction.receiverParameterType?.let(::processKotlinType)
-
-        @Suppress("DEPRECATION_ERROR")
-        kmFunction.contextReceiverTypes.forEach(::processKotlinType)
+        kmFunction.contextParameters.forEach { processKotlinType(it.type) }
         processKotlinType(kmFunction.returnType)
     }
 
-    @OptIn(ExperimentalContextReceivers::class)
+    @OptIn(ExperimentalContextParameters::class)
     private fun processKotlinProperty(kmProperty: KmProperty, classNode: ClassNode) {
         if (!kmProperty.visibility.isPublicApi) {
             return
@@ -316,8 +312,7 @@ internal class ForeignClassUsageProcessor(nonPublicMarkers: Set<String>, private
         kmProperty.getterSignature?.let { classNode.findMethod(it) }?.let(::doProcessJavaMethod)
         kmProperty.setterSignature?.let { classNode.findMethod(it) }?.let(::doProcessJavaMethod)
 
-        @Suppress("DEPRECATION_ERROR")
-        kmProperty.contextReceiverTypes.forEach(::processKotlinType)
+        kmProperty.contextParameters.forEach { processKotlinType(it.type) }
         kmProperty.receiverParameterType?.let(::processKotlinType)
         processKotlinType(kmProperty.returnType)
     }

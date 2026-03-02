@@ -55,8 +55,8 @@ tasks.withType<AbstractArchiveTask>().configureEach {
 
 tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
-        languageVersion.set(KotlinVersion.KOTLIN_2_1)
-        apiVersion.set(KotlinVersion.KOTLIN_2_1)
+        languageVersion.set(KotlinVersion.KOTLIN_2_2)
+        apiVersion.set(KotlinVersion.KOTLIN_2_2)
     }
 }
 
