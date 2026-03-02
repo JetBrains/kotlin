@@ -1,3 +1,27 @@
+## 2.3.20-RC2
+
+### Compiler
+
+- [`KT-84620`](https://youtrack.jetbrains.com/issue/KT-84620) Incorrect optimization of property delegation
+- [`KT-81974`](https://youtrack.jetbrains.com/issue/KT-81974) Do not eagerly initialize reflection for KProperty objects for delegated properties
+
+### JVM. Reflection
+
+- [`KT-84600`](https://youtrack.jetbrains.com/issue/KT-84600) Performance regression around Kotlin properties JVM reflection during instantiation
+
+### Tools. Build Tools API
+
+- [`KT-84577`](https://youtrack.jetbrains.com/issue/KT-84577) BTA: API 2.3.20 incompatible with compiler 2.3.10
+
+### Tools. Compiler plugins. Compose
+
+- [`KT-84218`](https://youtrack.jetbrains.com/issue/KT-84218) [2.3.20-Beta1] "IllegalStateException: no implementation for FUN MISSING_DECLARATION" during bitcode lowering
+
+### Tools. Gradle
+
+- [`KT-84152`](https://youtrack.jetbrains.com/issue/KT-84152) Memory Leak and OOM Errors in Kotlin Gradle Plugin 2.3.20-Beta2 with `in-process` execution mode
+
+
 ## 2.3.20-RC
 
 ### Backend. Wasm
