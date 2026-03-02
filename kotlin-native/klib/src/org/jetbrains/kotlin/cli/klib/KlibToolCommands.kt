@@ -169,10 +169,9 @@ internal class DumpIr(output: KlibToolOutput, args: KlibToolArguments) : KlibToo
         val linker = KlibToolIrLinker(output, module, irBuiltIns, symbolTable)
         module.allDependencyModules.forEach {
             linker.deserializeOnlyHeaderModule(it, it.kotlinLibrary)
-            linker.resolveModuleDeserializer(it, null).init()
         }
         val irFragment = linker.deserializeFullModule(module, library)
-        linker.resolveModuleDeserializer(module, null).init()
+        linker.init(null)
         linker.modulesWithReachableTopLevels.forEach(IrModuleDeserializer::deserializeReachableDeclarations)
 
         val dumpOptions = DumpIrTreeOptions(
