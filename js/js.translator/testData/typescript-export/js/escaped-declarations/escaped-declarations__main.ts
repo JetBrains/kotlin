@@ -25,6 +25,8 @@ function box(): string {
     assert(new A1(10, 20)["second.value"] === 20);
 
     assert(new A2()["invalid:name"] === 42);
+    assert(new A2()['"contains \" symbol"'] === "OK");
+    assert(new A2()[`'contains both \" and \' symbols"`]() === "OK");
 
     const a3 = new A3()
     assert(a3.invalid_args_name_sum(10, 20) === 30);

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
+import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.ModuleKind
@@ -138,10 +139,14 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         return "new${renderTypeParameters(typeParameters, includeVariance = false)}(${parameters.generateTypeScriptString(indent)}): ${returnType.toTypeScript(indent)};"
     }
 
+    private fun String.asEscapedIdentifier(): String {
+        return JsToStringGenerationVisitor.javaScriptString(this, true).toString()
+    }
+
     private val ExportedMember.propertyMemberName: String
         get() = when (val propertyName = name) {
             is ExportedMemberName.SymbolReference -> "[${propertyName.value}]"
-            is ExportedMemberName.Identifier if !propertyName.value.isValidES5Identifier() -> "\"${propertyName.value}\""
+            is ExportedMemberName.Identifier if !propertyName.value.isValidES5Identifier() -> propertyName.value.asEscapedIdentifier()
             else -> propertyName.value
         }
 
@@ -243,7 +248,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         val escapedName = when (val exportedName = name) {
             is ExportedMemberName.SymbolReference -> "[${exportedName.value}]"
             is ExportedMemberName.Identifier -> when {
-                isMember && !exportedName.value.isValidES5Identifier() -> "\"${exportedName.value}\""
+                isMember && containsUnresolvedChar -> exportedName.value.asEscapedIdentifier()
                 else -> exportedName.value
             }
         }

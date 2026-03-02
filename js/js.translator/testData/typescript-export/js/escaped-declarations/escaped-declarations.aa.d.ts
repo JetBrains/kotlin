@@ -22,8 +22,10 @@ declare namespace JS_TESTS {
         }
         class A2 {
             constructor();
+            "'contains both \" and ' symbols\""(): string;
             get "invalid:name"(): number;
             set "invalid:name"(value: number);
+            get "\"contains \" symbol\""(): string;
         }
         namespace A2 {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
