@@ -1,3 +1,4 @@
+//
 import kotlin.wasm.WasmImport
 
 /*

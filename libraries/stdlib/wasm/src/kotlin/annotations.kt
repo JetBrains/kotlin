@@ -23,13 +23,13 @@ public annotation class EagerInitialization
  * Classes and interfaces annotated with `@WitInterface` are treated as WIT interface
  * definitions by the Kotlin/Wasm compiler backend.
  *
- * @property name The WIT interface name. If not specified, the Kotlin name is used.
+ * @property name The WIT interface name.
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @SinceKotlin("2.4")
-public annotation class WitInterface(val witName: String = "")
+public annotation class WitInterface(val witName:String)
 
 /**
  * TODO proper doc comment

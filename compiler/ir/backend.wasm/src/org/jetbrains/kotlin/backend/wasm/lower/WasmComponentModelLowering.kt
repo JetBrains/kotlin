@@ -7,35 +7,29 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.copyFunctionSignatureFrom
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFakeOverride
@@ -44,14 +38,112 @@ import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.util.parentsWithSelf
-import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
 import org.jetbrains.kotlin.ir.validation.validateIr
 import org.jetbrains.kotlin.ir.validation.withBasicChecks
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
+import kotlin.math.ceil
+import kotlin.math.log2
+import kotlin.math.max
+
+// TODO maybe this whole thing should rather be in @WasmExport? But prob not, would be a bit weird for "normal" exports to implicitly support this
+sealed interface WitType {
+    val size: ULong
+    val alignment: ULong
+
+    fun flattened(): List<WitType>
+}
+
+// TODO better representation for things that are already flat? maybe an "isFullyFlat" in top-level iface?
+interface WitTypeFullyFlattened : WitType {
+    override fun flattened(): List<WitType> = listOf(this)
+}
+
+class WitPointer(val pointedToTy: WitType) : WitTypeFullyFlattened {
+    // TODO wasm32 only for now, find canon abi spec specifics for this
+    override val size: ULong = 4u
+    override val alignment: ULong = 4u
+
+    override fun flattened(): List<WitType> = listOf(this)
+
+}
+
+abstract class WitPrimitiveInt(
+    sizeAndAlignment: ULong,
+    override val size: ULong = sizeAndAlignment,
+    override val alignment: ULong = sizeAndAlignment,
+) : WitTypeFullyFlattened {
+}
+
+class U8 : WitPrimitiveInt(1u)
+class U16 : WitPrimitiveInt(2u)
+class U32 : WitPrimitiveInt(4u)
+class U64 : WitPrimitiveInt(8u)
+
+class S8 : WitPrimitiveInt(1u)
+class S16 : WitPrimitiveInt(2u)
+class S32 : WitPrimitiveInt(4u)
+class S64 : WitPrimitiveInt(8u)
+
+class WitList(val elemTy: WitType, val optionalFixedLength: ULong? = null) : WitType {
+    override val size: ULong
+        get() {
+            if (optionalFixedLength == null)
+                return 8u
+            return elemTy.size * optionalFixedLength
+        }
+    // TODO think about getters vs by lazy vs functions vs eager init in init{} block vs direct init
+    override val alignment: ULong by lazy{
+        if (optionalFixedLength == null)
+            return@lazy 4u
+        return@lazy elemTy.alignment
+    }
+
+    override fun flattened(): List<WitType> = listOf(WitPointer(elemTy), U32())
+}
+
+class WitVariant(val cases: List<WitType>) : WitType {
+    // TODO toInt() doesn't exist, just toUInt()???
+    val discriminantType: WitType = when(ceil(log2(cases.size.toDouble())/8).toUInt()){
+        0u -> U8()
+        1u -> U8()
+        2u -> U16()
+        3u -> U32()
+        else -> error("PANIC") //TODO proper
+    }
+
+    /*
+   def elem_size_variant(cases):
+  s = elem_size(discriminant_type(cases))
+  s = align_to(s, max_case_alignment(cases))
+  cs = 0
+  for c in cases:
+    if c.t is not None:
+      cs = max(cs, elem_size(c.t))
+  s += cs
+  return align_to(s, alignment_variant(cases))
+     */
+    override val size: ULong = run {
+        /*
+        TODO this is pretty wrong so far
+        val discriminantSize = this@WitVariant.discriminantType.size
+        val discrimantAlign = this@WitVariant.discriminantType.alignment
+
+        var maxCaseSize = 0uL
+        for (case in cases) {
+            maxCaseSize = max(maxCaseSize, case.size)
+        }
+
+        // TODO alignTo
+        return@run alignTo(discriminantSize + maxCaseSize, discrimantAlign)
+         */
+        0uL
+    }
+    override val alignment: ULong = 4u
+    override fun flattened(): List<WitType> = TODO("Not yet implemented")
+
+}
 
 class WasmComponentModelLowering(val context: WasmBackendContext) : FileLoweringPass {
     // TODO with all of the names in this file, make them so that there can't be any conflicts
@@ -62,16 +154,9 @@ class WasmComponentModelLowering(val context: WasmBackendContext) : FileLowering
         for (decl in irFile.declarations) {
 
 
-
-
-
             // The problem is the body of the <init> function of the companion object would be null, because the surrounding interface is external.
             // Theres a special change in ClassMemberGenerator.kt in fir2ir, that makes sure that external interfaces that are
             // annotated with @WitInterface/their companion objects with @WitImport are actually treated as non-external for the purposes of generating the <init> body
-
-
-
-
 
 
             // TODO frontend checks for the annotation that doesn't match this, i.e. on a non-interface, or a non-external interface
@@ -119,7 +204,7 @@ class WasmComponentModelLowering(val context: WasmBackendContext) : FileLowering
                             .find { it.isFakeOverride && it.name == functionDecl.name }!! // TODO think about a better check for this than comparing names
 
                         companionObject.factory.stageController.restrictTo(implFunction) {
-                        // TODO actual offsets? rewrite original functions offsets?
+                            // TODO actual offsets? rewrite original functions offsets?
                             val irb = context.createIrBuilder(implFunction.symbol)
                             implFunction.body = irb.irBlockBody {
                                 +irReturn(
