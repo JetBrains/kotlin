@@ -453,6 +453,17 @@ fun BuildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicat
         else IsolatedProjectsMode.DISABLED
 )
 
+// KMP dependencies checker does not work with Gradle isolated projects feature in older Gradle releases
+fun BuildOptions.disableIsolatedProjectsForKmpDependenciesChecker(
+    gradleVersion: GradleVersion
+) = copy(
+    isolatedProjects = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_12)) {
+        IsolatedProjectsMode.DISABLED
+    } else {
+        isolatedProjects
+    }
+)
+
 fun BuildOptions.suppressWarningForOldKotlinVersion(
     currentGradleVersion: GradleVersion,
 ) = suppressDeprecationWarningsSinceGradleVersion(

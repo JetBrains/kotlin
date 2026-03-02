@@ -66,12 +66,10 @@ class ComposeIT : KGPBaseTest() {
             )
 
             build("assembleDebug") {
-                assertOutputDoesNotContain("Detected Android Gradle Plugin compose compiler configuration")
-                assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
                 assertCompilerArgument(
                     ":compileDebugKotlin",
-                    "plugin:androidx.compose.compiler.plugins.kotlin:sourceInformation=true," +
-                            "plugin:androidx.compose.compiler.plugins.kotlin:traceMarkersEnabled=true",
+                    "plugin:androidx.compose.compiler.plugins.kotlin:traceMarkersEnabled=true," +
+                            "plugin:androidx.compose.compiler.plugins.kotlin:sourceInformation=true",
                     LogLevel.INFO
                 )
             }
@@ -117,22 +115,12 @@ class ComposeIT : KGPBaseTest() {
             )
 
             buildAndFail("assembleDebug") {
-                when (agpVersion) {
-                    TestVersions.AgpCompatibilityMatrix.AGP_82.version,
-                    TestVersions.AgpCompatibilityMatrix.AGP_83.version,
-                    TestVersions.AgpCompatibilityMatrix.AGP_84.version,
-                        -> {
-                        assertOutputContains(APPLY_COMPOSE_SUGGESTION)
-                    }
-                    else -> {
-                        // This error should come from AGP side
-                        assertOutputContains(
-                            "Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n" +
-                                    "  when compose is enabled. See the following link for more information:\n" +
-                                    "  https://d.android.com/r/studio-ui/compose-compiler"
-                        )
-                    }
-                }
+                // This error should come from AGP side
+                assertOutputContains(
+                    "Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n" +
+                            "  when compose is enabled. See the following link for more information:\n" +
+                            "  https://d.android.com/r/studio-ui/compose-compiler"
+                )
             }
         }
     }
@@ -154,7 +142,6 @@ class ComposeIT : KGPBaseTest() {
         ) {
             build("assembleDebug") {
                 assertOutputContains("Detected Android Gradle Plugin compose compiler configuration")
-                assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
             }
         }
     }
@@ -221,20 +208,8 @@ class ComposeIT : KGPBaseTest() {
             buildJdk = providedJdk.location,
             buildOptions = buildOptions,
         ) {
-            val agpVersion = TestVersions.AgpCompatibilityMatrix.fromVersion(agpVersion)
-            build(":composeApp:assembleDebug") {
-                // AGP autoconfigures compose in the presence of Kotlin Compose plugin
-                if (agpVersion <= TestVersions.AgpCompatibilityMatrix.AGP_85) {
-                    assertOutputDoesNotContain("Detected Android Gradle Plugin compose compiler configuration")
-                    assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
-                }
-            }
-
-            build(":composeApp:desktopJar") {
-                if (agpVersion <= TestVersions.AgpCompatibilityMatrix.AGP_85) {
-                    assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
-                }
-            }
+            build(":composeApp:assembleDebug")
+            build(":composeApp:desktopJar")
         }
     }
 
@@ -257,9 +232,7 @@ class ComposeIT : KGPBaseTest() {
                 it.replace("kotlin(\"plugin.compose\")", "")
             }
 
-            buildAndFail(":composeApp:assembleDebug") {
-                assertOutputDoesNotContain(APPLY_COMPOSE_SUGGESTION)
-            }
+            buildAndFail(":composeApp:assembleDebug")
         }
     }
 
@@ -878,11 +851,6 @@ class ComposeIT : KGPBaseTest() {
     }
 
     companion object {
-        private const val APPLY_COMPOSE_SUGGESTION =
-            "The Compose compiler plugin is now a part of Kotlin.\n" +
-                    "Please apply the 'org.jetbrains.kotlin.plugin.compose' Gradle plugin to enable the Compose compiler plugin.\n" +
-                    "Learn more about this at https://kotl.in/compose-plugin"
-
         private const val LEGACY_OPEN_FUNCTION_WARNING =
             "Detected a @Composable function that overrides an open function compiled with older compiler that is known to crash " +
                     "at runtime."
