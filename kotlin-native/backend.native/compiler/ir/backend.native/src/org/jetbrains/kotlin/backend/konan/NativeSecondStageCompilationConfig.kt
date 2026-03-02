@@ -542,6 +542,8 @@ class NativeSecondStageCompilationConfig(
         if (macabi) {
             append("-macabi")
         }
+        if (cCallMode != defaultCCallMode)
+            append("-ccall_mode${cCallMode.name}")
     }
 
     private val systemCacheFlavorString = buildString {
@@ -686,7 +688,8 @@ class NativeSecondStageCompilationConfig(
         }
     }
 
-    val cCallMode get() = configuration.get(BinaryOptions.cCallMode) ?: CCallMode.IndirectOrDirect
+    private val defaultCCallMode get() = CCallMode.IndirectOrDirect
+    val cCallMode get() = configuration.get(BinaryOptions.cCallMode) ?: defaultCCallMode
 
     val unitSuspendFunctionObjCExport: UnitSuspendFunctionObjCExport
         get() = configuration.get(BinaryOptions.unitSuspendFunctionObjCExport) ?: UnitSuspendFunctionObjCExport.DEFAULT

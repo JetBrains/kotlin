@@ -398,6 +398,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     putIfNotNull(KONAN_DATA_DIR, config.distribution.localKonanDir.absolutePath)
     putIfNotNull(BinaryOptions.minidumpLocation, config.minidumpLocation)
     putIfNotNull(BinaryOptions.macabi, config.macabi)
+    putIfNotNull(BinaryOptions.cCallMode, config.cCallMode)
 }
 
 private fun Array<String>?.toNonNullList() = this?.asList().orEmpty()
