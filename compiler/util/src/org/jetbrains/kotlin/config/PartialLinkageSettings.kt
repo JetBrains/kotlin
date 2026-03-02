@@ -33,5 +33,7 @@ enum class PartialLinkageLogLevel {
 
         fun resolveLogLevel(key: String): PartialLinkageLogLevel? =
             entries.firstOrNull { entry -> entry.name.equals(key, ignoreCase = true) }
+
+        fun availableValues() = entries.joinToString(prefix = "{", postfix = "}") { it.name.lowercase() }
     }
 }

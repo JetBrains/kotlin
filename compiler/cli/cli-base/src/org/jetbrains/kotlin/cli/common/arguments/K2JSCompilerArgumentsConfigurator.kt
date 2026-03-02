@@ -44,4 +44,10 @@ class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfig
         }
         return result
     }
+
+    override fun isSecondStage(arguments: CommonCompilerArguments): Boolean = with(arguments) {
+        require(this is K2JSCompilerArguments)
+
+        return includes != null
+    }
 }

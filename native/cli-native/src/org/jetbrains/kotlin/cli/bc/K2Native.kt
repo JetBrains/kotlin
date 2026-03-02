@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageCo
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.isNativeSecondStage
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -56,7 +57,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         services: Services,
         basicMessageCollector: MessageCollector,
     ): ExitCode? {
-        if (arguments.produce != "library") {
+        if (arguments.isNativeSecondStage()) {
             return null
         }
         return doExecutePhasedKlibCompilation(arguments, services, basicMessageCollector, isOneStageCompilation = false)

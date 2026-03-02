@@ -26,4 +26,10 @@ class K2NativeCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsCo
             }
         }
     }
+
+    override fun isSecondStage(arguments: CommonCompilerArguments): Boolean = with(arguments) {
+        require(this is K2NativeCompilerArguments)
+
+        return isNativeSecondStage()
+    }
 }
