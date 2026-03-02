@@ -31,15 +31,13 @@ class FirTowerResolver(
 ) : SessionAndScopeSessionHolder by components {
     private val manager = TowerResolveManager(collector)
 
-    @JvmName("runResolverNullable")
     fun runResolver(
         info: CallInfo,
         context: ResolutionContext,
         externalCollector: CandidateCollector? = null,
-        externalManager: TowerResolveManager? = null,
         candidateFactory: CandidateFactory = CandidateFactory(context, info),
     ): CandidateCollector {
-        return runResolver(info, context, externalCollector ?: collector, externalManager ?: manager, candidateFactory)
+        return runResolver(info, context, externalCollector ?: collector, manager, candidateFactory)
     }
 
     fun runResolver(

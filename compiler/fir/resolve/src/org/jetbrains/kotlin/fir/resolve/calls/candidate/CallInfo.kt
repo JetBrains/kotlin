@@ -100,6 +100,7 @@ open class CallInfo(
         name: Name = this.name,
         implicitInvokeMode: ImplicitInvokeMode = this.implicitInvokeMode,
         candidateForCommonInvokeReceiver: Candidate? = this.candidateForCommonInvokeReceiver,
+        containingCandidateForCollectionLiteral: Candidate? = this.containingCandidateForCollectionLiteral,
     ): CallInfo = CallInfo(
         callSite, callKind, name, explicitReceiver, argumentList,
         isUsedAsGetClassReceiver, typeArguments,
@@ -139,6 +140,7 @@ class CallableReferenceInfo(
         name: Name,
         implicitInvokeMode: ImplicitInvokeMode,
         candidateForCommonInvokeReceiver: Candidate?,
+        containingCandidateForCollectionLiteral: Candidate?,
     ): CallableReferenceInfo = CallableReferenceInfo(
         callSite, name, explicitReceiver,
         session, containingFile, containingDeclarations,

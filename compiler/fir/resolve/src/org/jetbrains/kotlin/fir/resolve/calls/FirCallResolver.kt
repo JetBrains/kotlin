@@ -85,10 +85,9 @@ class FirCallResolver(
         val name = functionCall.calleeReference.name
         val result = collectCandidates(
             functionCall, name,
-            forceCallKind = if (isCollectionLiteralCall) CallKind.CollectionLiteral else null,
             origin = functionCall.origin,
             resolutionMode = resolutionMode,
-            containingCallCandidateForCL = collectionLiteralContext?.containingCandidate
+            collectionLiteralContext = collectionLiteralContext
         )
 
         var forceCandidates: Collection<Candidate>? = null
@@ -227,7 +226,7 @@ class FirCallResolver(
         collector: CandidateCollector? = null,
         callSite: FirElement = qualifiedAccess,
         resolutionMode: ResolutionMode,
-        containingCallCandidateForCL: Candidate? = null,
+        collectionLiteralContext: CollectionLiteralOuterCandidateContext? = null,
     ): ResolutionResult {
         val explicitReceiver = qualifiedAccess.explicitReceiver
         val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
@@ -235,9 +234,16 @@ class FirCallResolver(
             qualifiedAccess.typeArguments
         } else emptyList()
 
+        val callKind = when {
+            forceCallKind != null -> forceCallKind
+            collectionLiteralContext != null -> CallKind.CollectionLiteral
+            qualifiedAccess is FirFunctionCall -> CallKind.Function
+            else -> CallKind.VariableAccess
+        }
+
         val info = CallInfo(
             callSite,
-            forceCallKind ?: if (qualifiedAccess is FirFunctionCall) CallKind.Function else CallKind.VariableAccess,
+            callKind,
             name,
             explicitReceiver,
             argumentList,
@@ -249,26 +255,24 @@ class FirCallResolver(
             origin = origin,
             resolutionMode = resolutionMode,
             implicitInvokeMode = if (qualifiedAccess is FirImplicitInvokeCall) ImplicitInvokeMode.Regular else ImplicitInvokeMode.None,
-            containingCandidateForCollectionLiteral = containingCallCandidateForCL,
+            containingCandidateForCollectionLiteral = collectionLiteralContext?.containingCandidate,
         )
-        val candidateCollectorForCLCall =
-            if (containingCallCandidateForCL != null) {
-                CandidateCollector(components, components.resolutionStageRunner)
-            } else {
-                towerResolver.reset()
-                null
-            }
+        val resultCollector = if (collectionLiteralContext != null) {
+            // collection literals may be resolved during resolve of outer call, hence no resolve and fresh CandidateCollector instance
+            val collectorForCLCall = CandidateCollector(components, components.resolutionStageRunner)
+            val managerForCLCall = TowerResolveManager(collectorForCLCall)
 
-        val candidateFactory = CandidateFactory(resolutionContext, info)
-
-        val resultCollector: CandidateCollector =
             towerResolver.runResolver(
                 info,
                 resolutionContext,
-                collector ?: candidateCollectorForCLCall,
-                candidateCollectorForCLCall?.let { TowerResolveManager(it) },
-                candidateFactory,
+                collectorForCLCall,
+                managerForCLCall,
             )
+        } else {
+            towerResolver.reset()
+            towerResolver.runResolver(info, resolutionContext, collector)
+        }
+
         var (reducedCandidates, applicability) = reduceCandidates(resultCollector, resolutionContext)
         reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
 
