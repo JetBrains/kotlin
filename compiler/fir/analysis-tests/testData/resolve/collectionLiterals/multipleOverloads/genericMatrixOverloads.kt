@@ -20,10 +20,10 @@ fun t1() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>]<!>) // ambiguity
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>([["!"]]) // string
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>([[1], [2], [3]]) // int
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>([[1], Matrix.Row(2), [3]]) // int
+    f1([[1], Matrix.Row(2), [3]]) // int
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>([[1], Matrix.Row(), [3]]) // int
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>([["1"], Matrix.Row(2), ["3"]]) // no applicable?
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>([["1"], Matrix.Row<String>(), ["3"]]) // string
+    f1([<!ARGUMENT_TYPE_MISMATCH!>["1"]<!>, Matrix.Row(2), <!ARGUMENT_TYPE_MISMATCH!>["3"]<!>]) // no applicable?
+    f1([["1"], Matrix.Row<String>(), ["3"]]) // string
 }
 
 fun f2(x: Matrix<Int>) { }
@@ -36,9 +36,9 @@ fun t2() {
     f2([<!ARGUMENT_TYPE_MISMATCH!>["1"]<!>, <!ARGUMENT_TYPE_MISMATCH!>["2"]<!>, <!ARGUMENT_TYPE_MISMATCH!>["3"]<!>]) // any
     f2([[1], Matrix.Row(2), [3]]) // int
     f2([[1], Matrix.Row(), [3]]) // int
-    f2(<!ARGUMENT_TYPE_MISMATCH!>[[1], Matrix.Row<String>(), [3]]<!>) // any
+    f2([[1], Matrix.Row<String>(), [3]]) // any
     f2([<!ARGUMENT_TYPE_MISMATCH!>["1"]<!>, Matrix.Row(2), <!ARGUMENT_TYPE_MISMATCH!>["3"]<!>]) // any
-    f2(<!ARGUMENT_TYPE_MISMATCH!>[["1"], Matrix.Row("2"), ["3"]]<!>) // any
+    f2([["1"], Matrix.Row("2"), ["3"]]) // any
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, intersectionType,

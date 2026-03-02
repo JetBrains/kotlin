@@ -31,14 +31,14 @@ fun testVar() {
     var x: MyList<Int> = [1, 2, 3]
     x <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> [1, 2, 3]
     x <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> []
-    x <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> ["string"]
-    x <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> [null]
+    x += <!ARGUMENT_TYPE_MISMATCH!>["string"]<!>
+    x += <!ARGUMENT_TYPE_MISMATCH!>[null]<!>
 }
 
 fun testConcat() {
     val a: MyList<Int> = concat([1, 2, 3], [4, 5, 6])
     val b: MyList<Int> = concat([], [])
-    val c: MyList<Int> = concat(<!ARGUMENT_TYPE_MISMATCH!>[""]<!>, [1, 2, 3])
+    val c: MyList<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> concat([""], [1, 2, 3])
     val d = concat([1, 2, 3], [4, 5, 6])
     val e = concat([1, 2, 3], ["string"])
     val f = concat([], [null])

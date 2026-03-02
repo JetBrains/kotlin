@@ -16,28 +16,80 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCollectionLiteralAtom
+import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSinkImpl
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.ImplicitInvokeMode
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.createErrorReferenceWithErrorCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
+import org.jetbrains.kotlin.fir.resolve.inference.CollectionLiteralBounds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.CollectionNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-context(context: ResolutionContext)
-fun resolveCollectionLiteralToPreparedCall(
+context(context: ResolutionContext, outerCallsContext: CollectionLiteralOuterCallsContext)
+fun runCollectionLiteralResolution(
+    atom: ConeCollectionLiteralAtom,
+    precalculatedBounds: CollectionLiteralBounds?,
+) {
+    val originalExpression = atom.expression
+
+    val newExpression: FirFunctionCall = run {
+        val classForResolution = when (precalculatedBounds) {
+            is CollectionLiteralBounds.SingleBound -> precalculatedBounds.bound
+            is CollectionLiteralBounds.NonTvExpected -> precalculatedBounds.bound
+            // it means CL is here through regular resolve of postponed atoms with all input types known
+            null -> atom.expectedType?.getClassRepresentativeForCollectionLiteralResolution()
+            else -> null
+        }
+
+        val resolvedThroughRegularStrategies = tryAllCLResolutionStrategies {
+            val preparedCall = prepareRawCall(originalExpression, classForResolution) ?: return@tryAllCLResolutionStrategies null
+            resolveCollectionLiteralToPreparedCall(preparedCall, atom)
+        }
+
+        when {
+            resolvedThroughRegularStrategies != null -> resolvedThroughRegularStrategies
+            precalculatedBounds is CollectionLiteralBounds.Ambiguity -> {
+                resolveCollectionLiteralToErrorCall(
+                    precalculatedBounds.toConeDiagnostic(),
+                    atom,
+                )
+            }
+            else -> {
+                val preparedCall = prepareFunctionCallForFallback(originalExpression)
+                resolveCollectionLiteralToPreparedCall(preparedCall, atom)
+            }
+        }
+    }
+
+    atom.containingCallCandidate.setUpdatedCollectionLiteral(originalExpression, newExpression)
+
+    ArgumentCheckingProcessor.resolveArgumentExpression(
+        outerCallsContext.containingCandidate,
+        ConeResolutionAtom.createRawAtom(newExpression),
+        atom.expectedType,
+        outerCallsContext.checkerSink ?: CheckerSinkImpl(outerCallsContext.containingCandidate),
+        context = context,
+        isReceiver = false,
+        isDispatch = false,
+    )
+}
+
+context(context: ResolutionContext, outerCallsContext: CollectionLiteralOuterCallsContext)
+private fun resolveCollectionLiteralToPreparedCall(
     preparedCall: FirFunctionCall,
     collectionLiteralAtom: ConeCollectionLiteralAtom,
-    topLevelCandidate: Candidate,
 ): FirFunctionCall {
     var call = preparedCall
     call =
-        context.bodyResolveComponents.callResolver.resolveCallAndSelectCandidate(call, ResolutionMode.ContextDependent, topLevelCandidate)
+        context.bodyResolveComponents.callResolver.resolveCallAndSelectCandidate(call, ResolutionMode.ContextDependent, outerCallsContext)
     call = context.bodyResolveComponents.callCompleter.completeCall(
         call,
         ResolutionMode.ContextDependent,
@@ -45,15 +97,14 @@ fun resolveCollectionLiteralToPreparedCall(
     )
 
     return call.also {
-        postprocessCollectionLiteralCall(it, topLevelCandidate, collectionLiteralAtom)
+        postprocessCollectionLiteralCall(it, outerCallsContext.containingCandidate, collectionLiteralAtom)
     }
 }
 
-context(context: ResolutionContext)
-fun resolveCollectionLiteralToErrorCall(
+context(context: ResolutionContext, outerCallsContext: CollectionLiteralOuterCallsContext)
+private fun resolveCollectionLiteralToErrorCall(
     diagnostic: ConeDiagnostic,
     collectionLiteralAtom: ConeCollectionLiteralAtom,
-    topLevelCandidate: Candidate,
 ): FirFunctionCall {
     val components = context.bodyResolveComponents
     val collectionLiteral = collectionLiteralAtom.expression
@@ -71,7 +122,7 @@ fun resolveCollectionLiteralToErrorCall(
         resolutionMode = ResolutionMode.ContextDependent,
         origin = FirFunctionCallOrigin.Operator,
         implicitInvokeMode = ImplicitInvokeMode.None,
-        containingCandidateForCollectionLiteral = topLevelCandidate,
+        containingCandidateForCollectionLiteral = outerCallsContext.containingCandidate,
     )
 
     val errorReference = createErrorReferenceWithErrorCandidate(
@@ -96,7 +147,7 @@ fun resolveCollectionLiteralToErrorCall(
     )
 
     return call.also {
-        postprocessCollectionLiteralCall(it, topLevelCandidate, collectionLiteralAtom)
+        postprocessCollectionLiteralCall(it, outerCallsContext.containingCandidate, collectionLiteralAtom)
     }
 }
 

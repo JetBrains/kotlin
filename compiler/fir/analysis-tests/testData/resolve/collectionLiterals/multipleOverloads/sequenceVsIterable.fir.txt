@@ -16,9 +16,9 @@ FILE: sequenceVsIterable.kt
     }
     public final fun testFooOneGeneric(): R|kotlin/Unit| {
         R|/fooOneGeneric|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>())
-        R|/fooOneGeneric<Inapplicable(INAPPLICABLE): /fooOneGeneric>#|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)))
+        R|/fooOneGeneric|<R|kotlin/Int|>(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/Int|>(Int(42)))
         R|/fooOneGeneric|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(String(!)))
-        R|/fooOneGeneric<Inapplicable(INAPPLICABLE): /fooOneGeneric>#|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(vararg(Int(42), String(!))))
+        R|/fooOneGeneric|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(vararg(Int(42), String(!))))
     }
     public final fun <T> fooBothGeneric(x: R|kotlin/sequences/Sequence<T>|): R|kotlin/Unit| {
     }
@@ -35,6 +35,6 @@ FILE: sequenceVsIterable.kt
     public final fun testFooOtherGeneric(): R|kotlin/Unit| {
         R|/fooOtherGeneric|(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/String|>())
         R|/fooOtherGeneric|(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/String|>(String(!)))
-        R|/fooOtherGeneric<Inapplicable(INAPPLICABLE): /fooOtherGeneric>#|(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/Int|>(Int(42)))
-        R|/fooOtherGeneric<Inapplicable(INAPPLICABLE): /fooOtherGeneric>#|(Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(vararg(Int(42), String(!))))
+        R|/fooOtherGeneric|<R|kotlin/Int|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)))
+        R|/fooOtherGeneric|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(vararg(Int(42), String(!))))
     }

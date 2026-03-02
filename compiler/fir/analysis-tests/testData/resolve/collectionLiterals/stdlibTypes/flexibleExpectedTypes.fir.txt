@@ -11,5 +11,5 @@ FILE: main.kt
         Q|Utils|.R|/Utils.acceptListString*s|(Q|kotlin/collections|.R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(42))))
         Q|Utils|.R|/Utils.acceptIntArray*s|(Q|kotlin|.R|kotlin/intArrayOf|())
         Q|Utils|.R|/Utils.acceptIntArray*s|(Q|kotlin|.R|kotlin/intArrayOf|(vararg(Int(1), Int(2), Int(3))))
-        Q|Utils|.R|/Utils.acceptIntArray*s|(Q|kotlin|.R|kotlin/intArrayOf<Inapplicable(INAPPLICABLE): kotlin/intArrayOf>#|(vararg(String(42))))
+        Q|Utils|.R|/Utils.acceptIntArray*s<Inapplicable(INAPPLICABLE): /Utils.acceptIntArray>#|(Q|kotlin|.R|kotlin/intArrayOf<Inapplicable(INAPPLICABLE): kotlin/intArrayOf>#|(vararg(String(42))))
     }

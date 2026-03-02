@@ -11,28 +11,23 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.resolve.CollectionLiteralOuterCallsContext
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
-import org.jetbrains.kotlin.fir.resolve.getClassRepresentativeForCollectionLiteralResolution
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPositionWithCoercionToUnit
 import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
 import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
-import org.jetbrains.kotlin.fir.resolve.prepareFunctionCallForFallback
-import org.jetbrains.kotlin.fir.resolve.resolveCollectionLiteralToErrorCall
-import org.jetbrains.kotlin.fir.resolve.resolveCollectionLiteralToPreparedCall
+import org.jetbrains.kotlin.fir.resolve.runCollectionLiteralResolution
 import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
-import org.jetbrains.kotlin.fir.resolve.toConeDiagnostic
-import org.jetbrains.kotlin.fir.resolve.tryAllCLResolutionStrategies
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
@@ -219,57 +214,11 @@ class PostponedArgumentsAnalyzer(
     ) {
         atom.analyzed = true
 
-        runCollectionLiteralResolution(atom, topLevelCandidate, precalculatedBounds)
-    }
+        val outerCallsContext = CollectionLiteralOuterCallsContext(topLevelCandidate)
 
-    private fun runCollectionLiteralResolution(
-        atom: ConeCollectionLiteralAtom,
-        topLevelCandidate: Candidate,
-        precalculatedBounds: CollectionLiteralBounds?,
-    ) {
-        val originalExpression = atom.expression
-
-        val newExpression: FirFunctionCall = context(resolutionContext) {
-            val classForResolution = when (precalculatedBounds) {
-                is CollectionLiteralBounds.SingleBound -> precalculatedBounds.bound
-                is CollectionLiteralBounds.NonTvExpected -> precalculatedBounds.bound
-                // it means CL is here through regular resolve of postponed atoms with all input types known
-                null -> atom.expectedType?.getClassRepresentativeForCollectionLiteralResolution()
-                else -> null
-            }
-
-            val resolvedThroughRegularStrategies = tryAllCLResolutionStrategies {
-                val preparedCall = prepareRawCall(originalExpression, classForResolution) ?: return@tryAllCLResolutionStrategies null
-                resolveCollectionLiteralToPreparedCall(preparedCall, atom, topLevelCandidate)
-            }
-
-            when {
-                resolvedThroughRegularStrategies != null -> resolvedThroughRegularStrategies
-                precalculatedBounds is CollectionLiteralBounds.Ambiguity -> {
-                    resolveCollectionLiteralToErrorCall(
-                        precalculatedBounds.toConeDiagnostic(),
-                        atom,
-                        topLevelCandidate,
-                    )
-                }
-                else -> {
-                    val preparedCall = prepareFunctionCallForFallback(originalExpression)
-                    resolveCollectionLiteralToPreparedCall(preparedCall, atom, topLevelCandidate)
-                }
-            }
+        context(resolutionContext, outerCallsContext) {
+            runCollectionLiteralResolution(atom, precalculatedBounds)
         }
-
-        atom.containingCallCandidate.setUpdatedCollectionLiteral(originalExpression, newExpression)
-
-        ArgumentCheckingProcessor.resolveArgumentExpression(
-            topLevelCandidate,
-            ConeResolutionAtom.createRawAtom(newExpression),
-            atom.expectedType,
-            CheckerSinkImpl(topLevelCandidate),
-            context = resolutionContext,
-            isReceiver = false,
-            isDispatch = false,
-        )
     }
 
     fun analyzeLambda(

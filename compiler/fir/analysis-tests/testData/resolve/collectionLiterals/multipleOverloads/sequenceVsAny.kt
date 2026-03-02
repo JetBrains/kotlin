@@ -8,9 +8,9 @@ fun f1(x: Sequence<Int>) { }
 fun t1() {
     f1([])
     f1([1, 2, 3])
-    f1(<!ARGUMENT_TYPE_MISMATCH!>["!"]<!>)
-    f1(<!ARGUMENT_TYPE_MISMATCH!>[42u]<!>)
-    f1(<!ARGUMENT_TYPE_MISMATCH!>[42L]<!>)
+    f1(["!"])
+    f1([42u])
+    f1([42L])
 }
 
 fun f2(x: Any) { }
@@ -19,7 +19,7 @@ fun f2(x: Sequence<Int>?) { }
 fun t2() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f2<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f2<!>([42])
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>f2<!>(["!"])
+    f2(["!"])
 }
 
 fun f3(x: Any) { }
@@ -37,7 +37,7 @@ fun <T: CharSequence> f4(x: Sequence<T>) { }
 fun t4() {
     f4([])
     f4(["!"])
-    <!CANNOT_INFER_PARAMETER_TYPE!>f4<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
+    f4([1, 2, 3])
 }
 
 fun f5(x: Any) { }
@@ -54,7 +54,7 @@ fun f6(x: Sequence<Int>?) { }
 fun t6() {
     f6([])
     f6([1, 2, 3])
-    f6(<!ARGUMENT_TYPE_MISMATCH!>["!"]<!>)
+    f6(["!"])
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, intersectionType, nullableType, stringLiteral,

@@ -12,8 +12,8 @@ fun acceptList(l: MyList<String>) = Unit
 fun acceptList(l: MyList<Int>) = Unit
 
 fun test() {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>acceptList<!>(<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>)
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>acceptList<!>(<!UNRESOLVED_REFERENCE!>["1", "2", "3"]<!>)
+    acceptList([1, 2, 3])
+    acceptList(["1", "2", "3"])
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>acceptList<!>(<!UNRESOLVED_REFERENCE!>[]<!>)
 }
 

@@ -79,15 +79,14 @@ class FirCallResolver(
     fun resolveCallAndSelectCandidate(
         functionCall: FirFunctionCall,
         resolutionMode: ResolutionMode,
-        // When resolving collection literal call, the constraint system is a clone of the outer constraint system
-        containingCallCandidateForCL: Candidate? = null,
+        collectionLiteralContext: CollectionLiteralOuterCallsContext? = null,
     ): FirFunctionCall {
         val name = functionCall.calleeReference.name
         val result = collectCandidates(
             functionCall, name,
             origin = functionCall.origin,
             resolutionMode = resolutionMode,
-            containingCallCandidateForCL = containingCallCandidateForCL
+            containingCallCandidateForCL = collectionLiteralContext?.containingCandidate
         )
 
         var forceCandidates: Collection<Candidate>? = null
@@ -121,6 +120,10 @@ class FirCallResolver(
         }
         val candidate = (nameReference as? FirNamedReferenceWithCandidate)?.candidate
         candidate?.updateSourcesOfReceivers()
+
+        if (candidate?.isSuccessful != true) {
+            collectionLiteralContext?.checkerSink?.reportDiagnostic(UnsuccessfulCollectionLiteralArgument)
+        }
 
         // We need desugaring
         val resultFunctionCall = if (candidate != null && candidate.callInfo != result.info) {
@@ -250,11 +253,24 @@ class FirCallResolver(
             implicitInvokeMode = if (qualifiedAccess is FirImplicitInvokeCall) ImplicitInvokeMode.Regular else ImplicitInvokeMode.None,
             containingCandidateForCollectionLiteral = containingCallCandidateForCL,
         )
-        towerResolver.reset()
+        val candidateCollectorForCLCall =
+            if (containingCallCandidateForCL != null) {
+                CandidateCollector(components, components.resolutionStageRunner)
+            } else {
+                towerResolver.reset()
+                null
+            }
 
         val candidateFactory = CandidateFactory(resolutionContext, info)
 
-        val resultCollector: CandidateCollector = towerResolver.runResolver(info, resolutionContext, collector, candidateFactory)
+        val resultCollector: CandidateCollector =
+            towerResolver.runResolver(
+                info,
+                resolutionContext,
+                collector ?: candidateCollectorForCLCall,
+                candidateCollectorForCLCall?.let { TowerResolveManager(it) },
+                candidateFactory,
+            )
         var (reducedCandidates, applicability) = reduceCandidates(resultCollector, resolutionContext)
         reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
 
