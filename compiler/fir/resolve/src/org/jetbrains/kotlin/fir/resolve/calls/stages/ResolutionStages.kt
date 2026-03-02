@@ -831,7 +831,7 @@ internal object EagerResolveOfCallableReferences : ResolutionStage() {
 internal object EagerResolveOfCollectionLiteral : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
     override suspend fun check(candidate: Candidate): Unit =
-        context(context.typeContext, CollectionLiteralOuterCallsContext(candidate, sink)) {
+        context(context.typeContext, CollectionLiteralOuterCandidateContext(candidate, sink)) {
             if (candidate.postponedAtoms.isEmpty()) return
             for (atom in candidate.postponedAtoms) {
                 if (atom !is ConeCollectionLiteralAtom || atom.analyzed) continue

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
 
-class CollectionLiteralOuterCallsContext(
+class CollectionLiteralOuterCandidateContext(
     /**
      * [Candidate] whose constraint system must be expanded by the CL's system.
      * During overload resolution, it is always the immediate containing candidate.

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.CollectionNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-context(context: ResolutionContext, outerCallsContext: CollectionLiteralOuterCallsContext)
+context(context: ResolutionContext, outerCandidateContext: CollectionLiteralOuterCandidateContext)
 fun runCollectionLiteralResolution(
     atom: ConeCollectionLiteralAtom,
     precalculatedBounds: CollectionLiteralBounds?,
@@ -68,13 +68,16 @@ fun runCollectionLiteralResolution(
     postprocessCollectionLiteralCall(resolvedCall, atom)
 }
 
-context(context: ResolutionContext, outerCallsContext: CollectionLiteralOuterCallsContext)
+context(context: ResolutionContext, outerCandidateContext: CollectionLiteralOuterCandidateContext)
 private fun resolveCollectionLiteralToPreparedCall(
     preparedCall: FirFunctionCall,
 ): FirFunctionCall {
     var call = preparedCall
-    call =
-        context.bodyResolveComponents.callResolver.resolveCallAndSelectCandidate(call, ResolutionMode.ContextDependent, outerCallsContext)
+    call = context.bodyResolveComponents.callResolver.resolveCallAndSelectCandidate(
+        call,
+        ResolutionMode.ContextDependent,
+        outerCandidateContext,
+    )
     call = context.bodyResolveComponents.callCompleter.completeCall(
         call,
         ResolutionMode.ContextDependent,
@@ -84,7 +87,7 @@ private fun resolveCollectionLiteralToPreparedCall(
     return call
 }
 
-context(context: ResolutionContext, outerCallsContext: CollectionLiteralOuterCallsContext)
+context(context: ResolutionContext, outerCandidateContext: CollectionLiteralOuterCandidateContext)
 private fun resolveCollectionLiteralToErrorCall(
     diagnostic: ConeDiagnostic,
     collectionLiteralAtom: ConeCollectionLiteralAtom,
@@ -105,7 +108,7 @@ private fun resolveCollectionLiteralToErrorCall(
         resolutionMode = ResolutionMode.ContextDependent,
         origin = FirFunctionCallOrigin.Operator,
         implicitInvokeMode = ImplicitInvokeMode.None,
-        containingCandidateForCollectionLiteral = outerCallsContext.containingCandidate,
+        containingCandidateForCollectionLiteral = outerCandidateContext.containingCandidate,
     )
 
     val errorReference = createErrorReferenceWithErrorCandidate(
@@ -132,7 +135,7 @@ private fun resolveCollectionLiteralToErrorCall(
     return call
 }
 
-context(context: ResolutionContext, outerCallsContext: CollectionLiteralOuterCallsContext)
+context(context: ResolutionContext, outerCandidateContext: CollectionLiteralOuterCandidateContext)
 private fun postprocessCollectionLiteralCall(
     replacementForCL: FirFunctionCall,
     collectionLiteralAtom: ConeCollectionLiteralAtom,
@@ -140,7 +143,7 @@ private fun postprocessCollectionLiteralCall(
     val originalExpression = collectionLiteralAtom.expression
     val candidateForCL = (replacementForCL.calleeReference as? FirNamedReferenceWithCandidate)?.candidate
         ?: error("Collection literal is expected to be resolved to a call with named candidate.")
-    val containingCandidate = outerCallsContext.containingCandidate
+    val containingCandidate = outerCandidateContext.containingCandidate
     // 0. When entering the function, `candidateForCL` passed all the stages of `CallKind.CollectionLiteral`.
     // Its system is not yet merged back to containing call's system.
     // Constraint typeOf(replacementForCL) <: expectedType of CL is not added to either of the systems.
@@ -157,7 +160,7 @@ private fun postprocessCollectionLiteralCall(
         candidateForCL,
         collectionLiteralAtom.subAtom!!,
         collectionLiteralAtom.expectedType,
-        outerCallsContext.checkerSink ?: CheckerSinkImpl(containingCandidate),
+        outerCandidateContext.checkerSink ?: CheckerSinkImpl(containingCandidate),
         context = context,
         isReceiver = false,
         isDispatch = false,
@@ -182,7 +185,7 @@ private fun postprocessCollectionLiteralCall(
             is UnsuccessfulCollectionLiteralArgument -> resolutionDiagnostic
             else -> UnsuccessfulCollectionLiteralArgument(resolutionDiagnostic)
         }
-        outerCallsContext.checkerSink?.reportDiagnostic(remappedDiagnostic)
+        outerCandidateContext.checkerSink?.reportDiagnostic(remappedDiagnostic)
     }
 
     // 6. Finally, the outer system can be updated.

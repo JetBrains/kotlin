@@ -79,7 +79,7 @@ class FirCallResolver(
     fun resolveCallAndSelectCandidate(
         functionCall: FirFunctionCall,
         resolutionMode: ResolutionMode,
-        collectionLiteralContext: CollectionLiteralOuterCallsContext? = null,
+        collectionLiteralContext: CollectionLiteralOuterCandidateContext? = null,
     ): FirFunctionCall {
         val isCollectionLiteralCall = collectionLiteralContext != null
         val name = functionCall.calleeReference.name

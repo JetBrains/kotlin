@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.CollectionLiteralOuterCallsContext
+import org.jetbrains.kotlin.fir.resolve.CollectionLiteralOuterCandidateContext
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
@@ -214,7 +214,7 @@ class PostponedArgumentsAnalyzer(
     ) {
         atom.analyzed = true
 
-        val outerCallsContext = CollectionLiteralOuterCallsContext(topLevelCandidate)
+        val outerCallsContext = CollectionLiteralOuterCandidateContext(topLevelCandidate)
 
         context(resolutionContext, outerCallsContext) {
             runCollectionLiteralResolution(atom, precalculatedBounds)
