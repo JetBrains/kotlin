@@ -9,11 +9,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
-import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.copyTo
-import kotlin.io.path.copyToRecursively
-import kotlin.io.path.createDirectories
-import kotlin.io.path.exists
+import kotlin.io.path.*
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 abstract class KotlinMavenTestBase {
@@ -48,7 +44,8 @@ abstract class KotlinMavenTestBase {
             context = context,
             workDir = workDir,
             settingsFile = settingsXml,
-            buildOptions = buildOptions
+            buildOptions = buildOptions,
+            mavenVersion = mavenVersion.version
         )
 
         if (code != null) code(project)
