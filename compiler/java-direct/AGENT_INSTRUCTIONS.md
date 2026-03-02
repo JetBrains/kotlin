@@ -219,6 +219,160 @@ Each iteration in FIXING_ITERATIONS.md follows this structure:
 - Validation report with test results
 - Updated `ITERATION_RESULTS.md` entry
 
+## Debugging Technique: Exception-Based Deep Inspection
+
+### Why This Approach is Necessary
+
+**CRITICAL**: Standard debug output (println, logging) **DOES NOT WORK** in Kotlin test infrastructure when running tests through Gradle. The test framework captures and suppresses this output, making it impossible to see what's happening during test execution.
+
+**Solution**: Use exception-based debugging to inspect runtime state.
+
+### How It Works
+
+When you need to understand what's happening at a specific point in code during test execution:
+
+1. **Throw an exception with the data you want to inspect**
+2. **The test will fail and show the exception with stack trace**
+3. **The exception message contains the runtime values you need**
+
+### Basic Pattern
+
+```kotlin
+// Instead of this (won't see output):
+println("classifierQualifiedName: $classifierQualifiedName")
+println("packageFqName: $packageFqName")
+
+// Do this:
+throw IllegalStateException("DEBUG: classifierQualifiedName='$classifierQualifiedName', packageFqName='$packageFqName'")
+```
+
+### Advanced: Inspecting Complex Objects
+
+```kotlin
+// Dump entire object structure
+throw IllegalStateException("""
+    DEBUG: JavaClassOverAst state:
+      fqName: ${fqName}
+      classId: ${classId}
+      supertypes: ${supertypes.joinToString { it.toString() }}
+      members: ${members.size} members
+      compilationUnit: ${compilationUnit != null}
+      isInterface: ${isInterface}
+""".trimIndent())
+```
+
+### Multi-Point Inspection
+
+When you need to see values at multiple execution points:
+
+```kotlin
+// Option 1: Conditional exception (let some cases pass)
+if (someCondition) {
+    throw IllegalStateException("DEBUG at checkpoint 1: value=$value")
+}
+
+// Option 2: Accumulate data and throw at end
+val debugLog = mutableListOf<String>()
+debugLog.add("Point 1: fqName=$fqName")
+// ... more code ...
+debugLog.add("Point 2: classId=$classId")
+// ... at end of method:
+if (shouldDebug) {
+    throw IllegalStateException("DEBUG trace:\n${debugLog.joinToString("\n")}")
+}
+```
+
+### Inspecting Call Sequences
+
+To understand the order of method calls and their parameters:
+
+```kotlin
+override fun findClass(request: JavaClassFinder.Request): JavaClass? {
+    throw IllegalStateException("""
+        DEBUG: findClass called
+          classId: ${request.classId}
+          outerClass: ${request.outerClass}
+          Stack trace will show who called this
+    """.trimIndent())
+    
+    // Original implementation below (won't execute)
+}
+```
+
+### Example: Real Usage
+
+From iteration work, here's a concrete example of using this technique:
+
+```kotlin
+// Problem: Need to see what classifierQualifiedName returns for java.lang.Object
+override val classifierQualifiedName: String
+    get() {
+        val result = classId.asSingleFqName().asString()
+        
+        // DEBUG: See what we're returning for Object
+        if (classId.shortClassName.asString() == "Object") {
+            throw IllegalStateException("""
+                DEBUG: classifierQualifiedName for Object:
+                  classId: $classId
+                  classId.asSingleFqName(): ${classId.asSingleFqName()}
+                  result: $result
+                  Expected: java.lang.Object
+                  packageFqName: ${classId.packageFqName}
+            """.trimIndent())
+        }
+        
+        return result
+    }
+```
+
+**What you'll see in test output:**
+```
+java.lang.IllegalStateException: DEBUG: classifierQualifiedName for Object:
+  classId: java/lang/Object
+  classId.asSingleFqName(): java.lang.Object
+  result: java.lang.Object
+  Expected: java.lang.Object
+  packageFqName: java.lang
+    at org.jetbrains.kotlin.java.direct.JavaClassOverAst.getClassifierQualifiedName(JavaClassOverAst.kt:123)
+    at org.jetbrains.kotlin.fir.java.FirJavaFacade.convertClass(FirJavaFacade.kt:456)
+    ...stack trace shows full call chain...
+```
+
+### Best Practices
+
+1. **Prefix with "DEBUG:"** - Makes it clear this is intentional debugging, not a real error
+2. **Include context** - Show not just the value, but also related values that help understand it
+3. **Use descriptive labels** - `"value=$value"` is better than just `"$value"`
+4. **Stack traces are valuable** - They show you the call chain that led to this point
+5. **Remove after debugging** - Don't commit these exceptions (unless documenting a bug)
+
+### When to Use This
+
+- ✅ When you need to see runtime values during test execution
+- ✅ When you need to understand call sequences and who's calling what
+- ✅ When you need to inspect complex object state at specific points
+- ✅ When standard logging doesn't appear in test output
+- ❌ NOT for final production code (only for debugging during iteration)
+- ❌ NOT when you can use unit tests to verify behavior (prefer tests)
+
+### Alternative: Conditional Exceptions
+
+If you want to debug only specific cases without failing all tests:
+
+```kotlin
+// Only throw for specific test cases
+val isDebugCase = classId.shortClassName.asString() == "Object" && 
+                  classId.packageFqName.asString() == "java.lang"
+
+if (isDebugCase) {
+    throw IllegalStateException("DEBUG: ...")
+}
+```
+
+This lets other tests run while you focus on understanding one specific scenario.
+
+---
+
 ## Focus Strategy - How to Pick "The ONE Test"
 
 When starting an iteration:
