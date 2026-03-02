@@ -230,7 +230,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.friendLibraries += friendLibraries
         arguments.includes?.let { configuration.includes = it }
         val commonSourcesArray = arguments.commonSources
-        val commonSources = commonSourcesArray?.toSet() ?: emptySet()
+        val commonSources = commonSourcesArray.toSet()
         val hmppCliModuleStructure = configuration.hmppModuleStructure
         for (arg in arguments.freeArgs) {
             configuration.addKotlinSourceRoot(arg, commonSources.contains(arg), hmppCliModuleStructure?.getModuleNameForSource(arg))

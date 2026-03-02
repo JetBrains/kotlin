@@ -390,7 +390,7 @@ private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
             true -> "Boolean?"
             false -> "Boolean"
         }
-        is StringArrayType -> "Array<String>?"
+        is StringArrayType -> "Array<String>"
         else -> when (type.isNullable.current) {
             true -> "String?"
             false -> "String"
@@ -479,6 +479,9 @@ private val KotlinCompilerArgument.defaultValueInArgs: String
     get() {
         @Suppress("UNCHECKED_CAST")
         val valueType = argumentType as KotlinArgumentValueType<Any>
+        if (argumentType is StringArrayType) {
+            return "emptyArray()"
+        }
         return valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
     }
 

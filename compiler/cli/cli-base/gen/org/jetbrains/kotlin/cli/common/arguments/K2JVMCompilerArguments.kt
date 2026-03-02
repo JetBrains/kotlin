@@ -31,7 +31,7 @@ to force diagnostics to be reported.""",
         valueDescription = "<module[,]>",
         description = "Root modules to resolve in addition to the initial modules, or all modules on the module path if <module> is ALL-MODULE-PATH.",
     )
-    var additionalJavaModules: Array<String>? = null
+    var additionalJavaModules: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -179,7 +179,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         valueDescription = "<path>",
         description = "Paths to output directories for friend modules (modules whose internals should be visible).",
     )
-    var friendPaths: Array<String>? = null
+    var friendPaths: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -200,7 +200,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         valueDescription = "<fq.name>|*",
         description = "Do not copy these annotations to the bridge methods from their targets.",
     )
-    var ignoredAnnotationsForBridges: Array<String>? = null
+    var ignoredAnnotationsForBridges: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -241,7 +241,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         valueDescription = "<path>",
         description = "Paths to directories with Java source files.",
     )
-    var javaSourceRoots: Array<String>? = null
+    var javaSourceRoots: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -285,7 +285,7 @@ Modes:
 * strict (experimental; treat like other supported nullability annotations)
 * warn (report a warning)""",
     )
-    var jsr305: Array<String>? = null
+    var jsr305: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -478,7 +478,7 @@ Modes:
 * strict
 * warn (report a warning)""",
     )
-    var nullabilityAnnotations: Array<String>? = null
+    var nullabilityAnnotations: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -541,7 +541,7 @@ problems with parentheses in identifiers on certain platforms.""",
         valueDescription = "<key=value[,]>",
         description = "Set the script resolver environment in key-value pairs (the value can be quoted and escaped).",
     )
-    var scriptResolverEnvironment: Array<String>? = null
+    var scriptResolverEnvironment: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -833,7 +833,7 @@ The default value is 'inline'.""",
         valueDescription = "<fully qualified class name[,]>",
         description = "Script definition template classes.",
     )
-    var scriptTemplates: Array<String>? = null
+    var scriptTemplates: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value

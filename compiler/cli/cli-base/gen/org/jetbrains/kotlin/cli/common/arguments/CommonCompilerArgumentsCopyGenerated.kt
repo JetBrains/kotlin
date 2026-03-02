@@ -22,7 +22,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.autoAdvanceApiVersion = from.autoAdvanceApiVersion
     to.autoAdvanceLanguageVersion = from.autoAdvanceLanguageVersion
     to.checkPhaseConditions = from.checkPhaseConditions
-    to.commonSources = from.commonSources?.copyOf()
+    to.commonSources = from.commonSources.copyOf()
     to.consistentDataClassCopyVisibility = from.consistentDataClassCopyVisibility
     to.contextParameters = from.contextParameters
     to.contextReceivers = from.contextReceivers
@@ -32,7 +32,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.detailedPerf = from.detailedPerf
     to.directJavaActualization = from.directJavaActualization
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin
-    to.disablePhases = from.disablePhases?.copyOf()
+    to.disablePhases = from.disablePhases.copyOf()
     to.dontSortSourceFiles = from.dontSortSourceFiles
     to.dontWarnOnErrorSuppression = from.dontWarnOnErrorSuppression
     to.dumpArgumentsDir = from.dumpArgumentsDir
@@ -44,11 +44,11 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.explicitBackingFields = from.explicitBackingFields
     to.explicitContextArguments = from.explicitContextArguments
     to.explicitReturnTypes = from.explicitReturnTypes
-    to.fragmentDependencies = from.fragmentDependencies?.copyOf()
-    to.fragmentFriendDependencies = from.fragmentFriendDependencies?.copyOf()
-    to.fragmentRefines = from.fragmentRefines?.copyOf()
-    to.fragmentSources = from.fragmentSources?.copyOf()
-    to.fragments = from.fragments?.copyOf()
+    to.fragmentDependencies = from.fragmentDependencies.copyOf()
+    to.fragmentFriendDependencies = from.fragmentFriendDependencies.copyOf()
+    to.fragmentRefines = from.fragmentRefines.copyOf()
+    to.fragmentSources = from.fragmentSources.copyOf()
+    to.fragments = from.fragments.copyOf()
     to.headerMode = from.headerMode
     to.headerModeType = from.headerModeType
     to.ignoreConstOptimizationErrors = from.ignoreConstOptimizationErrors
@@ -60,7 +60,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.lenientMode = from.lenientMode
     to.listPhases = from.listPhases
     to.localTypeAliases = from.localTypeAliases
-    to.manuallyConfiguredFeatures = from.manuallyConfiguredFeatures?.copyOf()
+    to.manuallyConfiguredFeatures = from.manuallyConfiguredFeatures.copyOf()
     to.metadataKlib = from.metadataKlib
     to.metadataVersion = from.metadataVersion
     to.multiDollarInterpolation = from.multiDollarInterpolation
@@ -71,17 +71,17 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.noCheckActual = from.noCheckActual
     to.noInline = from.noInline
     to.nonLocalBreakContinue = from.nonLocalBreakContinue
-    to.optIn = from.optIn?.copyOf()
-    to.phasesToDump = from.phasesToDump?.copyOf()
-    to.phasesToDumpAfter = from.phasesToDumpAfter?.copyOf()
-    to.phasesToDumpBefore = from.phasesToDumpBefore?.copyOf()
-    to.phasesToValidate = from.phasesToValidate?.copyOf()
-    to.phasesToValidateAfter = from.phasesToValidateAfter?.copyOf()
-    to.phasesToValidateBefore = from.phasesToValidateBefore?.copyOf()
-    to.pluginClasspaths = from.pluginClasspaths?.copyOf()
-    to.pluginConfigurations = from.pluginConfigurations?.copyOf()
-    to.pluginOptions = from.pluginOptions?.copyOf()
-    to.pluginOrderConstraints = from.pluginOrderConstraints?.copyOf()
+    to.optIn = from.optIn.copyOf()
+    to.phasesToDump = from.phasesToDump.copyOf()
+    to.phasesToDumpAfter = from.phasesToDumpAfter.copyOf()
+    to.phasesToDumpBefore = from.phasesToDumpBefore.copyOf()
+    to.phasesToValidate = from.phasesToValidate.copyOf()
+    to.phasesToValidateAfter = from.phasesToValidateAfter.copyOf()
+    to.phasesToValidateBefore = from.phasesToValidateBefore.copyOf()
+    to.pluginClasspaths = from.pluginClasspaths.copyOf()
+    to.pluginConfigurations = from.pluginConfigurations.copyOf()
+    to.pluginOptions = from.pluginOptions.copyOf()
+    to.pluginOrderConstraints = from.pluginOrderConstraints.copyOf()
     to.printConfiguration = from.printConfiguration
     to.profilePhases = from.profilePhases
     to.progressiveMode = from.progressiveMode
@@ -98,18 +98,18 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.stdlibCompilation = from.stdlibCompilation
     to.suppressApiVersionGreaterThanLanguageVersionError = from.suppressApiVersionGreaterThanLanguageVersionError
     to.suppressVersionWarnings = from.suppressVersionWarnings
-    to.suppressedDiagnostics = from.suppressedDiagnostics?.copyOf()
+    to.suppressedDiagnostics = from.suppressedDiagnostics.copyOf()
     to.unrestrictedBuilderInference = from.unrestrictedBuilderInference
     @Suppress("DEPRECATION")
     to.useFirExperimentalCheckers = from.useFirExperimentalCheckers
     to.useFirIC = from.useFirIC
     to.useFirLT = from.useFirLT
     to.useK2 = from.useK2
-    to.verbosePhases = from.verbosePhases?.copyOf()
+    to.verbosePhases = from.verbosePhases.copyOf()
     to.verifyIr = from.verifyIr
     to.verifyIrNestedOffsets = from.verifyIrNestedOffsets
     to.verifyIrVisibility = from.verifyIrVisibility
-    to.warningLevels = from.warningLevels?.copyOf()
+    to.warningLevels = from.warningLevels.copyOf()
     to.whenGuards = from.whenGuards
 
     return to

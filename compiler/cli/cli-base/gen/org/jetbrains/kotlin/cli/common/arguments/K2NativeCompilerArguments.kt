@@ -66,7 +66,7 @@ Currently this option is disabled by default on other platforms.""",
 By default caches will be placed into the kotlin-native system cache directory.""",
         delimiter = Argument.Delimiters.none,
     )
-    var autoCacheableFrom: Array<String>? = null
+    var autoCacheableFrom: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -90,7 +90,7 @@ The default value is 1.""",
         valueDescription = "<option=value>",
         description = "Specify a binary option.",
     )
-    var binaryOptions: Array<String>? = null
+    var binaryOptions: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -113,7 +113,7 @@ The default value is 1.""",
         description = "Path to the directory containing caches.",
         delimiter = Argument.Delimiters.none,
     )
-    var cacheDirectories: Array<String>? = null
+    var cacheDirectories: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -125,7 +125,7 @@ The default value is 1.""",
         description = "Paths to a library and its cache, separated by a comma.",
         delimiter = Argument.Delimiters.none,
     )
-    var cachedLibraries: Array<String>? = null
+    var cachedLibraries: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -178,7 +178,7 @@ The default value is 1.""",
         valueDescription = "<old1=new1,old2=new2,...>",
         description = "Remap file source directory paths in debug info.",
     )
-    var debugPrefixMap: Array<String>? = null
+    var debugPrefixMap: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -233,7 +233,7 @@ The default value is 1.""",
 This library must be one of the ones passed with '-library'.""",
         delimiter = Argument.Delimiters.none,
     )
-    var exportedLibraries: Array<String>? = null
+    var exportedLibraries: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -268,7 +268,7 @@ but they do not affect compilation at all.""",
         description = "Path to the file to cache.",
         delimiter = Argument.Delimiters.none,
     )
-    var filesToCache: Array<String>? = null
+    var filesToCache: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -279,7 +279,7 @@ but they do not affect compilation at all.""",
         valueDescription = "<header>",
         description = "Add an additional header import to the framework header.",
     )
-    var frameworkImportHeaders: Array<String>? = null
+    var frameworkImportHeaders: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -345,7 +345,7 @@ but they do not affect compilation at all.""",
         valueDescription = "<path>",
         description = "A path to an intermediate library that should be processed in the same manner as source files.",
     )
-    var includes: Array<String>? = null
+    var includes: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -417,7 +417,7 @@ but they do not affect compilation at all.""",
         value = "-Xmanifest-native-targets",
         description = "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.",
     )
-    var manifestNativeTargets: Array<String>? = null
+    var manifestNativeTargets: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -448,7 +448,7 @@ but they do not affect compilation at all.""",
         valueDescription = "<arg1,arg2,...>",
         description = "Explicit list of Clang options.",
     )
-    var clangOptions: Array<String>? = null
+    var clangOptions: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -460,7 +460,7 @@ but they do not affect compilation at all.""",
         description = "Override values from 'konan.properties' with the given ones.",
         delimiter = Argument.Delimiters.semicolon,
     )
-    var overrideKonanProperties: Array<String>? = null
+    var overrideKonanProperties: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -536,7 +536,7 @@ but they do not affect compilation at all.""",
         valueDescription = "<path>",
         description = "Paths to output directories for refined modules (modules whose 'expect' declarations this module can actualize).",
     )
-    var refinesPaths: Array<String>? = null
+    var refinesPaths: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -569,7 +569,7 @@ but they do not affect compilation at all.""",
         value = "-Xsave-llvm-ir-after",
         description = "Save the result of the Kotlin IR to LLVM IR translation to '-Xsave-llvm-ir-directory'.",
     )
-    var saveLlvmIrAfter: Array<String>? = null
+    var saveLlvmIrAfter: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -757,7 +757,7 @@ but they do not affect compilation at all.""",
         valueDescription = "<path>",
         description = "Pack the given external binary into the klib.",
     )
-    var includeBinaries: Array<String>? = null
+    var includeBinaries: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -770,7 +770,7 @@ but they do not affect compilation at all.""",
         description = "Link with the given library.",
         delimiter = Argument.Delimiters.none,
     )
-    var libraries: Array<String>? = null
+    var libraries: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -796,7 +796,7 @@ Note: This option is deprecated and will be removed in one of the future release
         description = "Pass the given argument to the linker.",
         delimiter = Argument.Delimiters.none,
     )
-    var singleLinkerArguments: Array<String>? = null
+    var singleLinkerArguments: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -809,7 +809,7 @@ Note: This option is deprecated and will be removed in one of the future release
         description = "Pass arguments to the linker.",
         delimiter = Argument.Delimiters.space,
     )
-    var linkerArguments: Array<String>? = null
+    var linkerArguments: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -868,7 +868,7 @@ Note: This option is deprecated and will be removed in one of the future release
         description = "Include the given native bitcode library.",
         delimiter = Argument.Delimiters.none,
     )
-    var nativeLibraries: Array<String>? = null
+    var nativeLibraries: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value

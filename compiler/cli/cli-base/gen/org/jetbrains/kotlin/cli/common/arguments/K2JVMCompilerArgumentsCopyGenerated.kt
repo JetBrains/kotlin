@@ -11,7 +11,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     copyCommonCompilerArguments(from, to)
 
     to.abiStability = from.abiStability
-    to.additionalJavaModules = from.additionalJavaModules?.copyOf()
+    to.additionalJavaModules = from.additionalJavaModules.copyOf()
     to.allowNoSourceFiles = from.allowNoSourceFiles
     to.allowUnstableDependencies = from.allowUnstableDependencies
     to.annotationsInMetadata = from.annotationsInMetadata
@@ -29,19 +29,19 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.enhanceTypeParameterTypesToDefNotNull = from.enhanceTypeParameterTypesToDefNotNull
     to.enhancedCoroutinesDebugging = from.enhancedCoroutinesDebugging
     to.expression = from.expression
-    to.friendPaths = from.friendPaths?.copyOf()
-    to.ignoredAnnotationsForBridges = from.ignoredAnnotationsForBridges?.copyOf()
+    to.friendPaths = from.friendPaths.copyOf()
+    to.ignoredAnnotationsForBridges = from.ignoredAnnotationsForBridges.copyOf()
     to.includeRuntime = from.includeRuntime
     to.indyAllowAnnotatedLambdas = from.indyAllowAnnotatedLambdas
     to.inheritMultifileParts = from.inheritMultifileParts
     to.javaModulePath = from.javaModulePath
     to.javaPackagePrefix = from.javaPackagePrefix
     to.javaParameters = from.javaParameters
-    to.javaSourceRoots = from.javaSourceRoots?.copyOf()
+    to.javaSourceRoots = from.javaSourceRoots.copyOf()
     to.jdkHome = from.jdkHome
     to.jdkRelease = from.jdkRelease
     to.jspecifyAnnotations = from.jspecifyAnnotations
-    to.jsr305 = from.jsr305?.copyOf()
+    to.jsr305 = from.jsr305.copyOf()
     @Suppress("DEPRECATION")
     to.jvmDefault = from.jvmDefault
     to.jvmDefaultStable = from.jvmDefaultStable
@@ -63,13 +63,13 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.noSourceDebugExtension = from.noSourceDebugExtension
     to.noStdlib = from.noStdlib
     to.noUnifiedNullChecks = from.noUnifiedNullChecks
-    to.nullabilityAnnotations = from.nullabilityAnnotations?.copyOf()
+    to.nullabilityAnnotations = from.nullabilityAnnotations.copyOf()
     to.outputBuiltinsMetadata = from.outputBuiltinsMetadata
     to.profileCompilerCommand = from.profileCompilerCommand
     to.samConversions = from.samConversions
     to.sanitizeParentheses = from.sanitizeParentheses
-    to.scriptResolverEnvironment = from.scriptResolverEnvironment?.copyOf()
-    to.scriptTemplates = from.scriptTemplates?.copyOf()
+    to.scriptResolverEnvironment = from.scriptResolverEnvironment.copyOf()
+    to.scriptTemplates = from.scriptTemplates.copyOf()
     to.strictMetadataVersionSemantics = from.strictMetadataVersionSemantics
     to.stringConcat = from.stringConcat
     to.supportCompatqualCheckerFrameworkAnnotations = from.supportCompatqualCheckerFrameworkAnnotations

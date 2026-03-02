@@ -288,7 +288,7 @@ fun CompilerConfiguration.configureModuleChunk(
         if (destination != null) {
             strongWarning("The '-d' option with a directory destination is ignored because '-Xbuild-file' is specified")
         }
-        if (arguments.javaSourceRoots != null) {
+        if (arguments.javaSourceRoots.isNotEmpty()) {
             strongWarning("The '-Xjava-source-roots' option is ignored because '-Xbuild-file' is specified")
         }
         if (arguments.javaPackagePrefix != null) {

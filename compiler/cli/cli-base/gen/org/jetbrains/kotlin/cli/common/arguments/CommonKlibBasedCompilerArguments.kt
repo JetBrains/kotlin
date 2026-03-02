@@ -76,7 +76,7 @@ The only observable effect is that a custom ABI version is written to KLIB manif
 The supplied prefixes should be absolute paths to the directories containing the source code files.
 Note: The prefixes are applied in the same order as they are passed in this CLI argument.""",
     )
-    var relativePathBases: Array<String>? = null
+    var relativePathBases: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value

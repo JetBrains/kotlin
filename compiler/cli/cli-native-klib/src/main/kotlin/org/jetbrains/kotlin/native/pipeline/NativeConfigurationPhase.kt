@@ -63,7 +63,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         configuration: CompilerConfiguration,
         arguments: K2NativeCompilerArguments,
     ) {
-        val commonSources = arguments.commonSources?.toSet().orEmpty().map { java.io.File(it).absoluteFile.normalize() }
+        val commonSources = arguments.commonSources.toSet().map { java.io.File(it).absoluteFile.normalize() }
         val hmppModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
         arguments.freeArgs.forEach { path ->
             val normalizedPath = java.io.File(path).absoluteFile.normalize()
@@ -78,7 +78,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
             NativePlatforms.nativePlatformByTargetNames(listOf(it))
         } ?: NativePlatforms.unspecifiedNativePlatform
 
-        configuration.konanLibraries = arguments.libraries?.toList().orEmpty()
+        configuration.konanLibraries = arguments.libraries.toList()
         arguments.friendModules?.let {
             configuration.konanFriendLibraries = it.split(File.pathSeparator).filterNot(String::isEmpty)
 
@@ -99,18 +99,14 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         configuration.konanDontCompressKlib = arguments.nopack
 
         arguments.outputName?.let { configuration.konanOutputPath = it }
-        arguments.refinesPaths?.let {
-            configuration.konanRefinesModules = it.filterNot(String::isEmpty)
-        }
+        configuration.konanRefinesModules = arguments.refinesPaths.filterNot(String::isEmpty)
 
-        configuration.konanIncludedBinaries = arguments.includeBinaries?.toList().orEmpty()
+        configuration.konanIncludedBinaries = arguments.includeBinaries.toList()
 
         arguments.manifestFile?.let { configuration.konanManifestAddend = it }
         arguments.headerKlibPath?.let { configuration.konanGeneratedHeaderKlibPath = it }
         arguments.shortModuleName?.let { configuration.konanShortModuleName = it }
-        arguments.includes?.let {
-            configuration.konanIncludedLibraries = it.toList()
-        }
+        configuration.konanIncludedLibraries = arguments.includes.toList()
 
         configuration.konanPrintIr = arguments.printIr
         configuration.konanPrintFiles = arguments.printFiles
@@ -124,7 +120,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         arguments.writeDependenciesOfProducedKlibTo?.let {
             configuration.konanWriteDependenciesOfProducedKlibTo = it
         }
-        arguments.manifestNativeTargets?.let {
+        arguments.manifestNativeTargets.takeIf { it.isNotEmpty() }?.let {
             configuration.konanManifestNativeTargets = parseManifestNativeTargets(it, configuration)
         }
 

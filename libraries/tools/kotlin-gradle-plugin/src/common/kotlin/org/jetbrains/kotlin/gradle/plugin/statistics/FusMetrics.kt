@@ -137,13 +137,10 @@ internal object CompilerArgumentMetrics : FusMetrics {
     }
 
     private fun <Args : CommonCompilerArguments> StatisticsValuesConsumer.reportPluginsFromListIfUsed(args: Args, pluginPatterns: List<Pair<BooleanMetrics, String>>) {
-        val pluginJars = args.pluginClasspaths?.map { it.replace("\\", "/").split("/").last() }
-
-        if (pluginJars != null) {
-            for (pluginPattern in pluginPatterns) {
-                if (pluginJars.any { it.matches(pluginPattern.second.toRegex()) }) {
-                    report(pluginPattern.first, true)
-                }
+        val pluginJars = args.pluginClasspaths.map { it.replace("\\", "/").split("/").last() }
+        for (pluginPattern in pluginPatterns) {
+            if (pluginJars.any { it.matches(pluginPattern.second.toRegex()) }) {
+                report(pluginPattern.first, true)
             }
         }
     }
@@ -153,7 +150,7 @@ internal object NativeArgumentMetrics : FusMetrics {
 
     private fun getGcTypeMetrics(arguments: K2NativeCompilerArguments): BooleanMetrics? {
         return arguments.binaryOptions
-            ?.firstOrNull { it.startsWith("gc=") }
+            .firstOrNull { it.startsWith("gc=") }
             ?.substring("gc=".length)
             ?.let {
                 //Values are connected to [org.jetbrains.kotlin.backend.konan.GC], but the class can't be access from here
@@ -168,7 +165,7 @@ internal object NativeArgumentMetrics : FusMetrics {
     }
 
     private fun getSwiftExportMetrics(arguments: K2NativeCompilerArguments): BooleanMetrics? {
-        return if (arguments.binaryOptions?.contains("swiftExport=true") == true) {
+        return if (arguments.binaryOptions.contains("swiftExport=true")) {
             BooleanMetrics.ENABLED_SWIFT_EXPORT
         } else {
             null

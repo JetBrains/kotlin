@@ -273,8 +273,8 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         this.report(COMPILER_ARGUMENTS_WARNING, message)
     }
 
-    if (rawFragments == null) {
-        if (rawFragmentRefines != null) {
+    if (rawFragments.isEmpty()) {
+        if (rawFragmentRefines.isNotEmpty()) {
             reportError("$FRAGMENT_REFINES_ARG_NAME flag can not be used without $FRAGMENTS_ARG_NAME")
         }
         return null
@@ -287,7 +287,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
 
     val sourcesByFragmentName: Map<String, Set<String>> = rawFragments.associateWith { mutableSetOf<String>() }.apply {
-        rawFragmentSources.orEmpty().forEach { rawFragmentSourceArg ->
+        rawFragmentSources.forEach { rawFragmentSourceArg ->
             val split = rawFragmentSourceArg.split(":", limit = 2)
             if (split.size < 2) {
                 reportError(
@@ -350,7 +350,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     }
 
     if (modules.size == 1) {
-        if (rawFragmentRefines?.isNotEmpty() == true) {
+        if (rawFragmentRefines.isNotEmpty()) {
             reportError("$FRAGMENT_REFINES_ARG_NAME flag is specified but there is only one module declared")
         }
         return HmppCliModuleStructure(modules, sourceDependencies = emptyMap(), moduleDependencies = emptyMap(), friendDependencies = emptyMap())
@@ -365,7 +365,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     val moduleByName = modules.associateBy { it.name }
 
-    val sourceDependencies: Map<HmppCliModule, List<HmppCliModule>> = rawFragmentRefines.orEmpty().mapNotNull { rawFragmentRefinesEdge ->
+    val sourceDependencies: Map<HmppCliModule, List<HmppCliModule>> = rawFragmentRefines.mapNotNull { rawFragmentRefinesEdge ->
         val split = rawFragmentRefinesEdge.split(":")
         if (split.size != 2) {
             reportError(
@@ -404,10 +404,10 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         }
     }
 
-    if (arguments.fragmentDependencies != null && !arguments.separateKmpCompilationScheme) {
+    if (arguments.fragmentDependencies.isNotEmpty() && !arguments.separateKmpCompilationScheme) {
         reportError("$FRAGMENT_DEPENDENCIES_ARG_NAME flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
     }
-    if (arguments.fragmentFriendDependencies != null && !arguments.separateKmpCompilationScheme) {
+    if (arguments.fragmentFriendDependencies.isNotEmpty() && !arguments.separateKmpCompilationScheme) {
         reportError("$FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
     }
 

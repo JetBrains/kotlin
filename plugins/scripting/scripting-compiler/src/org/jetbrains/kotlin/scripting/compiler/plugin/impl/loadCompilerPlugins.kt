@@ -44,7 +44,7 @@ internal fun CompilerConfiguration.loadPluginsFromClassloader(classLoader: Class
 
 internal fun CompilerConfiguration.processPluginsCommandLine(arguments: K2JVMCompilerArguments) {
     val classLoader = CompilerConfiguration::class.java.classLoader
-    val pluginOptions = arguments.pluginOptions?.asIterable() ?: emptyList()
+    val pluginOptions = arguments.pluginOptions.asIterable()
 
     val commandLineProcessors =
         classLoader.loadServices<CommandLineProcessor>(

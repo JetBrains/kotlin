@@ -489,13 +489,13 @@ internal constructor(
                 //filterKlibsPassedToCompiler call exists on files
                 val filteredLibraries = libraries.exclude(originalPlatformLibraries()).files.filterKlibsPassedToCompiler().toMutableList()
                 filteredLibraries.toPathsArray()
-            }
+            } ?: emptyArray()
             args.friendModules = runSafe {
                 friendModule.files.takeIf { it.isNotEmpty() }?.map { it.absolutePath }?.joinToString(File.pathSeparator)
             }
             args.refinesPaths = runSafe {
                 sharedCompilationData?.refinesPaths?.files?.takeIf { it.isNotEmpty() }?.toPathsArray()
-            }
+            } ?: emptyArray()
         }
 
         sources { args ->
@@ -510,7 +510,7 @@ internal constructor(
                     args.fragmentFriendDependencies = emptyArray()
                 }
             } else {
-                args.commonSources = commonSourcesTree.files.takeIf { it.isNotEmpty() }?.toPathsArray()
+                args.commonSources = commonSourcesTree.files.toPathsArray()
             }
 
             args.freeArgs += sources.asFileTree.map { it.absolutePath }

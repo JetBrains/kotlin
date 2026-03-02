@@ -324,8 +324,8 @@ constructor(
         dependencyClasspath { args ->
             args.libraries = runSafe {
                 libraries.exclude(excludeDependencies).files.filterKlibsPassedToCompiler()
-            }?.toPathsArray()
-            args.exportedLibraries = runSafe { exportLibraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
+            }?.toPathsArray() ?: emptyArray()
+            args.exportedLibraries = runSafe { exportLibraries.files.filterKlibsPassedToCompiler() }?.toPathsArray() ?: emptyArray()
             args.friendModules = runSafe { friendModule.files.toList().takeIf { it.isNotEmpty() } }
                 ?.joinToString(File.pathSeparator) { it.absolutePath }
         }

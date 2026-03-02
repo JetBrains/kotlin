@@ -321,10 +321,10 @@ private fun createInitialCompilerConfiguration(
             ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
         )
 
-        val pluginClasspaths = baseArguments.pluginClasspaths?.asList().orEmpty()
-        val pluginOptions = baseArguments.pluginOptions?.asList().orEmpty()
-        val pluginConfigurations = baseArguments.pluginConfigurations?.asList().orEmpty()
-        val pluginOrderConstraints = baseArguments.pluginOrderConstraints?.asList().orEmpty()
+        val pluginClasspaths = baseArguments.pluginClasspaths.asList()
+        val pluginOptions = baseArguments.pluginOptions.asList()
+        val pluginConfigurations = baseArguments.pluginConfigurations.asList()
+        val pluginOrderConstraints = baseArguments.pluginOrderConstraints.asList()
 
         checkPluginsArguments(this, false, pluginClasspaths, pluginOptions, pluginConfigurations)
         if (pluginClasspaths.isNotEmpty() || pluginConfigurations.isNotEmpty()) {

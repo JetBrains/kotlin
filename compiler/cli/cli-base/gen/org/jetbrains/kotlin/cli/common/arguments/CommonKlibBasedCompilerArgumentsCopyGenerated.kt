@@ -18,7 +18,7 @@ fun copyCommonKlibBasedCompilerArguments(from: CommonKlibBasedCompilerArguments,
     to.normalizeAbsolutePath = from.normalizeAbsolutePath
     to.partialLinkageLogLevel = from.partialLinkageLogLevel
     to.partialLinkageMode = from.partialLinkageMode
-    to.relativePathBases = from.relativePathBases?.copyOf()
+    to.relativePathBases = from.relativePathBases.copyOf()
     to.skipLibrarySpecialCompatibilityChecks = from.skipLibrarySpecialCompatibilityChecks
 
     return to

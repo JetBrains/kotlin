@@ -12,12 +12,12 @@ fun copyK2MetadataCompilerArguments(from: K2MetadataCompilerArguments, to: K2Met
 
     to.classpath = from.classpath
     to.destination = from.destination
-    to.friendPaths = from.friendPaths?.copyOf()
+    to.friendPaths = from.friendPaths.copyOf()
     to.klibZipFileAccessorCacheLimit = from.klibZipFileAccessorCacheLimit
     to.legacyMetadataJar = from.legacyMetadataJar
     to.moduleName = from.moduleName
-    to.refinesPaths = from.refinesPaths?.copyOf()
-    to.targetPlatform = from.targetPlatform?.copyOf()
+    to.refinesPaths = from.refinesPaths.copyOf()
+    to.targetPlatform = from.targetPlatform.copyOf()
 
     return to
 }

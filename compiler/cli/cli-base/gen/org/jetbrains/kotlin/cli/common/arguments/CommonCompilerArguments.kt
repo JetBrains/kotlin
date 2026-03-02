@@ -31,7 +31,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         valueDescription = "plugin:<pluginId>:<optionName>=<value>",
         description = "Pass an option to a plugin.",
     )
-    var pluginOptions: Array<String>? = null
+    var pluginOptions: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -45,7 +45,7 @@ Warning: this flag is not intended for production use. If you want to configure 
 -language-version or corresponding experimental feature flags.""",
         delimiter = Argument.Delimiters.none,
     )
-    var manuallyConfiguredFeatures: Array<String>? = null
+    var manuallyConfiguredFeatures: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -209,7 +209,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         description = """Sources of the common module that need to be compiled together with this module in multiplatform mode.
 They should be a subset of sources passed as free arguments.""",
     )
-    var commonSources: Array<String>? = null
+    var commonSources: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -221,7 +221,7 @@ They should be a subset of sources passed as free arguments.""",
         description = "Register a compiler plugin.",
         delimiter = Argument.Delimiters.none,
     )
-    var pluginConfigurations: Array<String>? = null
+    var pluginConfigurations: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -236,7 +236,7 @@ The first specified plugin will be executed before the second plugin.
 Multiple constraints can be specified by repeating this option. Cycles in constraints will cause an error.""",
         delimiter = Argument.Delimiters.none,
     )
-    var pluginOrderConstraints: Array<String>? = null
+    var pluginOrderConstraints: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -334,7 +334,7 @@ For WASM and JS, the performance report includes execution time and lines per se
         value = "-Xdisable-phases",
         description = "Disable backend phases.",
     )
-    var disablePhases: Array<String>? = null
+    var disablePhases: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -457,7 +457,7 @@ The argument should be used only if the new compilation scheme is enabled with -
 """,
         delimiter = Argument.Delimiters.none,
     )
-    var fragmentDependencies: Array<String>? = null
+    var fragmentDependencies: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -472,7 +472,7 @@ The argument should be used only if the new compilation scheme is enabled with -
 """,
         delimiter = Argument.Delimiters.none,
     )
-    var fragmentFriendDependencies: Array<String>? = null
+    var fragmentFriendDependencies: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -483,7 +483,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         valueDescription = "<fromModuleName>:<onModuleName>",
         description = "Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.",
     )
-    var fragmentRefines: Array<String>? = null
+    var fragmentRefines: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -494,7 +494,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         valueDescription = "<fragment name>:<path>",
         description = "Add sources to a specific fragment of a multiplatform compilation.",
     )
-    var fragmentSources: Array<String>? = null
+    var fragmentSources: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -505,7 +505,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         valueDescription = "<fragment name>",
         description = "Declare all known fragments of a multiplatform compilation.",
     )
-    var fragments: Array<String>? = null
+    var fragments: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -715,7 +715,7 @@ with bodies.""",
         value = "-Xphases-to-dump",
         description = "Dump the backend's state both before and after these phases.",
     )
-    var phasesToDump: Array<String>? = null
+    var phasesToDump: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -725,7 +725,7 @@ with bodies.""",
         value = "-Xphases-to-dump-after",
         description = "Dump the backend's state after these phases.",
     )
-    var phasesToDumpAfter: Array<String>? = null
+    var phasesToDumpAfter: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -735,7 +735,7 @@ with bodies.""",
         value = "-Xphases-to-dump-before",
         description = "Dump the backend's state before these phases.",
     )
-    var phasesToDumpBefore: Array<String>? = null
+    var phasesToDumpBefore: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -745,7 +745,7 @@ with bodies.""",
         value = "-Xphases-to-validate",
         description = "Validate the backend's state both before and after these phases.",
     )
-    var phasesToValidate: Array<String>? = null
+    var phasesToValidate: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -755,7 +755,7 @@ with bodies.""",
         value = "-Xphases-to-validate-after",
         description = "Validate the backend's state after these phases.",
     )
-    var phasesToValidateAfter: Array<String>? = null
+    var phasesToValidateAfter: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -765,7 +765,7 @@ with bodies.""",
         value = "-Xphases-to-validate-before",
         description = "Validate the backend's state before these phases.",
     )
-    var phasesToValidateBefore: Array<String>? = null
+    var phasesToValidateBefore: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -776,7 +776,7 @@ with bodies.""",
         valueDescription = "<path>",
         description = "Load plugins from the given classpath.",
     )
-    var pluginClasspaths: Array<String>? = null
+    var pluginClasspaths: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -929,7 +929,7 @@ Warning: This is temporary solution (see KT-63712) intended to be used only for 
         valueDescription = "<WARNING_NAME>",
         description = "Suppress specified warning module-wide. This option is deprecated in favor of \"-Xwarning-level\" flag",
     )
-    var suppressedDiagnostics: Array<String>? = null
+    var suppressedDiagnostics: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -993,7 +993,7 @@ Warning: This feature is not yet production-ready.""",
         value = "-Xverbose-phases",
         description = "Be verbose while performing the given backend phases.",
     )
-    var verbosePhases: Array<String>? = null
+    var verbosePhases: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -1038,7 +1038,7 @@ Warning: This feature is not yet production-ready.""",
 - `disabled` level suppresses reporting of a warning (similar to -nowarn but more granular)
 - `warning` level overrides -nowarn and -Werror for this specific warning (the warning will be reported/won't be considered as an error)""",
     )
-    var warningLevels: Array<String>? = null
+    var warningLevels: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -1094,7 +1094,7 @@ Warning: This feature is not yet production-ready.""",
         valueDescription = "<fq.name>",
         description = "Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.",
     )
-    var optIn: Array<String>? = null
+    var optIn: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value

@@ -237,11 +237,11 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             // A little hack: produce == null is assumed to be treated as produce == "program" later in the pipeline.
             val producingExecutable = produce == null || produce == "program"
             // KT-68673: It is legal to store entry point in one of the libraries.
-            if (producingExecutable && libraries?.isNotEmpty() == true) {
+            if (producingExecutable && libraries.isNotEmpty()) {
                 return true
             }
-            return !includes.isNullOrEmpty()
-                    || !exportedLibraries.isNullOrEmpty()
+            return includes.isNotEmpty()
+                    || exportedLibraries.isNotEmpty()
                     || libraryToAddToCache != null
                     || !compileFromBitcode.isNullOrEmpty()
         }

@@ -189,7 +189,9 @@ private fun reportInvalidArguments(
     vararg toIgnore: KMutableProperty1<K2JVMCompilerArguments, *>
 ): Boolean {
     val invalidArgKeys = toIgnore.mapNotNull { argProperty ->
-        if (argProperty.get(arguments) != argProperty.get(reportingState.currentArguments)) {
+        val currentArg = argProperty.get(reportingState.currentArguments)
+        val arg = argProperty.get(arguments)
+        if (!(arg == currentArg || arg.isEmptyArray() && currentArg.isEmptyArray())) {
             argProperty.javaField?.getAnnotation(Argument::class.java)?.value
                 ?: throw IllegalStateException("unknown compiler argument property: $argProperty: no Argument annotation found")
         } else null
@@ -201,6 +203,8 @@ private fun reportInvalidArguments(
     }
     return false
 }
+
+private fun Any?.isEmptyArray(): Boolean = this is Array<*> && isEmpty()
 
 val MessageCollector.reporter: MessageReporter
     get() = { severity, message ->
