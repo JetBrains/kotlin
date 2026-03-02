@@ -288,7 +288,7 @@ abstract class KotlinIrLinker(
         return moduleFragment
     }
 
-    protected open fun maybeWrapWithBuiltInAndInit(
+    protected fun maybeWrapWithBuiltInAndInit(
         moduleDescriptor: ModuleDescriptor,
         moduleDeserializer: IrModuleDeserializer
     ): IrModuleDeserializer =
