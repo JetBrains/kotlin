@@ -1222,7 +1222,8 @@ open class IrFileSerializer(
     private fun serializeStatement(statement: IrElement): ProtoStatement {
         val coordinates =
             // Both IrExpression and IrDeclaration have their own coordinate fields, the one on ProtoStatement is ignored for them.
-            if (statement is IrExpression || statement is IrDeclaration) 0
+            // Coordinates of IrExpressionBody are derived from the wrapped IrExpression, and those on ProtoStatement are ignored as well.
+            if (statement is IrExpression || statement is IrDeclaration || statement is IrExpressionBody) 0
             else serializeCoordinates(statement.startOffset, statement.endOffset)
         val proto = ProtoStatement.newBuilder()
             .setCoordinates(coordinates)
