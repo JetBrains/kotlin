@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.model.isDynamic
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheckerKind.Common) {
@@ -98,6 +99,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
 
     context(context: CheckerContext)
     fun TypeInfo.approximateIfCollection(): TypeInfo {
+        if (directType.isDynamic()) return this
         for (specialCollectionType in specialCollectionTypes) {
             val symbol = specialCollectionType.toSymbol() as? FirClassSymbol<*> ?: continue
             val starProjectedType = symbol.constructStarProjectedType()
@@ -110,6 +112,9 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
     }
 
     context(context: CheckerContext)
+    fun ConeKotlinType.isDynamic(): Boolean = with(context.session.typeContext) { this@isDynamic.isDynamic() }
+
+    context(context: CheckerContext)
     fun checkStrictEqualityCase(leftTypeInfo: TypeInfo, rightTypeInfo: TypeInfo): ConeKotlinType? {
         val leftType = leftTypeInfo.type
         val leftCanBeNull = leftType.canBeNull(context.session)
@@ -118,6 +123,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         val rightCanBeNull = rightType.canBeNull(context.session)
 
         if (leftCanBeNull && rightCanBeNull) return null
+        if (leftType.isDynamic() || rightType.isDynamic()) return null
         if (areRelated(leftTypeInfo, rightTypeInfo)) return null
 
         fun problematicCase(strictness: EqualityStrictness, otherCanBeNull: Boolean): Boolean =

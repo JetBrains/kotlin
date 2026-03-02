@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNSUPPORTED
 
 data class A(val name: String)
 data class B(val name: String)
@@ -26,6 +27,9 @@ fun test4(a: Any?, b: Any?): Boolean {
     }
     return true
 }
+
+fun test5a(a: A, b: dynamic): Boolean = a == b
+fun test5b(a: dynamic, b: A): Boolean = a == b
 
 /* GENERATED_FIR_TAGS: andExpression, classDeclaration, data, equalityExpression, functionDeclaration, ifExpression,
 isExpression, localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast */

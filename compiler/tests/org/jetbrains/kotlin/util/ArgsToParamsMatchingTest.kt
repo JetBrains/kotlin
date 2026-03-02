@@ -158,7 +158,7 @@ private fun assertParamMapsEquals(actuals: Map<KParameter, Any?>?, vararg expect
     Assert.assertNotNull(actuals)
     val stringifiedActuals = actuals!!.mapKeys { it.key.name }
     val mappedExpected = expected.toMap()
-    if (expected != stringifiedActuals) {
+    if (mappedExpected != stringifiedActuals) {
         Assert.assertEquals(stringifiedActuals.keys, mappedExpected.keys)
         mappedExpected.forEach { exp ->
             val actVal = stringifiedActuals[exp.key]
