@@ -243,9 +243,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val computeTransformedLibraryChecksum: Boolean
         get() = booleanProperty(KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM) ?: true
 
-    val enableKotlinToolingMetadataArtifact: Boolean
-        get() = booleanProperty("kotlin.mpp.enableKotlinToolingMetadataArtifact") ?: true
-
     val mppEnableOptimisticNumberCommonization: Boolean
         get() = booleanProperty(KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION) ?: true
 
