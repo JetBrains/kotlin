@@ -73,8 +73,7 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
 
     open fun declareIrSymbol(symbol: IrSymbol) {
         val signature = symbol.signature
-        require(signature != null) { "Symbol is not public API: ${symbol.descriptor}" }
-        assert(symbol.hasDescriptor)
+        require(signature != null) { "Symbol is not public API" }
         deserializeIrSymbolOrFail(signature, symbol.kind())
     }
 
