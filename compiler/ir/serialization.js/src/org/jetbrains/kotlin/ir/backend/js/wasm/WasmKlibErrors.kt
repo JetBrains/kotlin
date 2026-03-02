@@ -19,6 +19,8 @@ object WasmKlibErrors : KtDiagnosticsContainer() {
 
     val EXPORTING_JS_NAME_WASM_EXPORT_CLASH by error2<PsiElement, String, List<WasmKlibExportingDeclaration>>()
 
+    val WASM_EXPORT_EXPORTING_JS_NAME_CLASH by error2<PsiElement, String, List<WasmKlibExportingDeclaration>>()
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultJsKlibErrorMessages
     }
@@ -50,6 +52,12 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(
             WasmKlibErrors.EXPORTING_JS_NAME_WASM_EXPORT_CLASH,
             "Exporting JsExport name ''{0}'' clashes with WasmExport {1}",
+            CommonRenderers.STRING,
+            KLIB_EXPORTS_LIST
+        )
+        map.put(
+            WasmKlibErrors.WASM_EXPORT_EXPORTING_JS_NAME_CLASH,
+            "Exporting WasmExport name ''{0}'' clashes with JsExport {1}",
             CommonRenderers.STRING,
             KLIB_EXPORTS_LIST
         )

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.wasm.declarations
 
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.backend.js.checkers.*
-import org.jetbrains.kotlin.ir.backend.js.wasm.ExportKind
-import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibErrors
 import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibExportingDeclaration
 
 object WasmKlibExportsChecker {
@@ -21,28 +19,21 @@ object WasmKlibExportsChecker {
                 val declaration = exportedDeclaration.declaration ?: continue
                 val clashedWith = exportedDeclarationClashes.filterIndexed { i, _ -> i != index }
 
-                val clashedWithSameExportType = clashedWith.filter { it.exportKind == exportedDeclaration.exportKind }
-                val clashedWithOtherExportType = clashedWith.filter { it.exportKind != exportedDeclaration.exportKind }
+                val (sameExportType, differentExportType) = clashedWith.partition { it.exportKind == exportedDeclaration.exportKind }
 
-                val errorSameExportType = if (exportedDeclaration.exportKind == ExportKind.JsExport) {
-                    WasmKlibErrors.EXPORTING_JS_NAME_CLASH
-                } else {
-                    WasmKlibErrors.WASM_EXPORT_CLASH
-                }
-
-                if (clashedWithSameExportType.isNotEmpty()) {
+                if (sameExportType.isNotEmpty()) {
                     reporter.at(declaration, context).report(
-                        errorSameExportType,
+                        exportedDeclaration.exportKind.clashError,
                         exportedDeclaration.exportingName,
-                        clashedWithSameExportType
+                        sameExportType
                     )
                 }
 
-                if (clashedWithOtherExportType.isNotEmpty()) {
+                if (differentExportType.isNotEmpty()) {
                     reporter.at(declaration, context).report(
-                        WasmKlibErrors.EXPORTING_JS_NAME_WASM_EXPORT_CLASH,
+                        exportedDeclaration.exportKind.crossClashError,
                         exportedDeclaration.exportingName,
-                        clashedWithOtherExportType
+                        differentExportType
                     )
                 }
             }

@@ -15,4 +15,4 @@ package b
 
 import kotlin.wasm.*
 
-<!EXPORTING_JS_NAME_WASM_EXPORT_CLASH!>@WasmExport("fInt") fun bar() = 3<!>
+<!WASM_EXPORT_EXPORTING_JS_NAME_CLASH!>@WasmExport("fInt") fun bar() = 3<!>

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.wasm.checks.*
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
 import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
@@ -117,6 +118,10 @@ fun compileToLoweredIr(
     for (module in allModules)
         for (file in module.files)
             markExportedDeclarations(context, file, exportedDeclarations)
+
+    // check clashing JsExport/WasmExport exporting names, that appeared after
+    // linking all modules (not caught by Frontend checks)
+    checkCrossModuleExportClashes(allModules, configuration)
 
     val typeScriptFragment = runIf(configuration.generateDts) {
         val exportModel = ExportModelGenerator(context).generateExport(allModules)
