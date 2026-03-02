@@ -16,12 +16,12 @@ fun <Z : MyList<String>> fullyRestrictedId(z: Z): Z = z
 fun test() {
     id<MyList<String>>([])
     id<MyList<String>>(["42"])
-    id<MyList<String>>(<!ARGUMENT_TYPE_MISMATCH!>[null]<!>)
+    id<MyList<String>>([<!NULL_FOR_NONNULL_TYPE!>null<!>])
 
     id<MyList<MyList<String>>>([])
     id<MyList<MyList<String>>>([[]])
     id<MyList<MyList<String>>>([["42"]])
-    id<MyList<MyList<String>>>([<!ARGUMENT_TYPE_MISMATCH!>[null]<!>])
+    id<MyList<MyList<String>>>([[<!NULL_FOR_NONNULL_TYPE!>null<!>]])
 
     id<MyList<*>>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     id<MyList<*>>(["42"])
@@ -36,7 +36,7 @@ fun test() {
 
     restrictedId<MyList<String>>([])
     restrictedId<MyList<String>>(["42"])
-    restrictedId<MyList<String>>(<!ARGUMENT_TYPE_MISMATCH!>[null]<!>)
+    restrictedId<MyList<String>>([<!NULL_FOR_NONNULL_TYPE!>null<!>])
 
     restrictedId<MyList<*>>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     restrictedId<MyList<*>>(["42"])
@@ -47,7 +47,7 @@ fun test() {
 
     fullyRestrictedId([])
     fullyRestrictedId(["42"])
-    <!CANNOT_INFER_PARAMETER_TYPE!>fullyRestrictedId<!>(<!ARGUMENT_TYPE_MISMATCH!>[null]<!>)
+    fullyRestrictedId([<!NULL_FOR_NONNULL_TYPE!>null<!>])
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, companionObject, functionDeclaration, nullableType,

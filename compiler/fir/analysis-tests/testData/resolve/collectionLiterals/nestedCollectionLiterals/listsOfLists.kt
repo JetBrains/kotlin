@@ -16,19 +16,19 @@ fun test() {
     takeListListInt([[]])
     takeListListInt([[1, 2, 3]])
 
-    takeListListInt([<!ARGUMENT_TYPE_MISMATCH!>[1, '2', 3]<!>])
-    takeListListInt([<!ARGUMENT_TYPE_MISMATCH!>[1, null, 3]<!>])
+    takeListListInt([[1, <!ARGUMENT_TYPE_MISMATCH!>'2'<!>, 3]])
+    takeListListInt([[1, <!NULL_FOR_NONNULL_TYPE!>null<!>, 3]])
     takeListListInt([[<!UNRESOLVED_REFERENCE!>[]<!>]])
-    takeListListInt(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
+    takeListListInt([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
 
     takeListList<Int>([])
     takeListList<Int>([[]])
     takeListList<Int>([[1, 2, 3]])
 
-    takeListList<Int>([<!ARGUMENT_TYPE_MISMATCH!>[1, '2', 3]<!>])
-    takeListList<Int>([<!ARGUMENT_TYPE_MISMATCH!>[1, null, 3]<!>])
+    takeListList<Int>([[1, <!ARGUMENT_TYPE_MISMATCH!>'2'<!>, 3]])
+    takeListList<Int>([[1, <!NULL_FOR_NONNULL_TYPE!>null<!>, 3]])
     takeListList<Int>([[<!UNRESOLVED_REFERENCE!>[]<!>]])
-    takeListList<Int>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
+    takeListList<Int>([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
 
     <!CANNOT_INFER_PARAMETER_TYPE!>takeListList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     <!CANNOT_INFER_PARAMETER_TYPE!>takeListList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>]<!>)
@@ -36,10 +36,10 @@ fun test() {
     <!CANNOT_INFER_PARAMETER_TYPE!>takeListList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNRESOLVED_REFERENCE!>[]<!>]<!>]<!>)
     takeListList([[1, '2', 3]])
     takeListList([[1, null, 3]])
-    <!CANNOT_INFER_PARAMETER_TYPE!>takeListList<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeListList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>]<!>)
 
-    var lst: MyList<MyList<Int>> = [[1, 2, 3], <!ARGUMENT_TYPE_MISMATCH!>[4L, 5L, 6L]<!>, [7, 8, 9]]
-    lst = [<!ARGUMENT_TYPE_MISMATCH!>["1", "2", "3"]<!>]
+    var lst: MyList<MyList<Int>> = [[1, 2, 3], [<!ARGUMENT_TYPE_MISMATCH!>4L<!>, <!ARGUMENT_TYPE_MISMATCH!>5L<!>, <!ARGUMENT_TYPE_MISMATCH!>6L<!>], [7, 8, 9]]
+    lst = [[<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>]]
     lst = []
     lst = [[]]
     lst = [[<!UNRESOLVED_REFERENCE!>[]<!>]]

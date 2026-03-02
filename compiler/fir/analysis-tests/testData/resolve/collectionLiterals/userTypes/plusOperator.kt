@@ -18,21 +18,21 @@ fun testVal() {
     val x: MyList<Int> = [1, 2, 3]
     x += [1, 2, 3]
     x += []
-    x += <!ARGUMENT_TYPE_MISMATCH!>["string"]<!>
-    x += <!ARGUMENT_TYPE_MISMATCH!>[null]<!>
+    x += [<!ARGUMENT_TYPE_MISMATCH!>"string"<!>]
+    x += [<!NULL_FOR_NONNULL_TYPE!>null<!>]
 
     x + []
     x + [1, 2, 3]
-    x + <!ARGUMENT_TYPE_MISMATCH!>["string"]<!>
-    x + <!ARGUMENT_TYPE_MISMATCH!>[null]<!>
+    x + [<!ARGUMENT_TYPE_MISMATCH!>"string"<!>]
+    x + [<!NULL_FOR_NONNULL_TYPE!>null<!>]
 }
 
 fun testVar() {
     var x: MyList<Int> = [1, 2, 3]
     x <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> [1, 2, 3]
     x <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> []
-    x += <!ARGUMENT_TYPE_MISMATCH!>["string"]<!>
-    x += <!ARGUMENT_TYPE_MISMATCH!>[null]<!>
+    x += [<!ARGUMENT_TYPE_MISMATCH!>"string"<!>]
+    x += [<!NULL_FOR_NONNULL_TYPE!>null<!>]
 }
 
 fun testConcat() {

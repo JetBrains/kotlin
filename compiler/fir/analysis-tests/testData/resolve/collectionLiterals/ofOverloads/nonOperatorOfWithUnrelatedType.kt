@@ -16,7 +16,7 @@ class A {
 fun test() {
     val x: A = []
     val y: A = [P()]
-    val z: A <!INITIALIZER_TYPE_MISMATCH!>=<!> <!OPERATOR_MODIFIER_REQUIRED!>[42]<!>
+    val z: A = [<!ARGUMENT_TYPE_MISMATCH!>42<!>]
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, objectDeclaration,

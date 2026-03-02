@@ -25,21 +25,21 @@ fun testMatrixInt() {
     ])
     takeMatrixInt([])
     takeMatrixInt([[], [], []])
-    takeMatrixInt([<!ARGUMENT_TYPE_MISMATCH!>["1", "2", "3"]<!>])
+    takeMatrixInt([[<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>]])
 
     takeMatrixInt([
         [1, 2, 3],
-        <!ARGUMENT_TYPE_MISMATCH!>[4, '5', 6]<!>,
+        [4, <!ARGUMENT_TYPE_MISMATCH!>'5'<!>, 6],
         [7, 8, 9],
     ])
     takeMatrixInt([
         [1, 2, 3],
-        <!ARGUMENT_TYPE_MISMATCH!>[4, null, 6]<!>,
+        [4, <!NULL_FOR_NONNULL_TYPE!>null<!>, 6],
         [7, 8, 9],
     ])
     takeMatrixInt([
         [1, 2, 3],
-        <!ARGUMENT_TYPE_MISMATCH!>[4, 5L, 6]<!>,
+        [4, <!ARGUMENT_TYPE_MISMATCH!>5L<!>, 6],
         [7, 8, 9],
     ])
     takeMatrixInt([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
@@ -55,17 +55,17 @@ fun testMatrixInt() {
 
     takeMatrix<Int>([
         [1, 2, 3],
-        <!ARGUMENT_TYPE_MISMATCH!>[4, '5', 6]<!>,
+        [4, <!ARGUMENT_TYPE_MISMATCH!>'5'<!>, 6],
         [7, 8, 9],
     ])
     takeMatrix<Int>([
         [1, 2, 3],
-        <!ARGUMENT_TYPE_MISMATCH!>[4, null, 6]<!>,
+        [4, <!NULL_FOR_NONNULL_TYPE!>null<!>, 6],
         [7, 8, 9],
     ])
     takeMatrix<Int>([
         [1, 2, 3],
-        <!ARGUMENT_TYPE_MISMATCH!>[4, 5L, 6]<!>,
+        [4, <!ARGUMENT_TYPE_MISMATCH!>5L<!>, 6],
         [7, 8, 9],
     ])
     takeMatrix<Int>([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
@@ -77,11 +77,11 @@ fun testMatrixInt() {
     matrix = [[<!UNRESOLVED_REFERENCE!>[]<!>]]
     matrix = [[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>]]
     matrix = [<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>]
-    matrix = [<!ARGUMENT_TYPE_MISMATCH!>[1, null, 3]<!>]
-    matrix = [<!ARGUMENT_TYPE_MISMATCH!>[1, "2", 3]<!>]
+    matrix = [[1, <!NULL_FOR_NONNULL_TYPE!>null<!>, 3]]
+    matrix = [[1, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, 3]]
     matrix = [[null!!]]
-    matrix = [<!ARGUMENT_TYPE_MISMATCH!>["1", "2", "3"]<!>]
-    val matrixString: Matrix<String> = [<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>]
+    matrix = [[<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>]]
+    val matrixString: Matrix<String> = [[<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>]]
 }
 
 fun testMatrix() {

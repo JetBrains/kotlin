@@ -20,7 +20,7 @@ fun acceptList(other: OtherList<String>) = Unit
 fun test() {
     acceptList(my = ["1", "2", "3"])
     acceptList(other = [])
-    acceptList(other = <!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
+    acceptList(other = [<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nullableType,

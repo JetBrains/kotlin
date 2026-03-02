@@ -20,7 +20,7 @@ FILE: test.kt
     }
     public final fun test(): R|kotlin/Unit| {
         Q|Utils|.R|/Utils.expectFlexible*s|(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/String!|>())
-        Q|Utils|.R|/Utils.expectFlexible*s<Inapplicable(INAPPLICABLE): /Utils.expectFlexible>#|(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        Q|Utils|.R|/Utils.expectFlexible*s<Inapplicable(INAPPLICABLE): /Utils.expectFlexible>#|(Q|C.Companion|.R|/C.Companion.of<Inapplicable(INAPPLICABLE): /C.Companion.of>#|<R|kotlin/String!|>(vararg(Int(42))))
         Q|Utils|.R|/Utils.expectFlexible*s|(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/String!|>(vararg(String(42))))
         Q|Utils|.R|/Utils.expectFlexibleGeneric*s<CS errors: /Utils.expectFlexibleGeneric>#|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(Q|C.Companion|.R|/C.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>())
         Q|Utils|.R|/Utils.expectFlexibleGeneric*s|<R|ft<it(kotlin/Comparable<*> & java/io/Serializable), it(kotlin/Comparable<*>? & java/io/Serializable?)>|>(Q|C.Companion|.R|/C.Companion.of|<R|ft<it(kotlin/Comparable<*> & java/io/Serializable), it(kotlin/Comparable<*>? & java/io/Serializable?)>|>(vararg(Int(42), String(42))))

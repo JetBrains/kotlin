@@ -502,13 +502,13 @@ Q|A.Companion|.of#(IntegerLiteral(42))
 ```
 
 #### Candidate 1: `FirNamedFunctionSymbol /A.Companion.of` --- `fun of(vararg x: Int): A`
-##### Resolution Stages > CheckArguments:
-
-1. `ILT: 42 <: kotlin/Int` _from Argument IntegerLiteral(42)_
-
 ##### Resolution Stages > CheckLowPriorityInOverloadResolution:
 
 1. `A <: TypeVariable(T)` _from Argument Q|A.Companion|.R?C|/A.Companion.of|(IntegerLiteral(42))_
+
+##### Resolution Stages > CheckArguments:
+
+1. `ILT: 42 <: kotlin/Int` _from Argument IntegerLiteral(42)_
 
 ### Call 9
 

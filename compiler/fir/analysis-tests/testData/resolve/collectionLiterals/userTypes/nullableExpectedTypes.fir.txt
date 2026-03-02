@@ -38,7 +38,7 @@ FILE: nullableExpectedTypes.kt
     public final fun test(): R|kotlin/Unit| {
         R|/expectNullable|(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/String|>())
         R|/expectNullable|(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/String|>(vararg(String(42))))
-        R|/expectNullable<Inapplicable(INAPPLICABLE): /expectNullable>#|(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        R|/expectNullable<Inapplicable(INAPPLICABLE): /expectNullable>#|(Q|C.Companion|.R|/C.Companion.of<Inapplicable(INAPPLICABLE): /C.Companion.of>#|<R|kotlin/String|>(vararg(Int(42))))
         R|/expectNullableGeneric<CS errors: /expectNullableGeneric>#|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(Q|C.Companion|.R|/C.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>())
         R|/expectNullableGeneric|<R|kotlin/String|>(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/String|>(vararg(String(42))))
         R|/expectNullableGeneric|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(Q|C.Companion|.R|/C.Companion.of|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(vararg(Int(42), String(42))))
@@ -46,7 +46,7 @@ FILE: nullableExpectedTypes.kt
         R|/expectThroughTypealias|<R|kotlin/Int|>(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
         R|/expectThroughTypealias|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(Q|C.Companion|.R|/C.Companion.of|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(vararg(Int(42), String(42))))
         R|/expectThroughTypealias|<R|kotlin/String|>(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/String|>())
-        R|/expectThroughTypealias<Inapplicable(INAPPLICABLE): /expectThroughTypealias>#|<R|kotlin/String|>(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        R|/expectThroughTypealias<Inapplicable(INAPPLICABLE): /expectThroughTypealias>#|<R|kotlin/String|>(Q|C.Companion|.R|/C.Companion.of<Inapplicable(INAPPLICABLE): /C.Companion.of>#|<R|kotlin/String|>(vararg(Int(42))))
         R|/expectThroughTV|<R|C<kotlin/Int>?|>(Q|C|.R|/C.Companion.nullable|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
         R|/expectThroughTV|<R|C<kotlin/Int>?|>(Q|C|.R|/C.Companion.nullable|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
         R|/expectThroughTV|<R|C<out it(kotlin/Comparable<*> & java/io/Serializable)>?|>(Q|C|.R|/C.Companion.nullable|<R|kotlin/String|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))

@@ -18,18 +18,18 @@ fun test() {
     val lst3: MyList<String?> = ["1", "2", "3"]
     val lst4: MyList<Any?> = ["1", "2", "3"]
     val lst5: MyList<Any?> = [null, A(), "0"]
-    val lst6: MyList<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> [null, "0"] // should not pass
-    val lst7: MyList<A?> <!INITIALIZER_TYPE_MISMATCH!>=<!> [null, "0", A()] // should not pass
+    val lst6: MyList<String> = [<!NULL_FOR_NONNULL_TYPE!>null<!>, "0"] // should not pass
+    val lst7: MyList<A?> = [null, <!ARGUMENT_TYPE_MISMATCH!>"0"<!>, A()] // should not pass
     val lst8: MyList<Nothing> = <!ILLEGAL_TYPE_ARGUMENT_FOR_VARARG_PARAMETER_WARNING!>[]<!>
-    val lst9: MyList<Nothing> <!INITIALIZER_TYPE_MISMATCH!>=<!> ["1", "2", "3"] // should not pass
+    val lst9: MyList<Nothing> = <!ILLEGAL_TYPE_ARGUMENT_FOR_VARARG_PARAMETER_WARNING!>[<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>]<!> // should not pass
     val lst10: MyList<Nothing?> = [null]
 
     var lst: MyList<String?> = []
     lst = ["1", "2", "3"]
     lst = [null, "0"]
     lst = [null]
-    lst <!ASSIGNMENT_TYPE_MISMATCH!>=<!> [A()] // should not pass
-    lst <!ASSIGNMENT_TYPE_MISMATCH!>=<!> ["0", null, A()] // should not pass
+    lst = [<!ARGUMENT_TYPE_MISMATCH!>A()<!>] // should not pass
+    lst = ["0", null, <!ARGUMENT_TYPE_MISMATCH!>A()<!>] // should not pass
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, nullableType,

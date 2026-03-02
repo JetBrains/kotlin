@@ -170,13 +170,12 @@ private fun postprocessCollectionLiteralCall(
     // Notably, they include eager resolve for nested collection literals.
     // This is why it is important that we replace the containing call's system later --
     // the system of CL candidate might be expanded even further during these stages.
-    if (candidateForCL.isSuccessful) {
-        context.bodyResolveComponents.resolutionStageRunner.processCandidate(
-            candidateForCL,
-            context,
-            runAdditionalStages = true,
-        )
-    }
+    context.bodyResolveComponents.resolutionStageRunner.processCandidate(
+        candidateForCL,
+        context,
+        stopOnFirstError = false,
+        runAdditionalStages = true,
+    )
 
     // 5. All the diagnostics collected for CL candidate (both from additional stages and basic ones)
     // need to be remapped. Remap preserves the exact applicability.

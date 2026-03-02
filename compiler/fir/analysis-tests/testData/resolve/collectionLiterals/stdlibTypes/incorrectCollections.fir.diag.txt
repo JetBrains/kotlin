@@ -1,12 +1,16 @@
-/incorrectCollections.kt:(191,192): error: Initializer type mismatch: expected 'List<Int>', actual 'List<Int?>'.
+/incorrectCollections.kt:(197,201): error: Null cannot be a value of a non-null type 'uninferred T (of fun <T> listOf)'.
 
-/incorrectCollections.kt:(234,235): error: Initializer type mismatch: expected 'MutableList<Any>', actual 'MutableList<Nothing?>'.
+/incorrectCollections.kt:(237,241): error: Null cannot be a value of a non-null type 'uninferred T (of fun <T> mutableListOf)'.
 
-/incorrectCollections.kt:(266,267): error: Initializer type mismatch: expected 'Set<String>', actual 'Set<Int>'.
+/incorrectCollections.kt:(269,270): error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
 
-/incorrectCollections.kt:(302,303): error: Initializer type mismatch: expected 'MutableSet<String>', actual 'MutableSet<CharSequence>'.
+/incorrectCollections.kt:(305,323): error: Argument type mismatch: actual type is 'CharSequence', but 'String' was expected.
 
-/incorrectCollections.kt:(350,351): error: Initializer type mismatch: expected 'Sequence<Int>', actual 'Sequence<Long>'.
+/incorrectCollections.kt:(353,355): error: Argument type mismatch: actual type is 'Long', but 'Int' was expected.
+
+/incorrectCollections.kt:(357,359): error: Argument type mismatch: actual type is 'Long', but 'Int' was expected.
+
+/incorrectCollections.kt:(361,363): error: Argument type mismatch: actual type is 'Long', but 'Int' was expected.
 
 /incorrectCollections.kt:(399,401): error: Argument type mismatch: actual type is 'List<uninferred T (of fun <T> listOf)>', but 'Int' was expected.
 

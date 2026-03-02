@@ -33,7 +33,7 @@ fun test() {
     Utils.<!CANNOT_INFER_PARAMETER_TYPE!>acceptSet<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     Utils.acceptSet([1, 2, 3])
     Utils.acceptListString([])
-    Utils.acceptListString(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
+    Utils.acceptListString([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
     Utils.acceptListString(["42"])
     Utils.acceptIntArray([])
     Utils.acceptIntArray([1, 2, 3])

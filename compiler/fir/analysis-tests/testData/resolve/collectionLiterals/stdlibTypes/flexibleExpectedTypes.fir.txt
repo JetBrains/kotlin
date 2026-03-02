@@ -7,7 +7,7 @@ FILE: main.kt
         Q|Utils|.R|/Utils.acceptSet*s<CS errors: /Utils.acceptSet>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())
         Q|Utils|.R|/Utils.acceptSet*s|<R|kotlin/Int!|>(Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))))
         Q|Utils|.R|/Utils.acceptListString*s|(Q|kotlin/collections|.R|kotlin/collections/mutableListOf|<R|kotlin/String!|>())
-        Q|Utils|.R|/Utils.acceptListString*s<Inapplicable(INAPPLICABLE): /Utils.acceptListString>#|(Q|kotlin/collections|.R|kotlin/collections/mutableListOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))))
+        Q|Utils|.R|/Utils.acceptListString*s<Inapplicable(INAPPLICABLE): /Utils.acceptListString>#|(Q|kotlin/collections|.R|kotlin/collections/mutableListOf<Inapplicable(INAPPLICABLE): kotlin/collections/mutableListOf>#|<R|kotlin/String!|>(vararg(Int(1), Int(2), Int(3))))
         Q|Utils|.R|/Utils.acceptListString*s|(Q|kotlin/collections|.R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(42))))
         Q|Utils|.R|/Utils.acceptIntArray*s|(Q|kotlin|.R|kotlin/intArrayOf|())
         Q|Utils|.R|/Utils.acceptIntArray*s|(Q|kotlin|.R|kotlin/intArrayOf|(vararg(Int(1), Int(2), Int(3))))

@@ -151,13 +151,13 @@ FILE: declaredUpperBounds.kt
     }
     public final fun testIdOutA(): R|kotlin/Unit| {
         R|/idOutA|<R|MyListOutA<X>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|X|>())
-        R|/idOutA<Inapplicable(INAPPLICABLE): /idOutA>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        R|/idOutA|<R|MyListOutA<X>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of<Inapplicable(INAPPLICABLE): /MyListOutA.Companion.of>#|<R|X|>(vararg(Int(42))))
         R|/idOutA|<R|MyListOutA<X>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|X|>(vararg(R|/xx|())))
         R|/idOutA|<R|MyListOutA<Z>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|Z|>(vararg(R|/zz|())))
         lval p0: R|MyListOutA<Z>| = R|/idOutA|<R|MyListOutA<Z>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|Z|>())
         lval p1: R|MyListOutA<Y>| = R|/idOutA|<R|MyListOutA<it(X & Y)>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|it(X & Y)|>())
         lval p2: R|MyListOutA<Y>| = R|/idOutA|<R|MyListOutA<Z>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|Z|>(vararg(R|/zz|())))
-        lval p3: R|MyListOutA<Y>| = R|/idOutA<Inapplicable(INAPPLICABLE): /idOutA>#|<R|it(MyListOutA<X> & MyListOutA<Y>)|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|Y|>(vararg(R|/yy|())))
+        lval p3: R|MyListOutA<Y>| = R|/idOutA|<R|MyListOutA<it(X & Y)>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of<Inapplicable(INAPPLICABLE): /MyListOutA.Companion.of>#|<R|it(X & Y)|>(vararg(R|/yy|())))
         lval p4: R|MyListOutB<X>| = R|/idOutA|<R|MyListOutB<X>|>(Q|MyListOutB.Companion|.R|/MyListOutB.Companion.of|<R|X|>())
         lval p5: R|MyListOutB<Z>| = R|/idOutA|<R|MyListOutB<Z>|>(Q|MyListOutB.Companion|.R|/MyListOutB.Companion.of|<R|Z|>())
         lval p6: R|MyListOutB<Y>| = R|/idOutA|<R|MyListOutB<it(X & Y)>|>(Q|MyListOutB.Companion|.R|/MyListOutB.Companion.of|<R|it(X & Y)|>())

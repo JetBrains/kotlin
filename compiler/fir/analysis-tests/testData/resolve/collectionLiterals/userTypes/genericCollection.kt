@@ -25,8 +25,8 @@ fun test() {
 
     acceptStringList(MyList.of("1", "2", "3"))
     acceptStringList(MyList.of())
-    acceptStringList(<!ARGUMENT_TYPE_MISMATCH!>["0", null]<!>) // should not pass
-    acceptStringList(<!ARGUMENT_TYPE_MISMATCH!>[A(), "0"]<!>) // should not pass
+    acceptStringList(["0", <!NULL_FOR_NONNULL_TYPE!>null<!>]) // should not pass
+    acceptStringList([<!ARGUMENT_TYPE_MISMATCH!>A()<!>, "0"]) // should not pass
     acceptStringList([])
     acceptStringList(["1", "2", "3"])
 
@@ -35,8 +35,8 @@ fun test() {
     acceptList<String>(["1", "2", "3"])
     acceptList<String?>(["1", "2", "3"])
     acceptList<Any?>([null, A(), "0"])
-    acceptList<String>(<!ARGUMENT_TYPE_MISMATCH!>[null, "0"]<!>) // should not pass
-    acceptList<String?>(<!ARGUMENT_TYPE_MISMATCH!>[null, "0", A()]<!>) // should not pass
+    acceptList<String>([<!NULL_FOR_NONNULL_TYPE!>null<!>, "0"]) // should not pass
+    acceptList<String?>([null, "0", <!ARGUMENT_TYPE_MISMATCH!>A()<!>]) // should not pass
     acceptList<Nothing>(<!ILLEGAL_TYPE_ARGUMENT_FOR_VARARG_PARAMETER_WARNING!>[]<!>)
     acceptList<Nothing?>([null])
 }

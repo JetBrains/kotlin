@@ -70,14 +70,14 @@ fun <U: MyListOutB<X>> idOutB(u: U): U = u
 
 fun testIdOutA() {
     idOutA([])
-    <!CANNOT_INFER_PARAMETER_TYPE!>idOutA<!>(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
+    idOutA([<!ARGUMENT_TYPE_MISMATCH!>42<!>])
     idOutA([xx()])
     idOutA([zz()])
 
     val p0: MyListOutA<Z> = idOutA([])
     val p1: MyListOutA<Y> = idOutA([])
     val p2: MyListOutA<Y> = idOutA([zz()])
-    val p3: MyListOutA<Y> = idOutA(<!ARGUMENT_TYPE_MISMATCH!>[yy()]<!>)
+    val p3: MyListOutA<Y> = idOutA([<!ARGUMENT_TYPE_MISMATCH!>yy()<!>])
 
     val p4: MyListOutB<X> = idOutA([])
     val p5: MyListOutB<Z> = idOutA([])
