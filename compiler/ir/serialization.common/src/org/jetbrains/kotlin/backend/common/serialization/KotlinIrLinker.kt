@@ -81,7 +81,13 @@ abstract class KotlinIrLinker(
         // Note: The top-level symbol might be gone in newer version of dependency KLIB. Then the KLIB that was compiled against
         // the older version of dependency KLIB will still have a reference to non-existing symbol. And the linker will have to
         // handle such situation appropriately. See KT-41378.
-        val actualModuleDeserializer: IrModuleDeserializer? = moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSignature)
+        val actualModuleDeserializer: IrModuleDeserializer? = if (topLevelSignature in moduleDeserializer) {
+            moduleDeserializer
+        } else {
+            moduleDeserializer.moduleDescriptor.allDependencyModules
+                .mapNotNull { deserializersForModules[it.name.asString()] }
+                .firstOrNull { topLevelSignature in it }
+        }
 
         // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
         // Then the `actualModuleDeserializer` will be non-null, but `actualModuleDeserializer.tryDeserializeIrSymbol()` call
