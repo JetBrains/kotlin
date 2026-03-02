@@ -62,6 +62,7 @@ fun SessionAndScopeSessionHolder.collectTowerDataElementsForClass(owner: FirClas
     return TowerElementsForClass(
         thisReceiver,
         owner.staticScope(this),
+        owner.symbol as? FirRegularClassSymbol,
         companionReceiver,
         companionObject?.staticScope(this),
         superClassesStaticsAndCompanionReceivers.asReversed(),
@@ -71,6 +72,7 @@ fun SessionAndScopeSessionHolder.collectTowerDataElementsForClass(owner: FirClas
 class TowerElementsForClass(
     val thisReceiver: ImplicitReceiverValue<*>,
     val staticScope: FirScope?,
+    val staticScopeOwnerSymbol: FirRegularClassSymbol?,
     val companionReceiver: ImplicitReceiverValue<*>?,
     val companionStaticScope: FirScope?,
     // Ordered from inner scopes to outer scopes.
@@ -184,16 +186,22 @@ data class FirTowerDataContext private constructor(
         return addNonLocalScope(scope)
     }
 
-    // Optimized version for two parameters
-    fun addNonLocalScopesIfNotNull(scope1: FirScope?, scope2: FirScope?): FirTowerDataContext {
-        return if (scope1 != null) {
-            if (scope2 != null) {
-                addNonLocalScopeElements(listOf(scope1.asTowerDataElement(isLocal = false), scope2.asTowerDataElement(isLocal = false)))
+    fun addCompanionAndStaticScopes(towerElementsForClass: TowerElementsForClass): FirTowerDataContext {
+        return if (towerElementsForClass.companionStaticScope != null) {
+            if (towerElementsForClass.staticScope != null) {
+                addNonLocalScopeElements(
+                    listOf(
+                        towerElementsForClass.companionStaticScope.asTowerDataElement(isLocal = false),
+                        towerElementsForClass.staticScope.asTowerDataElementForStaticScope(
+                            towerElementsForClass.staticScopeOwnerSymbol
+                        )
+                    )
+                )
             } else {
-                addNonLocalScope(scope1)
+                addNonLocalScope(towerElementsForClass.companionStaticScope)
             }
-        } else if (scope2 != null) {
-            addNonLocalScope(scope2)
+        } else if (towerElementsForClass.staticScope != null) {
+            addStaticScope(towerElementsForClass.staticScope, towerElementsForClass.staticScopeOwnerSymbol)
         } else {
             this
         }
@@ -201,6 +209,14 @@ data class FirTowerDataContext private constructor(
 
     fun addNonLocalScope(scope: FirScope): FirTowerDataContext {
         val element = scope.asTowerDataElement(isLocal = false)
+        return copy(
+            towerDataElements = towerDataElements.add(element),
+            nonLocalTowerDataElements = nonLocalTowerDataElements.add(element)
+        )
+    }
+
+    fun addStaticScope(scope: FirScope, staticScopeOwnerSymbol: FirRegularClassSymbol?): FirTowerDataContext {
+        val element = scope.asTowerDataElementForStaticScope(staticScopeOwnerSymbol)
         return copy(
             towerDataElements = towerDataElements.add(element),
             nonLocalTowerDataElements = nonLocalTowerDataElements.add(element)

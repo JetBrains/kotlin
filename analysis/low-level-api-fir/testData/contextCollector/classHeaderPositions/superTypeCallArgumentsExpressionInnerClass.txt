@@ -16,6 +16,7 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public open class Base : R|kotlin/Any|
                 FirRegularClassSymbol public final inner class Child : R|test/TopLevel.Base|
+        Static scope owner symbol: FirRegularClassSymbol public final class TopLevel : R|kotlin/Any|
     Element 7
         Implicit receiver:
             FirRegularClassSymbol public final class TopLevel : R|kotlin/Any|

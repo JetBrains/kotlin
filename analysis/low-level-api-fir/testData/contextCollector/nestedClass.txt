@@ -16,6 +16,7 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final? class Bar<B> : R|kotlin/Any|
                 FirRegularClassSymbol public final? class Baz : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public final class Foo<A> : R|kotlin/Any|
     Element 7
         Scope: FirMemberTypeParameterScope
             Classifiers:

@@ -68,7 +68,7 @@ FILE: qualifierPriority.kt
 
         public final static enum entry H: R|G|
         public final fun foo(): R|kotlin/Unit| {
-            R|/G.values*s|()
+            Q|G|.R|/G.values*s|()
         }
 
         public final companion object Companion : R|kotlin/Any| {

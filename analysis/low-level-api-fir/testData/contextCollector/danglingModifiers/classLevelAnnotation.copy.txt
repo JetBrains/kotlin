@@ -20,6 +20,7 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
                 FirRegularClassSymbol public final annotation class NestedAnnotation : R|kotlin/Annotation|
+        Static scope owner symbol: FirRegularClassSymbol public final class MyClass : R|kotlin/Any|
     Element 8
         Implicit receiver:
             FirRegularClassSymbol public final class MyClass : R|kotlin/Any|

@@ -29,6 +29,7 @@ Tower Data Context:
             Classifiers:
                 FirTypeAliasSymbol public final typealias Alias = TopLevelClass
                 FirRegularClassSymbol public final? companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public final class TopLevelClass : R|pack/SuperClass|
 
 FILE: [ResolvedTo(RAW_FIR)] typealiasAnnotation.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {

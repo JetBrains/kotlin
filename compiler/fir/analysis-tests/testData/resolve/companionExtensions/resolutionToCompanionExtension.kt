@@ -1,8 +1,45 @@
 // RUN_PIPELINE_TILL: FRONTEND
 package stuff
 
-open class C
-class D : C()
+open class C {
+    companion {
+        fun insideCompanionBlock() {
+            foo()
+            fooTa()
+            prop
+            propTa
+        }
+    }
+
+    companion object {
+        fun insideCompanionObject() {
+            foo()
+            fooTa()
+            prop
+            propTa
+        }
+    }
+}
+
+class D : C() {
+    companion {
+        fun insideCompanionBlock() {
+            foo()
+            fooTa()
+            prop
+            propTa
+        }
+    }
+
+    companion object {
+        fun insideCompanionObject() {
+            foo()
+            fooTa()
+            prop
+            propTa
+        }
+    }
+}
 
 typealias TA = C
 
@@ -31,8 +68,8 @@ inline fun <reified T> test() {
     D.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>propTa<!>
     <!TYPE_PARAMETER_ON_LHS_OF_DOT!>T<!>.<!UNRESOLVED_REFERENCE!>prop<!>
 
-    C.<!UNRESOLVED_REFERENCE!>bar<!>()
-    TA.<!UNRESOLVED_REFERENCE!>bar<!>()
+    C.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
+    TA.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
     C().<!UNRESOLVED_REFERENCE!>foo<!>()
     C().<!UNRESOLVED_REFERENCE!>prop<!>
 

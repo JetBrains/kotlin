@@ -36,6 +36,7 @@ Tower Data Context:
                 FirEnumEntrySymbol public final static enum entry ENTRY3: R|foo/MyEnumClass|
                 FirRegularPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
                     public static get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+        Static scope owner symbol: FirRegularClassSymbol public final enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>|
     Element 9
         Implicit receiver:
             FirRegularClassSymbol public final enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>|

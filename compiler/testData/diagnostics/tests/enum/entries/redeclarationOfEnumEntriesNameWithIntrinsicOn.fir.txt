@@ -7,7 +7,7 @@ FILE: redeclarationOfEnumEntriesNameWithIntrinsicOn.fir.kt
         public final static enum entry entries: R|E|
         public final static enum entry Entries: R|E|
         public final fun foo(): R|kotlin/Unit| {
-            R|/E.entries|.R|SubstitutionOverride</E.ordinal: R|kotlin/Int|>|
+            Q|E|.R|/E.entries|.R|SubstitutionOverride</E.ordinal: R|kotlin/Int|>|
             Q|E|.R|/E.entries|.R|SubstitutionOverride</E.ordinal: R|kotlin/Int|>|
         }
 

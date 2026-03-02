@@ -12,7 +12,7 @@ import bar.*
     /*p:bar p:bar(bar) p:foo p:foo(bar) p:foo.A(B) p:foo.A(Companion) p:foo.A.B(CO) p:foo.A.B(bar) p:foo.A.B.CO(bar)*/A./*p:foo.A.B(CO)*/B.bar(1)
     /*p:bar p:bar(bar) p:foo p:foo(bar) p:foo.A(B) p:foo.A(Companion) p:foo.A.B(CO) p:foo.A.B.CO(bar)*/A./*p:foo.A.B(CO)*/B./*p:foo.A.B*/CO.bar(1)
     /*p:foo p:foo.A(Companion)*/A
-    /*p:bar p:foo p:foo.A(Companion) p:foo.A(a) p:foo.A.Companion(a)*/A.a
+    /*p:bar p:bar(a) p:foo p:foo(a) p:foo.A(Companion) p:foo.A(a) p:foo.A.Companion(a)*/A.a
     /*p:bar p:bar(baz) p:foo p:foo(baz) p:foo.A(Companion) p:foo.A(baz) p:foo.A.Companion(baz)*/A.baz()
     /*p:bar p:foo p:foo.A(Companion)*/A./*p:foo.A*/Companion
     /*p:bar p:bar(baz) p:foo p:foo(baz) p:foo.A(Companion) p:foo.A(baz) p:foo.A.Companion(baz)*/A./*p:foo.A*/Companion.baz()

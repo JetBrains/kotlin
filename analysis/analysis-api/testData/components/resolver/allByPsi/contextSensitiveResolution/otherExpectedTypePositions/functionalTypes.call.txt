@@ -50,7 +50,9 @@ KtNameReferenceExpression(218,225): 'Option1'
   KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
-      dispatchReceiver = null
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = /MyEnum
+        type = MyEnum.Companion
       extensionReceiver = null
       isContextSensitive = false
       kind = Read
@@ -88,7 +90,9 @@ KtNameReferenceExpression(288,295): 'Option1'
   KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
-      dispatchReceiver = null
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = /MyEnum
+        type = MyEnum.Companion
       extensionReceiver = null
       isContextSensitive = false
       kind = Read

@@ -4,9 +4,9 @@
 class C {
     companion object {
         fun test() {
-            <!UNRESOLVED_REFERENCE!>foo<!>()
-            <!UNRESOLVED_REFERENCE!>bar<!>()
-            <!UNRESOLVED_REFERENCE!>baz<!>()
+            foo()
+            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
+            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>baz<!>()
         }
     }
 }

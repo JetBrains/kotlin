@@ -62,7 +62,9 @@ KtNameReferenceExpression(245,255): 'EnumValue1'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
-      dispatchReceiver = null
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = /MyEnum
+        type = MyEnum.Companion
       extensionReceiver = null
       isContextSensitive = false
       kind = Read
