@@ -28,8 +28,11 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheckerKind.Common) {
@@ -79,11 +82,31 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         }
 
         if (expression.operation == FirOperation.EQ || expression.operation == FirOperation.NOT_EQ) {
-            val problematicType = checkStrictEqualityCase(l.smartCastTypeInfo, r.smartCastTypeInfo)
+            val problematicType = checkStrictEqualityCase(
+                l.smartCastTypeInfo.approximateIfCollection(),
+                r.smartCastTypeInfo.approximateIfCollection()
+            )
             if (problematicType != null) {
                 return reporter.reportOn(expression.source, FirErrors.PROBLEMATIC_EQUALS, problematicType)
             }
         }
+    }
+
+    val specialCollectionTypes: Set<ClassId> = setOf(
+        StandardClassIds.List, StandardClassIds.Set, StandardClassIds.Map,
+    )
+
+    context(context: CheckerContext)
+    fun TypeInfo.approximateIfCollection(): TypeInfo {
+        for (specialCollectionType in specialCollectionTypes) {
+            val symbol = specialCollectionType.toSymbol() as? FirClassSymbol<*> ?: continue
+            val starProjectedType = symbol.constructStarProjectedType()
+            if (directType.isSubtypeOf(starProjectedType, context.session)) {
+                return ConeTypeIntersector.intersectTypes(context.session.typeContext, setOf(directType, starProjectedType))
+                    .toTypeInfo(context.session)
+            }
+        }
+        return this
     }
 
     context(context: CheckerContext)
@@ -135,7 +158,9 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
     context(context: CheckerContext)
     fun TypeInfo.computeEqualityStrictnessNotNull(): EqualityStrictness {
         if (isBuiltin || isIdentityLess(context.session)) return EqualityStrictness.Strict
-        return when (val type = this.notNullType) {
+        val type = this.notNullType
+        if (type.fullyExpandedClassId(context.session) in specialCollectionTypes) return EqualityStrictness.Strict
+        return when (type) {
             is ConeIntegerLiteralType -> EqualityStrictness.Strict
             is ConeIntersectionType -> type.intersectedTypes.minOf { it.computeEqualityStrictness() }
             is ConeDefinitelyNotNullType -> type.original.computeEqualityStrictness().definitelyNotNullable()
