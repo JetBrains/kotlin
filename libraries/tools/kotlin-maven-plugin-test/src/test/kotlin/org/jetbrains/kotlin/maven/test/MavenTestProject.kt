@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.maven.test.MavenBuildOptions
 import org.jetbrains.kotlin.maven.test.isTeamCityRun
 import org.jetbrains.kotlin.maven.test.printLog
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import java.io.StringReader
@@ -25,6 +26,7 @@ class MavenTestProject(
     val workDir: Path,
     val settingsFile: Path,
     val buildOptions: MavenBuildOptions,
+    val mavenVersion: String,
 ) {
     fun build(
         vararg args: String,
@@ -33,6 +35,14 @@ class MavenTestProject(
         buildOptions: MavenBuildOptions = this.buildOptions,
         code: (Verifier.() -> Unit)? = null,
     ): Verifier {
+        // Maven 4+ requires JDK 17+ as runtime
+        if (mavenVersion.startsWith("4")) {
+            assumeTrue(
+                buildOptions.javaVersion.numericVersion >= 17,
+                "Maven $mavenVersion requires JDK 17+ as runtime, but ${buildOptions.javaVersion} was requested"
+            )
+        }
+
         val verifier = Verifier(
             workDir.absolutePathString(),
             null, // settingsFile is used only to extract local repo from there, but we pass it explicitly below
