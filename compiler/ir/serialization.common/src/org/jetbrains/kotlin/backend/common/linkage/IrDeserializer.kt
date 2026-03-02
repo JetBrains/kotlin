@@ -19,7 +19,7 @@ interface IrDeserializer : IrProvider {
         TYPEALIAS_SYMBOL;
     }
 
-    fun init(moduleFragment: IrModuleFragment?) {}
+    fun init(moduleFragment: IrModuleFragment?)
     fun resolveBySignatureInModule(signature: IdSignature, kind: TopLevelSymbolKind, moduleName: Name): IrSymbol
 
     /**
