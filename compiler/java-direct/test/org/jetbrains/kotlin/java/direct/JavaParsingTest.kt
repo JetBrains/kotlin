@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.java.direct
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -684,17 +683,17 @@ class JavaParsingTest {
                     public void greet() {}
                 }
             """.trimIndent())
-
+            
             val finder = JavaClassFinderOverAstImpl(listOf(helloFile))
-
+            
             // Try to find example.Hello
             val classId = org.jetbrains.kotlin.name.ClassId(
-                FqName("example"),
-                Name.identifier("Hello")
+                org.jetbrains.kotlin.name.FqName("example"),
+                org.jetbrains.kotlin.name.Name.identifier("Hello")
             )
             val request = org.jetbrains.kotlin.load.java.JavaClassFinder.Request(classId)
             val javaClass = finder.findClass(request)
-
+            
             assert(javaClass != null) { "Expected to find example.Hello class" }
             assert(javaClass?.name?.asString() == "Hello") { "Expected class name 'Hello', got ${javaClass?.name?.asString()}" }
             assert(javaClass?.fqName?.asString() == "example.Hello") { "Expected fqName 'example.Hello', got ${javaClass?.fqName?.asString()}" }

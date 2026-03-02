@@ -864,136 +864,389 @@ CONFIRMATION REQUIRED: Confirm understanding before starting. Check if TYPE_ARGU
 
 ---
 
-## Iteration 6: Resolution Debugging and JDK Class Access
+## Iteration 6: Hybrid JavaClassFinder for Binary Dependencies
 
-**Reference**: See `AGENT_INSTRUCTIONS.md`, `TYPE_RESOLUTION_DESIGN.md`, and `ITERATION_RESULTS.md` (Iteration 5).
+**Reference**: See `AGENT_INSTRUCTIONS.md`, `EXTERNAL_DEPENDENCIES_RESOLUTION_ANALYSIS.md`, and `ITERATION_RESULTS.md` (Iteration 5).
 
 ### Prompt
 
 ---
-TASK: Investigate and fix the two primary blockers preventing test improvements
+TASK: Implement a hybrid JavaClassFinder that combines java-direct for sources with platform-based lookup for binaries
 
 CONTEXT:
 **Current Status: 31/138 (22.5%) tests passing**
 
-Iteration 5 implemented type arguments correctly but revealed that **type arguments are NOT the primary blocker**. Analysis of 107 failing tests shows:
+Iteration 5 implemented type arguments correctly but revealed a **fundamental architectural gap**:
 
-1. **MISSING_DEPENDENCY_CLASS** (36 errors): Classes in packages (e.g., `example.Hello`) aren't being found
-2. **UNRESOLVED_REFERENCE** for JDK classes (39 errors): `NullPointerException`, `RuntimeException` etc. fail to resolve
+1. **MISSING_DEPENDENCY_CLASS** (36 errors): Classes like `example.Hello` from test Java files fail to resolve
+2. **UNRESOLVED_REFERENCE** for JDK classes (39 errors): `NullPointerException`, `RuntimeException`, `String`, `Object` etc.
 
-These are fundamental resolution issues that must be fixed before other features (generics, wildcards) can have impact.
+**Root Cause Discovery** (see `EXTERNAL_DEPENDENCIES_RESOLUTION_ANALYSIS.md`):
 
-### Investigation Strategy
+The `java-direct` module currently replaces ONLY the `JavaClassFinder` for Java **sources**. However, when those Java sources (or Kotlin code) reference external types from:
+- JDK (`java.lang.*`, `java.util.*`, etc.)
+- Library JARs on classpath
+- Binary Java classes (`.class` files)
 
-**CRITICAL: Follow FOCUS_STRATEGY.md approach - investigate ONE concrete failure at a time**
+...the resolution STILL needs the platform-dependent infrastructure (`VirtualFile`, `JvmDependenciesIndex`, etc.) that we haven't replaced.
 
-### Phase 1: Diagnose Package-based Class Discovery
+**The Architectural Gap:**
+```
+What java-direct replaces:
+    JavaClassFinderOverAstImpl  →  Java Sources (.java files)
 
-1. SELECT A SIMPLE FAILING TEST with MISSING_DEPENDENCY_CLASS:
-   - Example: `testGenericSamProjectedOut` - has `example.Hello` class
-   - Find test in `compiler/testData/codegen/box/javaInterop/`
+What java-direct DOESN'T replace (but needs):
+    KotlinClassFinder / VirtualFileFinder  →  Binary Kotlin classes (.class with @Metadata)
+    BinaryJavaClass  →  Binary Java classes (.class without @Metadata)
+    JvmDependenciesIndex  →  Classpath indexing and lookup
+```
 
-2. ADD DIAGNOSTIC LOGGING to `JavaClassFinderOverAstImpl`:
-   ```kotlin
-   // In buildIndex()
-   println("JAVA-DIRECT: Indexing file $path -> package=$packageFqName, classes=$classNames")
-   
-   // In findClass()
-   println("JAVA-DIRECT: findClass request for $classId")
-   println("JAVA-DIRECT: index has packages: ${index.keys}")
-   println("JAVA-DIRECT: package ${classId.packageFqName} contains: ${index[classId.packageFqName]?.keys}")
-   ```
+**Solution: Hybrid Approach (Short-term)**
 
-3. RUN THE SINGLE TEST:
+Create a `CombinedJavaClassFinder` that:
+1. First tries `JavaClassFinderOverAstImpl` for Java sources
+2. Falls back to platform-based `JavaClassFinder` for binary classes
+
+This unblocks tests while maintaining the java-direct architecture for sources.
+
+### Implementation Steps
+
+**CRITICAL: Follow FOCUS_STRATEGY.md - verify with ONE test before full implementation**
+
+### Phase 0: Select Representative Test
+
+1. FIND A SIMPLE TEST that demonstrates the issue:
    ```bash
-   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testGenericSamProjectedOut" -q 2>&1 | grep "JAVA-DIRECT"
+   # Run a test known to fail with MISSING_DEPENDENCY_CLASS
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testGenericSamProjectedOut" -q 2>&1 | head -50
    ```
 
-4. ANALYZE OUTPUT:
-   - Are all Java files being indexed?
-   - Is the package name correctly extracted?
-   - Is `findClass` being called with the right ClassId?
-   - If yes to all, why is it returning null?
+2. READ THE TEST DATA:
+   - File: `compiler/testData/codegen/box/javaInterop/genericSamProjectedOut.kt`
+   - Note: Has Java classes in package `example` AND references JDK types like `String`
 
-### Phase 2: Diagnose JDK Class Resolution
+3. DOCUMENT SELECTION:
+   ```
+   Selected test: testGenericSamProjectedOut
+   Reason: Uses packaged Java classes (example.Hello) AND JDK types (String)
+   Expected: After fix, both source Java classes AND JDK types resolve
+   ```
 
-5. SELECT A SIMPLE FAILING TEST with UNRESOLVED_REFERENCE for JDK class:
-   - Example: `testPlatformToLateinit` - references `NullPointerException`
+**STOP and confirm test selection before proceeding.**
 
-6. ADD DIAGNOSTIC TO `JavaTypeConversion.kt` (FIR side):
+### Phase 1: Create CombinedJavaClassFinder
+
+4. CREATE NEW FILE `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/CombinedJavaClassFinder.kt`:
+
    ```kotlin
-   // In toConeKotlinTypeForFlexibleBound(), null -> branch
-   println("JAVA-DIRECT-FIR: Resolving classifier=$classifierQualifiedName, isResolved=$isResolved")
-   
-   // In resolveSimpleName()
-   println("JAVA-DIRECT-FIR: Trying to resolve simple name $simpleName")
-   println("JAVA-DIRECT-FIR: symbolProvider result for $candidateFqn = ${session.symbolProvider.getClassLikeSymbolByClassId(classId)}")
+   package org.jetbrains.kotlin.java.direct
+
+   import org.jetbrains.kotlin.load.java.JavaClassFinder
+   import org.jetbrains.kotlin.load.java.structure.JavaClass
+   import org.jetbrains.kotlin.load.java.structure.JavaPackage
+   import org.jetbrains.kotlin.name.ClassId
+   import org.jetbrains.kotlin.name.FqName
+
+   /**
+    * A JavaClassFinder that combines source-based lookup (java-direct) with binary-based lookup (platform).
+    * 
+    * Resolution order:
+    * 1. Try source finder (JavaClassFinderOverAstImpl) - for Java sources in current module
+    * 2. Fall back to binary finder (platform-based) - for JDK, libraries, binary dependencies
+    * 
+    * This hybrid approach allows java-direct to handle source parsing while still accessing
+    * binary dependencies through the existing platform infrastructure.
+    */
+   class CombinedJavaClassFinder(
+       private val sourceFinder: JavaClassFinder,
+       private val binaryFinder: JavaClassFinder
+   ) : JavaClassFinder {
+       
+       override fun findClass(request: JavaClassFinder.Request): JavaClass? {
+           // 1. Try source-based lookup first (java-direct)
+           sourceFinder.findClass(request)?.let { return it }
+           
+           // 2. Fall back to binary lookup (platform-based)
+           return binaryFinder.findClass(request)
+       }
+       
+       override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> {
+           // Combine results from both finders, sources take precedence
+           val fromSources = sourceFinder.findClasses(request)
+           if (fromSources.isNotEmpty()) return fromSources
+           
+           return binaryFinder.findClasses(request)
+       }
+       
+       override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
+           // Check both - sources for current module, binaries for dependencies
+           return sourceFinder.findPackage(fqName, mayHaveAnnotations)
+               ?: binaryFinder.findPackage(fqName, mayHaveAnnotations)
+       }
+       
+       override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {
+           // Combine known names from both finders
+           val fromSources = sourceFinder.knownClassNamesInPackage(packageFqName)
+           val fromBinaries = binaryFinder.knownClassNamesInPackage(packageFqName)
+           
+           return when {
+               fromSources == null && fromBinaries == null -> null
+               fromSources == null -> fromBinaries
+               fromBinaries == null -> fromSources
+               else -> fromSources + fromBinaries
+           }
+       }
+       
+       override fun canComputeKnownClassNamesInPackage(): Boolean {
+           // Can compute if either finder can
+           return sourceFinder.canComputeKnownClassNamesInPackage() 
+               || binaryFinder.canComputeKnownClassNamesInPackage()
+       }
+   }
    ```
 
-7. RUN THE SINGLE TEST and check:
-   - Is `NullPointerException` being looked up?
-   - What ClassId is being constructed?
-   - Does `session.symbolProvider` return null for JDK classes?
+### Phase 2: Modify VfsBasedProjectEnvironmentOverAst
 
-8. IF symbolProvider returns null for JDK classes:
-   - This is likely a test infrastructure issue
-   - Check if `JvmClassFileBasedSymbolProvider` is in the provider chain
-   - Verify the library session has JDK on classpath
+5. UPDATE `compiler/java-direct/testFixtures/org/jetbrains/kotlin/java/direct/VfsBasedProjectEnvironmentOverAst.kt`:
+
+   ```kotlin
+   package org.jetbrains.kotlin.java.direct
+
+   import com.intellij.openapi.project.Project
+   import com.intellij.openapi.vfs.VirtualFileSystem
+   import com.intellij.psi.search.GlobalSearchScope
+   import org.jetbrains.kotlin.cli.extensionsStorage
+   import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+   import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectFileSearchScope
+   import org.jetbrains.kotlin.config.CompilerConfiguration
+   import org.jetbrains.kotlin.fir.FirModuleData
+   import org.jetbrains.kotlin.fir.FirSession
+   import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
+   import org.jetbrains.kotlin.fir.java.javaAnnotationProvider
+   import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+   import org.jetbrains.kotlin.load.java.createJavaClassFinder
+   import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+   import java.nio.file.Path
+
+   /**
+    * A [VfsBasedProjectEnvironment] that uses a hybrid [CombinedJavaClassFinder]:
+    * - [JavaClassFinderOverAstImpl] for Java sources in the current module
+    * - Platform-based [JavaClassFinder] for binary dependencies (JDK, libraries)
+    * 
+    * This allows java-direct to parse Java sources without platform PSI while still
+    * resolving external types like java.lang.String, java.util.List, etc.
+    */
+   class VfsBasedProjectEnvironmentOverAst(
+       project: Project,
+       configuration: CompilerConfiguration,
+       fileSystem: VirtualFileSystem,
+       private val getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider,
+       private val librariesScope: AbstractProjectFileSearchScope,
+       private val javaSourceRoots: List<Path>,
+   ) : VfsBasedProjectEnvironment(project, configuration.extensionsStorage, fileSystem, getPackagePartProviderFn) {
+
+       override fun getFirJavaFacade(
+           firSession: FirSession,
+           baseModuleData: FirModuleData,
+           fileSearchScope: AbstractProjectFileSearchScope,
+       ): FirJavaFacadeForSource {
+           // For libraries scope, use default behavior (no java-direct)
+           if (fileSearchScope === librariesScope) {
+               return super.getFirJavaFacade(firSession, baseModuleData, fileSearchScope)
+           }
+
+           // Create source finder (java-direct)
+           val sourceFinder = JavaClassFinderOverAstImpl(javaSourceRoots)
+           
+           // Create binary finder (platform-based) for JDK and library classes
+           // Use libraries scope to find binary dependencies
+           val javaAnnotationProvider = firSession.javaAnnotationProvider
+           val binaryFinder = project.createJavaClassFinder(
+               librariesScope.asPsiSearchScope(),
+               javaAnnotationProvider
+           )
+           
+           // Combine both finders: sources first, then binaries
+           val combinedFinder = CombinedJavaClassFinder(sourceFinder, binaryFinder)
+           
+           return FirJavaFacadeForSource(firSession, baseModuleData, combinedFinder)
+       }
+   }
+
+   // Extension to convert AbstractProjectFileSearchScope to GlobalSearchScope
+   private fun AbstractProjectFileSearchScope.asPsiSearchScope(): GlobalSearchScope {
+       return when {
+           this === AbstractProjectFileSearchScope.EMPTY -> GlobalSearchScope.EMPTY_SCOPE
+           this is org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope -> this.psiSearchScope
+           else -> GlobalSearchScope.EMPTY_SCOPE // Fallback
+       }
+   }
+   ```
+
+### Phase 3: Add Required Import/Extension
+
+6. CHECK IF `asPsiSearchScope()` extension exists:
+   - Look in `compiler/cli/src/org/jetbrains/kotlin/cli/jvm/compiler/VfsBasedProjectEnvironment.kt`
+   - If it's internal/private, we may need to make it accessible or duplicate
+
+7. IF NEEDED, add import or duplicate the extension in the test fixtures:
+   ```kotlin
+   // If the extension is not accessible, add this in VfsBasedProjectEnvironmentOverAst.kt:
+   import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
    
-### Phase 3: Fix Identified Issues
+   private fun AbstractProjectFileSearchScope.asPsiSearchScope(): GlobalSearchScope =
+       (this as? PsiBasedProjectFileSearchScope)?.psiSearchScope 
+           ?: GlobalSearchScope.EMPTY_SCOPE
+   ```
 
-Based on diagnostics, implement fixes:
+### Phase 4: Unit Test for CombinedJavaClassFinder
 
-**If package indexing is broken:**
-- Fix `tryBuildFileEntry` package name extraction
-- Verify `PACKAGE_STATEMENT` → `JAVA_CODE_REFERENCE` path
-- Test with unit test first
+8. CREATE UNIT TEST `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/CombinedJavaClassFinderTest.kt`:
 
-**If findClass lookup is broken:**
-- Check `ClassId` structure (packageFqName vs relativeClassName)
-- Verify index key matching
+   ```kotlin
+   package org.jetbrains.kotlin.java.direct
 
-**If JDK classes aren't in symbolProvider:**
-- This may require test infrastructure changes
-- Check `AbstractJavaUsingAstBoxTest` configuration
-- Verify library session setup includes JDK
+   import org.jetbrains.kotlin.load.java.JavaClassFinder
+   import org.jetbrains.kotlin.load.java.structure.JavaClass
+   import org.jetbrains.kotlin.load.java.structure.JavaPackage
+   import org.jetbrains.kotlin.name.ClassId
+   import org.jetbrains.kotlin.name.FqName
+   import org.junit.jupiter.api.Test
+   import kotlin.test.assertEquals
+   import kotlin.test.assertNotNull
+   import kotlin.test.assertNull
 
-**If symbolProvider IS queried but returns null:**
-- May be a composite provider ordering issue
-- Check provider chain in FirSession
+   class CombinedJavaClassFinderTest {
+       
+       // Mock source finder that knows about "test.SourceClass"
+       private val mockSourceFinder = object : JavaClassFinder {
+           override fun findClass(request: JavaClassFinder.Request): JavaClass? {
+               return if (request.classId == ClassId.topLevel(FqName("test.SourceClass"))) {
+                   // Return a mock JavaClass (simplified for test)
+                   TODO("Create mock JavaClass")
+               } else null
+           }
+           override fun findClasses(request: JavaClassFinder.Request) = listOfNotNull(findClass(request))
+           override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? = null
+           override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? = 
+               if (packageFqName == FqName("test")) setOf("SourceClass") else null
+           override fun canComputeKnownClassNamesInPackage() = true
+       }
+       
+       // Mock binary finder that knows about "java.lang.String"
+       private val mockBinaryFinder = object : JavaClassFinder {
+           override fun findClass(request: JavaClassFinder.Request): JavaClass? {
+               return if (request.classId.packageFqName.asString().startsWith("java.")) {
+                   TODO("Create mock JavaClass for JDK")
+               } else null
+           }
+           override fun findClasses(request: JavaClassFinder.Request) = listOfNotNull(findClass(request))
+           override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? = null
+           override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? = null
+           override fun canComputeKnownClassNamesInPackage() = false
+       }
+       
+       @Test
+       fun testSourceFinderTakesPrecedence() {
+           // Test that source finder is queried first
+           // This is a conceptual test - actual implementation needs mock JavaClass
+       }
+       
+       @Test
+       fun testFallbackToBinaryFinder() {
+           // Test that binary finder is used when source finder returns null
+       }
+       
+       @Test
+       fun testKnownClassNamesCombined() {
+           val combined = CombinedJavaClassFinder(mockSourceFinder, mockBinaryFinder)
+           val known = combined.knownClassNamesInPackage(FqName("test"))
+           assertNotNull(known)
+           assertEquals(setOf("SourceClass"), known)
+       }
+   }
+   ```
 
-### Phase 4: Validate Fixes
+### Phase 5: Validate with Selected Test
 
-9. REMOVE DIAGNOSTIC LOGGING (or guard with flag)
+9. RUN THE SELECTED TEST:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testGenericSamProjectedOut" -q
+   ```
 
-10. RUN PREVIOUSLY FAILING TESTS:
+10. EXPECTED BEHAVIOR:
+    - `example.Hello` class found via `sourceFinder` (java-direct parses the Java source)
+    - `java.lang.String` found via `binaryFinder` (platform looks up from JDK)
+    - Test should PASS or show different error (not MISSING_DEPENDENCY_CLASS)
+
+11. IF TEST STILL FAILS:
+    - Add diagnostic logging to `CombinedJavaClassFinder.findClass()`
+    - Check which finder is being called
+    - Verify the `librariesScope` includes JDK classes
+
+### Phase 6: Run Full Test Suite
+
+12. RUN ALL BOX TESTS:
     ```bash
-    ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testGenericSamProjectedOut" -q
-    ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testPlatformToLateinit" -q
+    ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q 2>&1 | tee iteration6_results.txt
     ```
 
-11. RUN FULL TEST SUITE:
+13. COUNT RESULTS:
     ```bash
-    ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q
+    grep "tests completed" iteration6_results.txt
+    # Or count PASSED vs FAILED
     ```
+
+14. ANALYZE IMPROVEMENTS:
+    - Count MISSING_DEPENDENCY_CLASS errors (should decrease significantly)
+    - Count UNRESOLVED_REFERENCE for JDK types (should decrease)
+    - Document any new error patterns
+
+### Phase 7: Document Results
+
+15. UPDATE `ITERATION_RESULTS.md` with:
+    - Test selection rationale
+    - Implementation summary
+    - Before/after test counts
+    - Remaining failure analysis
+    - Recommendations for Iteration 7
 
 EXPECTED RESULTS:
-- If package discovery fixed: +20-30 tests (MISSING_DEPENDENCY_CLASS resolved)
-- If JDK resolution fixed: +15-25 tests (UNRESOLVED_REFERENCE for JDK resolved)
-- Combined potential: 50-80/138 (36-58%) tests passing
+- MISSING_DEPENDENCY_CLASS errors: 36 → ~0 (Java sources found via java-direct)
+- JDK UNRESOLVED_REFERENCE: 39 → ~0 (JDK classes found via platform)
+- Pass rate: 31/138 → 70-100/138 (50-72%)
 
 SCOPE LIMITATIONS:
-- Focus ONLY on these two specific blockers
-- Do NOT attempt to fix wildcards, annotations, etc. in this iteration
-- If fixes require test infrastructure changes, document clearly
+- DO implement the hybrid CombinedJavaClassFinder
+- DO use platform-based finder for binary dependencies
+- DO NOT attempt to remove platform dependencies for binaries (future work)
+- DO NOT fix wildcards, annotations, etc. in this iteration
 
 DELIVERABLE:
-- Diagnostic findings documented
-- Fixes implemented for identified issues
-- Test results showing improvement
-- If unable to fix (e.g., requires broader changes), document root cause precisely
+- `CombinedJavaClassFinder.kt` - hybrid finder implementation
+- Modified `VfsBasedProjectEnvironmentOverAst.kt` - uses combined finder
+- Unit tests for combined finder
+- Box test results showing significant improvement
+- Analysis of remaining failures
 
-CONFIRMATION REQUIRED: Acknowledge the two-blocker focus before starting investigation.
+VALIDATION CHECKLIST:
+- [ ] CombinedJavaClassFinder compiles and implements JavaClassFinder
+- [ ] Source finder is queried first in findClass()
+- [ ] Binary finder is used as fallback
+- [ ] knownClassNamesInPackage combines results from both
+- [ ] VfsBasedProjectEnvironmentOverAst uses CombinedJavaClassFinder
+- [ ] testGenericSamProjectedOut passes (or shows new error, not MISSING_DEPENDENCY)
+- [ ] Box tests improve significantly (target: 50%+ pass rate)
+- [ ] JDK types (String, Object, List) resolve correctly
+- [ ] Java sources in packages (example.Hello) resolve correctly
+
+DEBUGGING TIPS:
+- If source classes not found: Check `JavaClassFinderOverAstImpl.findClass()` logging
+- If JDK classes not found: Verify `librariesScope` includes JDK path
+- If wrong finder used: Add logging to `CombinedJavaClassFinder.findClass()`
+- If scope conversion fails: Check `asPsiSearchScope()` implementation
+
+CONFIRMATION REQUIRED: Confirm understanding of the hybrid approach before starting implementation.
 
 ---
 

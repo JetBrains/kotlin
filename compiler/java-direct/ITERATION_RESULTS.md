@@ -9,7 +9,155 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 **Usage**: After completing each iteration, the agent MUST append a results section below.
 
-**Last Updated**: 2026-02-27
+**Last Updated**: 2026-03-02
+
+---
+
+## Iteration 6: Hybrid JavaClassFinder Investigation - 2026-03-02
+
+### Status
+- ⚠️ **PARTIALLY COMPLETED** - Investigation revealed architectural constraints
+- ❌ **NO TEST IMPROVEMENT** - 31/138 (22.5%) still passing
+
+### Summary
+Attempted to implement hybrid JavaClassFinder combining source-based (java-direct) with binary-based (platform) lookup for JDK and library classes. Created `CombinedJavaClassFinder` architecture, but discovered that **PSI GlobalSearchScope has no Project reference in test environment**, preventing creation of platform-based binary finder. Through exception-based debugging, discovered that **package-based class indexing already works correctly** - the real issue is elsewhere.
+
+### Key Findings
+
+**Architecture Investigation:**
+- **CombinedJavaClassFinder Pattern**: Created hybrid finder that tries source first, then falls back to binary
+- **Factory Integration**: Modified `JavaClassFinderOverAstFactory` to create combined finder when possible
+- **Project Access Issue**: `GlobalSearchScope.project` returns null in test environment (both `CoreLibrariesScope` and `AllJavaSourcesInProjectScope`)
+- **Cannot Create Binary Finder**: Without Project, cannot call `project.createJavaClassFinder()` for platform-based lookup
+
+**Critical Discovery via Exception-Based Debugging:**
+- **Package Indexing WORKS**: Debug exceptions revealed that index correctly has `[Hello, SomeJavaClass]` in package `example`
+- **Lookup WORKS**: Candidates list correctly identifies the source file path
+- **Parsing WORKS**: `parseTopLevelClassFromFile` successfully returns JavaClass instances
+- **Previous Assumption WRONG**: Iteration 5 results said "package-based class discovery missing" but this is FALSE
+
+**Test Environment Constraints:**
+- Test environment uses `CoreLibrariesScope` and `AllJavaSourcesInProjectScope` 
+- These scopes are created without Project references or with null projects
+- Cannot access platform's PSI-based binary class finder
+- Current architecture fully replaces platform finder rather than augmenting it
+
+### Implementation Decisions
+- **CombinedJavaClassFinder Created**: Implements all JavaClassFinder methods, delegates to source then binary
+- **Added canComputeKnownClassNamesInPackage()**: Returns true if either finder can compute
+- **Graceful Fallback**: When no Project available, returns only source finder
+- **Clean Code**: Removed all debug println statements, added only strategic exception-based debugging
+
+### Changes Made
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/CombinedJavaClassFinder.kt` (NEW):
+  - Created hybrid finder combining source and binary lookups
+  - Implements full JavaClassFinder interface
+  
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaDirectComponentRegistrar.kt`:
+  - Modified factory to extract PSI scope from AbstractProjectFileSearchScope
+  - Attempt to get Project from GlobalSearchScope
+  - Falls back to source-only finder if no Project available
+  - Added imports for PsiBasedProjectFileSearchScope and createJavaClassFinder
+
+### Test Results
+- Unit tests: Not affected (infrastructure change only)
+- Box tests: **31/138 passing (22.5%)** - UNCHANGED from Iteration 5
+- No regression: Combined finder falls back to source-only behavior
+- No improvement: Binary finder never created due to null Project
+
+### Issues Encountered
+1. **PSI Scope Has No Project**: GlobalSearchScope.project returns null in test environment
+   - Tested with both CoreLibrariesScope and AllJavaSourcesInProjectScope
+   - Test infrastructure doesn't provide full Project setup
+   
+2. **Debug Output Swallowed**: Gradle test runner doesn't show println/System.out
+   - **Solution**: Exception-based debugging - throw RuntimeException with debug info
+   - Check test result XML files for exception messages
+   
+3. **False Diagnosis**: Iteration 5 incorrectly blamed "package-based class discovery"
+   - Exception debugging proved indexing works perfectly
+   - Classes in packages ARE found and parsed
+   
+4. **Architecture Mismatch**: Extension point design assumes full replacement, not augmentation
+   - JavaClassFinderFactory returns ONE finder
+   - No built-in way to access default/fallback finder
+   - Would need different extension mechanism or test infrastructure changes
+
+### Root Cause Analysis - Why Tests Still Fail
+
+**What's Actually Working:**
+1. ✅ Package-based indexing (classes in `package example;` are indexed)
+2. ✅ Class lookup (index finds candidate files correctly)
+3. ✅ File parsing (JavaClassOverAst instances created successfully)
+4. ✅ Type arguments (generics parsing implemented)
+5. ✅ Imports (simple imports qualify type names)
+6. ✅ Star import resolution (callback approach implemented)
+
+**What's Still Missing:**
+1. ❌ **JDK Binary Classes**: Cannot resolve `java.lang.Object`, `String`, `NullPointerException`, etc.
+   - These are NOT in source roots
+   - Need binary .class file reading OR test environment configuration
+   
+2. ❌ **Type Mapping for Unresolved Types**: While JavaToKotlinClassMap is applied, it only works AFTER resolution
+   - If type can't be found by symbol provider, mapping never happens
+   
+3. ❌ **Wildcard Type Support**: `? extends Foo`, `? super Bar` not implemented
+   - Runtime errors about wrong method signatures
+   
+4. ❌ **Method Parameters**: Some tests fail because methods don't have parameters parsed
+   - Wait, this was implemented in Iteration 4 - need to verify
+
+**The Real Blocker:**
+Tests reference JDK classes that are NOT in source roots and CAN'T be found via current implementation. Solutions:
+- Option A: Fix test environment to provide JDK sources or binaries to source finder
+- Option B: Implement actual binary .class reading (major undertaking)
+- Option C: Configure test infrastructure to provide platform finder separately
+- Option D: Accept limitation - java-direct only works for project sources, not dependencies
+
+### Recommendations for Next Steps
+
+**SHORT TERM - Verify Current Capabilities:**
+1. **Test Parameter Parsing**: Verify Iteration 4 changes actually work
+   - Run tests with methods that take parameters
+   - Check if `abstractMethodsOfAny` now passes (needs `equals(Object)`)
+   
+2. **Test Type Arguments**: Verify Iteration 5 changes work end-to-end
+   - Find test that only uses generics with source classes (no JDK)
+   - Check if generic type resolution works when all types are in sources
+
+**MEDIUM TERM - Address Binary Dependencies:**
+3. **Investigate Test Infrastructure**: 
+   - Can we configure test environment to provide JDK to our finder?
+   - Can we add JDK source roots to configuration?
+   - Can we access kotlin-stdlib's JDK mappings differently?
+
+4. **Consider Scope Limitation**:
+   - Document that java-direct is for **source Java only**
+   - JDK and library dependencies use platform finder (separate session)
+   - This might be acceptable for the use case
+
+**LONG TERM - Binary Class Reading:**
+5. **Implement Binary .class Reader**: Major feature to read compiled classes
+   - Would require ASM or similar bytecode library
+   - Significant implementation effort
+   - May not align with "direct" parsing goal
+
+### Key Learnings
+- **Exception-Based Debugging**: Essential for Gradle test environments that swallow output
+- **Verify Assumptions**: "Package discovery missing" was wrong - always debug to confirm
+- **Test Infrastructure Matters**: Platform integration points may not be available in test environment
+- **Extension Point Design**: Single-factory pattern makes augmentation difficult
+- **GlobalSearchScope Limitations**: Not all scopes have Project references
+
+### Documentation Updates Needed
+- [x] Update ITERATION_RESULTS.md: This entry
+- [ ] Update AGENT_INSTRUCTIONS.md: 
+  - Remove "package-based class discovery" from failing items (IT WORKS)
+  - Add JDK binary class access as primary blocker
+  - Document exception-based debugging technique
+- [ ] Update FIXING_ITERATIONS.md: 
+  - Iteration 6 needs major revision - assumption about binary finder access was wrong
+  - Next iteration should focus on JDK access or accept source-only limitation
 
 ---
 

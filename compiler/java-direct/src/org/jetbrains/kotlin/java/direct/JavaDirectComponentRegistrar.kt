@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.extensions.JavaClassFinderFactory
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
+import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import java.io.File
 import java.nio.file.Paths
 
@@ -33,7 +35,17 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
         findLocalFile: (String) -> File?,
     ): JavaClassFinder {
         val roots = configuration.javaSourceRoots.mapNotNull(findLocalFile).flatMap { it.walk().filter { it.isFile && it.extension == "java" } }.map { it.canonicalFile.toPath() }
-        return JavaClassFinderOverAstImpl(roots)
+        val sourceFinder = JavaClassFinderOverAstImpl(roots)
+        
+        val psiScope = when (scope) {
+            is PsiBasedProjectFileSearchScope -> scope.psiSearchScope
+            else -> return sourceFinder
+        }
+        
+        val project = psiScope.project ?: return sourceFinder
+        val binaryFinder = project.createJavaClassFinder(psiScope, annotationProvider)
+        
+        return CombinedJavaClassFinder(sourceFinder, binaryFinder)
     }
 }
 
