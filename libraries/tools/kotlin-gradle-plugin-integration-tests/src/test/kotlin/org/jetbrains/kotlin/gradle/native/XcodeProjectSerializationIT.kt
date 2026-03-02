@@ -33,10 +33,10 @@ class XcodeProjectSerializationIT : KGPBaseTest() {
                 kotlin("multiplatform")
             }
 
-            val sampleXcodeProjectJson = XcodeProjectSerializationFixtures.sampleXcodeProjectWithEmbedAndSignIntegration.toByteArray()
+            val sampleXcodeProjectJson = XcodeProjectSerializationFixtures.sampleXcodeProjectWithEmbedAndSignIntegration
             val reserializedProjectString = buildScriptReturn {
                 ByteArrayOutputStream().use {
-                    deserializeXcodeProject(sampleXcodeProjectJson)
+                    deserializeXcodeProject(sampleXcodeProjectJson.toByteArray())
                         .serializeXcodeProject(it)
                     it.toString()
                 }
