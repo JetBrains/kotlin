@@ -1,595 +1,152 @@
 # Java-Direct: Agent Instructions
 
-## Document Purpose
+## Quick Reference
 
-This document contains common instructions, guidelines, and reference information for AI agents working on the `java-direct` module. It should be referenced at the start of each iteration.
+| Metric | Value |
+|--------|-------|
+| **Status** | Iteration 6 complete |
+| **Tests** | 90/138 passing (65.2%) |
+| **Next focus** | Type parameters, generics, SAM lambdas |
 
-**Target Audience**: AI coding assistants (Claude 4.5 Sonnet, Junie, etc.)  
-**Usage**: Reference this file at the start of each iteration from FIXING_ITERATIONS.md  
-**Status**: Active  
-**Last Updated**: 2026-02-23
-
----
-
-## Overview of Current State
-
-### What Works
-- ✅ **KMP Java Parser integration**: Can parse Java source files into AST
-- ✅ **Basic Java Model**: `JavaClassOverAst`, `JavaMethodOverAst`, `JavaFieldOverAst` etc. exist
-- ✅ **Test infrastructure**: Tests are generated and running through new implementation
-- ✅ **Plugin registration**: `JavaDirectComponentRegistrar` successfully injects `JavaClassFinderOverAstImpl`
-- ✅ **File indexing**: Basic file discovery and indexing works
-
-### What's Failing
-- ❌ **Most box tests**: ~50+ generated tests in `JavaUsingAstLegacyBoxTestGenerated.java` are failing
-- ❌ **Type resolution**: Java types referenced in source are not being resolved correctly
-- ❌ **Supertypes**: Java class inheritance is not working
-- ❌ **Members access**: Methods and fields from Java classes may not be accessible from Kotlin
-- ❌ **Package resolution**: Java packages may not be found properly
-
-### Repository Structure
-```
-compiler/java-direct/
-├── src/                          # Implementation
-│   └── org/jetbrains/kotlin/java/direct/
-│       ├── JavaClassFinderOverAstImpl.kt    # Main entry point
-│       ├── JavaClassOverAst.kt              # Java class model
-│       ├── JavaMemberOverAst.kt             # Methods, fields, constructors
-│       ├── JavaTypeOverAst.kt               # Type representations
-│       ├── JavaPackageOverAst.kt            # Package model
-│       ├── JavaAnnotationOverAst.kt         # Annotations
-│       ├── JavaElementOverAst.kt            # Base classes
-│       ├── JavaDirectComponentRegistrar.kt  # Plugin registration
-│       ├── parse.kt                         # Parser integration
-│       └── utils.kt                         # Utilities
-├── test/                         # Unit tests
-│   └── org/jetbrains/kotlin/java/direct/
-│       └── JavaParsingTest.kt              # Parser tests (passing)
-├── testFixtures/                 # Test infrastructure
-│   └── org/jetbrains/kotlin/java/direct/
-│       ├── AbstractJavaUsingAstBoxTest.kt  # Box test base
-│       ├── AbstractJavaUsingAstTest.kt     # Diagnostic test base
-│       ├── components.kt                   # Test configurator
-│       └── TestGenerator.kt                # Test generator
-├── build/tests-gen/              # Generated tests
-│   └── org/jetbrains/kotlin/java/direct/
-│       ├── JavaUsingAstLegacyBoxTestGenerated.java       # ~50+ tests
-│       ├── JavaUsingAstLegacyDiagnosticTestGenerated.java
-│       └── JavaUsingAstResolveTestGenerated.java
-├── IMPLEMENTATION_PLAN.md        # Overall architecture plan
-├── AGENT_INSTRUCTIONS.md         # This file
-└── FIXING_ITERATIONS.md          # Iteration prompts
-```
-
-### Test Data Location
-- Tests use data from: `compiler/testData/codegen/box/javaInterop/`
-- Each test has embedded Java files (marked with `// FILE: ClassName.java`)
-- Tests also have Kotlin files and expected results
+**Key files**: `JavaClassFinderOverAstImpl.kt`, `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaImports.kt`
 
 ---
 
-## Ground Rules for AI Agents
+## Ground Rules
 
-### Code Quality Standards
-1. **Follow Kotlin repository conventions**:
-   - Use existing coding style from the codebase
-   - Match naming conventions in FIR and compiler modules
-   - Keep files focused and cohesive
-   - **MANDATORY**: Follow all rules in `.ai/guidelines.md`
+### Mandatory
+- **Use JetBrains MCP tools** for all project file operations (see `.ai/guidelines.md`)
+- **FIR terminology**: `simpleImports`/`starImports` (NOT singleType/onDemand)
+- **Update ITERATION_RESULTS.md** after each iteration
+- **Check files with `get_file_problems`** after changes
 
-2. **Minimal code philosophy**:
-   - Write the minimum code necessary to solve the problem
-   - Avoid speculative features or over-engineering
-   - Refactor only when needed
-
-3. **Comments** (CRITICAL - Read Carefully):
-   - **Default: No comments** - Write self-explanatory code first
-   - **When to comment**:
-     * Non-obvious design decisions (why this approach over alternatives)
-     * Workarounds for bugs (with YouTrack reference: `// Workaround for KT-XXXXX`)
-     * Complex algorithms that aren't immediately clear
-     * Intentional limitations or TODOs for future work
-   - **NEVER comment**:
-     * What the code does (if it's readable, the code itself is the comment)
-     * Simple operations like "return the value" or "check if null"
-     * Paraphrasing the code in English
-     * Implementation details that are obvious from reading the code
-   - **Examples**:
-     ```kotlin
-     // ❌ BAD - States the obvious
-     // Return the class names if we have this package
-     val byName = index[packageFqName]
-     if (byName != null) return byName.keys
-     
-     // ✅ GOOD - No comment needed, code is clear
-     val byName = index[packageFqName]
-     if (byName != null) return byName.keys
-     
-     // ❌ BAD - Explains what, not why
-     // Return empty set for packages not in index
-     return emptySet()
-     
-     // ✅ GOOD - Explains non-obvious contract
-     // Empty set means "we checked, nothing found". Null means "cannot compute".
-     return emptySet()
-     ```
-   - **Rule of thumb**: If someone reading the code would ask "why?", comment. If they would ask "what?", improve the code instead.
-
-4. **Testing**:
-   - Every fix must have a test (either unit test or box test passes)
-   - Prefer isolated unit tests when possible
-   - Use box tests to verify end-to-end scenarios
-
-### Interaction Protocol
-1. **Before each iteration**: Present your analysis and proposed approach
-2. **Ask for confirmation**: Wait for user approval before implementing
-3. **After implementation**: Report what was changed and verification results
-4. **If stuck**: Ask specific questions rather than making assumptions
-
-### Use of Tools
-- **MANDATORY**: Use JetBrains IDE MCP tools for all file operations (see `.ai/guidelines.md`)
-  - Use `mcp__jetbrains__get_file_text_by_path` instead of `Read`
-  - Use `mcp__jetbrains__replace_text_in_file` instead of `Edit`/`Write`
-  - Use `mcp__jetbrains__search_in_files_by_text` instead of `Grep`
-  - Use `mcp__jetbrains__find_files_by_name_keyword` instead of `Glob`
-- Use `mcp__jetbrains__get_file_problems` after changes to check for warnings
-- Use `mcp__jetbrains__build_project` to verify compilation (if needed)
-- Use `mcp__jetbrains__search_*` tools for code exploration
-- Use default `Bash` tool (NOT `execute_terminal_command`) for terminal commands
-
-### FIR Terminology (MANDATORY)
-Use correct FIR naming conventions throughout:
-- ✅ `simpleImports` (NOT `singleTypeImports`)
-- ✅ `starImports` (NOT `onDemandImports`)
-- Match naming conventions from FIR codebase for consistency
+### Code Quality
+- **No obvious comments** — comment only "why", never "what"
+- **Minimal code** — solve the problem, don't over-engineer
+- **Every fix needs a test** — unit test or box test must pass
+- **Lazy evaluation** — avoid eager computation
 
 ---
 
-## Iteration Template
+## Iteration Workflow
 
-Each iteration in FIXING_ITERATIONS.md follows this structure:
-
-### Phase 1: Analysis - FOCUS ON SINGLE REPRESENTATIVE TEST
-**Goal**: Understand the root cause through ONE concrete failing test
-
-**CRITICAL**: Do NOT analyze all failures at once. Pick ONE representative test.
-
-**Tasks**:
-1. **Select ONE failing test** (pick simplest or most common error)
-   - Run ONLY this single test first
-   - Read its test data file (testData/codegen/box/javaInterop/)
-   - Understand what it's testing
-2. **Examine this test's specific failure**
-   - What is the exact error message?
-   - What line of code fails?
-   - What values/types are involved?
-3. **Trace through code for THIS test only**
-   - Add logging/debugging if needed
-   - Follow execution path step by step
-4. **Form hypothesis for THIS specific failure**
-   - Not a general pattern - this concrete case
-
-**Deliverable**: Analysis document with:
-- Selected test name and what it tests
-- Exact error message and location
-- Concrete root cause hypothesis
-- Proposed fix approach
-
-**Anti-pattern to AVOID**: Running all 138 tests and trying to categorize errors. This leads to analysis paralysis.
-
-### Phase 2: Reproduction
-**Goal**: Create minimal reproducible test case for the ONE issue
-
-**Tasks**:
-1. Extract minimal failing example from the ONE box test
-2. Create unit test in `compiler/java-direct/test/.../` directory
-3. Verify unit test fails with SAME error
-4. Simplify test case as much as possible
-
-**Deliverable**: New unit test file demonstrating the issue
-
-### Phase 3: Implementation
-**Goal**: Fix the identified issue
-
-**Tasks**:
-1. Implement the fix in appropriate source file(s)
-2. Ensure unit test now passes
-3. Ensure the ONE selected box test now passes
-4. **Only after single test passes**: Run broader set (10-20 related tests)
-5. Check that fix doesn't break existing passing tests
-
-**Deliverable**: 
-- Modified source files
-- Passing unit test
-- Report showing: single test → passes, related tests → improvement count
-
-**Anti-pattern to AVOID**: Implementing a fix and immediately running all 138 tests to see aggregate improvement. This wastes time and provides unclear feedback.
-
-### Phase 4: Validation
-**Goal**: Confirm fix is correct and complete
-
-**Tasks**:
-1. Run `mcp__jetbrains__get_file_problems` on modified files
-2. Fix any warnings related to changes
-3. Run full test suite ONLY to measure overall progress (not for debugging)
-4. Document any limitations or partial fixes
-5. **MANDATORY**: Update `ITERATION_RESULTS.md` with your findings
-
-**Deliverable**: 
-- Validation report with test results
-- Updated `ITERATION_RESULTS.md` entry
-
-## Debugging Technique: Exception-Based Deep Inspection
-
-### Why This Approach is Necessary
-
-**CRITICAL**: Standard debug output (println, logging) **DOES NOT WORK** in Kotlin test infrastructure when running tests through Gradle. The test framework captures and suppresses this output, making it impossible to see what's happening during test execution.
-
-**Solution**: Use exception-based debugging to inspect runtime state.
-
-### How It Works
-
-When you need to understand what's happening at a specific point in code during test execution:
-
-1. **Throw an exception with the data you want to inspect**
-2. **The test will fail and show the exception with stack trace**
-3. **The exception message contains the runtime values you need**
-
-### Basic Pattern
-
-```kotlin
-// Instead of this (won't see output):
-println("classifierQualifiedName: $classifierQualifiedName")
-println("packageFqName: $packageFqName")
-
-// Do this:
-throw IllegalStateException("DEBUG: classifierQualifiedName='$classifierQualifiedName', packageFqName='$packageFqName'")
-```
-
-### Advanced: Inspecting Complex Objects
-
-```kotlin
-// Dump entire object structure
-throw IllegalStateException("""
-    DEBUG: JavaClassOverAst state:
-      fqName: ${fqName}
-      classId: ${classId}
-      supertypes: ${supertypes.joinToString { it.toString() }}
-      members: ${members.size} members
-      compilationUnit: ${compilationUnit != null}
-      isInterface: ${isInterface}
-""".trimIndent())
-```
-
-### Multi-Point Inspection
-
-When you need to see values at multiple execution points:
-
-```kotlin
-// Option 1: Conditional exception (let some cases pass)
-if (someCondition) {
-    throw IllegalStateException("DEBUG at checkpoint 1: value=$value")
-}
-
-// Option 2: Accumulate data and throw at end
-val debugLog = mutableListOf<String>()
-debugLog.add("Point 1: fqName=$fqName")
-// ... more code ...
-debugLog.add("Point 2: classId=$classId")
-// ... at end of method:
-if (shouldDebug) {
-    throw IllegalStateException("DEBUG trace:\n${debugLog.joinToString("\n")}")
-}
-```
-
-### Inspecting Call Sequences
-
-To understand the order of method calls and their parameters:
-
-```kotlin
-override fun findClass(request: JavaClassFinder.Request): JavaClass? {
-    throw IllegalStateException("""
-        DEBUG: findClass called
-          classId: ${request.classId}
-          outerClass: ${request.outerClass}
-          Stack trace will show who called this
-    """.trimIndent())
-    
-    // Original implementation below (won't execute)
-}
-```
-
-### Example: Real Usage
-
-From iteration work, here's a concrete example of using this technique:
-
-```kotlin
-// Problem: Need to see what classifierQualifiedName returns for java.lang.Object
-override val classifierQualifiedName: String
-    get() {
-        val result = classId.asSingleFqName().asString()
-        
-        // DEBUG: See what we're returning for Object
-        if (classId.shortClassName.asString() == "Object") {
-            throw IllegalStateException("""
-                DEBUG: classifierQualifiedName for Object:
-                  classId: $classId
-                  classId.asSingleFqName(): ${classId.asSingleFqName()}
-                  result: $result
-                  Expected: java.lang.Object
-                  packageFqName: ${classId.packageFqName}
-            """.trimIndent())
-        }
-        
-        return result
-    }
-```
-
-**What you'll see in test output:**
-```
-java.lang.IllegalStateException: DEBUG: classifierQualifiedName for Object:
-  classId: java/lang/Object
-  classId.asSingleFqName(): java.lang.Object
-  result: java.lang.Object
-  Expected: java.lang.Object
-  packageFqName: java.lang
-    at org.jetbrains.kotlin.java.direct.JavaClassOverAst.getClassifierQualifiedName(JavaClassOverAst.kt:123)
-    at org.jetbrains.kotlin.fir.java.FirJavaFacade.convertClass(FirJavaFacade.kt:456)
-    ...stack trace shows full call chain...
-```
-
-### Best Practices
-
-1. **Prefix with "DEBUG:"** - Makes it clear this is intentional debugging, not a real error
-2. **Include context** - Show not just the value, but also related values that help understand it
-3. **Use descriptive labels** - `"value=$value"` is better than just `"$value"`
-4. **Stack traces are valuable** - They show you the call chain that led to this point
-5. **Remove after debugging** - Don't commit these exceptions (unless documenting a bug)
-
-### When to Use This
-
-- ✅ When you need to see runtime values during test execution
-- ✅ When you need to understand call sequences and who's calling what
-- ✅ When you need to inspect complex object state at specific points
-- ✅ When standard logging doesn't appear in test output
-- ❌ NOT for final production code (only for debugging during iteration)
-- ❌ NOT when you can use unit tests to verify behavior (prefer tests)
-
-### Alternative: Conditional Exceptions
-
-If you want to debug only specific cases without failing all tests:
-
-```kotlin
-// Only throw for specific test cases
-val isDebugCase = classId.shortClassName.asString() == "Object" && 
-                  classId.packageFqName.asString() == "java.lang"
-
-if (isDebugCase) {
-    throw IllegalStateException("DEBUG: ...")
-}
-```
-
-This lets other tests run while you focus on understanding one specific scenario.
-
----
-
-## Focus Strategy - How to Pick "The ONE Test"
-
-When starting an iteration:
-
-### Step 1: Run Full Suite ONCE (for statistics only)
+### 1. Pick ONE Failing Test
 ```bash
+# Get current failure statistics
 ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q 2>&1 | tee test_output.txt
+grep -E "(FAIL|Exception)" test_output.txt | sort | uniq -c | sort -rn | head -10
 ```
+Pick the **simplest** test with the **most common** error pattern.
 
-### Step 2: Categorize Error Types
+### 2. Debug That Single Test
 ```bash
-# Extract unique error patterns
-grep "DIAGNOSTICS:" test_output.txt | sort | uniq -c | sort -rn | head -20
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testSpecificName" -q
 ```
+Use exception-based debugging (see below) to understand the failure.
 
-### Step 3: Pick Most Frequent Error Pattern
-Choose the error that appears most often. This represents the biggest blocker.
+### 3. Fix and Verify
+1. Implement fix
+2. Verify single test passes
+3. Run related tests (10-20 with similar pattern)
+4. Run full suite to measure progress
 
-### Step 4: Find Simplest Test With That Error
-From tests showing that error, pick the shortest/simplest one:
-- Fewest lines of Java code
-- Fewest features used (no generics, no annotations, etc.)
-- Most focused test scenario
-
-### Step 5: Work ONLY on That Test
-```bash
-# Run ONLY this test
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testSimpleInheritance" -q
-```
-
-### Step 6: After Fix Works, Verify Related Tests
-```bash
-# Find tests with similar characteristics
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.test*Inheritance*" -q
-```
-
-### Step 7: THEN Run Full Suite (to measure progress)
-
-## Example Focus Workflow
-
-**BAD Approach** (what to avoid):
-```
-Agent: "I'll analyze all 108 failing tests..."
-[Reads 108 test files]
-[Tries to categorize into 15 different patterns]
-[Gets overwhelmed, makes speculative changes]
-[Runs all tests again, sees no improvement]
-[Doesn't know which test to debug]
-```
-
-**GOOD Approach** (what to do):
-```
-Agent: "Running full suite to get error statistics..."
-[Finds MISSING_DEPENDENCY_CLASS appears 88 times]
-Agent: "Finding simplest test with MISSING_DEPENDENCY_CLASS..."
-[Identifies testAbstractMethodsOfAny.kt - 20 lines, uses Object only]
-Agent: "Running ONLY testAbstractMethodsOfAny..."
-[Test fails: "cannot find java.lang.Object"]
-Agent: "Let me trace why Object isn't found..."
-[Adds logging, discovers classifierQualifiedName returns "Object" not "java.lang.Object"]
-Agent: "I'll fix classifierQualifiedName to qualify java.lang names..."
-[Implements fix]
-Agent: "Testing ONLY testAbstractMethodsOfAny..."
-[Test passes!]
-Agent: "Now testing all tests with 'Object' in name..."
-[Finds 10 more tests pass]
-Agent: "Running full suite to measure overall improvement..."
-[38/138 → 48/138, documents in ITERATION_RESULTS.md]
-```
+### 4. Document
+Update `ITERATION_RESULTS.md` with findings, changes, and test counts.
 
 ---
 
-## Key Files to Understand
+## Debugging: Exception-Based Inspection
 
-### Core Implementation
-- `JavaClassFinderOverAstImpl.kt`: Entry point, file indexing, class lookup
-- `JavaClassOverAst.kt`: Java class model, most complex logic here
-- `JavaTypeOverAst.kt`: Type representations
-- `parse.kt`: Parser integration with KMP Java parser
+**Why**: println/logging doesn't appear in Gradle test output.
 
-### FIR Integration Points
-- `compiler/fir/fir-jvm/src/.../FirJavaFacade.kt`: Converts Java Model to FIR (reference)
-- `compiler/fir/fir-jvm/src/.../JavaSymbolProvider.kt`: Exposes Java classes to FIR (reference)
-- `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt`: Type conversion logic (reference)
+**Pattern**:
+```kotlin
+throw IllegalStateException("DEBUG: value='$value', context='$context'")
+```
 
-### Java Model Interfaces (implement these)
-- `core/compiler.common.jvm/src/.../load/java/structure/javaElements.kt`
+**Conditional** (debug specific cases only):
+```kotlin
+if (classId.shortClassName.asString() == "TargetClass") {
+    throw IllegalStateException("DEBUG: classId=$classId, supertypes=${supertypes.size}")
+}
+```
+
+Remove debug exceptions before committing.
+
+---
+
+## Key Architecture Decisions
+
+From iterations 1-6 (see `ITERATION_RESULTS.md` for details):
+
+1. **Type resolution in FIR layer** — Java Model provides names via `classifierQualifiedName`, FIR resolves them
+2. **Callback pattern for star imports** — `resolve(tryResolve: (String) -> Boolean)` in `JavaClassifierType`
+3. **Hybrid finder** — `CombinedJavaClassFinder` tries sources first, falls back to binaries
+
+---
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `JavaClassFinderOverAstImpl.kt` | Source class finder, file indexing |
+| `JavaClassOverAst.kt` | Java class model |
+| `JavaTypeOverAst.kt` | Type representations, `classifierQualifiedName` |
+| `JavaImports.kt` | Import handling |
+| `JavaMemberOverAst.kt` | Methods, fields, parameters |
+| `JavaDirectComponentRegistrar.kt` | Plugin registration, hybrid finder setup |
+
+**FIR integration** (reference, don't modify unless necessary):
+- `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt` — uses `resolve()` callback
+- `compiler/fir/fir-jvm/src/.../FirJavaFacade.kt` — converts Java Model to FIR
 
 ---
 
 ## Common Pitfalls
 
-1. **Circular Dependencies**: FIR needs Java model, Java model needs FIR
-   - **Solution**: Lazy evaluation everywhere
-
-2. **Wrong Terminology**: Using different names than FIR codebase
-   - Use `simpleImports`, `starImports` (not singleType/onDemand)
-   - Use FIR naming conventions throughout
-
-3. **Over-Engineering**: Trying to implement everything at once
-   - Start minimal, iterate, add complexity gradually
-
-4. **Not Testing**: Making changes without unit tests
-   - Every feature needs a test
-   - Box tests verify end-to-end, but are slow
-
-5. **Ignoring Laziness**: Eager evaluation kills performance
-   - Everything should be lazy: parsing, resolution, member building
-
-6. **Using Wrong Tools**: Using standard file tools instead of JetBrains MCP
-   - Always use MCP tools for project files (see `.ai/guidelines.md`)
+| Pitfall | Solution |
+|---------|----------|
+| Circular FIR↔Java dependency | Use lazy evaluation |
+| Wrong terminology | Use FIR names (simpleImports, starImports) |
+| Using wrong tools | Use MCP tools, not Read/Edit/Grep |
+| Eager evaluation | Make everything lazy |
+| No tests | Every fix needs a passing test |
 
 ---
 
 ## Useful Commands
 
 ```bash
-# Run specific test class
-./gradlew :compiler:java-direct:test --tests "JavaParsingTest" -q
+# Single test
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testName" -q
 
-# Run generated box tests (may take long)
+# All box tests
 ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q
 
-# Run single box test
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testAbstractMethodsOfAny" -q
-
-# Build java-direct module
+# Build module
 ./gradlew :compiler:java-direct:build -q
-
-# Generate tests (after adding new test data)
-./gradlew generateTests -q
-```
-
-Note: Use `-q` (quiet) flag to reduce output noise.
-
----
-
-## Reference Documentation
-
-- **IMPLEMENTATION_PLAN.md**: Overall architecture and design decisions
-- **.ai/guidelines.md**: Kotlin project coding guidelines (MANDATORY reading)
-- `compiler/AGENTS.md`: Compiler-specific agent guidelines
-- `compiler/fir/fir-jvm/`: FIR Java integration (reference implementation)
-- `compiler/javac-wrapper/`: Old javac-based implementation (reference for resolution logic)
-
----
-
-## Success Metrics
-
-After completing all iterations, we expect:
-
-- ✅ **Test pass rate**: 50-70% of box tests passing (from current ~0%)
-- ✅ **Core features working**:
-  - Simple Java classes with fields and methods
-  - Inheritance (single and multiple interfaces)
-  - Basic generics
-  - Import resolution
-  - Package resolution
-- ✅ **Code quality**: No warnings on modified files
-- ✅ **Documentation**: Known limitations clearly documented
-
-**Not expected to work yet** (future work beyond these iterations):
-- Complex annotation arguments with constant evaluation
-- All edge cases of generic types
-- Full Java 21 feature support
-- 100% test pass rate
-
----
-
-## Quick Feedback Templates
-
-If an agent produces code that doesn't follow guidelines, use these templates:
-
-### Over-Commenting
-```
-The code has too many obvious comments. Please review AGENT_INSTRUCTIONS.md 
-section on Comments and remove all comments that explain "what" rather than "why". 
-Keep only comments for non-obvious design decisions.
-
-Examples to remove:
-- "Return the class names if we have this package" - obvious from code
-- "Check if null and return" - obvious from code
-Keep only comments like:
-- "Empty set means checked but not found; null means cannot compute" - explains contract
-```
-
-### Wrong Terminology
-```
-Please use correct FIR terminology:
-- Use `simpleImports` not `singleTypeImports`
-- Use `starImports` not `onDemandImports`
-```
-
-### Not Using JetBrains MCP Tools
-```
-Please use JetBrains MCP tools instead of standard tools:
-- Use `mcp__jetbrains__get_file_text_by_path` not `Read`
-- Use `mcp__jetbrains__replace_text_in_file` not `Edit`/`Write`
-See AGENT_INSTRUCTIONS.md "Use of Tools" section.
 ```
 
 ---
 
-## Keeping Documentation Fresh
+## Related Documents
 
-**For Human Reviewers**: Every 2-3 iterations, review `ITERATION_RESULTS.md` and update this file with:
-- Newly discovered key files or patterns
-- Updated "What Works" / "What's Failing" sections
-- New common pitfalls encountered
-- Adjusted success metrics
-
-This keeps core instructions lean while preserving knowledge.
+| Document | Purpose |
+|----------|---------|
+| `ITERATION_RESULTS.md` | Progress history, key findings |
+| `IMPLEMENTATION_PLAN.md` | Architecture overview |
+| `.ai/guidelines.md` | Project-wide coding guidelines |
 
 ---
 
-## Document Change Log
+## Remaining Work (48 failing tests)
 
-- 2026-02-23: Added ITERATION_RESULTS.md integration and periodic update process
-- 2026-02-23: Split from ITERATIVE_FIXING_PLAN.md into separate common instructions
-- 2026-02-10: Original content created in ITERATIVE_FIXING_PLAN.md
+Likely causes based on iteration 6 analysis:
+1. **Type parameters** (`T`, `U`) treated as class names
+2. **Complex generics** (`? extends`, `? super`)
+3. **SAM lambda inference** (`it` parameter)
+4. **Other semantic issues**
+
+---
+
+*Last updated: 2026-03-03 (after iteration 6)*
