@@ -168,7 +168,6 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, DeprecatedKotlinNativeTargetsChecker)
         register(project, MissingNativeStdlibChecker)
         register(project, UnusedSourceSetsChecker)
-        register(project, AndroidSourceSetLayoutV1SourceSetsNotFoundChecker)
         register(project, AndroidPluginWithoutAndroidTargetChecker)
         register(project, NoKotlinTargetsDeclaredChecker)
         register(project, DisabledCinteropCommonizationInHmppProjectChecker)

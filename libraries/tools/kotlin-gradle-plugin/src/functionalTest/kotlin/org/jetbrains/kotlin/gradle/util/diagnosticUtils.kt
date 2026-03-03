@@ -20,7 +20,6 @@ import kotlin.test.fail
 internal fun checkDiagnosticsWithMppProject(expectedDiagnosticsFile: String, projectConfiguration: Project.() -> Unit) {
     val projectName = File(expectedDiagnosticsFile).name
     val project = buildProjectWithMPP(projectBuilder = { withName(projectName) })
-    project.setMultiplatformAndroidSourceSetLayoutVersion(2)
     project.projectConfiguration()
     project.evaluate()
     project.checkDiagnostics(expectedDiagnosticsFile)

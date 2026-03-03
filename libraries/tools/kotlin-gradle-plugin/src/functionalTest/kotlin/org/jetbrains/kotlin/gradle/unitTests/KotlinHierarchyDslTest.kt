@@ -266,7 +266,6 @@ class KotlinHierarchyDslTest {
     @Test
     fun `test - hierarchy - jvm and android`() {
         val project = buildProjectWithMPP {
-            setMultiplatformAndroidSourceSetLayoutVersion(2)
         }
 
         val kotlin = project.multiplatformExtension

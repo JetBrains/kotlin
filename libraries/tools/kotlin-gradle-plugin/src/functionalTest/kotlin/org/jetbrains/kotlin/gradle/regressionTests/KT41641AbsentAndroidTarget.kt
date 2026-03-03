@@ -83,6 +83,5 @@ class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
         android.configureDefaults()
         kotlin.jvm()
 
-        project.setMultiplatformAndroidSourceSetLayoutVersion(2)
     }
 }

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.ResolvedVariant
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.UnresolvedComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
-import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
 import org.jetbrains.kotlin.gradle.utils.appendLine
@@ -645,20 +644,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object AndroidSourceSetLayoutV1Deprecation : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Deprecation) {
-        operator fun invoke() = build {
-            title("Deprecated Android Source Set Layout V1")
-                .description {
-                    "The version 1 of Android source set layout is deprecated."
-                }
-                .solution {
-                    "Please remove kotlin.mpp.androidSourceSetLayoutVersion=1 from the gradle.properties file."
-                }
-                .documentationLink(URI("https://kotl.in/android-source-set-layout-v2")) { url ->
-                    "Learn how to migrate to the version 2 source set layout at: $url"
-                }
-        }
-    }
 
     object AgpRequirementNotMetForAndroidSourceSetLayoutV2 : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(minimumRequiredAgpVersion: String, currentAgpVersion: String) = build {
@@ -696,22 +681,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object SourceSetLayoutV1StyleDirUsageWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
-        operator fun invoke(v1StyleSourceDirInUse: String, currentLayoutName: String, v2StyleSourceDirToUse: String) = build {
-            title("Deprecated Source Set Layout V1")
-                .description {
-                    """
-                    Found used source directory $v1StyleSourceDirInUse
-                    This source directory was supported by: ${multiplatformAndroidSourceSetLayoutV1.name}
-                    Current KotlinAndroidSourceSetLayout: $currentLayoutName
-                    New source directory is: $v2StyleSourceDirToUse
-                    """.trimIndent()
-                }
-                .solution {
-                    "Please migrate to the new source directory: $v2StyleSourceDirToUse"
-                }
-        }
-    }
 
     object IncompatibleGradleVersionTooLowFatalError : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
@@ -786,27 +755,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object AndroidSourceSetLayoutV1SourceSetsNotFoundError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(nameOfRequestedSourceSet: String) = build {
-            title("Renamed Android Source Set Not Found")
-                .description {
-                    """
-                    KotlinSourceSet with name '$nameOfRequestedSourceSet' not found:
-                    The SourceSet requested ('$nameOfRequestedSourceSet') was renamed in Kotlin 1.9.0
-                    
-                    In order to migrate you might want to replace:
-                    sourceSets.getByName("androidTest") -> sourceSets.getByName("androidUnitTest")
-                    sourceSets.getByName("androidAndroidTest") -> sourceSets.getByName("androidInstrumentedTest")
-                    """.trimIndent()
-                }
-                .solution {
-                    "Please update the source set name to the new one."
-                }
-                .documentationLink(URI("https://kotl.in/android-source-set-layout-v2")) { url ->
-                    "Learn more about the new Kotlin/Android SourceSet Layout: $url"
-                }
-        }
-    }
 
     object KotlinJvmMainRunTaskConflict : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(targetName: String, taskName: String) = build {

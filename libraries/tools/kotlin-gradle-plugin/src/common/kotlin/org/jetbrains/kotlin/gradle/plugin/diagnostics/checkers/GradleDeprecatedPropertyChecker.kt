@@ -101,6 +101,10 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
                 it.toString().toBooleanLenient() == false
             }
         ), // since 2.3.20
+        DeprecatedProperty(
+            propertyName = "kotlin.mpp.androidSourceSetLayoutVersion",
+            details = "Android Source Set Layout V2 is enabled by default and can't be changed. Leave your questions here https://youtrack.jetbrains.com/issue/KT-82265"
+        )
     )
 
     private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(
