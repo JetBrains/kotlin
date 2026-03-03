@@ -159,9 +159,6 @@ private fun Project.createLinkTask(binary: NativeBinary) {
         locateOrRegisterTask<Task>(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(linkTask)
     }
 
-    if (binary is Framework) {
-        createFrameworkArtifact(binary, linkTask)
-    }
 }
 
 

@@ -992,10 +992,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/DefaultKo
 	public abstract fun predicate ()Z
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/Framework$Companion {
-	public final fun getFrameworkTargets ()Lorg/gradle/api/attributes/Attribute;
-}
-
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/GenerateProjectStructureMetadata : org/gradle/api/DefaultTask {
 	public fun <init> ()V
 	public final fun generateMetadataXml ()V
@@ -1261,8 +1257,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget 
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget$Companion {
 	public final fun getKonanTargetAttribute ()Lorg/gradle/api/attributes/Attribute;
-	public final fun getKotlinNativeBuildTypeAttribute ()Lorg/gradle/api/attributes/Attribute;
-	public final fun getKotlinNativeFrameworkNameAttribute ()Lorg/gradle/api/attributes/Attribute;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests : org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithTests {

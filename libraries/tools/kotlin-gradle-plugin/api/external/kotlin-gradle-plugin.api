@@ -1027,7 +1027,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/Executable : org/jetbr
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/Framework : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractNativeLibrary, org/gradle/api/attributes/HasAttributes {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework$Companion;
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
 	public synthetic fun getAttributes ()Lorg/gradle/api/attributes/AttributeContainer;
 	public fun getAttributes ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/HierarchyAttributeContainer;

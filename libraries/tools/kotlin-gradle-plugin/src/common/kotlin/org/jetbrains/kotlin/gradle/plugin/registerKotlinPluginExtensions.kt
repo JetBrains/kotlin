@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmCompilationWireJavaSourc
 import org.jetbrains.kotlin.gradle.targets.jvm.ConfigureJavaTestFixturesSideEffect
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.ConfigureFrameworkExportSideEffect
-import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeConfigureBinariesSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.SetupEmbedAndSignAppleFrameworkTaskSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
@@ -93,7 +92,6 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, XcodeVersionSetupAction)
             register(project, CheckXcodeTargetsConfigurationSetupAction)
             register(project, AddBuildListenerForXcodeSetupAction)
-            register(project, CreateFatFrameworksSetupAction)
             register(project, KotlinRegisterCompilationArchiveTasksExtension)
             register(project, IdeMultiplatformImportActionSetupAction)
             register(project, KotlinLLDBScriptSetupAction)
