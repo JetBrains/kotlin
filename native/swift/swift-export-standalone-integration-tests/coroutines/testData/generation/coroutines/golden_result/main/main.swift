@@ -25,14 +25,6 @@ public var flowFoo: KotlinCoroutineSupport._KotlinTypedFlow<main.Foo> {
         return KotlinCoroutineSupport._KotlinTypedFlow<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowFoo_get()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
     }
 }
-public func closure_returning_flow(
-    i: @escaping (KotlinCoroutineSupport._KotlinTypedFlow<main.Foo>) -> Swift.Void
-) -> Swift.Void {
-    return __root___closure_returning_flow__TypesOfArguments__U28KotlinCoroutineSupport__KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__({
-        let originalBlock = i
-        return { arg0 in return originalBlock(KotlinCoroutineSupport._KotlinTypedFlow<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)) }
-    }())
-}
 public func demo() -> KotlinCoroutineSupport._KotlinTypedFlow<main.Foo> {
     return KotlinCoroutineSupport._KotlinTypedFlow<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___demo()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
 }

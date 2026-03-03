@@ -4,6 +4,7 @@ import KotlinRuntimeSupport
 import KotlinStdlib
 
 public typealias BoxFun = () -> main.Box
+public typealias BoxFunIn = (main.Box) -> Swift.Int32
 public protocol A: KotlinRuntime.KotlinBase {
     var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get
@@ -319,11 +320,37 @@ public func foo(
 ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
     return { switch __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(param1.map { it in it.__externalRCRef() } ?? nil, param2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
 }
+public func produceBoxUpperBound(
+    box: @escaping (main.Box) -> Swift.Void
+) -> Swift.Void {
+    return __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__({
+        let originalBlock = box
+        return { arg0 in return originalBlock(main.Box.__createClassWrapper(externalRCRef: arg0)) }
+    }())
+}
 public func returnBoxFun() -> main.BoxFun {
     return {
         let pointerToBlock = __root___returnBoxFun()
         return { return main.Box.__createClassWrapper(externalRCRef: main_internal_functional_type_caller_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock)) }
     }()
+}
+public func takeBoxStarProjection(
+    box: main.Box
+) -> Swift.Void {
+    return __root___takeBoxStarProjection__TypesOfArguments__main_Box__(box.__externalRCRef())
+}
+public func takeBoxUpperBound(
+    box: main.Box
+) -> Swift.Void {
+    return __root___takeBoxUpperBound__TypesOfArguments__main_Box__(box.__externalRCRef())
+}
+public func takeBoxUpperBoundClosure(
+    box: @escaping () -> main.Box
+) -> Swift.Void {
+    return __root___takeBoxUpperBoundClosure__TypesOfArguments__U2829202D_U20main_Box__({
+        let originalBlock = box
+        return { return originalBlock().__externalRCRef() }
+    }())
 }
 extension main.A where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {

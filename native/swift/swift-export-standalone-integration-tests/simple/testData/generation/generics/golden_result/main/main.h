@@ -93,7 +93,15 @@ NSArray<id> * __root___customFilter__TypesOfArguments__Swift_Array_Swift_Optiona
 
 void * _Nullable __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * _Nullable param1, void * _Nullable param2);
 
+void __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(void (^box)(void *));
+
 void * __root___returnBoxFun();
+
+void __root___takeBoxStarProjection__TypesOfArguments__main_Box__(void * box);
+
+void __root___takeBoxUpperBound__TypesOfArguments__main_Box__(void * box);
+
+void __root___takeBoxUpperBoundClosure__TypesOfArguments__U2829202D_U20main_Box__(void * (^box)(void));
 
 void * main_internal_functional_type_caller_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToBlock);
 
