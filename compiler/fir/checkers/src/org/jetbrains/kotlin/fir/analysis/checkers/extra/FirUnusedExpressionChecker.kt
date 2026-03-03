@@ -22,13 +22,10 @@ object FirUnusedExpressionChecker : FirUnusedCheckerBase() {
     override fun createVisitor(): UsageVisitorBase = UsageVisitor(context, reporter)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkIfExpressionUnused(
+    private fun reportUnused(
         expression: FirExpression,
-        hasSideEffects: Boolean,
         source: KtSourceElement?,
-    ): Boolean {
-        if (hasSideEffects) return false
-
+    ) {
         val isLambda = expression is FirAnonymousFunctionExpression && expression.anonymousFunction.isLambda
         val factory = when {
             isLambda
@@ -36,17 +33,17 @@ object FirUnusedExpressionChecker : FirUnusedCheckerBase() {
             else -> FirErrors.UNUSED_EXPRESSION
         }
         reporter.reportOn(source, factory)
-        return !isLambda // Need to visit nested lambdas
     }
 
     private class UsageVisitor(context: CheckerContext, reporter: DiagnosticReporter) : UsageVisitorBase(context, reporter) {
         override fun checkExpression(
             expression: FirExpression,
             data: UsageState,
-        ): Boolean {
-            if (!data.isUnused()) return false
+        ) {
+            if (!data.isUnused()) return
+            if (expression.hasSideEffect()) return
             context(context, reporter) {
-                return checkIfExpressionUnused(expression, expression.hasSideEffect(), expression.source)
+                reportUnused(expression, expression.source)
             }
         }
     }

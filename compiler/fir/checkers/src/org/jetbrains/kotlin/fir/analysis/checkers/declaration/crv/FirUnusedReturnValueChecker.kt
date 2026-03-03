@@ -35,27 +35,27 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         expression: FirExpression,
         hasSideEffects: Boolean,
         data: UsageState,
-    ): Boolean {
-        if (!hasSideEffects && data !is UsageState.UsedInReturn) return false // Do not report anything FirUnusedExpressionChecker already reported
-        if (data == UsageState.Used) return false
+    ) {
+        if (!hasSideEffects && data !is UsageState.UsedInReturn) return  // Do not report anything FirUnusedExpressionChecker already reported
+        if (data == UsageState.Used) return
 
-        if (expression.resolvedType.isIgnorable()) return false
+        if (expression.resolvedType.isIgnorable()) return
 
         val resolvedSymbol = expression.toResolvedCallableSymbol(context.session)?.originalOrSelf()
 
         if (expression is FirFunctionCall) {
             // Special case for `x[y] = z` assigment:
-            if (expression.origin == FirFunctionCallOrigin.Operator && resolvedSymbol?.name?.asString() == "set") return false
+            if (expression.origin == FirFunctionCallOrigin.Operator && resolvedSymbol?.name?.asString() == "set") return
 
             // returnsResultOf contracts:
-            if (resolvedSymbol != null && hasContractAndPropagatesIgnorable(expression, resolvedSymbol, data)) return false
+            if (resolvedSymbol != null && hasContractAndPropagatesIgnorable(expression, resolvedSymbol, data)) return
             // TODO(KT-84198): technically, this whole shouldUse thing should be recursive, because we may have x?.let { a[b] = c } or x?.let { y?.let { ... }}
         }
 
         // Special case for `condition() || throw/return` or `condition() && throw/return`:
-        if (expression is FirBooleanOperatorExpression && expression.rightOperand.resolvedType.isIgnorable()) return false
+        if (expression is FirBooleanOperatorExpression && expression.rightOperand.resolvedType.isIgnorable()) return
 
-        return reportForSymbol(expression, resolvedSymbol, data)
+        reportForSymbol(expression, resolvedSymbol, data)
     }
 
     context(context: CheckerContext, visitor: UsageVisitor)
@@ -122,12 +122,12 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         expression: FirExpression,
         resolvedSymbol: FirCallableSymbol<*>?,
         data: UsageState,
-    ): Boolean {
-        if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck()) return false
+    ) {
+        if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck()) return
         val functionName = resolvedSymbol?.name
         val targetExpression = if (data is UsageState.UsedInReturn) {
             // Not in map => not inside contracted function call => no need to report
-            val value = visitor.returnsToCheck[data.returnExpression] ?: return false
+            val value = visitor.returnsToCheck[data.returnExpression] ?: return
             visitor.returnsToCheck.values.removeAll { it == value } // Remove all the keys to avoid multiple UNUSED reports on [value]
             value
         } else {
@@ -138,7 +138,6 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
             if (data != UsageState.UnusedFromCoercion) FirErrors.RETURN_VALUE_NOT_USED else FirErrors.RETURN_VALUE_NOT_USED_COERCION,
             functionName
         )
-        return true
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -151,9 +150,9 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
     ) : UsageVisitorBase(context, reporter) {
         val returnsToCheck: MutableMap<FirReturnExpression, FirFunctionCall> = hashMapOf()
 
-        override fun checkExpression(expression: FirExpression, data: UsageState): Boolean {
+        override fun checkExpression(expression: FirExpression, data: UsageState) {
             context(context, reporter) {
-                return checkIfExpressionUnused(expression, expression.hasSideEffect(), data)
+                checkIfExpressionUnused(expression, expression.hasSideEffect(), data)
             }
         }
 

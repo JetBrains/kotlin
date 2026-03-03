@@ -68,16 +68,12 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
         protected val reporter: DiagnosticReporter,
     ) : FirDefaultVisitor<Unit, UsageState>() {
 
-        /**
-         * If this function returns true, the visitor stops visiting the children of [expression].
-         * Return false to continue visiting.
-         */
-        abstract fun checkExpression(expression: FirExpression, data: UsageState): Boolean
+        abstract fun checkExpression(expression: FirExpression, data: UsageState)
         
         override fun visitElement(element: FirElement, data: UsageState) {
             if (element is FirDeclaration) return // The checker handles nested declarations, see FirUnusedCheckerBase.check
             if (element is FirExpression && element.source != null) {
-                if (checkExpression(element, data)) return
+                checkExpression(element, data)
             }
             element.acceptChildren(this, UsageState.Used)
         }
