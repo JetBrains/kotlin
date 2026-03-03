@@ -35,13 +35,6 @@ abstract class PublicPackageJsonTask :
     val projectVersion = project.version.toString()
 
     @get:Input
-    @Deprecated(
-        "All the compilations are always done by the IR compiler, so this property is treated as `true`. Scheduled for removal in Kotlin 2.4",
-        level = DeprecationLevel.ERROR
-    )
-    abstract val jsIrCompilation: Property<Boolean>
-
-    @get:Input
     abstract val extension: Property<String>
 
     @get:Input
