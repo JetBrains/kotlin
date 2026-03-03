@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.objcinterop
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINTEROP_ARGS
@@ -18,6 +19,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTar
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToStaticLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
+import org.jetbrains.kotlin.konan.test.klib.customNativeCompilerSettings
+import org.jetbrains.kotlin.konan.test.klib.defaultLanguageVersion
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -90,6 +93,11 @@ class ObjCInteropFacade(val testServices: TestServices) : AbstractTestFacade<Res
             }
             add("-compiler-option")
             add("-I$defRealFileFolder")
+            val defaultLanguageVersion = customNativeCompilerSettings.defaultLanguageVersion
+            if (defaultLanguageVersion < LanguageVersion.LATEST_STABLE) {
+                add("-Xklib-abi-compatibility-level")
+                add("${defaultLanguageVersion.major}.${defaultLanguageVersion.minor}")
+            }
         }
 
         val loggedCInteropParameters = LoggedData.CInteropParameters(args, defFile)

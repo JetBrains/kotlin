@@ -166,4 +166,5 @@ projectTests {
     testData(project(":compiler").isolated, "testData/codegen/box")
     testData(project(":compiler").isolated, "testData/codegen/boxInline")
     testData(project(":compiler").isolated, "testData/klib/klib-compatibility/sanity")
+    testData(project(":native:native.tests").isolated, "testData/codegen")
 }
