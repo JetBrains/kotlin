@@ -1,8 +1,11 @@
+import org.gradle.kotlin.dsl.maven
+
 pluginManagement {
     apply(from = "cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
     apply(from = "kotlin-bootstrap/src/main/kotlin/kotlin-bootstrap.settings.gradle.kts")
 
     repositories {
+        maven { setUrl("https://packages.jetbrains.team/maven/p/kt/dokka-test") }
         maven(url = "https://redirector.kotlinlang.org/maven/kotlin-dependencies")
         mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
         gradlePluginPortal()
