@@ -25,6 +25,11 @@ enum class PartialLinkageIssueSignificance {
         MINOR -> PartialLinkageDiagnostics.MINOR_PARTIAL_LINKAGE_ISSUE
         MAJOR -> PartialLinkageDiagnostics.MAJOR_PARTIAL_LINKAGE_ISSUE
     }
+
+    companion object {
+        fun minorIf(condition: () -> Boolean): PartialLinkageIssueSignificance =
+            if (condition()) MINOR else MAJOR
+    }
 }
 
 private object KtDefaultPartialLinkageErrorMessages : BaseDiagnosticRendererFactory() {

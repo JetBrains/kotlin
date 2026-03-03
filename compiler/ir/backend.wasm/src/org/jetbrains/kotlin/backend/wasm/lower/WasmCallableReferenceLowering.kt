@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageIssueSignificance
 import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
@@ -134,10 +135,10 @@ private fun IrRichFunctionReference.isFunInterfaceConstructorAdapter() =
 
 private fun IrRichFunctionReference.getLinkageErrorIfAny(backendContext: WasmBackendContext): String? =
     reflectionTargetLinkageError?.let { reflectionTargetLinkageError ->
-        backendContext.partialLinkageSupport.prepareLinkageError(
-            doNotLog = false,
+        backendContext.partialLinkageSupport.renderAndLogLinkageError(
             reflectionTargetLinkageError,
             this,
             PLFile.determineFileFor(invokeFunction),
+            PartialLinkageIssueSignificance.MINOR,
         )
     }

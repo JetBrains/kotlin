@@ -37,35 +37,35 @@ val IrClass.partialLinkageStatus: ClassifierPartialLinkageStatus?
 interface PartialLinkageSupportForLowerings {
     val isEnabled: Boolean
 
-    fun prepareLinkageError(
-        doNotLog: Boolean,
+    fun renderAndLogLinkageError(
         partialLinkageCase: PartialLinkageCase,
         element: IrElement,
         file: PLFile,
+        significance: PartialLinkageIssueSignificance = PartialLinkageIssueSignificance.MAJOR,
     ): String
 
     fun throwLinkageError(
         partialLinkageCase: PartialLinkageCase,
         element: IrElement,
         file: PLFile,
-        doNotLog: Boolean = false
+        significance: PartialLinkageIssueSignificance = PartialLinkageIssueSignificance.MAJOR,
     ): IrCall
 
     companion object {
         val DISABLED = object : PartialLinkageSupportForLowerings {
             override val isEnabled get() = false
-            override fun prepareLinkageError(
-                doNotLog: Boolean,
+            override fun renderAndLogLinkageError(
                 partialLinkageCase: PartialLinkageCase,
                 element: IrElement,
-                file: PLFile
+                file: PLFile,
+                significance: PartialLinkageIssueSignificance,
             ): String = error("Should not be called")
 
             override fun throwLinkageError(
                 partialLinkageCase: PartialLinkageCase,
                 element: IrElement,
                 file: PLFile,
-                doNotLog: Boolean
+                significance: PartialLinkageIssueSignificance,
             ): IrCall = error("Should not be called")
         }
     }

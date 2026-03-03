@@ -55,9 +55,9 @@ internal class PartialLinkageSupportForLoweringsImpl(
         partialLinkageCase: PartialLinkageCase,
         element: IrElement,
         file: PLFile,
-        doNotLog: Boolean
+        significance: PartialLinkageIssueSignificance,
     ): IrCall {
-        val errorMessage = prepareLinkageError(doNotLog, partialLinkageCase, element, file)
+        val errorMessage = renderAndLogLinkageError(partialLinkageCase, element, file, significance)
 
         throwExpressionsGenerated++ // Track each generated `throw` expression.
 
@@ -73,21 +73,11 @@ internal class PartialLinkageSupportForLoweringsImpl(
         }
     }
 
-    override fun prepareLinkageError(
-        doNotLog: Boolean,
+    override fun renderAndLogLinkageError(
         partialLinkageCase: PartialLinkageCase,
         element: IrElement,
         file: PLFile,
-    ): String = if (doNotLog)
-        renderLinkageError(partialLinkageCase) // Just render a message.
-    else
-        renderAndLogLinkageError(partialLinkageCase, element, file) // Render + log with the appropriate severity.
-
-    fun renderAndLogLinkageError(
-        partialLinkageCase: PartialLinkageCase,
-        element: IrElement,
-        file: PLFile,
-        significance: PartialLinkageIssueSignificance = PartialLinkageIssueSignificance.MAJOR,
+        significance: PartialLinkageIssueSignificance,
     ): String {
         val errorMessage = renderLinkageError(partialLinkageCase)
         val locationInSourceCode = file.computeLocationForOffset(element.startOffsetOfFirstDenotableIrElement())
