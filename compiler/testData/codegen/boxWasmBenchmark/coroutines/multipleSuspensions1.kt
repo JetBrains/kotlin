@@ -9,8 +9,15 @@ open class EmptyContinuation(override val context: CoroutineContext = EmptyCorou
     override fun resumeWith(result: Result<Any?>) { result.getOrThrow() }
 }
 
+fun f(a: Int): Int {
+    if (a <= 1) {
+        return a
+    }
+    return f(a - 1) + f(a - 2)
+}
+
 suspend fun suspendWithIncrement(value: Int): Int = suspendCoroutineUninterceptedOrReturn { x ->
-    x.resume(value + 1)
+    x.resume(value + f(value % 20 + 10))
     COROUTINE_SUSPENDED
 }
 
@@ -20,15 +27,15 @@ fun builder(c: suspend () -> Unit) {
 
 fun box(): String {
     var result = 0
-    
+
     builder {
         var acc = 0
-        for (i in 1..50) {
+        for (i in 1..100) {
             acc = suspendWithIncrement(acc)
         }
         result = acc
     }
-    
-    if (result != 50) return "Failed: expected 50, got $result"
+
+    if (result != 999) return "Failed: expected 50, got $result"
     return "OK"
 }

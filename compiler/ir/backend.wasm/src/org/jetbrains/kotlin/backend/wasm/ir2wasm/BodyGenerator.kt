@@ -902,12 +902,18 @@ class BodyGenerator(
                 body.buildUnreachable(location)
             }
             else -> {
+//                if (toType.erasedUpperBound.symbol.isSubtypeOfClass(backendContext.wasmSymbols.wasmCont1RefClass)) {
+////                    body.buildInstr(WasmOp.REF_CAST_NULL, location, WasmImmediate.HeapType(WasmHeapType.Simple.Cont))
+//                    val wasmToType = wasmFileCodegenContext.referenceContType(1)
+//                    body.buildRefCastNullStatic(wasmToType, location)
+//                } else {
                 val wasmToType = wasmFileCodegenContext.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol)
                 if (isRefNullCast) {
                     body.buildRefCastNullStatic(wasmToType, location)
                 } else {
                     body.buildRefCastStatic(wasmToType, location)
                 }
+//                }
             }
         }
     }
@@ -1204,6 +1210,12 @@ class BodyGenerator(
                 body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicSuspendResult), location)
             }
 
+            wasmSymbols.nullable_contref_intrinsic -> {
+                val wasmToType = wasmFileCodegenContext.referenceContType(1)
+                val type = WasmImmediate.HeapType(WasmHeapType.Type(wasmToType))
+                body.buildInstr(WasmOp.REF_NULL, location, type)
+            }
+
             wasmSymbols.resumeWithIntrinsic -> {
                 val wasmContinuation = functionContext.referenceLocal(0)
 
@@ -1443,6 +1455,8 @@ class BodyGenerator(
         }
 
         val expectedClassErased = expectedType.getRuntimeClass(irBuiltIns)
+
+        if (isBuiltInWasmRefType(actualType)) return
 
         // TYPE -> EXTERNAL -> TRUE
         if (expectedClassErased.isExternal) return

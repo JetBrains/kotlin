@@ -256,6 +256,7 @@ class WasmSymbols(
 
     val suspendIntrinsic = getInternalWasmFunction("suspendIntrinsic")
     val resumeThrowIntrinsic = getInternalWasmFunction("resumeThrowIntrinsic")
+    val nullable_contref_intrinsic = getInternalWasmFunction("nullable_contref_intrinsic")
     val resumeWithIntrinsic = getInternalWasmFunction("resumeWithIntrinsic")
     val setWasmContinuation = getInternalWasmFunction("setWasmContinuation")
     val buildResumeIntrinsicSuspendResult = getInternalWasmFunction("buildResumeIntrinsicSuspendResult")
