@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments as CommonTo
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments,
+internal abstract class CommonToolArgumentsImpl(
+  private val adapter:
+      CompilerArgumentValueAdapter<ArgumentsCommonToolArguments.CommonToolArgument<*>>? = null,
+) : ArgumentsCommonToolArguments,
     ArgumentsCommonToolArguments.Builder {
   protected val internalArguments: MutableSet<String> = mutableSetOf()
 
@@ -39,7 +42,7 @@ internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments,
   @Suppress("UNCHECKED_CAST")
   override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return optionsMap[key.id] as V
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
   }
 
   override operator fun <V> `set`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>, `value`: V) {
@@ -47,7 +50,7 @@ internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments,
     if (key.availableSinceVersion > KotlinReleaseVersion(currentKotlinVersion.major, currentKotlinVersion.minor, currentKotlinVersion.patch)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = `value`
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
   }
 
   override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap

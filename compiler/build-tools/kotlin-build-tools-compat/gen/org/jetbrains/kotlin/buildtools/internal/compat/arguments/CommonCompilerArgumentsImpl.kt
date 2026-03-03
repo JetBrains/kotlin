@@ -114,14 +114,18 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments as Comm
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
-    ArgumentsCommonCompilerArguments, ArgumentsCommonCompilerArguments.Builder {
+internal abstract class CommonCompilerArgumentsImpl(
+  private val adapter:
+      CompilerArgumentValueAdapter<ArgumentsCommonCompilerArguments.CommonCompilerArgument<*>>? = null,
+) : CommonToolArgumentsImpl(),
+    ArgumentsCommonCompilerArguments,
+    ArgumentsCommonCompilerArguments.Builder {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")
   override operator fun <V> `get`(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return optionsMap[key.id] as V
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
   }
 
   override operator fun <V> `set`(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<V>, `value`: V) {
@@ -129,7 +133,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if (key.availableSinceVersion > KotlinReleaseVersion(currentKotlinVersion.major, currentKotlinVersion.minor, currentKotlinVersion.patch)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = `value`
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
   }
 
   override operator fun contains(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<*>): Boolean = key.id in optionsMap
