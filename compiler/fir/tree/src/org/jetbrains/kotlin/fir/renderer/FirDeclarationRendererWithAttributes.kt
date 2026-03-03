@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
@@ -44,6 +45,7 @@ open class FirDeclarationRendererWithAttributes : FirDeclarationRenderer() {
         is FirCallableSymbol<*> -> callableIdAsString()
         is FirClassLikeSymbol<*> -> classId.asString()
         is FirCallableDeclaration -> symbol.callableIdAsString()
+        is KtSourceElement -> "KtSourceElement"
         else -> toString()
     }
 }

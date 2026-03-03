@@ -1,5 +1,5 @@
 FILE: companionBlocks.kt
-    public final? class C : R|kotlin/Any| {
+    public final? [FirstCompanionBlockKey=KtSourceElement] class C : R|kotlin/Any| {
         public? [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|kotlin/Any|>
         }

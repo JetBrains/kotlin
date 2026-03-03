@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +CompanionBlocksAndExtensions
 // FILE: A.java
 public class A extends K {
     public static void foo() {}

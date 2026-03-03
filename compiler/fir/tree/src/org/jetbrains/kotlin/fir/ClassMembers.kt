@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
@@ -289,3 +290,6 @@ private object LocalClassJvmTypeKey : FirDeclarationDataKey()
  */
 var FirClass.localClassJvmType: FqName? by FirDeclarationDataRegistry.data(LocalClassJvmTypeKey)
 val FirClassSymbol<*>.localClassJvmType: FqName? get() = fir.localClassJvmType
+
+private object FirstCompanionBlockKey : FirDeclarationDataKey()
+var FirRegularClass.firstCompanionBlock: KtSourceElement? by FirDeclarationDataRegistry.data(FirstCompanionBlockKey)

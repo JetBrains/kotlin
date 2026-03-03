@@ -693,6 +693,10 @@ class LightTreeRawFirDeclarationBuilder(
                         contextParameters.addContextParameters(modifiers?.contextLists, classSymbol)
                     }.also {
                         it.delegateFieldsMap = delegatedFieldsMap
+
+                        classBody?.getChildNodeByType(COMPANION_BLOCK)?.toFirSourceElement()?.let { companionBlock ->
+                            it.firstCompanionBlock = companionBlock
+                        }
                     }
                 }.also {
                     fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)

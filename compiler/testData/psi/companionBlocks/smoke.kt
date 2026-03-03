@@ -1,3 +1,4 @@
+// LANGUAGE: +CompanionBlocksAndExtensions
 class C {
     companion {}
 }

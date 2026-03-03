@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +CompanionBlocksAndExtensions
 // COMPARE_WITH_LIGHT_TREE
 // FILE: C.kt
 class C {

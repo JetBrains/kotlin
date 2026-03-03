@@ -2082,6 +2082,10 @@ open class PsiRawFirBuilder(
 
                             contextParameters.addContextParameters(classOrObject.modifierList?.contextParameterLists.orEmpty(), classSymbol)
                         }.also {
+                            @OptIn(KtExperimentalApi::class)
+                            classOrObject.companionBlocks.firstOrNull()?.let { companionBlock ->
+                                it.firstCompanionBlock = companionBlock.toFirSourceElement()
+                            }
                             it.delegateFieldsMap = delegatedFieldsMap
                         }
                     }.also {
