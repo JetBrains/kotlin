@@ -80,7 +80,7 @@
 /.junie/ "Kotlin" "Kotlin Analysis API" "Kotlin Build Infrastructure"
 
 /analysis/ "Kotlin Analysis API"
-/analysis/analysis-api-fir/gen/ "Kotlin Frontend"
+/analysis/analysis-api-fir/gen/ "Kotlin Analysis API" "Kotlin Frontend"
 
 # UNKNOWN: /annotations/
 
