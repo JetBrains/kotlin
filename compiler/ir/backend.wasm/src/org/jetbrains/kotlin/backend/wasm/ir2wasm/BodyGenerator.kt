@@ -902,18 +902,12 @@ class BodyGenerator(
                 body.buildUnreachable(location)
             }
             else -> {
-//                if (toType.erasedUpperBound.symbol.isSubtypeOfClass(backendContext.wasmSymbols.wasmCont1RefClass)) {
-////                    body.buildInstr(WasmOp.REF_CAST_NULL, location, WasmImmediate.HeapType(WasmHeapType.Simple.Cont))
-//                    val wasmToType = wasmFileCodegenContext.referenceContType(1)
-//                    body.buildRefCastNullStatic(wasmToType, location)
-//                } else {
                 val wasmToType = wasmFileCodegenContext.referenceGcType(toType.getRuntimeClass(irBuiltIns).symbol)
                 if (isRefNullCast) {
                     body.buildRefCastNullStatic(wasmToType, location)
                 } else {
                     body.buildRefCastStatic(wasmToType, location)
                 }
-//                }
             }
         }
     }
