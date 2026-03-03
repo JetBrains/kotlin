@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.testing
 
 object XcodeProjectSerializationFixtures {
+    /**
+     * Created from "/usr/bin/plutil -convert json /path/to/project.pbxproj" from a wizard Xcode project
+     */
     val sampleXcodeProjectWithEmbedAndSignIntegration = """
         {
           "classes": {},
