@@ -52,7 +52,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
     )
 
     val objcRetainAutoreleasedReturnValue = llvm.externalNativeRuntimeFunction(
-            "llvm.objc.retainAutoreleasedReturnValue",
+            OBJC_RETAIN_AUTORELEASED_RETURN_VALUE,
             LlvmRetType(llvm.pointerType, isObjectType = false),
             listOf(LlvmParamType(llvm.pointerType)),
             listOf(LlvmFunctionAttribute.NoUnwind)
@@ -78,6 +78,8 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
     fun msgSender(functionType: LlvmFunctionSignature): LlvmCallable =
             LlvmCallable(objcMsgSend.llvm, functionType)
 }
+
+internal const val OBJC_RETAIN_AUTORELEASED_RETURN_VALUE = "llvm.objc.retainAutoreleasedReturnValue"
 
 internal fun FunctionGenerationContext.genObjCSelector(selector: String): LLVMValueRef {
     val selectorRef = codegen.objCDataGenerator!!.genSelectorRef(selector).llvm

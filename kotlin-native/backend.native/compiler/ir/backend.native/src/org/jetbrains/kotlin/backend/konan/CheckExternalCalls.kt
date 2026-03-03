@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.objc.OBJC_RETAIN_AUTORELEASED_RETURN_VALUE
 import org.jetbrains.kotlin.library.uniqueName
 
 private fun LLVMValueRef.isLLVMBuiltin(): Boolean {
@@ -96,7 +97,34 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
         for (call in calls) {
             val calleeInfo = call.getPossiblyExternalCalledFunction() ?: continue
             if (calleeInfo.name != null && isGoodFunction(calleeInfo.name)) continue
-            LLVMPositionBuilderBefore(builder, call)
+            val insertionPoint = if (calleeInfo.name == OBJC_RETAIN_AUTORELEASED_RETURN_VALUE) {
+                /*
+                We are about to generate some code around this call.
+                Generating it before the call is harmful:
+                the retainAutoreleasedReturnValue call is supposed to go right after another call,
+                and the latter detects the former and eliminates the matching autorelease operation.
+                Inserting anything in between would break this optimization.
+                So, here we go an alternative way: generate the instrumentation after the call and not before.
+                It is not perfect, but it is safe enough for this particular case, and the easiest option here.
+
+                For simplicity, we support handling here only 'call' instructions and not 'invoke'.
+                (invoke instructions are intertwined with basic blocks, so getting the next instruction requires more code).
+                The function doesn't throw, so nobody should generate "invokes" to it anyway.
+                */
+                check(LLVMIsACallInst(call) != null) { "Expected a call instruction, not invoke: ${llvm2string(call)}" }
+                val nextInstruction = LLVMGetNextInstruction(call)
+                check(nextInstruction != null) { "Expected a next instruction after ${llvm2string(call)}" }
+                nextInstruction
+            } else {
+                /*
+                Generate the instrumentation before the call. It is the safest option. For example,
+                - We check before calling, so we don't call the function if it is not allowed.
+                - For Objective-C method calls, the object is still alive, so we can safely get the method implementation.
+                  (The method itself may be 'release', which might destroy the object).
+                 */
+                call
+            }
+            LLVMPositionBuilderBefore(builder, insertionPoint)
             LLVMBuilderResetDebugLocation(builder)
             val callSiteDescription: String
             val calledName: String?
@@ -170,6 +198,9 @@ internal fun checkLlvmModuleExternalCalls(generationState: NativeGenerationState
 
     val ignoredFunctions = (llvm.runtimeAnnotationMap["no_external_calls_check"] ?: emptyList())
 
+    // Note: the code for `goodFunctions` assumes that runtime LLVM IR is included in the current module,
+    // which is true only when the compiler caches are disabled.
+    // But this is anyway only an optimization, so it is safe to use the empty list as a fallback.
     val goodFunctions = staticData.getGlobal("Kotlin_callsCheckerGoodFunctionNames")?.getInitializer()?.run {
         getOperands(this).map {
             val global = if (generationState.config.useLlvmOpaquePointers) {
