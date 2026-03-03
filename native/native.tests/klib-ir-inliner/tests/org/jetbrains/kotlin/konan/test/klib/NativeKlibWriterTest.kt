@@ -41,10 +41,9 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
         }
     }
 
-    context(properties: Properties)
-    override fun customizeManifestForMockKlib(parameters: NewNativeKlibWriterParameters) {
-        super.customizeManifestForMockKlib(parameters)
-        properties[KLIB_PROPERTY_NATIVE_TARGETS] = parameters.targetsForManifest?.joinToString(" ") { it.visibleName }
+    override fun Properties.customizeManifestForMockKlib(parameters: NewNativeKlibWriterParameters) {
+        // No-op super call since it's Unit in the base class
+        this[KLIB_PROPERTY_NATIVE_TARGETS] = parameters.targetsForManifest?.joinToString(" ") { it.visibleName }
             ?: parameters.target.visibleName
     }
 

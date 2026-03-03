@@ -158,11 +158,9 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
         return createNewKlibDir().also { unzippedDir -> this.unzipTo(unzippedDir) }
     }
 
-    context(dsl: KlibMockDSL)
-    protected open fun customizeMockKlib(parameters: P) = Unit
+    protected open fun KlibMockDSL.customizeMockKlib(parameters: P) = Unit
 
-    context(properties: Properties)
-    protected open fun customizeManifestForMockKlib(parameters: P) = Unit
+    protected open fun Properties.customizeManifestForMockKlib(parameters: P) = Unit
 
     protected fun createNewKlibDir(): File = tmpDir.resolve(UUID.randomUUID().toString()).apply(File::mkdirs)
 

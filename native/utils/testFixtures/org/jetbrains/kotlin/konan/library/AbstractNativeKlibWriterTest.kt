@@ -87,23 +87,21 @@ abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters:
         }
     }
 
-    context(dsl: KlibMockDSL)
-    override fun customizeMockKlib(parameters: P) {
-        super.customizeMockKlib(parameters)
-        dsl.target(parameters.target) {
+    override fun KlibMockDSL.customizeMockKlib(parameters: P) {
+        // No-op super call since it's Unit in the base class
+        target(parameters.target) {
             nativeIncludedBinaries(parameters.nativeIncludedBinaryFiles)
             bitcode(parameters.bitcodeFiles)
         }
     }
 
-    context(properties: Properties)
-    override fun customizeManifestForMockKlib(parameters: P) {
-        super.customizeManifestForMockKlib(parameters)
-        parameters.shortName?.let { shortName -> properties[KLIB_PROPERTY_SHORT_NAME] = shortName }
+    override fun Properties.customizeManifestForMockKlib(parameters: P) {
+        // No-op super call since it's Unit in the base class
+        parameters.shortName?.let { shortName -> this[KLIB_PROPERTY_SHORT_NAME] = shortName }
         if (parameters.dependencies.isNotEmpty()) {
-            properties[KLIB_PROPERTY_DEPENDS] = parameters.dependencies.joinToString(" ") { it.uniqueName }
+            this[KLIB_PROPERTY_DEPENDS] = parameters.dependencies.joinToString(" ") { it.uniqueName }
         }
-        properties[KLIB_PROPERTY_NATIVE_TARGETS] = parameters.target.visibleName
+        this[KLIB_PROPERTY_NATIVE_TARGETS] = parameters.target.visibleName
     }
 
     protected fun mockBinaryFiles(count: Int, prefix: String, extension: String): List<BinaryFile> {
