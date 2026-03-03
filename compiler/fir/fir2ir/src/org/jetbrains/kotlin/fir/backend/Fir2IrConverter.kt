@@ -9,7 +9,6 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
-import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.backend.common.fileForTopLevelPluginDeclarations
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
-import org.jetbrains.kotlin.fir.java.javaElementFinder
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
@@ -40,21 +38,13 @@ import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.isNothingOrNullableNothing
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImplWithShape
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
-import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
-import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
@@ -63,8 +53,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fileOrNull
-import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtFile
@@ -614,71 +602,6 @@ class Fir2IrConverter(
     }
 
     companion object {
-        // TODO: move to compiler/fir/entrypoint/src/org/jetbrains/kotlin/fir/pipeline/convertToIr.kt (KT-64201)
-        fun evaluateConstants(irModuleFragment: IrModuleFragment, components: Fir2IrComponents, irBuiltIns: IrBuiltIns) {
-            val fir2IrConfiguration = components.configuration
-            val firModuleDescriptor = irModuleFragment.descriptor as? FirModuleDescriptor
-            val targetPlatform = firModuleDescriptor?.platform
-            val languageVersionSettings = firModuleDescriptor?.session?.languageVersionSettings ?: return
-            val intrinsicConstEvaluation = languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
-
-            val configuration = IrInterpreterConfiguration(
-                platform = targetPlatform,
-                printOnlyExceptionMessage = true,
-            )
-
-            val interpreter = IrInterpreter(IrInterpreterEnvironment(irBuiltIns, configuration))
-            val mode = if (intrinsicConstEvaluation) EvaluationMode.OnlyIntrinsicConst() else EvaluationMode.OnlyBuiltins
-
-            components.session.javaElementFinder?.propertyEvaluator = { it.evaluate(components, interpreter, mode) }
-
-            val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-                fir2IrConfiguration.diagnosticReporter, languageVersionSettings
-            )
-            irModuleFragment.files.forEach {
-                it.transformConst(
-                    it,
-                    interpreter,
-                    mode,
-                    fir2IrConfiguration.evaluatedConstTracker,
-                    fir2IrConfiguration.inlineConstTracker,
-                    onError = { irFile, element, error ->
-                        // We are using exactly this overload of `at` to eliminate differences between PSI and LightTree render
-                        ktDiagnosticReporter.at(element.sourceElement(), element, irFile)
-                            .report(CommonBackendErrors.EVALUATION_ERROR, error.description)
-                    }
-                )
-            }
-        }
-
-        private fun FirProperty.evaluate(components: Fir2IrComponents, interpreter: IrInterpreter, mode: EvaluationMode): String? {
-            @OptIn(UnsafeDuringIrConstructionAPI::class)
-            val irProperty = components.declarationStorage.getCachedIrPropertySymbol(
-                property = this, fakeOverrideOwnerLookupTag = null
-            )?.owner ?: return null
-
-            fun IrProperty.tryToGetConst(): IrConst? = (backingField?.initializer?.expression as? IrConst)
-            fun IrConst.asString(): String {
-                return when (val constVal = value) {
-                    is Char -> constVal.code.toString()
-                    is String -> "\"$constVal\""
-                    else -> constVal.toString()
-                }
-            }
-            irProperty.tryToGetConst()?.let { return it.asString() }
-
-            val irFile = irProperty.fileOrNull ?: return null
-            // Note: can't evaluate all expressions in given file, because we can accidentally get recursive processing and
-            // second call of `Fir2IrLazyField.initializer` will return null
-            val evaluated = irProperty.transformConst(
-                irFile, interpreter, mode,
-                evaluatedConstTracker = components.configuration.evaluatedConstTracker,
-                inlineConstTracker = components.configuration.inlineConstTracker,
-            )
-
-            return (evaluated as? IrProperty)?.tryToGetConst()?.asString()
-        }
-
         fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): IrModuleFragmentImpl {
             val session = components.session
 

@@ -270,8 +270,6 @@ private class Fir2IrPipeline(
 
         checkUnboundSymbols()
 
-        evaluateConstants()
-
         val actualizationResult = irActualizer?.runChecksAndFinalize(expectActualMap)
 
         fakeOverrideResolver.cacheFakeOverridesOfAllClasses(mainIrFragment)
@@ -368,10 +366,6 @@ private class Fir2IrPipeline(
             fir2IrConfiguration.messageCollector,
             IrVerificationMode.ERROR,
         )
-    }
-
-    private fun Fir2IrConversionResult.evaluateConstants() {
-        Fir2IrConverter.evaluateConstants(mainIrFragment, componentsStorage, irBuiltIns)
     }
 
     // ------------------------------------------------------ f/o building helpers ------------------------------------------------------
