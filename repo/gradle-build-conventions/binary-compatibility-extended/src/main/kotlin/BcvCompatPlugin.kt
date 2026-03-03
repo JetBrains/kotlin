@@ -124,6 +124,7 @@ constructor(
                             )
                         }
                     )
+                    add(project.dependencies.create("org.ow2.asm:asm-tree:9.7"))
                 }
             }
 
