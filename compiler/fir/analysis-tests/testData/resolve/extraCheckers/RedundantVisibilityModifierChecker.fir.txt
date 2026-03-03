@@ -110,7 +110,7 @@ FILE: RedundantVisibilityModifierChecker.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<F>|
-            public get(): R|kotlin/enums/EnumEntries<F>|
+            public static get(): R|kotlin/enums/EnumEntries<F>|
 
     }
     public sealed class G : R|kotlin/Any| {

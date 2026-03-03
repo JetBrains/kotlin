@@ -71,7 +71,7 @@ FILE: enums3.kt
                 }
 
                 public final static [ContainingClassKey=Planet] val entries: R|kotlin/enums/EnumEntries<<local>/Planet>|
-                    public get(): R|kotlin/enums/EnumEntries<<local>/Planet>|
+                    public static get(): R|kotlin/enums/EnumEntries<<local>/Planet>|
 
             }
 

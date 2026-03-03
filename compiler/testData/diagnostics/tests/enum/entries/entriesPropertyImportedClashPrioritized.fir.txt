@@ -23,7 +23,7 @@ FILE: entriesPropertyImportedClashPrioritized.fir.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<foo/A>|
-            public get(): R|kotlin/enums/EnumEntries<foo/A>|
+            public static get(): R|kotlin/enums/EnumEntries<foo/A>|
 
     }
     public final fun test(): R|kotlin/Unit| {

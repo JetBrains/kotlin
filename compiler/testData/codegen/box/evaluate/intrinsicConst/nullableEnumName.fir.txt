@@ -15,7 +15,7 @@ FILE: nullableEnumName.kt
         }
 
         public final static [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public get(): R|kotlin/enums/EnumEntries<EnumClass>|
+            public static get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
     }
     public final val shouldNotBeEvaluated1: R|kotlin/String| = Q|EnumClass|.R|/EnumClass.OK|?.{ $subj$.R|SubstitutionOverride</EnumClass.name: R|kotlin/String|>| } ?: String()

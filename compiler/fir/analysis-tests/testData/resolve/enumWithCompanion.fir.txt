@@ -32,6 +32,6 @@ FILE: enumWithCompanion.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<EC>|
-            public get(): R|kotlin/enums/EnumEntries<EC>|
+            public static get(): R|kotlin/enums/EnumEntries<EC>|
 
     }

@@ -14,7 +14,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enums.kt
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Order] val entries: R|kotlin/enums/EnumEntries<Order>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Order>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Order>|
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class Planet : R|kotlin/Enum<Planet>| {
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enums.kt
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Planet] val entries: R|kotlin/enums/EnumEntries<Planet>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Planet>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Planet>|
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
@@ -122,6 +122,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enums.kt
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PseudoInsn] val entries: R|kotlin/enums/EnumEntries<PseudoInsn>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<PseudoInsn>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<PseudoInsn>|
 
     }

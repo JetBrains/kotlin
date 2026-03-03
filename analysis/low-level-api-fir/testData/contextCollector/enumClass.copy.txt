@@ -64,6 +64,6 @@ FILE: [ResolvedTo(RAW_FIR)] enumClass.kt
         }
 
         public final static [ResolvedTo(RAW_FIR)] val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+            public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
 
     }

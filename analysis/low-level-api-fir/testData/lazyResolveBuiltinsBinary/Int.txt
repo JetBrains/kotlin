@@ -2541,7 +2541,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DeprecationLevel] val entries: R|kotlin/enums/EnumEntries<kotlin/DeprecationLevel>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<kotlin/DeprecationLevel>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<kotlin/DeprecationLevel>|
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>| {
@@ -3588,7 +3588,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
             }
 
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Level] val entries: R|kotlin/enums/EnumEntries<kotlin/RequiresOptIn.Level>|
-                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<kotlin/RequiresOptIn.Level>|
+                public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<kotlin/RequiresOptIn.Level>|
 
         }
 

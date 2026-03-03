@@ -13,7 +13,7 @@ FILE: differentTrivialExpectedTypePositions.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<MyEnum>|
-            public get(): R|kotlin/enums/EnumEntries<MyEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum>|
 
     }
     public final val L: R|MyEnum| = Q|MyEnum|.R|/MyEnum.Y|

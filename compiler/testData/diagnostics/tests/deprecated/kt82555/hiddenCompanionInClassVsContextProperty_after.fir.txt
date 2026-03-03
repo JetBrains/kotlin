@@ -31,7 +31,7 @@ FILE: hiddenCompanionInClassVsContextProperty_after.kt
             }
 
             public final static val entries: R|kotlin/enums/EnumEntries<Outer.Nested>|
-                public get(): R|kotlin/enums/EnumEntries<Outer.Nested>|
+                public static get(): R|kotlin/enums/EnumEntries<Outer.Nested>|
 
         }
 

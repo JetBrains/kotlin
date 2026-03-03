@@ -28,7 +28,7 @@ FILE: exposedPropertyType.kt
             }
 
             public final static val entries: R|kotlin/enums/EnumEntries<A.AInnerProtectedEnum>|
-                public get(): R|kotlin/enums/EnumEntries<A.AInnerProtectedEnum>|
+                public static get(): R|kotlin/enums/EnumEntries<A.AInnerProtectedEnum>|
 
         }
 

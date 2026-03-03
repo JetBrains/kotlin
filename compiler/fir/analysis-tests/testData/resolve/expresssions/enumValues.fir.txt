@@ -18,7 +18,7 @@ FILE: enumValues.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<MyEnum>|
-            public get(): R|kotlin/enums/EnumEntries<MyEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum>|
 
     }
     public final fun foo(): R|kotlin/Unit| {

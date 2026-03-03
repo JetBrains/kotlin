@@ -34,7 +34,7 @@ FILE: annotation.kt
         }
 
         public final static [ContainingClassKey=My] val entries: R|kotlin/enums/EnumEntries<My>|
-            public get(): R|kotlin/enums/EnumEntries<My>|
+            public static get(): R|kotlin/enums/EnumEntries<My>|
 
     }
     @base() public? final? fun foo(@base() y: @base() Int): @base() Int { LAZY_BLOCK }
@@ -78,7 +78,7 @@ FILE: annotation.kt
         }
 
         public final static [ContainingClassKey=MyDerived] val entries: R|kotlin/enums/EnumEntries<MyDerived>|
-            public get(): R|kotlin/enums/EnumEntries<MyDerived>|
+            public static get(): R|kotlin/enums/EnumEntries<MyDerived>|
 
     }
     @derived(LAZY_EXPRESSION) public? final? fun fooDerived(@derived(LAZY_EXPRESSION) y: @derived(LAZY_EXPRESSION) Int): @derived(LAZY_EXPRESSION) Int { LAZY_BLOCK }

@@ -27,7 +27,7 @@ public final annotation class Ann : R|kotlin/Annotation| {
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<test/MyRequiresOptIn.MyLevel>|
-            public get(): R|kotlin/enums/EnumEntries<test/MyRequiresOptIn.MyLevel>|
+            public static get(): R|kotlin/enums/EnumEntries<test/MyRequiresOptIn.MyLevel>|
 
     }
 

@@ -14,7 +14,7 @@ FILE: Some.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<some/Some>|
-            public get(): R|kotlin/enums/EnumEntries<some/Some>|
+            public static get(): R|kotlin/enums/EnumEntries<some/Some>|
 
     }
 FILE: Some.kt
@@ -43,7 +43,7 @@ FILE: Some.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<some2/Some>|
-            public get(): R|kotlin/enums/EnumEntries<some2/Some>|
+            public static get(): R|kotlin/enums/EnumEntries<some2/Some>|
 
     }
 FILE: main.kt

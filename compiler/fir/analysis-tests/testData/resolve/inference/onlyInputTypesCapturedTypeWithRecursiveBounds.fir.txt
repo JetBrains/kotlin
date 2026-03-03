@@ -14,7 +14,7 @@ FILE: onlyInputTypesCapturedTypeWithRecursiveBounds.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<MyEnum>|
-            public get(): R|kotlin/enums/EnumEntries<MyEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum>|
 
     }
     public open class Foo<P : R|kotlin/Enum<P>|, R|I|> : R|kotlin/Any| {

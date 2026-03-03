@@ -14,7 +14,7 @@ FILE: exhaustiveness_enum.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Enum>|
-            public get(): R|kotlin/enums/EnumEntries<Enum>|
+            public static get(): R|kotlin/enums/EnumEntries<Enum>|
 
     }
     public final fun test_1(e: R|Enum|): R|kotlin/Unit| {

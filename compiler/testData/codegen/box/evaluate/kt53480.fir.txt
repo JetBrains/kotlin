@@ -15,7 +15,7 @@ FILE: Main.kt
         }
 
         public final static [ContainingClassKey=A] val entries: R|kotlin/enums/EnumEntries<A>|
-            public get(): R|kotlin/enums/EnumEntries<A>|
+            public static get(): R|kotlin/enums/EnumEntries<A>|
 
     }
     public final fun box(): R|kotlin/String| {

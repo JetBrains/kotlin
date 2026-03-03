@@ -35,7 +35,7 @@ Tower Data Context:
             Properties:
                 FirEnumEntrySymbol public final static enum entry ENTRY: R|pack/MyEnumClass|
                 FirRegularPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<pack/MyEnumClass>|
-                    public get(): R|kotlin/enums/EnumEntries<pack/MyEnumClass>|
+                    public static get(): R|kotlin/enums/EnumEntries<pack/MyEnumClass>|
 
 FILE: [ResolvedTo(IMPORTS)] enumEntryAnnotationArgument.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -79,6 +79,6 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryAnnotationArgument.kt
         }
 
         public final static [ResolvedTo(STATUS)] val entries: R|kotlin/enums/EnumEntries<pack/MyEnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<pack/MyEnumClass>|
+            public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<pack/MyEnumClass>|
 
     }

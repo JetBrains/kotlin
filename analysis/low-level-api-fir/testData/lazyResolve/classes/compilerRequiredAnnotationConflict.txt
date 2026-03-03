@@ -25,7 +25,7 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -124,7 +124,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -223,7 +223,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -289,7 +289,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -322,7 +322,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -355,7 +355,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -396,7 +396,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -437,7 +437,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 
@@ -478,7 +478,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationConflict.kt
             }
 
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
-                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
 
         }
 

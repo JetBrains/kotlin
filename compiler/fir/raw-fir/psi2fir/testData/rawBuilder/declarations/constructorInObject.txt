@@ -31,7 +31,7 @@ FILE: constructorInObject.kt
         }
 
         public final static [ContainingClassKey=B] val entries: R|kotlin/enums/EnumEntries<B>|
-            public get(): R|kotlin/enums/EnumEntries<B>|
+            public static get(): R|kotlin/enums/EnumEntries<B>|
 
     }
     public final? class C : R|kotlin/Any| {

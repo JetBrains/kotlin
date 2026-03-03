@@ -17,7 +17,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -62,7 +62,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -107,7 +107,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -242,7 +242,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -287,7 +287,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -332,7 +332,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -377,7 +377,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -422,7 +422,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -467,7 +467,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -512,7 +512,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -557,7 +557,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -603,7 +603,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -629,4 +629,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationParametersScript.kts
             }
 
         }
-

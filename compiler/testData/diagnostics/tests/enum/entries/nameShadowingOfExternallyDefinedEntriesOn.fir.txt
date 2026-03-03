@@ -20,7 +20,7 @@ FILE: nameShadowingOfExternallyDefinedEntriesOn.fir.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<pckg/E>|
-            public get(): R|kotlin/enums/EnumEntries<pckg/E>|
+            public static get(): R|kotlin/enums/EnumEntries<pckg/E>|
 
     }
     public final class A : R|kotlin/Any| {
@@ -67,7 +67,7 @@ FILE: nameShadowingOfExternallyDefinedEntriesOn.fir.kt
             }
 
             public final static val entries: R|kotlin/enums/EnumEntries<pckg/A.E>|
-                public get(): R|kotlin/enums/EnumEntries<pckg/A.E>|
+                public static get(): R|kotlin/enums/EnumEntries<pckg/A.E>|
 
         }
 

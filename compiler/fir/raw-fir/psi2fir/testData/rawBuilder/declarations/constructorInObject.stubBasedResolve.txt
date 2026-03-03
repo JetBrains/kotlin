@@ -20,7 +20,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] constructorInObject.kt
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] val entries: R|kotlin/enums/EnumEntries<B>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<B>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<B>|
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] class C : R|kotlin/Any| {

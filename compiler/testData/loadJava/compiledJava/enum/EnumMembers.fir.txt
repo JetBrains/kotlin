@@ -14,6 +14,6 @@ public final enum class EnumMembers : R|kotlin/Enum<test/EnumMembers!>| {
     }
 
     public final static val entries: R|kotlin/enums/EnumEntries<test/EnumMembers>|
-        public get(): R|kotlin/enums/EnumEntries<test/EnumMembers>|
+        public static get(): R|kotlin/enums/EnumEntries<test/EnumMembers>|
 
 }

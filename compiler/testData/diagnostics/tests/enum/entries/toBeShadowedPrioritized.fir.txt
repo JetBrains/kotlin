@@ -18,7 +18,7 @@ FILE: toBeShadowedPrioritized.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<E05>|
-            public get(): R|kotlin/enums/EnumEntries<E05>|
+            public static get(): R|kotlin/enums/EnumEntries<E05>|
 
     }
     public final fun test05(): R|kotlin/Unit| {
@@ -43,7 +43,7 @@ FILE: toBeShadowedPrioritized.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<E07>|
-            public get(): R|kotlin/enums/EnumEntries<E07>|
+            public static get(): R|kotlin/enums/EnumEntries<E07>|
 
     }
     public final enum class E071 : R|kotlin/Enum<E071>| {
@@ -59,7 +59,7 @@ FILE: toBeShadowedPrioritized.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<E071>|
-            public get(): R|kotlin/enums/EnumEntries<E071>|
+            public static get(): R|kotlin/enums/EnumEntries<E071>|
 
     }
     public final enum class E09 : R|kotlin/Enum<E09>| {
@@ -81,7 +81,7 @@ FILE: toBeShadowedPrioritized.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<E09>|
-            public get(): R|kotlin/enums/EnumEntries<E09>|
+            public static get(): R|kotlin/enums/EnumEntries<E09>|
 
     }
     public abstract interface I01 : R|kotlin/Any| {
@@ -107,6 +107,6 @@ FILE: toBeShadowedPrioritized.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<E10>|
-            public get(): R|kotlin/enums/EnumEntries<E10>|
+            public static get(): R|kotlin/enums/EnumEntries<E10>|
 
     }

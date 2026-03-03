@@ -14,7 +14,7 @@ FILE: enums.kt
         }
 
         public final static [ContainingClassKey=Order] val entries: R|kotlin/enums/EnumEntries<Order>|
-            public get(): R|kotlin/enums/EnumEntries<Order>|
+            public static get(): R|kotlin/enums/EnumEntries<Order>|
 
     }
     public final? enum class Planet : R|kotlin/Enum<Planet>| {
@@ -83,7 +83,7 @@ FILE: enums.kt
         }
 
         public final static [ContainingClassKey=Planet] val entries: R|kotlin/enums/EnumEntries<Planet>|
-            public get(): R|kotlin/enums/EnumEntries<Planet>|
+            public static get(): R|kotlin/enums/EnumEntries<Planet>|
 
     }
     public final? enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
@@ -153,6 +153,6 @@ FILE: enums.kt
         }
 
         public final static [ContainingClassKey=PseudoInsn] val entries: R|kotlin/enums/EnumEntries<PseudoInsn>|
-            public get(): R|kotlin/enums/EnumEntries<PseudoInsn>|
+            public static get(): R|kotlin/enums/EnumEntries<PseudoInsn>|
 
     }

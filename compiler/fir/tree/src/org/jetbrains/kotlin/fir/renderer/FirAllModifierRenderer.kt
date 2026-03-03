@@ -97,6 +97,10 @@ class FirAllModifierRenderer : FirModifierRenderer() {
 
     override fun renderModifiers(propertyAccessor: FirPropertyAccessor) {
         renderModifier(propertyAccessor.visibility.asString())
+
+        if (propertyAccessor.isStatic) {
+            renderModifier("static")
+        }
         if (propertyAccessor.isInline) {
             renderModifier("inline")
         }

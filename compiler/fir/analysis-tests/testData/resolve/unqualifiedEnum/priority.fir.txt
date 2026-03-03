@@ -15,7 +15,7 @@ FILE: first.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<first/First>|
-            public get(): R|kotlin/enums/EnumEntries<first/First>|
+            public static get(): R|kotlin/enums/EnumEntries<first/First>|
 
     }
     public final val THREE: R|first/First| = Q|first/First|.R|first/First.ONE|
@@ -37,7 +37,7 @@ FILE: second.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<second/Second>|
-            public get(): R|kotlin/enums/EnumEntries<second/Second>|
+            public static get(): R|kotlin/enums/EnumEntries<second/Second>|
 
     }
     public final val ONE: R|second/Second| = Q|second/Second|.R|second/Second.THREE|

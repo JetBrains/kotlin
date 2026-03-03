@@ -8,6 +8,6 @@ public final enum class EnumWithPrimitiveConstructorParameter : R|kotlin/Enum<te
     }
 
     public final static val entries: R|kotlin/enums/EnumEntries<test/EnumWithPrimitiveConstructorParameter>|
-        public get(): R|kotlin/enums/EnumEntries<test/EnumWithPrimitiveConstructorParameter>|
+        public static get(): R|kotlin/enums/EnumEntries<test/EnumWithPrimitiveConstructorParameter>|
 
 }

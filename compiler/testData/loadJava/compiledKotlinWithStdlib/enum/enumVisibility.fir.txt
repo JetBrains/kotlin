@@ -9,7 +9,7 @@ internal final enum class In : R|kotlin/Enum<test/In>| {
     }
 
     public final static val entries: R|kotlin/enums/EnumEntries<test/In>|
-        public get(): R|kotlin/enums/EnumEntries<test/In>|
+        public static get(): R|kotlin/enums/EnumEntries<test/In>|
 
 }
 
@@ -24,7 +24,7 @@ private final enum class Pr : R|kotlin/Enum<test/Pr>| {
     }
 
     public final static val entries: R|kotlin/enums/EnumEntries<test/Pr>|
-        public get(): R|kotlin/enums/EnumEntries<test/Pr>|
+        public static get(): R|kotlin/enums/EnumEntries<test/Pr>|
 
 }
 
@@ -39,6 +39,6 @@ public final enum class Pu : R|kotlin/Enum<test/Pu>| {
     }
 
     public final static val entries: R|kotlin/enums/EnumEntries<test/Pu>|
-        public get(): R|kotlin/enums/EnumEntries<test/Pu>|
+        public static get(): R|kotlin/enums/EnumEntries<test/Pu>|
 
 }

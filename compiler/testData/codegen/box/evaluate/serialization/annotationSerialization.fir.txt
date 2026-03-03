@@ -52,7 +52,7 @@ FILE: lib.kt
         }
 
         public final static [ContainingClassKey=SomeEnum] val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
-            public get(): R|kotlin/enums/EnumEntries<SomeEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<SomeEnum>|
 
     }
     field:@FIELD:R|BinaryAnnotation|(str = <strcat>(String(Str), String(ing)) [evaluated = String(String)]) public final var x: R|kotlin/Int| = Int(5)

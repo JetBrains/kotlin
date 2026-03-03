@@ -18,7 +18,7 @@ FILE: typeOfAnnotationMember.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Enum>|
-            public get(): R|kotlin/enums/EnumEntries<Enum>|
+            public static get(): R|kotlin/enums/EnumEntries<Enum>|
 
     }
     public final annotation class Ann1 : R|kotlin/Annotation| {

@@ -23,6 +23,6 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] danglingModifierInsideEnumEntry.kt
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
 
     }

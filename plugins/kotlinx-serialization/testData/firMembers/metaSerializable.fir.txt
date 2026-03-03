@@ -367,7 +367,7 @@ FILE: metaSerializable.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<TestEnum>|
-            public get(): R|kotlin/enums/EnumEntries<TestEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<TestEnum>|
 
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<TestEnum>|

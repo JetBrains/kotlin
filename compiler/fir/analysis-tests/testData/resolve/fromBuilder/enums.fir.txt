@@ -14,7 +14,7 @@ FILE: enums.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Order>|
-            public get(): R|kotlin/enums/EnumEntries<Order>|
+            public static get(): R|kotlin/enums/EnumEntries<Order>|
 
     }
     public final enum class Planet : R|kotlin/Enum<Planet>| {
@@ -83,6 +83,6 @@ FILE: enums.kt
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<Planet>|
-            public get(): R|kotlin/enums/EnumEntries<Planet>|
+            public static get(): R|kotlin/enums/EnumEntries<Planet>|
 
     }

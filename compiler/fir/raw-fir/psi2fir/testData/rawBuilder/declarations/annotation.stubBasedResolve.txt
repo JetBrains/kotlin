@@ -46,7 +46,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation.kt
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] val entries: R|kotlin/enums/EnumEntries<My>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<My>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<My>|
 
     }
     @R|base|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|base|[Types]() y: R|@R|base|()  kotlin/Int|): R|@R|base|()  kotlin/Int| { LAZY_BLOCK }
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation.kt
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] val entries: R|kotlin/enums/EnumEntries<MyDerived>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyDerived>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyDerived>|
 
     }
     @R|derived|[Types](x = Int(1) [evaluated = Int(1)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun fooDerived([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|derived|[Types](x = Int(1) [evaluated = Int(1)]) y: R|@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int|): R|@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int| { LAZY_BLOCK }

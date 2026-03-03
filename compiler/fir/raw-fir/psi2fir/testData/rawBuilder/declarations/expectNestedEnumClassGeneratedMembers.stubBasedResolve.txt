@@ -10,7 +10,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] expectNestedEnumClassGeneratedMembers.kt
             }
 
             public final expect static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedEnum] val entries: R|kotlin/enums/EnumEntries<Outer.NestedEnum>|
-                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Outer.NestedEnum>|
+                public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Outer.NestedEnum>|
 
         }
 
