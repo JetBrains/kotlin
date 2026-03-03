@@ -10,10 +10,11 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.Opaque
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCLocalSwiftPackageReference
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxProject
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializeXcodeProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.serializeXcodeProject
 import org.jetbrains.kotlin.gradle.testing.XcodeProjectSerializationFixtures
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.assertIsInstance
 import java.io.ByteArrayOutputStream
 import kotlin.test.Test
@@ -36,8 +37,8 @@ class XcodeProjectSerializationTests {
         )
 
         assertEquals(
-            originalJson,
-            reserializedJson,
+            originalJson.prettyPrinted,
+            reserializedJson.prettyPrinted,
         )
     }
 
@@ -48,6 +49,7 @@ class XcodeProjectSerializationTests {
               "classes": {},
               "unknownProperty": 1,
               "archiveVersion": "1",
+              "rootObject" : "1",
               "objects": {
                 "1": {
                   "isa": "UnknownIsa",
@@ -78,6 +80,7 @@ class XcodeProjectSerializationTests {
               "classes": {},
               "unknownProperty": 1,
               "archiveVersion": "1",
+              "rootObject" : "1",
               "objects": {
                 "1": {
                   "isa": "UnknownIsa",
@@ -105,6 +108,7 @@ class XcodeProjectSerializationTests {
             {
               "classes": {},
               "archiveVersion": "1",
+              "rootObject" : "1",
               "objects": {
                 "2": {
                   "isa": "XCLocalSwiftPackageReference",
@@ -135,6 +139,7 @@ class XcodeProjectSerializationTests {
             {
               "classes": {},
               "archiveVersion": "1",
+              "rootObject" : "1",
               "objects": {
                 "2": {
                   "isa": "XCLocalSwiftPackageReference",
@@ -152,20 +157,21 @@ class XcodeProjectSerializationTests {
         """.trimIndent()
 
         assertEquals(
-            Json.decodeFromString<JsonElement>(outputProject),
-            reserializedJson,
+            Json.decodeFromString<JsonElement>(outputProject).prettyPrinted,
+            reserializedJson.prettyPrinted,
         )
     }
 
     @Test
-    fun `mutating PBXProject build phases - persists unknown properties in PBXProject`() {
+    fun `mutating PBXNativeTarget build phases - persists unknown properties in PBXNativeTarget`() {
         val inputProject = """
             {
               "classes": {},
               "archiveVersion": "1",
+              "rootObject" : "1",
               "objects": {
                 "3": {
-                  "isa": "PBXProject",
+                  "isa": "PBXNativeTarget",
                   "unknownProperty": {
                     "listSubproperty": [
                        {
@@ -182,7 +188,7 @@ class XcodeProjectSerializationTests {
             """.trimIndent()
 
         val project = deserializeXcodeProject(inputProject.toByteArray())
-        (project.objects["3"] as PbxProject).buildPhases?.add("2")
+        (project.objects["3"] as PbxNativeTarget).buildPhases?.add("2")
 
         val reserializedJson: JsonElement = Json.decodeFromString<JsonElement>(
             ByteArrayOutputStream().use {
@@ -195,9 +201,10 @@ class XcodeProjectSerializationTests {
             {
               "classes": {},
               "archiveVersion": "1",
+              "rootObject" : "1",
               "objects": {
                 "3": {
-                  "isa": "PBXProject",
+                  "isa": "PBXNativeTarget",
                   "unknownProperty": {
                     "listSubproperty": [
                        {
@@ -215,8 +222,8 @@ class XcodeProjectSerializationTests {
         """.trimIndent()
 
         assertEquals(
-            Json.decodeFromString<JsonElement>(outputProject),
-            reserializedJson,
+            Json.decodeFromString<JsonElement>(outputProject).prettyPrinted,
+            reserializedJson.prettyPrinted,
         )
     }
 }

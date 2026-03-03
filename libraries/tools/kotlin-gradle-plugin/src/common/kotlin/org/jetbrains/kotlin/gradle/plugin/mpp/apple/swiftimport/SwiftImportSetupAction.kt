@@ -84,6 +84,7 @@ import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.nio.file.Paths
 import kotlin.io.readLines
+import kotlin.io.resolve
 import kotlin.text.startsWith
 
 internal fun Project.swiftPMDependenciesExtension(): SwiftImportExtension {
@@ -1414,12 +1415,15 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 }
 
 
+/**
+ * This is a CLI command you would run once to integrated embedAndSign script in the Xcode project. It shouldn't ever be UTD or cached.
+ */
 @DisableCachingByDefault(because = "...")
 internal abstract class IntegrateEmbedAndSignIntoXcodeProject : DefaultTask() {
-    @get:Input
+    @get:Internal
     abstract val xcodeprojPath: Property<String>
 
-    @get:Input
+    @get:Internal
     abstract val currentDir: Property<File>
 
     @get:Internal
@@ -1428,7 +1432,6 @@ internal abstract class IntegrateEmbedAndSignIntoXcodeProject : DefaultTask() {
     @get:Inject
     protected abstract val execOps: ExecOperations
 
-    @Suppress("UNCHECKED_CAST")
     @TaskAction
     fun integrate() {
         var projectPath = File(xcodeprojPath.get())
@@ -1447,48 +1450,17 @@ internal abstract class IntegrateEmbedAndSignIntoXcodeProject : DefaultTask() {
             """.trimIndent())
 
         val pbxprojPath = projectPath.resolve("project.pbxproj")
-        val output = ByteArrayOutputStream()
-        execOps.exec {
-            it.standardOutput = output
-            it.commandLine(
-                "/usr/bin/plutil",
-                "-convert", "json",
-                pbxprojPath,
-                "-o", "-"
-            )
+        val project = deserializeXcodeProject(pbxprojPath, execOps)
+
+        val hasEmbedAndSignReference = project.objects.entries.any {
+            (it.value as? PbxShellScriptBuildPhase)?.shellScript?.stringValue?.contains("gradle") ?: false
         }
-
-        val projectJson = Gson().fromJson(
-            output.toString(), Map::class.java
-        ) as Map<String, Any>
-
-        val objects = projectJson.property<Map<String, Any>>("objects").toMutableMap()
-
-        val embedAndSignShellScriptPhaseReference = objects.entries.firstOrNull { (_, pbxObject) ->
-            if (pbxObject is Map<*, *>) {
-                pbxObject as Map<String, Any>
-                val shellContent = pbxObject["shellScript"]
-                if (shellContent is String) {
-                    "gradle" in shellContent
-                } else if (shellContent is List<*>) {
-                    shellContent as List<String>
-                    shellContent.any {
-                        "gradle" in it
-                    }
-                } else false
-            } else false
-        }?.key
-        if (embedAndSignShellScriptPhaseReference != null) {
-            println("embedAndSign integration found in ${embedAndSignShellScriptPhaseReference}")
+        if (hasEmbedAndSignReference) {
+            println("Found embedAndSign integration. Nothing to do")
             return
         }
 
-        val nativeTargets = objects.entries.filter { (_, pbxObject) ->
-            if (pbxObject is Map<*, *>) {
-                pbxObject as Map<String, Any>
-                pbxObject.property<String>("isa") == "PBXNativeTarget"
-            } else false
-        }
+        val nativeTargets = project.objects.values.filterIsInstance<PbxNativeTarget>()
         if (nativeTargets.isEmpty()) {
             error("Couldn't find targets to insert embedAndSign integration")
         }
@@ -1496,26 +1468,22 @@ internal abstract class IntegrateEmbedAndSignIntoXcodeProject : DefaultTask() {
         val srcrootPath = projectPath.parentFile
         val relativeGradlewPath = gradlewPath.parentFile.relativeTo(srcrootPath)
         nativeTargets.forEach {
-            val scriptPhaseReference = generateRandomPBXObjectReference()
-            val targetCopy = (it.value as Map<String, Any>).toMutableMap()
-            val buildPhasesCopy = targetCopy["buildPhases"]?.let { (it as List<String>).toMutableList() } ?: error("Missing buildPhases in ${it.key}")
-            buildPhasesCopy.add(0, scriptPhaseReference)
-            targetCopy["buildPhases"] = buildPhasesCopy
             val scriptPhase = generateScriptReference(
                 relativeGradlewPath.path,
                 gradleProjectPath,
             )
-            objects[scriptPhaseReference] = scriptPhase
-            objects[it.key] = targetCopy
+            val scriptPhaseReference = generateRandomPBXObjectReference()
+            if (it.buildPhases == null) {
+                it.buildPhases = mutableListOf()
+            }
+            it.buildPhases?.add(0, scriptPhaseReference)
+            project.objects[scriptPhaseReference] = scriptPhase
         }
-
-        val updatedProjectJson = projectJson.toMutableMap()
-        updatedProjectJson["objects"] = objects
 
         saveJsonBackIntoPbxproj(
             execOps,
             xcodeprojTemporaries.getFile(),
-            Gson().toJson(updatedProjectJson),
+            project,
             pbxprojPath.path,
         )
     }
@@ -1523,26 +1491,22 @@ internal abstract class IntegrateEmbedAndSignIntoXcodeProject : DefaultTask() {
     private fun generateScriptReference(
         relativeGradlewRootPath: String,
         gradleProjectPath: String,
-    ) = mapOf<String, Any>(
-        "isa" to "PBXShellScriptBuildPhase",
-        "alwaysOutOfDate" to 1,
-        "runOnlyForDeploymentPostprocessing" to 0,
-        "buildActionMask" to 2147483647,
-        "files" to emptyList<Any>(),
-        "inputFileListPaths" to emptyList<Any>(),
-        "inputPaths" to emptyList<Any>(),
-        "outputFileListPaths" to emptyList<Any>(),
-        "outputPaths" to emptyList<Any>(),
-        "name" to "Compile Kotlin Framework",
-        "shellPath" to "/bin/sh",
-        "shellScript" to """
+    ) = PbxShellScriptBuildPhase(
+        name = "Compile Kotlin Framework",
+        alwaysOutOfDate = "1",
+        runOnlyForDeploymentPostprocessing = "0",
+        buildActionMask = "2147483647",
+        shellPath = "/bin/sh",
+        shellScript = StringOrStringList.StringValue(
+            """
             if [ "YES" = "${'$'}OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED" ]; then
               echo "Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \"YES\""
               exit 0
             fi
             cd "${'$'}${SRCROOT_ENV}/${relativeGradlewRootPath}"
             ./gradlew ${gradleProjectPath}:${AppleXcodeTasks.embedAndSignTaskPrefix}${AppleXcodeTasks.embedAndSignTaskPostfix} -i
-        """.trimIndent()
+            """.trimIndent()
+        )
     )
 
     companion object {
@@ -1554,14 +1518,16 @@ internal abstract class IntegrateEmbedAndSignIntoXcodeProject : DefaultTask() {
     }
 }
 
-
+/**
+ * This is a CLI command you would run once to integrate the linkage package in the Xcode project. It shouldn't ever be UTD or cached.
+ */
 @DisableCachingByDefault(because = "...")
 internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() {
 
-    @get:Input
+    @get:Internal
     abstract val xcodeprojPath: Property<String>
 
-    @get:Input
+    @get:Internal
     abstract val currentDir: Property<File>
 
     @get:Internal
@@ -1571,114 +1537,58 @@ internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() 
     protected abstract val execOps: ExecOperations
 
     @TaskAction
-    @Suppress("UNCHECKED_CAST")
     fun integrate() {
         var projectPath = File(xcodeprojPath.get())
         if (!projectPath.isAbsolute) {
             projectPath = currentDir.get().resolve(projectPath)
         }
-        val pbxprojPath = projectPath.resolve("project.pbxproj")
-        val output = ByteArrayOutputStream()
-        execOps.exec {
-            it.standardOutput = output
-            it.commandLine(
-                "/usr/bin/plutil",
-                "-convert", "json",
-                pbxprojPath,
-                "-o", "-"
-            )
-        }
 
-        val projectJson = Gson().fromJson(
-            output.toString(), Map::class.java
-        ) as Map<String, Any>
-        if (linkageProductsReferencedInPBXObjects(projectJson).isNotEmpty()) {
+        val pbxprojPath = projectPath.resolve("project.pbxproj")
+        val project = deserializeXcodeProject(pbxprojPath, execOps)
+        if (linkageProductsReferencedInPBXObjects(project).isNotEmpty()) {
             println("Product already referenced, nothing to do")
             return
         }
+        val rootProjectId = project.rootObject
 
-        val rootProjectId = projectJson.property<String>("rootObject")
-
-        val objects = projectJson.property<Map<String, Any>>("objects").toMutableMap()
-        val rootProject = objects[rootProjectId] ?: error("Couldn't find root project")
-
-        val embedAndSignShellScriptPhaseReference = objects.entries.firstOrNull { (_, pbxObject) ->
-            if (pbxObject is Map<*, *>) {
-                pbxObject as Map<String, Any>
-                val shellContent = pbxObject["shellScript"]
-                if (shellContent is String) {
-                    "gradle" in shellContent
-                } else if (shellContent is List<*>) {
-                    shellContent as List<String>
-                    shellContent.any {
-                        "gradle" in it
-                    }
-                } else false
-            } else false
+        val embedAndSignShellScriptPhaseReference = project.objects.entries.firstOrNull {
+            (it.value as? PbxShellScriptBuildPhase)?.shellScript?.stringValue?.contains("gradle") ?: false
         }?.key ?: error("embedAndSign integration wasn't found")
-
-        val embedAndSignTargets = objects.entries.filter { (_, pbxObject) ->
-            if (pbxObject is Map<*, *>) {
-                pbxObject as Map<String, Any>
-                val phases = pbxObject["buildPhases"]
-                if (phases is List<*>) {
-                    phases as List<String>
-                    embedAndSignShellScriptPhaseReference in phases
-                } else false
-            } else false
+        val embedAndSignTargets = project.objects.values.filterIsInstance<PbxNativeTarget>().filter {
+            it.buildPhases?.contains(embedAndSignShellScriptPhaseReference) ?: false
         }
+        val rootProject = (project.objects[rootProjectId] ?: error("Couldn't find root project")) as PbxProject
 
         val productDependencyReference = generateRandomPBXObjectReference()
-        objects[productDependencyReference] = mapOf(
-            "isa" to "XCSwiftPackageProductDependency",
-            "productName" to SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
-        )
-
         val buildFileDependencyReference = generateRandomPBXObjectReference()
-        objects[buildFileDependencyReference] = mapOf(
-            "isa" to "PBXBuildFile",
-            "productRef" to productDependencyReference,
-        )
-
         val localPackageReference = generateRandomPBXObjectReference()
-        objects[localPackageReference] = mapOf(
-            "isa" to "XCLocalSwiftPackageReference",
-            "relativePath" to SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
-        )
 
+        if (rootProject.packageReferences == null) { rootProject.packageReferences = mutableListOf() }
+        rootProject.packageReferences?.add(localPackageReference)
 
-        val updatedProject = (rootProject as Map<String, Any>).toMutableMap()
-        val existingPackages = updatedProject["packageReferences"] as? List<String> ?: listOf()
-        updatedProject["packageReferences"] = existingPackages + localPackageReference
-        objects[rootProjectId] = updatedProject
-
-        embedAndSignTargets.forEach { (uuid, target) ->
-            val updatedTarget = (target as Map<String, Any>).toMutableMap()
-            val existingPackageProductDependencies = updatedProject["packageProductDependencies"] as? List<String> ?: listOf()
-            updatedTarget["packageProductDependencies"] = existingPackageProductDependencies + productDependencyReference
-            objects[uuid] = updatedTarget
+        embedAndSignTargets.forEach {
+            if (it.packageProductDependencies == null) { it.packageProductDependencies = mutableListOf() }
+            it.packageProductDependencies?.add(productDependencyReference)
         }
 
-        embedAndSignTargets.mapNotNull { (_, target) ->
-            target as Map<String, Any>
-            target.property<List<String>>("buildPhases")
-        }.flatten().forEach { buildPhaseReference ->
-            val buildPhase = objects.property<Map<String, Any>>(buildPhaseReference)
-            if (buildPhase.property<String>("isa") == "PBXFrameworksBuildPhase") {
-                val updatedBuildPhase = buildPhase.toMutableMap()
-                val existingFiles = updatedBuildPhase["files"] as? List<String> ?: listOf()
-                updatedBuildPhase["files"] = existingFiles + buildFileDependencyReference
-                objects[buildPhaseReference] = updatedBuildPhase
-            }
+        val buildPhases = embedAndSignTargets.flatMap { it.buildPhases ?: listOf() }
+        val frameworkBuildPhases = buildPhases.mapNotNull {
+            project.objects[it] as? PbxFrameworksBuildPhase
         }
 
-        val updatedProjectJson = projectJson.toMutableMap()
-        updatedProjectJson["objects"] = objects
+        frameworkBuildPhases.forEach {
+            if (it.files == null) { it.files = mutableListOf() }
+            it.files?.add(buildFileDependencyReference)
+        }
+
+        project.objects[buildFileDependencyReference] = PbxBuildFile(productRef = productDependencyReference)
+        project.objects[localPackageReference] = XCLocalSwiftPackageReference(relativePath = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME)
+        project.objects[productDependencyReference] = XCSwiftPackageProductDependency(productName = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME)
 
         saveJsonBackIntoPbxproj(
             execOps,
             xcodeprojTemporaries.getFile(),
-            Gson().toJson(updatedProjectJson),
+            project,
             pbxprojPath.path,
         )
     }
@@ -1725,12 +1635,14 @@ private fun generateRandomPBXObjectReference(): String {
 private fun saveJsonBackIntoPbxproj(
     execOps: ExecOperations,
     xcodeprojTemporaries: File,
-    json: String,
+    project: XcodeProject,
     outputPbxprojPath: String,
 ) {
     xcodeprojTemporaries.mkdirs()
     val jsonPbxprojPath = xcodeprojTemporaries.resolve("project.pbxproj.json")
-    jsonPbxprojPath.writeText(json)
+    jsonPbxprojPath.outputStream().use {
+        project.serializeXcodeProject(it)
+    }
     val binName = "mutatePbxproj"
     xcodeprojTemporaries.resolve("Package.swift").writeText(
         """
@@ -1893,6 +1805,28 @@ internal abstract class SerializeSwiftPMDependenciesMetadata : DefaultTask() {
         const val TASK_NAME = "serializeSwiftPMDependenciesMetadata"
     }
 
+}
+
+internal fun linkageProductsReferencedInPBXObjects(project: XcodeProject): Set<String> {
+    // FIXME: Check if the product is correctly integrated into the build phase
+    return project.objects.entries.mapNotNull { (id, pbxObject) ->
+        if ((pbxObject as? XCSwiftPackageProductDependency)?.productName == SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) {
+            id
+        } else {
+            null
+        }
+    }.toSet()
+//    return objects.entries.mapNotNull { (id, pbxObject) ->
+//        @Suppress("UNCHECKED_CAST")
+//        pbxObject as Map<String, Any>
+//        val type = pbxObject.property<String>("isa")
+//        if (type == "XCSwiftPackageProductDependency") {
+//            val packageProductName = pbxObject.property<String>("productName")
+//            if (packageProductName == SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) {
+//                id
+//            } else null
+//        } else null
+//    }.toSet()
 }
 
 fun linkageProductsReferencedInPBXObjects(projectJson: Map<String, Any>): Set<String> {
