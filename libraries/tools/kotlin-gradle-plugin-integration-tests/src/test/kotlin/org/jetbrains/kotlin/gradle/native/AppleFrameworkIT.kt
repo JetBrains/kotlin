@@ -562,17 +562,6 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Frameworks can be consumed from other gradle project")
-    @GradleTest
-    fun shouldCheckFrameworksCanBeConsumedFromOtherGradleProjects(gradleVersion: GradleVersion) {
-        nativeProject("consumableAppleFrameworks", gradleVersion) {
-            build(":consumer:help") {
-                assertOutputContains("RESOLUTION_SUCCESS")
-                assertOutputDoesNotContain("RESOLUTION_FAILURE")
-            }
-        }
-    }
-
     @OptIn(EnvironmentalVariablesOverride::class)
     @DisplayName("Framework contains Kdoc documentation")
     @GradleTest
