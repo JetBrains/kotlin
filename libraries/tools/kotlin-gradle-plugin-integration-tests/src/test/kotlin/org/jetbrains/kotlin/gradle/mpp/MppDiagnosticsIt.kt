@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
-import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroup
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
@@ -39,7 +38,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
                 // is to compare blocks ignoring the order
                 assertBlocksEqual(
                     expectedOutputFile().extractBlocksFromExpectedOutput(),
-                    extractProjectsAndTheirDiagnosticsInBlocks(),
+                    filteredDiagnosticsOutput(),
                 )
             }
         }
@@ -73,7 +72,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
             buildAndFail("assemble") {
                 assertEqualsToFile(
                     expectedOutputFile("assemble"),
-                    filteredErrorDiagnosticBuildFailsOutput()
+                    filteredDiagnosticsOutput().asString()
                 )
             }
 
@@ -81,7 +80,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
             build("clean") {
                 assertEqualsToFile(
                     expectedOutputFile("clean"),
-                    filteredErrorDiagnosticBuildFailsOutput()
+                    filteredDiagnosticsOutput().asString()
                 )
             }
 
@@ -89,7 +88,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
             build("myTask", "--rerun-tasks") {
                 assertEqualsToFile(
                     expectedOutputFile("customTask"),
-                    filteredErrorDiagnosticBuildFailsOutput()
+                    filteredDiagnosticsOutput().asString()
                 )
             }
 
@@ -97,7 +96,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
             build("commonize") {
                 assertEqualsToFile(
                     expectedOutputFile("commonize"),
-                    filteredErrorDiagnosticBuildFailsOutput()
+                    filteredDiagnosticsOutput().asString()
                 )
             }
         }
@@ -111,7 +110,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
                 assertConfigurationCacheStored()
                 assertEqualsToFile(
                     expectedOutputFile("assemble"),
-                    filteredErrorDiagnosticBuildFailsOutput()
+                    filteredDiagnosticsOutput().asString()
                 )
             }
 
@@ -120,7 +119,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
                 assertConfigurationCacheReused()
                 assertEqualsToFile(
                     expectedOutputFile("assemble-cache-reused"),
-                    filteredErrorDiagnosticBuildFailsOutput()
+                    filteredDiagnosticsOutput().asString()
                 )
             }
         }
@@ -130,10 +129,16 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testErrorDiagnosticBuildSucceeds(gradleVersion: GradleVersion) {
         project("errorDiagnosticBuildSucceeds", gradleVersion) {
             build("assemble") {
-                assertEqualsToFile(expectedOutputFile("assemble"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("assemble"),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
             build("myTask", "--rerun-tasks") {
-                assertEqualsToFile(expectedOutputFile("customTask"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("customTask"),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
         }
     }
@@ -143,7 +148,10 @@ class MppDiagnosticsIt : KGPBaseTest() {
         project("suppressGradlePluginErrors", gradleVersion) {
             // build succeeds
             build("assemble") {
-                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile(),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
         }
     }
@@ -164,7 +172,10 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testSuppressGradlePluginWarnings(gradleVersion: GradleVersion) {
         project("suppressGradlePluginWarnings", gradleVersion) {
             build("assemble") {
-                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile(),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
         }
     }
@@ -173,7 +184,10 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testSuppressGradlePluginFatals(gradleVersion: GradleVersion) {
         project("suppressGradlePluginFatals", gradleVersion) {
             buildAndFail("assemble") {
-                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile(),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
         }
     }
@@ -187,24 +201,39 @@ class MppDiagnosticsIt : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
         ) {
             buildAndFail("brokenProjectA:assemble") {
-                assertEqualsToFile(expectedOutputFile("brokenA"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("brokenA"),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
 
             buildAndFail("brokenProjectB:assemble") {
-                assertEqualsToFile(expectedOutputFile("brokenB"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("brokenB"),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
 
             build("healthyProject:assemble") {
-                assertEqualsToFile(expectedOutputFile("healthy"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("healthy"),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
 
             // Turn off parallel execution so that order of execution (and therefore the testdata) is stable
             buildAndFail("assemble", buildOptions = buildOptions.copy(parallel = false)) {
-                assertEqualsToFile(expectedOutputFile("root"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("root"),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
 
             buildAndFail("assemble", "--continue", buildOptions = buildOptions.copy(parallel = false)) {
-                assertEqualsToFile(expectedOutputFile("root-with-continue"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("root-with-continue"),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
         }
     }
@@ -213,7 +242,10 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testEarlyTasksMaterializationDoesntBreakReports(gradleVersion: GradleVersion) {
         project("earlyTasksMaterializationDoesntBreakReports", gradleVersion) {
             buildAndFail("assemble") {
-                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile(),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
         }
     }
@@ -230,15 +262,24 @@ class MppDiagnosticsIt : KGPBaseTest() {
             // need to override that to mimic real-life scenarios
             val options = buildOptions.copy(showDiagnosticsStacktrace = null, stacktraceMode = null)
             build("help", buildOptions = options) {
-                assertEqualsToFile(expectedOutputFile("without-stacktrace"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("without-stacktrace"),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
 
             build("help", "--stacktrace", buildOptions = options) {
-                assertEqualsToFile(expectedOutputFile("with-stacktrace"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("with-stacktrace"),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
 
             build("help", "--full-stacktrace", buildOptions = options) {
-                assertEqualsToFile(expectedOutputFile("with-full-stacktrace"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("with-full-stacktrace"),
+                    filteredDiagnosticsOutput().asString()
+                )
             }
         }
     }
@@ -331,16 +372,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         return projectPath.resolve("expectedOutput$suffixIfAny.txt").toFile()
     }
 
-    /**
-     * Filters out DisabledNativeTargetTaskWarning from diagnostics output.
-     * This warning is host-dependent and is already tested in GeneralNativeIT.
-     */
-    private fun BuildResult.filteredErrorDiagnosticBuildFailsOutput(): String {
-        val filteredBlocks = extractProjectsAndTheirDiagnosticsInBlocks().filterNot {
-            KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning.id in it
-        }
-        return filteredBlocks.joinToString(separator = "\n").trim()
-    }
+    private fun List<String>.asString(): String = joinToString(separator = "\n").trim()
 
     private fun TestProject.checkDeprecatedProperties(isDeprecationExpected: Boolean) {
         build {

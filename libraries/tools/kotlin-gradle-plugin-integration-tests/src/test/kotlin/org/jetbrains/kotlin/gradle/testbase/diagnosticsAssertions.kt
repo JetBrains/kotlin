@@ -74,6 +74,20 @@ fun BuildResult.extractProjectsAndTheirDiagnostics(): String = extractProjectsAn
     .trim()
 
 /**
+ * Filters out some diagnostics from diagnostics output:
+ * - KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning: This warning is host-dependent and is already tested in GeneralNativeIT
+ * - KotlinToolingDiagnostics.DeprecatedGradleVersionWarning: generic diagnostic that have dedicated test
+ * - KotlinToolingDiagnostics.OldNativeVersionDiagnostic: causing test failures on non CI runs due to Native Distribution snapshot usage
+ */
+internal fun BuildResult.filteredDiagnosticsOutput(): List<String> = extractProjectsAndTheirDiagnosticsInBlocks()
+    .filterNot {
+        KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning.id in it ||
+                KotlinToolingDiagnostics.DeprecatedGradleVersionWarning.id in it ||
+                KotlinToolingDiagnostics.OldNativeVersionDiagnostic.id in it
+    }
+
+
+/**
  * NB: Needs parsable formatting of diagnostics, see [org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.internalDiagnosticsUseParsableFormat]
  * Because this mode is enabled by the 'kotlin.internal'-property, actual output will always contain
  * [org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed].

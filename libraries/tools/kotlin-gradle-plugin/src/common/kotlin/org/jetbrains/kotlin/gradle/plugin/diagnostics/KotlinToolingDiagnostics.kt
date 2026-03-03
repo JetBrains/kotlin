@@ -717,6 +717,28 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object DeprecatedGradleVersionWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
+        operator fun invoke(
+            currentGradleVersion: GradleVersion,
+            nextMinimumSupportedGradleVersion: GradleVersion,
+        ) = build {
+            title("Deprecated Gradle Version")
+                .description {
+                    """
+                    The used Gradle version ($currentGradleVersion) is deprecated and will not be supported in future Kotlin Gradle Plugin releases.
+                    The minimum supported Gradle version will become $nextMinimumSupportedGradleVersion in Kotlin 2.5.0.
+
+                    This warning can be suppressed in 'gradle.properties':
+                        ${KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY}=$id
+                    
+                    """.trimIndent()
+                }
+                .solution {
+                    "Please update the Gradle version to at least $nextMinimumSupportedGradleVersion."
+                }
+        }
+    }
+
     object IncompatibleAgpVersionTooLowFatalError : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
             androidGradlePluginVersionString: String,

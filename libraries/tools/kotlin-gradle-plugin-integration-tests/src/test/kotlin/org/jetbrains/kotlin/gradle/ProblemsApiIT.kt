@@ -107,7 +107,7 @@ class ProblemsApiIT : KGPBaseTest() {
 
                 val actualProblems = problemReport.diagnostics.filter {
                     it.problemId.all { id ->
-                        id.name != "OldNativeVersionDiagnostic"
+                        id.name != "OldNativeVersionDiagnostic" && id.name != "deprecated-gradle-version-warning"
                     }
                 }
 
