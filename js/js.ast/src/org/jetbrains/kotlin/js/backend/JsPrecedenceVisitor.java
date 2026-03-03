@@ -135,6 +135,11 @@ class JsPrecedenceVisitor extends JsVisitor {
     }
 
     @Override
+    public void visitClass(@NotNull JsClass x) {
+        answer = 17; // primary
+    }
+
+    @Override
     public void visitPostfixOperation(@NotNull JsPostfixOperation x) {
         answer = x.getOperator().getPrecedence();
     }

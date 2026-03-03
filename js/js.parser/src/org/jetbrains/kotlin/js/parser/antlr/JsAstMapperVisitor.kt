@@ -424,16 +424,7 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitClassDeclaration(ctx: JavaScriptParser.ClassDeclarationContext): JsClass {
-        val tail = ctx.classTail()
-        val name = visitNode<JsNameRef>(ctx.identifier()).name
-        val baseClass = tail.singleExpression()?.let { visitNode<JsExpression>(it) }
-        val (ctors, methods) = tail.classElement()
-            .mapNotNull { visitNode<JsFunction?>(it) }
-            .partition { it.name?.ident == "constructor" }
-        check(ctors.size <= 1, ctx.identifier().startPosition) { "A class may only have one constructor" }
-
-        return JsClass(name, baseClass, ctors.singleOrNull(), methods.toMutableList())
-            .applyLocation(ctx)
+        return createClassNode(ctx.identifier(), ctx.classTail(), ctx.Class())
     }
 
     override fun visitClassTail(ctx: JavaScriptParser.ClassTailContext): JsNode? {
@@ -1079,8 +1070,8 @@ internal class JsAstMapperVisitor(
         }
     }
 
-    override fun visitClassExpression(ctx: JavaScriptParser.ClassExpressionContext): JsNode? {
-        reportError("Classes are not supported yet", ctx)
+    override fun visitClassExpression(ctx: JavaScriptParser.ClassExpressionContext): JsClass {
+        return createClassNode(ctx.identifier(), ctx.classTail(), ctx.Class())
     }
 
     override fun visitMemberIndexExpression(ctx: JavaScriptParser.MemberIndexExpressionContext): JsArrayAccess {
@@ -1396,6 +1387,22 @@ internal class JsAstMapperVisitor(
 
     override fun visitEos(ctx: JavaScriptParser.EosContext): JsNode? {
         return super.visit(ctx)
+    }
+
+    private fun createClassNode(
+        identifier: JavaScriptParser.IdentifierContext?,
+        tail: JavaScriptParser.ClassTailContext,
+        classKeyword: TerminalNode
+    ): JsClass {
+        val name = identifier?.let { visitNode<JsNameRef>(it).name }
+        val baseClass = tail.singleExpression()?.let { visitNode<JsExpression>(it) }
+        val (ctors, methods) = tail.classElement()
+            .mapNotNull { visitNode<JsFunction?>(it) }
+            .partition { it.name?.ident == "constructor" }
+        check(ctors.size <= 1, identifier?.startPosition ?: classKeyword.startPosition) { "A class may only have one constructor" }
+
+        return JsClass(name, baseClass, ctors.singleOrNull(), methods.toMutableList())
+            .applyLocation(classKeyword)
     }
 
     private fun mapBlock(statements: List<JsStatement?>): JsBlock {

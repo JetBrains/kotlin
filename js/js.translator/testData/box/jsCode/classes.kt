@@ -60,6 +60,32 @@ fun initClasses() {
             }
         }
         globalThis.C = C;
+        
+        globalThis.D = class { 
+            constructor() {
+                this.ctorCalledD = 1;
+            }
+        };
+        
+        globalThis.E = class E {
+            constructor() {
+                this.ctorCalledE = 1;
+            }
+        };
+        
+        globalThis.F = class F extends globalThis.E {
+            constructor() {
+                super();
+                this.ctorCalledF = 1;
+            }
+        };
+        
+        globalThis.G = class extends globalThis.F {
+            constructor() {
+                super();
+                this.ctorCalledG = 1;
+            }
+        };
     """)
 }
 
@@ -117,6 +143,34 @@ fun box(): String {
     if (c.ctorCalledA != 1) return "fail: c.ctorCalledA == ${c.ctorCalledA}"
     if (c.ctorCalledB != 123) return "fail: c.ctorCalledB == ${c.ctorCalledB}"
     if (c.ctorCalledC != "fallback") return "fail: c.ctorCalledC == ${c.ctorCalledC}"
+
+    val d = js("new D();")
+
+    if (d.ctorCalledD != 1) return "fail: d.ctorCalledD == ${d.ctorCalledD}"
+
+    val e = js("new E();")
+
+    if (e.ctorCalledE != 1) return "fail: e.ctorCalledE == ${e.ctorCalledE}"
+
+    val f = js("new F();")
+
+    if (f.ctorCalledE != 1) return "fail: f.ctorCalledE == ${f.ctorCalledE}"
+    if (f.ctorCalledF != 1) return "fail: f.ctorCalledF == ${f.ctorCalledF}"
+
+    val g = js("new G();")
+
+    if (g.ctorCalledF != 1) return "fail: g.ctorCalledF == ${g.ctorCalledF}"
+    if (g.ctorCalledG != 1) return "fail: g.ctorCalledG == ${g.ctorCalledG}"
+
+    val h = js("""new class extends G {
+        constructor() {
+            super();
+            this.ctorCalledH = 1;
+        }
+    }();""")
+
+    if (h.ctorCalledG != 1) return "fail: h.ctorCalledG == ${h.ctorCalledG}"
+    if (h.ctorCalledH != 1) return "fail: h.ctorCalledH == ${h.ctorCalledH}"
 
     return "OK"
 }

@@ -832,8 +832,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         printCommentsBeforeNode(x);
 
         p.print(CHARS_CLASS);
-        space();
         if (x.getName() != null) {
+            space();
             nameOf(x);
         }
 
@@ -1032,6 +1032,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         leftParen();
         printExpressions(x.getArguments());
         rightParen();
+
+        // When using class expressions as construction expressions, they reset this from default 'true' to 'false',
+        // which produces invalid code due to the next statements ambiguity.
+        needSemi = true;
 
         printCommentsAfterNode(x);
         popSourceInfo();
