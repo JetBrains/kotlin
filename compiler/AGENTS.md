@@ -32,6 +32,11 @@ Backend implementations:
 
 For type inference implementation details, read [inference.md](../docs/fir/inference.md).
 
+## Commit Guidelines
+
+- **FIR prefix**: When changes are mostly related to FIR (`compiler/fir/`), use `FIR: ` prefix in the commit subject line.
+- **Test-before-fix**: When fixing an issue and adding a test, commit the test data as a separate commit **before** the fix. This helps reviewers see how the fix actually changes semantics (the test will show diagnostic differences in the fix commit).
+
 ## Testing
 
 For FIR analysis test data format (directives, diagnostic markers, file structure), see [analysis-tests/AGENTS.md](fir/analysis-tests/AGENTS.md).
