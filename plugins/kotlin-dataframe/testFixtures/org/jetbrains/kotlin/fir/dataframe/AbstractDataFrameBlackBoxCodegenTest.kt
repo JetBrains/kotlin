@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
-import org.jetbrains.kotlin.fir.dataframe.services.DataFrameClasspathProvider
+import org.jetbrains.kotlin.fir.dataframe.services.DataFrameRuntimeClasspathProvider
 import org.jetbrains.kotlin.fir.dataframe.services.DataFrameDirectives
-import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
-import org.jetbrains.kotlin.fir.dataframe.services.ExperimentalExtensionRegistrarConfigurator
+import org.jetbrains.kotlin.fir.dataframe.services.DataFrameEnvironmentConfigurator
 import org.jetbrains.kotlin.fir.dataframe.services.TestUtilsSourceProvider
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -21,9 +20,6 @@ import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCod
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import org.junit.AssumptionViolatedException
-import org.junit.jupiter.api.Assumptions
-import java.io.File
 
 open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -37,9 +33,8 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
         }
         builder.enableLazyResolvePhaseChecking()
         builder.useDirectives(DataFrameDirectives)
-        builder.useConfigurators(::DataFramePluginAnnotationsProvider)
-        builder.useConfigurators(::ExperimentalExtensionRegistrarConfigurator)
-        builder.useCustomRuntimeClasspathProviders(::DataFrameClasspathProvider)
+        builder.useConfigurators(::DataFrameEnvironmentConfigurator)
+        builder.useCustomRuntimeClasspathProviders(::DataFrameRuntimeClasspathProvider)
         builder.useAdditionalSourceProviders(::TestUtilsSourceProvider)
     }
 

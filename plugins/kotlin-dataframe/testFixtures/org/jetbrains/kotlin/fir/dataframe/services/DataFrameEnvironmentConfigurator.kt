@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.dataframe.services
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -18,7 +19,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.FirDataFrameExtensionRegistrar
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ImportedSchemasData
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.IrBodyFiller
 
-class ExperimentalExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+class DataFrameEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        configuration.addJvmClasspathRoots(DATAFRAME_CLASSPATH)
+    }
+
     override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
         module: TestModule,
         configuration: CompilerConfiguration,
