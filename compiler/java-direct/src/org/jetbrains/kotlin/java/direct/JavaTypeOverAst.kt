@@ -60,6 +60,7 @@ class JavaClassifierTypeOverAst(
         get() {
             val parts = rawTypeName.split('.')
 
+            // 1. Check local scope (same compilation unit)
             val localBase = localScope?.findClass(Name.identifier(parts[0]))
             if (localBase != null) {
                 var current: JavaClass? = localBase
@@ -69,6 +70,7 @@ class JavaClassifierTypeOverAst(
                 return current?.fqName?.asString() ?: rawTypeName
             }
 
+            // 2. Check explicit single-type imports
             val qualified = imports.simpleImports[parts[0]]
             if (qualified != null) {
                 var result = qualified.asString()
@@ -78,6 +80,7 @@ class JavaClassifierTypeOverAst(
                 return result
             }
 
+            // 3. Return as-is - FIR will resolve via callback (same package, star imports, java.lang)
             return rawTypeName
         }
 
@@ -104,17 +107,28 @@ class JavaClassifierTypeOverAst(
     override fun resolve(tryResolve: (String) -> Boolean): String? {
         val simpleName = rawTypeName
 
-        val javaLangFqn = "java.lang.$simpleName"
+        // 1. Try current package first (Java same-package visibility)
+        // TODO: it should be extracted from the local context, and removed from import itself
+        val packageFqName = imports.packageFqName
+        if (!packageFqName.isRoot) {
+            val samePackageFqn = "${packageFqName.asString()}.$simpleName"
+            if (tryResolve(samePackageFqn)) {
+                return samePackageFqn
+            }
+        }
 
+        // 2. Try java.lang.* (automatic import per JLS)
+        val javaLangFqn = "java.lang.$simpleName"
         if (JavaToKotlinClassMap.mapJavaToKotlin(FqName(javaLangFqn)) != null || tryResolve(javaLangFqn)) {
             return javaLangFqn
         }
 
+        // 3. Try explicit star imports
         val starImports = imports.starImports
         var foundFqn: String? = null
 
-        for (packageFqName in starImports) {
-            val candidateFqn = "${packageFqName.asString()}.$simpleName"
+        for (starPackage in starImports) {
+            val candidateFqn = "${starPackage.asString()}.$simpleName"
             if (tryResolve(candidateFqn)) {
                 if (foundFqn != null) {
                     return null

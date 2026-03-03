@@ -34,7 +34,8 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
         annotationProvider: JavaAnnotationProvider?,
         findLocalFile: (String) -> File?,
     ): JavaClassFinder {
-        val roots = configuration.javaSourceRoots.mapNotNull(findLocalFile).flatMap { it.walk().filter { it.isFile && it.extension == "java" } }.map { it.canonicalFile.toPath() }
+        val roots = configuration.javaSourceRoots.mapNotNull(findLocalFile).flatMap {
+            it.walk().filter { it.isDirectory || (it.isFile && it.extension == "java") } }.map { it.canonicalFile.toPath() }
         val sourceFinder = JavaClassFinderOverAstImpl(roots)
         
         val psiScope = when (scope) {
