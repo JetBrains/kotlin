@@ -71,12 +71,6 @@ public class FirWasmSpecCodegenBenchmarkTestGenerated extends AbstractFirWasmSpe
     }
 
     @Test
-    @TestMetadata("startCoroutineUninterceptedOrReturnPerformance.kt")
-    public void testStartCoroutineUninterceptedOrReturnPerformance() {
-      runTest("compiler/testData/codegen/boxWasmBenchmark/coroutines/startCoroutineUninterceptedOrReturnPerformance.kt");
-    }
-
-    @Test
     @TestMetadata("suspendCoroutineUninterceptedOrReturnPerformance.kt")
     public void testSuspendCoroutineUninterceptedOrReturnPerformance() {
       runTest("compiler/testData/codegen/boxWasmBenchmark/coroutines/suspendCoroutineUninterceptedOrReturnPerformance.kt");
