@@ -49,7 +49,6 @@ com/intellij/psi/tree/ILazyParseableElementType
 com/intellij/psi/tree/TokenSet
 com/intellij/util/ArrayFactory
 com/intellij/util/IncorrectOperationException
-javax/swing/Icon
 org/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget
 org/jetbrains/kotlin/name/ClassId
 org/jetbrains/kotlin/name/FqName
