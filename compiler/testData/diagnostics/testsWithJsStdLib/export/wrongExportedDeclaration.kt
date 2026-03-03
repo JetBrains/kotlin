@@ -2,7 +2,7 @@
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // RENDER_DIAGNOSTIC_ARGUMENTS
 // DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
-// LANGUAGE: +AllowInterfaceNestedClassesInJsExport +AllowNamedCompanionForJsExport
+// LANGUAGE: +AllowInterfaceNestedClassesInJsExport +AllowNamedCompanionForJsExport +JsAllowExportingValueClasses
 
 package foo
 
@@ -55,16 +55,16 @@ interface OuterInterface {
 }
 
 @JsExport
-value class <!WRONG_EXPORTED_DECLARATION("value class")!>A(val a: Int)<!>
+value class A(val a: Int)
 
 @JsExport
-inline class <!WRONG_EXPORTED_DECLARATION("value class")!>B(val b: Int)<!>
+inline class B(val b: Int)
 
 @JsExport
-<!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> <!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> class <!WRONG_EXPORTED_DECLARATION("value class")!>C(val c: Int)<!>
+<!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> <!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> class C(val c: Int)
 
 <!MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE!>@JsExport.Default
-<!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> <!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> class <!WRONG_EXPORTED_DECLARATION("value class")!>D(val d: Int)<!><!>
+<!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> <!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> class D(val d: Int)<!>
 
 @JsExport
 external interface ExternalInterface

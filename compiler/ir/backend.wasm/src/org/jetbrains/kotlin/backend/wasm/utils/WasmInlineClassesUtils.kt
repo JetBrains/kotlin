@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 
 class WasmInlineClassesUtils(private val wasmSymbols: BackendWasmSymbols) : JsCommonInlineClassesUtils {
 
-    override fun getInlinedClass(type: IrType): IrClass? {
+    override fun getInlinedClass(type: IrType, includingExported: Boolean): IrClass? {
         if (type is IrSimpleType) {
             // TODO: Make inlining less strict
             if (type.isNullable()) return null

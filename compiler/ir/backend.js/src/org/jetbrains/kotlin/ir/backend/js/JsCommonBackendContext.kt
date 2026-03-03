@@ -46,7 +46,7 @@ interface JsCommonInlineClassesUtils : InlineClassesUtils {
     /**
      * Returns the inlined class for the given type, or `null` if the type is not inlined.
      */
-    fun getInlinedClass(type: IrType): IrClass?
+    fun getInlinedClass(type: IrType, includingExported: Boolean = false): IrClass?
 
     fun isTypeInlined(type: IrType): Boolean {
         return getInlinedClass(type) != null

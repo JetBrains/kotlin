@@ -40,9 +40,6 @@ internal fun IrClass.exportability(): Exportability {
         return Exportability.Implicit
     }
 
-    if (isSingleFieldValueClass)
-        return Exportability.Prohibited("Inline class ${fqNameWhenAvailable}")
-
     return Exportability.Allowed
 }
 

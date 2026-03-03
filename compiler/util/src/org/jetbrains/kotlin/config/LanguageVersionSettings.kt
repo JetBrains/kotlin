@@ -502,6 +502,7 @@ enum class LanguageFeature(
     AllowNamedCompanionForJsExport(sinceVersion = KOTLIN_2_4, issue = "KT-82128"),
     AllowInterfaceNestedClassesInJsExport(sinceVersion = KOTLIN_2_4, issue = "KT-84332"),
     NativeTestProcessorBeforeSerialization(KOTLIN_2_4, "KT-83807"),
+    JsAllowExportingValueClasses(sinceVersion = KOTLIN_2_4, "KT-72198"),
 
     // 2.5
 

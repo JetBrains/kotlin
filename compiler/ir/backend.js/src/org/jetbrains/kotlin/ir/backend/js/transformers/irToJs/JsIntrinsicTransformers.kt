@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6ConstructorLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6PrimaryConstructorOptimizationLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.exportedValueClassBoxFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -216,6 +217,12 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val arg = translateCallArguments(call, context).single()
                 val inlineClass = call.typeArguments[0]?.let { icUtils.getRuntimeClassFor(it) }
                     ?: compilationException("Unexpected type argument in box intrinsic", call)
+
+                inlineClass.exportedValueClassBoxFunction?.let {
+                    return@add JsInvocation(context.getNameForStaticFunction(it).makeRef(), arg)
+                        .apply { isInlineClassBoxing = true }
+                }
+
                 val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
 
                 JsNew(constructor.getConstructorRef(context.staticContext), listOf(arg))
@@ -224,7 +231,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(symbols.jsUnboxIntrinsic) { call, context ->
                 val arg = translateCallArguments(call, context).single()
-                val inlineClass = icUtils.getInlinedClass(call.typeArguments[1]!!)!!
+                val inlineClass = icUtils.getInlinedClass(call.typeArguments[1]!!, includingExported = true)!!
                 val field = getInlineClassBackingField(inlineClass)
                 val fieldName = context.getNameForField(field)
                 JsNameRef(fieldName, arg).apply { isInlineClassUnboxing = true }
