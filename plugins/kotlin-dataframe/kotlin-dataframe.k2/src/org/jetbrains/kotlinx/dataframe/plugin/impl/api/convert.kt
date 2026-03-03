@@ -182,10 +182,13 @@ internal abstract class AbstractToSpecificType : AbstractInterpreter<PluginDataF
         val converterAnnotation =
             functionCall.calleeReference.toResolvedFunctionSymbol()?.getAnnotationByClassId(Names.CONVERTER_ANNOTATION, session)
         val to = converterAnnotation?.getKClassArgument(Name.identifier("klass"))
-        val nullable = converterAnnotation?.getBooleanArgument(Name.identifier("nullable"))
-        return if (to != null && nullable != null) {
-            val targetType = to.withNullability(nullable, session.typeContext)
+        return if (to != null) {
             receiver.schema.convertAsColumn(receiver.columns) {
+                val targetType = if (it is SimpleDataColumn) {
+                    to.withNullabilityOf(it.type.coneType, session.typeContext)
+                } else {
+                    session.builtinTypes.nothingType.coneType
+                }
                 simpleColumnOf("", targetType)
             }
         } else {
