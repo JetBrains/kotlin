@@ -495,7 +495,6 @@ enum class LanguageFeature(
     ResolveEqualsRhsInDependentContextWithCompletion(KOTLIN_2_4, "KT-81763"),
     IrIntraModuleInlinerBeforeKlibSerialization(KOTLIN_2_4, sinceApiVersion = ApiVersion.KOTLIN_2_3, issue = "KT-79717"),
     ImprovedExhaustivenessCheckForSubjectVariable24(KOTLIN_2_4, issue = "KT-83903"),
-    WrapContinuationForTailCallFunctions(KOTLIN_2_4, sinceApiVersion = ApiVersion.KOTLIN_2_4, "KT-74051"),
     DontMakeExplicitNullableJavaTypeArgumentsFlexible(KOTLIN_2_4, "KTLC-284"),
     ProhibitFunctionCallsInDefaultParametersOfInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-83829"),
     AllowNamedCompanionForJsExport(sinceVersion = KOTLIN_2_4, issue = "KT-82128"),
@@ -511,6 +510,7 @@ enum class LanguageFeature(
     ProperSupportOfInnerClassesInCallableReferenceLHS(sinceVersion = KOTLIN_2_5, "KTLC-388"),
     ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-358"),
     ForbidUselessTypeArgumentsIn25(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-390"),
+    WrapContinuationForTailCallFunctions(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, "KT-74051"),
 
     // End of 2.* language features --------------------------------------------------
 
