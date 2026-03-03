@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DOT_METADATA_FILE_EXTE
 import org.jetbrains.kotlin.serialization.deserialization.METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.utils.SmartList
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 
@@ -28,11 +30,11 @@ class CliVirtualFileFinder(
     private val enableSearchInCtSym: Boolean,
     perfManager: PerformanceManager?,
 ) : VirtualFileFinder(perfManager) {
-    private val childrenInPackageCache =
+    private val childrenInPackageCache: Cache<FqName, Map<String, SmartList<VirtualFile>>> =
         CacheBuilder.newBuilder()
             .maximumSize(2000)
             .expireAfterAccess(15, TimeUnit.MINUTES)
-            .build<FqName, Map<String, Set<VirtualFile>>>()
+            .build()
 
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
         findBinaryOrSigClass(classId)
@@ -76,7 +78,7 @@ class CliVirtualFileFinder(
         return findClass(classId, BuiltInSerializerProtocol.getBuiltInsFileName(packageFqName))?.inputStream
     }
 
-    private fun findClass(classId: ClassId, fileName: String) =
+    private fun findClass(classId: ClassId, fileName: String): VirtualFile? =
         childrenInPackage(classId.packageFqName)[fileName]
             ?.filter(VirtualFile::isValid)
             ?.firstOrNull { it in scope }
@@ -94,17 +96,20 @@ class CliVirtualFileFinder(
         }
     }
 
-    private fun childrenInPackage(packageFqName: FqName): Map<String, Set<VirtualFile>> {
+    private fun childrenInPackage(packageFqName: FqName): Map<String, SmartList<VirtualFile>> {
         return childrenInPackageCache.get(packageFqName) {
-            val files = Object2ObjectOpenHashMap<String, MutableSet<VirtualFile>>()
+            val files = Object2ObjectOpenHashMap<String, SmartList<VirtualFile>>()
             index.traverseDirectoriesInPackage(packageFqName, continueSearch = { dir, _ ->
                 for (child in dir.children) {
-                    if (child.extension == METADATA_FILE_EXTENSION ||
-                        child.extension == "class" ||
-                        child.extension == "sig" ||
-                        child.extension == "java"
+                    if (child.extension.let {
+                            it == METADATA_FILE_EXTENSION ||
+                                    it == "class" ||
+                                    it == "sig" ||
+                                    it == "java" ||
+                                    it == "kotlin_builtins"
+                        }
                     ) {
-                        files.getOrPut(child.name) { ObjectOpenHashSet() }.add(child)
+                        files.getOrPut(child.name) { SmartList() }.add(child)
                     }
                 }
 

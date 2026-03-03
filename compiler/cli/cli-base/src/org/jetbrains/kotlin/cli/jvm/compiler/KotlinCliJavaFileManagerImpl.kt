@@ -17,6 +17,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.openapi.diagnostic.Logger
@@ -58,11 +59,11 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
     private lateinit var packagePartProviders: List<PackagePartProvider>
 
-    private val childrenInPackageCache =
+    private val childrenInPackageCache: Cache<FqName, Map<String, SmartList<VirtualFile>>> =
         CacheBuilder.newBuilder()
             .maximumSize(2000)
             .expireAfterAccess(15, TimeUnit.MINUTES)
-            .build<FqName, Map<String, Set<VirtualFile>>>()
+            .build()
 
     /**
      * Caches the [VirtualFile]s found in [index] for the key [FqName].
@@ -264,14 +265,14 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }
     }
 
-    private fun childrenInPackage(packageFqName: FqName): Map<String, Set<VirtualFile>> {
+    private fun childrenInPackage(packageFqName: FqName): Map<String, SmartList<VirtualFile>> {
         return childrenInPackageCache.get(packageFqName) {
-            val files = Object2ObjectOpenHashMap<String, MutableSet<VirtualFile>>()
+            val files = Object2ObjectOpenHashMap<String, SmartList<VirtualFile>>()
             index.traverseDirectoriesInPackage(packageFqName) { dir, _ ->
                 for (child in dir.children) {
                     val extension = child.extension
-                    if (extension == "class" || extension == "java" || extension == "sig") {
-                        files.getOrPut(child.nameWithoutExtension) { ObjectOpenHashSet() }.add(child)
+                    if (extension == "class" || extension == "java" || extension == "sig" || extension == "kotlin_builtins") {
+                        files.getOrPut(child.nameWithoutExtension) { SmartList() }.add(child)
                     }
                 }
                 true
