@@ -2198,21 +2198,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    internal object UsingOutOfProcessDisablesBuildToolsApi : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
-        operator fun invoke() = build {
-            title("Using out-of-process Kotlin compilation disables Build Tools API.")
-                .description(
-                    """
-                    By default, the Kotlin Gradle Plugin runs the compiler via the Build Tools API (BTA). 
-                    BTA doesn’t support out‑of‑process compilation, so the selected compilation mode disables BTA for this build. 
-                    This warning will become an error in a future release of KGP.
-                """.trimIndent()
-                )
-                .solution("Select the daemon or in-process compilation modes to allow KGP to run compilation through BTA.")
-                .documentationLink(URI("https://kotl.in/build-tools-api"))
-        }
-    }
-
     internal object GeneratingCompilerRefIndexWithoutBuildToolsApi : ToolingDiagnosticFactory(
         WARNING,
         DiagnosticGroup.Kgp.Misconfiguration,
@@ -2221,22 +2206,6 @@ internal object KotlinToolingDiagnostics {
             title("Skipping the Compiler Reference Index data generation in '$projectName' ('$projectPath')")
                 .description("Compiler Reference Index data can be generated only when compilation is performed via Build Tools API.")
                 .solution("Please set `kotlin.compiler.runViaBuildToolsApi=true` to enable compilation via Build Tools API.")
-        }
-    }
-
-    internal object OutOfProcessExecutionStrategyUsage : ToolingDiagnosticFactory(
-        WARNING,
-        DiagnosticGroup.Kgp.Deprecation,
-    ) {
-        operator fun invoke() = build {
-            title("Deprecated usage of 'out-of-process' Kotlin compiler execution strategy")
-                .description(
-                    """
-                The 'out-of-process' Kotlin compiler execution strategy is deprecated and will be removed in future versions.
-                Consider using a default 'daemon' strategy for improved performance and stability.
-                """.trimIndent()
-                )
-                .solution("Please remove 'kotlin.compiler.executionStrategy=out-of-process' from project 'gradle.properties' file.")
         }
     }
 

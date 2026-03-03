@@ -75,23 +75,18 @@ internal fun createGradleCompilerRunner(
     diagnosticsReporter: UsesKotlinToolingDiagnostics,
 ): GradleCompilerRunner {
     if (runViaBuildToolsApi) {
-        @Suppress("DEPRECATION")
-        if (compilerExecutionSettings.strategy != KotlinCompilerExecutionStrategy.OUT_OF_PROCESS) {
-            return GradleBuildToolsApiCompilerRunner(
-                taskProvider,
-                toolsJar,
-                compilerExecutionSettings,
-                buildMetricsReporter,
-                workerExecutor,
-                cachedClassLoadersService,
-                buildFinishedListenerService,
-                buildIdService,
-                buildSessionService,
-                fusMetricsConsumer
-            )
-        } else {
-            diagnosticsReporter.reportDiagnostic(KotlinToolingDiagnostics.UsingOutOfProcessDisablesBuildToolsApi())
-        }
+        return GradleBuildToolsApiCompilerRunner(
+            taskProvider,
+            toolsJar,
+            compilerExecutionSettings,
+            buildMetricsReporter,
+            workerExecutor,
+            cachedClassLoadersService,
+            buildFinishedListenerService,
+            buildIdService,
+            buildSessionService,
+            fusMetricsConsumer
+        )
     } else if (compilerExecutionSettings.generateCompilerRefIndex) {
         diagnosticsReporter.reportDiagnostic(
             KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi(

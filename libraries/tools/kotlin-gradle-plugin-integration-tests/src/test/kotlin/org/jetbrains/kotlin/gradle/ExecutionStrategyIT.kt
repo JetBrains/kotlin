@@ -5,8 +5,6 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
@@ -72,11 +70,6 @@ class ExecutionStrategyJsIT : ExecutionStrategyIT() {
 
 @DisplayName("Kotlin JVM compile execution strategy")
 class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
-    override val expectedOutOfProcessDiagnostics: Set<ToolingDiagnosticFactory> = setOf(
-        KotlinToolingDiagnostics.UsingOutOfProcessDisablesBuildToolsApi,
-        KotlinToolingDiagnostics.OutOfProcessExecutionStrategyUsage,
-    )
-
     override fun BuildResult.checkOutput(project: TestProject) {
         with(project) {
             val classesDir = subProject("app").kotlinClassesDir().resolve("foo")
@@ -97,8 +90,6 @@ class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
 }
 
 abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
-    internal open val expectedOutOfProcessDiagnostics: Set<ToolingDiagnosticFactory>? = null
-
     @DisplayName("Compilation via Kotlin daemon")
     @GradleTest
     fun testDaemon(gradleVersion: GradleVersion) {
@@ -236,24 +227,12 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         }
     }
 
-    @DisplayName("Compilation via separate compiler process")
-    @GradleTest
-    fun testOutOfProcess(gradleVersion: GradleVersion) {
-        @Suppress("DEPRECATION")
-        doTestExecutionStrategy(
-            gradleVersion,
-            KotlinCompilerExecutionStrategy.OUT_OF_PROCESS,
-            expectDiagnostics = expectedOutOfProcessDiagnostics
-        )
-    }
-
     private fun doTestExecutionStrategy(
         gradleVersion: GradleVersion,
         executionStrategy: KotlinCompilerExecutionStrategy,
         addHeapDumpOptions: Boolean = true,
         testFallbackStrategy: Boolean = false,
         shouldConfigureStrategyViaGradleProperty: Boolean = true,
-        expectDiagnostics: Set<ToolingDiagnosticFactory>? = null,
         additionalProjectConfiguration: TestProject.() -> Unit = {},
     ) {
         project(
@@ -291,16 +270,14 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             } else {
                 emptyArray()
             }
-            @Suppress("DEPRECATION") val expectedFinishStrategy = when {
-                testFallbackStrategy && this@ExecutionStrategyIT is ExecutionStrategyJvmIT -> KotlinCompilerExecutionStrategy.IN_PROCESS
-                testFallbackStrategy && this@ExecutionStrategyIT !is ExecutionStrategyJvmIT -> KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
+            val expectedFinishStrategy = when {
+                testFallbackStrategy -> KotlinCompilerExecutionStrategy.IN_PROCESS
                 else -> executionStrategy
             }
             val finishMessage = expectedFinishStrategy.asFinishLogMessage
 
             build("build", *args) {
                 assertOutputContains(expectedFinishStrategy.asFinishLogMessage)
-                expectDiagnostics?.forEach { assertHasDiagnostic(it) }
                 checkOutput(this@project)
 
                 if (testFallbackStrategy) {

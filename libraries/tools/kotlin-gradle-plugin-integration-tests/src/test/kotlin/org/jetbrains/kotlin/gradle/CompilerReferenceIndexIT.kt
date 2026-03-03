@@ -55,7 +55,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
             buildOptions = when (strategy) {
                 "in-process" -> defaultInProcessBuildOptions
                 "daemon" -> defaultDaemonBuildOptions
-                else -> return // `out-of-process` strategy is not supported by BTA
+                else -> return
             },
         ) {
             kotlinSourcesDir().source("main.kt") {
