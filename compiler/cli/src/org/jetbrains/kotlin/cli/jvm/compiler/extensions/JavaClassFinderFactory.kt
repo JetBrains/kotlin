@@ -18,9 +18,20 @@ interface JavaClassFinderFactory {
         JavaClassFinderFactory::class.java
     )
 
+    /**
+     * Creates a JavaClassFinder for the given scope.
+     *
+     * @param scope The search scope for finding Java classes
+     * @param annotationProvider Provider for Java annotations
+     * @param findLocalFile Function to resolve file paths to File objects
+     * @param defaultFinderProvider Optional provider for the platform's default JavaClassFinder.
+     *        Can be used to create a hybrid finder that combines custom source-based lookup
+     *        with the platform's binary class lookup. Returns null if no default is available.
+     */
     fun createJavaClassFinder(
         scope: AbstractProjectFileSearchScope,
         annotationProvider: JavaAnnotationProvider?,
         findLocalFile: (String) -> File?,
+        defaultFinderProvider: (() -> JavaClassFinder)? = null,
     ): JavaClassFinder
 }

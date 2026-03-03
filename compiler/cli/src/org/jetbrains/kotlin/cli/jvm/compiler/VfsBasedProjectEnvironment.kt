@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.java.javaAnnotationProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -208,12 +209,16 @@ open class VfsBasedProjectEnvironment(
     ): FirJavaFacadeForSource {
         val javaAnnotationProvider = firSession.javaAnnotationProvider
         val localFs = knownFileSystems.first { it.protocol == StandardFileSystems.FILE_PROTOCOL }
+        val defaultFinderProvider: () -> JavaClassFinder = {
+            project.createJavaClassFinder(fileSearchScope.asPsiSearchScope(), javaAnnotationProvider)
+        }
         val javaClassFinder = extensionsStorage?.get(JavaClassFinderFactory)?.firstOrNull() // TODO: selector?
             ?.createJavaClassFinder(
                 fileSearchScope,
                 javaAnnotationProvider,
-                { localFs.findFileByPath(it)?.path?.let(::File) }
-            ) ?: project.createJavaClassFinder(fileSearchScope.asPsiSearchScope(), javaAnnotationProvider)
+                { localFs.findFileByPath(it)?.path?.let(::File) },
+                defaultFinderProvider
+            ) ?: defaultFinderProvider()
         return FirJavaFacadeForSource(firSession, baseModuleData, javaClassFinder)
     }
 

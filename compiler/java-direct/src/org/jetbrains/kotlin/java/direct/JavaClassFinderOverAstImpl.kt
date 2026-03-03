@@ -54,7 +54,9 @@ class JavaClassFinderOverAstImpl(
 
         val classes = findClasses(request)
         val result = classes.firstOrNull()
-        classCache[classId] = result
+        if (result != null) {
+            classCache[classId] = result
+        }
         return result
     }
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.extensions.JavaClassFinderFactory
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -13,9 +12,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
-import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import java.io.File
-import java.nio.file.Paths
 
 class JavaDirectComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
@@ -28,24 +25,24 @@ class JavaDirectComponentRegistrar : CompilerPluginRegistrar() {
         get() = true
 }
 
-class JavaClassFinderOverAstFactory(private val configuration: CompilerConfiguration): JavaClassFinderFactory {
+class JavaClassFinderOverAstFactory(private val configuration: CompilerConfiguration) : JavaClassFinderFactory {
     override fun createJavaClassFinder(
         scope: AbstractProjectFileSearchScope,
         annotationProvider: JavaAnnotationProvider?,
         findLocalFile: (String) -> File?,
+        defaultFinderProvider: (() -> JavaClassFinder)?,
     ): JavaClassFinder {
-        val roots = configuration.javaSourceRoots.mapNotNull(findLocalFile).flatMap {
-            it.walk().filter { it.isDirectory || (it.isFile && it.extension == "java") } }.map { it.canonicalFile.toPath() }
+        // Collect source roots (directories only)
+        val roots = configuration.javaSourceRoots
+            .mapNotNull(findLocalFile)
+            .filter { it.isDirectory }
+            .map { it.canonicalFile.toPath() }
         val sourceFinder = JavaClassFinderOverAstImpl(roots)
-        
-        val psiScope = when (scope) {
-            is PsiBasedProjectFileSearchScope -> scope.psiSearchScope
-            else -> return sourceFinder
-        }
-        
-        val project = psiScope.project ?: return sourceFinder
-        val binaryFinder = project.createJavaClassFinder(psiScope, annotationProvider)
-        
+
+        // If no default finder provider, return source-only finder
+        val binaryFinder = defaultFinderProvider?.invoke() ?: return sourceFinder
+
+        // Combine source-based finder (for Java sources) with platform finder (for binaries)
         return CombinedJavaClassFinder(sourceFinder, binaryFinder)
     }
 }
