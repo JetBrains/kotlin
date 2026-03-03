@@ -22,7 +22,7 @@ class FirDataFrameExtensionRegistrar(
     val isTest: Boolean,
     val dumpSchemas: Boolean,
     val disableTopLevelExtensionsGenerator: Boolean = false,
-    val contextReader: ImportedSchemasData.Reader?
+    val contextReader: ImportedSchemasData.Reader?,
 ) : FirExtensionRegistrar() {
     @OptIn(FirExtensionApiInternals::class)
     override fun ExtensionRegistrarContext.configurePlugin() {
@@ -61,12 +61,12 @@ class FirDataFrameExtensionRegistrar(
 class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
 
-        val path = configuration.get(DATAFRAME_PATH)
+        val path = configuration[DATAFRAME_PATH]
         FirExtensionRegistrar.registerExtension(
             FirDataFrameExtensionRegistrar(
                 isTest = false,
                 dumpSchemas = true,
-                configuration.get(DATAFRAME_DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES) == true,
+                configuration[DATAFRAME_DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES] == true,
                 contextReader = ImportedSchemasData.getReader(path)
             )
         )
@@ -78,8 +78,6 @@ class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
 
     override val supportsK2: Boolean = true
 }
-
-
 
 object DataFrameConfigurationKeys {
     // Disable generation of extension properties for @DataSchema annotated classes or interfaces.
@@ -115,7 +113,10 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         return when (option) {
-            DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES_OPTION -> configuration.put(DATAFRAME_DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES, value == "true")
+            DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES_OPTION -> configuration.put(
+                DATAFRAME_DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES,
+                value == "true"
+            )
             SCHEMAS_OPTION -> configuration.put(DATAFRAME_PATH, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
