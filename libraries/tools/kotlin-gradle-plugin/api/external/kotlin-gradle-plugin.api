@@ -49,11 +49,9 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun getAndroidUnitTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getAppleMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getAppleTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
-	public synthetic fun getBOTH ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public fun getCommonMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getCommonTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
-	public fun getCompilerTypeFromProperties ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public fun getDefaultJsCompilerType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public fun getIR ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public fun getIosArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
@@ -68,7 +66,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun getJsTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getJvmMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getJvmTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
-	public synthetic fun getLEGACY ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public fun getLinuxArm32HfpMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getLinuxArm32HfpTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getLinuxArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
@@ -307,10 +304,8 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPr
 	public static fun androidTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public static fun androidTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public static fun androidTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
-	public static synthetic fun getBOTH (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public static fun getDefaultJsCompilerType (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public static fun getIR (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
-	public static synthetic fun getLEGACY (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun iosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;

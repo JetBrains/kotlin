@@ -245,12 +245,6 @@ abstract class KotlinJsProjectExtension(project: Project) :
     override val target: KotlinJsTargetDsl
         get() = targetFuture.lenient.getOrNull() ?: js()
 
-    @Deprecated(
-        "Because only the IR compiler is left, it's no longer necessary to know about the compiler type in properties. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    override val compilerTypeFromProperties: KotlinJsCompilerType? = null
-
     override val targetFuture = CompletableFuture<KotlinJsTargetDsl>()
 
     fun registerTargetObserver(observer: (KotlinJsTargetDsl?) -> Unit) {

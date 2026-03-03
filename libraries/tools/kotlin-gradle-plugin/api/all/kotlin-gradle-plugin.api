@@ -178,11 +178,8 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsCompile$DefaultImpls 
 
 public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinJsProjectExtension : org/jetbrains/kotlin/gradle/dsl/KotlinSingleTargetExtension, org/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder {
 	public fun <init> (Lorg/gradle/api/Project;)V
-	public synthetic fun getBOTH ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
-	public fun getCompilerTypeFromProperties ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public fun getDefaultJsCompilerType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public fun getIR ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
-	public synthetic fun getLEGACY ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public synthetic fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public fun getTarget ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
 	public synthetic fun getTargetFuture$kotlin_gradle_plugin_common ()Lorg/jetbrains/kotlin/gradle/utils/Future;
@@ -2183,20 +2180,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/KotlinJsReportAggre
 	public fun setExecutionSourceFrom (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/KotlinJsTarget : org/jetbrains/kotlin/gradle/plugin/KotlinTarget, org/jetbrains/kotlin/gradle/plugin/mpp/InternalKotlinTarget {
-	public fun <init> ()V
-	public fun attributes (Lkotlin/jvm/functions/Function1;)V
-	public fun attributes (Lorg/gradle/api/Action;)V
-	public fun getDisambiguationClassifier ()Ljava/lang/String;
-	public final fun getIrTarget ()Ljava/lang/Void;
-	public fun getName ()Ljava/lang/String;
-	public synthetic fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
-	public fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
-	public fun jvmToolchain (I)V
-	public fun jvmToolchain (Lorg/gradle/api/Action;)V
-	public fun mavenPublication (Lkotlin/jvm/functions/Function1;)V
-}
-
 public final class org/jetbrains/kotlin/gradle/targets/js/KotlinWasmTargetAttribute : java/lang/Enum, java/io/Serializable, org/gradle/api/Named {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/KotlinWasmTargetAttribute$Companion;
 	public static final field js Lorg/jetbrains/kotlin/gradle/targets/js/KotlinWasmTargetAttribute;
@@ -4083,18 +4066,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/subtargets/DefaultDist
 	public fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 	public fun setDirectory (Ljava/io/File;)V
 	public fun setName (Ljava/lang/String;)V
-}
-
-public abstract class org/jetbrains/kotlin/gradle/targets/js/subtargets/KotlinBrowserJs : org/jetbrains/kotlin/gradle/targets/js/subtargets/KotlinJsSubTarget, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserDsl {
-	public fun <init> ()V
-}
-
-public abstract class org/jetbrains/kotlin/gradle/targets/js/subtargets/KotlinJsSubTarget : org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetDsl {
-	public fun <init> ()V
-}
-
-public abstract class org/jetbrains/kotlin/gradle/targets/js/subtargets/KotlinNodeJs : org/jetbrains/kotlin/gradle/targets/js/subtargets/KotlinJsSubTarget, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsNodeDsl {
-	public fun <init> ()V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest : org/jetbrains/kotlin/gradle/tasks/KotlinTest, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {

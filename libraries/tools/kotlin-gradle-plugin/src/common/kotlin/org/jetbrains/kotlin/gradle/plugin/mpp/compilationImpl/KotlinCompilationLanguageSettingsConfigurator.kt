@@ -20,12 +20,6 @@ internal object KotlinCompilationLanguageSettingsConfigurator : KotlinCompilatio
             compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME
         ) return
 
-        // Ignoring jsLegacy as it shares a source set with jsIR
-        @Suppress("DEPRECATION_ERROR")
-        if (compilation.platformType == KotlinPlatformType.js &&
-            compilation.target is org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-        ) return
-
         val languageSettingsBuilder = (compilation.defaultSourceSet.languageSettings as DefaultLanguageSettingsBuilder)
         if (languageSettingsBuilder.compilationCompilerOptions.isCompleted) {
             compilation.target.project.logger.warn(
