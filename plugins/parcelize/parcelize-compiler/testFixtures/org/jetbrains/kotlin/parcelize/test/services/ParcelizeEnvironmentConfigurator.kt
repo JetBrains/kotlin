@@ -33,7 +33,6 @@ class ParcelizeEnvironmentConfigurator(testServices: TestServices) : Environment
         if (ENABLE_PARCELIZE !in module.directives) return
         val libPath = PathUtil.kotlinPathsForCompiler.libPath
         val runtimeLibrary = File(libPath, PathUtil.PARCELIZE_RUNTIME_PLUGIN_JAR_NAME)
-        val androidExtensionsRuntimeLibrary = File(libPath, PathUtil.ANDROID_EXTENSIONS_RUNTIME_PLUGIN_JAR_NAME)
         val androidApiJar = KtTestUtil.findAndroidApiJar()
         val kotlinxCollectionsImmutable = getLibraryJar(kotlinxImmutable("ImmutableList"))
             ?: error("kotlinx-collections-immutable is not found on classpath")
@@ -41,7 +40,6 @@ class ParcelizeEnvironmentConfigurator(testServices: TestServices) : Environment
         configuration.addJvmClasspathRoots(
             listOf(
                 runtimeLibrary,
-                androidExtensionsRuntimeLibrary,
                 androidApiJar,
                 kotlinxCollectionsImmutable
             )

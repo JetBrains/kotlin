@@ -37,7 +37,6 @@ object PathUtil {
     const val SERIALIZATION_PLUGIN_NAME = "kotlinx-serialization-compiler-plugin"
     const val SERIALIZATION_PLUGIN_JAR_NAME = "$SERIALIZATION_PLUGIN_NAME.jar"
     const val LOMBOK_PLUGIN_NAME = "lombok-compiler-plugin"
-    const val ANDROID_EXTENSIONS_RUNTIME_PLUGIN_JAR_NAME = "android-extensions-runtime.jar"
     const val PARCELIZE_RUNTIME_PLUGIN_JAR_NAME = "parcelize-runtime.jar"
     const val JS_LIB_SRC_JAR_NAME = "kotlin-stdlib-js-sources.jar"
 
