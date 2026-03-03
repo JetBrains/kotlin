@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
+import kotlin.reflect.KClass
 import kotlin.reflect.full.functions
 
 /**
@@ -21,32 +22,42 @@ import kotlin.reflect.full.functions
  * to maintain compatibility when argument type definitions evolve between API and implementation.
  */
 @OptIn(ExperimentalCompilerArgument::class)
-internal interface JvmCompilerArgumentValueAdapter {
+internal interface CompilerArgumentValueAdapter<V> {
 
-    fun <V, T> mapFrom(value: T, key: JvmCompilerArguments.JvmCompilerArgument<V>): V?
-    fun <V, T> mapTo(value: V, key: JvmCompilerArguments.JvmCompilerArgument<V>): T?
+    fun <T> mapFrom(value: Any?, key: V): T?
+    fun <T> mapTo(value: Any?, key: V): T?
 
     companion object {
         //TODO(KT-84598): Expose API Version via Public Property
         private val requiresPre240ForwardCompatibility: Boolean =
             JvmPlatformToolchain::class.functions.none { it.name == "discoverScriptExtensionsOperationBuilder" }
 
-        fun createOrNull(): JvmCompilerArgumentValueAdapter? =
-            if (requiresPre240ForwardCompatibility) JvmCompilerArgumentPre2_4_0ValueAdapter else null
+        @Suppress("UNCHECKED_CAST")
+        fun <T : Any> getOrNull(keyClass: KClass<T>): CompilerArgumentValueAdapter<T>? {
+            return when (keyClass) {
+                JvmCompilerArguments.JvmCompilerArgument::class if requiresPre240ForwardCompatibility -> {
+                    JvmCompilerArgumentPre2_4_0ValueAdapter as CompilerArgumentValueAdapter<T>
+                }
+                else -> null
+            }
+        }
     }
 }
 
 @Suppress("ClassName")
 @OptIn(ExperimentalCompilerArgument::class)
-private object JvmCompilerArgumentPre2_4_0ValueAdapter : JvmCompilerArgumentValueAdapter {
+private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAdapter<JvmCompilerArguments.JvmCompilerArgument<*>> {
 
     @Suppress("UNCHECKED_CAST")
-    override fun <V, T> mapFrom(value: T, key: JvmCompilerArguments.JvmCompilerArgument<V>): V? {
-        if (value == null) return null as V?
+    override fun <T> mapFrom(
+        value: Any?,
+        key: JvmCompilerArguments.JvmCompilerArgument<*>,
+    ): T? {
+        if (value == null) return null as T?
         return when (key) {
             JvmCompilerArguments.JDK_HOME -> {
                 val pathValue = value as Path
-                pathValue.absolutePathStringOrThrow() as V
+                pathValue.absolutePathStringOrThrow() as T
             }
 
             JvmCompilerArguments.X_PROFILE -> {
@@ -56,15 +67,18 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : JvmCompilerArgumentValu
                             "${File.pathSeparator}${command}" +
                             "${File.pathSeparator}" +
                             "${outputDir.toFile().absolutePath}"
-                } as V
+                } as T
             }
 
-            else -> value as V
+            else -> value as T
         }
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <V, T> mapTo(value: V, key: JvmCompilerArguments.JvmCompilerArgument<V>): T? {
+    override fun <T> mapTo(
+        value: Any?,
+        key: JvmCompilerArguments.JvmCompilerArgument<*>,
+    ): T? {
         if (value == null) return null as T?
 
         return when (key) {

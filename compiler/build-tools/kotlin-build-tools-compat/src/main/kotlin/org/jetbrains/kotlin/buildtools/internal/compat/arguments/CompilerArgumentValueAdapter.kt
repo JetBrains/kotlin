@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.buildtools.internal.compat.arguments
 
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 
 /**
  * Handles forward compatibility when the API version is older than the implementation version.
@@ -15,15 +14,15 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
  * to maintain compatibility when argument type definitions evolve between API and implementation.
  */
 @OptIn(ExperimentalCompilerArgument::class)
-internal object JvmCompilerArgumentValueAdapter {
+internal class CompilerArgumentValueAdapter<V> {
 
     @Suppress("UNCHECKED_CAST")
-    fun <V, T> mapFrom(value: T, key: JvmCompilerArguments.JvmCompilerArgument<V>): V? {
-        return value as V
+    fun <T> mapFrom(value: Any?, key: V): T? {
+        return value as T?
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <V, T> mapTo(value: V, key: JvmCompilerArguments.JvmCompilerArgument<V>): T? {
+    fun <T> mapTo(value: Any?, key: V): T? {
         return value as T
     }
 }

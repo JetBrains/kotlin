@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.buildtools.options.generator
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
@@ -42,8 +41,6 @@ internal class BtaImplGenerator(
                     .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
             )
             classType(implClassName) {
-                val isJvmCompilerArguments = level.name == CompilerArgumentsLevelNames.jvmCompilerArguments
-
                 addModifiers(KModifier.INTERNAL)
                 if (!level.isLeaf()) {
                     addModifiers(KModifier.ABSTRACT)
@@ -71,8 +68,9 @@ internal class BtaImplGenerator(
                     generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
                 val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
                 val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
+                val constructorSpecBuilder = constructorSpecBuilder(argumentTypeName)
 
-                generateGetPutFunctions(argumentTypeName, argumentImplTypeName, isJvmCompilerArguments)
+                generateGetPutFunctions(argumentTypeName, argumentImplTypeName)
 
                 addType(TypeSpec.companionObjectBuilder().apply {
                     property(
@@ -99,17 +97,10 @@ internal class BtaImplGenerator(
                     function("deepCopy") {
                         addModifiers(KModifier.OVERRIDE)
                         returns(ClassName(targetPackage, implClassName))
-                        if (isJvmCompilerArguments) {
-                            addStatement(
-                                "return %T(adapter).also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }",
-                                ClassName(targetPackage, implClassName)
-                            )
-                        } else {
-                            addStatement(
-                                "return %T().also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }",
-                                ClassName(targetPackage, implClassName)
-                            )
-                        }
+                        addStatement(
+                            "return %T(adapter).also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }",
+                            ClassName(targetPackage, implClassName)
+                        )
                     }
                     function("build") {
                         addModifiers(KModifier.OVERRIDE)
@@ -127,26 +118,11 @@ internal class BtaImplGenerator(
                         level.getCompilerArgumentsClassName()
                     )
 
-                    primaryConstructor(FunSpec.constructorBuilder().apply {
-                        if (isJvmCompilerArguments) {
-                            val adapterType = ClassName(targetPackage, "JvmCompilerArgumentValueAdapter")
-                                .copy(nullable = true)
-
-                            addParameter(
-                                ParameterSpec.builder("adapter", adapterType)
-                                    .defaultValue("null")
-                                    .build()
-                            )
-                            addProperty(
-                                PropertySpec.builder("adapter", adapterType)
-                                    .addModifiers(KModifier.PRIVATE)
-                                    .initializer("adapter")
-                                    .build()
-                            )
-                        }
-                        addStatement("applyCompilerArguments(%T())", level.getCompilerArgumentsClassName())
-                    }.build())
+                    constructorSpecBuilder.addStatement("applyCompilerArguments(%T())", level.getCompilerArgumentsClassName())
                 }
+
+                primaryConstructor(constructorSpecBuilder.build())
+
                 toCompilerConverterFun.addStatement("return arguments")
                 addFunction(toCompilerConverterFun.build())
 
@@ -160,6 +136,27 @@ internal class BtaImplGenerator(
         mainFile.writeTo(mainFileAppendable)
         outputs += Path(mainFile.relativePath) to mainFileAppendable.toString()
         return GeneratorOutputs(ClassName(targetPackage, implClassName), outputs)
+    }
+
+    private fun TypeSpec.Builder.constructorSpecBuilder(
+        argumentTypeName: ClassName,
+    ): FunSpec.Builder = FunSpec.constructorBuilder().apply {
+        val adapterType = ClassName(targetPackage, "CompilerArgumentValueAdapter")
+            .parameterizedBy(argumentTypeName.parameterizedBy(STAR))
+            .copy(nullable = true)
+
+        addParameter(
+            ParameterSpec.builder("adapter", adapterType)
+                .defaultValue("null")
+                .build()
+        )
+
+        addProperty(
+            PropertySpec.builder("adapter", adapterType)
+                .addModifiers(KModifier.PRIVATE)
+                .initializer("adapter")
+                .build()
+        )
     }
 
     private fun TypeSpec.Builder.generateOptions(
@@ -430,7 +427,7 @@ internal class BtaImplGenerator(
         }
     }.build()
 
-    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, implParameter: ClassName, isJvmCompilerArguments: Boolean) {
+    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, implParameter: ClassName) {
         val mapProperty = property(
             "optionsMap",
             ClassName("kotlin.collections", "MutableMap").parameterizedBy(typeNameOf<String>(), ANY.copy(nullable = true))
@@ -451,12 +448,7 @@ internal class BtaImplGenerator(
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addStatement($$"check(key.id in optionsMap) { \"Argument ${key.id} is not set and has no default value\" }")
-
-            if (isJvmCompilerArguments) {
-                addStatement("return adapter?.mapFrom(%N[key.id], key) ?: %N[key.id] as %T", mapProperty, mapProperty, typeParameter)
-            } else {
-                addStatement("return %N[key.id] as %T", mapProperty, typeParameter)
-            }
+            addStatement("return adapter?.mapFrom(%N[key.id], key) ?: %N[key.id] as %T", mapProperty, mapProperty, typeParameter)
         }
         function("set") {
             if (targetPackage == IMPL_ARGUMENTS_PACKAGE) {
@@ -496,12 +488,7 @@ internal class BtaImplGenerator(
                     .endControlFlow()
                     .build()
             )
-
-            if (isJvmCompilerArguments) {
-                addStatement("%N[key.id] = adapter?.mapTo(%N, key) ?: %N", mapProperty, "value", "value")
-            } else {
-                addStatement("%N[key.id] = %N", mapProperty, "value")
-            }
+            addStatement("%N[key.id] = adapter?.mapTo(%N, key) ?: %N", mapProperty, "value", "value")
         }
 
         function("contains") {
