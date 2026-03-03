@@ -19,7 +19,7 @@ internal open class JsonElementBacked {
     var jsonElement: JsonElement? = null
 }
 
-private open class JsonElementBackedSerializer<T : JsonElementBacked>(
+private class JsonElementBackedSerializer<T : JsonElementBacked>(
     private val typeSerializer: KSerializer<T>,
 ) : KSerializer<T> {
 
@@ -29,7 +29,7 @@ private open class JsonElementBackedSerializer<T : JsonElementBacked>(
         decoder as JsonDecoder
         val rawElement = decoder.decodeJsonElement()
         val typedEntity = decoder.json.decodeFromJsonElement(typeSerializer, rawElement)
-        (typedEntity as JsonElementBacked).jsonElement = rawElement
+        typedEntity.jsonElement = rawElement
         return typedEntity
     }
 
@@ -97,23 +97,26 @@ internal class XCLocalSwiftPackageReference(
     var relativePath: String? = null,
 ) : PbxObject() {}
 
+// This entity holds all the other entries we don't care about
 @Serializable
-internal class Opaque private constructor() : PbxObject()
+internal class Opaque(
+    val isa: String
+) : PbxObject()
 
 @Serializable
-internal class Project(
+internal class XcodeProject(
     val objects: MutableMap<String, PbxObject>,
 ) : JsonElementBacked()
 
 internal fun deserializeXcodeProject(byteArray: ByteArray) =
     json.decodeFromStream(
-        JsonElementBackedSerializer(Project.serializer()),
+        JsonElementBackedSerializer(XcodeProject.serializer()),
         ByteArrayInputStream(byteArray)
     )
 
-internal fun Project.serializeXcodeProject(outputStream: OutputStream) =
+internal fun XcodeProject.serializeXcodeProject(outputStream: OutputStream) =
     json.encodeToStream(
-        JsonElementBackedSerializer(Project.serializer()),
+        JsonElementBackedSerializer(XcodeProject.serializer()),
         this,
         outputStream
     )
