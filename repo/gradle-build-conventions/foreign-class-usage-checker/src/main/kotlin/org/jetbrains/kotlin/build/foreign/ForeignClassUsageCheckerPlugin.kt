@@ -26,6 +26,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
+import java.util.zip.ZipFile
 
 @Suppress("unused")
 class ForeignClassUsageCheckerPlugin : Plugin<Project> {
@@ -37,7 +38,7 @@ class ForeignClassUsageCheckerPlugin : Plugin<Project> {
                 .map { it.output.classesDirs }
 
             project.tasks.withType<CheckForeignClassUsageTask>().configureEach {
-                classesDirs.from(classesDirsProvider)
+                classes.from(classesDirsProvider)
             }
 
             project.tasks.named("check").configure {
@@ -54,10 +55,10 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
     }
 
     /**
-     * Directories with compiled class files to scan for foreign class usage.
+     * Directories or archives with compiled class files to scan for foreign class usage.
      *
-     * This property accepts one or more directories containing `.class` files that will be analyzed
-     * to detect usage of external (foreign) classes in their public API surface.
+     * This property accepts one or more directories containing `.class` files, or JAR files with them,
+     * that will be analyzed to detect usage of external (foreign) classes in their public API surface.
      *
      * By default, this property is configured to point to the output directories of the project's
      * [SourceSet.MAIN_SOURCE_SET_NAME] source set when the `java` plugin is applied.
@@ -65,7 +66,7 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
     @get:InputFiles
     @get:SkipWhenEmpty
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val classesDirs: ConfigurableFileCollection
+    abstract val classes: ConfigurableFileCollection
 
     /**
      * Set of fully qualified names of annotations that mark declarations as non-public API.
@@ -143,9 +144,24 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
         val collectUsages = collectUsages.get()
         val processor = ForeignClassUsageProcessor(nonPublicMarkers.get(), collectUsages)
 
-        for (classesDir in classesDirs.files) {
-            classesDir.walkTopDown().filter { it.isFile && it.extension == "class" }.forEach { classFile ->
-                processor.process(classFile)
+        for (classesFile in classes.files) {
+            if (classesFile.isFile && classesFile.extension == "jar") {
+                ZipFile(classesFile).use { zipFile ->
+                    for (zipEntry in zipFile.entries()) {
+                        if (zipEntry.name.endsWith(".class")) {
+                            zipFile.getInputStream(zipEntry).use { inputStream ->
+                                processor.process(inputStream)
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Process individual '.class' files and directories with them
+                classesFile.walkTopDown().filter { it.isFile && it.extension == "class" }.forEach { classFile ->
+                    classFile.inputStream().buffered().use { inputStream ->
+                        processor.process(inputStream)
+                    }
+                }
             }
         }
 
