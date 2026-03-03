@@ -330,10 +330,46 @@ public fun __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSup
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__")
+public fun __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(box: kotlin.native.internal.NativePtr): Unit {
+    val __box = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Unit>(box);
+        { arg0: Box<kotlin.Any?> ->
+            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            Unit
+        }
+    }
+    produceBoxUpperBound(__box)
+}
+
 @ExportedBridge("__root___returnBoxFun")
 public fun __root___returnBoxFun(): kotlin.native.internal.NativePtr {
     val _result = returnBoxFun()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___takeBoxStarProjection__TypesOfArguments__main_Box__")
+public fun __root___takeBoxStarProjection__TypesOfArguments__main_Box__(box: kotlin.native.internal.NativePtr): Unit {
+    val __box = kotlin.native.internal.ref.dereferenceExternalRCRef(box) as Box<kotlin.Any?>
+    takeBoxStarProjection(__box)
+}
+
+@ExportedBridge("__root___takeBoxUpperBound__TypesOfArguments__main_Box__")
+public fun __root___takeBoxUpperBound__TypesOfArguments__main_Box__(box: kotlin.native.internal.NativePtr): Unit {
+    val __box = kotlin.native.internal.ref.dereferenceExternalRCRef(box) as Box<kotlin.Any?>
+    takeBoxUpperBound(__box)
+}
+
+@ExportedBridge("__root___takeBoxUpperBoundClosure__TypesOfArguments__U2829202D_U20main_Box__")
+public fun __root___takeBoxUpperBoundClosure__TypesOfArguments__U2829202D_U20main_Box__(box: kotlin.native.internal.NativePtr): Unit {
+    val __box = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<()->kotlin.native.internal.NativePtr>(box);
+        {
+            val _result = kotlinFun()
+            kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Box<kotlin.Any?>
+        }
+    }
+    takeBoxUpperBoundClosure(__box)
 }
 
 @ExportedBridge("main_internal_functional_type_caller_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__")

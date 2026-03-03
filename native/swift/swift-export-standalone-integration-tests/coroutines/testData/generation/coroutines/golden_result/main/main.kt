@@ -18,18 +18,6 @@ public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRa
     kotlin.native.internal.initInstance(____kt, Foo())
 }
 
-@ExportedBridge("__root___closure_returning_flow__TypesOfArguments__U28KotlinCoroutineSupport__KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__")
-public fun __root___closure_returning_flow__TypesOfArguments__U28KotlinCoroutineSupport__KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__(i: kotlin.native.internal.NativePtr): Unit {
-    val __i = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Unit>(i);
-        { arg0: kotlinx.coroutines.flow.Flow<Foo> ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
-            Unit
-        }
-    }
-    closure_returning_flow(__i)
-}
-
 @ExportedBridge("__root___demo")
 public fun __root___demo(): kotlin.native.internal.NativePtr {
     val _result = demo()

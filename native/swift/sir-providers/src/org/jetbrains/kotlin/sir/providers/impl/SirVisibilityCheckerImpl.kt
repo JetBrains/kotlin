@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.export.utilities.isAllSuperTypesExporte
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -81,10 +82,7 @@ public class SirVisibilityCheckerImpl(
         if (ktSymbol.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN) {
             visibility.value = SirVisibility.PRIVATE
         }
-        if (ktSymbol is KaNamedFunctionSymbol && ktSymbol.allParameters.map { it.returnType.fullyExpandedType }
-                .filter { type -> !type.isFunctionType && !sirSession.isTypeSupported(type) }
-                .any { hasUnboundTypeParameters(it) }
-        ) {
+        if (ktSymbol is KaNamedFunctionSymbol && hasUnsupportedInputTypeParameters(ktSymbol)) {
             return@withSessions SirAvailability.Unavailable("Callables with parameters unbound generic types are not supported yet")
         }
         if (containsHidesFromObjCAnnotation(ktSymbol)) {
@@ -236,17 +234,35 @@ private fun containsHidesFromObjCAnnotation(symbol: KaAnnotatedSymbol): Boolean 
 
 private val SUPPORTED_SYMBOL_ORIGINS = setOf(KaSymbolOrigin.SOURCE, KaSymbolOrigin.LIBRARY)
 
+context(ka: KaSession, sirSession: SirSession)
+private fun hasUnsupportedInputTypeParameters(ktSymbol: KaFunctionSymbol): Boolean =
+    ktSymbol.allParameters.map { it.returnType }.any {
+        hasUnboundInputTypeParameters(it, false)
+    } || hasUnboundInputTypeParameters(ktSymbol.returnType, true)
+
 @OptIn(KaExperimentalApi::class)
-context(ka: KaSession)
-private fun hasUnboundTypeParameters(type: KaType): Boolean = (type.fullyExpandedType as? KaClassType)?.let { classType ->
-    val typeParameters = classType.symbol.typeParameters.also { it.ifEmpty { return@let false } }
-
-    if (typeParameters.isEmpty()) return@let false
-
-    classType.typeArguments
-        .zipIfSizesAreEqual(typeParameters.map { typeParam -> typeParam.upperBounds.singleOrNull() }) // null indicates multiple bounds
-        ?.any { (argument, bound) -> argument.type?.let { it != bound } ?: false }  // .type == null indicates star projection
-        ?: false
+context(ka: KaSession, sirSession: SirSession)
+private fun hasUnboundInputTypeParameters(
+    type: KaType,
+    isReturnType: Boolean
+): Boolean = (type.fullyExpandedType as? KaClassType)?.let { classType ->
+    if (sirSession.isTypeSupported(classType)) return@let false
+    if (classType is KaFunctionType) {
+        return@let classType.parameterTypes.any {
+            hasUnboundInputTypeParameters(it, false)
+        } || hasUnboundInputTypeParameters(classType.returnType, isReturnType)
+    } else if (isReturnType) {
+        return@let false
+    }
+    val typeParamUpperBounds = classType.symbol.typeParameters.map { typeParam ->
+        val upperBounds = typeParam.upperBounds
+        if (upperBounds.isEmpty()) return@map ka.builtinTypes.nullableAny // no upperbound indicates Any?
+        upperBounds.singleOrNull() // null indicates multiple bounds
+    }
+    if (typeParamUpperBounds.isEmpty()) return@let false
+    classType.typeArguments.zipIfSizesAreEqual(typeParamUpperBounds)?.any { (argument, bound) ->
+        argument.type?.let { it != bound } ?: false // .type == null indicates star projection
+    } ?: false
 } ?: false
 
 @OptIn(KaExperimentalApi::class)

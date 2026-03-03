@@ -818,23 +818,6 @@ extension ExportedKotlinPackages.kotlinx.serialization.modules {
     package protocol _SerializersModuleCollector {
     }
     public final class PolymorphicModuleBuilder: KotlinRuntime.KotlinBase {
-        @available(*, deprecated, message: "Deprecated in favor of function with more precise name: defaultDeserializer. Replacement: defaultDeserializer(defaultSerializerProvider)")
-        public func `default`(
-            defaultSerializerProvider: @escaping (Swift.String?) -> (any ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy)?
-        ) -> Swift.Void {
-            return kotlinx_serialization_modules_PolymorphicModuleBuilder_default__TypesOfArguments__U28Swift_Optional_Swift_String_U29202D_U20Swift_Optional_anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___(self.__externalRCRef(), {
-                let originalBlock = defaultSerializerProvider
-                return { arg0 in return originalBlock(arg0).map { it in it.__externalRCRef() } ?? nil }
-            }())
-        }
-        public func defaultDeserializer(
-            defaultDeserializerProvider: @escaping (Swift.String?) -> (any ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy)?
-        ) -> Swift.Void {
-            return kotlinx_serialization_modules_PolymorphicModuleBuilder_defaultDeserializer__TypesOfArguments__U28Swift_Optional_Swift_String_U29202D_U20Swift_Optional_anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___(self.__externalRCRef(), {
-                let originalBlock = defaultDeserializerProvider
-                return { arg0 in return originalBlock(arg0).map { it in it.__externalRCRef() } ?? nil }
-            }())
-        }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
