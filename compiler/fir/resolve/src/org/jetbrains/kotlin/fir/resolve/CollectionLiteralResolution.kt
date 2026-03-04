@@ -120,6 +120,7 @@ private fun resolveCollectionLiteralToErrorCall(
     )
 
     var call = buildFunctionCall {
+        annotations.addAll(collectionLiteral.annotations)
         source = collectionLiteral.source
         argumentList = collectionLiteral.argumentList
         calleeReference = errorReference
@@ -250,6 +251,7 @@ private class CollectionLiteralResolutionStrategyThroughCompanion(context: Resol
         val companion = expectedClass?.companionObjectIfDefinedOperatorOf ?: return null
 
         val functionCall = buildFunctionCall {
+            annotations.addAll(collectionLiteral.annotations)
             explicitReceiver =
                 companion.toImplicitResolvedQualifierReceiver(
                     components,
