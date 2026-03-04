@@ -110,10 +110,20 @@ internal val Project.kotlinToolingDiagnosticsCollectorProvider: Provider<KotlinT
 internal val Project.kotlinToolingDiagnosticsCollector: KotlinToolingDiagnosticsCollector
     get() = kotlinToolingDiagnosticsCollectorProvider.get()
 
+/**
+ * Reports [diagnostic] through this project's [KotlinToolingDiagnosticsCollector].
+ *
+ * This method does not deduplicate diagnostics and reports each invocation independently.
+ */
 internal fun Project.reportDiagnostic(diagnostic: ToolingDiagnostic) {
     kotlinToolingDiagnosticsCollector.report(toolingDiagnosticsContext, diagnostic)
 }
 
+/**
+ * Reports [diagnostic] at most once during the current Gradle build.
+ *
+ * Subsequent calls with the same [key] are ignored.
+ */
 internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(
     context: ToolingDiagnosticsContext,
     diagnostic: ToolingDiagnostic,
@@ -122,6 +132,11 @@ internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(
     report(context, diagnostic, reportOnce = true, ":#$key")
 }
 
+/**
+ * Reports [diagnostic] at most once for a given Gradle project.
+ *
+ * Deduplication is scoped to `context.projectPath`, so different projects can report the same [key].
+ */
 internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleProject(
     context: ToolingDiagnosticsContext,
     diagnostic: ToolingDiagnostic,
@@ -130,10 +145,18 @@ internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleProject(
     report(context, diagnostic, reportOnce = true, "${context.projectPath}#$key")
 }
 
+/**
+ * Convenience wrapper for [KotlinToolingDiagnosticsCollector.reportOncePerGradleProject]
+ * that uses this project's diagnostics context.
+ */
 internal fun Project.reportDiagnosticOncePerProject(diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
     kotlinToolingDiagnosticsCollector.reportOncePerGradleProject(toolingDiagnosticsContext, diagnostic, key)
 }
 
+/**
+ * Convenience wrapper for [KotlinToolingDiagnosticsCollector.reportOncePerGradleBuild]
+ * that uses this project's diagnostics context.
+ */
 internal fun Project.reportDiagnosticOncePerBuild(diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
     kotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(toolingDiagnosticsContext, diagnostic, key)
 }
@@ -153,6 +176,10 @@ internal fun reportDiagnosticImmediately(
     diagnostic.renderReportedDiagnostic(logger, renderingOptions)
 }
 
+/**
+ * Convenience overload of [reportDiagnosticImmediately] that resolves logger and rendering options
+ * from this [Project].
+ */
 @ImmediateDiagnosticReporting
 internal fun Project.reportDiagnosticImmediately(diagnostic: ToolingDiagnostic) {
     reportDiagnosticImmediately(logger, ToolingDiagnosticRenderingOptions.forProject(this), diagnostic)
