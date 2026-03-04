@@ -8,43 +8,31 @@ package org.jetbrains.kotlin.java.direct
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-@Suppress("UNCHECKED_CAST")
 class JavaClassOverAst(
     node: JavaSyntaxNode,
-    source: CharSequence,
+    val resolutionContext: JavaResolutionContext,
     override val outerClass: JavaClass? = null,
-    internal val localScope: LocalJavaScope? = null,
-    internal val imports: JavaImports = JavaImports.EMPTY
-) : JavaElementOverAst(node, source), JavaClass {
+) : JavaElementOverAst(node, resolutionContext.source), JavaClass {
 
     override val name: Name
         get() = Name.identifier(node.children.find { it.type.toString() == "IDENTIFIER" }?.text ?: "<error>")
 
     override val fqName: FqName?
         get() {
-            var currentRoot: JavaSyntaxNode? = node
-            while (currentRoot?.parent != null) {
-                currentRoot = currentRoot.parent
-            }
-            val packageStmt = currentRoot?.findChildByType("PACKAGE_STATEMENT")
-            val packageName = packageStmt?.findChildByType("JAVA_CODE_REFERENCE")?.text
-            val packageFqName = if (packageName != null) FqName(packageName) else FqName.ROOT
-            
             val nestedName = mutableListOf<String>()
             var currentClass: JavaClass? = this
             while (currentClass != null) {
                 nestedName.add(0, currentClass.name.asString())
                 currentClass = currentClass.outerClass
             }
-            
-            var result = packageFqName
-            for (name in nestedName) {
-                result = result.child(Name.identifier(name))
+
+            var result = resolutionContext.packageFqName
+            for (n in nestedName) {
+                result = result.child(Name.identifier(n))
             }
             return result
         }
@@ -69,29 +57,33 @@ class JavaClassOverAst(
         }
 
     override val typeParameters: List<JavaTypeParameter>
-        get() = node.findChildByType("TYPE_PARAMETER_LIST")?.getChildrenByType("TYPE_PARAMETER")?.map { JavaTypeParameterOverAst(it, source, localScope, imports) } ?: emptyList()
+        get() = node.findChildByType("TYPE_PARAMETER_LIST")
+            ?.getChildrenByType("TYPE_PARAMETER")
+            ?.map { JavaTypeParameterOverAst(it, resolutionContext) }
+            ?: emptyList()
 
     override val supertypes: Collection<JavaClassifierType>
         get() {
             val result = mutableListOf<JavaClassifierType>()
             node.findChildByType("EXTENDS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
-                result.add(JavaClassifierTypeOverAst(it, source, localScope, imports))
+                result.add(JavaClassifierTypeOverAst(it, resolutionContext))
             }
             node.findChildByType("IMPLEMENTS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
-                result.add(JavaClassifierTypeOverAst(it, source, localScope, imports))
+                result.add(JavaClassifierTypeOverAst(it, resolutionContext))
             }
             return result
         }
+
     override val innerClassNames: Collection<Name>
-        get() = node.children.filter { it.type.toString() == "CLASS" }.map { 
+        get() = node.children.filter { it.type.toString() == "CLASS" }.map {
             Name.identifier(it.findChildByType("IDENTIFIER")?.text ?: "<error>")
         }
 
     override fun findInnerClass(name: Name): JavaClass? {
-        val innerClassNode = node.children.find { 
+        val innerClassNode = node.children.find {
             it.type.toString() == "CLASS" && it.findChildByType("IDENTIFIER")?.text == name.asString()
         }
-        return innerClassNode?.let { JavaClassOverAst(it, source, this, localScope, imports) }
+        return innerClassNode?.let { JavaClassOverAst(it, resolutionContext, outerClass = this) }
     }
 
     override val isInterface: Boolean get() = node.findChildByType("INTERFACE_KEYWORD") != null
@@ -103,18 +95,27 @@ class JavaClassOverAst(
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
     override val methods: Collection<JavaMethod>
-        get() = node.getChildrenByType("METHOD").filter { it.findChildByType("TYPE") != null }.map { JavaMethodOverAst(it, source, this) }
+        get() = node.getChildrenByType("METHOD")
+            .filter { it.findChildByType("TYPE") != null }
+            .map { JavaMethodOverAst(it, this) }
+
     override val fields: Collection<JavaField>
-        get() = node.getChildrenByType("FIELD").map { JavaFieldOverAst(it, source, this) }
+        get() = node.getChildrenByType("FIELD").map { JavaFieldOverAst(it, this) }
 
     override val constructors: Collection<JavaConstructor>
-        get() = node.getChildrenByType("METHOD").filter { it.findChildByType("TYPE") == null }.map { JavaConstructorOverAst(it, source, this) }
+        get() = node.getChildrenByType("METHOD")
+            .filter { it.findChildByType("TYPE") == null }
+            .map { JavaConstructorOverAst(it, this) }
+
     override val recordComponents: Collection<JavaRecordComponent> get() = emptyList()
 
     override fun hasDefaultConstructor(): Boolean = !isInterface && constructors.isEmpty()
 
     override val annotations: Collection<JavaAnnotation>
-        get() = modifierList?.getChildrenByType("ANNOTATION")?.map { JavaAnnotationOverAst(it, source) } ?: emptyList()
+        get() = modifierList?.getChildrenByType("ANNOTATION")
+            ?.map { JavaAnnotationOverAst(it, resolutionContext.source) }
+            ?: emptyList()
+
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 

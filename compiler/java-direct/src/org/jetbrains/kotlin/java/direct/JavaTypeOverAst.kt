@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -21,10 +20,9 @@ abstract class JavaTypeOverAst(
 
 class JavaClassifierTypeOverAst(
     node: JavaSyntaxNode,
-    source: CharSequence,
-    private val localScope: LocalJavaScope? = null,
-    private val imports: JavaImports = JavaImports.EMPTY,
-) : JavaTypeOverAst(node, source), JavaClassifierType {
+    private val resolutionContext: JavaResolutionContext,
+) : JavaTypeOverAst(node, resolutionContext.source), JavaClassifierType {
+
     private val rawTypeName: String by lazy {
         var text = node.text.trim()
         while (text.endsWith("]")) {
@@ -41,18 +39,14 @@ class JavaClassifierTypeOverAst(
 
     override val classifier: JavaClassifier? by lazy {
         val parts = rawTypeName.split('.')
-
-        var current: JavaClassifier? = localScope?.findClass(Name.identifier(parts[0]))
+        var current: JavaClassifier? = resolutionContext.findLocalClass(Name.identifier(parts[0]))
 
         if (current is JavaClass) {
             for (i in 1 until parts.size) {
-                val nextPart = parts[i]
-                val prev = current as JavaClass
-                current = prev.findInnerClass(Name.identifier(nextPart))
-                if (current == null) return@lazy null
+                current = (current as JavaClass).findInnerClass(Name.identifier(parts[i]))
+                    ?: return@lazy null
             }
         }
-
         current
     }
 
@@ -61,7 +55,7 @@ class JavaClassifierTypeOverAst(
             val parts = rawTypeName.split('.')
 
             // 1. Check local scope (same compilation unit)
-            val localBase = localScope?.findClass(Name.identifier(parts[0]))
+            val localBase = resolutionContext.findLocalClass(Name.identifier(parts[0]))
             if (localBase != null) {
                 var current: JavaClass? = localBase
                 for (i in 1 until parts.size) {
@@ -71,7 +65,7 @@ class JavaClassifierTypeOverAst(
             }
 
             // 2. Check explicit single-type imports
-            val qualified = imports.simpleImports[parts[0]]
+            val qualified = resolutionContext.getSimpleImport(parts[0])
             if (qualified != null) {
                 var result = qualified.asString()
                 for (i in 1 until parts.size) {
@@ -85,59 +79,26 @@ class JavaClassifierTypeOverAst(
         }
 
     override val presentableText: String get() = node.text
+
     override val isRaw: Boolean by lazy {
         val hasParameterList = node.findChildByType("REFERENCE_PARAMETER_LIST") != null
         !hasParameterList && (classifier as? JavaClass)?.typeParameters?.isNotEmpty() == true
     }
+
     override val typeArguments: List<JavaType> by lazy {
         val parameterList = node.findChildByType("REFERENCE_PARAMETER_LIST") ?: return@lazy emptyList()
-
         parameterList.children
             .filter { it.type.toString() == "TYPE" }
-            .map { typeNode -> createJavaType(typeNode, source, localScope, imports) }
+            .map { typeNode -> createJavaType(typeNode, resolutionContext) }
     }
 
     override val isResolved: Boolean
-        get() {
-            return classifier != null
-                    || rawTypeName.contains('.')
-                    || imports.simpleImports.containsKey(rawTypeName)
-        }
+        get() = classifier != null
+                || rawTypeName.contains('.')
+                || resolutionContext.getSimpleImport(rawTypeName) != null
 
     override fun resolve(tryResolve: (String) -> Boolean): String? {
-        val simpleName = rawTypeName
-
-        // 1. Try current package first (Java same-package visibility)
-        // TODO: it should be extracted from the local context, and removed from import itself
-        val packageFqName = imports.packageFqName
-        if (!packageFqName.isRoot) {
-            val samePackageFqn = "${packageFqName.asString()}.$simpleName"
-            if (tryResolve(samePackageFqn)) {
-                return samePackageFqn
-            }
-        }
-
-        // 2. Try java.lang.* (automatic import per JLS)
-        val javaLangFqn = "java.lang.$simpleName"
-        if (JavaToKotlinClassMap.mapJavaToKotlin(FqName(javaLangFqn)) != null || tryResolve(javaLangFqn)) {
-            return javaLangFqn
-        }
-
-        // 3. Try explicit star imports
-        val starImports = imports.starImports
-        var foundFqn: String? = null
-
-        for (starPackage in starImports) {
-            val candidateFqn = "${starPackage.asString()}.$simpleName"
-            if (tryResolve(candidateFqn)) {
-                if (foundFqn != null) {
-                    return null
-                }
-                foundFqn = candidateFqn
-            }
-        }
-
-        return foundFqn
+        return resolutionContext.resolveWithCallback(rawTypeName, tryResolve)
     }
 }
 
@@ -173,12 +134,7 @@ class JavaWildcardTypeOverAst(
     override val isExtends: Boolean,
 ) : JavaTypeOverAst(node, source), JavaWildcardType
 
-fun createJavaType(
-    node: JavaSyntaxNode,
-    source: CharSequence,
-    localScope: LocalJavaScope? = null,
-    imports: JavaImports = JavaImports.EMPTY,
-): JavaType {
+fun createJavaType(node: JavaSyntaxNode, resolutionContext: JavaResolutionContext): JavaType {
     // If input node is a TYPE with array brackets or vararg ellipsis, handle it directly
     // (don't look for nested TYPE first, as that would skip the array dimension)
     if (node.type.toString() == "TYPE") {
@@ -187,8 +143,8 @@ fun createJavaType(
         if (hasArrayBracket || hasVarargEllipsis) {
             val componentTypeNode = node.findChildByType("TYPE")
             if (componentTypeNode != null) {
-                val componentType = createJavaType(componentTypeNode, source, localScope, imports)
-                return JavaArrayTypeOverAst(node, source, componentType)
+                val componentType = createJavaType(componentTypeNode, resolutionContext)
+                return JavaArrayTypeOverAst(node, resolutionContext.source, componentType)
             }
         }
     }
@@ -201,35 +157,38 @@ fun createJavaType(
     if (hasArrayBracket || hasVarargEllipsis) {
         val componentTypeNode = typeNode.findChildByType("TYPE")
         if (componentTypeNode != null) {
-            val componentType = createJavaType(componentTypeNode, source, localScope, imports)
-            return JavaArrayTypeOverAst(typeNode, source, componentType)
+            val componentType = createJavaType(componentTypeNode, resolutionContext)
+            return JavaArrayTypeOverAst(typeNode, resolutionContext.source, componentType)
         }
     }
 
     val primitiveNode = typeNode.children.find { it.type.toString().endsWith("_KEYWORD") }
     if (primitiveNode != null) {
-        return JavaPrimitiveTypeOverAst(primitiveNode, source)
+        return JavaPrimitiveTypeOverAst(primitiveNode, resolutionContext.source)
     }
+
     val referenceNode = typeNode.findChildByType("JAVA_CODE_REFERENCE")
     if (referenceNode != null) {
-        return JavaClassifierTypeOverAst(referenceNode, source, localScope, imports)
+        return JavaClassifierTypeOverAst(referenceNode, resolutionContext)
     }
-    return JavaClassifierTypeOverAst(typeNode, source, localScope, imports)
+    return JavaClassifierTypeOverAst(typeNode, resolutionContext)
 }
 
 class JavaTypeParameterOverAst(
     node: JavaSyntaxNode,
-    source: CharSequence,
-    private val localScope: LocalJavaScope? = null,
-    private val imports: JavaImports = JavaImports.EMPTY,
-) : JavaElementOverAst(node, source), JavaTypeParameter {
-    override val name: Name get() = Name.identifier(node.findChildByType("IDENTIFIER")?.text ?: "<error>")
+    private val resolutionContext: JavaResolutionContext,
+) : JavaElementOverAst(node, resolutionContext.source), JavaTypeParameter {
+
+    override val name: Name
+        get() = Name.identifier(node.findChildByType("IDENTIFIER")?.text ?: "<error>")
+
     override val upperBounds: Collection<JavaClassifierType> by lazy {
         val extendsList = node.findChildByType("EXTENDS_BOUND_LIST") ?: return@lazy emptyList()
         extendsList.getChildrenByType("JAVA_CODE_REFERENCE").map { ref ->
-            JavaClassifierTypeOverAst(ref, source, localScope, imports)
+            JavaClassifierTypeOverAst(ref, resolutionContext)
         }
     }
+
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null

@@ -15,13 +15,23 @@ import kotlin.io.path.writeText
 
 class JavaParsingTest {
 
+    private fun parseSource(source: String): Pair<JavaSyntaxNode, JavaResolutionContext> {
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+        val context = JavaResolutionContext.create(root, source)
+        return root to context
+    }
+
+    private fun parseFirstClass(source: String): JavaClassOverAst {
+        val (root, context) = parseSource(source)
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        return JavaClassOverAst(classNode, context)
+    }
+
     @Test
     fun testBasicJavaParsing() {
         val source = "public final class A {}"
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        println(root.dump())
-        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
+        val javaClass = parseFirstClass(source)
         assert(javaClass.name.asString() == "A")
         assert(javaClass.isFinal)
         assert(!javaClass.isAbstract)
@@ -31,10 +41,7 @@ class JavaParsingTest {
     @Test
     fun testAbstractInterface() {
         val source = "interface I {}"
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        println(root.dump())
-        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
+        val javaClass = parseFirstClass(source)
         assert(javaClass.name.asString() == "I")
         assert(javaClass.isInterface)
         assert(javaClass.isAbstract)
@@ -49,10 +56,7 @@ class JavaParsingTest {
                 public A() {}
             }
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        println(root.dump())
-        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
+        val javaClass = parseFirstClass(source)
 
         assert(javaClass.fields.size == 1)
         assert(javaClass.fields.first().name.asString() == "field")
@@ -67,10 +71,7 @@ class JavaParsingTest {
     @Test
     fun testSupertypesAndTypeParameters() {
         val source = "class A<T> extends B implements C, D {}"
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        println(root.dump())
-        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
+        val javaClass = parseFirstClass(source)
 
         assert(javaClass.typeParameters.size == 1)
         assert(javaClass.typeParameters.first().name.asString() == "T")
@@ -88,11 +89,7 @@ class JavaParsingTest {
             package com.example;
             class A {}
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        println(root.dump())
-        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
-
+        val javaClass = parseFirstClass(source)
         assert(javaClass.fqName?.asString() == "com.example.A")
     }
 
@@ -102,10 +99,7 @@ class JavaParsingTest {
             @Deprecated
             class A {}
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        println(root.dump())
-        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassOverAst(it, source) }
+        val javaClass = parseFirstClass(source)
 
         assert(javaClass.annotations.size == 1)
         assert(javaClass.annotations.first().classId?.asSingleFqName()?.asString() == "Deprecated")
@@ -134,26 +128,23 @@ class JavaParsingTest {
             class Base {}
             class Derived extends Base {}
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        
-        val localScope = LocalJavaScope(root, source)
-        
+        val (root, context) = parseSource(source)
+
         val classes = root.children.filter { it.type.toString() == "CLASS" }
         assert(classes.size == 2) { "Expected 2 classes, got ${classes.size}" }
-        
-        val base = JavaClassOverAst(classes[0], source, null, localScope)
-        val derived = JavaClassOverAst(classes[1], source, null, localScope)
-        
+
+        val base = JavaClassOverAst(classes[0], context)
+        val derived = JavaClassOverAst(classes[1], context)
+
         assert(base.name.asString() == "Base")
         assert(derived.name.asString() == "Derived")
-        
+
         assert(base.supertypes.isEmpty()) { "Base should have no supertypes" }
         assert(derived.supertypes.size == 1) { "Derived should have 1 supertype, got ${derived.supertypes.size}" }
-        
+
         val supertype = derived.supertypes.first()
         assert(supertype.classifierQualifiedName == "Base") { "Expected Base, got ${supertype.classifierQualifiedName}" }
-        
+
         val classifier = supertype.classifier
         assert(classifier != null) { "Expected classifier to be resolved" }
         assert(classifier is JavaClass) { "Expected JavaClass, got ${classifier?.javaClass}" }
@@ -165,36 +156,27 @@ class JavaParsingTest {
         val sourceWithoutConstructor = """
             public class A {}
         """.trimIndent()
-        val builder1 = parseJavaToSyntaxTreeBuilder(sourceWithoutConstructor, 0)
-        val root1 = buildSyntaxTree(builder1, sourceWithoutConstructor)
-        val classNode1 = root1.children.first { it.type.toString() == "CLASS" }
-        val javaClass1 = JavaClassOverAst(classNode1, sourceWithoutConstructor)
-        
+        val javaClass1 = parseFirstClass(sourceWithoutConstructor)
+
         assert(javaClass1.constructors.isEmpty()) { "Expected no explicit constructors" }
         assert(javaClass1.hasDefaultConstructor()) { "Expected hasDefaultConstructor() = true for class without explicit constructor" }
         assert(!javaClass1.isInterface) { "A is not an interface" }
-        
+
         val sourceWithConstructor = """
             public class B {
                 public B() {}
             }
         """.trimIndent()
-        val builder2 = parseJavaToSyntaxTreeBuilder(sourceWithConstructor, 0)
-        val root2 = buildSyntaxTree(builder2, sourceWithConstructor)
-        val classNode2 = root2.children.first { it.type.toString() == "CLASS" }
-        val javaClass2 = JavaClassOverAst(classNode2, sourceWithConstructor)
-        
+        val javaClass2 = parseFirstClass(sourceWithConstructor)
+
         assert(javaClass2.constructors.size == 1) { "Expected 1 explicit constructor, got ${javaClass2.constructors.size}" }
         assert(!javaClass2.hasDefaultConstructor()) { "Expected hasDefaultConstructor() = false for class with explicit constructor" }
-        
+
         val sourceInterface = """
             public interface I {}
         """.trimIndent()
-        val builder3 = parseJavaToSyntaxTreeBuilder(sourceInterface, 0)
-        val root3 = buildSyntaxTree(builder3, sourceInterface)
-        val classNode3 = root3.children.first { it.type.toString() == "CLASS" }
-        val javaClass3 = JavaClassOverAst(classNode3, sourceInterface)
-        
+        val javaClass3 = parseFirstClass(sourceInterface)
+
         assert(javaClass3.constructors.isEmpty()) { "Expected no constructors for interface" }
         assert(!javaClass3.hasDefaultConstructor()) { "Expected hasDefaultConstructor() = false for interface" }
         assert(javaClass3.isInterface) { "I should be an interface" }
@@ -207,15 +189,12 @@ class JavaParsingTest {
                 public void method() {}
             }
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val javaClass = JavaClassOverAst(classNode, source)
-        
+        val javaClass = parseFirstClass(source)
+
         assert(javaClass.methods.size == 1) { "Expected 1 method, got ${javaClass.methods.size}" }
         val method = javaClass.methods.first()
         assert(method.name.asString() == "method")
-        
+
         val returnType = method.returnType
         assert(returnType is JavaPrimitiveType) { "Expected JavaPrimitiveType, got ${returnType::class.java}" }
         assert((returnType as JavaPrimitiveType).type == null) { "Expected type=null for void, got ${returnType.type}" }
@@ -227,32 +206,25 @@ class JavaParsingTest {
             class Base {}
             class Derived extends Base {}
         """.trimIndent()
-        val builder1 = parseJavaToSyntaxTreeBuilder(sourceSimpleName, 0)
-        val root1 = buildSyntaxTree(builder1, sourceSimpleName)
-        val localScope1 = LocalJavaScope(root1, sourceSimpleName)
-        
+        val (root1, context1) = parseSource(sourceSimpleName)
+
         val derivedNode = root1.children.first { it.type.toString() == "CLASS" && it.findChildByType("IDENTIFIER")?.text == "Derived" }
-        val derived = JavaClassOverAst(derivedNode, sourceSimpleName, null, localScope1)
-        
+        val derived = JavaClassOverAst(derivedNode, context1)
+
         assert(derived.supertypes.size == 1) { "Expected 1 supertype" }
         val supertype = derived.supertypes.first()
         assert(supertype.classifierQualifiedName == "Base") { "Expected 'Base', got '${supertype.classifierQualifiedName}'" }
-        assert(supertype.classifier != null) { "Base should be resolved via LocalJavaScope" }
-        
+        assert(supertype.classifier != null) { "Base should be resolved via local scope" }
+
         val sourceQualifiedName = """
             class MyClass extends java.util.ArrayList {}
         """.trimIndent()
-        val builder2 = parseJavaToSyntaxTreeBuilder(sourceQualifiedName, 0)
-        val root2 = buildSyntaxTree(builder2, sourceQualifiedName)
-        val localScope2 = LocalJavaScope(root2, sourceQualifiedName)
-        
-        val myClassNode = root2.children.first { it.type.toString() == "CLASS" }
-        val myClass = JavaClassOverAst(myClassNode, sourceQualifiedName, null, localScope2)
-        
+        val myClass = parseFirstClass(sourceQualifiedName)
+
         assert(myClass.supertypes.size == 1) { "Expected 1 supertype" }
         val supertype2 = myClass.supertypes.first()
         assert(supertype2.classifierQualifiedName == "java.util.ArrayList") { "Expected 'java.util.ArrayList', got '${supertype2.classifierQualifiedName}'" }
-        assert(supertype2.classifier == null) { "java.util.ArrayList should NOT be in LocalJavaScope" }
+        assert(supertype2.classifier == null) { "java.util.ArrayList should NOT be in local scope" }
     }
 
     @Test
@@ -268,35 +240,17 @@ class JavaParsingTest {
                 AtomicInteger counter;
             }
         """.trimIndent()
-        
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        
-        val imports = extractImports(root, source)
-        
-        assert(imports.simpleImports.size == 2) { "Expected 2 simple imports, got ${imports.simpleImports.size}: ${imports.simpleImports}" }
-        assert(imports.simpleImports["ArrayList"]?.asString() == "java.util.ArrayList") { "Expected ArrayList -> java.util.ArrayList, got ${imports.simpleImports["ArrayList"]}" }
-        assert(imports.simpleImports["List"]?.asString() == "java.util.List") { "Expected List -> java.util.List, got ${imports.simpleImports["List"]}" }
-        
-        assert(imports.starImports.size == 1) { "Expected 1 star import, got ${imports.starImports.size}: ${imports.starImports}" }
-        assert(imports.starImports[0].asString() == "java.util.concurrent.atomic") { "Expected java.util.concurrent.atomic (without asterisk), got ${imports.starImports[0]}" }
-        
-        val pathSegments = imports.starImports[0].pathSegments()
-        assert(pathSegments.size == 4) { "Expected 4 path segments, got ${pathSegments.size}: $pathSegments" }
-        assert(pathSegments[0].asString() == "java") { "Expected 'java' as first segment" }
-        assert(pathSegments[3].asString() == "atomic") { "Expected 'atomic' as last segment, got ${pathSegments[3]}" }
-        
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val javaClass = JavaClassOverAst(classNode, source, null, LocalJavaScope(root, source), imports)
-        
+
+        val javaClass = parseFirstClass(source)
+
         assert(javaClass.supertypes.size == 1) { "Expected 1 supertype" }
         val supertype = javaClass.supertypes.first()
         assert(supertype.classifierQualifiedName == "java.util.ArrayList") { "Expected qualified name java.util.ArrayList, got ${supertype.classifierQualifiedName}" }
-        
+
         val listField = javaClass.fields.first { it.name.asString() == "list" }
         val listType = listField.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         assert(listType.classifierQualifiedName == "java.util.List") { "Expected qualified name java.util.List for list field, got ${listType.classifierQualifiedName}" }
-        
+
         val counterField = javaClass.fields.first { it.name.asString() == "counter" }
         val counterType = counterField.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         assert(counterType.classifierQualifiedName == "AtomicInteger") { "Expected simple name AtomicInteger for star import, got ${counterType.classifierQualifiedName}" }
@@ -313,11 +267,7 @@ class JavaParsingTest {
             }
         """.trimIndent()
 
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        val imports = extractImports(root, source)
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val javaClass = JavaClassOverAst(classNode, source, null, LocalJavaScope(root, source), imports)
+        val javaClass = parseFirstClass(source)
 
         val fieldA = javaClass.fields.first { it.name.asString() == "a" }
         val typeA = fieldA.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -375,7 +325,6 @@ class JavaParsingTest {
         assert("ClassC" in testClasses) { "Expected ClassC in test" }
 
         // Test package NOT in our index - should return empty set (not null)
-        // This is critical: FIR expects empty set to mean "no Java classes here from this source"
         val kotlinPackageClasses = finder.knownClassNamesInPackage(FqName("kotlin"))
         assert(kotlinPackageClasses != null) { "Expected non-null (empty set) for package kotlin, got null" }
         assert(kotlinPackageClasses!!.isEmpty()) { "Expected empty set for package kotlin, got $kotlinPackageClasses" }
@@ -397,29 +346,20 @@ class JavaParsingTest {
                 public Object field;
             }
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val javaClass = JavaClassOverAst(classNode, source)
+        val javaClass = parseFirstClass(source)
 
         assert(javaClass.fields.size == 1) { "Expected 1 field, got ${javaClass.fields.size}" }
         val field = javaClass.fields.first()
         val fieldType = field.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
-
-        println("fieldType.classifierQualifiedName = '${fieldType.classifierQualifiedName}'")
-        println("fieldType.isResolved = ${fieldType.isResolved}")
-        println("fieldType.classifier = ${fieldType.classifier}")
 
         assert(fieldType.classifierQualifiedName == "Object") { "Expected 'Object', got '${fieldType.classifierQualifiedName}'" }
         assert(!fieldType.isResolved) { "Expected isResolved=false for unqualified Object" }
         assert(fieldType.classifier == null) { "Expected classifier=null for external type" }
 
         val resolved = fieldType.resolve { candidateFqn ->
-            println("  tryResolve called with: '$candidateFqn'")
             candidateFqn == "java.lang.Object"
         }
 
-        println("resolved = '$resolved'")
         assert(resolved == "java.lang.Object") { "Expected resolution to 'java.lang.Object', got '$resolved'" }
     }
 
@@ -432,11 +372,7 @@ class JavaParsingTest {
                 public B method() { return null; }
             }
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        val localScope = LocalJavaScope(root, source)
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val javaClass = JavaClassOverAst(classNode, source, null, localScope)
+        val javaClass = parseFirstClass(source)
 
         val field = javaClass.fields.first { it.name.asString() == "field" }
         val fieldType = field.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -456,26 +392,23 @@ class JavaParsingTest {
                 public abstract boolean equals(Object o);
             }
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val javaClass = JavaClassOverAst(classNode, source)
-        
+        val javaClass = parseFirstClass(source)
+
         val equalsMethod = javaClass.methods.first { it.name.asString() == "equals" }
         assert(equalsMethod.valueParameters.size == 1) { "equals should have 1 parameter, got ${equalsMethod.valueParameters.size}" }
-        
+
         val param = equalsMethod.valueParameters.first()
         assert(param.name?.asString() == "o") { "Expected parameter name 'o', got ${param.name}" }
-        
+
         val paramType = param.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         assert(paramType.classifierQualifiedName == "Object") { "Expected 'Object', got '${paramType.classifierQualifiedName}'" }
         assert(!paramType.isResolved) { "Object should not be pre-resolved" }
         assert(paramType.classifier == null) { "Object should have null classifier (external type)" }
-        
+
         val resolved = paramType.resolve { candidateFqn ->
             candidateFqn == "java.lang.Object"
         }
-        
+
         assert(resolved == "java.lang.Object") { "Expected 'java.lang.Object', got '$resolved'" }
     }
 
@@ -492,45 +425,41 @@ class JavaParsingTest {
                 public A(String s, Object o) {}
             }
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        val imports = extractImports(root, source)
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val javaClass = JavaClassOverAst(classNode, source, null, LocalJavaScope(root, source), imports)
-        
+        val javaClass = parseFirstClass(source)
+
         val method1 = javaClass.methods.first { it.name.asString() == "method1" }
         assert(method1.valueParameters.size == 0) { "method1 should have 0 parameters, got ${method1.valueParameters.size}" }
-        
+
         val method2 = javaClass.methods.first { it.name.asString() == "method2" }
         assert(method2.valueParameters.size == 1) { "method2 should have 1 parameter, got ${method2.valueParameters.size}" }
         val param2 = method2.valueParameters.first()
         assert(param2.name?.asString() == "a") { "Expected parameter name 'a', got ${param2.name}" }
         assert(param2.type is org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType) { "Expected int to be JavaPrimitiveType" }
-        
+
         val method3 = javaClass.methods.first { it.name.asString() == "method3" }
         assert(method3.valueParameters.size == 3) { "method3 should have 3 parameters, got ${method3.valueParameters.size}" }
         val params3 = method3.valueParameters.toList()
         assert(params3[0].name?.asString() == "a") { "Expected parameter name 'a', got ${params3[0].name}" }
         assert(params3[1].name?.asString() == "b") { "Expected parameter name 'b', got ${params3[1].name}" }
         assert(params3[2].name?.asString() == "c") { "Expected parameter name 'c', got ${params3[2].name}" }
-        
+
         val paramAType = params3[0].type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         assert(paramAType.classifierQualifiedName == "String") { "Expected String, got ${paramAType.classifierQualifiedName}" }
-        
+
         val paramBType = params3[1].type as org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
         assert(paramBType.type == org.jetbrains.kotlin.builtins.PrimitiveType.INT) { "Expected INT primitive type" }
-        
+
         val paramCType = params3[2].type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         assert(paramCType.classifierQualifiedName == "java.util.List") { "Expected java.util.List, got ${paramCType.classifierQualifiedName}" }
-        
+
         val constructor0 = javaClass.constructors.first { it.valueParameters.size == 0 }
         assert(constructor0.valueParameters.size == 0) { "Constructor should have 0 parameters" }
-        
+
         val constructor1 = javaClass.constructors.first { it.valueParameters.size == 1 }
         assert(constructor1.valueParameters.size == 1) { "Constructor should have 1 parameter, got ${constructor1.valueParameters.size}" }
         val constParam1 = constructor1.valueParameters.first()
         assert(constParam1.name?.asString() == "x") { "Expected parameter name 'x', got ${constParam1.name}" }
-        
+
         val constructor2 = javaClass.constructors.first { it.valueParameters.size == 2 }
         assert(constructor2.valueParameters.size == 2) { "Constructor should have 2 parameters, got ${constructor2.valueParameters.size}" }
         val constParams2 = constructor2.valueParameters.toList()
@@ -553,11 +482,7 @@ class JavaParsingTest {
                 public Inner.Deep field4;
             }
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        val localScope = LocalJavaScope(root, source)
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val javaClass = JavaClassOverAst(classNode, source, null, localScope)
+        val javaClass = parseFirstClass(source)
 
         val field1 = javaClass.fields.first { it.name.asString() == "field1" }
         val type1 = field1.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -566,7 +491,6 @@ class JavaParsingTest {
 
         val field2 = javaClass.fields.first { it.name.asString() == "field2" }
         val type2 = field2.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
-        // This will currently fail because 'Outer.Inner' is not handled
         assert(type2.classifier != null) { "field2 type 'Outer.Inner' should resolve" }
         assert(type2.classifier?.name?.asString() == "Inner") { "field2 type should be 'Inner'" }
 
@@ -590,20 +514,19 @@ class JavaParsingTest {
                 public List<String> items;
             }
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        
+        val (root, _) = parseSource(source)
+
         fun printTree(node: JavaSyntaxNode, indent: String = "") {
             println("$indent${node.type}: '${node.text.take(50).replace("\n", "\\n")}'")
             for (child in node.children) {
                 printTree(child, "$indent  ")
             }
         }
-        
+
         val classNode = root.children.first { it.type.toString() == "CLASS" }
         val fieldNode = classNode.findChildByType("FIELD")!!
         val typeNode = fieldNode.findChildByType("TYPE")!!
-        
+
         println("=== TYPE node structure ===")
         printTree(typeNode)
     }
@@ -620,12 +543,7 @@ class JavaParsingTest {
                 public Map<String, Integer> map;
             }
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        val imports = extractImports(root, source)
-        val localScope = LocalJavaScope(root, source)
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val javaClass = JavaClassOverAst(classNode, source, null, localScope, imports)
+        val javaClass = parseFirstClass(source)
 
         val items = javaClass.fields.first { it.name.asString() == "items" }
         val itemsType = items.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -661,9 +579,8 @@ class JavaParsingTest {
                 public void greet() {}
             }
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        
+        val (root, _) = parseSource(source)
+
         val packageStmt = root.findChildByType("PACKAGE_STATEMENT")
         assert(packageStmt != null) { "Expected PACKAGE_STATEMENT node" }
         val packageName = packageStmt?.findChildByType("JAVA_CODE_REFERENCE")?.text
@@ -683,9 +600,9 @@ class JavaParsingTest {
                     public void greet() {}
                 }
             """.trimIndent())
-            
+
             val finder = JavaClassFinderOverAstImpl(listOf(helloFile))
-            
+
             // Try to find example.Hello
             val classId = org.jetbrains.kotlin.name.ClassId(
                 org.jetbrains.kotlin.name.FqName("example"),
@@ -693,7 +610,7 @@ class JavaParsingTest {
             )
             val request = org.jetbrains.kotlin.load.java.JavaClassFinder.Request(classId)
             val javaClass = finder.findClass(request)
-            
+
             assert(javaClass != null) { "Expected to find example.Hello class" }
             assert(javaClass?.name?.asString() == "Hello") { "Expected class name 'Hello', got ${javaClass?.name?.asString()}" }
             assert(javaClass?.fqName?.asString() == "example.Hello") { "Expected fqName 'example.Hello', got ${javaClass?.fqName?.asString()}" }
