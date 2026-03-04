@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_ASSERTIONS
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jv
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.assertThrows
 import java.nio.file.Paths
 
 @OptIn(ExperimentalCompilerArgument::class)
@@ -106,6 +108,21 @@ internal class AssertionsModeConversionTest : BaseArgumentTest<AssertionsMode>("
             getDefaultValueString(toolchain.getCompilerVersion()),
             getValueString(operation.compilerArguments[X_ASSERTIONS])
         )
+    }
+
+    @DisplayName("Raw argument with non-existent AssertionsMode value fails conversion")
+    @BtaVersionsOnlyCompilationTest
+    fun testInvalidAssertionsModeConversionFails(toolchain: KotlinToolchains) {
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
+
+        val exception = assertThrows<CompilerArgumentsParseException> {
+            operation.compilerArguments.applyArgumentStrings(
+                expectedArgumentStringsFor("non-existent-value")
+            )
+            operation.compilerArguments[X_ASSERTIONS]
+        }
+
+        assertEquals("Unknown -Xassertions value: non-existent-value", exception.message)
     }
 
     override fun expectedArgumentStringsFor(value: String): List<String> {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_WHEN_EXPRESSIONS
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.tests.toolchain
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.nio.file.Paths
 
 @OptIn(ExperimentalCompilerArgument::class)
@@ -105,6 +107,32 @@ internal class WhenExpressionsModeConversionTest : BaseArgumentTest<String>("Xwh
             getDefaultValueString(),
             getValueString(operation.compilerArguments[X_WHEN_EXPRESSIONS])
         )
+    }
+
+    @DisplayName("Raw argument with non-existent WhenExpressionsMode value fails conversion")
+    @Test
+    fun testInvalidWhenExpressionsModeConversionFails() {
+        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+
+        val exception = assertThrows<CompilerArgumentsParseException> {
+            operation.compilerArguments.applyArgumentStrings(
+                expectedArgumentStringsFor("non-existent-value")
+            )
+        }
+
+        assertEquals("Unknown -Xwhen-expressions value: non-existent-value", exception.message)
+    }
+
+    @DisplayName("Setting non-existent WhenExpressionsMode value directly fails")
+    @Test
+    fun testInvalidWhenExpressionsModeDirectAssignmentFails() {
+        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+
+        val exception = assertThrows<CompilerArgumentsParseException> {
+            operation.compilerArguments[X_WHEN_EXPRESSIONS] = "non-existent-value"
+        }
+
+        assertEquals("Unknown -Xwhen-expressions value: non-existent-value", exception.message)
     }
 
     override fun expectedArgumentStringsFor(value: String): List<String> {

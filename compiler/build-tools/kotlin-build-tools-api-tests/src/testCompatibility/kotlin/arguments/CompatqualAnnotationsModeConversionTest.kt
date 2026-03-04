@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jv
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.assertThrows
 import java.nio.file.Paths
 
 @OptIn(ExperimentalCompilerArgument::class)
@@ -107,6 +109,21 @@ internal class CompatqualAnnotationsModeConversionTest :
             getDefaultValueString(toolchain.getCompilerVersion()),
             getValueString(operation.compilerArguments[X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS])
         )
+    }
+
+    @DisplayName("Raw argument with non-existent CompatqualAnnotationsMode value fails conversion")
+    @BtaVersionsOnlyCompilationTest
+    fun testInvalidCompatqualAnnotationsModeConversionFails(toolchain: KotlinToolchains) {
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
+
+        val exception = assertThrows<CompilerArgumentsParseException> {
+            operation.compilerArguments.applyArgumentStrings(
+                expectedArgumentStringsFor("non-existent-value")
+            )
+            operation.compilerArguments[X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS]
+        }
+
+        assertEquals("Unknown -Xsupport-compatqual-checker-framework-annotations value: non-existent-value", exception.message)
     }
 
     override fun expectedArgumentStringsFor(value: String): List<String> {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.JVM_DEFAULT
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.assertThrows
 import java.nio.file.Paths
 
 @OptIn(ExperimentalCompilerArgument::class)
@@ -117,6 +119,22 @@ internal class JvmDefaultModeConversionTest : BaseArgumentTest<JvmDefaultMode>("
             getDefaultValueString(toolchain.getCompilerVersion()),
             getValueString(operation.compilerArguments[JVM_DEFAULT])
         )
+    }
+
+    @DisplayName("Raw argument with non-existent JvmDefaultMode value fails conversion")
+    @BtaVersionsOnlyCompilationTest
+    fun testInvalidJvmDefaultModeConversionFails(toolchain: KotlinToolchains) {
+        assumeJvmDefaultSupported(toolchain.getCompilerVersion())
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
+
+        val exception = assertThrows<CompilerArgumentsParseException> {
+            operation.compilerArguments.applyArgumentStrings(
+                expectedArgumentStringsFor("non-existent-value")
+            )
+            operation.compilerArguments[JVM_DEFAULT]
+        }
+
+        assertEquals("Unknown -jvm-default value: non-existent-value", exception.message)
     }
 
     override fun expectedArgumentStringsFor(value: String): List<String> {

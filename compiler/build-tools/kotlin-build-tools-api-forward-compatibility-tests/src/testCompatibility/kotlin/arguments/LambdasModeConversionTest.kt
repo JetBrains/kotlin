@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_LAMBDAS
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.tests.toolchain
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.nio.file.Paths
 
 @OptIn(ExperimentalCompilerArgument::class)
@@ -105,6 +107,32 @@ internal class LambdasModeConversionTest : BaseArgumentTest<String>("Xlambdas") 
             getDefaultValueString(),
             getValueString(operation.compilerArguments[X_LAMBDAS])
         )
+    }
+
+    @DisplayName("Raw argument with non-existent LambdasMode value fails conversion")
+    @Test
+    fun testInvalidLambdasModeConversionFails() {
+        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+
+        val exception = assertThrows<CompilerArgumentsParseException> {
+            operation.compilerArguments.applyArgumentStrings(
+                expectedArgumentStringsFor("non-existent-value")
+            )
+        }
+
+        assertEquals("Unknown -Xlambdas value: non-existent-value", exception.message)
+    }
+
+    @DisplayName("Setting non-existent LambdasMode value directly fails")
+    @Test
+    fun testInvalidLambdasModeDirectAssignmentFails() {
+        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+
+        val exception = assertThrows<CompilerArgumentsParseException> {
+            operation.compilerArguments[X_LAMBDAS] = "non-existent-value"
+        }
+
+        assertEquals("Unknown -Xlambdas value: non-existent-value", exception.message)
     }
 
     override fun expectedArgumentStringsFor(value: String): List<String> {

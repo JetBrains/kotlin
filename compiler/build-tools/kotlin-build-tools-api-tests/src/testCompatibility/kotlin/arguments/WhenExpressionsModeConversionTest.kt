@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_WHEN_EXPRESSIONS
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.assertThrows
 import java.nio.file.Paths
 
 @OptIn(ExperimentalCompilerArgument::class)
@@ -113,6 +115,22 @@ internal class WhenExpressionsModeConversionTest : BaseArgumentTest<WhenExpressi
             getDefaultValueString(toolchain.getCompilerVersion()),
             getValueString(operation.compilerArguments[X_WHEN_EXPRESSIONS])
         )
+    }
+
+    @DisplayName("Raw argument with non-existent WhenExpressionsMode value fails conversion")
+    @BtaVersionsOnlyCompilationTest
+    fun testInvalidWhenExpressionsModeConversionFails(toolchain: KotlinToolchains) {
+        assumeArgumentSupported(toolchain.getCompilerVersion())
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
+
+        val exception = assertThrows<CompilerArgumentsParseException> {
+            operation.compilerArguments.applyArgumentStrings(
+                expectedArgumentStringsFor("non-existent-value")
+            )
+            operation.compilerArguments[X_WHEN_EXPRESSIONS]
+        }
+
+        assertEquals("Unknown -Xwhen-expressions value: non-existent-value", exception.message)
     }
 
     override fun expectedArgumentStringsFor(value: String): List<String> {

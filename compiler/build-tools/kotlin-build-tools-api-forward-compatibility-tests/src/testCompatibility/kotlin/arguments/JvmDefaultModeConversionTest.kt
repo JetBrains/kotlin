@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.JVM_DEFAULT
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.tests.toolchain
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.nio.file.Paths
 
 
@@ -105,6 +107,32 @@ internal class JvmDefaultModeConversionTest : BaseArgumentTest<String>("jvm-defa
         assertEquals(
             getDefaultValueString(), getValueString(operation.compilerArguments[JVM_DEFAULT])
         )
+    }
+
+    @DisplayName("Raw argument with non-existent JvmDefaultMode value fails conversion")
+    @Test
+    fun testInvalidJvmDefaultModeConversionFails() {
+        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+
+        val exception = assertThrows<CompilerArgumentsParseException> {
+            operation.compilerArguments.applyArgumentStrings(
+                expectedArgumentStringsFor("non-existent-value")
+            )
+        }
+
+        assertEquals("Unknown -jvm-default value: non-existent-value", exception.message)
+    }
+
+    @DisplayName("Setting non-existent JvmDefaultMode value directly fails")
+    @Test
+    fun testInvalidJvmDefaultModeDirectAssignmentFails() {
+        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+
+        val exception = assertThrows<CompilerArgumentsParseException> {
+            operation.compilerArguments[JVM_DEFAULT] = "non-existent-value"
+        }
+
+        assertEquals("Unknown -jvm-default value: non-existent-value", exception.message)
     }
 
     override fun expectedArgumentStringsFor(value: String): List<String> {
