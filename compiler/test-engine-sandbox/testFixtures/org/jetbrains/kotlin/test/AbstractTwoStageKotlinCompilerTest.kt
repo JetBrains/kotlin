@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.backend.handlers.IrValidationErrorChecker
 import org.jetbrains.kotlin.test.builders.TwoPhaseTestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives.ESCAPE_MODULE_NAME
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.ApplicationDisposableProvider
@@ -22,6 +23,9 @@ abstract class AbstractTwoStageKotlinCompilerTest {
     val configurationBuilder: TwoPhaseTestConfigurationBuilder.() -> Unit = {
         commonConfiguration {
             AbstractKotlinCompilerTest.defaultConfiguration(this)
+            defaultDirectives {
+                +ESCAPE_MODULE_NAME
+            }
             useAdditionalService { createApplicationDisposableProvider() }
             useAdditionalService { createKotlinStandardLibrariesPathProvider() }
             useAfterAnalysisCheckers(::IrValidationErrorChecker)
