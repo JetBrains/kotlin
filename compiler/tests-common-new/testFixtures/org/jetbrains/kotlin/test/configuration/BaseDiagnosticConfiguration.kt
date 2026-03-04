@@ -33,10 +33,10 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_DAN
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_API_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_RETURN_TYPES_MODE
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.HEADER_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.HEADER_MODE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.*
@@ -154,7 +154,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     configureCommonDiagnosticTestPaths(testDataConsistencyHandler)
 }
 
-fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDiagnosticTest() {
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDiagnosticTest() {
     useHandlers(
         ::FirDiagnosticsHandler,
         ::FirDumpHandler,

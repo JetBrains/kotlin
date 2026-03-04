@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.test.builders.testRunner
+import org.jetbrains.kotlin.test.builders.nonGroupingPhaseTestRunner
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCompilerLazyDeclarationResolverWithPhaseChecking
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
@@ -48,7 +48,7 @@ class FirApproximationTest : AbstractFirPsiDiagnosticTest() {
     }
 
     private fun runWithSession(f: (FirSession) -> Unit) {
-        testRunner(emptyFilePath, configuration).runTest(emptyFilePath) { configuration ->
+        nonGroupingPhaseTestRunner(emptyFilePath, configuration).runTest(emptyFilePath) { configuration ->
             val artifact = configuration.testServices.artifactsProvider
                 .let {
                     val mainModule = configuration.testServices.moduleStructure.modules.first { it.name == "main" }

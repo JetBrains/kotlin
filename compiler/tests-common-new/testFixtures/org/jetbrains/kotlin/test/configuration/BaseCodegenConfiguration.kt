@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.codegen.forTestCompile.JavaForeignAnnotationType
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
-import org.jetbrains.kotlin.test.HandlersStepBuilder
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.TestStepBuilder
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
-import org.jetbrains.kotlin.test.services.configuration.*
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
+import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
@@ -173,7 +176,7 @@ fun TestConfigurationBuilder.commonHandlersForCodegenTest(includeK1Handlers: Boo
 /**
  * Adds a handler which checks that there are no compilation errors reported at the K1 frontend step
  */
-fun HandlersStepBuilder<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFrontend>.commonClassicFrontendHandlersForCodegenTest() {
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFrontend>.commonClassicFrontendHandlersForCodegenTest() {
     useHandlers(
         ::NoCompilationErrorsHandler,
     )
@@ -182,7 +185,7 @@ fun HandlersStepBuilder<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFron
 /**
  * Adds a handler which checks that there are no compilation errors reported at the K2 frontend step
  */
-fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersForCodegenTest() {
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersForCodegenTest() {
     useHandlers(
         ::NoFirCompilationErrorsHandler,
     )
@@ -191,7 +194,7 @@ fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersF
 /**
  * Add JVM artifact handlers usually used in codegen tests
  */
-fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHandlersForCodegenTest(includeNoCompilationErrorsHandler: Boolean = true) {
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHandlersForCodegenTest(includeNoCompilationErrorsHandler: Boolean = true) {
     useHandlers(
         ::JvmBackendDiagnosticsHandler,
         ::DxCheckerHandler,

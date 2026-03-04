@@ -30,7 +30,7 @@ abstract class AbstractFirIdenticalChecker(testServices: TestServices) : AfterAn
         get() = Order.P5
 
     /**
-     * [org.jetbrains.kotlin.test.TestRunner] runs `check` for all checkers and then `suppressIfNeeded`
+     * [org.jetbrains.kotlin.test.NonGroupingTestRunner] runs `check` for all checkers and then `suppressIfNeeded`
      * for all checkers. Since this checker relies on the fact that there are no other failures in the
      * test, we need to run it after all other suppressing checkers already suppressed all required
      * failures

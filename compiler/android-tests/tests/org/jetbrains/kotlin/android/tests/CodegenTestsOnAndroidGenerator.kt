@@ -396,7 +396,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         }
     }
 
-    private fun createTestConfiguration(testDataFile: File): TestConfiguration {
+    private fun createTestConfiguration(testDataFile: File): NonGroupingPhaseTestConfiguration {
         return TestConfigurationBuilder().apply {
             configure()
             testInfo = KotlinTestInfo(

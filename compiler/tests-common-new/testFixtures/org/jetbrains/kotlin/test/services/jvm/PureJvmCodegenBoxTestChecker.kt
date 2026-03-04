@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.TARGET_BACKEND
+import org.jetbrains.kotlin.test.impl.NonGroupingPhaseTestConfigurationImpl
 import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
@@ -34,7 +35,7 @@ class PureJvmCodegenBoxTestChecker(testServices: TestServices) : AfterAnalysisCh
         val hasSingleJvmTarget = targetBackends.singleOrNull().let { it == TargetBackend.JVM || it == TargetBackend.JVM_IR }
 
         @OptIn(TestInfrastructureInternals::class)
-        val testDataPath = testServices.testConfiguration.originalBuilder.testDataPath
+        val testDataPath = (testServices.testConfiguration as NonGroupingPhaseTestConfigurationImpl).originalBuilder.testDataPath
 
         if (testDataPath.startsWith(CODEGEN_BOX_JVM) && !hasSingleJvmTarget) {
 //            moveToBoxJvm(from = CODEGEN_BOX_JVM, to = CODEGEN_BOX)

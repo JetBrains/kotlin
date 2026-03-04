@@ -20,28 +20,26 @@ typealias Constructor<R> = (TestServices) -> R
 
 typealias Constructor2<T, R> = (TestServices, T) -> R
 
-abstract class TestConfiguration {
-    abstract val rootDisposable: Disposable
+interface TestConfiguration<Step : TestStep<*, *>> {
+    val rootDisposable: Disposable
+    val testServices: TestServices
+    val directives: DirectivesContainer
+    val defaultRegisteredDirectives: RegisteredDirectives
+    val moduleStructureExtractor: ModuleStructureExtractor
+    val preAnalysisHandlers: List<PreAnalysisHandler>
+    val metaTestConfigurators: List<MetaTestConfigurator>
+    val afterAnalysisCheckers: List<AfterAnalysisChecker>
+    val metaInfoHandlerEnabled: Boolean
 
-    abstract val testServices: TestServices
+    val steps: List<Step>
+}
 
-    abstract val directives: DirectivesContainer
+interface NonGroupingPhaseTestConfiguration : TestConfiguration<TestStep.NonGroupingStep<*, *>> {
+    var startingArtifactFactory: (TestModule) -> ResultingArtifact<*>
+}
 
-    abstract val defaultRegisteredDirectives: RegisteredDirectives
-
-    abstract val moduleStructureExtractor: ModuleStructureExtractor
-
-    abstract val preAnalysisHandlers: List<PreAnalysisHandler>
-
-    abstract val metaTestConfigurators: List<MetaTestConfigurator>
-
-    abstract val afterAnalysisCheckers: List<AfterAnalysisChecker>
-
-    abstract val startingArtifactFactory: (TestModule) -> ResultingArtifact<*>
-
-    abstract val steps: List<TestStep<*, *>>
-
-    abstract val metaInfoHandlerEnabled: Boolean
+interface GroupingPhaseTestConfiguration : TestConfiguration<TestStep.GroupingPhaseStep<*, *>> {
+    val mergerWorkers: List<GroupingPhaseInputsMerger.Worker>
 }
 
 // ---------------------------- Utils ----------------------------
