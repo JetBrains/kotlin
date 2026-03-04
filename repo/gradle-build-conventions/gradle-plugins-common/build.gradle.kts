@@ -34,6 +34,7 @@ gradlePlugin {
 }
 
 repositories {
+    maven { setUrl("https://packages.jetbrains.team/maven/p/kt/dokka-test") }
     maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
     mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
