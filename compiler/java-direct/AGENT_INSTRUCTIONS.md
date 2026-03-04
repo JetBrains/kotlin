@@ -133,9 +133,12 @@ From iterations 1-6 (see `ITERATION_RESULTS.md` for details):
 
 | Document | Purpose |
 |----------|---------|
-| `ITERATION_RESULTS.md` | Progress history, key findings |
-| `IMPLEMENTATION_PLAN.md` | Architecture overview |
-| `.ai/guidelines.md` | Project-wide coding guidelines |
+| `ITERATION_RESULTS.md` | Progress history, key findings from iterations 1-6 |
+| `IMPLEMENTATION_PLAN.md` | Architecture overview, type resolution design |
+| `FIRSESSION_RESOLUTION_ANALYSIS.md` | Why type resolution happens in FIR, not Java Model |
+| `../AGENTS.md` | Compiler architecture overview (K1/K2, FIR, IR, backends) |
+| `../../.ai/guidelines.md` | **MANDATORY** - Project-wide coding guidelines |
+| `../../.ai/testing.md` | Test infrastructure and conventions |
 
 ---
 
