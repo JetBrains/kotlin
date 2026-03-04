@@ -15,7 +15,6 @@ import kotlin.internal.DoNotInlineOnFirstStage
  * @sample samples.collections.Collections.Collections.collectionToTypedArray
  */
 @kotlin.internal.InlineOnly
-@DoNotInlineOnFirstStage
 public actual inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
 
 @Suppress("UNCHECKED_CAST")

@@ -30,12 +30,10 @@ internal fun <T> interceptContinuationIfNeeded(
 ): Continuation<T> = context[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation
 
 @PublishedApi
-@DoNotInlineOnFirstStage
 @UsedFromCompilerGeneratedCode
 internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
 
 @PublishedApi
-@DoNotInlineOnFirstStage
 @UsedFromCompilerGeneratedCode
 internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(block: (Continuation<T>) -> Any?): T =
     returnIfSuspended<T>(block(getContinuation<T>()))

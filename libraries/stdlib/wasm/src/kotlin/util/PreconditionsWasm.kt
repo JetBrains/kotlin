@@ -14,7 +14,6 @@ import kotlin.internal.DoNotInlineOnFirstStage
 
 @PublishedApi
 @kotlin.internal.InlineOnly
-@DoNotInlineOnFirstStage
 internal inline fun check(value: Boolean, lazyMessage: () -> String): Unit {
     contract {
         returns() implies value
@@ -27,5 +26,4 @@ internal inline fun check(value: Boolean, lazyMessage: () -> String): Unit {
 
 @PublishedApi
 @kotlin.internal.InlineOnly
-@DoNotInlineOnFirstStage
 internal inline fun error(message: String): Nothing = throw IllegalStateException(message)

@@ -49,7 +49,6 @@ public abstract class MemoryAllocator {
  * WARNING! Accessing the allocator outside of the [block] scope will throw [IllegalStateException].
  */
 @UnsafeWasmMemoryApi
-@DoNotInlineOnFirstStage
 public inline fun <T> withScopedMemoryAllocator(
     block: (allocator: MemoryAllocator) -> T
 ): T {
@@ -58,8 +57,7 @@ public inline fun <T> withScopedMemoryAllocator(
     val result = try {
         block(allocator)
     } finally {
-        allocator.destroy()
-        currentAllocator = allocator.parent
+        releaseScopedAllocator(allocator)
     }
     return result
 }
@@ -73,10 +71,16 @@ internal fun createAllocatorInTheNewScope(): ScopedMemoryAllocator {
     return allocator
 }
 
-
 @PublishedApi
 @UnsafeWasmMemoryApi
-internal var currentAllocator: ScopedMemoryAllocator? = null
+internal fun releaseScopedAllocator(allocator: ScopedMemoryAllocator) {
+    allocator.destroy()
+    currentAllocator = allocator.parent
+}
+
+
+@UnsafeWasmMemoryApi
+private var currentAllocator: ScopedMemoryAllocator? = null
 
 // TODO(KT-58041): Consider switching back to using ULong
 @PublishedApi

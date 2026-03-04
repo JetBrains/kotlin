@@ -1746,8 +1746,7 @@ public actual class Long private constructor(private val value: Long) : Number()
      * The shift distance actually used is therefore always in the range `0..63`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    @kotlin.internal.DoNotInlineOnFirstStage
-    public actual inline infix fun shl(bitCount: Int): Long =
+    public actual infix fun shl(bitCount: Int): Long =
         wasm_i64_shl(this, bitCount.toLong())
 
     /**
@@ -1757,8 +1756,7 @@ public actual class Long private constructor(private val value: Long) : Number()
      * The shift distance actually used is therefore always in the range `0..63`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    @kotlin.internal.DoNotInlineOnFirstStage
-    public actual inline infix fun shr(bitCount: Int): Long =
+    public actual infix fun shr(bitCount: Int): Long =
         wasm_i64_shr_s(this, bitCount.toLong())
 
     /**
@@ -1768,8 +1766,7 @@ public actual class Long private constructor(private val value: Long) : Number()
      * The shift distance actually used is therefore always in the range `0..63`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    @kotlin.internal.DoNotInlineOnFirstStage
-    public actual inline infix fun ushr(bitCount: Int): Long =
+    public actual infix fun ushr(bitCount: Int): Long =
         wasm_i64_shr_u(this, bitCount.toLong())
 
     /** Performs a bitwise AND operation between the two values. */
