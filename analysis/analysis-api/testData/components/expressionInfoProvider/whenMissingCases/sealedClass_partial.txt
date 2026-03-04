@@ -1,1 +1,1 @@
-IsTypeCheckIsMissing - is Foo.B
+TypeCase(/Foo.B)
