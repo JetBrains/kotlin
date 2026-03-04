@@ -2,6 +2,7 @@ package test.wasm.unsafe
 
 import kotlin.wasm.unsafe.*
 import kotlin.test.*
+import kotlin.wasm.internal.*
 
 @OptIn(UnsafeWasmMemoryApi::class)
 class MemoryAllocationTest {
@@ -9,9 +10,9 @@ class MemoryAllocationTest {
 
     @Test
     fun testWasmMemorySizeGrow() {
-        val s1 = wasmMemorySize()
-        val grow_res = wasmMemoryGrow(10)
-        val s2 = wasmMemorySize()
+        val s1 = wasm_memory_size()
+        val grow_res = wasm_memory_grow(10)
+        val s2 = wasm_memory_size()
         assertNotEquals(grow_res, -1)
         assertEquals(grow_res, s1)
         assertEquals(s2 - s1, 10)
@@ -63,19 +64,19 @@ class MemoryAllocationTest {
     @Test
     fun testScopedAllocatorGrowsMemory() {
         // Allocations past current memory size should grow memory
-        val memSizes = mutableListOf<Int>(wasmMemorySize())
+        val memSizes = mutableListOf<Int>(wasm_memory_size())
         withScopedMemoryAllocator { a ->
             var allocatedAddress = a.allocate(pageSize)
             var allocationSize = pageSize
 
             repeat(10) {
                 var currPagesUsed = (allocatedAddress.address.toInt() + allocationSize + 1) / pageSize
-                var currPagesAvailable = wasmMemorySize()
+                var currPagesAvailable = wasm_memory_size()
                 assertTrue(currPagesAvailable > currPagesUsed)
                 // Allocate 10 pages past max page
                 allocationSize = (currPagesAvailable - currPagesUsed + 10) * pageSize
                 allocatedAddress = a.allocate(allocationSize)
-                memSizes += wasmMemorySize()
+                memSizes += wasm_memory_size()
             }
         }
         assertTrue(memSizes.size == 11)
