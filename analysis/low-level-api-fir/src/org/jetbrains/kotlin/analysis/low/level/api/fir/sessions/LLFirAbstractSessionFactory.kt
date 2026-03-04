@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinAnchorM
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.platform.utils.mergeInto
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
-import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents

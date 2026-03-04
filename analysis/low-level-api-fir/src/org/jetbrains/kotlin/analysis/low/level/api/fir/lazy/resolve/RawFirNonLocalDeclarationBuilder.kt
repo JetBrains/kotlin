@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
+import org.jetbrains.kotlin.analysis.api.impl.base.util.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
