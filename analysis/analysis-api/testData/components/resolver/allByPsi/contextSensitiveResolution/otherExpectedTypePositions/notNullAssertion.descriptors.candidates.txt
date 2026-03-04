@@ -394,81 +394,13 @@ KtValueArgument(473,490): 'NestedInheritor!!'
   NO_CANDIDATES
 
 KtPostfixExpression(473,490): 'NestedInheritor!!'
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = ERROR_TYPE
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-      }
-      valueArgumentMapping = {
-        NestedInheritor -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(473,488): 'NestedInheritor'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(488,490): '!!'
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = ERROR_TYPE
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-      }
-      valueArgumentMapping = {
-        NestedInheritor -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtCallExpression(496,527): 'receive<MyClass>(myClassProp!!)'
   KaApplicableCallCandidate:
@@ -564,81 +496,13 @@ KtValueArgument(513,526): 'myClassProp!!'
   NO_CANDIDATES
 
 KtPostfixExpression(513,526): 'myClassProp!!'
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = ERROR_TYPE
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-      }
-      valueArgumentMapping = {
-        myClassProp -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(513,524): 'myClassProp'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(524,526): '!!'
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = ERROR_TYPE
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-      }
-      valueArgumentMapping = {
-        myClassProp -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtCallExpression(532,562): 'receive<MyClass>(stringProp!!)'
   KaApplicableCallCandidate:
@@ -734,81 +598,13 @@ KtValueArgument(549,561): 'stringProp!!'
   NO_CANDIDATES
 
 KtPostfixExpression(549,561): 'stringProp!!'
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = ERROR_TYPE
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-      }
-      valueArgumentMapping = {
-        stringProp -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(549,559): 'stringProp'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(559,561): '!!'
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = ERROR_TYPE
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-      }
-      valueArgumentMapping = {
-        stringProp -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtCallExpression(567,607): 'receive<MyClass>(getNestedInheritor()!!)'
   KaApplicableCallCandidate:
@@ -904,41 +700,7 @@ KtValueArgument(584,606): 'getNestedInheritor()!!'
   NO_CANDIDATES
 
 KtPostfixExpression(584,606): 'getNestedInheritor()!!'
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = ERROR_TYPE
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-      }
-      valueArgumentMapping = {
-        getNestedInheritor() -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtCallExpression(584,604): 'getNestedInheritor()'
   NO_CANDIDATES
@@ -950,41 +712,7 @@ KtValueArgumentList(602,604): '()'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(604,606): '!!'
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = ERROR_TYPE
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = ERROR_TYPE?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-      }
-      valueArgumentMapping = {
-        getNestedInheritor() -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = ERROR_TYPE?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNamedFunction(611,917): 'fun testIndexAccess(): Int? {'
   NO_CANDIDATES
@@ -2553,79 +2281,13 @@ KtReturnExpression(1086,1099): 'return null!!'
   NO_CANDIDATES
 
 KtPostfixExpression(1093,1099): 'null!!'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.ranges.ClosedFloatingPointRange<MyClass>)
-      }
-      valueArgumentMapping = {
-        null -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtConstantExpression(1093,1097): 'null'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(1097,1099): '!!'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.ranges.ClosedFloatingPointRange<MyClass>)
-      }
-      valueArgumentMapping = {
-        null -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNamedFunction(1102,1175): 'operator fun MyClass.contains(that: MyClass): Boolean {'
   NO_CANDIDATES

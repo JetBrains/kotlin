@@ -1743,40 +1743,7 @@ KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
     isInBestCandidates = true
 
 KtPostfixExpression(1174,1177): 't!!'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = pack.ClassWithType<kotlin.Int>
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = pack.ClassWithType<kotlin.Int>?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
-      }
-      valueArgumentMapping = {
-        t -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = pack.ClassWithType<kotlin.Int>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(1174,1175): 't'
   KaApplicableCallCandidateInfo:
@@ -1797,40 +1764,7 @@ KtNameReferenceExpression(1174,1175): 't'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1175,1177): '!!'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = pack.ClassWithType<kotlin.Int>
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = pack.ClassWithType<kotlin.Int>?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
-      }
-      valueArgumentMapping = {
-        t -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = pack.ClassWithType<kotlin.Int>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(1179,1195): 'functionWithType'
   KaApplicableCallCandidateInfo:
@@ -1875,40 +1809,7 @@ KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
     isInBestCandidates = true
 
 KtPostfixExpression(1200,1203): 't!!'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = pack.ClassWithType<kotlin.Int>
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = pack.ClassWithType<kotlin.Int>?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
-      }
-      valueArgumentMapping = {
-        t -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = pack.ClassWithType<kotlin.Int>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(1200,1201): 't'
   KaApplicableCallCandidateInfo:
@@ -1929,40 +1830,7 @@ KtNameReferenceExpression(1200,1201): 't'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(1201,1203): '!!'
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = pack.ClassWithType<kotlin.Int>
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = pack.ClassWithType<kotlin.Int>?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
-      }
-      valueArgumentMapping = {
-        t -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = pack.ClassWithType<kotlin.Int>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(1205,1221): 'propertyWithType'
   KaApplicableCallCandidateInfo:

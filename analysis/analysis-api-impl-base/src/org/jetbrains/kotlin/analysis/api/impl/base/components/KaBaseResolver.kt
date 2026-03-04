@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.idea.references.*
-import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -270,11 +270,12 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
 
     protected fun canBeResolvedAsCall(ktElement: KtElement): Boolean = when (ktElement) {
         is KtBinaryExpression -> ktElement.operationToken !in nonCallBinaryOperator
+        is KtPrefixExpression -> true
+        is KtPostfixExpression -> ktElement.operationToken != KtTokens.EXCLEXCL
         is KtCallElement -> true
         is KtConstructorCalleeExpression -> true
         is KtQualifiedExpression -> true
         is KtNameReferenceExpression -> true
-        is KtOperationExpression -> true
         is KtArrayAccessExpression -> true
         is KtCallableReferenceExpression -> true
         is KtWhenConditionInRange -> true
@@ -295,7 +296,13 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     }?.takeIf(::canBeResolvedAsCall)
 
     protected companion object {
-        private val nonCallBinaryOperator: Set<KtSingleValueToken> = setOf(KtTokens.ELVIS, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ)
+        private val nonCallBinaryOperator: TokenSet = TokenSet.create(
+            KtTokens.ELVIS,
+            KtTokens.EQEQEQ,
+            KtTokens.EXCLEQEQEQ,
+            KtTokens.ANDAND,
+            KtTokens.OROR,
+        )
     }
 }
 

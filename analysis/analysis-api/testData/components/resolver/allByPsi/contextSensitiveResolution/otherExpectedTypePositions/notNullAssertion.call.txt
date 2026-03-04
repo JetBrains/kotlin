@@ -650,9 +650,7 @@ KtValueArgument(584,606): 'getNestedInheritor()!!'
   null
 
 KtPostfixExpression(584,606): 'getNestedInheritor()!!'
-  KaErrorCallInfo:
-    candidateCalls = []
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): _synthetic/CHECK_NOT_NULL_CALL>
+  null
 
 KtCallExpression(584,604): 'getNestedInheritor()'
   KaCallResolutionError:
@@ -668,9 +666,7 @@ KtValueArgumentList(602,604): '()'
   null
 
 KtOperationReferenceExpression(604,606): '!!'
-  KaErrorCallInfo:
-    candidateCalls = []
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): _synthetic/CHECK_NOT_NULL_CALL>
+  null
 
 KtNamedFunction(611,917): 'fun testIndexAccess(): Int? {'
   null

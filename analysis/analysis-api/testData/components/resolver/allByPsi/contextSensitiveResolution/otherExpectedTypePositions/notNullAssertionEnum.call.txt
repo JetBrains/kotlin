@@ -290,9 +290,7 @@ KtNameReferenceExpression(472,478): 'MyEnum'
   null
 
 KtPostfixExpression(481,493): 'stringProp!!'
-  KaErrorCallInfo:
-    candidateCalls = []
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum?' was expected.>
+  null
 
 KtNameReferenceExpression(481,491): 'stringProp'
   KaSuccessCallInfo:
@@ -315,9 +313,7 @@ KtNameReferenceExpression(481,491): 'stringProp'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(491,493): '!!'
-  KaErrorCallInfo:
-    candidateCalls = []
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum?' was expected.>
+  null
 
 KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
   KaCallResolutionSuccess:

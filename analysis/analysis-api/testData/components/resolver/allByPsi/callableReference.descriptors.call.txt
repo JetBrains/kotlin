@@ -1687,39 +1687,7 @@ KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
       valueArgumentMapping = {}
 
 KtPostfixExpression(1174,1177): 't!!'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = pack.ClassWithType<kotlin.Int>
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = pack.ClassWithType<kotlin.Int>?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
-      }
-      valueArgumentMapping = {
-        t -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = pack.ClassWithType<kotlin.Int>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
+  null
 
 KtNameReferenceExpression(1174,1175): 't'
   KaSuccessCallInfo:
@@ -1739,39 +1707,7 @@ KtNameReferenceExpression(1174,1175): 't'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1175,1177): '!!'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = pack.ClassWithType<kotlin.Int>
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = pack.ClassWithType<kotlin.Int>?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
-      }
-      valueArgumentMapping = {
-        t -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = pack.ClassWithType<kotlin.Int>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
+  null
 
 KtNameReferenceExpression(1179,1195): 'functionWithType'
   KaSuccessCallInfo:
@@ -1814,39 +1750,7 @@ KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
       typeArgumentsMapping = {}
 
 KtPostfixExpression(1200,1203): 't!!'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = pack.ClassWithType<kotlin.Int>
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = pack.ClassWithType<kotlin.Int>?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
-      }
-      valueArgumentMapping = {
-        t -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = pack.ClassWithType<kotlin.Int>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
+  null
 
 KtNameReferenceExpression(1200,1201): 't'
   KaSuccessCallInfo:
@@ -1866,39 +1770,7 @@ KtNameReferenceExpression(1200,1201): 't'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1201,1203): '!!'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = pack.ClassWithType<kotlin.Int>
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = pack.ClassWithType<kotlin.Int>?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (pack.ClassWithType<kotlin.Int>)
-      }
-      valueArgumentMapping = {
-        t -> (KaVariableSignature:
-          name = baseExpr
-          receiverType = null
-          returnType = pack.ClassWithType<kotlin.Int>?
-          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-          contextParameters = []
-          callableId = null)
-      }
+  null
 
 KtNameReferenceExpression(1205,1221): 'propertyWithType'
   KaSuccessCallInfo:
