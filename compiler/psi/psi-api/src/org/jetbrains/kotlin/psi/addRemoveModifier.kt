@@ -105,9 +105,25 @@ internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywo
 
 fun removeModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
     owner.modifierList?.let {
-        it.getModifier(modifier)?.delete()
+        val modifier = it.getModifier(modifier)
+        if (modifier != null) {
+            val forward = it.lastChild != modifier // go backwards on last modifier, forwards otherwise
+            val rangeStart = modifier
+            val rangeEnd = modifier.siblings(forward = forward, withItself = true)
+                .takeWhile { e -> e is PsiWhiteSpace || e == modifier }
+                .last()
+
+            if (forward) {
+                it.deleteChildRange(rangeStart, rangeEnd)
+            } else {
+                it.deleteChildRange(rangeEnd, rangeStart)
+            }
+        }
         if (it.firstChild == null) {
-            it.delete()
+            val rangeEnd = it.siblings(forward = true, withItself = true)
+                .takeWhile { e -> e is PsiWhiteSpace || e == it }
+                .last()
+            owner.deleteChildRange(it, rangeEnd)
             return
         }
 
