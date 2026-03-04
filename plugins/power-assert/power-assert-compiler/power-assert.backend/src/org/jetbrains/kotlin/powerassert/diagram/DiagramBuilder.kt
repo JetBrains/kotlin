@@ -31,14 +31,16 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.powerassert.EXPLAIN_BLOCK
+import org.jetbrains.kotlin.powerassert.EXPLAIN_TEMPORARY
 
 fun IrBuilderWithScope.buildDiagramNesting(
     sourceFile: SourceFile,
     root: Node,
-    variables: PersistentList<IrTemporaryVariable> = persistentListOf(),
-    call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
+    variables: PersistentList<IrDiagramVariable> = persistentListOf(),
+    call: IrBlockBuilder.(IrExpression, PersistentList<IrDiagramVariable>) -> IrExpression,
 ): IrExpression {
-    return irBlock {
+    return irBlock(origin = EXPLAIN_BLOCK) {
         +buildExpression(sourceFile, root, variables) { argument, subStack ->
             call(argument, subStack)
         }
@@ -48,8 +50,8 @@ fun IrBuilderWithScope.buildDiagramNesting(
 private fun IrBlockBuilder.buildExpression(
     sourceFile: SourceFile,
     node: Node,
-    variables: PersistentList<IrTemporaryVariable>,
-    call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
+    variables: PersistentList<IrDiagramVariable>,
+    call: IrBlockBuilder.(IrExpression, PersistentList<IrDiagramVariable>) -> IrExpression,
 ): IrExpression = when (node) {
     is ConstantNode -> add(node, variables, call)
     is HiddenNode -> add(node, variables, call)
@@ -57,7 +59,7 @@ private fun IrBlockBuilder.buildExpression(
     is ChainNode -> nest(sourceFile, node, index = 0, variables, call)
     is WhenNode -> nest(sourceFile, node, index = 0, variables, call)
     is ElvisNode -> nest(sourceFile, node, index = 0, variables, call)
-    is RootNode -> error("Unsupported node type=$node")
+    is RootNode<*> -> error("Unsupported node type=$node")
 }
 
 /**
@@ -73,8 +75,8 @@ private fun IrBlockBuilder.buildExpression(
  */
 private fun IrBlockBuilder.add(
     node: ConstantNode,
-    variables: PersistentList<IrTemporaryVariable>,
-    call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
+    variables: PersistentList<IrDiagramVariable>,
+    call: IrBlockBuilder.(IrExpression, PersistentList<IrDiagramVariable>) -> IrExpression,
 ): IrExpression {
     val expression = node.expression
     val transformer = IrTemporaryExtractionTransformer(this@add, variables)
@@ -96,16 +98,16 @@ private fun IrBlockBuilder.add(
  */
 private fun IrBlockBuilder.add(
     node: HiddenNode,
-    variables: PersistentList<IrTemporaryVariable>,
-    call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
+    variables: PersistentList<IrDiagramVariable>,
+    call: IrBlockBuilder.(IrExpression, PersistentList<IrDiagramVariable>) -> IrExpression,
 ): IrExpression {
     val expression = node.expression
 
     val transformer = IrTemporaryExtractionTransformer(this@add, variables)
     val copy = expression.deepCopyWithSymbols(scope.getLocalDeclarationParent()).transform(transformer, null)
 
-    val variable = irTemporary(copy, nameHint = "PowerAssertSynthesized")
-    val newVariables = variables.add(IrTemporaryVariable.Hidden(variable, expression))
+    val variable = irTemporary(copy, nameHint = "Explain", origin = EXPLAIN_TEMPORARY)
+    val newVariables = variables.add(IrDiagramVariable.Hidden(variable, expression))
     return call(irGet(variable), newVariables)
 }
 
@@ -124,8 +126,8 @@ private fun IrBlockBuilder.add(
 private fun IrBlockBuilder.add(
     sourceFile: SourceFile,
     node: ExpressionNode,
-    variables: PersistentList<IrTemporaryVariable>,
-    call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
+    variables: PersistentList<IrDiagramVariable>,
+    call: IrBlockBuilder.(IrExpression, PersistentList<IrDiagramVariable>) -> IrExpression,
 ): IrExpression {
     val expression = node.expression
     val sourceRangeInfo = sourceFile.getSourceRangeInfo(expression)
@@ -134,8 +136,8 @@ private fun IrBlockBuilder.add(
     val transformer = IrTemporaryExtractionTransformer(this, variables)
     val copy = expression.deepCopyWithSymbols(scope.getLocalDeclarationParent()).transform(transformer, null)
 
-    val variable = irTemporary(copy, nameHint = "PowerAssertSynthesized")
-    val newVariables = variables.add(IrTemporaryVariable.Displayable(variable, expression, sourceRangeInfo, text))
+    val variable = irTemporary(copy, nameHint = "Explain", origin = EXPLAIN_TEMPORARY)
+    val newVariables = variables.add(IrDiagramVariable.Displayable(variable, expression, sourceRangeInfo, text))
     return call(irGet(variable), newVariables)
 }
 
@@ -159,8 +161,8 @@ private fun IrBlockBuilder.nest(
     sourceFile: SourceFile,
     node: ChainNode,
     index: Int,
-    variables: PersistentList<IrTemporaryVariable>,
-    call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
+    variables: PersistentList<IrDiagramVariable>,
+    call: IrBlockBuilder.(IrExpression, PersistentList<IrDiagramVariable>) -> IrExpression,
 ): IrExpression {
     val children = node.children
     val child = children[index]
@@ -203,8 +205,8 @@ private fun IrBlockBuilder.nest(
     sourceFile: SourceFile,
     node: WhenNode,
     index: Int,
-    variables: PersistentList<IrTemporaryVariable>,
-    call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
+    variables: PersistentList<IrDiagramVariable>,
+    call: IrBlockBuilder.(IrExpression, PersistentList<IrDiagramVariable>) -> IrExpression,
 ): IrExpression {
     class BranchOptimizer(private val branchIndex: Int) : IrElementTransformerVoid() {
         override fun visitWhen(expression: IrWhen): IrExpression {
@@ -311,8 +313,8 @@ private fun IrBlockBuilder.nest(
     sourceFile: SourceFile,
     node: ElvisNode,
     index: Int,
-    variables: PersistentList<IrTemporaryVariable>,
-    call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
+    variables: PersistentList<IrDiagramVariable>,
+    call: IrBlockBuilder.(IrExpression, PersistentList<IrDiagramVariable>) -> IrExpression,
 ): IrExpression {
     class ElvisOptimizer : IrElementTransformerVoid() {
         private val transformer = IrTemporaryExtractionTransformer(this@nest, variables)

@@ -20,7 +20,9 @@
 package org.jetbrains.kotlin.powerassert
 
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -28,13 +30,9 @@ import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.parent
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -43,11 +41,14 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.powerassert.delegate.FunctionDelegate
-import org.jetbrains.kotlin.powerassert.delegate.LambdaFunctionDelegate
-import org.jetbrains.kotlin.powerassert.delegate.SamConversionLambdaFunctionDelegate
-import org.jetbrains.kotlin.powerassert.delegate.SimpleFunctionDelegate
+import org.jetbrains.kotlin.powerassert.builder.call.CallBuilder
+import org.jetbrains.kotlin.powerassert.builder.call.LambdaCallBuilder
+import org.jetbrains.kotlin.powerassert.builder.call.SamConversionLambdaCallBuilder
+import org.jetbrains.kotlin.powerassert.builder.call.SimpleCallBuilder
+import org.jetbrains.kotlin.powerassert.builder.parameter.ParameterBuilder
+import org.jetbrains.kotlin.powerassert.builder.parameter.StringParameterBuilder
 import org.jetbrains.kotlin.powerassert.diagram.*
+import org.jetbrains.kotlin.powerassert.diagram.buildTree
 
 class PowerAssertCallTransformer(
     private val sourceFile: SourceFile,
@@ -57,25 +58,33 @@ class PowerAssertCallTransformer(
     private val irTypeSystemContext = IrTypeSystemContextImpl(context.irBuiltIns)
 
     override fun visitCall(expression: IrCall): IrExpression {
+        expression.transformChildrenVoid()
+
         val function = expression.symbol.owner
         val fqName = function.kotlinFqName
-        if (function.parameters.isEmpty() || configuration.functions.none { fqName == it }) {
-            return super.visitCall(expression)
+        return when {
+            function.parameters.isEmpty() -> expression
+            fqName in configuration.functions -> buildForOverride(expression, function)
+            else -> expression
         }
+    }
 
+    private fun buildForOverride(originalCall: IrCall, function: IrSimpleFunction): IrExpression {
         // Find a valid delegate function or do not translate
         // TODO better way to determine which delegate to actually use
-        val delegates = findDelegates(function)
-        val delegate = delegates.maxByOrNull { delegate ->
-            delegate.function.parameters.count { it.kind == IrParameterKind.Regular }
+        val callBuilders = findCallBuilders(function, originalCall)
+        val callBuilder = callBuilders.maxByOrNull { builder ->
+            builder.targetFunction.parameters.count { it.kind == IrParameterKind.Regular }
         }
-        if (delegate == null) {
+
+        if (callBuilder == null) {
+            val fqName = function.kotlinFqName
             val regularParameters = function.parameters.filter { it.kind == IrParameterKind.Regular }
             val valueTypesTruncated = regularParameters.subList(0, regularParameters.size - 1)
                 .joinToString("") { it.type.render() + ", " }
             val valueTypesAll = regularParameters.joinToString("") { it.type.render() + ", " }
             configuration.messageCollector.warn(
-                expression = expression,
+                expression = originalCall,
                 message = """
                   |Unable to find overload of function $fqName for power-assert transformation callable as:
                   | - $fqName(${valueTypesTruncated}String)
@@ -84,105 +93,76 @@ class PowerAssertCallTransformer(
                   | - $fqName($valueTypesAll() -> String)
                 """.trimMargin(),
             )
-            return super.visitCall(expression)
+            return super.visitCall(originalCall)
         }
 
-        val messageArgument: IrExpression?
-        val roots: List<Node?>
-        if (delegate.function.parameters.size == function.parameters.size) {
-            messageArgument = expression.arguments.last()
-            roots = expression.arguments
-                .subList(fromIndex = 0, toIndex = expression.arguments.lastIndex) // Exclude message argument.
-                .map { buildTree(it) }
-        } else {
-            messageArgument = null
-            roots = expression.arguments
-                .map { buildTree(it) }
+        val roots = buildArgumentRoots(callBuilder, function, originalCall)
+
+        // If all roots are non-visible, there are no transformable parameters
+        if (roots.all { !it.isVisible() }) {
+            configuration.messageCollector.info(originalCall, "Expression is constant and will not be power-assert transformed")
+            return super.visitCall(originalCall)
         }
 
-        // If all roots are null or non-visible, there are no transformable parameters
-        if (roots.all { it == null || !it.isVisible() }) {
-            configuration.messageCollector.info(expression, "Expression is constant and will not be power-assert transformed")
-            return super.visitCall(expression)
+        val messageArgument = when (callBuilder.targetFunction.parameters.size) {
+            function.parameters.size -> originalCall.arguments.last()
+            else -> null
         }
-
-        val symbol = currentScope!!.scope.scopeOwnerSymbol
-        val builder = DeclarationIrBuilder(context, symbol, expression.startOffset, expression.endOffset)
-        return builder.diagram(
-            call = expression,
-            delegate = delegate,
-            messageArgument = messageArgument,
-            roots = roots,
-        )
+        val parameterBuilder = StringParameterBuilder(sourceFile, originalCall, function, messageArgument)
+        return buildPowerAssertCall(originalCall, callBuilder, parameterBuilder, roots)
     }
 
-    private fun buildTree(expression: IrExpression?): Node? {
-        if (expression == null) return null
-        return buildTree(configuration.constTracker, sourceFile, expression)
+    private fun buildArgumentRoots(
+        callBuilder: CallBuilder,
+        function: IrSimpleFunction,
+        originalCall: IrCall,
+    ): List<RootNode<IrValueParameter>> {
+        val argumentCount = when (callBuilder.targetFunction.parameters.size) {
+            function.parameters.size -> originalCall.arguments.size - 1
+            else -> originalCall.arguments.size
+        }
+        return (0..<argumentCount).map {
+            buildTree(configuration.constTracker, sourceFile, function.parameters[it], originalCall.arguments[it])
+        }
     }
 
-    private fun DeclarationIrBuilder.diagram(
-        call: IrCall,
-        delegate: FunctionDelegate,
-        messageArgument: IrExpression?,
-        roots: List<Node?>,
+    private fun buildPowerAssertCall(
+        originalCall: IrCall,
+        callBuilder: CallBuilder,
+        parameterBuilder: ParameterBuilder,
+        roots: List<RootNode<IrValueParameter>>,
     ): IrExpression {
+        val symbol = currentScope!!.scope.scopeOwnerSymbol
+        val builder = DeclarationIrBuilder(context, symbol, originalCall.startOffset, originalCall.endOffset)
+
         fun recursive(
             index: Int,
             arguments: PersistentList<IrExpression?>,
-            variables: PersistentList<IrTemporaryVariable>,
+            argumentVariables: PersistentMap<IrValueParameter, List<IrDiagramVariable>>,
         ): IrExpression {
             if (index >= roots.size) {
-                val prefix = buildMessagePrefix(messageArgument, delegate.messageParameter)
-                    ?.deepCopyWithSymbols(parent)
-                val diagram = irDiagramString(sourceFile, prefix, call, variables)
-                return delegate.buildCall(this, call, arguments, diagram)
+                val diagram = parameterBuilder.build(builder, argumentVariables)
+                return callBuilder.buildCall(builder, arguments, diagram)
             } else {
                 val root = roots[index]
-                if (root == null) {
-                    val newArguments = arguments.add(call.arguments[index])
-                    return recursive(index + 1, newArguments, variables)
+                val child = root.child
+                if (child == null) {
+                    val newArguments = arguments.add(originalCall.arguments[index])
+                    return recursive(index + 1, newArguments, argumentVariables)
                 } else {
-                    return buildDiagramNesting(sourceFile, root, variables) { argument, newVariables ->
+                    return builder.buildDiagramNesting(sourceFile, child) { argument, newVariables ->
                         val newArguments = arguments.add(argument)
-                        recursive(index + 1, newArguments, newVariables)
+                        val newArgumentVariables = argumentVariables.put(root.parameter, newVariables)
+                        recursive(index + 1, newArguments, newArgumentVariables)
                     }
                 }
             }
         }
 
-        return recursive(0, persistentListOf(), persistentListOf())
+        return recursive(0, persistentListOf(), persistentMapOf())
     }
 
-    private fun DeclarationIrBuilder.buildMessagePrefix(
-        messageArgument: IrExpression?,
-        messageParameter: IrValueParameter,
-    ): IrExpression? {
-        return when (messageArgument) {
-            is IrConst -> messageArgument
-            is IrStringConcatenation -> messageArgument
-            is IrGetValue -> {
-                if (messageArgument.type.isAssignableTo(context.irBuiltIns.stringType)) {
-                    return messageArgument
-                } else {
-                    val invoke = messageParameter.type.classOrNull!!.functions
-                        .filter { !it.owner.isFakeOverride } // TODO best way to find single access method?
-                        .single()
-                    irCall(invoke).apply { dispatchReceiver = messageArgument }
-                }
-            }
-            // Kotlin Lambda or SAMs conversion lambda
-            is IrFunctionExpression, is IrTypeOperatorCall -> {
-                val invoke = messageParameter.type.classOrNull!!.functions
-                    .filter { !it.owner.isFakeOverride } // TODO best way to find single access method?
-                    .single()
-                irCall(invoke).apply { dispatchReceiver = messageArgument }
-            }
-            else -> null
-        }
-    }
-
-    private fun findDelegates(function: IrFunction): List<FunctionDelegate> {
+    private fun findCallBuilders(function: IrFunction, original: IrCall): List<CallBuilder> {
         val values = function.parameters
         if (values.isEmpty()) return emptyList()
 
@@ -236,11 +216,11 @@ class PowerAssertCallTransformer(
 
             val messageParameter = parameters.last()
             if (messageParameter.kind != IrParameterKind.Regular) return@mapNotNull null
+            val messageType = messageParameter.type
             return@mapNotNull when {
-                isStringSupertype(messageParameter.type) -> SimpleFunctionDelegate(overload, messageParameter)
-                isStringFunction(messageParameter.type) -> LambdaFunctionDelegate(overload, messageParameter)
-                isStringJavaSupplierFunction(messageParameter.type) ->
-                    SamConversionLambdaFunctionDelegate(overload, messageParameter)
+                isStringSupertype(messageType) -> SimpleCallBuilder(overload, original)
+                isStringFunction(messageType) -> LambdaCallBuilder(overload, original, messageType)
+                isStringJavaSupplierFunction(messageType) -> SamConversionLambdaCallBuilder(overload, original, messageType)
                 else -> null
             }
         }

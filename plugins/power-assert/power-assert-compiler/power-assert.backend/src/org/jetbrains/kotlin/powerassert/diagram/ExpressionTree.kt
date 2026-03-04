@@ -56,9 +56,14 @@ sealed class Node {
     }
 }
 
-class RootNode : Node() {
+class RootNode<T>(
+    val parameter: T,
+) : Node() {
     override fun isVisible(): Boolean = children.any { it.isVisible() }
     override fun toString() = "RootNode"
+
+    val child: Node?
+        get() = children.singleOrNull()?.takeIf { it !is ConstantNode }
 }
 
 class ConstantNode(
@@ -103,16 +108,17 @@ class ElvisNode(
     override fun toString() = "ElvisNode(${expression.dumpKotlinLike()})"
 }
 
-fun buildTree(
+fun <T> buildTree(
     constTracker: EvaluatedConstTracker?,
     sourceFile: SourceFile,
-    expression: IrExpression,
-): Node? {
+    parameter: T,
+    expression: IrExpression?,
+): RootNode<T> {
     fun IrConst.isEvaluatedConst(): Boolean =
         constTracker?.load(startOffset, endOffset, sourceFile.irFile.evaluatedConstTrackerKey) != null
 
-    val tree = RootNode()
-    expression.accept(
+    val root = RootNode(parameter)
+    expression?.accept(
         object : IrVisitor<Unit, Node>() {
             private val calls = mutableListOf<IrCall>()
             private val whenSubjects = mutableListOf<IrVariableSymbol>()
@@ -321,8 +327,8 @@ fun buildTree(
                 }
             }
         },
-        tree,
+        root,
     )
 
-    return tree.children.singleOrNull()?.takeIf { it !is ConstantNode }
+    return root
 }

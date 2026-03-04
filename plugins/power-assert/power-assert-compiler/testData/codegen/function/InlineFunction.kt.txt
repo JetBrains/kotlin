@@ -12,15 +12,16 @@ suspend fun getFalse(): Boolean {
 fun test1() {
   runBlocking<Unit>(block = local suspend fun <anonymous>() {
     { // BLOCK
-      val tmp_0: Boolean = run<Boolean>(block = local fun <anonymous>(): Boolean {
+      val tmp0_Explain: Boolean = run<Boolean>(block = local fun <anonymous>(): Boolean {
         return getFalse()
       }
 )
-      assert(value = tmp_0, lazyMessage = local fun <anonymous>(): String {
-        return "\nassert(run { getFalse() })" + "\n       |" + "\n       " + tmp_0 + "\n"
+      assert(value = tmp0_Explain, lazyMessage = local fun <anonymous>(): String {
+        return "\nassert(run { getFalse() })" + "\n       |" + "\n       " + tmp0_Explain + "\n"
       }
 )
     }
   }
 )
 }
+

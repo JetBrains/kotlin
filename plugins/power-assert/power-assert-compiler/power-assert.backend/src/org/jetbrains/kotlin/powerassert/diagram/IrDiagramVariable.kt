@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-sealed class IrTemporaryVariable(
+sealed class IrDiagramVariable(
     val temporary: IrVariable,
     val original: IrExpression,
 ) {
@@ -35,17 +35,17 @@ sealed class IrTemporaryVariable(
         original: IrExpression,
         val sourceRangeInfo: SourceRangeInfo,
         val text: String,
-    ) : IrTemporaryVariable(temporary, original)
+    ) : IrDiagramVariable(temporary, original)
 
     class Hidden(
         temporary: IrVariable,
         original: IrExpression,
-    ) : IrTemporaryVariable(temporary, original)
+    ) : IrDiagramVariable(temporary, original)
 }
 
 class IrTemporaryExtractionTransformer(
     private val builder: IrStatementsBuilder<*>,
-    variables: List<IrTemporaryVariable>,
+    variables: List<IrDiagramVariable>,
 ) : IrElementTransformerVoid() {
     private val replacements = variables.associate { it.original to it.temporary }
 

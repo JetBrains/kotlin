@@ -53,11 +53,11 @@ fun context2Assert(condition: Boolean, msg: Any? = null) {
 fun test1() {
   with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_1: Asserter = $this$with
+      val tmp0_Explain: Asserter = $this$with
       { // BLOCK
-        val tmp_2: Int = "test".<get-length>()
-        val tmp_3: Boolean = EQEQ(arg0 = tmp_2, arg1 = 5)
-        context1Assert(/* $context-Asserter = tmp_1, */ condition = tmp_3, msg = "\ncontext1Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_3 + "\n                      " + tmp_2 + "\n")
+        val tmp1_Explain: Int = "test".<get-length>()
+        val tmp2_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = 5)
+        context1Assert(/* $context-Asserter = tmp0_Explain, */ condition = tmp2_Explain, msg = "\ncontext1Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp2_Explain + "\n                      " + tmp1_Explain + "\n")
       }
     }
   }
@@ -67,13 +67,13 @@ fun test1() {
 fun test2() {
   with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_4: Asserter = $this$with
+      val tmp0_Explain: Asserter = $this$with
       { // BLOCK
-        val tmp_5: Asserter = $this$with
+        val tmp1_Explain: Asserter = $this$with
         { // BLOCK
-          val tmp_6: Int = "test".<get-length>()
-          val tmp_7: Boolean = EQEQ(arg0 = tmp_6, arg1 = 5)
-          context2Assert(/* $context-Asserter#1 = tmp_4, $context-Asserter#2 = tmp_5, */ condition = tmp_7, msg = "\ncontext2Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_7 + "\n                      " + tmp_6 + "\n")
+          val tmp2_Explain: Int = "test".<get-length>()
+          val tmp3_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = 5)
+          context2Assert(/* $context-Asserter#1 = tmp0_Explain, $context-Asserter#2 = tmp1_Explain, */ condition = tmp3_Explain, msg = "\ncontext2Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp3_Explain + "\n                      " + tmp2_Explain + "\n")
         }
       }
     }

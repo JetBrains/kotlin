@@ -68,11 +68,11 @@ fun Asserter.extensionAssert(condition: Boolean, msg: Any? = null) {
 
 fun test1() {
   { // BLOCK
-    val tmp_1: Asserter = Asserter
+    val tmp0_Explain: Asserter = Asserter
     { // BLOCK
-      val tmp_2: Int = "test".<get-length>()
-      val tmp_3: Boolean = EQEQ(arg0 = tmp_2, arg1 = 5)
-      tmp_1.dispatchAssert(condition = tmp_3, msg = "\nAsserter.dispatchAssert(\"test\".length == 5)" + "\n                               |      |" + "\n                               |      " + tmp_3 + "\n                               " + tmp_2 + "\n")
+      val tmp1_Explain: Int = "test".<get-length>()
+      val tmp2_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = 5)
+      tmp0_Explain.dispatchAssert(condition = tmp2_Explain, msg = "\nAsserter.dispatchAssert(\"test\".length == 5)" + "\n                               |      |" + "\n                               |      " + tmp2_Explain + "\n                               " + tmp1_Explain + "\n")
     }
   }
 }
@@ -80,11 +80,11 @@ fun test1() {
 fun test2() {
   with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_4: Asserter = $this$with
+      val tmp0_Explain: Asserter = $this$with
       { // BLOCK
-        val tmp_5: Int = "test".<get-length>()
-        val tmp_6: Boolean = EQEQ(arg0 = tmp_5, arg1 = 5)
-        tmp_4.dispatchAssert(condition = tmp_6, msg = "\ndispatchAssert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_6 + "\n                      " + tmp_5 + "\n")
+        val tmp1_Explain: Int = "test".<get-length>()
+        val tmp2_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = 5)
+        tmp0_Explain.dispatchAssert(condition = tmp2_Explain, msg = "\ndispatchAssert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp2_Explain + "\n                      " + tmp1_Explain + "\n")
       }
     }
   }
@@ -93,11 +93,11 @@ fun test2() {
 
 fun test3() {
   { // BLOCK
-    val tmp_7: Asserter = Asserter
+    val tmp0_Explain: Asserter = Asserter
     { // BLOCK
-      val tmp_8: Int = "test".<get-length>()
-      val tmp_9: Boolean = EQEQ(arg0 = tmp_8, arg1 = 5)
-      extensionAssert(/* <this> = tmp_7, */ condition = tmp_9, msg = "\nAsserter.extensionAssert(\"test\".length == 5)" + "\n                                |      |" + "\n                                |      " + tmp_9 + "\n                                " + tmp_8 + "\n")
+      val tmp1_Explain: Int = "test".<get-length>()
+      val tmp2_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = 5)
+      extensionAssert(/* <this> = tmp0_Explain, */ condition = tmp2_Explain, msg = "\nAsserter.extensionAssert(\"test\".length == 5)" + "\n                                |      |" + "\n                                |      " + tmp2_Explain + "\n                                " + tmp1_Explain + "\n")
     }
   }
 }
@@ -105,11 +105,11 @@ fun test3() {
 fun test4() {
   with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_10: Asserter = $this$with
+      val tmp0_Explain: Asserter = $this$with
       { // BLOCK
-        val tmp_11: Int = "test".<get-length>()
-        val tmp_12: Boolean = EQEQ(arg0 = tmp_11, arg1 = 5)
-        extensionAssert(/* <this> = tmp_10, */ condition = tmp_12, msg = "\nextensionAssert(\"test\".length == 5)" + "\n                       |      |" + "\n                       |      " + tmp_12 + "\n                       " + tmp_11 + "\n")
+        val tmp1_Explain: Int = "test".<get-length>()
+        val tmp2_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = 5)
+        extensionAssert(/* <this> = tmp0_Explain, */ condition = tmp2_Explain, msg = "\nextensionAssert(\"test\".length == 5)" + "\n                       |      |" + "\n                       |      " + tmp2_Explain + "\n                       " + tmp1_Explain + "\n")
       }
     }
   }
@@ -119,13 +119,13 @@ fun test4() {
 fun test5() {
   with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_13: Asserter = $this$with
+      val tmp0_Explain: Asserter = $this$with
       { // BLOCK
-        val tmp_14: Asserter = Asserter
+        val tmp1_Explain: Asserter = Asserter
         { // BLOCK
-          val tmp_15: Int = "test".<get-length>()
-          val tmp_16: Boolean = EQEQ(arg0 = tmp_15, arg1 = 5)
-          tmp_13.memberExtensionAssert(/* <this> = tmp_14, */ condition = tmp_16, msg = "\nAsserter.memberExtensionAssert(\"test\".length == 5)" + "\n                                      |      |" + "\n                                      |      " + tmp_16 + "\n                                      " + tmp_15 + "\n")
+          val tmp2_Explain: Int = "test".<get-length>()
+          val tmp3_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = 5)
+          tmp0_Explain.memberExtensionAssert(/* <this> = tmp1_Explain, */ condition = tmp3_Explain, msg = "\nAsserter.memberExtensionAssert(\"test\".length == 5)" + "\n                                      |      |" + "\n                                      |      " + tmp3_Explain + "\n                                      " + tmp2_Explain + "\n")
         }
       }
     }
@@ -136,13 +136,13 @@ fun test5() {
 fun test6() {
   with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
     { // BLOCK
-      val tmp_17: Asserter = $this$with
+      val tmp0_Explain: Asserter = $this$with
       { // BLOCK
-        val tmp_18: Asserter = $this$with
+        val tmp1_Explain: Asserter = $this$with
         { // BLOCK
-          val tmp_19: Int = "test".<get-length>()
-          val tmp_20: Boolean = EQEQ(arg0 = tmp_19, arg1 = 5)
-          tmp_17.memberExtensionAssert(/* <this> = tmp_18, */ condition = tmp_20, msg = "\nmemberExtensionAssert(\"test\".length == 5)" + "\n                             |      |" + "\n                             |      " + tmp_20 + "\n                             " + tmp_19 + "\n")
+          val tmp2_Explain: Int = "test".<get-length>()
+          val tmp3_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = 5)
+          tmp0_Explain.memberExtensionAssert(/* <this> = tmp1_Explain, */ condition = tmp3_Explain, msg = "\nmemberExtensionAssert(\"test\".length == 5)" + "\n                             |      |" + "\n                             |      " + tmp3_Explain + "\n                             " + tmp2_Explain + "\n")
         }
       }
     }
