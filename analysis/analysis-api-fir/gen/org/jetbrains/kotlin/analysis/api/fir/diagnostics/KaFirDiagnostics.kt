@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.RelationToType
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -3912,13 +3912,13 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface NoElseInWhen : KaFirDiagnostic<KtWhenExpression> {
         override val diagnosticClass get() = NoElseInWhen::class
-        val missingWhenCases: List<WhenMissingCase>
+        val missingWhenCases: List<KaWhenMissingCase>
         val description: String
     }
 
     interface MissingBranchForNonAbstractSealedClass : KaFirDiagnostic<KtWhenExpression> {
         override val diagnosticClass get() = MissingBranchForNonAbstractSealedClass::class
-        val missingWhenCases: List<WhenMissingCase>
+        val missingWhenCases: List<KaWhenMissingCase>
     }
 
     interface InvalidIfAsExpression : KaFirDiagnostic<KtIfExpression> {

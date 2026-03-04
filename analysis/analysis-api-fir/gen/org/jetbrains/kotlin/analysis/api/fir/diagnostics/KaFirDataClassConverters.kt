@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.analysis.api.fir.components.toKaWhenMissingCase
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
@@ -1349,7 +1350,7 @@ private fun KaDiagnosticConverterBuilder.addConversions25() {
     add(FirErrors.NO_ELSE_IN_WHEN) { firDiagnostic ->
         NoElseInWhenImpl(
             firDiagnostic.a.map { whenMissingCase ->
-                whenMissingCase
+                whenMissingCase.toKaWhenMissingCase()
             },
             firDiagnostic.b,
             firDiagnostic as KtPsiDiagnostic,
@@ -3814,7 +3815,7 @@ private fun KaDiagnosticConverterBuilder.addConversions86() {
     add(FirErrors.MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS) { firDiagnostic ->
         MissingBranchForNonAbstractSealedClassImpl(
             firDiagnostic.a.map { whenMissingCase ->
-                whenMissingCase
+                whenMissingCase.toKaWhenMissingCase()
             },
             firDiagnostic as KtPsiDiagnostic,
             token,

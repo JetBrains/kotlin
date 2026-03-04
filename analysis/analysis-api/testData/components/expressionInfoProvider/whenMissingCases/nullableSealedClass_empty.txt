@@ -1,3 +1,3 @@
-IsTypeCheckIsMissing - Foo.A
-IsTypeCheckIsMissing - is Foo.B
-NullIsMissing - null
+TypeCase(object /Foo.A)
+TypeCase(/Foo.B)
+NullCase
