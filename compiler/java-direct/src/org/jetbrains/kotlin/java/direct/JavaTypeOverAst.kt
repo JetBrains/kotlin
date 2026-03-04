@@ -179,7 +179,33 @@ fun createJavaType(
     localScope: LocalJavaScope? = null,
     imports: JavaImports = JavaImports.EMPTY,
 ): JavaType {
+    // If input node is a TYPE with array brackets or vararg ellipsis, handle it directly
+    // (don't look for nested TYPE first, as that would skip the array dimension)
+    if (node.type.toString() == "TYPE") {
+        val hasArrayBracket = node.findChildByType("LBRACKET") != null
+        val hasVarargEllipsis = node.findChildByType("ELLIPSIS") != null
+        if (hasArrayBracket || hasVarargEllipsis) {
+            val componentTypeNode = node.findChildByType("TYPE")
+            if (componentTypeNode != null) {
+                val componentType = createJavaType(componentTypeNode, source, localScope, imports)
+                return JavaArrayTypeOverAst(node, source, componentType)
+            }
+        }
+    }
+
     val typeNode = node.findChildByType("TYPE") ?: node
+
+    // Array type or vararg: TYPE contains nested TYPE + LBRACKET/RBRACKET or ELLIPSIS
+    val hasArrayBracket = typeNode.findChildByType("LBRACKET") != null
+    val hasVarargEllipsis = typeNode.findChildByType("ELLIPSIS") != null
+    if (hasArrayBracket || hasVarargEllipsis) {
+        val componentTypeNode = typeNode.findChildByType("TYPE")
+        if (componentTypeNode != null) {
+            val componentType = createJavaType(componentTypeNode, source, localScope, imports)
+            return JavaArrayTypeOverAst(typeNode, source, componentType)
+        }
+    }
+
     val primitiveNode = typeNode.children.find { it.type.toString().endsWith("_KEYWORD") }
     if (primitiveNode != null) {
         return JavaPrimitiveTypeOverAst(primitiveNode, source)
@@ -194,9 +220,16 @@ fun createJavaType(
 class JavaTypeParameterOverAst(
     node: JavaSyntaxNode,
     source: CharSequence,
+    private val localScope: LocalJavaScope? = null,
+    private val imports: JavaImports = JavaImports.EMPTY,
 ) : JavaElementOverAst(node, source), JavaTypeParameter {
     override val name: Name get() = Name.identifier(node.findChildByType("IDENTIFIER")?.text ?: "<error>")
-    override val upperBounds: Collection<JavaClassifierType> get() = emptyList()
+    override val upperBounds: Collection<JavaClassifierType> by lazy {
+        val extendsList = node.findChildByType("EXTENDS_BOUND_LIST") ?: return@lazy emptyList()
+        extendsList.getChildrenByType("JAVA_CODE_REFERENCE").map { ref ->
+            JavaClassifierTypeOverAst(ref, source, localScope, imports)
+        }
+    }
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null

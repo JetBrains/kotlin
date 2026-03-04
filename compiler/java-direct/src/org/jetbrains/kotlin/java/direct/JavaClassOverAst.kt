@@ -69,7 +69,7 @@ class JavaClassOverAst(
         }
 
     override val typeParameters: List<JavaTypeParameter>
-        get() = node.findChildByType("TYPE_PARAMETER_LIST")?.getChildrenByType("TYPE_PARAMETER")?.map { JavaTypeParameterOverAst(it, source) } ?: emptyList()
+        get() = node.findChildByType("TYPE_PARAMETER_LIST")?.getChildrenByType("TYPE_PARAMETER")?.map { JavaTypeParameterOverAst(it, source, localScope, imports) } ?: emptyList()
 
     override val supertypes: Collection<JavaClassifierType>
         get() {

@@ -86,7 +86,14 @@ class JavaMethodOverAst(
     override val annotationParameterDefaultValue: JavaAnnotationArgument? get() = null
     override val hasAnnotationParameterDefaultValue: Boolean get() = false
     override val isNative: Boolean get() = false
-    override val typeParameters: List<JavaTypeParameter> get() = emptyList()
+    override val typeParameters: List<JavaTypeParameter> by lazy {
+        val typeParamList = node.findChildByType("TYPE_PARAMETER_LIST") ?: return@lazy emptyList()
+        val localScope = (containingClass as? JavaClassOverAst)?.localScope
+        val imports = (containingClass as? JavaClassOverAst)?.imports ?: JavaImports.EMPTY
+        typeParamList.getChildrenByType("TYPE_PARAMETER").map { typeParam ->
+            JavaTypeParameterOverAst(typeParam, source, localScope, imports)
+        }
+    }
     override val isFromSource: Boolean get() = true
 }
 
@@ -101,7 +108,14 @@ class JavaConstructorOverAst(
             val parameters = parameterList.getChildrenByType("PARAMETER")
             return parameters.map { JavaValueParameterOverAst(it, source, containingClass) }
         }
-    override val typeParameters: List<JavaTypeParameter> get() = emptyList()
+    override val typeParameters: List<JavaTypeParameter> by lazy {
+        val typeParamList = node.findChildByType("TYPE_PARAMETER_LIST") ?: return@lazy emptyList()
+        val localScope = (containingClass as? JavaClassOverAst)?.localScope
+        val imports = (containingClass as? JavaClassOverAst)?.imports ?: JavaImports.EMPTY
+        typeParamList.getChildrenByType("TYPE_PARAMETER").map { typeParam ->
+            JavaTypeParameterOverAst(typeParam, source, localScope, imports)
+        }
+    }
     override val isFromSource: Boolean get() = true
 }
 
@@ -131,7 +145,12 @@ class JavaValueParameterOverAst(
     }
 
     override val isVararg: Boolean
-        get() = node.findChildByType("ELLIPSIS") != null
+        get() {
+            // ELLIPSIS can be a direct child or inside the TYPE node
+            if (node.findChildByType("ELLIPSIS") != null) return true
+            val typeNode = node.findChildByType("TYPE")
+            return typeNode?.findChildByType("ELLIPSIS") != null
+        }
 
     override val annotations: Collection<JavaAnnotation> get() = emptyList()
     override val isDeprecatedInJavaDoc: Boolean get() = false

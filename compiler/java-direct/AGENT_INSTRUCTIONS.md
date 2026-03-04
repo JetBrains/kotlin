@@ -4,9 +4,9 @@
 
 | Metric | Value |
 |--------|-------|
-| **Status** | Iteration 7 in progress |
-| **Tests** | 90/138 passing (65.2%) |
-| **Next focus** | Array types, type parameters, Kotlin class resolution |
+| **Status** | Iteration 7 complete |
+| **Tests** | 96/138 passing (69.6%) |
+| **Next focus** | Kotlin class resolution, raw types, complex generics |
 
 **Key files**: `JavaClassFinderOverAstImpl.kt`, `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaImports.kt`
 
@@ -213,19 +213,18 @@ From iterations 1-6 (see `ITERATION_RESULTS.md` for details):
 
 ---
 
-## Remaining Work (48 failing tests)
+## Remaining Work (42 failing tests)
 
-Based on iteration 7 analysis (see `implDocs/ITERATION_7_PROBLEM_ANALYSIS.md`):
+After iteration 7 completion:
 
 | Category | Count | Priority |
 |----------|-------|----------|
-| MISSING_DEPENDENCY_CLASS | 15 | Medium (complex) |
+| MISSING_DEPENDENCY_CLASS | ~15 | Medium (Kotlin classes from Java) |
 | Wrong NPE behavior | 6 | Low |
-| NOTHING_TO_OVERRIDE (array types) | 5 | **High (quick win)** |
-| NONE_APPLICABLE | 4 | Medium |
-| CANNOT_INFER_PARAMETER_TYPE | 3 | Medium |
-| Other | 15 | Varies |
+| CANNOT_INFER_PARAMETER_TYPE | ~5 | Medium |
+| Raw types (List...) | ~3 | Medium |
+| Other | ~13 | Varies |
 
 ---
 
-*Last updated: 2026-03-04 (iteration 7 analysis)*
+*Last updated: 2026-03-04 (iteration 7 complete)*

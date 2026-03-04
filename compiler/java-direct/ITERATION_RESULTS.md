@@ -94,3 +94,67 @@ After Iteration 6, 48 tests still fail. Likely causes:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 7: Array Types and Vararg Handling - 2026-03-04
+
+### Status
+- ✅ Completed
+
+### Summary
+Implemented array type parsing and vararg handling in `createJavaType()`. Fixed method/constructor/class type parameters to include localScope and imports for proper bound resolution. Improved from 90/138 (65.2%) to 96/138 (69.6%) - gained 6 tests.
+
+### Key Findings
+1. **Array AST Structure**: Arrays are represented as `TYPE` containing nested `TYPE` + `LBRACKET`/`RBRACKET`:
+   ```
+   TYPE: String[]
+     TYPE: String
+       JAVA_CODE_REFERENCE: String
+     LBRACKET: [
+     RBRACKET: ]
+   ```
+
+2. **Vararg AST Structure**: Varargs use `ELLIPSIS` instead of brackets, inside the TYPE node:
+   ```
+   TYPE: String...
+     TYPE: String
+       JAVA_CODE_REFERENCE: String
+     ELLIPSIS: ...
+   ```
+
+3. **TYPE Node Handling Bug**: When `createJavaType()` receives a TYPE node directly (e.g., from parameter), calling `findChildByType("TYPE")` returns the nested component type, skipping the array dimension. Fix: check if input node IS a TYPE with LBRACKET/ELLIPSIS before looking for nested TYPE.
+
+4. **Type Parameter Scope**: `JavaTypeParameterOverAst` needs `localScope` and `imports` to resolve bounds like `<T extends SomeClass>`.
+
+### Changes Made
+| File | Change |
+|------|--------|
+| `JavaTypeOverAst.kt` | Added array type detection (LBRACKET) and vararg detection (ELLIPSIS) in `createJavaType()`. Updated `JavaTypeParameterOverAst` constructor to accept localScope/imports. |
+| `JavaMemberOverAst.kt` | Fixed `isVararg` to check ELLIPSIS inside TYPE node. Updated method/constructor typeParameters to pass localScope/imports. |
+| `JavaClassOverAst.kt` | Updated class-level typeParameters to pass localScope/imports to `JavaTypeParameterOverAst`. |
+
+### Test Results
+- Box tests: 96/138 passing (69.6%) - UP from 90/138 (65.2%)
+- Gained: 6 tests (+4.4%)
+
+### Tests Fixed
+- `testOverrideWithArrayParameterType` - String[] parameter now correctly parsed as Array<String>
+- `testOverrideWithArrayParameterTypeNotNull` - Array with nullability annotations
+- `testOverrideWithVarargParameterType` - String... vararg now correctly parsed as Array<String>
+- Plus 3 other tests benefiting from array/vararg handling
+
+### Tests Still Failing (42 remaining)
+| Category | Count | Notes |
+|----------|-------|-------|
+| MISSING_DEPENDENCY_CLASS | ~15 | Kotlin classes from Java (kotlin.Function, etc.) |
+| CANNOT_INFER_PARAMETER_TYPE | ~5 | Complex generic inference |
+| NOTHING_TO_OVERRIDE | ~3 | Raw types (List...) not handled |
+| Other | ~19 | Various issues |
+
+### Issues Encountered
+1. **isVararg returning false**: ELLIPSIS was inside TYPE node, not direct child of PARAMETER. Fixed by checking both locations.
+2. **testOverrideWithArrayParameterType2 still fails**: Uses raw type `List...` which needs proper raw type handling (out of scope for this iteration).
+
+### Key Learnings
+1. Always check if input node is already the target type before calling `findChildByType()` - it may skip important structure.
+2. Vararg and array have different AST representations but both need to produce `JavaArrayType`.
+3. Exception-based debugging with `node.dump()` is essential for understanding AST structure.
