@@ -21,6 +21,7 @@ Comment lines at the top of the file control test behavior:
 | `// DUMP_INFERENCE_LOGS: option1, option2`                | Possible options: FIXATION, MARKDOWN, MERMAID                                                                                                                    |
 | `// CHECK_TYPE`                                           | Enables `checkType { _<Type>() }` pattern for type assertions                                                                                                    |
 | `// FILE: Name.kt` / `// FILE: Name.java`                 | Multi-file test (splits single `.kt` file into virtual files)                                                                                                    |
+| `// LATEST_LV_DIFFERENCE`                                 | Indicates test expectations differ between stable and latest language version (see `.latestLV.kt` below)                                                         |
 
 ### Inline Diagnostic Markers
 
@@ -49,6 +50,20 @@ Diagnostic assertions are placed inline around the code that should produce them
 | `.fixation.txt`  | Type variable fixation process                                      | `DUMP_INFERENCE_LOGS: FIXATION` directive present |
 | `.inference.md`  | General type inference logs                                         | `DUMP_INFERENCE_LOGS: MARKDOWN` directive present |
 | `.inference.mmd` | General type inference logs via Mermaid format                      | `DUMP_INFERENCE_LOGS: MERMAID` directive present  |
+| `.latestLV.kt`   | Test expectations for latest language version when they differ from stable | `LATEST_LV_DIFFERENCE` directive present     |
+
+## Latest Language Version Differences
+
+When a language feature has `sinceVersion` set to a future Kotlin version (e.g., `KOTLIN_2_5`), it is disabled at the stable language version but enabled at the latest language version. This causes different compiler behavior depending on which LV the test runs with.
+
+To handle this:
+1. Add `// LATEST_LV_DIFFERENCE` directive to the `.kt` test file
+2. Create a `.latestLV.kt` file (for diagnostics tests: `.fir.latestLV.kt` if only FIR behavior differs) containing the full test with diagnostic expectations for the latest LV
+3. The base `.kt` file keeps expectations for the stable (default) language version
+
+The latest-LV test runners (`FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated`, `FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGenerated`) use the `.latestLV.kt` file instead of the base `.kt` file.
+
+Run with `-Pkotlin.test.update.test.data=true` to auto-generate/update `.latestLV.kt` content.
 
 ## Creating a New Test
 
