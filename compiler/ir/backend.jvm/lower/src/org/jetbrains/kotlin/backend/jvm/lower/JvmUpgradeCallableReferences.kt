@@ -60,6 +60,4 @@ internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : Upgrad
     override fun copyNecessaryAttributes(oldReference: IrPropertyReference, newReference: IrRichPropertyReference) {
         newReference.copyAttributes(oldReference)
     }
-
-    override fun IrDeclaration.hasMissingObjectDispatchReceiver(): Boolean = isJvmStaticInObject()
 }
