@@ -193,7 +193,7 @@ private fun postprocessCollectionLiteralCall(
 }
 
 context(context: ResolutionContext)
-fun prepareFunctionCallForFallback(collectionLiteral: FirCollectionLiteral): FirFunctionCall {
+private fun prepareFunctionCallForFallback(collectionLiteral: FirCollectionLiteral): FirFunctionCall {
     val packageName = StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
     val functionName = CollectionNames.Factories.LIST_OF
 
