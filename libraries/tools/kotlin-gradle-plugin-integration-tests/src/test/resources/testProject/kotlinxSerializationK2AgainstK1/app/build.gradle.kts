@@ -6,14 +6,14 @@ plugins {
     application
 }
 
-dependencies {
-    implementation(project(":lib"))
+tasks.named<KotlinCompile>("compileKotlin").configure {
+    compilerOptions {
+        languageVersion.set(KotlinVersion.KOTLIN_2_0)
+    }
 }
 
-val compileKotlin: KotlinCompile by tasks
-
-compileKotlin.compilerOptions {
-    languageVersion.set(KotlinVersion.KOTLIN_2_0)
+dependencies {
+    implementation("org.test.example:lib:1.0.0")
 }
 
 application {

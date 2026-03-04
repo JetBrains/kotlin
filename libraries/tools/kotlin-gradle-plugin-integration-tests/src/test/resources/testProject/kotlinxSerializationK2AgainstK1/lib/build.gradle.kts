@@ -1,12 +1,7 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-
 plugins {
-    kotlin("jvm")
+    kotlin("jvm") version "1.9.25"
+    kotlin("plugin.serialization") version "1.9.25"
 }
 
-val compileKotlin: KotlinCompile by tasks
-
-compileKotlin.compilerOptions {
-    languageVersion.set(KotlinVersion.KOTLIN_1_9)
-}
+group = "org.test.example"
+version = "1.0.0"

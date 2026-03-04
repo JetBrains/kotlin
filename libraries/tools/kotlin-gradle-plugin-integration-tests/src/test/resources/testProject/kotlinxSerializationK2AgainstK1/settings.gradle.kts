@@ -1,3 +1,4 @@
 rootProject.name = "kotlinxSerializationK2AgainstK1"
 
-include(":lib", "app")
+includeBuild("lib")
+include("app")
