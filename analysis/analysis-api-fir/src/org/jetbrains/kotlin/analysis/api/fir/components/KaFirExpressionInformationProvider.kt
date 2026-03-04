@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider
+import org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
 import org.jetbrains.kotlin.analysis.api.components.tryResolveSymbols
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
@@ -40,11 +41,12 @@ internal class KaFirExpressionInformationProvider(
     override val KtReturnExpression.targetSymbol: KaCallableSymbol?
         get() = with(analysisSession) { resolveSymbol() }
 
-    override fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> = withPsiValidityAssertion {
+    override fun KtWhenExpression.computeMissingCases(): List<KaWhenMissingCase> = withPsiValidityAssertion {
         val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.resolutionFacade) ?: return emptyList()
-        return withSession(analysisSession.resolutionFacade.useSiteFirSession) {
+        val compilerMissingCases = withSession(analysisSession.resolutionFacade.useSiteFirSession) {
             FirWhenExhaustivenessComputer.computeAllMissingCases(firWhenExpression)
         }
+        return compilerMissingCases.map { it.toKaWhenMissingCase() }
     }
 
     override val KtExpression.isUsedAsExpression: Boolean
@@ -510,3 +512,15 @@ private fun KaSession.isVariableAccessCall(reference: KtReferenceExpression): Bo
 
 private fun KaSession.returnsUnit(declaration: KtDeclarationWithReturnType): Boolean =
     declaration.returnType.isUnitType
+
+internal fun WhenMissingCase.toKaWhenMissingCase(): KaWhenMissingCase = when (this) {
+    is WhenMissingCase.Unknown -> KaWhenMissingCase.UnknownCase
+    is WhenMissingCase.ConditionTypeIsExpect.SealedClass -> KaWhenMissingCase.ExpectTypeCase.ExpectSealedClassCase
+    is WhenMissingCase.ConditionTypeIsExpect.SealedInterface -> KaWhenMissingCase.ExpectTypeCase.ExpectSealedInterfaceCase
+    is WhenMissingCase.ConditionTypeIsExpect.Enum -> KaWhenMissingCase.ExpectTypeCase.ExpectEnumCase
+    is WhenMissingCase.NullIsMissing -> KaWhenMissingCase.NullCase
+    is WhenMissingCase.BooleanIsMissing.TrueIsMissing -> KaWhenMissingCase.BooleanCase(true)
+    is WhenMissingCase.BooleanIsMissing.FalseIsMissing -> KaWhenMissingCase.BooleanCase(false)
+    is WhenMissingCase.IsTypeCheckIsMissing -> KaWhenMissingCase.TypeCase(classId, isSingleton, ownTypeParametersCount)
+    is WhenMissingCase.EnumCheckIsMissing -> KaWhenMissingCase.EnumEntryCase(callableId)
+}
