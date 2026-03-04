@@ -160,6 +160,17 @@ internal class KaFe10JavaInteroperabilityComponent(
         throw UnsupportedOperationException("Conversion to KtType is not supported in K1 implementation")
     }
 
+    override fun KaType.mapToJvmTypeDescriptor(
+        mode: KaTypeMappingMode,
+        isAnnotationMethod: Boolean,
+        suppressWildcards: Boolean?,
+    ): String {
+        val kotlinType = (this as KaFe10Type).fe10Type
+        val kotlinMode = mode.toTypeMappingMode(this, isAnnotationMethod, suppressWildcards)
+        return typeMapper.mapType(kotlinType, kotlinMode).descriptor
+    }
+
+    @Deprecated("Use 'mapToJvmTypeDescriptor' instead.", level = DeprecationLevel.HIDDEN)
     override fun KaType.mapToJvmType(mode: TypeMappingMode): Type = withValidityAssertion {
         val kotlinType = (this as KaFe10Type).fe10Type
         return typeMapper.mapType(kotlinType, mode)

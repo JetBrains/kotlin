@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.test
 
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.analyzeCopy
 import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
@@ -18,12 +19,16 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResoluti
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.org.objectweb.asm.Type
 import org.junit.jupiter.api.Test
 import kotlin.reflect.full.isSubclassOf
 import kotlin.test.assertEquals
@@ -140,6 +145,37 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surfac
 
             checkSubstitution(regularClassSymbol)
             checkSubstitution(psiBasedClassSymbol)
+        }
+    }
+
+    @Test
+    fun deprecatedMapToJvmType(mainFile: KtFile) {
+        val testFunction = mainFile.declarations.firstIsInstance<KtFunction>()
+        assertEquals("test", testFunction.name)
+
+        analyze(testFunction) {
+            val valueParameter = testFunction.valueParameters.single()
+
+            val kotlinType = valueParameter.symbol.returnType
+
+            val memberMethod = this@analyze::class.java
+                .getMethod("mapToJvmType", KaType::class.java, TypeMappingMode::class.java)
+
+            assert(memberMethod.isSynthetic)
+
+            val contextParameterBridgeMethod = Class
+                .forName("org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponentKt")
+                .getMethod("mapToJvmType", KaSession::class.java, KaType::class.java, TypeMappingMode::class.java)
+
+            assert(contextParameterBridgeMethod.isSynthetic)
+
+            val expectedResult = Type.getType("LFoo;")
+
+            val memberResult = memberMethod.invoke(this@analyze, kotlinType, TypeMappingMode.DEFAULT)
+            assertEquals(expectedResult, memberResult)
+
+            val contextParameterBridgeResult = contextParameterBridgeMethod.invoke(null, this@analyze, kotlinType, TypeMappingMode.DEFAULT)
+            assertEquals(expectedResult, contextParameterBridgeResult)
         }
     }
 }

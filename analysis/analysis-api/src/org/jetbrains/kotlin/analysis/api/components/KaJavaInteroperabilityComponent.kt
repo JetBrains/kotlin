@@ -10,7 +10,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaCustomContextParameterBridge
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaNoContextParameterBridgeRequired
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
@@ -77,11 +79,27 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
     public fun PsiType.asKaType(useSitePosition: PsiElement): KaType?
 
     /**
+     * Convert the given [KaType] to a JVM type descriptor.
+     * To learn more about JVM descriptors, check out the
+     * [JVM specification](https://docs.oracle.com/javase/specs/jvms/se24/html/jvms-4.html#jvms-4.3).
+     *
+     * @see KaTypeMappingMode
+     */
+    @KaExperimentalApi
+    public fun KaType.mapToJvmTypeDescriptor(
+        mode: KaTypeMappingMode = KaTypeMappingMode.DEFAULT,
+        isAnnotationMethod: Boolean = false,
+        suppressWildcards: Boolean? = null,
+    ): String
+
+    /**
      * Convert the given [KaType] to a JVM [ASM](https://asm.ow2.io) type.
      *
      * @see TypeMappingMode
      */
+    @Deprecated("Use 'mapToJvmTypeDescriptor' instead.", level = DeprecationLevel.HIDDEN)
     @KaExperimentalApi
+    @KaNoContextParameterBridgeRequired
     public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type
 
     /**
@@ -126,6 +144,22 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
      */
     @KaExperimentalApi
     public val KaPropertySymbol.javaSetterName: Name?
+}
+
+/**
+ * Convert the given [KaType] to a JVM [ASM](https://asm.ow2.io) type.
+ *
+ * @see TypeMappingMode
+ */
+@Deprecated("Use 'mapToJvmTypeDescriptor' instead.", level = DeprecationLevel.HIDDEN)
+@KaExperimentalApi
+@KaContextParameterApi
+@KaCustomContextParameterBridge
+context(session: KaSession)
+public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type {
+    @OptIn(KaSessionComponentImplementationDetail::class)
+    return KaJavaInteroperabilityComponent::class.java.getDeclaredMethod("mapToJvmType", KaType::class.java, TypeMappingMode::class.java)
+        .invoke(session, this, mode) as Type
 }
 
 /**
@@ -205,18 +239,26 @@ public fun PsiType.asKaType(useSitePosition: PsiElement): KaType? {
 }
 
 /**
- * Convert the given [KaType] to a JVM [ASM](https://asm.ow2.io) type.
+ * Convert the given [KaType] to a JVM type descriptor.
+ * To learn more about JVM descriptors, check out the
+ * [JVM specification](https://docs.oracle.com/javase/specs/jvms/se24/html/jvms-4.html#jvms-4.3).
  *
- * @see TypeMappingMode
+ * @see KaTypeMappingMode
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
-public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type {
+public fun KaType.mapToJvmTypeDescriptor(
+    mode: KaTypeMappingMode = KaTypeMappingMode.DEFAULT,
+    isAnnotationMethod: Boolean = false,
+    suppressWildcards: Boolean? = null,
+): String {
     return with(session) {
-        mapToJvmType(
+        mapToJvmTypeDescriptor(
             mode = mode,
+            isAnnotationMethod = isAnnotationMethod,
+            suppressWildcards = suppressWildcards,
         )
     }
 }
