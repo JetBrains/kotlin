@@ -16,6 +16,16 @@ suspend fun suspendFun() { }
 val String.extensionProperty<!>
     get() = this.length
 
+<!WRONG_EXPORTED_DECLARATION("property with context parameters")!>@JsExport
+context(x: Int)
+val propertyWithContext<!>
+    get() = x
+
+<!WRONG_EXPORTED_DECLARATION("extension property")!>@JsExport
+context(x: Int)
+val String.extensionPropertyWithContext<!>
+    get() = this.length
+
 @JsExport
 annotation class <!WRONG_EXPORTED_DECLARATION("annotation class")!>AnnotationClass<!>
 

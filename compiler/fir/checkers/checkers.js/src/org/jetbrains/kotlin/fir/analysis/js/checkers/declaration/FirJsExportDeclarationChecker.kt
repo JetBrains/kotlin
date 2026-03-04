@@ -136,6 +136,11 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     return
                 }
 
+                if (declaration.contextParameters.isNotEmpty()) {
+                    reportWrongExportedDeclaration("property with context parameters")
+                    return
+                }
+
                 val containingClass = declaration.getContainingClassSymbol() as? FirClassSymbol<*>
                 val enumEntriesProperty = containingClass?.let(declaration::isEnumEntries) ?: false
                 val returnType = declaration.returnTypeRef.coneType
