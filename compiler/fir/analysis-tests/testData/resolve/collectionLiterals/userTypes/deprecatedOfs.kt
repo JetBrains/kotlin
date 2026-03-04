@@ -14,13 +14,13 @@ class AllDeprecated {
 
 class OldSetDeprecated {
     companion object {
-        <!MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF!>@Deprecated("", level = DeprecationLevel.HIDDEN)
-        operator fun of(vararg x: Int)<!> = OldSetDeprecated()
+        @Deprecated("", level = DeprecationLevel.HIDDEN)
+        operator fun of(vararg x: Int) = OldSetDeprecated()
 
         @Deprecated("", level = DeprecationLevel.HIDDEN)
         operator fun of() = OldSetDeprecated()
 
-        <!MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF!>operator fun of(vararg x: Long)<!> = OldSetDeprecated()
+        operator fun of(vararg x: Long) = OldSetDeprecated()
         operator fun of(x: Long) = OldSetDeprecated()
     }
 }
@@ -28,15 +28,15 @@ class OldSetDeprecated {
 fun <T> take(t: T) = Unit
 
 fun test() {
-    take<AllDeprecated>(<!NONE_APPLICABLE, UNRESOLVED_REFERENCE!>[1, 2, 3]<!>)
-    take<AllDeprecated>(<!UNRESOLVED_REFERENCE!>[]<!>)
+    take<AllDeprecated>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
+    take<AllDeprecated>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
 
     take<OldSetDeprecated>([1, 2, 3])
     take<OldSetDeprecated>([])
 
     val x = when {
         true -> AllDeprecated()
-        else -> <!NONE_APPLICABLE, UNRESOLVED_REFERENCE!>[1, 2, 3]<!>
+        else -> [1, 2, 3]
     }
 
     val y = when {

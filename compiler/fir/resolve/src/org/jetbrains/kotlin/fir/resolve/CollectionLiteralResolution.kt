@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.declarations.isDeprecationLevelHidden
 import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -229,7 +230,7 @@ private class CollectionLiteralResolutionStrategyThroughCompanion(context: Resol
         var result: Boolean? = null
         processAllDeclaredCallables(context.session) { declaration ->
             if (result != null) return@processAllDeclaredCallables
-            if (declaration.isOperatorOf()) {
+            if (declaration.isOperatorOf() && !declaration.isDeprecationLevelHidden(context.session)) {
                 result = declaration.isVisible(receiver)
             }
         }

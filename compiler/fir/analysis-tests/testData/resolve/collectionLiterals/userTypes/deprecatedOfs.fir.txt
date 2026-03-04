@@ -53,16 +53,16 @@ FILE: deprecatedOfs.kt
         ^take Q|kotlin/Unit|
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/take<Inapplicable(INAPPLICABLE): /take>#|<R|AllDeprecated|>(Q|AllDeprecated.Companion|.<Ambiguity: of, [/AllDeprecated.Companion.of, /AllDeprecated.Companion.of]>#(Int(1), Int(2), Int(3)))
-        R|/take<Inapplicable(INAPPLICABLE): /take>#|<R|AllDeprecated|>(Q|AllDeprecated.Companion|.<HIDDEN: /AllDeprecated.Companion.of is deprecated with DeprecationLevel.HIDDEN>#())
+        R|/take<Inapplicable(INAPPLICABLE): /take>#|<R|AllDeprecated|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))))
+        R|/take<Inapplicable(INAPPLICABLE): /take>#|<R|AllDeprecated|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())
         R|/take|<R|OldSetDeprecated|>(Q|OldSetDeprecated.Companion|.R|/OldSetDeprecated.Companion.of|(vararg(Long(1), Long(2), Long(3))))
         R|/take|<R|OldSetDeprecated|>(Q|OldSetDeprecated.Companion|.R|/OldSetDeprecated.Companion.of|())
-        lval x: R|AllDeprecated| = when () {
+        lval x: R|kotlin/Any| = when () {
             Boolean(true) ->  {
                 R|/AllDeprecated.AllDeprecated|()
             }
             else ->  {
-                Q|AllDeprecated.Companion|.<Ambiguity: of, [/AllDeprecated.Companion.of, /AllDeprecated.Companion.of]>#(Int(1), Int(2), Int(3))
+                Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
             }
         }
 

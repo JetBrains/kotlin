@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaredMemberScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.isDeprecationLevelHidden
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.isDisabled
@@ -142,8 +143,8 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         fun check() {
             val allOverloads = buildList {
                 companion.declaredMemberScope().processFunctionsByName(OperatorNameConventions.OF) { functionSymbol ->
-                    // TODO: filter out deprecated declarations correctly (KT-83165)
                     if (!functionSymbol.isOperator) return@processFunctionsByName
+                    if (functionSymbol.isDeprecationLevelHidden(context.session)) return@processFunctionsByName
 
                     val mainParameter: FirValueParameterSymbol? = functionSymbol.valueParameterSymbols.firstOrNull { it.isVararg }
 

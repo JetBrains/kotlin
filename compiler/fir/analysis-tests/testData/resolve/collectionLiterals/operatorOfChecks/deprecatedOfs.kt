@@ -4,8 +4,8 @@
 
 class VarargOverloadDeprecated {
     companion object {
-        operator fun of() = VarargOverloadDeprecated()
-        operator fun of(x: Int) = VarargOverloadDeprecated()
+        <!NO_VARARG_OVERLOAD_OF_OPERATOR_OF!>operator fun of()<!> = VarargOverloadDeprecated()
+        <!NO_VARARG_OVERLOAD_OF_OPERATOR_OF!>operator fun of(x: Int)<!> = VarargOverloadDeprecated()
 
         @Deprecated("", level = DeprecationLevel.HIDDEN)
         operator fun of(vararg x: Int) = VarargOverloadDeprecated()
@@ -14,16 +14,16 @@ class VarargOverloadDeprecated {
 
 class MultipleVarargOverloadsDeprecated {
     companion object {
-        operator fun of() = MultipleVarargOverloadsDeprecated()
+        <!NO_VARARG_OVERLOAD_OF_OPERATOR_OF!>operator fun of()<!> = MultipleVarargOverloadsDeprecated()
 
-        <!MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF!>@Deprecated("", level = DeprecationLevel.HIDDEN)
-        operator fun of(vararg x: Int)<!> = MultipleVarargOverloadsDeprecated()
+        @Deprecated("", level = DeprecationLevel.HIDDEN)
+        operator fun of(vararg x: Int) = MultipleVarargOverloadsDeprecated()
 
-        <!MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF!>@Deprecated("", level = DeprecationLevel.HIDDEN)
-        operator fun of(vararg x: Long)<!> = MultipleVarargOverloadsDeprecated()
+        @Deprecated("", level = DeprecationLevel.HIDDEN)
+        operator fun of(vararg x: Long) = MultipleVarargOverloadsDeprecated()
 
-        <!MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF!>@Deprecated("", level = DeprecationLevel.HIDDEN)
-        operator fun of(vararg x: Char)<!> = MultipleVarargOverloadsDeprecated()
+        @Deprecated("", level = DeprecationLevel.HIDDEN)
+        operator fun of(vararg x: Char) = MultipleVarargOverloadsDeprecated()
     }
 }
 
@@ -32,7 +32,7 @@ class UnrelatedOverloadDeprecated {
         operator fun of() = UnrelatedOverloadDeprecated()
 
         @Deprecated("", level = DeprecationLevel.HIDDEN)
-        operator fun of(<!INCONSISTENT_PARAMETER_TYPES_IN_OF_OVERLOADS!>x: Int<!>) = UnrelatedOverloadDeprecated()
+        operator fun of(x: Int) = UnrelatedOverloadDeprecated()
 
         operator fun of(vararg x: Long) = UnrelatedOverloadDeprecated()
     }
@@ -40,15 +40,17 @@ class UnrelatedOverloadDeprecated {
 
 class DeprecatedWithWrongReturnType {
     companion object {
-        <!NO_VARARG_OVERLOAD_OF_OPERATOR_OF!>@Deprecated("", level = DeprecationLevel.HIDDEN)
-        operator fun of(): <!RETURN_TYPE_MISMATCH_OF_OPERATOR_OF!>DeprecatedWithWrongReturnType.Companion<!><!> = this
+        @Deprecated("", level = DeprecationLevel.HIDDEN)
+        operator fun of(): <!RETURN_TYPE_MISMATCH_OF_OPERATOR_OF!>DeprecatedWithWrongReturnType.Companion<!> = this
     }
 }
 
 class DeprecatedWithDifferentParameterTypes {
     companion object {
-        <!NO_VARARG_OVERLOAD_OF_OPERATOR_OF!>@Deprecated("", level = DeprecationLevel.HIDDEN)
-        operator fun of(x: Int, y: Long)<!> = DeprecatedWithDifferentParameterTypes()
+        // generally, what strategy to apply here, since there is no main "vararg" parameter
+        // probably, the best approximation would be to check parameters between themselves
+        @Deprecated("", level = DeprecationLevel.HIDDEN)
+        operator fun of(x: Int, y: Long) = DeprecatedWithDifferentParameterTypes()
     }
 }
 
