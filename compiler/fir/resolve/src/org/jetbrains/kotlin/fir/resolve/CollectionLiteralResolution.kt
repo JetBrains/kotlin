@@ -26,10 +26,9 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.createErrorReferenceWith
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
 import org.jetbrains.kotlin.fir.resolve.inference.CollectionLiteralBounds
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.resolve.CollectionNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 context(context: ResolutionContext, outerCandidateContext: CollectionLiteralOuterCandidateContext)
 fun runCollectionLiteralResolution(
@@ -213,43 +212,56 @@ private class CollectionLiteralResolutionStrategyThroughCompanion(context: Resol
     CollectionLiteralResolutionStrategy(context) {
 
     private fun FirCallableSymbol<*>.isOperatorOf(): Boolean {
-        return when {
-            this !is FirNamedFunctionSymbol -> false
-            else -> isOperator && name == OperatorNameConventions.OF
-        }
+        return this is FirNamedFunctionSymbol && this.isOperator && name == OperatorNameConventions.OF
     }
 
-    /**
-     * @return if there is a suitable operator `of` overload, companion object where it is defined
-     */
-    private val FirRegularClassSymbol.companionObjectIfDefinedOperatorOf: FirRegularClassSymbol?
-        get() {
-            val companionObjectSymbol = resolvedCompanionObjectSymbol ?: return null
-            var overloadFound = false
-            companionObjectSymbol.processAllDeclaredCallables(context.session) { declaration ->
-                if (declaration.isOperatorOf())
-                    overloadFound = true
+    private fun FirCallableSymbol<*>.isVisible(receiver: FirResolvedQualifier): Boolean {
+        return context.session.visibilityChecker.isVisible(
+            fir,
+            context.session,
+            context.bodyResolveComponents.file,
+            context.bodyResolveComponents.containingDeclarations,
+            dispatchReceiver = receiver,
+        )
+    }
+
+    private fun FirRegularClassSymbol.declaresVisibleOf(receiver: FirResolvedQualifier): Boolean {
+        var result: Boolean? = null
+        processAllDeclaredCallables(context.session) { declaration ->
+            if (result != null) return@processAllDeclaredCallables
+            if (declaration.isOperatorOf()) {
+                result = declaration.isVisible(receiver)
             }
-            return overloadFound.ifTrue { companionObjectSymbol }
         }
+        return result ?: false
+    }
+
+    private fun buildReceiverIfThereIsVisibleOf(
+        expectedClass: FirRegularClassSymbol?,
+        collectionLiteral: FirCollectionLiteral?,
+    ): FirResolvedQualifier? {
+        val companionObjectSymbol = expectedClass?.resolvedCompanionObjectSymbol ?: return null
+        val companionAsImplicitReceiver = companionObjectSymbol.toImplicitResolvedQualifierReceiver(
+            components,
+            collectionLiteral?.source?.fakeElement(KtFakeSourceElementKind.DesugaredReceiverForOperatorOfCall),
+        )
+
+        return companionAsImplicitReceiver.takeIf { companionObjectSymbol.declaresVisibleOf(it) }
+    }
 
     override fun declaresOperatorOf(expectedType: FirRegularClassSymbol): Boolean {
-        return expectedType.companionObjectIfDefinedOperatorOf != null
+        return buildReceiverIfThereIsVisibleOf(expectedType, null) != null
     }
 
     override fun prepareRawCall(
         collectionLiteral: FirCollectionLiteral,
         expectedClass: FirRegularClassSymbol?
     ): FirFunctionCall? {
-        val companion = expectedClass?.companionObjectIfDefinedOperatorOf ?: return null
+        val companionReceiver = buildReceiverIfThereIsVisibleOf(expectedClass, collectionLiteral) ?: return null
 
         val functionCall = buildFunctionCall {
             annotations.addAll(collectionLiteral.annotations)
-            explicitReceiver =
-                companion.toImplicitResolvedQualifierReceiver(
-                    components,
-                    collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.DesugaredReceiverForOperatorOfCall),
-                )
+            explicitReceiver = companionReceiver
             source = collectionLiteral.source
             calleeReference = buildSimpleNamedReference {
                 source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall)

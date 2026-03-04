@@ -1,6 +1,7 @@
 // LANGUAGE: +CollectionLiterals
 // RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTIC_ARGUMENTS
+// WITH_STDLIB
 
 class WithPrivateOf {
     companion object {
@@ -27,14 +28,14 @@ class WithPrivateOf {
 fun accept(s: WithPrivateOf) = Unit
 
 fun test() {
-    accept(<!INVISIBLE_REFERENCE("fun of(vararg x: String): WithPrivateOf; private; 'WithPrivateOf.Companion'")!>[]<!>)
-    accept(<!INVISIBLE_REFERENCE("fun of(vararg x: String): WithPrivateOf; private; 'WithPrivateOf.Companion'")!>["!"]<!>)
+    accept(<!ARGUMENT_TYPE_MISMATCH("List<uninferred T (of fun <T> listOf)>; WithPrivateOf"), CANNOT_INFER_PARAMETER_TYPE("T")!>[]<!>)
+    accept(<!ARGUMENT_TYPE_MISMATCH("List<String>; WithPrivateOf")!>["!"]<!>)
 
-    val wpo: WithPrivateOf = <!INVISIBLE_REFERENCE("fun of(vararg x: String): WithPrivateOf; private; 'WithPrivateOf.Companion'")!>[]<!>
+    val wpo: WithPrivateOf <!INITIALIZER_TYPE_MISMATCH("WithPrivateOf; List<uninferred ??? (Unknown type for type parameter T)>")!>=<!> <!CANNOT_INFER_PARAMETER_TYPE("T")!>[]<!>
 
     val res = when {
         true -> WithPrivateOf()
-        else -> <!INVISIBLE_REFERENCE("fun of(vararg x: String): WithPrivateOf; private; 'WithPrivateOf.Companion'")!>[]<!>
+        else -> <!CANNOT_INFER_PARAMETER_TYPE("T")!>[]<!>
     }
 }
 
