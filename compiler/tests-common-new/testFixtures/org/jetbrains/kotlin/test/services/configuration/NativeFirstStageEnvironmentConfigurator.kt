@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.services.configuration
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.konanFriendLibraries
-import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.konan.config.konanLibraries
 import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -17,14 +16,20 @@ import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import java.io.File
 
-class NativeFirstStageEnvironmentConfigurator(testServices: TestServices) : NativeEnvironmentConfigurator(testServices) {
+class NativeFirstStageEnvironmentConfigurator(testServices: TestServices, private val customNativeHome: File? = null) :
+    NativeEnvironmentConfigurator(testServices, customNativeHome)
+{
     override val compilationStage: CompilationStage
         get() = CompilationStage.FIRST
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (!module.targetPlatform(testServices).isNative()) return
 
+        customNativeHome?.let {
+            System.setProperty("kotlin.native.home", it.absolutePath)
+        }
         configuration.konanProducedArtifactKind = CompilerOutputKind.LIBRARY
         val klibService = testServices.klibEnvironmentConfigurator
         configuration.put(

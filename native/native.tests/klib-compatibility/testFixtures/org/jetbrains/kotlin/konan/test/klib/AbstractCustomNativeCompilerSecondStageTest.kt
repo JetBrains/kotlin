@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.nativeArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_MULTIPLE_API_VERSIONS_SETTING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.API_VERSION
@@ -60,7 +58,10 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
             }
         }
 
-        useConfigurators(::NativeFirstStageEnvironmentConfigurator, ::NativeSecondStageEnvironmentConfigurator)
+        useConfigurators(
+            ::NativeFirstStageEnvironmentConfigurator.bind(customNativeCompilerSettings.nativeHome),
+            ::NativeSecondStageEnvironmentConfigurator,
+        )
         useAdditionalSourceProviders(
             ::NativeLauncherAdditionalSourceProvider,
         )

@@ -38,7 +38,6 @@ fun main(args: Array<String>) {
                 annotations = listOf(
                     provider<UseDummyTestCaseGroupProvider>(),
                     annotation(HeavyTest::class.java),
-                    annotation(org.junit.jupiter.api.Disabled::class.java),
                 )
             ) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
@@ -59,7 +58,6 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "CustomNativeAggregateSecondStageTestGenerated",
                 annotations = listOf(
                     annotation(HeavyTest::class.java),
-                    annotation(org.junit.jupiter.api.Disabled::class.java),
                     aggregate(),
                     provider<UseDummyTestCaseGroupProvider>(),
                 )
