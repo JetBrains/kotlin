@@ -1067,6 +1067,74 @@ public class SourceResolveCandidatesByFileFirTreeConsistencyTestGenerated extend
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/operators")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Operators {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/operators/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInOperators() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/operators"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("arithmetic.kt")
+    public void testArithmetic() {
+      run("arithmetic.kt");
+    }
+
+    @Test
+    @TestMetadata("augmentedAssignment.kt")
+    public void testAugmentedAssignment() {
+      run("augmentedAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("equals.kt")
+    public void testEquals() {
+      run("equals.kt");
+    }
+
+    @Test
+    @TestMetadata("inOperator.kt")
+    public void testInOperator() {
+      run("inOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("nonCallBinary.kt")
+    public void testNonCallBinary() {
+      run("nonCallBinary.kt");
+    }
+
+    @Test
+    @TestMetadata("notNullAssertion.kt")
+    public void testNotNullAssertion() {
+      run("notNullAssertion.kt");
+    }
+
+    @Test
+    @TestMetadata("range.kt")
+    public void testRange() {
+      run("range.kt");
+    }
+
+    @Test
+    @TestMetadata("typeOperators.kt")
+    public void testTypeOperators() {
+      run("typeOperators.kt");
+    }
+
+    @Test
+    @TestMetadata("unary.kt")
+    public void testUnary() {
+      run("unary.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeAlias {

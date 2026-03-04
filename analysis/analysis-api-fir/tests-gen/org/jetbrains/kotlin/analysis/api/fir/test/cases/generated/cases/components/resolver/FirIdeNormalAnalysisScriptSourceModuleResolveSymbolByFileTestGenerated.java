@@ -189,6 +189,20 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveSymbolByFileTestGenera
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/operators")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Operators {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/operators/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInOperators() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/operators"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeAlias {
