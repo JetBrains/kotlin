@@ -26,7 +26,7 @@ import kotlin.reflect.full.memberProperties
  * Checks captured variables inside non-in-place lambdas and determines their stability
  * using [FindCapturedWrites, FindVisibleWrites].
  */
-object FirAtMostOncePopularityChecker : FirFunctionChecker(MppCheckerKind.Common) {
+object FirAtLeastOncePopularityChecker : FirFunctionChecker(MppCheckerKind.Common) {
     @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
@@ -58,7 +58,7 @@ private class FirFunctionDeepVisitorWithData2 : FirDefaultVisitor<Unit, Captured
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CapturedVariableCheckerData) {
         val invocationKind = anonymousFunction.invocationKind
-        if (invocationKind == EventOccurrencesRange.AT_MOST_ONCE) {
+        if (invocationKind == EventOccurrencesRange.AT_LEAST_ONCE) {
             val graph = (anonymousFunction as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return
 
             val collector = ControlFlowAnalysisDiagnosticComponent.LocalPropertyCollector().apply {
@@ -67,7 +67,7 @@ private class FirFunctionDeepVisitorWithData2 : FirDefaultVisitor<Unit, Captured
             data.propertiesStack.add(collector.properties)
         }
         super.visitAnonymousFunction(anonymousFunction, data)
-        if (invocationKind == EventOccurrencesRange.AT_MOST_ONCE) {
+        if (invocationKind == EventOccurrencesRange.AT_LEAST_ONCE) {
             data.propertiesStack.removeLast()
         }
     }
@@ -113,7 +113,7 @@ private class FirFunctionDeepVisitorWithData2 : FirDefaultVisitor<Unit, Captured
     private fun checkCapturedVariable(variableSymbol: FirVariableSymbol<*>, data: CapturedVariableCheckerData, source: KtSourceElement?) {
         if (data.propertiesStack.isEmpty()) return
         if (variableSymbol in data.propertiesStack.last()) return
-        if (!variableSymbol.isVal) return
+        if (!variableSymbol.isVar) return
         if (variableSymbol.resolvedReturnType is ConeDynamicType) return
         if (!variableSymbol.isLocal) return
         val report = IEReporter(source, data.context, data.reporter, FirErrors.EO_DIAGNOSTIC)

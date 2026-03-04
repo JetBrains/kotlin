@@ -16,9 +16,9 @@ fun barWithContractExactlyOnce(f: () -> Unit) {
 }
 
 @OptIn(ExperimentalContracts::class)
-fun barWithContractAtMostOnce(f: () -> Unit) {
+fun barWithContractAtLeastOnce(f: () -> Unit) {
     contract {
-        callsInPlace(f, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(f, InvocationKind.AT_LEAST_ONCE)
     }
     f()
 }
@@ -30,19 +30,20 @@ fun foo() {
     }
     println(y)
 
-    val x: Int
-    barWithContractAtMostOnce {
-        <!EO_DIAGNOSTIC!>x<!> = 2
-        println(x)
+    var x: Int
+    barWithContractAtLeastOnce {
+        x = 2
     }
+    println(x)
 }
 
 fun nestedExactlyOnceCase() {
     barRegular{
-        val nested: Int
-        barWithContractAtMostOnce {
-            <!EO_DIAGNOSTIC!>nested<!> = 2
+        var reportStatus: String
+        barWithContractAtLeastOnce {
+            reportStatus = "Completed"
         }
+        println(reportStatus)
     }
 }
 

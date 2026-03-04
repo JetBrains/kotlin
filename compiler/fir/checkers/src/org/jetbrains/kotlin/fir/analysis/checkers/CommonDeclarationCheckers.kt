@@ -65,7 +65,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirOperatorModifierChecker,
         FirTailrecFunctionChecker,
         FirVersionOverloadsChecker,
-        FirAtMostOncePopularityChecker,
+        FirAtLeastOncePopularityChecker,
     )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = setOf(
