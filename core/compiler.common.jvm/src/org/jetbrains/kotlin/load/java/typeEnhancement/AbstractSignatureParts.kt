@@ -166,10 +166,15 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         return defaultQualifiers?.get(applicabilityType)
     }
 
-    protected abstract fun getDefaultNullability(
+    protected open fun getDefaultNullability(
         referencedParameterBoundsNullability: NullabilityQualifierWithMigrationStatus?,
         defaultTypeQualifiers: JavaDefaultQualifiers?
-    ): NullabilityQualifierWithMigrationStatus?
+    ): NullabilityQualifierWithMigrationStatus? {
+        val defaultNullability = defaultTypeQualifiers?.nullabilityQualifier
+        return defaultNullability?.takeIf { defaultTypeQualifiers.preferQualifierOverBound }
+            ?: referencedParameterBoundsNullability?.takeIf { it.qualifier == NullabilityQualifier.NOT_NULL }
+            ?: defaultNullability
+    }
 
     private fun mostSpecific(
         a: NullabilityQualifierWithMigrationStatus?,

@@ -1,6 +1,9 @@
 // IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 
+// KT-85831 Reflection: flexibility is incorrectly removed when substituting type parameter with @NotNull primitive type in new implementation
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: kt43217.kt
 class A {
     private val b =

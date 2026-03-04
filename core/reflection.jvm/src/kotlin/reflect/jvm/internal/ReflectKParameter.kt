@@ -91,8 +91,7 @@ internal class JavaParameter(val callable: Member, val index: Int)
 internal val ReflectKParameter.javaParameter: JavaParameter?
     get() = when (val callable = callable.caller.member) {
         is Method -> {
-            require(Modifier.isStatic(callable.modifiers)) { "Only static methods are supported for now: $callable" }
-            JavaParameter(callable, index)
+            JavaParameter(callable, index + (if (Modifier.isStatic(callable.modifiers)) 0 else -1))
         }
         is Constructor<*> -> {
             val shift = when {

@@ -1,5 +1,9 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+
+// KT-85735 Reflection: Java wildcard type based on Kotlin type with declaration-site variance is loaded differently in new implementation
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: PropertyDescriptorImpl.java
 
 import org.jetbrains.annotations.NotNull;

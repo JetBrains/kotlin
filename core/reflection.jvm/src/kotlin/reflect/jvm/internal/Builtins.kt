@@ -28,3 +28,18 @@ internal fun createFunctionKmClass(arity: Int): KmClass = KmClass().apply {
 
     // TODO (KT-80710): `invoke` function.
 }
+
+internal fun createCloneableKmClass(): KmClass = KmClass().apply {
+    name = "kotlin/Cloneable"
+    kind = ClassKind.INTERFACE
+    modality = Modality.ABSTRACT
+    visibility = Visibility.PUBLIC
+
+    functions.add(KmFunction("clone").apply {
+        modality = Modality.OPEN
+        visibility = Visibility.PROTECTED
+        returnType = KmType().apply {
+            classifier = KmClassifier.Class("kotlin/Any")
+        }
+    })
+}

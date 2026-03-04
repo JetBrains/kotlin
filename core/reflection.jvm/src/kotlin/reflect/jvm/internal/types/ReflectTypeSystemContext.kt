@@ -6,8 +6,8 @@
 package kotlin.reflect.jvm.internal.types
 
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
-import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.model.*
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
@@ -233,7 +233,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? {
-        shouldNotBeCalled()
+        return this as? KTypeParameterImpl
     }
 
     override fun TypeConstructorMarker.isTypeParameterTypeConstructor(): Boolean {
@@ -248,15 +248,15 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun TypeParameterMarker.upperBoundCount(): Int {
-        shouldNotBeCalled()
+        return (this as KTypeParameter).upperBounds.size
     }
 
     override fun TypeParameterMarker.getUpperBound(index: Int): KotlinTypeMarker {
-        shouldNotBeCalled()
+        return (this as KTypeParameter).upperBounds[index] as KotlinTypeMarker
     }
 
     override fun TypeParameterMarker.getUpperBounds(): List<KotlinTypeMarker> {
-        shouldNotBeCalled()
+        return (this as KTypeParameter).upperBounds.map { it as KotlinTypeMarker }
     }
 
     override fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker {

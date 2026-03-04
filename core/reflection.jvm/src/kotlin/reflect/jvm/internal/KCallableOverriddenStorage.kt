@@ -15,6 +15,9 @@ internal data class KCallableOverriddenStorage(
     val isStatic: Boolean?,
     val originalContainerIfFakeOverride: KDeclarationContainerImpl?,
     private val originalCallableTypeParameters: List<KTypeParameter>,
+    // For fake overrides, the list of callables from supertypes that it overrides. If the callable is not a fake override, the list is
+    // empty, and the overridden callables should be found by calling `computeOverriddenFunctions`.
+    val overridden: List<ReflectKCallable<*>>,
 
     val forceIsExternal: Boolean,
     val forceIsOperator: Boolean,
@@ -29,6 +32,7 @@ internal data class KCallableOverriddenStorage(
             isStatic = null,
             originalContainerIfFakeOverride = null,
             originalCallableTypeParameters = emptyList(),
+            overridden = emptyList(),
             forceIsExternal = false,
             forceIsOperator = false,
             forceIsInfix = false,

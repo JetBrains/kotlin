@@ -1,0 +1,64 @@
+KClass: class A : Any
+  constructors:
+    public final fun `<init>`(): A
+  members:
+    public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
+    public open fun A.hashCode(): kotlin.Int
+    public open fun A.toString(): kotlin.String
+    private final val A.b: `A$b$1`
+  declaredMembers:
+    private final val A.b: `A$b$1`
+KClass: class A$b$1 : DoubleExpression
+  members:
+    public open operator fun `A$b$1`.equals(kotlin.Any?): kotlin.Boolean
+    public open fun `A$b$1`.get(): kotlin.Double
+    public open fun `A$b$1`.hashCode(): kotlin.Int
+    public open fun `A$b$1`.isEqualTo(kotlin.Double): kotlin.Any!
+    public open fun `A$b$1`.isEqualTo(kotlin.Double): kotlin.Any!
+    public open fun `A$b$1`.toString(): kotlin.String
+  declaredMembers:
+    public open fun `A$b$1`.get(): kotlin.Double
+KClass: class C : DoubleExpression
+  constructors:
+    public final fun `<init>`(): C
+  members:
+    public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
+    public open fun C.get(): kotlin.Double
+    public open fun C.hashCode(): kotlin.Int
+    public open fun C.isEqualTo(kotlin.Double): kotlin.Any!
+    public open fun C.isEqualTo(kotlin.Double): kotlin.Any!
+    public open fun C.toString(): kotlin.String
+  declaredMembers:
+    public open fun C.get(): kotlin.Double
+KClass: abstract class DoubleExpression : ObservableDouble, Any
+  constructors:
+    public final fun `<init>`(): DoubleExpression
+  members:
+    public open operator fun DoubleExpression.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun DoubleExpression.get(): kotlin.Double!
+    public open fun DoubleExpression.hashCode(): kotlin.Int
+    public open fun DoubleExpression.isEqualTo(kotlin.Double): kotlin.Any!
+    public open fun DoubleExpression.isEqualTo(kotlin.Double): kotlin.Any!
+    public open fun DoubleExpression.toString(): kotlin.String
+  declaredMembers:
+    public open fun DoubleExpression.isEqualTo(kotlin.Double): kotlin.Any!
+KClass: abstract interface ObservableDouble : ObservableValue, Any
+  members:
+    public open operator fun ObservableDouble.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun ObservableDouble.get(): kotlin.Double!
+    public open fun ObservableDouble.hashCode(): kotlin.Int
+    public open fun ObservableDouble.isEqualTo(kotlin.Double!): kotlin.Any!
+    public abstract fun ObservableDouble.isEqualTo(kotlin.Double): kotlin.Any!
+    public open fun ObservableDouble.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun ObservableDouble.isEqualTo(kotlin.Double): kotlin.Any!
+KClass: abstract interface ObservableValue : Any
+  members:
+    public open operator fun ObservableValue<T>.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun ObservableValue<T>.get(): T!
+    public open fun ObservableValue<T>.hashCode(): kotlin.Int
+    public open fun ObservableValue<T>.isEqualTo(T!): kotlin.Any!
+    public open fun ObservableValue<T>.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun ObservableValue<T>.get(): T!
+    public open fun ObservableValue<T>.isEqualTo(T!): kotlin.Any!

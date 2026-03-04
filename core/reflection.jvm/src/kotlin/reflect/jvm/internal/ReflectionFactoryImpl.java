@@ -92,15 +92,16 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                     return new KotlinKConstructor(container, signature, f.getBoundReceiver(), kmConstructor);
                 }
             }
-            else if (isJava) {
-                Method method = container.findJavaMethod(name, signature);
-                if (Modifier.isStatic(method.getModifiers())) {
-                    return new JavaKNamedFunction(container, method, f.getBoundReceiver(), KCallableOverriddenStorage.EMPTY);
-                }
-            }
             else if (container instanceof KPackageImpl) {
                 KmFunction kmFunction = container.findFunctionMetadata(name, signature);
                 return new KotlinKNamedFunction(container, signature, f.getBoundReceiver(), kmFunction, KCallableOverriddenStorage.EMPTY);
+            }
+            else if (container instanceof KClassImpl<?> &&
+                     !((KClassImpl<?>) container).getData().getValue().isComplicatedBuiltinSubclass()) {
+                if (isJava) {
+                    Method method = container.findJavaMethod(name, signature);
+                    return new JavaKNamedFunction(container, method, f.getBoundReceiver(), KCallableOverriddenStorage.EMPTY);
+                }
             }
         }
         return new DescriptorKFunction(container, name, signature, f.getBoundReceiver());

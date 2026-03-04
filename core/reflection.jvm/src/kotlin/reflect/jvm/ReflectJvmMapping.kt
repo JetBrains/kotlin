@@ -57,7 +57,10 @@ val KMutableProperty<*>.javaSetter: Method?
  * or `null` if this function is a constructor or cannot be represented by a Java [Method].
  */
 val KFunction<*>.javaMethod: Method?
-    get() = this.asReflectCallable()?.caller?.member as? Method
+    get() {
+        val callable = this.asReflectCallable()
+        return (callable as? JavaKNamedFunction)?.jMethod ?: callable?.caller?.member as? Method
+    }
 
 /**
  * Returns a Java [Constructor] instance corresponding to the given Kotlin function,

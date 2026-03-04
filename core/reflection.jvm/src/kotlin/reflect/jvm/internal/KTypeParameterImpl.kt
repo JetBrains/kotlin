@@ -34,7 +34,7 @@ import kotlin.reflect.jvm.internal.types.DescriptorKType
 
 internal class KTypeParameterImpl private constructor(
     descriptor: TypeParameterDescriptor?,
-    container: KTypeParameterOwnerImpl,
+    val container: KTypeParameterOwnerImpl,
     override val name: String,
     override val variance: KVariance,
     override val isReified: Boolean,
