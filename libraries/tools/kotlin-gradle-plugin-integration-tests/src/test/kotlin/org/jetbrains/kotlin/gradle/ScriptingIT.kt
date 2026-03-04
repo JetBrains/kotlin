@@ -115,7 +115,6 @@ abstract class ScriptingIT : KGPBaseTest() {
     }
 
     // Compose only works on JDK 11+
-    // compilerOptions("-language-version", "1.9") is set in scriptDef.kt due to KT-64362.
     @DisplayName("Compose compiler plugin should work with scripting")
     @JdkVersions(versions = [JavaVersion.VERSION_11])
     @GradleWithJdkTest

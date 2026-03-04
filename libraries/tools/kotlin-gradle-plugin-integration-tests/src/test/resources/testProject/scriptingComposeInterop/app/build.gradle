@@ -6,5 +6,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-main-kts:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-scripting-jvm-host:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:$kotlin_version"
+    // See https://mvnrepository.com/artifact/androidx.compose.runtime/runtime-desktop
+    implementation "androidx.compose.runtime:runtime-desktop:1.10.3"
     testImplementation "junit:junit:4.12"
 }
