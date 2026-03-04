@@ -32,7 +32,7 @@ dependencies {
     api(kotlinStdlib())
     implementation(project(":kotlinx-metadata-klib"))
     implementation(project(":native:kotlin-native-utils"))
-    implementation(project(":compiler:util"))
+    implementation(project(":native:unsafe-mem"))
     implementation(project(":compiler:ir.serialization.common"))
 
     testImplementation(kotlinTest("junit5"))
