@@ -104,17 +104,32 @@ internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywo
 }
 
 fun removeModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
-    owner.modifierList?.let {
-        it.getModifier(modifier)?.delete()
-        if (it.firstChild == null) {
-            it.delete()
-            return
-        }
+    val modifierList = owner.modifierList ?: return
+    val modifier = modifierList.getModifier(modifier)
+    if (modifier != null) {
+        val forward = modifierList.lastChild != modifier // go backwards on last modifier, forwards otherwise
+        val rangeStart = modifier
+        val rangeEnd = modifier.siblings(forward = forward, withItself = true)
+            .takeWhile { e -> e is PsiWhiteSpace || e == modifier }
+            .last()
 
-        val lastChild = it.lastChild
-        if (lastChild is PsiComment) {
-            it.addAfter(KtPsiFactory(owner.project).createNewLine(), lastChild)
+        if (forward) {
+            modifierList.deleteChildRange(rangeStart, rangeEnd)
+        } else {
+            modifierList.deleteChildRange(rangeEnd, rangeStart)
         }
+    }
+    if (modifierList.firstChild == null) {
+        val rangeEnd = modifierList.siblings(forward = true, withItself = true)
+            .takeWhile { e -> e is PsiWhiteSpace || e == modifierList }
+            .last()
+        owner.deleteChildRange(modifierList, rangeEnd)
+        return
+    }
+
+    val lastChild = modifierList.lastChild
+    if (lastChild is PsiComment) {
+        modifierList.addAfter(KtPsiFactory(owner.project).createNewLine(), lastChild)
     }
 }
 
