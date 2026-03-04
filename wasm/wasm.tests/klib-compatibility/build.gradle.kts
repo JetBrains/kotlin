@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.gradle.node)
     id("java-test-fixtures")
     id("d8-configuration")
+    id("binaryen-configuration")
     id("project-tests-convention")
     id("test-inputs-check")
 }
@@ -56,6 +57,9 @@ fun Project.customCompilerTest(
         jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
             property.set("kotlin.wasm.test.node.dir")
             buildDirectory.set(node.nodeProjectDir)
+        }
+        with(binaryenKotlinBuild) {
+            setupBinaryen()
         }
         body()
     }
