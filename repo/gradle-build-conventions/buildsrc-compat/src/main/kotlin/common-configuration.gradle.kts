@@ -410,6 +410,7 @@ fun Project.configureTests() {
             ":tools:ide-plugin-dependencies-validator",
             ":tools:jdk-api-validator",
             ":wasm:wasm.ir",
+            ":compiler:test-engine-sandbox",
         )
         val projectPath = project.path
         val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check")

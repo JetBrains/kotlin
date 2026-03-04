@@ -163,6 +163,7 @@
 /compiler/test-infrastructure/ "Kotlin Frontend"
 /compiler/test-infrastructure-utils/ "Kotlin Frontend"
 /compiler/test-infrastructure-utils.common/ "Kotlin Frontend"
+/compiler/test-engine-sandbox/ "Kotlin Frontend" "Kotlin Common Backend"
 
 /compiler/testData/asJava/findClasses/ "Kotlin Frontend"
 /compiler/testData/asJava/lightClasses/ "Kotlin Analysis API"
