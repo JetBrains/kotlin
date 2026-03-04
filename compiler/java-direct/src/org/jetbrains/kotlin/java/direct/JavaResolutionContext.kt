@@ -109,6 +109,29 @@ class JavaResolutionContext private constructor(
                     simpleImports[fqName.substringAfterLast('.')] = FqName(fqName)
                 }
             }
+            
+            // Also check for ERROR_ELEMENT imports (parser may emit these for imports starting with reserved words like 'kotlin')
+            for (errorNode in importList?.getChildrenByType("ERROR_ELEMENT") ?: emptyList()) {
+                if (errorNode.findChildByType("IMPORT_KEYWORD") == null) continue
+                
+                // Reconstruct the import from IDENTIFIER and DOT children
+                val identifiers = mutableListOf<String>()
+                for (child in errorNode.children) {
+                    if (child.type.toString() == "IDENTIFIER") {
+                        identifiers.add(child.text)
+                    }
+                }
+                if (identifiers.isEmpty()) continue
+                
+                val hasStar = errorNode.children.any { it.type.toString() == "ASTERISK" }
+                val fqName = identifiers.joinToString(".")
+                
+                if (hasStar) {
+                    starImports.add(FqName(fqName))
+                } else {
+                    simpleImports[identifiers.last()] = FqName(fqName)
+                }
+            }
 
             return simpleImports to starImports
         }

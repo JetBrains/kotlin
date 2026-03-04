@@ -95,7 +95,93 @@ After Iteration 6, 48 tests still fail. Likely causes:
 
 <!-- Add new iteration results here, newest at top -->
 
-## Iteration 7: Array Types and Vararg Handling - 2026-03-04
+## Iteration 7b: ERROR_ELEMENT Import Handling - 2026-03-04
+
+### Status
+- ✅ Completed
+
+### Summary
+Fixed import resolution for Java imports starting with reserved words (like `kotlin`). The KMP Java parser emits `ERROR_ELEMENT` instead of `IMPORT_STATEMENT` for such imports, causing `MISSING_DEPENDENCY_CLASS` errors. Added ERROR_ELEMENT handling to `extractImports()` in `JavaResolutionContext.kt`.
+
+### Key Findings
+
+1. **KMP Parser treats `import kotlin.*` as parse error**: The KMP Java parser (used by java-direct) incorrectly parses imports starting with 'kotlin' (a reserved word in Java 9+ module system) as `ERROR_ELEMENT` instead of `IMPORT_STATEMENT`.
+
+2. **AST Structure for ERROR_ELEMENT imports**:
+   ```
+   IMPORT_LIST:
+     ERROR_ELEMENT: import kotlin.jvm.functions.FunctionN;
+       IMPORT_KEYWORD: import
+       IDENTIFIER: kotlin
+       DOT: .
+       IDENTIFIER: jvm
+       DOT: .
+       IDENTIFIER: functions
+       DOT: .
+       IDENTIFIER: FunctionN
+       SEMICOLON: ;
+   ```
+   Compare to normal import:
+   ```
+   IMPORT_STATEMENT: import java.util.List;
+     IMPORT_KEYWORD: import
+     JAVA_CODE_REFERENCE: java.util.List
+       ...
+     SEMICOLON: ;
+   ```
+
+3. **Impact on type resolution**: Without this fix, `FunctionN`, `Function0`, etc. from `kotlin.jvm.functions` were unresolvable, causing `MISSING_DEPENDENCY_CLASS: Cannot access class 'FunctionN'` errors.
+
+### Changes Made
+| File | Change |
+|------|--------|
+| `JavaResolutionContext.kt` | Added ERROR_ELEMENT handling in `extractImports()` - checks for ERROR_ELEMENT nodes containing IMPORT_KEYWORD and reconstructs FQN from IDENTIFIER children |
+
+### Test Results
+- Box tests: 96/138 passing (69.6%) - same count but different error profile
+- **Key change**: `testFunctionWithBigArity` now fails with `ARGUMENT_TYPE_MISMATCH` instead of `MISSING_DEPENDENCY_CLASS` - proving import resolution works
+
+### Error Profile Change
+| Before Fix | After Fix |
+|------------|-----------|
+| `MISSING_DEPENDENCY_CLASS: Cannot access class 'FunctionN'` | `ARGUMENT_TYPE_MISMATCH: actual type is 'FunctionN<Any>', but 'FunctionN<!>{1}' was expected` |
+
+This shows the fix works - `FunctionN` is now being resolved, but there are separate type argument handling issues.
+
+### Remaining Failures Categorization (42 tests)
+
+| Category | Count | Tests |
+|----------|-------|-------|
+| MISSING_DEPENDENCY_CLASS | 13 | testGenericSamSmartcast, testInheritanceWithWildcard, testJavaToKotlinHierarchy, testKjkWithRawTypes, testKt42824, testKt42825, testLocalEntities, testNoAssertionForNulllableCaptured, testOverrideWithGenericArrayParameterType, testPropertyVarianceConflict, testSamUnboundTypeParameter, testUsingJavaAtomicWhenKotlinAtomicExpected, testUsingKotlinAtomicWhenJavaAtomicExpected |
+| NPE_ASSERTION | 8 | testInFunctionWithExpressionBody, testInLocalFunctionWithExpressionBody, testInLocalVariableInitializer, testInMemberPropertyInitializer, testInPropertyGetterWithExpressionBody, testInTopLevelPropertyInitializer, testNnStringVsTXArray, testNnStringVsTXString |
+| OTHER | 8 | testFunctionAssertion, testJavaNestedSamInterface, testKt43217, testKt53041, testOverrideWithArrayParameterType2, testRawTypeArgumentInJavaSuperType, testTriangleWithFlexibleTypeAndSubstitution4, testUsingNullableValueAsLowerBoundLeadsToNullableResult2 |
+| NONE_APPLICABLE | 4 | testAddedOverloadWithAtomics, testIntersectionKotlinJavaAtomics, testKotlinToJavaHierarchy, testKt48590 |
+| UNRESOLVED_REFERENCE | 3 | testGenericSamProjectedOut, testJavaInterfaceFieldDirectAccess, testKt65482 |
+| ARGUMENT_TYPE_MISMATCH | 2 | testFunctionWithBigArity, testLambdaInstanceOf |
+| CANNOT_INFER_PARAMETER_TYPE | 2 | testSamTypeParameter, testUsingNullableValueAsLowerBoundLeadsToNullableResult |
+| NOTHING_TO_OVERRIDE | 1 | testPrimitiveSubstitutionToDnnParameter |
+| AbstractMethodError | 1 | testDelegationToJavaDnn |
+
+### Analysis of Remaining Issues
+
+1. **MISSING_DEPENDENCY_CLASS (13)**: Likely type parameters (`T`, `U`) being treated as class names rather than type variables.
+
+2. **NPE_ASSERTION (8)**: Enhanced nullability assertion tests - NPE not being thrown when expected. Related to annotation processing.
+
+3. **NONE_APPLICABLE (4)**: Overload resolution issues, likely related to atomics handling.
+
+4. **UNRESOLVED_REFERENCE (3)**: Interface fields or generic type access issues.
+
+5. **ARGUMENT_TYPE_MISMATCH (2)**: Generic type argument handling (FunctionN issues).
+
+### Key Learnings
+1. **Reserved words in module paths**: Java 9 introduced module system with reserved words like `kotlin`, `java`, `javax`. Parsers may treat these specially.
+2. **ERROR_ELEMENT recovery**: Parser errors don't mean data is lost - the AST often contains recoverable information in ERROR_ELEMENT nodes.
+3. **Exception-based debugging is essential**: Adding `throw IllegalStateException("DEBUG: ${node.dump()}")` was the only reliable way to see AST structure in Gradle test output.
+
+---
+
+## Iteration 7a: Array Types and Vararg Handling - 2026-03-04
 
 ### Status
 - ✅ Completed

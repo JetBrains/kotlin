@@ -1,7 +1,8 @@
 # Iteration 7: Problem Analysis
 
 **Date**: 2026-03-04  
-**Test Status**: 90/138 passing (65.2%), 48 failing
+**Initial Status**: 90/138 passing (65.2%), 48 failing  
+**Current Status**: 96/138 passing (69.6%), 42 failing (after Iteration 7a + 7b fixes)
 
 ## Overview
 
@@ -27,85 +28,47 @@ This document captures the root cause analysis of the 48 remaining failing tests
 
 ## Detailed Analysis
 
-### 1. Array Types Not Parsed (5 tests) - NOTHING_TO_OVERRIDE
+### 1. ✅ FIXED: Array Types Not Parsed (5 tests) - NOTHING_TO_OVERRIDE
+
+**Status**: Fixed in Iteration 7a
 
 **Affected Tests:**
-- testOverrideWithArrayParameterType
-- testOverrideWithArrayParameterType2
-- testOverrideWithArrayParameterTypeNotNull
-- testOverrideWithVarargParameterType
-- testPrimitiveSubstitutionToDnnParameter
+- ✅ testOverrideWithArrayParameterType - FIXED
+- ❌ testOverrideWithArrayParameterType2 - Still fails (raw type `List...`)
+- ✅ testOverrideWithArrayParameterTypeNotNull - FIXED
+- ✅ testOverrideWithVarargParameterType - FIXED
+- testPrimitiveSubstitutionToDnnParameter - Status TBD
 
-**Symptom:**
-```
-NOTHING_TO_OVERRIDE: 'foo' overrides nothing. 
-Potential signatures for overriding: fun foo(a: String!): String!
-```
-
-But Java interface declares: `String foo(String[] a)` - the array dimension is lost.
-
-**Root Cause:**
-The `createJavaType()` function in `JavaTypeOverAst.kt` doesn't handle array types. It only checks for:
-1. Primitive types (via `_KEYWORD`)
-2. Reference types (via `JAVA_CODE_REFERENCE`)
-
-**AST Structure Discovery** (via exception-based debugging):
-```
-TYPE: String[]
-  TYPE: String
-    JAVA_CODE_REFERENCE: String
-      IDENTIFIER: String
-      REFERENCE_PARAMETER_LIST: 
-  LBRACKET: [
-  RBRACKET: ]
-```
-
-**Fix Required:**
-In `createJavaType()`, detect `LBRACKET` child and recursively create `JavaArrayTypeOverAst` with nested `TYPE` as component type.
-
-**Impact:** High - 5 tests directly, potentially more indirectly
+**Fix Applied:**
+In `createJavaType()`, detect `LBRACKET`/`ELLIPSIS` child and recursively create `JavaArrayTypeOverAst` with nested `TYPE` as component type.
 
 ---
 
-### 2. Kotlin Classes from Java Code (15 tests) - MISSING_DEPENDENCY_CLASS
+### 2. ⚠️ PARTIALLY FIXED: Kotlin Classes from Java Code - MISSING_DEPENDENCY_CLASS
 
-**Affected Tests:**
-- testFunctionWithBigArity
-- testGenericSamSmartcast
-- testJavaToKotlinHierarchy
-- testKjkWithRawTypes
-- testKt42824, testKt42825
-- testLambdaInstanceOf
-- testLocalEntities
-- testNoAssertionForNulllableCaptured
-- testOverrideWithGenericArrayParameterType
-- testPropertyVarianceConflict
-- testSamUnboundTypeParameter
-- testUsingJavaAtomicWhenKotlinAtomicExpected
-- testUsingKotlinAtomicWhenJavaAtomicExpected
-- testUsingNullableValueAsLowerBoundLeadsToNullableResult2
+**Status**: Import resolution fixed in Iteration 7b, but some tests still fail with different errors
 
-**Symptom:**
+**Original Symptom:**
 ```
-MISSING_DEPENDENCY_CLASS: Cannot access class 'Function'. 
-Check your module classpath for missing or conflicting dependencies.
+MISSING_DEPENDENCY_CLASS: Cannot access class 'FunctionN'. 
 ```
 
-**Root Cause:**
-Java source files import Kotlin classes like:
+**Root Cause Found:**
+The KMP Java parser emits `ERROR_ELEMENT` instead of `IMPORT_STATEMENT` for imports starting with reserved words like `kotlin`:
 ```java
-import kotlin.Function;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.FunctionN;
+import kotlin.jvm.functions.FunctionN;  // Parsed as ERROR_ELEMENT!
 ```
 
-The `CombinedJavaClassFinder` falls back to binary class finder for JDK/library classes, but Kotlin compiled classes (`.class` files from kotlin-stdlib) are not being found.
+**Fix Applied (Iteration 7b):**
+Modified `extractImports()` in `JavaResolutionContext.kt` to also process `ERROR_ELEMENT` nodes containing `IMPORT_KEYWORD`, reconstructing FQN from IDENTIFIER children.
 
-**Investigation Needed:**
-- Check if binary finder is configured to include kotlin-stdlib in classpath
-- Verify Kotlin class metadata is accessible via platform infrastructure
+**Current Status:**
+- `testFunctionWithBigArity` - Now fails with `ARGUMENT_TYPE_MISMATCH` instead of `MISSING_DEPENDENCY_CLASS` (proves import resolution works!)
+- Some tests still show `MISSING_DEPENDENCY_CLASS: Cannot access class 'T'` or `'U'` - these are **type parameters being treated as class names**, which is a DIFFERENT issue
 
-**Impact:** High - 15 tests, but fix may be complex/architectural
+**Remaining MISSING_DEPENDENCY_CLASS issues** are likely caused by:
+1. Type parameters (`T`, `U`) being interpreted as class names
+2. Issues with generic type argument resolution
 
 ---
 

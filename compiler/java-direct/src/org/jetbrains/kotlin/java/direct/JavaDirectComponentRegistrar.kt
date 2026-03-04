@@ -37,6 +37,13 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
             .mapNotNull(findLocalFile)
             .filter { it.isDirectory }
             .map { it.canonicalFile.toPath() }
+        
+        // For library session (no Java sources), just use the default finder
+        if (roots.isEmpty()) {
+            return defaultFinderProvider?.invoke() 
+                ?: throw IllegalStateException("No Java source roots and no default finder provider")
+        }
+        
         val sourceFinder = JavaClassFinderOverAstImpl(roots)
 
         // If no default finder provider, return source-only finder
