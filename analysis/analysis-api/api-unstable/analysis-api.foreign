@@ -29,7 +29,6 @@ org/jetbrains/kotlin/idea/references/KtInvokeFunctionReference
 org/jetbrains/kotlin/idea/references/KtReference
 org/jetbrains/kotlin/lexer/KtKeywordToken
 org/jetbrains/kotlin/lexer/KtModifierKeywordToken
-org/jetbrains/kotlin/load/kotlin/TypeMappingMode
 org/jetbrains/kotlin/name/CallableId
 org/jetbrains/kotlin/name/ClassId
 org/jetbrains/kotlin/name/FqName
@@ -84,4 +83,3 @@ org/jetbrains/kotlin/resolution/KtResolvableCall
 org/jetbrains/kotlin/resolve/deprecation/DeprecationInfo
 org/jetbrains/kotlin/types/Variance
 org/jetbrains/kotlin/util/ImplementationStatus
-org/jetbrains/org/objectweb/asm/Type
