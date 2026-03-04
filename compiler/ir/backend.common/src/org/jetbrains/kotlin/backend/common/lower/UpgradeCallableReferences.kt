@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -244,13 +243,6 @@ open class UpgradeCallableReferences(
         }
 
         private fun IrCallableReference<*>.getCapturedValues(referencedDeclaration: IrDeclaration) = buildList {
-            if (referencedDeclaration.hasMissingObjectDispatchReceiver()) {
-                val objectClass = referencedDeclaration.parentAsClass
-                val dispatchReceiver = IrGetObjectValueImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.defaultType, objectClass.symbol
-                )
-                add(CapturedValue(SpecialNames.THIS, objectClass.defaultType, null, dispatchReceiver))
-            }
             for ((parameter, argument) in getArgumentsWithIr()) {
                 add(CapturedValue(parameter.name, argument.type, parameter, argument))
             }
@@ -305,16 +297,11 @@ open class UpgradeCallableReferences(
                     getterFun = expression.wrapFunction(getterArguments, data, getter, isPropertySetter = false)
                     setterFun = runIf(expression.type.isKMutableProperty() && setter != null) {
                         requireNotNull(setter)
-                        val parameterIndexShift = when {
-                            getter.hasMissingObjectDispatchReceiver() && !setter.hasMissingObjectDispatchReceiver() -> 1
-                            setter.hasMissingObjectDispatchReceiver() && !getter.hasMissingObjectDispatchReceiver() -> -1
-                            else -> 0
-                        }
                         val setterArguments = getterArguments.map {
                             it.copy(
                                 correspondingParameter = when (val p = it.correspondingParameter) {
                                     null -> setter.dispatchReceiverParameter // maybe null if both hasMissingObjectDispatchReceiver()
-                                    else -> setter.parameters.getOrNull(p.indexInParameters + parameterIndexShift)
+                                    else -> setter.parameters.getOrNull(p.indexInParameters)
                                 }
                             )
                         }
@@ -594,7 +581,6 @@ open class UpgradeCallableReferences(
     protected open fun copyNecessaryAttributes(oldReference: IrFunctionReference, newReference: IrRichFunctionReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrPropertyReference, newReference: IrRichPropertyReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrLocalDelegatedPropertyReference, newReference: IrRichPropertyReference) {}
-    protected open fun IrDeclaration.hasMissingObjectDispatchReceiver(): Boolean = false
 }
 
 val LAMBDA_EXTENSION_RECEIVER by IrDeclarationOriginImpl.Regular
