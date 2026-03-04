@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.maven.plugin.test
+package org.jetbrains.kotlin.maven.test
 
 import org.jetbrains.kotlin.maven.test.TestVersions
 import org.jetbrains.kotlin.maven.test.jdk.CompositeJdkProvider
@@ -32,12 +32,12 @@ class EnvironmentConfigProvider {
     /**
      * Replaces all non-word characters (anything except letters, digits, and underscores)
      * with underscores and converts the result to uppercase.
-     * 
+     *
      * Examples:
      * - "kotlin.version" → "KOTLIN_VERSION"
      */
     private fun String.toEnvironmentKey() = replace("\\W".toRegex(), "_").uppercase()
-    
+
     fun get(
         propertyKey: String,
         environmentKey: String = propertyKey.toEnvironmentKey(),

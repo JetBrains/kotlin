@@ -3,15 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.maven.plugin.test
+package org.jetbrains.kotlin.maven.test
 
 import bsh.Interpreter
 import groovy.lang.Binding
 import groovy.util.GroovyScriptEngine
 import org.apache.maven.shared.verifier.Verifier
-import org.jetbrains.kotlin.maven.test.MavenBuildOptions
-import org.jetbrains.kotlin.maven.test.isTeamCityRun
-import org.jetbrains.kotlin.maven.test.printLog
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream

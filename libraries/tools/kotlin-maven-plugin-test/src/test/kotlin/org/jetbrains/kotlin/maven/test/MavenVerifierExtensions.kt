@@ -51,3 +51,34 @@ fun Verifier.assertBuildLogContains(vararg substring: String) {
         }
     }
 }
+
+fun Verifier.assertCompiledKotlin(vararg expectedPaths: String) {
+    val kotlinCompileIteration = Regex("compile iteration: (.*)$")
+    val normalizedActualPaths = mutableSetOf<String>()
+    val workingDirPath = File(basedir).toPath().toRealPath().toAbsolutePath()
+
+    forEachBuildLogLine { line ->
+        kotlinCompileIteration.find(line)?.let { match ->
+            val compiledFiles = match.groupValues[1].split(",")
+            for (path in compiledFiles) {
+                if (path.isBlank()) continue
+                val file = File(path.trim())
+                val relativePath = workingDirPath.relativize(file.toPath().toAbsolutePath())
+                normalizedActualPaths.add(relativePath.normalize().toString())
+            }
+        }
+    }
+
+    val actualSorted = normalizedActualPaths.sorted().joinToString("\n")
+    val expectedSorted = expectedPaths.map { File(it).toPath().normalize().toString() }.sorted().joinToString("\n")
+
+    Assertions.assertEquals(expectedSorted, actualSorted, "Compiled files differ")
+}
+
+fun Verifier.assertFilesExist(vararg paths: String) {
+    val base = File(basedir)
+    for (path in paths) {
+        val file = base.resolve(path)
+        Assertions.assertTrue(file.exists()) { "$file does not exist" }
+    }
+}
