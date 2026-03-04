@@ -20,10 +20,10 @@ fun create4(code: () -> Unit) {}
 fun <S> create4(code: () -> S): S = TODO()
 
 fun main() {
-    val x11 = create1 { "a" }
+    val x11 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create1<!> { "a" }
     val x12 = create1 { println(123) }
 
-    val x21 = create2 { "a" }
+    val x21 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create2<!> { "a" }
     val x22 = create2 { println(123) }
 
     val x31 = create3 { "a" }
@@ -32,9 +32,9 @@ fun main() {
     val x41 = create4 { "a" }
     val x42 = create4 { println(123) }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x11<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: create1, [/create1, /create1]")!>x11<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x12<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x21<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: create2, [/create2, /create2]")!>x21<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x22<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x31<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x32<!>
