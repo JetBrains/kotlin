@@ -212,15 +212,10 @@ abstract class CollectionLiteralResolutionStrategy(protected val context: Resolu
 private class CollectionLiteralResolutionStrategyThroughCompanion(context: ResolutionContext) :
     CollectionLiteralResolutionStrategy(context) {
 
-    private fun FirCallableSymbol<*>.canBeMainOperatorOfOverload(outerClass: FirRegularClassSymbol): Boolean {
+    private fun FirCallableSymbol<*>.isOperatorOf(): Boolean {
         return when {
             this !is FirNamedFunctionSymbol -> false
-            !isOperator || name != OperatorNameConventions.OF || valueParameterSymbols.none { it.isVararg } -> false
-            else -> when (val returnType = context.returnTypeCalculator.tryCalculateReturnType(this).coneType) {
-                is ConeClassLikeType if returnType.fullyExpandedType(context.session).lookupTag == outerClass.toLookupTag() -> true
-                is ConeErrorType -> true
-                else -> false
-            }
+            else -> isOperator && name == OperatorNameConventions.OF
         }
     }
 
@@ -232,7 +227,7 @@ private class CollectionLiteralResolutionStrategyThroughCompanion(context: Resol
             val companionObjectSymbol = resolvedCompanionObjectSymbol ?: return null
             var overloadFound = false
             companionObjectSymbol.processAllDeclaredCallables(context.session) { declaration ->
-                if (declaration.canBeMainOperatorOfOverload(this))
+                if (declaration.isOperatorOf())
                     overloadFound = true
             }
             return overloadFound.ifTrue { companionObjectSymbol }
