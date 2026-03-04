@@ -15,8 +15,14 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.UnsuccessfulCollectionLiteralArgument
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.createErrorReferenceWithExistingCandidate
 import org.jetbrains.kotlin.fir.resolve.inference.CollectionLiteralBounds
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -32,6 +38,9 @@ import org.jetbrains.kotlin.fir.types.ConeStubType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 context(resolutionContext: ResolutionContext)
 fun ConeKotlinType.getClassRepresentativeForCollectionLiteralResolution(): FirRegularClassSymbol? {
@@ -115,5 +124,37 @@ fun BodyResolveComponents.buildCollectionLiteralCallForStdlibType(
             name = functionName
         }
         argumentList = collectionLiteral.argumentList
+    }
+}
+
+context(context: ResolutionContext)
+fun updateCalleeReferenceWithNewErrorsIfNeeded(functionCall: FirFunctionCall, candidate: Candidate) {
+    if (candidate.isSuccessful) return
+    val existingReference = functionCall.calleeReference
+    if (existingReference is FirErrorReferenceWithCandidate && existingReference.candidateSymbol is FirErrorFunctionSymbol) return
+    val diagnostic = createConeDiagnosticForCandidateWithError(candidate.lowestApplicability, candidate)
+    val errorReference = createErrorReferenceWithExistingCandidate(
+        candidate,
+        diagnostic,
+        functionCall.calleeReference.source,
+        context,
+        context.bodyResolveComponents.resolutionStageRunner,
+    )
+
+    functionCall.replaceCalleeReference(errorReference)
+}
+
+fun Candidate.remapResolutionDiagnosticsToOuterCandidate(outerCheckerSink: CheckerSink) {
+    for (diagnostic in diagnostics) {
+        val applicability = diagnostic.applicability
+
+        @OptIn(ApplicabilityDetail::class)
+        val remappedDiagnostic = when {
+            diagnostic is UnsuccessfulCollectionLiteralArgument -> diagnostic
+            !applicability.isSuccess && applicability != CandidateApplicability.RESOLVED_WITH_ERROR ->
+                UnsuccessfulCollectionLiteralArgument(CandidateApplicability.INAPPLICABLE)
+            else -> UnsuccessfulCollectionLiteralArgument(diagnostic.applicability)
+        }
+        outerCheckerSink.reportDiagnostic(remappedDiagnostic)
     }
 }

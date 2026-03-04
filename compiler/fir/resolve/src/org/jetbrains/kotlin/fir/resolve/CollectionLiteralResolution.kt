@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCollectionLiteralAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
-import org.jetbrains.kotlin.fir.resolve.calls.UnsuccessfulCollectionLiteralArgument
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSinkImpl
@@ -178,17 +177,16 @@ private fun postprocessCollectionLiteralCall(
         runAdditionalStages = true,
     )
 
-    // 5. All the diagnostics collected for CL candidate (both from additional stages and basic ones)
-    // need to be remapped. Remap preserves the exact applicability.
-    for (resolutionDiagnostic in candidateForCL.diagnostics) {
-        val remappedDiagnostic = when (resolutionDiagnostic) {
-            is UnsuccessfulCollectionLiteralArgument -> resolutionDiagnostic
-            else -> UnsuccessfulCollectionLiteralArgument(resolutionDiagnostic)
-        }
-        outerCandidateContext.checkerSink?.reportDiagnostic(remappedDiagnostic)
+    // 5. Update resolved reference of the candidate with new ConeDiagnostic, if needed.
+    updateCalleeReferenceWithNewErrorsIfNeeded(replacementForCL, candidateForCL)
+
+    // 6. All the diagnostics collected for CL candidate (both from additional stages and basic ones)
+    // need to be remapped. Remap preserves the exact applicability if it `isSuccess`.
+    outerCandidateContext.checkerSink?.let {
+        candidateForCL.remapResolutionDiagnosticsToOuterCandidate(it)
     }
 
-    // 6. Finally, the outer system can be updated.
+    // 7. Finally, the outer system can be updated.
     containingCandidate.system.replaceContentWith(candidateForCL.system.currentStorage())
 }
 

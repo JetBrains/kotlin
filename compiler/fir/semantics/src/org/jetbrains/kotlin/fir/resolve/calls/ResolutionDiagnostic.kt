@@ -96,8 +96,7 @@ object UnsuccessfulCallableReferenceArgument : ResolutionDiagnostic(INAPPLICABLE
  *
  * They are skipped during reporting since they are reported for CL candidate itself already.
  */
-class UnsuccessfulCollectionLiteralArgument(delegatedDiagnostic: ResolutionDiagnostic) :
-    ResolutionDiagnostic(delegatedDiagnostic.applicability)
+class UnsuccessfulCollectionLiteralArgument(applicability: CandidateApplicability) : ResolutionDiagnostic(applicability)
 
 object ErrorTypeInArguments : ResolutionDiagnostic(INAPPLICABLE)
 

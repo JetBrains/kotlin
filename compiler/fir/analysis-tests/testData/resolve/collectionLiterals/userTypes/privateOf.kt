@@ -27,14 +27,14 @@ class WithPrivateOf {
 fun accept(s: WithPrivateOf) = Unit
 
 fun test() {
-    <!INVISIBLE_REFERENCE("fun accept(s: WithPrivateOf): Unit; public; file")!>accept<!>(<!INAPPLICABLE_CANDIDATE("fun of(vararg x: String): WithPrivateOf")!>[]<!>)
-    <!INVISIBLE_REFERENCE("fun accept(s: WithPrivateOf): Unit; public; file")!>accept<!>(<!INAPPLICABLE_CANDIDATE("fun of(vararg x: String): WithPrivateOf")!>["!"]<!>)
+    accept(<!INVISIBLE_REFERENCE("fun of(vararg x: String): WithPrivateOf; private; 'WithPrivateOf.Companion'")!>[]<!>)
+    accept(<!INVISIBLE_REFERENCE("fun of(vararg x: String): WithPrivateOf; private; 'WithPrivateOf.Companion'")!>["!"]<!>)
 
-    val wpo: WithPrivateOf = <!INAPPLICABLE_CANDIDATE("fun of(vararg x: String): WithPrivateOf")!>[]<!>
+    val wpo: WithPrivateOf = <!INVISIBLE_REFERENCE("fun of(vararg x: String): WithPrivateOf; private; 'WithPrivateOf.Companion'")!>[]<!>
 
     val res = when {
         true -> WithPrivateOf()
-        else -> <!INAPPLICABLE_CANDIDATE("fun of(vararg x: String): WithPrivateOf")!>[]<!>
+        else -> <!INVISIBLE_REFERENCE("fun of(vararg x: String): WithPrivateOf; private; 'WithPrivateOf.Companion'")!>[]<!>
     }
 }
 
