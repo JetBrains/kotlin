@@ -1,2 +1,2 @@
-TrueIsMissing - true
-FalseIsMissing - false
+BooleanCase(true)
+BooleanCase(false)

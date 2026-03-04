@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.RelationToType
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
@@ -358,6 +359,13 @@ internal object FirToKtConversionCreator {
                 "org.jetbrains.kotlin.psi",
                 "org.jetbrains.kotlin.KtPsiSourceElement"
             )
+        ),
+        WhenMissingCase::class to HLFunctionCallConversion(
+            "{0}.toKaWhenMissingCase()",
+            KaWhenMissingCase::class.createType(),
+            importsToAdd = listOf(
+                "org.jetbrains.kotlin.analysis.api.fir.components.toKaWhenMissingCase"
+            )
         )
     )
 
@@ -371,7 +379,6 @@ internal object FirToKtConversionCreator {
         KtModifierKeywordToken::class,
         Visibility::class,
         EffectiveVisibility::class,
-        WhenMissingCase::class,
         ForbiddenNamedArgumentsTarget::class,
         LanguageFeature::class,
         LanguageVersionSettings::class,
