@@ -176,70 +176,80 @@ internal class KotlinWrapperPre2_4_0(
                     if (delegate[key] == null) return null as V
 
                     val stringValue = delegate[key] as String
-                    JvmDefaultMode.values().first { it.stringValue == stringValue } as V
+                    JvmDefaultMode.values().firstOrNull { it.stringValue == stringValue } as V
+                        ?: throw CompilerArgumentsParseException("Unknown -jvm-default value: $stringValue")
                 }
 
                 JvmCompilerArguments.X_ABI_STABILITY -> {
                     if (delegate[key] == null) return null as V
 
                     val stringValue = delegate[key] as String
-                    AbiStabilityMode.values().first { it.stringValue == stringValue } as V
+                    AbiStabilityMode.values().firstOrNull { it.stringValue == stringValue } as V
+                        ?: throw CompilerArgumentsParseException("Unknown -Xabi-stability value: $stringValue")
                 }
 
                 JvmCompilerArguments.X_ASSERTIONS -> {
                     if (delegate[key] == null) return null as V
 
                     val stringValue = delegate[key] as String
-                    AssertionsMode.values().first { it.stringValue == stringValue } as V
+                    AssertionsMode.values().firstOrNull { it.stringValue == stringValue } as V
+                        ?: throw CompilerArgumentsParseException("Unknown -Xassertions value: $stringValue")
                 }
 
                 JvmCompilerArguments.X_JSPECIFY_ANNOTATIONS -> {
                     if (delegate[key] == null) return null as V
 
                     val stringValue = delegate[key] as String
-                    JspecifyAnnotationsMode.values().first { it.stringValue == stringValue } as V
+                    JspecifyAnnotationsMode.values().firstOrNull { it.stringValue == stringValue } as V
+                        ?: throw CompilerArgumentsParseException("Unknown -Xjspecify-annotations value: $stringValue")
                 }
 
                 JvmCompilerArguments.X_LAMBDAS -> {
                     if (delegate[key] == null) return null as V
 
                     val stringValue = delegate[key] as String
-                    LambdasMode.values().first { it.stringValue == stringValue } as V
+                    LambdasMode.values().firstOrNull { it.stringValue == stringValue } as V
+                        ?: throw CompilerArgumentsParseException("Unknown -Xlambdas value: $stringValue")
                 }
 
                 JvmCompilerArguments.X_SAM_CONVERSIONS -> {
                     if (delegate[key] == null) return null as V
 
                     val stringValue = delegate[key] as String
-                    SamConversionsMode.values().first { it.stringValue == stringValue } as V
+                    SamConversionsMode.values().firstOrNull { it.stringValue == stringValue } as V
+                        ?: throw CompilerArgumentsParseException("Unknown -Xsam-conversions value: $stringValue")
                 }
 
                 JvmCompilerArguments.X_STRING_CONCAT -> {
                     if (delegate[key] == null) return null as V
 
                     val stringValue = delegate[key] as String
-                    StringConcatMode.values().first { it.stringValue == stringValue } as V
+                    StringConcatMode.values().firstOrNull { it.stringValue == stringValue } as V
+                        ?: throw CompilerArgumentsParseException("Unknown -Xstring-concat value: $stringValue")
                 }
 
                 JvmCompilerArguments.X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS -> {
                     if (delegate[key] == null) return null as V
 
                     val stringValue = delegate[key] as String
-                    CompatqualAnnotationsMode.values().first { it.stringValue == stringValue } as V
+                    CompatqualAnnotationsMode.values().firstOrNull { it.stringValue == stringValue } as V
+                        ?: throw CompilerArgumentsParseException("Unknown -Xsupport-compatqual-checker-framework-annotations value: $stringValue")
                 }
 
                 JvmCompilerArguments.X_WHEN_EXPRESSIONS -> {
                     if (delegate[key] == null) return null as V
 
                     val stringValue = delegate[key] as String
-                    WhenExpressionsMode.values().first { it.stringValue == stringValue } as V
+                    WhenExpressionsMode.values().firstOrNull { it.stringValue == stringValue } as V
+                        ?: throw CompilerArgumentsParseException("Unknown -Xwhen-expressions value: $stringValue")
                 }
 
                 JvmCompilerArguments.X_JDK_RELEASE -> {
                     if (delegate[key] == null) return null as V
 
                     val stringValue = delegate[key] as String
-                    JdkRelease.values().first { it.stringValue == stringValue } as V
+                    JdkRelease.values().firstOrNull { it.stringValue == stringValue } as V
+                        ?: throw CompilerArgumentsParseException("Unknown -Xjdk-release value: $stringValue")
                 }
 
                 else -> delegate[key]
