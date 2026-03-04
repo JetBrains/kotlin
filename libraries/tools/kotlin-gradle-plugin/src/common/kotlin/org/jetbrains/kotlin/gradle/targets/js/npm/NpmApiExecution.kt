@@ -16,9 +16,20 @@ import java.io.File
 import java.io.Serializable
 
 /**
- * NodeJS package manager API
+ * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ *
+ * NodeJS package manager API.
+ *
+ * This interface is a wrapper for calling npm package managers, like npm or yarn.
  */
 interface NpmApiExecution<out T : PackageManagerEnvironment> : Serializable {
+
+    /**
+     * Get files that are necessary for executing the package manager in the root npm project.
+     *
+     * For example, the root project's `package.json` that describes
+     * the root npm project's dependencies and workspaces.
+     */
     fun preparedFiles(nodeJs: NodeJsEnvironment): Collection<File>
 
     fun prepareRootProject(
@@ -29,6 +40,9 @@ interface NpmApiExecution<out T : PackageManagerEnvironment> : Serializable {
         subProjects: Collection<PreparedKotlinCompilationNpmResolution>,
     )
 
+    /**
+     * Installs npm packages (e.g. `npm install`)
+     */
     fun resolveRootProject(
         services: ServiceRegistry,
         logger: Logger,
@@ -63,7 +77,7 @@ data class NodeJsEnvironment(
 internal fun asNodeJsEnvironment(
     rootPackageDirectory: Provider<Directory>,
     packageManager: Provider<NpmApiExecution<PackageManagerEnvironment>>,
-    nodeJsEnv: NodeJsEnv
+    nodeJsEnv: NodeJsEnv,
 ) = NodeJsEnvironment(
     rootPackageDirectory,
     nodeJsEnv.executable,

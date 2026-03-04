@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import kotlin.reflect.KClass
 
+// KT-80311: This will be refactored as part of npm dependencies project isolation support.
 internal class NodeJsRootPluginApplier(
     private val platformDisambiguate: HasPlatformDisambiguator,
     private val nodeJsRootKlass: KClass<out BaseNodeJsRootExtension>,

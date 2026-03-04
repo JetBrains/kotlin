@@ -143,6 +143,9 @@ class Npm internal constructor(
         )
     }
 
+    /**
+     * Runs `npm install`.
+     */
     override fun packageManagerExec(
         logger: Logger,
         nodeJs: NodeJsEnvironment,

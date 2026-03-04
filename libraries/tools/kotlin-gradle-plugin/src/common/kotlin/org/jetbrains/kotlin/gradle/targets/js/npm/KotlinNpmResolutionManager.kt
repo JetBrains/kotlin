@@ -16,6 +16,7 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 import org.gradle.internal.service.ServiceRegistry
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
@@ -30,21 +31,23 @@ internal interface UsesKotlinNpmResolutionManager : Task {
 }
 
 /**
- * [KotlinNpmResolutionManager] is build service which holds state of dependency resolution processes of JS-related projects.
+ * [KotlinNpmResolutionManager] is Gradle [BuildService] which holds
+ * the state of dependency resolution processes of JS-related projects.
  *
  * #### Terms
  *
  * `*Resolver` means entities which should exist only in Configuration phase
  *
- * `*Resolution` means entities which should be created from `*Resolver` in the end of Configuration phase (when all projects are registered themselves).
+ * `*Resolution` means entities which should be created from `*Resolver` in the end of
+ * Gradle's Configuration phase (when all projects have registered themselves with this service).
  *
  * #### Process
  *
- * The process is following:
- * 1. Every project register itself via [NpmResolverPlugin] in [KotlinRootNpmResolver].
- * 2. [KotlinRootNpmResolver] creates for every project [KotlinProjectNpmResolver],
- *   and [KotlinProjectNpmResolver] creates [KotlinCompilationNpmResolver] for every compilation.
- * 3. [KotlinCompilationNpmResolver] exist to resolve all JS-related dependencies (inter-project dependencies and NPM dependencies).
+ * The process is as follows:
+ * 1. Every project registers itself via [NpmResolverPlugin] in [KotlinRootNpmResolver].
+ * 2. [KotlinRootNpmResolver] creates a [KotlinProjectNpmResolver] for every project,
+ *   and [KotlinProjectNpmResolver] creates a [KotlinCompilationNpmResolver] for every Kotlin compilation.
+ * 3. A [KotlinCompilationNpmResolver] resolve all JS-related dependencies (inter-project dependencies and NPM dependencies).
  * 4. In [KotlinCompilationNpmResolver] one can get [KotlinCompilationNpmResolver.compilationNpmResolution] to get resolution,
  *   but it must be called only after all projects were registered in [KotlinRootNpmResolver]
  *
@@ -52,7 +55,7 @@ internal interface UsesKotlinNpmResolutionManager : Task {
  * [org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.kotlinNpmResolutionManager].
  *
  * It provides [KotlinRootNpmResolution] into [KotlinNpmResolutionManager]
- * and since then it stores all information about resolution process in execution phase.
+ * and since then it stores all information about the resolution process in execution phase.
  */
 abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionManager.Parameters> {
 
@@ -93,6 +96,10 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
         environment: PackageManagerEnvironment,
     ) = prepareIfNeeded(logger = logger, nodeJsEnvironment, environment)
 
+    /**
+     * Prepares the root npm project, if necessary,
+     * so a subproject can execute tasks that need npm dependencies.
+     */
     internal fun installIfNeeded(
         args: List<String> = emptyList(),
         services: ServiceRegistry,
