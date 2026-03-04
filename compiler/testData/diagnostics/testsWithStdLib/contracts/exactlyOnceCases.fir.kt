@@ -5,6 +5,8 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+fun barRegular(f: () -> Unit) {}
+
 @OptIn(ExperimentalContracts::class)
 fun barWithContract(f: () -> Unit) {
     contract {
@@ -31,6 +33,17 @@ fun foo() {
     val x: Int
     barWithContractAtMostOnce {
         x = 2
+        println(x)
+    }
+}
+
+fun nestedExactlyOnceCase() {
+    barRegular{
+        val nested: Int
+        barWithContract {
+            <!EO_DIAGNOSTIC!>nested<!> = 2
+        }
+        println(nested)
     }
 }
 
