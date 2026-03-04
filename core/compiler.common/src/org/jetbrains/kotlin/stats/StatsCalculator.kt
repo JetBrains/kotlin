@@ -116,9 +116,9 @@ class StatsCalculator(val reportsData: ReportsData) {
                 name = "Aggregate"
             }
             if (outputKind == null) {
-                outputKind = moduleStats.name
+                outputKind = moduleStats.outputKind
             } else if (outputKind != moduleStats.outputKind) {
-                name = "Aggregate"
+                outputKind = "Aggregate"
             }
             if (latestCurrentTimeMs == null || latestCurrentTimeMs < moduleStats.timeStampMs) {
                 latestCurrentTimeMs = moduleStats.timeStampMs
