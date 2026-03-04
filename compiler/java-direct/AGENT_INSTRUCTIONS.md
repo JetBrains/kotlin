@@ -4,9 +4,9 @@
 
 | Metric | Value |
 |--------|-------|
-| **Status** | Iteration 9 complete |
-| **Tests** | 115/138 passing (83.3%) |
-| **Next focus** | Raw types, nested generics, atomics mapping |
+| **Status** | Iteration 10 complete |
+| **Tests** | 117/138 passing (84.8%) |
+| **Next focus** | Raw types, atomics mapping, nullability assertions |
 
 **Key files**: `JavaClassFinderOverAstImpl.kt`, `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaMemberOverAst.kt`, `JavaResolutionContext.kt`
 

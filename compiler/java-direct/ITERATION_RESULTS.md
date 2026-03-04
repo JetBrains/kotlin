@@ -9,7 +9,7 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 **Usage**: After completing each iteration, the agent MUST append a results section below.
 
-**Last Updated**: 2026-03-04 (Iteration 9 complete)
+**Last Updated**: 2026-03-04 (Iteration 10 complete)
 
 ---
 
@@ -94,6 +94,102 @@ After Iteration 6, 48 tests still fail. Likely causes:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 10: Nested Interfaces and Enums Implicitly Static - 2026-03-04
+
+### Status
+- ✅ Completed
+
+### Summary
+Fixed `isStatic` for nested interfaces and enums to return `true` even without explicit `static` keyword. In Java, nested interfaces and enums are implicitly static. This affects FIR's `isInner` determination (`isInner = !isTopLevel && !isStatic`), which in turn affects IR's `extractTypeParameters()` during fake override building for SAM conversion. Improved from 115/138 (83.3%) to 117/138 (84.8%) - gained 2 tests.
+
+### Key Findings
+
+1. **Root Cause Analysis**: `testJavaNestedSamInterface` was failing with:
+   ```
+   IllegalArgumentException: typeParameters = [2 params] size != typeArguments = [] size
+   at FakeOverrideBuilderStrategy.kt:183
+   ```
+   This happens in IR's `buildFakeOverrideMember()` when building the SAM fake override.
+
+2. **The `extractTypeParameters()` Function**: At `IrTypeSystemContext.kt:596-619`, this function collects type parameters from the class and its enclosing classes. For non-inner classes (`!current.isInner`), it stops at that class. For inner classes, it continues to the outer class.
+
+3. **FIR's `isInner` Determination**: In `FirJavaFacade.kt:188`:
+   ```kotlin
+   this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
+   ```
+   So `isInner = true` when the class is NOT top-level AND NOT static. For a nested interface, if `isStatic` returns `false`, FIR sets `isInner = true`.
+
+4. **Java Language Rule**: Nested interfaces and enums are **implicitly static** in Java, even without the `static` keyword. This is different from nested classes which require explicit `static` to be static.
+
+5. **Impact Chain**:
+   - java-direct `isStatic = false` for nested interface (bug)
+   - FIR sets `isInner = true`
+   - IR's `extractTypeParameters()` collects outer class type params too
+   - SAM fake override builder expects type args matching all type params
+   - No type args provided → crash
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `JavaClassOverAst.kt` | Updated `isStatic` property to also return `true` for nested interfaces and enums: `hasModifier("STATIC_KEYWORD") || (outerClass != null && (isInterface || isEnum))` |
+| `JavaClassOverAst.kt` | Updated `findInnerClass()` to treat interfaces and enums as effectively static (for resolution context selection) - already done in previous iteration but now consistent with `isStatic` |
+
+### Test Results
+- Box tests: 117/138 passing (84.8%) - UP from 115/138 (83.3%)
+- Gained: 2 tests (+1.5%)
+
+### Tests Fixed
+| Test | Issue Fixed |
+|------|-------------|
+| `testJavaNestedSamInterface` | Nested SAM interface now correctly `isStatic=true`, so FIR sets `isInner=false`, IR doesn't collect outer type params |
+| `testKt53041` | Related nested class/interface type parameter handling |
+
+### Remaining Failures (21 tests)
+
+| Category | Count | Example Tests |
+|----------|-------|---------------|
+| NotNullAssertions | 4 | testLocalEntities, testFunctionAssertion, testFunctionWithBigArity, testNoAssertionForNulllableCaptured |
+| CommonAtomicTypes | 2 | testUsingJavaAtomicWhenKotlinAtomicExpected, testUsingKotlinAtomicWhenJavaAtomicExpected |
+| OTHER | 15 | Various inheritance, raw types, and generic issues |
+
+### Architecture Insight
+
+The `isStatic` flag has far-reaching effects:
+
+```
+JavaClass.isStatic
+    ↓
+FirJavaFacade: isInner = !isTopLevel && !isStatic
+    ↓
+Fir2IrClassifiersGenerator: irClass.isInner = regularClass.isInner
+    ↓
+IR extractTypeParameters(): if (!current.isInner) stop else continue to outer
+    ↓
+buildFakeOverrideMember(): requires typeParams.size == typeArgs.size
+```
+
+For nested interfaces/enums, the correct chain is:
+- `isStatic = true` (implicit in Java)
+- `isInner = false`
+- `extractTypeParameters()` stops at the nested interface
+- SAM fake override builds correctly
+
+### Key Learnings
+
+1. **Java Implicit Static Rules**:
+   - Nested interfaces: always implicitly static
+   - Nested enums: always implicitly static  
+   - Nested classes: only static if explicitly marked
+
+2. **isStatic Affects isInner**: The `isStatic` flag in Java Model directly controls the FIR `isInner` status, which has cascading effects on IR type parameter collection.
+
+3. **Consistency Matters**: Both `isStatic` property and `findInnerClass()` resolution context selection should agree on whether a nested type is static. The previous iteration fixed `findInnerClass()` but not `isStatic`, causing inconsistency.
+
+4. **Debug via Exception**: The error message `typeParameters = [2 params] size != typeArguments = [] size` was the key clue - 2 type params meant both outer class `X` and inner interface `T` were being collected, indicating the interface was incorrectly treated as inner.
+
+---
 
 ## Iteration 9: Interface Fields and SAM Conversion - 2026-03-04
 

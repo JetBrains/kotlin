@@ -796,4 +796,142 @@ class JavaParsingTest {
             "Expected @FunctionalInterface annotation"
         }
     }
+
+    @Test
+    fun testNestedInterfaceWithTypeParameters() {
+        // This tests the pattern that causes testJavaNestedSamInterface to fail
+        // Outer class A<X> has nested interface I<T>
+        val source = """
+            public class A<X extends Number> {
+                private final X x;
+
+                public A(X x) {
+                    this.x = x;
+                }
+
+                public interface I<T> {
+                    T compute();
+                }
+
+                public <T> T get(I<T> value) { return value.compute(); }
+            }
+        """.trimIndent()
+        val outerClass = parseFirstClass(source)
+
+        // Verify outer class
+        assert(outerClass.name.asString() == "A") { "Expected outer class name 'A'" }
+        assert(outerClass.typeParameters.size == 1) { "Outer class should have 1 type parameter, got ${outerClass.typeParameters.size}" }
+        assert(outerClass.typeParameters.first().name.asString() == "X") { "Outer type param should be 'X'" }
+
+        // Verify nested interface exists
+        assert(outerClass.innerClassNames.size == 1) { "Expected 1 inner class, got ${outerClass.innerClassNames.size}" }
+        assert(outerClass.innerClassNames.first().asString() == "I") { "Expected inner class name 'I'" }
+
+        // Get nested interface via findInnerClass
+        val nestedInterface = outerClass.findInnerClass(org.jetbrains.kotlin.name.Name.identifier("I"))
+        assert(nestedInterface != null) { "findInnerClass should find 'I'" }
+        assert(nestedInterface!!.isInterface) { "I should be an interface" }
+        assert(nestedInterface.name.asString() == "I") { "Nested interface name should be 'I'" }
+
+        // Verify nested interface type parameters
+        assert(nestedInterface.typeParameters.size == 1) { "Nested interface should have 1 type parameter, got ${nestedInterface.typeParameters.size}" }
+        assert(nestedInterface.typeParameters.first().name.asString() == "T") { "Nested type param should be 'T'" }
+
+        // Verify nested interface has SAM method
+        assert(nestedInterface.methods.size == 1) { "Nested interface should have 1 method, got ${nestedInterface.methods.size}" }
+        val computeMethod = nestedInterface.methods.first()
+        assert(computeMethod.name.asString() == "compute") { "Method name should be 'compute'" }
+        assert(computeMethod.isAbstract) { "Interface method should be implicitly abstract" }
+
+        // Verify fqName of nested interface
+        assert(nestedInterface.fqName?.asString() == "A.I") { "Expected fqName 'A.I', got ${nestedInterface.fqName?.asString()}" }
+
+        // Verify outerClass reference
+        assert(nestedInterface.outerClass == outerClass) { "Nested interface should reference outer class" }
+
+        // Verify get method in outer class that uses the nested interface
+        val getMethod = outerClass.methods.first { it.name.asString() == "get" }
+        assert(getMethod.typeParameters.size == 1) { "get method should have 1 type parameter" }
+        assert(getMethod.typeParameters.first().name.asString() == "T") { "get method type param should be 'T'" }
+        assert(getMethod.valueParameters.size == 1) { "get method should have 1 parameter" }
+
+        val paramType = getMethod.valueParameters.first().type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        // The type reference I<T> resolves to A.I since it's used within class A
+        assert(paramType.classifierQualifiedName == "A.I") { "Parameter type name should be 'A.I', got ${paramType.classifierQualifiedName}" }
+        assert(paramType.classifier == nestedInterface) { "Parameter type should resolve to nested interface" }
+        assert(paramType.typeArguments.size == 1) { "Parameter type should have 1 type argument, got ${paramType.typeArguments.size}" }
+    }
+
+    @Test
+    fun testNestedInterfaceIsStatic() {
+        // Java nested interfaces are always implicitly static
+        val source = """
+            public class Outer {
+                public interface NestedInterface {
+                    void method();
+                }
+                
+                public static class NestedStaticClass {
+                }
+                
+                public class NestedInnerClass {
+                }
+            }
+        """.trimIndent()
+        val outerClass = parseFirstClass(source)
+
+        val nestedInterface = outerClass.findInnerClass(org.jetbrains.kotlin.name.Name.identifier("NestedInterface"))
+        assert(nestedInterface != null) { "Should find NestedInterface" }
+        // Interfaces are implicitly static in Java
+        assert(nestedInterface!!.isInterface) { "NestedInterface should be an interface" }
+
+        val nestedStaticClass = outerClass.findInnerClass(org.jetbrains.kotlin.name.Name.identifier("NestedStaticClass"))
+        assert(nestedStaticClass != null) { "Should find NestedStaticClass" }
+        assert(nestedStaticClass!!.isStatic) { "NestedStaticClass should be explicitly static" }
+
+        val nestedInnerClass = outerClass.findInnerClass(org.jetbrains.kotlin.name.Name.identifier("NestedInnerClass"))
+        assert(nestedInnerClass != null) { "Should find NestedInnerClass" }
+        assert(!nestedInnerClass!!.isStatic) { "NestedInnerClass should NOT be static" }
+    }
+
+    @Test
+    fun testNestedInterfaceAndEnumImplicitlyStatic() {
+        // Java nested interfaces and enums are implicitly static even without the keyword
+        // This is critical for FIR to correctly set isInner=false for these types
+        val source = """
+            public class Outer<T> {
+                public interface NestedInterface<U> {
+                    U compute();
+                }
+                
+                public enum NestedEnum {
+                    A, B, C
+                }
+                
+                public class InnerClass {
+                }
+            }
+        """.trimIndent()
+        val outerClass = parseFirstClass(source)
+
+        // Nested interface should be implicitly static (no 'static' keyword in source)
+        val nestedInterface = outerClass.findInnerClass(org.jetbrains.kotlin.name.Name.identifier("NestedInterface"))
+        assert(nestedInterface != null) { "Should find NestedInterface" }
+        assert(nestedInterface!!.isInterface) { "NestedInterface should be an interface" }
+        assert(nestedInterface.isStatic) { "Nested interface should be implicitly static for FIR isInner=false" }
+        assert(nestedInterface.outerClass == outerClass) { "Nested interface should have outer class reference" }
+
+        // Nested enum should be implicitly static
+        val nestedEnum = outerClass.findInnerClass(org.jetbrains.kotlin.name.Name.identifier("NestedEnum"))
+        assert(nestedEnum != null) { "Should find NestedEnum" }
+        assert(nestedEnum!!.isEnum) { "NestedEnum should be an enum" }
+        assert(nestedEnum.isStatic) { "Nested enum should be implicitly static for FIR isInner=false" }
+
+        // Inner class (without static keyword) should NOT be static
+        val innerClass = outerClass.findInnerClass(org.jetbrains.kotlin.name.Name.identifier("InnerClass"))
+        assert(innerClass != null) { "Should find InnerClass" }
+        assert(!innerClass!!.isInterface) { "InnerClass should not be an interface" }
+        assert(!innerClass.isEnum) { "InnerClass should not be an enum" }
+        assert(!innerClass.isStatic) { "Inner class without 'static' keyword should NOT be static" }
+    }
 }

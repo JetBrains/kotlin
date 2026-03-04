@@ -56,7 +56,8 @@ class JavaClassOverAst(
     }
 
     override val isAbstract: Boolean get() = hasModifier("ABSTRACT_KEYWORD") || isInterface
-    override val isStatic: Boolean get() = hasModifier("STATIC_KEYWORD")
+    // Java nested interfaces and enums are implicitly static even without the keyword
+    override val isStatic: Boolean get() = hasModifier("STATIC_KEYWORD") || (outerClass != null && (isInterface || isEnum))
     override val isFinal: Boolean get() = hasModifier("FINAL_KEYWORD")
 
     override val visibility: Visibility
@@ -94,12 +95,21 @@ class JavaClassOverAst(
     override fun findInnerClass(name: Name): JavaClass? {
         val innerClassNode = node.children.find {
             it.type.toString() == "CLASS" && it.findChildByType("IDENTIFIER")?.text == name.asString()
-        }
-        // Non-static inner classes see outer class type parameters; static nested classes don't
-        val innerIsStatic = innerClassNode?.findChildByType("MODIFIER_LIST")
+        } ?: return null
+        
+        // Check if the inner class is effectively static:
+        // - Explicitly marked with 'static' keyword
+        // - Is an interface (interfaces are implicitly static in Java)
+        // - Is an enum (enums are implicitly static in Java)
+        val hasStaticKeyword = innerClassNode.findChildByType("MODIFIER_LIST")
             ?.children?.any { it.type.toString() == "STATIC_KEYWORD" } ?: false
-        val contextForInner = if (innerIsStatic) resolutionContext else memberResolutionContext
-        return innerClassNode?.let { JavaClassOverAst(it, contextForInner, outerClass = this) }
+        val isInterface = innerClassNode.findChildByType("INTERFACE_KEYWORD") != null
+        val isEnum = innerClassNode.findChildByType("ENUM_KEYWORD") != null
+        val innerIsEffectivelyStatic = hasStaticKeyword || isInterface || isEnum
+        
+        // Non-static inner classes see outer class type parameters; static nested classes/interfaces don't
+        val contextForInner = if (innerIsEffectivelyStatic) resolutionContext else memberResolutionContext
+        return JavaClassOverAst(innerClassNode, contextForInner, outerClass = this)
     }
 
     override val isInterface: Boolean get() = node.findChildByType("INTERFACE_KEYWORD") != null
