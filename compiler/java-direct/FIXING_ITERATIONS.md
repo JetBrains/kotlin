@@ -6,8 +6,8 @@ This document contains structured iteration prompts for fixing issues in the `ja
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration  
 **Usage**: Execute one iteration at a time, following the 4-phase template  
-**Status**: Iteration 6 completed, starting Iteration 7  
-**Last Updated**: 2026-03-03
+**Status**: Iteration 7 analysis complete, ready for implementation  
+**Last Updated**: 2026-03-04
 
 ---
 
@@ -67,9 +67,133 @@ See the template in `ITERATION_RESULTS.md` for the required format. This ensures
 
 ---
 
-## Iteration 7: Wildcards and Upper Bounds
+## Iteration 7: Array Types and Type Parameter Bounds
+
+**Status**: Analysis complete, ready for implementation  
+**Analysis Document**: `implDocs/ITERATION_7_PROBLEM_ANALYSIS.md`  
+**Expected Improvement**: 5-10 tests (array types alone: 5 tests)
+
+### Background
+
+After iteration 6, systematic analysis of 48 remaining failures revealed several root causes:
+
+| Category | Count | This Iteration? |
+|----------|-------|-----------------|
+| Array types not parsed | 5 | **Yes - Quick Win** |
+| Type parameter bounds | 7+ | **Yes** |
+| Kotlin classes from Java | 15 | Partial investigation |
+| Other issues | 21 | Deferred |
+
+### Prompt
+
+---
+TASK: Fix array type parsing and implement type parameter bounds
+
+CONTEXT:
+**Current Status: 90/138 (65.2%) box tests passing**
+
+Analysis revealed two concrete issues with known fixes:
+
+1. **Array types (`String[]`) parsed as `String`** (5 tests)
+   - AST structure discovered via exception-based debugging
+   - Fix location identified: `createJavaType()` in `JavaTypeOverAst.kt`
+
+2. **Type parameter bounds not parsed** (7+ tests)
+   - `JavaTypeParameterOverAst.upperBounds` returns empty list
+   - `JavaMethodOverAst.typeParameters` returns empty list
+
+IMPLEMENTATION STEPS:
+
+### Phase 1: Array Type Parsing (5 tests)
+
+1. **Understand the AST structure** (already discovered):
+   ```
+   TYPE: String[]
+     TYPE: String           <- component type
+       JAVA_CODE_REFERENCE: String
+     LBRACKET: [
+     RBRACKET: ]
+   ```
+
+2. **Modify `createJavaType()` in `JavaTypeOverAst.kt`**:
+   ```kotlin
+   fun createJavaType(node: JavaSyntaxNode, ...): JavaType {
+       val typeNode = node.findChildByType("TYPE") ?: node
+       
+       // NEW: Check for array type (has LBRACKET child)
+       if (typeNode.findChildByType("LBRACKET") != null) {
+           val componentTypeNode = typeNode.findChildByType("TYPE")
+               ?: return JavaClassifierTypeOverAst(typeNode, source, localScope, imports)
+           val componentType = createJavaType(componentTypeNode, source, localScope, imports)
+           return JavaArrayTypeOverAst(typeNode, source, componentType)
+       }
+       
+       // Existing primitive/reference handling...
+   }
+   ```
+
+3. **Handle multi-dimensional arrays** (`int[][]`):
+   - Recursively apply array detection
+   - Each dimension adds another `LBRACKET`/`RBRACKET` pair
+
+4. **Verify with test**:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testOverrideWithArrayParameterType" -q
+   ```
+
+### Phase 2: Type Parameter Bounds (7+ tests)
+
+5. **Update `JavaTypeParameterOverAst.upperBounds`**:
+   ```kotlin
+   override val upperBounds: Collection<JavaClassifierType>
+       get() {
+           val extendsList = node.findChildByType("EXTENDS_BOUND_LIST")
+               ?: return emptyList()
+           return extendsList.getChildrenByType("JAVA_CODE_REFERENCE")
+               .map { JavaClassifierTypeOverAst(it, source) }
+       }
+   ```
+
+6. **Update `JavaMethodOverAst.typeParameters`**:
+   ```kotlin
+   override val typeParameters: List<JavaTypeParameter>
+       get() = node.findChildByType("TYPE_PARAMETER_LIST")
+           ?.getChildrenByType("TYPE_PARAMETER")
+           ?.map { JavaTypeParameterOverAst(it, source) }
+           ?: emptyList()
+   ```
+
+7. **Verify with test**:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testSamTypeParameter" -q
+   ```
+
+### Phase 3: Validation
+
+8. **Run all box tests**:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q
+   ```
+
+9. **Check for file problems**:
+   Use `mcp__jetbrains__get_file_problems` on modified files.
+
+10. **Document results** in `ITERATION_RESULTS.md`.
+
+TARGET: 95-100/138 (69-72%) pass rate
+
+DELIVERABLE:
+- Array type parsing working
+- Type parameter bounds parsed
+- Method-level type parameters parsed
+- +5-10 passing tests
+
+---
+
+## Iteration 8: Wildcards and Complex Generics
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md` section 3.3.
+**Note**: Renumbered from original Iteration 7 after adding new Iteration 7 (Array Types).
 
 ### Prompt
 
@@ -158,68 +282,63 @@ CONFIRMATION REQUIRED: Complete Iteration 5 first, then assess if this is the ri
 
 ---
 
-## Iteration 8: Array Types
+## Iteration 9: Kotlin Class Resolution from Java
 
-**Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md`.
+**Reference**: See `AGENT_INSTRUCTIONS.md` and `implDocs/ITERATION_7_PROBLEM_ANALYSIS.md`.
+**Note**: Renumbered from original Iteration 8; content updated based on iteration 7 analysis.
 
 ### Prompt
 
 ---
-TASK: Implement proper array type support
+TASK: Investigate and fix Kotlin class resolution from Java code
 
 CONTEXT:
-**Expected Status After Iteration 6: ~40-50/138 (29-36%) tests passing**
+**Expected Status After Iteration 7: ~95-100/138 (69-72%) tests passing**
 
-Java arrays are common in test code and API boundaries. Proper array type handling may unlock additional tests.
+15 tests fail with MISSING_DEPENDENCY_CLASS when Java code imports Kotlin classes like:
+```java
+import kotlin.Function;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.FunctionN;
+```
 
-IMPLEMENTATION STEPS:
+INVESTIGATION STEPS:
 
-1. VERIFY CURRENT STATE:
-   - Check if `isArray()` is implemented in JavaTypeOverAst
-   - Verify component type extraction works
-   - Test primitive arrays vs reference arrays
+1. UNDERSTAND THE PROBLEM:
+   - Java sources import Kotlin classes from kotlin-stdlib
+   - `CombinedJavaClassFinder` falls back to binary finder
+   - Binary finder may not be configured to find Kotlin classes
 
-2. IMPLEMENT ARRAY TYPE PARSING:
-   - Parse array dimensions (`String[]`, `int[][]`)
-   - Return correct component types
-   - Handle multi-dimensional arrays
+2. CHECK BINARY FINDER CONFIGURATION:
+   - Examine how `defaultFinderProvider` is set up in `JavaDirectComponentRegistrar`
+   - Verify kotlin-stdlib is on the classpath for the binary finder
+   - Check if Kotlin class metadata is accessible
 
-3. FIR INTEGRATION:
-   - Ensure FIR creates correct array types
-   - Verify kotlin.Array vs primitive arrays mapping
-   - Test array type variance
+3. POTENTIAL FIXES:
+   - Ensure binary finder includes kotlin-stdlib JAR
+   - May need to configure additional class paths
+   - Consider if Kotlin classes need special handling
 
-4. CREATE TESTS:
-   ```kotlin
-   @Test
-   fun testArrayTypes() {
-       val source = """
-           class ArrayTest {
-               public String[] names;
-               public int[][] matrix;
-           }
-       """.trimIndent()
-       // Verify array type parsing
-   }
+4. TEST WITH SIMPLE CASE:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testLambdaInstanceOf" -q
    ```
 
-5. RUN BOX TESTS:
-   - Expect +5-10 tests with array usage
-
-6. TARGET: 45-60/138 (33-43%) pass rate
+5. TARGET: 105-115/138 (76-83%) pass rate if fixed
 
 DELIVERABLE:
-- Array type support
-- Multi-dimensional arrays
-- Test improvements
+- Analysis of Kotlin class resolution issue
+- Fix if straightforward, or detailed investigation report
+- Documentation of findings
 
-CONFIRMATION REQUIRED: Assess after Iteration 6 if arrays are blocking tests.
+CONFIRMATION REQUIRED: Assess complexity after initial investigation.
 
 ---
 
-## Iteration 9: Lower Bounds and Complex Generics
+## Iteration 10: Lower Bounds and Complex Generics
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md`.
+**Note**: Renumbered from original Iteration 9.
 
 ### Prompt
 
@@ -279,9 +398,10 @@ CONFIRMATION REQUIRED: Assess after Iteration 7 completion.
 
 ---
 
-## Iteration 10: Annotations and Nullability
+## Iteration 11: Annotations and Nullability
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md` section 3.5.
+**Note**: Renumbered from original Iteration 10.
 
 ### Prompt
 
@@ -333,9 +453,10 @@ CONFIRMATION REQUIRED: Assess after Iteration 6 if this is next priority.
 
 ---
 
-## Iteration 11: Inner Classes and Nested Types
+## Iteration 12: Inner Classes and Nested Types
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md`.
+**Note**: Renumbered from original Iteration 11.
 
 ### Prompt
 
@@ -379,9 +500,10 @@ CONFIRMATION REQUIRED: Assess priority after earlier iterations.
 
 ---
 
-## Iteration 12: Annotation Support
+## Iteration 13: Annotation Support (Extended)
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules and `IMPLEMENTATION_PLAN.md` section 3.5.
+**Note**: Renumbered from original Iteration 12.
 
 ### Prompt
 
@@ -437,9 +559,10 @@ CONFIRMATION REQUIRED: Verify current state of annotation support first.
 
 ---
 
-## Iteration 13: Error Handling and Diagnostics
+## Iteration 14: Error Handling and Diagnostics
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules.
+**Note**: Renumbered from original Iteration 13.
 
 ### Prompt
 
@@ -488,9 +611,10 @@ CONFIRMATION REQUIRED: Discuss error handling strategy.
 
 ---
 
-## Iteration 14: Performance and Caching
+## Iteration 15: Performance and Caching
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` for common pitfalls about laziness.
+**Note**: Renumbered from original Iteration 14.
 
 ### Prompt
 
@@ -535,9 +659,10 @@ CONFIRMATION REQUIRED: Profile first to find actual bottlenecks.
 
 ---
 
-## Iteration 15: Final Validation and Documentation
+## Iteration 16: Final Validation and Documentation
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` for success metrics.
+**Note**: Renumbered from original Iteration 15.
 
 ### Prompt
 
@@ -587,6 +712,9 @@ CONFIRMATION REQUIRED: N/A (final iteration)
 
 ## Document Change Log
 
+- 2026-03-04: Added Iteration 7 (Array Types and Type Parameter Bounds) based on systematic failure analysis
+- 2026-03-04: Renumbered Iterations 7-15 to 8-16 to accommodate new iteration
+- 2026-03-04: Updated Iteration 9 (formerly 8) with Kotlin class resolution investigation
 - 2026-02-23: Updated Iterations 2-4 to reflect FIR-based resolution approach (see FIRSESSION_RESOLUTION_ANALYSIS.md)
 - 2026-02-23: Iteration 2 now focuses on classifierQualifiedName correctness, not FirSession access
 - 2026-02-23: Iteration 3 now focuses on import tracking for name qualification
