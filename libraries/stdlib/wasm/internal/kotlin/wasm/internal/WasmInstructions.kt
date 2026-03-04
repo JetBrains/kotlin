@@ -542,10 +542,21 @@ internal fun wasm_memory_grow(delta: Int): Int =
 /**
  * Copy `size` bytes from `src` to `dst` in linear memory.
  */
-@Suppress("UNUSED_PARAMETER")
-@WasmOp(WasmOp.MEMORY_COPY)
-internal fun wasm_memory_copy(dst: Int, src: Int, size: Int): Unit =
-    implementedAsIntrinsic
+//@Suppress("UNUSED_PARAMETER")
+//@WasmOp(WasmOp.MEMORY_COPY)
+//internal fun wasm_memory_copy(dst: Int, src: Int, size: Int): Unit =
+//    implementedAsIntrinsic
+
+// TODO replace this function with intrinsic above after bootstrap
+internal fun wasm_memory_copy(dst: Int, src: Int, size: Int) {
+    var s = src
+    var d = dst
+    repeat(size) {
+        wasm_i32_store8(d, wasm_i32_load8_s(s))
+        s++
+        d++
+    }
+}
 
 @WasmOp(WasmOp.I32_CLZ)
 internal fun wasm_i32_clz(a: Int): Int =
