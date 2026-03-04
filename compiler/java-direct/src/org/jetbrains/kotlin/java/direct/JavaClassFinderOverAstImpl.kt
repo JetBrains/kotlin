@@ -141,7 +141,7 @@ class JavaClassFinderOverAstImpl(
         val source = tryReadFile(path) ?: return null
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
-        val resolutionContext = JavaResolutionContext.create(root, source)
+        val resolutionContext = JavaResolutionContext.create(root)
         val node = root.getChildrenByType("CLASS").firstOrNull { n ->
             n.findChildByType("IDENTIFIER")?.text == simpleName
         } ?: return null

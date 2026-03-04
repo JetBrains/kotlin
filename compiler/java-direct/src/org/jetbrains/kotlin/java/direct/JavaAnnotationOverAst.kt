@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.name.Name
 class JavaAnnotationOverAst(
     node: JavaSyntaxNode,
     private val resolutionContext: JavaResolutionContext,
-) : JavaElementOverAst(node, resolutionContext.source), JavaAnnotation {
+) : JavaElementOverAst(node), JavaAnnotation {
     override val arguments: Collection<JavaAnnotationArgument>
         get() {
             val parameterList = node.findChildByType("ANNOTATION_PARAMETER_LIST")
             if (parameterList == null) return emptyList()
             
             return parameterList.getChildrenByType("NAME_VALUE_PAIR").map { 
-                JavaAnnotationArgumentOverAst(it, resolutionContext.source)
+                JavaAnnotationArgumentOverAst(it)
             }
         }
 
@@ -47,9 +47,8 @@ class JavaAnnotationOverAst(
 }
 
 class JavaAnnotationArgumentOverAst(
-    node: JavaSyntaxNode,
-    source: CharSequence
-) : JavaElementOverAst(node, source), JavaAnnotationArgument {
+    node: JavaSyntaxNode
+) : JavaElementOverAst(node), JavaAnnotationArgument {
     override val name: Name?
         get() = node.findChildByType("IDENTIFIER")?.let { Name.identifier(it.text) }
 }

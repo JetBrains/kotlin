@@ -18,7 +18,7 @@ class JavaParsingTest {
     private fun parseSource(source: String): Pair<JavaSyntaxNode, JavaResolutionContext> {
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
-        val context = JavaResolutionContext.create(root, source)
+        val context = JavaResolutionContext.create(root)
         return root to context
     }
 

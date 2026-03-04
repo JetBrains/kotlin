@@ -234,7 +234,7 @@ fun createJavaTypeWithAnnotations(
 class JavaTypeParameterOverAst(
     node: JavaSyntaxNode,
     private val resolutionContext: JavaResolutionContext,
-) : JavaElementOverAst(node, resolutionContext.source), JavaTypeParameter {
+) : JavaElementOverAst(node), JavaTypeParameter {
 
     override val name: Name
         get() = Name.identifier(node.findChildByType("IDENTIFIER")?.text ?: "<error>")

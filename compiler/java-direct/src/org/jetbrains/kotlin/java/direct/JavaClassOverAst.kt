@@ -16,7 +16,7 @@ class JavaClassOverAst(
     node: JavaSyntaxNode,
     val resolutionContext: JavaResolutionContext,
     override val outerClass: JavaClass? = null,
-) : JavaElementOverAst(node, resolutionContext.source), JavaClass {
+) : JavaElementOverAst(node), JavaClass {
 
     /**
      * Resolution context for members of this class, includes the class's own type parameters

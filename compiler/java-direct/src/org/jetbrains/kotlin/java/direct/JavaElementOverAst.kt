@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.java.direct
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 
 abstract class JavaElementOverAst(
-    val node: JavaSyntaxNode,
-    val source: CharSequence
+    val node: JavaSyntaxNode
 ) : JavaElement {
     override fun equals(other: Any?): Boolean =
         other is JavaElementOverAst && node == other.node

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.name.Name
  * (from containing class and method declarations).
  */
 class JavaResolutionContext private constructor(
-    val source: CharSequence,
     val packageFqName: FqName,
     private val simpleImports: Map<String, FqName>,
     private val starImports: List<FqName>,
@@ -52,7 +51,7 @@ class JavaResolutionContext private constructor(
         if (typeParams.isEmpty()) return this
         val newScope = typeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaResolutionContext(
-            source, packageFqName, simpleImports, starImports, localClassProvider, newScope, containingClassProvider
+            packageFqName, simpleImports, starImports, localClassProvider, newScope, containingClassProvider
         )
     }
 
@@ -62,9 +61,8 @@ class JavaResolutionContext private constructor(
      */
     fun withContainingClass(containingClass: JavaClass): JavaResolutionContext {
         return JavaResolutionContext(
-            source, packageFqName, simpleImports, starImports, localClassProvider, typeParametersInScope,
-            containingClassProvider = { containingClass }
-        )
+            packageFqName, simpleImports, starImports, localClassProvider, typeParametersInScope
+        ) { containingClass }
     }
 
     /**
@@ -102,7 +100,7 @@ class JavaResolutionContext private constructor(
     }
 
     companion object {
-        fun create(root: JavaSyntaxNode, source: CharSequence): JavaResolutionContext {
+        fun create(root: JavaSyntaxNode): JavaResolutionContext {
             val packageFqName = extractPackageName(root)
             val (simpleImports, starImports) = extractImports(root)
 
@@ -119,7 +117,6 @@ class JavaResolutionContext private constructor(
             }
 
             return JavaResolutionContext(
-                source = source,
                 packageFqName = packageFqName,
                 simpleImports = simpleImports,
                 starImports = starImports,

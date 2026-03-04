@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.Name
 abstract class JavaMemberOverAst(
     node: JavaSyntaxNode,
     override val containingClass: JavaClassOverAst
-) : JavaElementOverAst(node, containingClass.resolutionContext.source), JavaMember {
+) : JavaElementOverAst(node), JavaMember {
 
     /**
      * Resolution context for this member. Includes the containing class's type parameters.
@@ -145,7 +145,7 @@ class JavaConstructorOverAst(
 class JavaValueParameterOverAst(
     node: JavaSyntaxNode,
     private val resolutionContext: JavaResolutionContext
-) : JavaElementOverAst(node, resolutionContext.source), JavaValueParameter {
+) : JavaElementOverAst(node), JavaValueParameter {
     override val name: Name?
         get() = node.findChildByType("IDENTIFIER")?.text?.let { Name.identifier(it) }
 
