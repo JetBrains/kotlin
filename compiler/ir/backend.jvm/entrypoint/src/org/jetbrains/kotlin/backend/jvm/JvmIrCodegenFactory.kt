@@ -230,7 +230,7 @@ class JvmIrCodegenFactory(
             symbolTable,
             psi2irContext.typeTranslator,
             psi2irContext.irBuiltIns,
-            irLinker,
+            if (enableIdSignatures) irLinker else stubGenerator,
             messageCollector,
             diagnosticReporter
         )
@@ -262,8 +262,9 @@ class JvmIrCodegenFactory(
         val irProviders = if (ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols) {
             listOf(stubGenerator)
         } else {
+            val irProvider = if (enableIdSignatures) irLinker else stubGenerator
             val stubGeneratorForMissingClasses = DeclarationStubGeneratorForNotFoundClasses(stubGenerator)
-            listOf(irLinker, stubGeneratorForMissingClasses)
+            listOf(irProvider, stubGeneratorForMissingClasses)
         }
 
         if (ideCodegenSettings.shouldReferenceUndiscoveredExpectSymbols) {

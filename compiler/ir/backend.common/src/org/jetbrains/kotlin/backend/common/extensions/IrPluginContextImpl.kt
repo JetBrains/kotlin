@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -43,7 +44,7 @@ open class IrPluginContextImpl(
     @OptIn(ObsoleteDescriptorBasedAPI::class, FirIncompatiblePluginAPI::class)
     override val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
-    val linker: IrDeserializer,
+    val linker: IrProvider,
     @property:Deprecated(
         "Consider using diagnosticReporter instead. See https://youtrack.jetbrains.com/issue/KT-78277 for more details",
         level = DeprecationLevel.WARNING
@@ -84,7 +85,9 @@ open class IrPluginContextImpl(
         if (symbol.isBound) return symbol
 
         linker.getDeclaration(symbol)
-        linker.postProcess(inOrAfterLinkageStep = false)
+        if (linker is IrDeserializer) {
+            linker.postProcess(inOrAfterLinkageStep = false)
+        }
 
         return symbol
     }
@@ -99,7 +102,9 @@ open class IrPluginContextImpl(
 
         symbols.forEach { if (!it.isBound) linker.getDeclaration(it) }
 
-        linker.postProcess(inOrAfterLinkageStep = false)
+        if (linker is IrDeserializer) {
+            linker.postProcess(inOrAfterLinkageStep = false)
+        }
 
         return symbols
     }
@@ -235,6 +240,8 @@ open class IrPluginContextImpl(
         kind: IrDeserializer.TopLevelSymbolKind,
         moduleDescriptor: ModuleDescriptor
     ): IrSymbol? {
+        if (linker !is IrDeserializer) return null
+
         val symbol = linker.resolveBySignatureInModule(signature, kind, moduleDescriptor.name)
         linker.postProcess(inOrAfterLinkageStep = false)
         return symbol
