@@ -253,9 +253,8 @@ class StabilityInferencer(
                 mask = externalTypeMatcherCollection
                     .maskForName(declaration.fqNameWhenAvailable) ?: 0
                 stability = Stability.Stable
-            } else if (declaration.isInterface && declaration.isInCurrentModule()) {
-                // trying to avoid extracting stability bitmask for interfaces in current module
-                // to support incremental compilation
+            } else if (declaration.isInterface) {
+                // `Stability.Unknown` is always used for interfaces because stability bitmasks aren't populated for them.
                 return Stability.Unknown(declaration)
             } else {
                 val bitmask = declaration.stabilityParamBitmask() ?: return Stability.Unstable

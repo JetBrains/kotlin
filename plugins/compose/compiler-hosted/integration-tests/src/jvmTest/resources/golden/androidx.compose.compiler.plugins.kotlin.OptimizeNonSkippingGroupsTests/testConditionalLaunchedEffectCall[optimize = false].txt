@@ -29,7 +29,12 @@ fun Test(states: List<String>, condition: Boolean, %composer: Composer?, %change
   sourceInformation(%composer, "C(Test)N(states,condition):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(states)) 0b0100 else 0b0010
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(states)
+    } else {
+      %composer.changedInstance(states)
+    }
+    ) 0b0100 else 0b0010
   }
   if (%changed and 0b00110000 == 0) {
     %dirty = %dirty or if (%composer.changed(condition)) 0b00100000 else 0b00010000

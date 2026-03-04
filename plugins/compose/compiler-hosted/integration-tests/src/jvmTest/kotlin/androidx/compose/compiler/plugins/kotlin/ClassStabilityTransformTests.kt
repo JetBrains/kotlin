@@ -141,9 +141,9 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
     )
 
     @Test
-    fun testLazyValIsUnstable() = assertStability(
+    fun testLazyValIsUncertain() = assertStability(
         "class Foo(value: Int) { val square by lazy { value * value } }",
-        "Unstable"
+        "Uncertain(Lazy)"
     )
 
     @Test
@@ -178,7 +178,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
     @Test
     fun testTypeParameterWithNonExactBackingFieldType() = assertStability(
         "class Foo<T>(val a: List<T>)",
-        "Unstable"
+        "Uncertain(List)"
     )
 
     @Test
