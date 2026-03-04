@@ -62,17 +62,19 @@ private class FirFunctionDeepVisitorWithData2 : FirDefaultVisitor<Unit, Captured
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CapturedVariableCheckerData) {
         val invocationKind = anonymousFunction.invocationKind
-        if (invocationKind != EventOccurrencesRange.EXACTLY_ONCE) return
+        if (invocationKind == EventOccurrencesRange.EXACTLY_ONCE) {
+            println("anonymous function exactly once: ${anonymousFunction.render()}")
+            val graph = (anonymousFunction as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return
 
-        val graph = (anonymousFunction as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return
-
-        val collector = ControlFlowAnalysisDiagnosticComponent.LocalPropertyCollector().apply {
-            anonymousFunction.acceptChildren(this, graph.subGraphs.toSet())
+            val collector = ControlFlowAnalysisDiagnosticComponent.LocalPropertyCollector().apply {
+                anonymousFunction.acceptChildren(this, graph.subGraphs.toSet())
+            }
+            data.propertiesStack.add(collector.properties)
         }
-
-        data.propertiesStack.add(collector.properties)
         super.visitAnonymousFunction(anonymousFunction, data)
-        data.propertiesStack.removeLast()
+        if (invocationKind == EventOccurrencesRange.EXACTLY_ONCE) {
+            data.propertiesStack.removeLast()
+        }
     }
 
     override fun visitQualifiedAccessExpression(
