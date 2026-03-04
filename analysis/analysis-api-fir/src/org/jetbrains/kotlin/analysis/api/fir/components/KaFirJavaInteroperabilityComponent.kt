@@ -284,6 +284,11 @@ internal class KaFirJavaInteroperabilityComponent(
         return coneKotlinType.asKaType()
     }
 
+    override fun KaType.mapToJvmTypeDescriptor(): String {
+        return jvmTypeMapper.mapType(coneType, TypeMappingMode.DEFAULT, sw = null, unresolvedQualifierRemapper = null).descriptor
+    }
+
+    @Deprecated("Use 'mapToJvmTypeDescriptor' instead.", level = DeprecationLevel.HIDDEN)
     override fun KaType.mapToJvmType(mode: TypeMappingMode): Type = withValidityAssertion {
         return jvmTypeMapper.mapType(coneType, mode, sw = null, unresolvedQualifierRemapper = null)
     }
