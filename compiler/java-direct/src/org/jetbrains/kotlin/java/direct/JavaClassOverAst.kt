@@ -18,6 +18,17 @@ class JavaClassOverAst(
     override val outerClass: JavaClass? = null,
 ) : JavaElementOverAst(node, resolutionContext.source), JavaClass {
 
+    /**
+     * Resolution context for members of this class, includes the class's own type parameters
+     * and allows resolution of inner classes by simple name.
+     * Used by fields, methods, constructors, and inner classes to resolve type references.
+     */
+    val memberResolutionContext: JavaResolutionContext by lazy {
+        resolutionContext
+            .withContainingClass(this)
+            .withTypeParameters(typeParameters)
+    }
+
     override val name: Name
         get() = Name.identifier(node.children.find { it.type.toString() == "IDENTIFIER" }?.text ?: "<error>")
 
@@ -65,11 +76,12 @@ class JavaClassOverAst(
     override val supertypes: Collection<JavaClassifierType>
         get() {
             val result = mutableListOf<JavaClassifierType>()
+            // Supertypes can reference class type parameters (e.g., class Foo<T> extends Bar<T>)
             node.findChildByType("EXTENDS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
-                result.add(JavaClassifierTypeOverAst(it, resolutionContext))
+                result.add(JavaClassifierTypeOverAst(it, memberResolutionContext))
             }
             node.findChildByType("IMPLEMENTS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
-                result.add(JavaClassifierTypeOverAst(it, resolutionContext))
+                result.add(JavaClassifierTypeOverAst(it, memberResolutionContext))
             }
             return result
         }
@@ -83,7 +95,11 @@ class JavaClassOverAst(
         val innerClassNode = node.children.find {
             it.type.toString() == "CLASS" && it.findChildByType("IDENTIFIER")?.text == name.asString()
         }
-        return innerClassNode?.let { JavaClassOverAst(it, resolutionContext, outerClass = this) }
+        // Non-static inner classes see outer class type parameters; static nested classes don't
+        val innerIsStatic = innerClassNode?.findChildByType("MODIFIER_LIST")
+            ?.children?.any { it.type.toString() == "STATIC_KEYWORD" } ?: false
+        val contextForInner = if (innerIsStatic) resolutionContext else memberResolutionContext
+        return innerClassNode?.let { JavaClassOverAst(it, contextForInner, outerClass = this) }
     }
 
     override val isInterface: Boolean get() = node.findChildByType("INTERFACE_KEYWORD") != null

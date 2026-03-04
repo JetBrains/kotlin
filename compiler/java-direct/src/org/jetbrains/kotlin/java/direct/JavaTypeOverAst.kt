@@ -39,6 +39,13 @@ class JavaClassifierTypeOverAst(
 
     override val classifier: JavaClassifier? by lazy {
         val parts = rawTypeName.split('.')
+
+        // 1. Check type parameters in scope FIRST (e.g., T, E, K, V)
+        if (parts.size == 1) {
+            resolutionContext.findTypeParameter(parts[0])?.let { return@lazy it }
+        }
+
+        // 2. Check local classes (same compilation unit)
         var current: JavaClassifier? = resolutionContext.findLocalClass(Name.identifier(parts[0]))
 
         if (current is JavaClass) {
@@ -54,7 +61,12 @@ class JavaClassifierTypeOverAst(
         get() {
             val parts = rawTypeName.split('.')
 
-            // 1. Check local scope (same compilation unit)
+            // 1. Check type parameters - return name as-is (FIR handles type params specially)
+            if (parts.size == 1 && resolutionContext.findTypeParameter(parts[0]) != null) {
+                return rawTypeName
+            }
+
+            // 2. Check local scope (same compilation unit)
             val localBase = resolutionContext.findLocalClass(Name.identifier(parts[0]))
             if (localBase != null) {
                 var current: JavaClass? = localBase
@@ -64,7 +76,7 @@ class JavaClassifierTypeOverAst(
                 return current?.fqName?.asString() ?: rawTypeName
             }
 
-            // 2. Check explicit single-type imports
+            // 3. Check explicit single-type imports
             val qualified = resolutionContext.getSimpleImport(parts[0])
             if (qualified != null) {
                 var result = qualified.asString()
@@ -74,7 +86,7 @@ class JavaClassifierTypeOverAst(
                 return result
             }
 
-            // 3. Return as-is - FIR will resolve via callback (same package, star imports, java.lang)
+            // 4. Return as-is - FIR will resolve via callback (same package, star imports, java.lang)
             return rawTypeName
         }
 
@@ -96,6 +108,7 @@ class JavaClassifierTypeOverAst(
         get() = classifier != null
                 || rawTypeName.contains('.')
                 || resolutionContext.getSimpleImport(rawTypeName) != null
+                || resolutionContext.findTypeParameter(rawTypeName) != null
 
     override fun resolve(tryResolve: (String) -> Boolean): String? {
         return resolutionContext.resolveWithCallback(rawTypeName, tryResolve)
@@ -150,6 +163,18 @@ fun createJavaType(node: JavaSyntaxNode, resolutionContext: JavaResolutionContex
     }
 
     val typeNode = node.findChildByType("TYPE") ?: node
+
+    // Wildcard type: TYPE contains QUEST (the '?'), optionally with EXTENDS_KEYWORD or SUPER_KEYWORD
+    // AST structure: TYPE -> [QUEST, (EXTENDS_KEYWORD|SUPER_KEYWORD)?, TYPE?]
+    if (typeNode.findChildByType("QUEST") != null) {
+        val hasSuper = typeNode.findChildByType("SUPER_KEYWORD") != null
+        val boundTypeNode = typeNode.findChildByType("TYPE")
+        val bound = boundTypeNode?.let { createJavaType(it, resolutionContext) as? JavaClassifierType }
+        // isExtends = true for "? extends X" or unbounded "?"
+        // isExtends = false for "? super X"
+        val isExtends = !hasSuper
+        return JavaWildcardTypeOverAst(typeNode, resolutionContext.source, bound, isExtends)
+    }
 
     // Array type or vararg: TYPE contains nested TYPE + LBRACKET/RBRACKET or ELLIPSIS
     val hasArrayBracket = typeNode.findChildByType("LBRACKET") != null

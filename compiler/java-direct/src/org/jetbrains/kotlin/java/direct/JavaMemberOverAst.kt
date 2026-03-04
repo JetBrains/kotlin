@@ -17,8 +17,12 @@ abstract class JavaMemberOverAst(
     override val containingClass: JavaClassOverAst
 ) : JavaElementOverAst(node, containingClass.resolutionContext.source), JavaMember {
 
-    protected val resolutionContext: JavaResolutionContext
-        get() = containingClass.resolutionContext
+    /**
+     * Resolution context for this member. Includes the containing class's type parameters.
+     * Subclasses (methods, constructors) may extend this with their own type parameters.
+     */
+    protected open val resolutionContext: JavaResolutionContext
+        get() = containingClass.memberResolutionContext
 
     override val name: Name
         get() = Name.identifier(node.findChildByType("IDENTIFIER")?.text ?: "<error>")
@@ -64,6 +68,22 @@ class JavaMethodOverAst(
     node: JavaSyntaxNode,
     containingClass: JavaClassOverAst
 ) : JavaMemberOverAst(node, containingClass), JavaMethod {
+
+    override val typeParameters: List<JavaTypeParameter> by lazy {
+        node.findChildByType("TYPE_PARAMETER_LIST")
+            ?.getChildrenByType("TYPE_PARAMETER")
+            ?.map { JavaTypeParameterOverAst(it, containingClass.memberResolutionContext) }
+            ?: emptyList()
+    }
+
+    /**
+     * Resolution context including both class and method type parameters.
+     * Method's own type parameters shadow class type parameters with the same name.
+     */
+    override val resolutionContext: JavaResolutionContext by lazy {
+        containingClass.memberResolutionContext.withTypeParameters(typeParameters)
+    }
+
     override val valueParameters: List<JavaValueParameter>
         get() {
             val parameterList = node.findChildByType("PARAMETER_LIST") ?: return emptyList()
@@ -82,13 +102,6 @@ class JavaMethodOverAst(
     override val hasAnnotationParameterDefaultValue: Boolean get() = false
     override val isNative: Boolean get() = false
 
-    override val typeParameters: List<JavaTypeParameter> by lazy {
-        node.findChildByType("TYPE_PARAMETER_LIST")
-            ?.getChildrenByType("TYPE_PARAMETER")
-            ?.map { JavaTypeParameterOverAst(it, resolutionContext) }
-            ?: emptyList()
-    }
-
     override val isFromSource: Boolean get() = true
 }
 
@@ -96,19 +109,27 @@ class JavaConstructorOverAst(
     node: JavaSyntaxNode,
     containingClass: JavaClassOverAst
 ) : JavaMemberOverAst(node, containingClass), JavaConstructor {
+
+    override val typeParameters: List<JavaTypeParameter> by lazy {
+        node.findChildByType("TYPE_PARAMETER_LIST")
+            ?.getChildrenByType("TYPE_PARAMETER")
+            ?.map { JavaTypeParameterOverAst(it, containingClass.memberResolutionContext) }
+            ?: emptyList()
+    }
+
+    /**
+     * Resolution context including both class and constructor type parameters.
+     */
+    override val resolutionContext: JavaResolutionContext by lazy {
+        containingClass.memberResolutionContext.withTypeParameters(typeParameters)
+    }
+
     override val valueParameters: List<JavaValueParameter>
         get() {
             val parameterList = node.findChildByType("PARAMETER_LIST") ?: return emptyList()
             return parameterList.getChildrenByType("PARAMETER")
                 .map { JavaValueParameterOverAst(it, resolutionContext) }
         }
-
-    override val typeParameters: List<JavaTypeParameter> by lazy {
-        node.findChildByType("TYPE_PARAMETER_LIST")
-            ?.getChildrenByType("TYPE_PARAMETER")
-            ?.map { JavaTypeParameterOverAst(it, resolutionContext) }
-            ?: emptyList()
-    }
 
     override val isFromSource: Boolean get() = true
 }

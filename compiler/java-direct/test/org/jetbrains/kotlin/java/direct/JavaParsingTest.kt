@@ -618,4 +618,49 @@ class JavaParsingTest {
             tempDir.toFile().deleteRecursively()
         }
     }
+
+    @Test
+    fun testDebugWildcardAST() {
+        val source = """
+            import java.util.List;
+            
+            interface A<T> {
+                List<? extends T> foo();
+                List<?> bar();
+                List<? super T> baz();
+            }
+        """.trimIndent()
+        val (root, _) = parseSource(source)
+
+        fun collectTypes(node: JavaSyntaxNode): List<String> {
+            val result = mutableListOf(node.type.toString())
+            for (child in node.children) {
+                result.addAll(collectTypes(child))
+            }
+            return result
+        }
+
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val methods = classNode.getChildrenByType("METHOD")
+        
+        // Check foo: List<? extends T>
+        val fooMethod = methods.first { it.findChildByType("IDENTIFIER")?.text == "foo" }
+        val fooTypeNode = fooMethod.findChildByType("TYPE")!!
+        val fooTypes = collectTypes(fooTypeNode)
+        // Should contain QUEST for wildcard and EXTENDS_KEYWORD
+        assert(fooTypes.any { it == "QUEST" }) { "foo should have QUEST in: $fooTypes" }
+        
+        // Check bar: List<?>
+        val barMethod = methods.first { it.findChildByType("IDENTIFIER")?.text == "bar" }
+        val barTypeNode = barMethod.findChildByType("TYPE")!!
+        val barTypes = collectTypes(barTypeNode)
+        assert(barTypes.any { it == "QUEST" }) { "bar should have QUEST in: $barTypes" }
+        
+        // Check baz: List<? super T>
+        val bazMethod = methods.first { it.findChildByType("IDENTIFIER")?.text == "baz" }
+        val bazTypeNode = bazMethod.findChildByType("TYPE")!!
+        val bazTypes = collectTypes(bazTypeNode)
+        assert(bazTypes.any { it == "QUEST" }) { "baz should have QUEST in: $bazTypes" }
+        assert(bazTypes.any { it == "SUPER_KEYWORD" }) { "baz should have SUPER_KEYWORD in: $bazTypes" }
+    }
 }

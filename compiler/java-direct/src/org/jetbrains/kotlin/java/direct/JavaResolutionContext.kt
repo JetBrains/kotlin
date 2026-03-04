@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.name.Name
  * needed to resolve type references within a compilation unit.
  *
  * This is analogous to FIR scopes but simplified for Java's scoping rules.
+ * The typeParametersInScope tracks type parameters visible at the current location
+ * (from containing class and method declarations).
  */
 class JavaResolutionContext private constructor(
     val source: CharSequence,
@@ -22,10 +25,47 @@ class JavaResolutionContext private constructor(
     private val simpleImports: Map<String, FqName>,
     private val starImports: List<FqName>,
     private val localClassProvider: (Name) -> JavaClass?,
+    private val typeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
+    private val containingClassProvider: (() -> JavaClass?)? = null,
 ) {
-    fun findLocalClass(name: Name): JavaClass? = localClassProvider(name)
+    /**
+     * Finds a class by simple name. Checks:
+     * 1. Inner classes of the containing class (if any)
+     * 2. Top-level classes in the same compilation unit
+     */
+    fun findLocalClass(name: Name): JavaClass? {
+        // First check inner classes of the containing class
+        containingClassProvider?.invoke()?.findInnerClass(name)?.let { return it }
+        // Then check top-level classes
+        return localClassProvider(name)
+    }
+
+    fun findTypeParameter(name: String): JavaTypeParameter? = typeParametersInScope[name]
 
     fun getSimpleImport(simpleName: String): FqName? = simpleImports[simpleName]
+
+    /**
+     * Creates a new context with additional type parameters in scope.
+     * Used when entering a class or method that declares type parameters.
+     */
+    fun withTypeParameters(typeParams: List<JavaTypeParameter>): JavaResolutionContext {
+        if (typeParams.isEmpty()) return this
+        val newScope = typeParametersInScope + typeParams.associateBy { it.name.asString() }
+        return JavaResolutionContext(
+            source, packageFqName, simpleImports, starImports, localClassProvider, newScope, containingClassProvider
+        )
+    }
+
+    /**
+     * Creates a new context for members of the given class.
+     * Inner class references will be resolved against this class.
+     */
+    fun withContainingClass(containingClass: JavaClass): JavaResolutionContext {
+        return JavaResolutionContext(
+            source, packageFqName, simpleImports, starImports, localClassProvider, typeParametersInScope,
+            containingClassProvider = { containingClass }
+        )
+    }
 
     /**
      * Resolve a simple type name using the callback for external resolution.

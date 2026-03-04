@@ -9,7 +9,7 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 **Usage**: After completing each iteration, the agent MUST append a results section below.
 
-**Last Updated**: 2026-03-03
+**Last Updated**: 2026-03-04
 
 ---
 
@@ -94,6 +94,92 @@ After Iteration 6, 48 tests still fail. Likely causes:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 7c: Type Parameter Scope Resolution - 2026-03-04
+
+### Status
+- ✅ Completed
+
+### Summary
+Implemented type parameter scope resolution to fix `MISSING_DEPENDENCY_CLASS: Cannot access class 'T'` errors. Added type parameter tracking to `JavaResolutionContext`, updated classifier resolution to check type parameters first, and added wildcard type support. Also refactored from separate `localScope`/`imports` threading to unified `resolutionContext` pattern. Improved from 96/138 (69.6%) to 101/138 (73.2%) - gained 5 tests.
+
+### Key Findings
+
+1. **Type Parameters Treated as Classes**: When java-direct parsed `class Foo<T> { T getValue(); }`, the `T` in return type was being resolved via `classifierQualifiedName` as a class name, causing FIR to emit `MISSING_DEPENDENCY_CLASS: Cannot access class 'T'`.
+
+2. **PSI/Javac Handle This Correctly**: Both PSI-based (`JavaClassifierImpl.java:32-38`) and javac-based (`ClassifierResolver.kt:199-205`) implementations check if a name refers to a type parameter before treating it as a class.
+
+3. **Resolution Context Pattern**: Replaced messy threading of `localScope` and `imports` parameters with a `JavaResolutionContext` class that encapsulates all resolution data. This follows FIR's scope pattern.
+
+4. **Wildcard AST Structure**: Wildcards use `QUEST` node with optional `EXTENDS_KEYWORD` or `SUPER_KEYWORD`:
+   ```
+   TYPE: ? extends T
+     QUEST: ?
+     EXTENDS_KEYWORD: extends
+     TYPE: T
+       JAVA_CODE_REFERENCE: T
+   ```
+
+5. **Inner Class Resolution**: Members need to resolve inner classes by simple name (e.g., `X` instead of `Outer.X`). Added `containingClassProvider` to resolution context.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `JavaResolutionContext.kt` | Added `typeParametersInScope` map, `findTypeParameter()`, `withTypeParameters()`, `withContainingClass()` methods. Refactored to be the central resolution data holder. |
+| `JavaTypeOverAst.kt` | Updated `classifier` to check type parameters first. Updated `classifierQualifiedName` and `isResolved` for type parameter handling. Added wildcard detection in `createJavaType()`. |
+| `JavaClassOverAst.kt` | Added `memberResolutionContext` that includes class type parameters and containing class reference. Updated supertypes and inner class creation to use member context. |
+| `JavaMemberOverAst.kt` | Changed `resolutionContext` to use `containingClass.memberResolutionContext`. `JavaMethodOverAst` and `JavaConstructorOverAst` now add their own type parameters via `withTypeParameters()`. |
+| `JavaImports.kt` | DELETED - functionality merged into `JavaResolutionContext` |
+| `LocalJavaScope.kt` | DELETED - functionality merged into `JavaResolutionContext` |
+
+### Test Results
+- Box tests: 101/138 passing (73.2%) - UP from 96/138 (69.6%)
+- Gained: 5 tests (+3.6%)
+
+### Tests Fixed
+- Tests using type parameters in method signatures (`<T> T getValue()`)
+- Tests using type parameters in field types (`T field`)
+- Tests using class type parameters in supertypes (`class Foo<T> extends Bar<T>`)
+- Tests using type parameter bounds (`<T extends Number>`)
+
+### Remaining Failures (37 tests)
+| Category | Count | Example Tests |
+|----------|-------|---------------|
+| Kotlin classes from Java | ~12 | testLambdaInstanceOf, testKotlinToJavaHierarchy |
+| Complex inheritance | ~8 | testInheritanceWithWildcard, testKjkWithRawTypes |
+| Nullability assertions | ~8 | testInFunctionWithExpressionBody, testLocalEntities |
+| Other generic issues | ~9 | testGenericSamSmartcast, testRawTypeArgumentInJavaSuperType |
+
+### Architecture Changes
+
+**Before (messy parameter threading):**
+```kotlin
+class JavaClassOverAst(node, source, outerClass, localScope, imports)
+class JavaMethodOverAst(node, containingClass)  // had to cast to get localScope
+fun createJavaType(node, source, localScope, imports)
+```
+
+**After (unified resolution context):**
+```kotlin
+class JavaClassOverAst(node, resolutionContext, outerClass)
+class JavaMethodOverAst(node, containingClass)  // uses containingClass.memberResolutionContext
+fun createJavaType(node, resolutionContext)
+```
+
+### Key Learnings
+
+1. **Type Parameter Scope is Hierarchical**: Class type params → Method type params → Type bounds. Each level can shadow outer scopes.
+
+2. **Inner vs Static Nested Classes**: Non-static inner classes inherit outer class type parameters, static nested classes don't. Must check STATIC_KEYWORD modifier.
+
+3. **Resolution Context Pattern**: Consolidating resolution data into a single context object greatly simplifies the API and reduces errors from mismatched parameters.
+
+4. **Wildcard isExtends Semantics**: `isExtends=true` for unbounded `?` and `? extends X`, `isExtends=false` only for `? super X`.
+
+5. **Lazy Initialization Needed**: `memberResolutionContext` must be lazy to avoid circular initialization when type parameters reference each other in bounds.
+
+---
 
 ## Iteration 7b: ERROR_ELEMENT Import Handling - 2026-03-04
 
