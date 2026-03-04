@@ -526,6 +526,35 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMod
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease : java/lang/Enum {
+	public static final field JDK_10 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_11 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_12 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_13 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_14 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_15 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_16 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_17 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_18 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_19 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_1_6 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_1_7 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_1_8 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_20 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_21 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_22 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_23 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_24 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_25 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_6 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_7 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_8 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_9 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode : java/lang/Enum {
 	public static final field IGNORE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode;
 	public static final field STRICT Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode;

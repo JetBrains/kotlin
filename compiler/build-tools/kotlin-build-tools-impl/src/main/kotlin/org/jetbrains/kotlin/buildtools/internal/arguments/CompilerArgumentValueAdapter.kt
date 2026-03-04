@@ -117,6 +117,11 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
                 mode.stringValue as T
             }
 
+            JvmCompilerArguments.X_JDK_RELEASE -> {
+                val mode = value as JdkRelease
+                mode.stringValue as T
+            }
+
             else -> value as T
         }
     }
@@ -203,6 +208,13 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
 
                 WhenExpressionsMode.entries.firstOrNull { it.stringValue == stringValue } as T
                     ?: throw CompilerArgumentsParseException("Unknown -Xwhen-expressions value: $stringValue")
+            }
+
+            JvmCompilerArguments.X_JDK_RELEASE -> {
+                val stringValue = value as String
+
+                JdkRelease.entries.firstOrNull { it.stringValue == stringValue } as T
+                    ?: throw CompilerArgumentsParseException("Unknown -Xjdk-release value: $stringValue")
             }
 
             else -> value as T

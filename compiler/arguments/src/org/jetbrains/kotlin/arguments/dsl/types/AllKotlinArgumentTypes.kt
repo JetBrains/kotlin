@@ -56,4 +56,7 @@ class AllKotlinArgumentTypes {
     @Serializable(with = AllDetailsWhenExpressionsModeSerializer::class)
     val whenExpressionsMode = WhenExpressionsMode.entries.toSet()
 
+    @Serializable(with = AllDetailsJdkReleaseSerializer::class)
+    val jdkRelease = JdkRelease.entries.toSet()
+
 }

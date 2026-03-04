@@ -1068,6 +1068,218 @@
                     }
                 }
             ]
+        },
+        "jdkRelease": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.JdkReleaseType",
+            "values": [
+                {
+                    "name": "1.6",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.0.0",
+                        "stabilizedVersion": "2.0.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "1.7",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.0.0",
+                        "stabilizedVersion": "2.0.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "1.8",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "6",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "7",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "8",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "9",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "10",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "11",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "12",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "13",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "14",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "15",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "16",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "17",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "18",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "19",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "20",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "21",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "22",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "23",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "24",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "25",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.7.0",
+                        "stabilizedVersion": "1.7.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
         }
     },
     "topLevel": {
@@ -6580,7 +6792,7 @@
                                     "removedVersion": null
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.JdkReleaseType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []

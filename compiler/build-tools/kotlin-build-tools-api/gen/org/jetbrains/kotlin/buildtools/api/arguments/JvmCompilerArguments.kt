@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.CompatqualAnnotationsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JdkRelease
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JspecifyAnnotationsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
@@ -346,7 +347,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_JDK_RELEASE: JvmCompilerArgument<String?> =
+    public val X_JDK_RELEASE: JvmCompilerArgument<JdkRelease?> =
         JvmCompilerArgument("X_JDK_RELEASE", KotlinReleaseVersion(1, 7, 0))
 
     /**

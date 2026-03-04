@@ -267,6 +267,14 @@ class WhenExpressionsModeType : EnumType<WhenExpressionsMode>(ReleaseDependent(t
     override val defaultValue: ReleaseDependent<WhenExpressionsMode?> = ReleaseDependent(null)
 }
 
+/**
+ * A value which accepts [JdkRelease] type.
+ */
+@Serializable
+class JdkReleaseType : EnumType<JdkRelease>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<JdkRelease?> = ReleaseDependent(null)
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

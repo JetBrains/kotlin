@@ -622,6 +622,7 @@ default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xjdk-release"
         description = ReleaseDependent(
@@ -637,6 +638,7 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
         )
         valueType = StringType.defaultNull
         valueDescription = "<version>".asReleaseDependent()
+        argumentType = JdkReleaseType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,

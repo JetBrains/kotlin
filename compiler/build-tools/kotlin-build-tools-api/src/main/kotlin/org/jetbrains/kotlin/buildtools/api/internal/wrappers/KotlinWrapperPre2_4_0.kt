@@ -235,6 +235,13 @@ internal class KotlinWrapperPre2_4_0(
                     WhenExpressionsMode.values().first { it.stringValue == stringValue } as V
                 }
 
+                JvmCompilerArguments.X_JDK_RELEASE -> {
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
+                    JdkRelease.values().first { it.stringValue == stringValue } as V
+                }
+
                 else -> delegate[key]
             }
         }
@@ -325,6 +332,14 @@ internal class KotlinWrapperPre2_4_0(
 
                 JvmCompilerArguments.X_WHEN_EXPRESSIONS -> {
                     val mode = value as WhenExpressionsMode?
+                    val stringValue = mode?.stringValue
+                    val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                    delegate[stringKey] = stringValue
+                }
+
+                JvmCompilerArguments.X_JDK_RELEASE -> {
+                    val mode = value as JdkRelease?
                     val stringValue = mode?.stringValue
                     val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
 
