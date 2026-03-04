@@ -979,6 +979,7 @@ tasks {
         dependsOn(":compiler:arguments:check")
         dependsOn(":compiler:multiplatform-parsing:jvmTest")
         dependsOn(":compiler:fir:modularized-tests:test")
+        dependsOn(":compiler:util:test")
     }
 
     register("miscTest") {
