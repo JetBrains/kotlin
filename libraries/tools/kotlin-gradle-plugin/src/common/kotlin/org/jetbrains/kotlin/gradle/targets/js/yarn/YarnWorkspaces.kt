@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
-import org.gradle.internal.service.ServiceRegistry
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
@@ -92,7 +91,6 @@ class YarnWorkspaces internal constructor(
     }
 
     override fun resolveRootProject(
-        services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsEnvironment,
         packageManagerEnvironment: YarnEnvironment,

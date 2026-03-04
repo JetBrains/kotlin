@@ -90,7 +90,6 @@ class Npm internal constructor(
     }
 
     override fun resolveRootProject(
-        services: ServiceRegistry,
         logger: Logger,
         nodeJs: NodeJsEnvironment,
         packageManagerEnvironment: NpmEnvironment,

@@ -3383,6 +3383,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/Npm : org/jetbrain
 	public fun prepareRootProject (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmEnvironment;Ljava/lang/String;Ljava/lang/String;Ljava/util/Collection;)V
 	public fun prepareTooling (Ljava/io/File;)V
 	public fun preparedFiles (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;)Ljava/util/Collection;
+	public synthetic fun resolveRootProject (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Ljava/util/List;)V
+	public fun resolveRootProject (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmEnvironment;Ljava/util/List;)V
 	public synthetic fun resolveRootProject (Lorg/gradle/internal/service/ServiceRegistry;Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Ljava/util/List;)V
 	public fun resolveRootProject (Lorg/gradle/internal/service/ServiceRegistry;Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmEnvironment;Ljava/util/List;)V
 }
@@ -3393,11 +3395,16 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/npm/NpmAp
 	public abstract fun prepareRootProject (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Ljava/lang/String;Ljava/lang/String;Ljava/util/Collection;)V
 	public abstract fun prepareTooling (Ljava/io/File;)V
 	public abstract fun preparedFiles (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;)Ljava/util/Collection;
+	public abstract fun resolveRootProject (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Ljava/util/List;)V
 	public abstract fun resolveRootProject (Lorg/gradle/internal/service/ServiceRegistry;Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Ljava/util/List;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmApiExecution$Companion {
 	public final fun resolveOperationDescription (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmApiExecution$DefaultImpls {
+	public static fun resolveRootProject (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmApiExecution;Lorg/gradle/internal/service/ServiceRegistry;Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Ljava/util/List;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency : org/gradle/api/artifacts/FileCollectionDependency, org/gradle/api/internal/artifacts/dependencies/SelfResolvingDependencyInternal {
@@ -4674,6 +4681,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/yarn/Yarn : org/jetbra
 	public fun prepareRootProject (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Ljava/lang/String;Ljava/lang/String;Ljava/util/Collection;)V
 	public fun prepareTooling (Ljava/io/File;)V
 	public fun preparedFiles (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;)Ljava/util/Collection;
+	public synthetic fun resolveRootProject (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Ljava/util/List;)V
+	public fun resolveRootProject (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Ljava/util/List;)V
 	public synthetic fun resolveRootProject (Lorg/gradle/internal/service/ServiceRegistry;Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Ljava/util/List;)V
 	public fun resolveRootProject (Lorg/gradle/internal/service/ServiceRegistry;Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Ljava/util/List;)V
 }
@@ -4683,6 +4692,8 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnBasics : o
 	public synthetic fun packageManagerExec (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Lorg/gradle/api/provider/Provider;Ljava/lang/String;Ljava/util/List;)V
 	public fun packageManagerExec (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Lorg/gradle/api/provider/Provider;Ljava/lang/String;Ljava/util/List;)V
 	public fun prepareTooling (Ljava/io/File;)V
+	public synthetic fun resolveRootProject (Lorg/gradle/internal/service/ServiceRegistry;Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Ljava/util/List;)V
+	public fun resolveRootProject (Lorg/gradle/internal/service/ServiceRegistry;Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Ljava/util/List;)V
 	public final fun yarnExec (Lorg/gradle/internal/service/ServiceRegistry;Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Ljava/io/File;Ljava/lang/String;Ljava/util/List;)V
 }
 
@@ -4833,8 +4844,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnWorkspaces : 
 	public synthetic fun prepareRootProject (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Ljava/lang/String;Ljava/lang/String;Ljava/util/Collection;)V
 	public fun prepareRootProject (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Ljava/lang/String;Ljava/lang/String;Ljava/util/Collection;)V
 	public fun preparedFiles (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;)Ljava/util/Collection;
-	public synthetic fun resolveRootProject (Lorg/gradle/internal/service/ServiceRegistry;Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Ljava/util/List;)V
-	public fun resolveRootProject (Lorg/gradle/internal/service/ServiceRegistry;Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Ljava/util/List;)V
+	public synthetic fun resolveRootProject (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;Ljava/util/List;)V
+	public fun resolveRootProject (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NodeJsEnvironment;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;Ljava/util/List;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmBinariesDsl {
