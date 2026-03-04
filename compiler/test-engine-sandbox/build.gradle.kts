@@ -52,7 +52,7 @@ sourceSets {
 projectTests {
     nativeTestTask("test") {
         useJUnitPlatform {
-            includeEngines("kotlin-compiler-second-stage-batching", "junit-jupiter")
+            includeEngines("kotlin-compiler-grouping-engine", "junit-jupiter")
         }
         workingDir = rootDir
     }

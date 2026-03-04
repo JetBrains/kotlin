@@ -61,7 +61,7 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest()
             ::CustomKlibCompilerTestSuppressor,
         )
         useDirectives(TestDirectives)
-        facadeStep(::NativeCompilerSecondStageFacade.bind(currentCustomNativeCompilerSettings))
+        facadeStep(NativeCompilerSecondStageFacade::NonGrouping.bind(currentCustomNativeCompilerSettings))
         nativeArtifactsHandlersStep {
             useHandlers(::NativeBoxRunner)
         }

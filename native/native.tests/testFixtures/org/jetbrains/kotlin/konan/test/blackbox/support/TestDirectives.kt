@@ -292,7 +292,8 @@ open class TestCompilerArgs(
     }
 }
 
-fun parseTestKind(registeredDirectives: RegisteredDirectives): TestKind? {
+fun parseTestKind(registeredDirectives: RegisteredDirectives?): TestKind? {
+    if (registeredDirectives == null) return null
     if (KIND !in registeredDirectives)
         return null // The default is determined by TEST_KIND global property
 

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.opentest4j.MultipleFailuresError
 import org.opentest4j.TestAbortedException
 
-internal abstract class AbstractRunner<R> : Runner<R> {
+abstract class AbstractRunner<R> : Runner<R> {
     protected abstract fun buildRun(): AbstractRun
     protected abstract fun buildResultHandler(runResult: RunResult): AbstractResultHandler<R>
     protected abstract fun getLoggedParameters(): LoggedData.TestRunParameters
@@ -35,7 +35,7 @@ internal abstract class AbstractRunner<R> : Runner<R> {
     }
 }
 
-internal abstract class AbstractResultHandler<R>(protected val runResult: RunResult) {
+abstract class AbstractResultHandler<R>(protected val runResult: RunResult) {
     abstract fun getLoggedRun(): LoggedData
     abstract fun handle(): R
 
