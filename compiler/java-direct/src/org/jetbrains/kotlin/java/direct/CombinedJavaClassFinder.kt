@@ -22,30 +22,28 @@ import org.jetbrains.kotlin.name.FqName
  */
 class CombinedJavaClassFinder(
     private val sourceFinder: JavaClassFinder,
-    private val binaryFinder: JavaClassFinder
+    private val binaryFinder: JavaClassFinder,
 ) : JavaClassFinder {
-    
-    override fun findClass(request: JavaClassFinder.Request): JavaClass? {
-        sourceFinder.findClass(request)?.let { return it }
-        return binaryFinder.findClass(request)
-    }
-    
+
+    override fun findClass(request: JavaClassFinder.Request): JavaClass? =
+        sourceFinder.findClass(request) ?: binaryFinder.findClass(request)
+
     override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> {
         val fromSources = sourceFinder.findClasses(request)
         if (fromSources.isNotEmpty()) return fromSources
-        
+
         return binaryFinder.findClasses(request)
     }
-    
+
     override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
         return sourceFinder.findPackage(fqName, mayHaveAnnotations)
             ?: binaryFinder.findPackage(fqName, mayHaveAnnotations)
     }
-    
+
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {
         val fromSources = sourceFinder.knownClassNamesInPackage(packageFqName)
         val fromBinaries = binaryFinder.knownClassNamesInPackage(packageFqName)
-        
+
         return when {
             fromSources == null && fromBinaries == null -> null
             fromSources == null -> fromBinaries
@@ -53,7 +51,7 @@ class CombinedJavaClassFinder(
             else -> fromSources + fromBinaries
         }
     }
-    
+
     override fun canComputeKnownClassNamesInPackage(): Boolean {
         return sourceFinder.canComputeKnownClassNamesInPackage() || binaryFinder.canComputeKnownClassNamesInPackage()
     }

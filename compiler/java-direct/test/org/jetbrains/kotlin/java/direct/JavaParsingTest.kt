@@ -282,9 +282,10 @@ class JavaParsingTest {
         }
 
         val fieldC = javaClass.fields.first { it.name.asString() == "c" }
-        val typeC = fieldC.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
-        assert(typeC.classifierQualifiedName == "Object") {
-            "Expected raw name Object for Object[], got ${typeC.classifierQualifiedName}"
+        val typeC = fieldC.type as org.jetbrains.kotlin.load.java.structure.JavaArrayType
+        val componentType = typeC.componentType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(componentType.classifierQualifiedName == "Object") {
+            "Expected component type Object for Object[], got ${componentType.classifierQualifiedName}"
         }
     }
 
@@ -662,5 +663,137 @@ class JavaParsingTest {
         val bazTypes = collectTypes(bazTypeNode)
         assert(bazTypes.any { it == "QUEST" }) { "baz should have QUEST in: $bazTypes" }
         assert(bazTypes.any { it == "SUPER_KEYWORD" }) { "baz should have SUPER_KEYWORD in: $bazTypes" }
+    }
+
+    @Test
+    fun testInterfaceFieldsImplicitlyStaticFinal() {
+        val source = """
+            public interface MyInterface {
+                String CONSTANT = "value";
+                int NUMBER = 42;
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        assert(javaClass.isInterface) { "Expected interface" }
+        assert(javaClass.fields.size == 2) { "Expected 2 fields, got ${javaClass.fields.size}" }
+
+        val constantField = javaClass.fields.first { it.name.asString() == "CONSTANT" }
+        assert(constantField.isStatic) { "Interface field CONSTANT should be implicitly static" }
+        assert(constantField.isFinal) { "Interface field CONSTANT should be implicitly final" }
+        assert(constantField.visibility.toString() == "public") { "Interface field should be public" }
+
+        val numberField = javaClass.fields.first { it.name.asString() == "NUMBER" }
+        assert(numberField.isStatic) { "Interface field NUMBER should be implicitly static" }
+        assert(numberField.isFinal) { "Interface field NUMBER should be implicitly final" }
+    }
+
+    @Test
+    fun testClassFieldsNotImplicitlyStaticFinal() {
+        val source = """
+            public class MyClass {
+                String field1;
+                static String field2;
+                final String field3 = "x";
+                static final String field4 = "y";
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        assert(!javaClass.isInterface) { "Expected class, not interface" }
+        assert(javaClass.fields.size == 4) { "Expected 4 fields, got ${javaClass.fields.size}" }
+
+        val field1 = javaClass.fields.first { it.name.asString() == "field1" }
+        assert(!field1.isStatic) { "field1 should NOT be static" }
+        assert(!field1.isFinal) { "field1 should NOT be final" }
+
+        val field2 = javaClass.fields.first { it.name.asString() == "field2" }
+        assert(field2.isStatic) { "field2 should be static" }
+        assert(!field2.isFinal) { "field2 should NOT be final" }
+
+        val field3 = javaClass.fields.first { it.name.asString() == "field3" }
+        assert(!field3.isStatic) { "field3 should NOT be static" }
+        assert(field3.isFinal) { "field3 should be final" }
+
+        val field4 = javaClass.fields.first { it.name.asString() == "field4" }
+        assert(field4.isStatic) { "field4 should be static" }
+        assert(field4.isFinal) { "field4 should be final" }
+    }
+
+    @Test
+    fun testInterfaceMethodsImplicitlyAbstract() {
+        val source = """
+            public interface MyInterface {
+                void abstractMethod();
+                String anotherAbstractMethod(int x);
+                default void defaultMethod() { }
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        assert(javaClass.isInterface) { "Expected interface" }
+        assert(javaClass.methods.size == 3) { "Expected 3 methods, got ${javaClass.methods.size}" }
+
+        val abstractMethod = javaClass.methods.first { it.name.asString() == "abstractMethod" }
+        assert(abstractMethod.isAbstract) { "Interface method without body should be implicitly abstract" }
+        assert(abstractMethod.visibility.toString() == "public") { "Interface method should be public" }
+
+        val anotherAbstract = javaClass.methods.first { it.name.asString() == "anotherAbstractMethod" }
+        assert(anotherAbstract.isAbstract) { "Interface method without body should be implicitly abstract" }
+        assert(anotherAbstract.valueParameters.size == 1) { "Should have 1 parameter" }
+
+        val defaultMethod = javaClass.methods.first { it.name.asString() == "defaultMethod" }
+        assert(!defaultMethod.isAbstract) { "Default method with body should NOT be abstract" }
+    }
+
+    @Test
+    fun testClassMethodsNotImplicitlyAbstract() {
+        val source = """
+            public class MyClass {
+                void regularMethod() { }
+                abstract void abstractMethod();
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        assert(!javaClass.isInterface) { "Expected class, not interface" }
+        assert(javaClass.methods.size == 2) { "Expected 2 methods, got ${javaClass.methods.size}" }
+
+        val regularMethod = javaClass.methods.first { it.name.asString() == "regularMethod" }
+        assert(!regularMethod.isAbstract) { "Regular method with body should NOT be abstract" }
+
+        val abstractMethod = javaClass.methods.first { it.name.asString() == "abstractMethod" }
+        assert(abstractMethod.isAbstract) { "Method with explicit abstract keyword should be abstract" }
+    }
+
+    @Test
+    fun testFunctionalInterfaceForSamConversion() {
+        val source = """
+            @FunctionalInterface
+            public interface MyFunction<T, R> {
+                R apply(T t);
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        assert(javaClass.isInterface) { "Expected interface" }
+        assert(javaClass.methods.size == 1) { "Expected 1 method (SAM), got ${javaClass.methods.size}" }
+
+        val applyMethod = javaClass.methods.first()
+        assert(applyMethod.name.asString() == "apply") { "Expected method 'apply'" }
+        assert(applyMethod.isAbstract) { "SAM method should be abstract for SAM conversion to work" }
+        assert(applyMethod.valueParameters.size == 1) { "apply should have 1 parameter" }
+
+        // Verify type parameters
+        assert(javaClass.typeParameters.size == 2) { "Expected 2 type parameters, got ${javaClass.typeParameters.size}" }
+        val typeParamNames = javaClass.typeParameters.map { it.name.asString() }
+        assert("T" in typeParamNames) { "Expected type parameter T" }
+        assert("R" in typeParamNames) { "Expected type parameter R" }
+
+        // Verify the annotation is parsed
+        assert(javaClass.annotations.size == 1) { "Expected 1 annotation, got ${javaClass.annotations.size}" }
+        assert(javaClass.annotations.first().classId?.shortClassName?.asString() == "FunctionalInterface") {
+            "Expected @FunctionalInterface annotation"
+        }
     }
 }

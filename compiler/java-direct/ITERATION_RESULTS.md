@@ -9,7 +9,7 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 **Usage**: After completing each iteration, the agent MUST append a results section below.
 
-**Last Updated**: 2026-03-04
+**Last Updated**: 2026-03-04 (Iteration 9 complete)
 
 ---
 
@@ -94,6 +94,85 @@ After Iteration 6, 48 tests still fail. Likely causes:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 9: Interface Fields and SAM Conversion - 2026-03-04
+
+### Status
+- ✅ Completed
+
+### Summary
+Fixed interface field and method implicit modifiers for proper static field access and SAM conversion. Interface fields are implicitly `public static final` and interface methods without a body are implicitly abstract. These fixes enable FIR to correctly identify SAM (Single Abstract Method) interfaces. Improved from 111/138 (80.4%) to 115/138 (83.3%) - gained 4 tests.
+
+### Key Findings
+
+1. **Interface Fields Implicitly Static/Final**: In Java, interface fields like `String CONST = "value";` are implicitly `public static final`. Without this, FIR couldn't find interface fields via `PublicParentInterface.publicStaticField` causing `UNRESOLVED_REFERENCE`.
+
+2. **Interface Methods Implicitly Abstract**: Interface methods without a body are implicitly abstract. FIR's SAM resolver checks `isFun` (set to `true` for all Java interfaces) and then looks for a single abstract method via `getSingleAbstractMethodOrNull()`. Without `isAbstract=true`, methods weren't counted as abstract and SAM conversion failed with `UNRESOLVED_REFERENCE: Unresolved reference 'it'`.
+
+3. **SAM Resolution Flow**: 
+   - `FirJavaFacade` sets `isFun = classKind == ClassKind.INTERFACE` for all Java interfaces
+   - `FirSamResolver.resolveFunctionTypeIfSamInterface()` checks `firRegularClass.status.isFun` 
+   - Then calls `getSingleAbstractMethodOrNull()` which needs exactly one abstract method
+   - If found, SAM conversion works and lambda `it` parameter gets its type inferred
+
+4. **hasBody Check**: Interface methods can have default implementations (Java 8+) with a `CODE_BLOCK`. Only methods without `CODE_BLOCK` should be implicitly abstract.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `JavaMemberOverAst.kt` | `JavaFieldOverAst`: Added `isStatic` and `isFinal` overrides that return `true` for interface fields. `JavaMethodOverAst`: Added `isAbstract` override that returns `true` for interface methods without body, added `hasBody` property checking for `CODE_BLOCK`. |
+
+### Test Results
+- Box tests: 115/138 passing (83.3%) - UP from 111/138 (80.4%)
+- Gained: 4 tests (+2.9%)
+
+### Tests Fixed
+| Test | Issue Fixed |
+|------|-------------|
+| `testJavaInterfaceFieldDirectAccess` | Interface field now correctly marked as static |
+| `testKt65482` | Interface field access via qualified name |
+| 2 SAM-related tests | Interface methods now correctly marked as abstract |
+
+### Remaining Failures (23 tests)
+
+| Category | Count | Example Tests |
+|----------|-------|---------------|
+| OTHER | 9 | testKt53041, testJavaNestedSamInterface, testRawTypeArgumentInJavaSuperType |
+| CANNOT_INFER_PARAMETER_TYPE | 4 | testSamTypeParameter, testLocalEntities, testFunctionAssertion |
+| NONE_APPLICABLE | 3 | testKt48590, testKotlinToJavaHierarchy, testIntersectionKotlinJavaAtomics |
+| MISSING_DEPENDENCY_CLASS | 3 | testJavaToKotlinHierarchy, atomics tests |
+| ARGUMENT_TYPE_MISMATCH | 2 | testLambdaInstanceOf, testFunctionWithBigArity |
+| ASSIGNMENT_TYPE_MISMATCH | 1 | testGenericSamProjectedOut |
+| NoSuchMethodError | 1 | testInheritanceWithWildcard |
+
+### Analysis of Remaining Issues
+
+1. **Generic projection issues** (testGenericSamProjectedOut): SAM conversion works but type parameter substitution with projections (`out String`) doesn't match expected type.
+
+2. **Nested SAM interfaces** (testJavaNestedSamInterface): `A<!>.I<String!>` - nested interface type has platform type issue with outer class type parameter.
+
+3. **CANNOT_INFER_PARAMETER_TYPE**: Complex generic inference scenarios with inheritance chains.
+
+4. **MISSING_DEPENDENCY_CLASS for atomics**: Kotlin/Java atomic types mapping not handled.
+
+5. **Raw types** (testKjkWithRawTypes, testRawTypeArgumentInJavaSuperType): Raw generic types not properly handled.
+
+### Key Learnings
+
+1. **Java Language Implicit Modifiers**: Interface members have implicit modifiers that must be explicitly handled:
+   - Fields: implicitly `public static final`
+   - Methods without body: implicitly `public abstract`
+   - Methods with body (default methods): implicitly `public` but NOT abstract
+
+2. **SAM Detection Chain**: The SAM detection requires:
+   - Interface (check)
+   - `isFun = true` (automatically set for Java interfaces)
+   - Exactly one abstract method (requires correct `isAbstract` reporting)
+
+3. **Debug via Exception**: Exception-based debugging (`throw IllegalStateException("DEBUG: ...")`) remains the only reliable way to inspect values in Gradle test output.
+
+---
 
 ## Iteration 8: Annotations and Nullability - 2026-03-04
 

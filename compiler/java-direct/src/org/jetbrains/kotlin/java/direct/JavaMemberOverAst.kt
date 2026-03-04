@@ -66,6 +66,10 @@ class JavaFieldOverAst(
     override val initializerValue: Any? get() = null
     override val hasConstantNotNullInitializer: Boolean get() = false
     override val isFromSource: Boolean get() = true
+
+    // Interface fields are implicitly public static final
+    override val isStatic: Boolean get() = containingClass.isInterface || super.isStatic
+    override val isFinal: Boolean get() = containingClass.isInterface || super.isFinal
 }
 
 class JavaMethodOverAst(
@@ -105,6 +109,13 @@ class JavaMethodOverAst(
 
     private val modifierList: JavaSyntaxNode?
         get() = node.findChildByType("MODIFIER_LIST")
+
+    // Interface methods without a body are implicitly abstract
+    override val isAbstract: Boolean
+        get() = super.isAbstract || (containingClass.isInterface && !hasBody)
+
+    private val hasBody: Boolean
+        get() = node.findChildByType("CODE_BLOCK") != null
 
     override val annotationParameterDefaultValue: JavaAnnotationArgument? get() = null
     override val hasAnnotationParameterDefaultValue: Boolean get() = false

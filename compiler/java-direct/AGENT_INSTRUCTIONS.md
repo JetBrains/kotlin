@@ -4,11 +4,11 @@
 
 | Metric | Value |
 |--------|-------|
-| **Status** | Iteration 7 complete |
-| **Tests** | 96/138 passing (69.6%) |
-| **Next focus** | Kotlin class resolution, raw types, complex generics |
+| **Status** | Iteration 9 complete |
+| **Tests** | 115/138 passing (83.3%) |
+| **Next focus** | Raw types, nested generics, atomics mapping |
 
-**Key files**: `JavaClassFinderOverAstImpl.kt`, `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaImports.kt`
+**Key files**: `JavaClassFinderOverAstImpl.kt`, `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaMemberOverAst.kt`, `JavaResolutionContext.kt`
 
 ---
 
