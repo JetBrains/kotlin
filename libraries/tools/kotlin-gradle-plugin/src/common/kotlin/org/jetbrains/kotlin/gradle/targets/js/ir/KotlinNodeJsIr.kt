@@ -29,20 +29,6 @@ internal constructor(
 ) :
     KotlinJsIrNpmBasedSubTarget(target, "node"),
     KotlinJsNodeDsl {
-
-    @Deprecated(
-        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR,
-    )
-    @Suppress("UNUSED_PARAMETER", "UNREACHABLE_CODE")
-    constructor(
-        target: KotlinJsIrTarget,
-    ) : this(
-        target = throw UnsupportedOperationException(),
-        objects = throw UnsupportedOperationException(),
-        providers = throw UnsupportedOperationException(),
-    )
-
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
 

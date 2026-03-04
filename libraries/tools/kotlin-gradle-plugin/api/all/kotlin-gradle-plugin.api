@@ -2807,7 +2807,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinBrowserJsIr$C
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinD8Ir : org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrSubTarget, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmD8Dsl {
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget;)V
 	public fun configureDefaultTestFramework (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;)V
 	public fun configureTestDependencies (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)V
 	public fun getTestTaskDescription ()Ljava/lang/String;
@@ -3017,7 +3016,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTargetKt 
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinNodeJsIr : org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrNpmBasedSubTarget, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsNodeDsl {
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget;)V
 	public fun configureDefaultTestFramework (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;)V
 	public fun configureTestDependencies (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)V
 	public fun getTestTaskDescription ()Ljava/lang/String;
@@ -4098,7 +4096,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/subtargets/KotlinNo
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest : org/jetbrains/kotlin/gradle/tasks/KotlinTest, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 	public synthetic fun createTestExecutionSpec ()Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
 	protected fun createTestExecutionSpec ()Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
 	public final fun environment (Ljava/lang/String;Ljava/lang/String;)V
@@ -4268,7 +4265,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/mocha/KotlinMo
 public abstract class org/jetbrains/kotlin/gradle/targets/js/typescript/TypeScriptValidationTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/typescript/TypeScriptValidationTask$Companion;
 	public static final field NAME Ljava/lang/String;
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 	public final fun getCompilation ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;
 	public abstract fun getInputDir ()Lorg/gradle/api/file/DirectoryProperty;
 	public fun getRequiredNpmDependencies ()Ljava/util/Set;
@@ -4286,7 +4282,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/webpack/Infrastructure
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpack : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/js/dsl/WebpackRulesDsl, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 	public fun cssSupport (Lorg/gradle/api/Action;)V
 	public final fun doExecute ()V
 	public final fun getArgs ()Ljava/util/List;
@@ -4813,7 +4808,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnRootEnvSpec$C
 
 public class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnRootExtension : org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootExtension {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnRootExtension$Companion;
-	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsRootExtension;Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnRootEnvSpec;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnRootExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
@@ -5065,12 +5059,10 @@ public final class org/jetbrains/kotlin/gradle/targets/native/tasks/GenerateArti
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/KotlinNativeHostTest : org/jetbrains/kotlin/gradle/targets/native/tasks/KotlinNativeTest {
-	public fun <init> ()V
 	protected fun getTestCommand ()Lorg/jetbrains/kotlin/gradle/targets/native/tasks/KotlinNativeTest$TestCommand;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/KotlinNativeSimulatorTest : org/jetbrains/kotlin/gradle/targets/native/tasks/KotlinNativeTest {
-	public fun <init> ()V
 	public synthetic fun createTestExecutionSpec ()Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
 	protected fun createTestExecutionSpec ()Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
 	public final fun getDebugMode ()Z
@@ -5083,7 +5075,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/KotlinNat
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/KotlinNativeTest : org/jetbrains/kotlin/gradle/tasks/KotlinTest {
-	public fun <init> ()V
 	public synthetic fun createTestExecutionSpec ()Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
 	protected fun createTestExecutionSpec ()Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
 	public final fun environment (Ljava/lang/String;Ljava/lang/Object;)V
@@ -6191,7 +6182,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeLink : org/j
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinTest : org/gradle/api/tasks/testing/AbstractTestTask {
-	public fun <init> ()V
 	public final fun addRunListener (Lorg/jetbrains/kotlin/gradle/internal/testing/KotlinTestRunnerListener;)V
 	protected fun createTestExecuter ()Lorg/gradle/api/internal/tasks/testing/TestExecuter;
 	public final fun getExcludePatterns ()Ljava/util/Set;

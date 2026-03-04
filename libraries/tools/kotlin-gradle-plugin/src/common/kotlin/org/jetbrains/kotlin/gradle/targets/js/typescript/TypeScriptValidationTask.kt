@@ -62,19 +62,6 @@ internal constructor(
     private val execOps: ExecOperations,
 ) : DefaultTask(), RequiresNpmDependencies {
 
-    @Deprecated(
-        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR,
-    )
-    @Suppress("UNUSED_PARAMETER", "UNREACHABLE_CODE")
-    constructor(
-        compilation: KotlinJsIrCompilation,
-    ) : this(
-        compilation = throw UnsupportedOperationException(),
-        objects = throw UnsupportedOperationException(),
-        execOps = throw UnsupportedOperationException(),
-    )
-
     private val npmProject: NpmProject = compilation.npmProject
 
     @get:Internal

@@ -30,23 +30,6 @@ internal constructor(
     execOps = execOps,
 ) {
 
-    @Deprecated(
-        "Extending or manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR
-    )
-    @Suppress("UNUSED_PARAMETER", "UNREACHABLE_CODE")
-    constructor(
-        project: Project,
-        nodeJsRoot: NodeJsRootExtension,
-        yarnSpec: YarnRootEnvSpec,
-    ) : this(
-        project = throw UnsupportedOperationException(),
-        nodeJsRoot = throw UnsupportedOperationException(),
-        yarnSpec = throw UnsupportedOperationException(),
-        objects = throw UnsupportedOperationException(),
-        execOps = throw UnsupportedOperationException(),
-    )
-
     companion object : HasPlatformDisambiguator by JsPlatformDisambiguator {
         val YARN: String
             get() = extensionName("yarn")
