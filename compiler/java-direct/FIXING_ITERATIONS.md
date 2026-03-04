@@ -6,8 +6,9 @@ This document contains structured iteration prompts for fixing issues in the `ja
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration  
 **Usage**: Execute one iteration at a time, following the 4-phase template  
-**Status**: Iteration 7 analysis complete, ready for implementation  
-**Last Updated**: 2026-03-04
+**Status**: Iteration 7c complete (101/138 = 73.2%), Iteration 8 ready  
+**Last Updated**: 2026-03-04  
+**Planning Changelog**: See `implDocs/PLANNING_CHANGELOG.md` for iteration restructuring history
 
 ---
 
@@ -366,379 +367,282 @@ enclosingClass.typeParameters
 
 ---
 
-## Iteration 8: Wildcards and Complex Generics
+## Iteration 8: Annotations and Nullability
 
-**Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md` section 3.3.
-**Note**: Renumbered from original Iteration 7 after adding new Iteration 7 (Array Types).
+**Status**: Ready for implementation  
+**Expected Improvement**: +8 tests (NPE_ASSERTION failures)  
+**Note**: Merged from old Iterations 11 and 13. Old Iterations 8 and 10 (Wildcards, Lower Bounds) were completed in 7c.
 
-### Prompt
+### Background
 
----
-TASK: Implement wildcard type arguments and simple upper bounds
+8 tests fail with NPE_ASSERTION errors - nullability checks not triggering when they should:
+- `testInFunctionWithExpressionBody`
+- `testInLocalFunctionWithExpressionBody`
+- `testInLocalVariableInitializer`
+- `testInMemberPropertyInitializer`
+- `testInPropertyGetterWithExpressionBody`
+- `testInTopLevelPropertyInitializer`
+- `testNnStringVsTXArray`
+- `testNnStringVsTXString`
 
-CONTEXT:
-**Expected Status After Iteration 5: ~40-50/138 (29-36%) tests passing**
-
-After simple type arguments work, many tests will need:
-- Wildcards: `List<?>`, `List<? extends Number>`
-- Upper bounds: `<T extends Comparable<T>>`
-
-**Incremental Approach**: Handle wildcards and upper bounds, defer lower bounds (`? super`) to later.
-
-IMPLEMENTATION STEPS:
-
-### Phase 1: Wildcard Support
-
-1. IDENTIFY WILDCARD IN AST:
-   - Look for `QUESTION` or `WILDCARD` node in TYPE_ARGUMENT
-   - Check for `EXTENDS_KEYWORD` following wildcard
-   - Example AST: `List<? extends Number>`
-
-2. CREATE TEST CASES:
-   ```kotlin
-   @Test
-   fun testWildcards() {
-       val source = """
-           import java.util.List;
-           class MyClass {
-               public List<?> wildcardList;
-               public List<? extends Number> boundedList;
-           }
-       """.trimIndent()
-       
-       // Verify wildcard detected
-       // Verify bound extracted
-   }
-   ```
-
-3. IMPLEMENT WILDCARD PARSING:
-   - Update type argument parsing to detect wildcard marker
-   - Extract bound type if `extends` present
-   - Create appropriate `JavaWildcardType` representation
-   - Reference javac-wrapper/PSI for correct structure
-
-### Phase 2: Type Parameter Bounds
-
-4. PARSE TYPE PARAMETER BOUNDS:
-   - In `JavaTypeParameterOverAst`, parse `EXTENDS_BOUND_LIST`
-   - Extract bound types (usually one, can be multiple for interfaces)
-   - Store as `upperBounds` collection
-
-5. TEST TYPE PARAMETERS:
-   ```kotlin
-   @Test
-   fun testTypeParameterBounds() {
-       val source = """
-           class Generic<T extends Number> {
-               public T value;
-           }
-       """.trimIndent()
-       
-       // Verify type parameter has bound
-       val typeParam = javaClass.typeParameters[0]
-       assertEquals(1, typeParam.upperBounds.size)
-   }
-   ```
-
-### Phase 3: Validate and Test
-
-6. RUN TESTS:
-   - Unit tests for wildcards
-   - Unit tests for bounded type parameters
-   - Box tests (expect +5-15 more tests)
-
-7. TARGET: 50-65/138 (36-47%) pass rate
-
-DELIVERABLE:
-- Wildcard parsing
-- Type parameter bounds
-- Box test improvement report
-
-CONFIRMATION REQUIRED: Complete Iteration 5 first, then assess if this is the right next step.
-
----
-
-## Iteration 9: Kotlin Class Resolution from Java
-
-**Reference**: See `AGENT_INSTRUCTIONS.md` and `implDocs/ITERATION_7_PROBLEM_ANALYSIS.md`.
-**Note**: Renumbered from original Iteration 8; content updated based on iteration 7 analysis.
+These tests expect `NullPointerException` to be thrown when null is passed to a non-null parameter, but the assertion is not being generated.
 
 ### Prompt
 
 ---
-TASK: Investigate and fix Kotlin class resolution from Java code
+TASK: Implement annotation parsing for nullability annotations
 
 CONTEXT:
-**Expected Status After Iteration 7: ~95-100/138 (69-72%) tests passing**
+**Current Status: 101/138 (73.2%) box tests passing**
 
-15 tests fail with MISSING_DEPENDENCY_CLASS when Java code imports Kotlin classes like:
-```java
-import kotlin.Function;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.FunctionN;
-```
+8 tests fail because nullability annotations (`@NotNull`, `@Nullable`, `@NonNull`) are not being parsed or attached to declarations properly. FIR uses these to generate null-checks.
 
 INVESTIGATION STEPS:
 
-1. UNDERSTAND THE PROBLEM:
-   - Java sources import Kotlin classes from kotlin-stdlib
-   - `CombinedJavaClassFinder` falls back to binary finder
-   - Binary finder may not be configured to find Kotlin classes
+### Phase 1: Understand Current State
 
-2. CHECK BINARY FINDER CONFIGURATION:
-   - Examine how `defaultFinderProvider` is set up in `JavaDirectComponentRegistrar`
-   - Verify kotlin-stdlib is on the classpath for the binary finder
-   - Check if Kotlin class metadata is accessible
+1. **Check existing annotation implementation**:
+   ```kotlin
+   // In JavaClassOverAst, JavaMethodOverAst, JavaFieldOverAst:
+   override val annotations: Collection<JavaAnnotation> get() = ???
+   ```
+   - What does `JavaAnnotationOwner.annotations` currently return?
+   - Is `JavaAnnotationOverAst` implemented?
 
-3. POTENTIAL FIXES:
-   - Ensure binary finder includes kotlin-stdlib JAR
-   - May need to configure additional class paths
-   - Consider if Kotlin classes need special handling
+2. **Examine PSI-based annotation handling**:
+   - `compiler/frontend.common.jvm/.../impl/JavaAnnotationImpl.kt`
+   - How are annotations extracted from PSI?
 
-4. TEST WITH SIMPLE CASE:
-   ```bash
-   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testLambdaInstanceOf" -q
+3. **Check FIR's usage of annotations**:
+   - Search for `@NotNull`, `@Nullable` handling in FIR
+   - How does FIR decide to generate null-checks?
+
+### Phase 2: Implement Annotation Parsing
+
+4. **Parse annotation AST structure**:
+   ```
+   MODIFIER_LIST:
+     ANNOTATION:
+       AT: @
+       JAVA_CODE_REFERENCE: NotNull
+         IDENTIFIER: NotNull
    ```
 
-5. TARGET: 105-115/138 (76-83%) pass rate if fixed
-
-DELIVERABLE:
-- Analysis of Kotlin class resolution issue
-- Fix if straightforward, or detailed investigation report
-- Documentation of findings
-
-CONFIRMATION REQUIRED: Assess complexity after initial investigation.
-
----
-
-## Iteration 10: Lower Bounds and Complex Generics
-
-**Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md`.
-**Note**: Renumbered from original Iteration 9.
-
-### Prompt
-
----
-TASK: Implement lower bounds (`super`) and complex generic patterns
-
-CONTEXT:
-**Expected Status After Iteration 7: ~45-60/138 (33-43%) tests passing**
-
-After implementing wildcards, upper bounds, and arrays, tackle remaining generic complexity.
-
-IMPLEMENTATION STEPS:
-
-1. IMPLEMENT LOWER BOUNDS:
-   - Parse `? super T` syntax
-   - Create appropriate type variance in FIR
-   - Test with consumer patterns like `List<? super Integer>`
-
-2. HANDLE COMPLEX NESTED GENERICS:
-   - `Map<String, List<Integer>>`
-   - `Function<List<String>, Map<Integer, String>>`
-   - Recursive generic bounds
-
-3. TEST VARIANCE COMBINATIONS:
-   - `List<? extends List<? super Number>>`
-   - Mixed variance in multi-parameter types
-
-4. CREATE COMPREHENSIVE TESTS:
+5. **Implement `JavaAnnotationOverAst`**:
    ```kotlin
-   @Test
-   fun testLowerBounds() {
-       val source = """
-           import java.util.*;
-           class Consumer {
-               void accept(List<? super Integer> list) {}
-           }
-       """.trimIndent()
-       // Verify lower bound parsing
-   }
-   ```
-
-5. RUN BOX TESTS:
-   - Expect +5-10 additional tests
-
-6. TARGET: 50-65/138 (36-47%) pass rate
-
-SCOPE LIMITATIONS:
-- Focus on type representation, not full variance checking
-- Complex recursive bounds may have limitations
-
-DELIVERABLE:
-- Lower bound support
-- Complex generics handling
-- Test improvements
-
-CONFIRMATION REQUIRED: Assess after Iteration 7 completion.
-
----
-
-## Iteration 11: Annotations and Nullability
-
-**Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md` section 3.5.
-**Note**: Renumbered from original Iteration 10.
-
-### Prompt
-
----
-TASK: Improve annotation support, especially nullability annotations
-
-CONTEXT:
-**Expected Status After Iteration 8: ~50-65/138 (36-47%) tests passing**
-
-Nullability annotations (`@Nullable`, `@NotNull`) affect type checking. Better annotation parsing may unlock more tests.
-
-IMPLEMENTATION STEPS:
-
-1. REVIEW CURRENT ANNOTATIONS:
-   - Check what `JavaAnnotationOwner.annotations` returns
-   - Verify annotation arguments parsed
-
-2. FOCUS ON NULLABILITY:
-   - Parse `@Nullable`, `@NotNull` annotations
-   - Attach to appropriate declarations
-   - FIR uses these for null-safety checks
-
-3. CREATE TESTS:
-   ```kotlin
-   @Test
-   fun testNullabilityAnnotations() {
-       val source = """
-           import org.jetbrains.annotations.NotNull;
-           class MyClass {
-               public @NotNull String name;
-           }
-       """.trimIndent()
+   class JavaAnnotationOverAst(
+       node: JavaSyntaxNode,
+       resolutionContext: JavaResolutionContext,
+   ) : JavaAnnotation {
+       override val classId: ClassId? by lazy {
+           val ref = node.findChildByType("JAVA_CODE_REFERENCE")
+           // Resolve annotation class using imports
+       }
        
-       // Verify annotation present on field
+       override val arguments: Collection<JavaAnnotationArgument>
+           get() = emptyList() // Defer complex arguments
    }
    ```
 
-4. RUN BOX TESTS:
-   - Expect +5-10 tests with nullability checks
+6. **Update annotation owners** to parse MODIFIER_LIST:
+   - `JavaClassOverAst.annotations`
+   - `JavaMethodOverAst.annotations`
+   - `JavaFieldOverAst.annotations`
+   - `JavaValueParameterOverAst.annotations`
 
-5. TARGET: 60-75/138 (43-54%) pass rate
+### Phase 3: Handle Common Nullability Annotations
+
+7. **Support standard annotation packages**:
+   - `org.jetbrains.annotations.NotNull`
+   - `org.jetbrains.annotations.Nullable`
+   - `javax.annotation.Nonnull`
+   - `javax.annotation.Nullable`
+   - `androidx.annotation.NonNull`
+   - `androidx.annotation.Nullable`
+
+8. **Handle TYPE_USE annotations** (Java 8+):
+   - Annotations can appear on types: `@NotNull String`
+   - Check `JavaType.annotations` as well as declaration annotations
+
+### Phase 4: Validation
+
+9. **Run targeted tests**:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testInFunctionWithExpressionBody" -q
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testNnStringVsTXString" -q
+   ```
+
+10. **Run full suite**:
+    ```bash
+    ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated*" -q
+    ```
+
+11. **Document results** in `ITERATION_RESULTS.md`.
+
+TARGET: 109/138 (79%) pass rate (+8 tests)
 
 DELIVERABLE:
-- Enhanced annotation support
-- Nullability annotations working
-- Box test improvements
-
-CONFIRMATION REQUIRED: Assess after Iteration 6 if this is next priority.
+- Annotation parsing working
+- Nullability annotations attached to declarations
+- +8 passing tests
 
 ---
 
-## Iteration 12: Inner Classes and Nested Types
+## Iteration 9: SAM Conversion and Interface Fields
 
-**Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md`.
-**Note**: Renumbered from original Iteration 11.
+**Status**: Ready for implementation  
+**Expected Improvement**: +5-8 tests
+
+### Background
+
+Several tests fail due to SAM conversion issues and interface field access:
+- `UNRESOLVED_REFERENCE` for interface fields (3 tests)
+- `CANNOT_INFER_PARAMETER_TYPE` for SAM types (2 tests)
+- `ARGUMENT_TYPE_MISMATCH` for SAM/lambda (4 tests)
 
 ### Prompt
 
 ---
-TASK: Implement proper inner class and nested type support
+TASK: Fix interface field access and SAM conversion issues
 
 CONTEXT:
-Some tests use inner classes, nested classes, or reference types as `Outer.Inner`.
+**Expected Status After Iteration 8: ~109/138 (79%) tests passing**
 
-IMPLEMENTATION STEPS:
+INVESTIGATION STEPS:
 
-1. VERIFY CURRENT STATE:
-   - `findInnerClass()` exists
-   - Check if nested class references work
+### Phase 1: Interface Field Access
 
-2. TEST PATTERNS:
-   ```java
-   class Outer {
-       class Inner { }
-       static class Nested { }
-   }
-   
-   class Usage extends Outer.Inner { }
+1. **Understand the problem**:
+   - `testJavaInterfaceFieldDirectAccess` fails with UNRESOLVED_REFERENCE
+   - Interface constants like `interface J { String CONST = "value"; }` not accessible
+
+2. **Check `JavaClassOverAst.fields`**:
+   - Are interface fields being parsed?
+   - Are they marked as static/final correctly?
+
+3. **Fix interface field parsing**:
+   - Interface fields are implicitly `public static final`
+   - Ensure they appear in `fields` collection
+
+### Phase 2: SAM Conversion
+
+4. **Understand SAM failures**:
+   - `testGenericSamProjectedOut` - UNRESOLVED_REFERENCE
+   - `testSamTypeParameter` - CANNOT_INFER_PARAMETER_TYPE
+   - `testJavaNestedSamInterface` - ARGUMENT_TYPE_MISMATCH
+
+5. **Check functional interface detection**:
+   - Is `isFunctionalInterface` property correct?
+   - Are SAM method signatures correct?
+
+6. **Verify type parameter handling in SAM context**:
+   - SAM with generics: `interface Mapper<T, R> { R map(T t); }`
+   - Type inference for lambda parameters
+
+### Phase 3: Validation
+
+7. **Run targeted tests**:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testJavaInterfaceFieldDirectAccess" -q
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testSamTypeParameter" -q
    ```
 
-3. FIX ISSUES:
-   - Qualified name resolution for nested classes
-   - Proper inner vs static nested distinction
-   - Outer class references
+8. **Run full suite** and document.
 
-4. RUN BOX TESTS:
-   - Expect +5-10 tests
-
-5. TARGET: 70-85/138 (51-62%) pass rate
+TARGET: 115/138 (83%) pass rate (+6 tests)
 
 DELIVERABLE:
-- Inner class support
-- Test improvements
-
-CONFIRMATION REQUIRED: Assess priority after earlier iterations.
+- Interface fields accessible
+- SAM conversion working for common cases
 
 ---
 
-## Iteration 13: Annotation Support (Extended)
+## Iteration 10: Inner Classes and Nested Types
 
-**Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules and `IMPLEMENTATION_PLAN.md` section 3.5.
-**Note**: Renumbered from original Iteration 12.
+**Status**: Ready for implementation  
+**Expected Improvement**: +2-3 tests
+
+### Background
+
+Some MISSING_DEPENDENCY_CLASS errors reference nested classes (`JavaClass.Nested`, `Middle`). Inner class handling may need fixes.
 
 ### Prompt
 
 ---
-TASK: Implement annotation extraction and argument handling
+TASK: Fix inner class and nested type resolution
 
 CONTEXT:
-Some tests use annotations, especially nullability annotations (@NotNull, @Nullable).
-These affect type inference and null safety.
+**Expected Status After Iteration 9: ~115/138 (83%) tests passing**
 
 IMPLEMENTATION STEPS:
 
-1. REVIEW EXISTING CODE:
-   - Check JavaAnnotationOverAst
-   - See what's already implemented
+1. **Identify failing tests**:
+   - Tests with `MISSING_DEPENDENCY_CLASS: Cannot access class 'Nested'`
+   - Tests with qualified names like `Outer.Inner`
 
-2. CREATE TEST CASES:
-   ```kotlin
-   @Test
-   fun testAnnotations() {
-       val source = """
-           import org.jetbrains.annotations.NotNull;
-           class MyClass {
-               @NotNull
-               public String getValue() { return ""; }
-           }
-       """.trimIndent()
-       // Verify annotation extraction
-   }
-   ```
+2. **Verify current state**:
+   - Check `JavaClassOverAst.findInnerClass()`
+   - Check `JavaClassOverAst.innerClasses`
+   - Check qualified name resolution in `classifierQualifiedName`
 
-3. IMPLEMENT BASIC ANNOTATIONS:
-   - Extract annotations from AST
-   - Resolve annotation class IDs
-   - Handle common annotations (@NotNull, @Nullable, @Override)
+3. **Fix issues**:
+   - Inner classes inherit outer class type parameters (non-static)
+   - Static nested classes don't see outer type parameters
+   - Qualified name resolution: `Outer.Inner` should find inner class
 
-4. DEFER COMPLEX FEATURES:
-   - Annotation arguments with constants: defer per IMPLEMENTATION_PLAN.md section 4
-   - Implement only literals for now
-   - Mark complex cases as TODO
+4. **Run tests and document**.
 
-5. TEST AND VERIFY:
-   - Annotation tests pass
-   - Box tests with annotations improve
-
-DELIVERABLE:
-- Enhanced annotation handling
-- Test cases
-- Documentation of limitations
-- Box test improvement report
-
-CONFIRMATION REQUIRED: Verify current state of annotation support first.
+TARGET: 117/138 (85%) pass rate (+2 tests)
 
 ---
 
-## Iteration 14: Error Handling and Diagnostics
+## Iteration 11: Atomics and Overload Resolution
 
-**Reference**: See `AGENT_INSTRUCTIONS.md` for ground rules.
-**Note**: Renumbered from original Iteration 13.
+**Status**: Ready for investigation  
+**Expected Improvement**: +4-6 tests
+
+### Background
+
+Several tests fail with `NONE_APPLICABLE` (overload resolution) or `MISSING_DEPENDENCY_CLASS` for atomics:
+- `testAddedOverloadWithAtomics`
+- `testIntersectionKotlinJavaAtomics`
+- `testKotlinToJavaHierarchy`
+- `testUsingJavaAtomicWhenKotlinAtomicExpected`
+- `testUsingKotlinAtomicWhenJavaAtomicExpected`
+
+### Prompt
+
+---
+TASK: Investigate atomics and overload resolution failures
+
+CONTEXT:
+**Expected Status After Iteration 10: ~117/138 (85%) tests passing**
+
+INVESTIGATION STEPS:
+
+1. **Analyze atomic-related failures**:
+   - What classes are missing? (`AtomicInteger`, etc.)
+   - Are these from `java.util.concurrent.atomic` or `kotlin.concurrent`?
+
+2. **Check overload resolution**:
+   - `NONE_APPLICABLE` means no overload matches
+   - Check if method signatures are correct
+   - Check if type arguments are resolved properly
+
+3. **Investigate Kotlin/Java atomics mapping**:
+   - Kotlin has atomics that map to Java atomics
+   - May need special handling in type conversion
+
+4. **Implement fixes if straightforward**.
+
+TARGET: 121/138 (88%) pass rate (+4 tests)
+
+---
+
+## Iteration 12: Error Handling and Diagnostics
+
+**Status**: Lower priority  
+**Expected Improvement**: Code quality, not test count
 
 ### Prompt
 
@@ -746,154 +650,111 @@ CONFIRMATION REQUIRED: Verify current state of annotation support first.
 TASK: Improve error handling and diagnostic reporting
 
 CONTEXT:
-When resolution fails or Java code is malformed, we need clear error messages
-and graceful degradation.
+**Expected Status After Iteration 11: ~121/138 (88%) tests passing**
+
+When resolution fails or Java code is malformed, we need clear error messages and graceful degradation.
 
 IMPLEMENTATION STEPS:
 
-1. IDENTIFY ERROR SCENARIOS:
+1. **Identify error scenarios**:
    - Type not found
-   - Package not found
    - Malformed Java syntax
    - Circular dependencies
 
-2. IMPLEMENT ERROR TYPES:
-   - Create JavaErrorType for unresolved types
-   - Ensure FIR can handle error types
+2. **Implement graceful degradation**:
+   - Return error types instead of crashing
    - Provide useful error messages
+   - Log resolution failures at debug level
 
-3. ADD LOGGING:
-   - Log resolution attempts (at debug level)
-   - Log failures with context
-   - Help debugging future issues
-
-4. HANDLE EDGE CASES:
-   - Missing files
-   - Parse errors
-   - Invalid type references
-
-5. TEST ERROR HANDLING:
-   - Create tests with intentional errors
-   - Verify graceful failure
-   - Check error messages are useful
+3. **Test error handling** with intentional errors.
 
 DELIVERABLE:
 - Robust error handling
 - Clear diagnostic messages
-- Error test cases
-- Documentation
-
-CONFIRMATION REQUIRED: Discuss error handling strategy.
 
 ---
 
-## Iteration 15: Performance and Caching
+## Iteration 13: Performance and Caching
 
-**Reference**: See `AGENT_INSTRUCTIONS.md` for common pitfalls about laziness.
-**Note**: Renumbered from original Iteration 14.
+**Status**: Lower priority  
+**Expected Improvement**: Performance, not test count
 
 ### Prompt
 
+---
 TASK: Optimize performance with proper caching strategies
 
 CONTEXT:
-Parsing and resolution should be lazy and cached to avoid redundant work.
+**Expected Status After Iteration 12: ~121/138 (88%) tests passing**
 
 IMPLEMENTATION STEPS:
 
-1. REVIEW CURRENT CACHING:
-   - Check JavaClassFinderOverAstImpl caching
-   - Check JavaClassOverAst lazy properties
-   - Identify what's cached vs recomputed
+1. **Review current caching**:
+   - `JavaClassFinderOverAstImpl` caching
+   - Lazy properties in AST classes
 
-2. ADD MISSING CACHES:
-   - Cache parsed AST if needed
-   - Cache resolved types
-   - Cache import information
+2. **Verify laziness**:
+   - Supertypes, members, type parameters
+   - Only parse files when requested
 
-3. VERIFY LAZINESS:
-   - Ensure supertypes are lazy
-   - Ensure members are lazy
-   - Only parse files when actually requested
-
-4. MEASURE PERFORMANCE:
-   - Run box tests and measure time
-   - Compare with PSI-based implementation (if possible)
-   - Identify bottlenecks
-
-5. OPTIMIZE HOT PATHS:
-   - Optimize indexing if slow
-   - Optimize type resolution if slow
-   - Don't over-optimize prematurely
+3. **Profile if needed**:
+   - Measure test execution time
+   - Identify bottlenecks before optimizing
 
 DELIVERABLE:
-- Optimized caching
+- Optimized caching where needed
 - Performance measurements
-- Documentation of caching strategy
-
-CONFIRMATION REQUIRED: Profile first to find actual bottlenecks.
 
 ---
 
-## Iteration 16: Final Validation and Documentation
+## Iteration 14: Final Validation and Documentation
 
-**Reference**: See `AGENT_INSTRUCTIONS.md` for success metrics.
-**Note**: Renumbered from original Iteration 15.
+**Status**: Final iteration
 
 ### Prompt
 
+---
 TASK: Validate implementation completeness and document findings
 
 CONTEXT:
-After previous iterations, most functionality should work. Final validation ensures
-quality and completeness.
+After previous iterations, most functionality should work.
 
 VALIDATION STEPS:
 
-1. RUN FULL TEST SUITE:
-   - Run all generated box tests
-   - Document pass/fail rates
-   - Categorize remaining failures
+1. **Run full test suite** and document pass/fail rates
 
-2. ANALYZE REMAINING FAILURES:
+2. **Analyze remaining failures**:
    - Group by failure type
-   - Determine if fixable in current scope
-   - Document as known limitations if not
+   - Document as known limitations if not fixable
 
-3. CODE QUALITY CHECK:
-   - Run mcp__jetbrains__get_file_problems on all modified files
+3. **Code quality check**:
+   - Run `get_file_problems` on all modified files
    - Fix warnings related to changes
-   - Ensure code follows Kotlin conventions
 
-4. UPDATE DOCUMENTATION:
-   - Update IMPLEMENTATION_PLAN.md with current status
-   - Document known limitations
-   - List deferred features (annotation arguments, etc.)
-
-5. CREATE SUMMARY REPORT:
-   - What was implemented
-   - What works now vs before
-   - What still needs work
-   - Recommendations for next steps
+4. **Update documentation**:
+   - `IMPLEMENTATION_PLAN.md` with final status
+   - Known limitations
+   - Recommendations for future work
 
 DELIVERABLE:
 - Test results summary
 - Updated documentation
 - Known limitations document
-- Recommendations for future work
-
-CONFIRMATION REQUIRED: N/A (final iteration)
 
 ---
 
 ## Document Change Log
 
-- 2026-03-04: Added Iteration 7 (Array Types and Type Parameter Bounds) based on systematic failure analysis
+- 2026-03-04: **Major restructuring after Iteration 7c** (see `implDocs/PLANNING_CHANGELOG.md`):
+  - Deleted old Iterations 8, 10 (Wildcards, Lower Bounds) - completed in 7c
+  - Merged old Iterations 11+13 into new Iteration 8 (Annotations)
+  - Added new Iteration 9 (SAM Conversion & Interface Fields)
+  - Renumbered remaining iterations to 10-14
+  - Current status: 101/138 (73.2%) tests passing
+- 2026-03-04: Added Iteration 7c (Type Parameter Scope Resolution)
+- 2026-03-04: Added Iteration 7b (ERROR_ELEMENT Import Handling)
+- 2026-03-04: Added Iteration 7a (Array Types and Vararg Handling)
 - 2026-03-04: Renumbered Iterations 7-15 to 8-16 to accommodate new iteration
-- 2026-03-04: Updated Iteration 9 (formerly 8) with Kotlin class resolution investigation
-- 2026-02-23: Updated Iterations 2-4 to reflect FIR-based resolution approach (see FIRSESSION_RESOLUTION_ANALYSIS.md)
-- 2026-02-23: Iteration 2 now focuses on classifierQualifiedName correctness, not FirSession access
-- 2026-02-23: Iteration 3 now focuses on import tracking for name qualification
-- 2026-02-23: Iteration 4 now validates FIR resolution integration, not FirSession plumbing
+- 2026-02-23: Updated Iterations 2-4 to reflect FIR-based resolution approach
 - 2026-02-23: Split from ITERATIVE_FIXING_PLAN.md into separate iteration prompts
 - 2026-02-10: Original content created in ITERATIVE_FIXING_PLAN.md
