@@ -137,7 +137,10 @@ class JavaResolutionContext private constructor(
             val simpleImports = mutableMapOf<String, FqName>()
             val starImports = mutableListOf<FqName>()
 
+            // Handle case where root might be CLASS instead of compilation unit
             val importList = root.findChildByType("IMPORT_LIST")
+                ?: root.findChildByType("CLASS")?.findChildByType("IMPORT_LIST")
+
             for (importNode in importList?.getChildrenByType("IMPORT_STATEMENT") ?: emptyList()) {
                 val codeRef = importNode.findChildByType("JAVA_CODE_REFERENCE") ?: continue
                 val hasStar = importNode.children.any { it.type.toString() == "ASTERISK" }
@@ -171,6 +174,34 @@ class JavaResolutionContext private constructor(
                 } else {
                     simpleImports[identifiers.last()] = FqName(fqName)
                 }
+            }
+            
+            // Handle fragmented import patterns where parser splits import across sibling nodes
+            // Pattern: ERROR_ELEMENT(IMPORT_KEYWORD) followed eventually by TYPE(JAVA_CODE_REFERENCE)
+            // Parser may insert MODIFIER_LIST and other nodes between them
+            val allChildren = root.children
+            var i = 0
+            while (i < allChildren.size) {
+                val node = allChildren[i]
+                if (node.type.toString() == "ERROR_ELEMENT" && 
+                    node.findChildByType("IMPORT_KEYWORD") != null) {
+                    // Look for the next TYPE or JAVA_CODE_REFERENCE sibling, skipping whitespace and modifier list
+                    for (j in (i + 1) until allChildren.size) {
+                        val sibling = allChildren[j]
+                        val sibType = sibling.type.toString()
+                        // Skip whitespace and empty modifier lists
+                        if (sibType == "WHITE_SPACE" || sibType == "MODIFIER_LIST") continue
+                        if (sibType == "TYPE" || sibType == "JAVA_CODE_REFERENCE") {
+                            val ref = sibling.findChildByType("JAVA_CODE_REFERENCE") ?: sibling
+                            val fqName = ref.text.trim()
+                            if (fqName.contains('.')) {
+                                simpleImports[fqName.substringAfterLast('.')] = FqName(fqName)
+                            }
+                        }
+                        break
+                    }
+                }
+                i++
             }
 
             return simpleImports to starImports

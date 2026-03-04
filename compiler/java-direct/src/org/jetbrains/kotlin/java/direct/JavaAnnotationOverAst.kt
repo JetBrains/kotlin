@@ -12,21 +12,34 @@ import org.jetbrains.kotlin.name.Name
 
 class JavaAnnotationOverAst(
     node: JavaSyntaxNode,
-    source: CharSequence
-) : JavaElementOverAst(node, source), JavaAnnotation {
+    private val resolutionContext: JavaResolutionContext,
+) : JavaElementOverAst(node, resolutionContext.source), JavaAnnotation {
     override val arguments: Collection<JavaAnnotationArgument>
         get() {
             val parameterList = node.findChildByType("ANNOTATION_PARAMETER_LIST")
             if (parameterList == null) return emptyList()
             
             return parameterList.getChildrenByType("NAME_VALUE_PAIR").map { 
-                JavaAnnotationArgumentOverAst(it, source)
+                JavaAnnotationArgumentOverAst(it, resolutionContext.source)
             }
         }
 
     override val classId: ClassId?
         get() {
             val reference = node.findChildByType("JAVA_CODE_REFERENCE")?.text ?: return null
+            
+            // If already qualified (contains dot), use as-is
+            if (reference.contains('.')) {
+                return ClassId.topLevel(FqName(reference))
+            }
+            
+            // Try to resolve via imports
+            val imported = resolutionContext.getSimpleImport(reference)
+            if (imported != null) {
+                return ClassId.topLevel(imported)
+            }
+            
+            // Use the unqualified name - FIR will try to resolve via star imports and java.lang
             return ClassId.topLevel(FqName(reference))
         }
 
@@ -39,7 +52,4 @@ class JavaAnnotationArgumentOverAst(
 ) : JavaElementOverAst(node, source), JavaAnnotationArgument {
     override val name: Name?
         get() = node.findChildByType("IDENTIFIER")?.let { Name.identifier(it.text) }
-
-    // This is a simplified implementation of argument parsing
-    fun getArgumentValue(): Any? = null
 }

@@ -129,7 +129,7 @@ class JavaClassOverAst(
 
     override val annotations: Collection<JavaAnnotation>
         get() = modifierList?.getChildrenByType("ANNOTATION")
-            ?.map { JavaAnnotationOverAst(it, resolutionContext.source) }
+            ?.map { JavaAnnotationOverAst(it, resolutionContext) }
             ?: emptyList()
 
     override val isDeprecatedInJavaDoc: Boolean get() = false

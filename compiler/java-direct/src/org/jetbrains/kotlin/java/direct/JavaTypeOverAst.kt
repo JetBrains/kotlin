@@ -11,17 +11,26 @@ import org.jetbrains.kotlin.name.Name
 
 abstract class JavaTypeOverAst(
     val node: JavaSyntaxNode,
-    val source: CharSequence,
+    protected val resolutionContext: JavaResolutionContext,
+    private val extraAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaType, JavaAnnotationOwner {
-    override val annotations: Collection<JavaAnnotation> get() = emptyList()
+    override val annotations: Collection<JavaAnnotation>
+        get() {
+            val nodeAnnotations = node.findChildByType("MODIFIER_LIST")?.getChildrenByType("ANNOTATION")
+                ?.map { JavaAnnotationOverAst(it, resolutionContext) }
+                ?: emptyList()
+            return extraAnnotations + nodeAnnotations
+        }
+
     override val isDeprecatedInJavaDoc: Boolean get() = false
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
 }
 
 class JavaClassifierTypeOverAst(
     node: JavaSyntaxNode,
-    private val resolutionContext: JavaResolutionContext,
-) : JavaTypeOverAst(node, resolutionContext.source), JavaClassifierType {
+    resolutionContext: JavaResolutionContext,
+    extraAnnotations: Collection<JavaAnnotation> = emptyList(),
+) : JavaTypeOverAst(node, resolutionContext, extraAnnotations), JavaClassifierType {
 
     private val rawTypeName: String by lazy {
         var text = node.text.trim()
@@ -117,8 +126,9 @@ class JavaClassifierTypeOverAst(
 
 class JavaPrimitiveTypeOverAst(
     node: JavaSyntaxNode,
-    source: CharSequence,
-) : JavaTypeOverAst(node, source), JavaPrimitiveType {
+    resolutionContext: JavaResolutionContext,
+    extraAnnotations: Collection<JavaAnnotation> = emptyList(),
+) : JavaTypeOverAst(node, resolutionContext, extraAnnotations), JavaPrimitiveType {
     override val type: org.jetbrains.kotlin.builtins.PrimitiveType?
         get() = when (node.text) {
             "void" -> null
@@ -136,18 +146,24 @@ class JavaPrimitiveTypeOverAst(
 
 class JavaArrayTypeOverAst(
     node: JavaSyntaxNode,
-    source: CharSequence,
+    resolutionContext: JavaResolutionContext,
     override val componentType: JavaType,
-) : JavaTypeOverAst(node, source), JavaArrayType
+    extraAnnotations: Collection<JavaAnnotation> = emptyList(),
+) : JavaTypeOverAst(node, resolutionContext, extraAnnotations), JavaArrayType
 
 class JavaWildcardTypeOverAst(
     node: JavaSyntaxNode,
-    source: CharSequence,
+    resolutionContext: JavaResolutionContext,
     override val bound: JavaType?,
     override val isExtends: Boolean,
-) : JavaTypeOverAst(node, source), JavaWildcardType
+    extraAnnotations: Collection<JavaAnnotation> = emptyList(),
+) : JavaTypeOverAst(node, resolutionContext, extraAnnotations), JavaWildcardType
 
-fun createJavaType(node: JavaSyntaxNode, resolutionContext: JavaResolutionContext): JavaType {
+fun createJavaType(
+    node: JavaSyntaxNode,
+    resolutionContext: JavaResolutionContext,
+    extraAnnotations: Collection<JavaAnnotation> = emptyList(),
+): JavaType {
     // If input node is a TYPE with array brackets or vararg ellipsis, handle it directly
     // (don't look for nested TYPE first, as that would skip the array dimension)
     if (node.type.toString() == "TYPE") {
@@ -157,7 +173,7 @@ fun createJavaType(node: JavaSyntaxNode, resolutionContext: JavaResolutionContex
             val componentTypeNode = node.findChildByType("TYPE")
             if (componentTypeNode != null) {
                 val componentType = createJavaType(componentTypeNode, resolutionContext)
-                return JavaArrayTypeOverAst(node, resolutionContext.source, componentType)
+                return JavaArrayTypeOverAst(node, resolutionContext, componentType, extraAnnotations)
             }
         }
     }
@@ -173,7 +189,7 @@ fun createJavaType(node: JavaSyntaxNode, resolutionContext: JavaResolutionContex
         // isExtends = true for "? extends X" or unbounded "?"
         // isExtends = false for "? super X"
         val isExtends = !hasSuper
-        return JavaWildcardTypeOverAst(typeNode, resolutionContext.source, bound, isExtends)
+        return JavaWildcardTypeOverAst(typeNode, resolutionContext, bound, isExtends, extraAnnotations)
     }
 
     // Array type or vararg: TYPE contains nested TYPE + LBRACKET/RBRACKET or ELLIPSIS
@@ -183,20 +199,36 @@ fun createJavaType(node: JavaSyntaxNode, resolutionContext: JavaResolutionContex
         val componentTypeNode = typeNode.findChildByType("TYPE")
         if (componentTypeNode != null) {
             val componentType = createJavaType(componentTypeNode, resolutionContext)
-            return JavaArrayTypeOverAst(typeNode, resolutionContext.source, componentType)
+            return JavaArrayTypeOverAst(typeNode, resolutionContext, componentType, extraAnnotations)
         }
     }
 
     val primitiveNode = typeNode.children.find { it.type.toString().endsWith("_KEYWORD") }
     if (primitiveNode != null) {
-        return JavaPrimitiveTypeOverAst(primitiveNode, resolutionContext.source)
+        return JavaPrimitiveTypeOverAst(primitiveNode, resolutionContext, extraAnnotations)
     }
 
     val referenceNode = typeNode.findChildByType("JAVA_CODE_REFERENCE")
     if (referenceNode != null) {
-        return JavaClassifierTypeOverAst(referenceNode, resolutionContext)
+        return JavaClassifierTypeOverAst(referenceNode, resolutionContext, extraAnnotations)
     }
-    return JavaClassifierTypeOverAst(typeNode, resolutionContext)
+    return JavaClassifierTypeOverAst(typeNode, resolutionContext, extraAnnotations)
+}
+
+/**
+ * Creates a JavaType with additional annotations from a modifier list.
+ * Used to handle TYPE_USE annotations that syntactically appear in the
+ * method/field modifier list but semantically belong to the type.
+ */
+fun createJavaTypeWithAnnotations(
+    typeNode: JavaSyntaxNode,
+    modifierList: JavaSyntaxNode?,
+    resolutionContext: JavaResolutionContext,
+): JavaType {
+    val extraAnnotations = modifierList?.getChildrenByType("ANNOTATION")
+        ?.map { JavaAnnotationOverAst(it, resolutionContext) }
+        ?: emptyList()
+    return createJavaType(typeNode, resolutionContext, extraAnnotations)
 }
 
 class JavaTypeParameterOverAst(

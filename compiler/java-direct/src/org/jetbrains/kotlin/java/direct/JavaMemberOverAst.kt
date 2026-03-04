@@ -47,9 +47,13 @@ abstract class JavaMemberOverAst(
             else -> JavaVisibilities.PackageVisibility
         }
 
-    override val annotations: Collection<JavaAnnotation> get() = emptyList()
+    override val annotations: Collection<JavaAnnotation>
+        get() = modifierList?.getChildrenByType("ANNOTATION")
+            ?.map { JavaAnnotationOverAst(it, resolutionContext) }
+            ?: emptyList()
+
     override val isDeprecatedInJavaDoc: Boolean get() = false
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
 }
 
 class JavaFieldOverAst(
@@ -94,9 +98,13 @@ class JavaMethodOverAst(
     override val returnType: JavaType
         get() {
             val typeNode = node.findChildByType("TYPE")
-                ?: return JavaPrimitiveTypeOverAst(node, resolutionContext.source)
-            return createJavaType(typeNode, resolutionContext)
+                ?: return JavaPrimitiveTypeOverAst(node, resolutionContext)
+            // TYPE_USE annotations appear in the method modifier list but belong to the return type
+            return createJavaTypeWithAnnotations(typeNode, modifierList, resolutionContext)
         }
+
+    private val modifierList: JavaSyntaxNode?
+        get() = node.findChildByType("MODIFIER_LIST")
 
     override val annotationParameterDefaultValue: JavaAnnotationArgument? get() = null
     override val hasAnnotationParameterDefaultValue: Boolean get() = false
@@ -154,8 +162,15 @@ class JavaValueParameterOverAst(
             return typeNode?.findChildByType("ELLIPSIS") != null
         }
 
-    override val annotations: Collection<JavaAnnotation> get() = emptyList()
+    private val modifierList: JavaSyntaxNode?
+        get() = node.findChildByType("MODIFIER_LIST")
+
+    override val annotations: Collection<JavaAnnotation>
+        get() = modifierList?.getChildrenByType("ANNOTATION")
+            ?.map { JavaAnnotationOverAst(it, resolutionContext) }
+            ?: emptyList()
+
     override val isDeprecatedInJavaDoc: Boolean get() = false
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
     override val isFromSource: Boolean get() = true
 }

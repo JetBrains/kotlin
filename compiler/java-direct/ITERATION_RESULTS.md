@@ -95,6 +95,120 @@ After Iteration 6, 48 tests still fail. Likely causes:
 
 <!-- Add new iteration results here, newest at top -->
 
+## Iteration 8: Annotations and Nullability - 2026-03-04
+
+### Status
+- ✅ Completed
+
+### Summary
+Implemented annotation parsing for nullability annotations (`@NotNull`, `@Nullable`) to enable FIR to generate proper null-checks. Fixed `JavaAnnotationOverAst.classId` to resolve annotation class names via imports, added annotation extraction from modifier lists for members and parameters, and implemented TYPE_USE annotation support for return types. Also fixed fragmented import patterns where the KMP parser splits imports across sibling nodes. Improved from 101/138 (73.2%) to 111/138 (80.4%) - gained 10 tests.
+
+### Key Findings
+
+1. **TYPE_USE Annotations in Method Modifier List**: In Java syntax `public @NotNull String nullString()`, the `@NotNull` annotation appears in the METHOD's `MODIFIER_LIST`, not on the TYPE node. The AST structure is:
+   ```
+   METHOD:
+     MODIFIER_LIST: public @NotNull
+       PUBLIC_KEYWORD: public
+       ANNOTATION: @NotNull
+     TYPE: String
+       JAVA_CODE_REFERENCE: String
+   ```
+   FIR expects these annotations on `JavaType.annotations`, so we pass them when creating the return type.
+
+2. **Annotation ClassId Resolution**: `JavaAnnotationOverAst.classId` must resolve the simple annotation name (e.g., `NotNull`) to its fully qualified name (e.g., `org.jetbrains.annotations.NotNull`) using imports. Without this, FIR reports `MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR`.
+
+3. **FIR's Annotation Handling**: FIR converts Java annotations in `javaAnnotationsMapping.kt`:
+   - `JavaAnnotation.toFirAnnotation()` uses `classId` to build the type
+   - `JavaType.annotations` are converted via `convertAnnotationsToFir()`
+   - Nullability qualifiers are extracted in `FirAnnotationTypeQualifierResolver`
+
+4. **Fragmented Import Pattern**: When the KMP parser receives malformed input (content with leading comments/newlines), it splits imports across sibling nodes:
+   ```
+   CLASS:
+     IMPORT_LIST: (empty)
+     ERROR_ELEMENT: import       <- IMPORT_KEYWORD here
+       IMPORT_KEYWORD: import
+     MODIFIER_LIST:
+     TYPE: org.jetbrains.annotations.NotNull  <- FQN here!
+     SEMICOLON: ;
+   ```
+   The fix scans for `ERROR_ELEMENT(IMPORT_KEYWORD)` followed by `TYPE` siblings, skipping whitespace and modifier lists.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `JavaAnnotationOverAst.kt` | Updated constructor to accept `JavaResolutionContext`. `classId` now resolves via `resolutionContext.getSimpleImport()`. |
+| `JavaTypeOverAst.kt` | Added `extraAnnotations` parameter to all type classes. Created `createJavaTypeWithAnnotations()` to pass TYPE_USE annotations from modifier list to return type. |
+| `JavaMemberOverAst.kt` | `annotations` property now parses from MODIFIER_LIST. `JavaMethodOverAst.returnType` uses `createJavaTypeWithAnnotations()` to include TYPE_USE annotations. `JavaValueParameterOverAst.annotations` implemented. |
+| `JavaClassOverAst.kt` | `annotations` property passes `resolutionContext` to `JavaAnnotationOverAst`. |
+| `JavaResolutionContext.kt` | Added fragmented import pattern detection in `extractImports()` - scans for `ERROR_ELEMENT(IMPORT_KEYWORD)` followed by `TYPE` sibling. |
+
+### Test Results
+- Box tests: 111/138 passing (80.4%) - UP from 101/138 (73.2%)
+- Gained: 10 tests (+7.2%)
+
+### Tests Fixed
+| Test | Issue Fixed |
+|------|-------------|
+| `testInFunctionWithExpressionBody` | NPE assertion now works - `@NotNull` annotation resolved |
+| `testInMemberPropertyInitializer` | NPE assertion for member property |
+| `testInPropertyGetterWithExpressionBody` | NPE assertion for property getter |
+| `testInTopLevelPropertyInitializer` | NPE assertion for top-level property |
+| `testNnStringVsTXArray` | Nullability annotation on array type |
+| `testNnStringVsTXString` | Nullability annotation on String type |
+| `testAddedOverloadWithAtomics` | Annotation resolution fixed import handling |
+| + 3 others | Various annotation-related fixes |
+
+### Remaining Failures (27 tests)
+
+| Category | Count | Example Tests |
+|----------|-------|---------------|
+| OTHER | 6 | testKjkWithRawTypes, testKt43217, testRawTypeArgumentInJavaSuperType |
+| ARGUMENT_TYPE_MISMATCH | 4 | testFunctionWithBigArity, testGenericSamSmartcast |
+| CANNOT_INFER_PARAMETER_TYPE | 4 | testFunctionAssertion, testLocalEntities, testSamTypeParameter |
+| UNRESOLVED_REFERENCE | 3 | testGenericSamProjectedOut, testJavaInterfaceFieldDirectAccess |
+| NONE_APPLICABLE | 3 | testIntersectionKotlinJavaAtomics, testKotlinToJavaHierarchy |
+| MISSING_DEPENDENCY_CLASS | 3 | testJavaToKotlinHierarchy, atomics tests |
+| AbstractMethodError | 2 | testDelegationToJavaDnn, testPrimitiveSubstitutionToDnnParameter |
+| NOTHING_TO_OVERRIDE | 1 | testOverrideWithGenericArrayParameterType |
+| NoSuchMethodError | 1 | testInheritanceWithWildcard |
+
+### Architecture Decisions
+
+**TYPE_USE Annotation Propagation**: Rather than modifying how types are created everywhere, we:
+1. Added `extraAnnotations` parameter to all `JavaTypeOverAst` subclasses
+2. Created `createJavaTypeWithAnnotations()` helper that extracts annotations from modifier list
+3. Only `JavaMethodOverAst.returnType` and `JavaFieldOverAst.type` need to use this helper
+
+**Fragmented Import Recovery**: Parser edge case handling in `extractImports()`:
+```kotlin
+// Pattern: ERROR_ELEMENT(IMPORT_KEYWORD) → skip whitespace/modifiers → TYPE
+if (node.type == "ERROR_ELEMENT" && node.findChildByType("IMPORT_KEYWORD") != null) {
+    for (sibling in siblings) {
+        if (sibling.type in ["WHITE_SPACE", "MODIFIER_LIST"]) continue
+        if (sibling.type == "TYPE") {
+            val fqName = sibling.findChildByType("JAVA_CODE_REFERENCE").text
+            simpleImports[fqName.substringAfterLast('.')] = FqName(fqName)
+        }
+        break
+    }
+}
+```
+
+### Key Learnings
+
+1. **TYPE_USE Annotations in Java Syntax**: Annotations before return type (`public @NotNull String`) are syntactically in the method modifier list but semantically belong to the return type. PSI handles this transparently; java-direct needs explicit handling.
+
+2. **Parser Edge Cases**: When the KMP parser receives unexpected input (multi-file content with comments), it may fragment constructs across sibling nodes. Robust recovery requires pattern matching on the AST structure.
+
+3. **Annotation Resolution Path**: `JavaAnnotation.classId` → FIR lookup → type enhancement → null-check generation. Any break in this chain causes either compile errors or missing runtime checks.
+
+4. **ExtraAnnotations Pattern**: Adding an optional `extraAnnotations` parameter to type constructors is cleaner than wrapper classes (which FIR doesn't recognize) or modifying all call sites.
+
+---
+
 ## Iteration 7c: Type Parameter Scope Resolution - 2026-03-04
 
 ### Status
