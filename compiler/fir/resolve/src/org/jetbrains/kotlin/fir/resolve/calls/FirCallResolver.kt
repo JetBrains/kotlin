@@ -268,6 +268,11 @@ class FirCallResolver(
         resolutionMode: ResolutionMode,
         collectionLiteralContext: CollectionLiteralOuterCandidateContext? = null,
     ): ResolutionResult {
+        assert(collectionLiteralContext == null || forceCallKind == null) {
+            "We only force call kind in cases we resolve incorrect variable access as though it was function call (or vice versa)," +
+                    " it does not have sense for collection literal"
+        }
+
         val explicitReceiver = qualifiedAccess.explicitReceiver
         val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
         val typeArguments = if (qualifiedAccess is FirFunctionCall || forceCallKind == CallKind.Function) {
