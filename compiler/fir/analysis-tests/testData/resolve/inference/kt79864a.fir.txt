@@ -1,0 +1,10 @@
+FILE: kt79864a.kt
+    public abstract interface Owner : R|kotlin/Any| {
+        public abstract val <C> R|kotlin/reflect/KClass<C & Any>|.myJava: R|java/lang/Class<C>|
+            public get(): R|java/lang/Class<C>|
+
+        public open fun <F : R|kotlin/Enum<*>|> field(defValue: R|F|): R|kotlin/Unit| {
+            Q|java/lang/Enum|.R|java/lang/Enum.valueOf*s<Inapplicable(INAPPLICABLE): java/lang/Enum.valueOf>#|<R|CapturedType(*)|>((this@R|/Owner|, <getClass>(R|<local>/defValue|)).R|/Owner.myJava|<R|CapturedType(out F)|>, String(str))
+        }
+
+    }
