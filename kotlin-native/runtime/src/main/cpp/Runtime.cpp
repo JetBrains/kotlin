@@ -50,7 +50,6 @@ enum {
   ALLOC_THREAD_LOCAL_GLOBALS = 0,
   INIT_GLOBALS = 1,
   INIT_THREAD_LOCAL_GLOBALS = 2,
-  DEINIT_GLOBALS = 3
 };
 
 void InitOrDeinitGlobalVariables(int initialize, MemoryState* memory) {
