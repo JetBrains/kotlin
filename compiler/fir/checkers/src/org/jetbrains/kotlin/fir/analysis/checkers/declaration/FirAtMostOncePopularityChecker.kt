@@ -3,12 +3,10 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.cfa.util.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.ControlFlowAnalysisDiagnosticComponent
@@ -16,8 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
-import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -30,7 +26,7 @@ import kotlin.reflect.full.memberProperties
  * Checks captured variables inside non-in-place lambdas and determines their stability
  * using [FindCapturedWrites, FindVisibleWrites].
  */
-object FirExactlyOncePopularityChecker : FirFunctionChecker(MppCheckerKind.Common) {
+object FirAtMostOncePopularityChecker : FirFunctionChecker(MppCheckerKind.Common) {
     @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
@@ -62,8 +58,7 @@ private class FirFunctionDeepVisitorWithData2 : FirDefaultVisitor<Unit, Captured
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CapturedVariableCheckerData) {
         val invocationKind = anonymousFunction.invocationKind
-        if (invocationKind == EventOccurrencesRange.EXACTLY_ONCE) {
-            println("anonymous function exactly once: ${anonymousFunction.render()}")
+        if (invocationKind == EventOccurrencesRange.AT_MOST_ONCE) {
             val graph = (anonymousFunction as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return
 
             val collector = ControlFlowAnalysisDiagnosticComponent.LocalPropertyCollector().apply {
@@ -72,7 +67,7 @@ private class FirFunctionDeepVisitorWithData2 : FirDefaultVisitor<Unit, Captured
             data.propertiesStack.add(collector.properties)
         }
         super.visitAnonymousFunction(anonymousFunction, data)
-        if (invocationKind == EventOccurrencesRange.EXACTLY_ONCE) {
+        if (invocationKind == EventOccurrencesRange.AT_MOST_ONCE) {
             data.propertiesStack.removeLast()
         }
     }

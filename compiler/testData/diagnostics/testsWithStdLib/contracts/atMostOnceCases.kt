@@ -8,7 +8,7 @@ import kotlin.contracts.contract
 fun barRegular(f: () -> Unit) {}
 
 @OptIn(ExperimentalContracts::class)
-fun barWithContract(f: () -> Unit) {
+fun barWithContractExactlyOnce(f: () -> Unit) {
     contract {
         callsInPlace(f, InvocationKind.EXACTLY_ONCE)
     }
@@ -25,7 +25,7 @@ fun barWithContractAtMostOnce(f: () -> Unit) {
 
 fun foo() {
     val y: Int
-    barWithContract {
+    barWithContractExactlyOnce {
         y = 2
     }
     println(y)
@@ -39,11 +39,10 @@ fun foo() {
 
 fun nestedExactlyOnceCase() {
     barRegular{
-        val nested: Int
-        barWithContract {
+        val <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>nested<!>: Int
+        barWithContractAtMostOnce {
             nested = 2
         }
-        println(nested)
     }
 }
 
