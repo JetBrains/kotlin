@@ -3,10 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.maven.plugin.test
+package org.jetbrains.kotlin.maven.test
 
-import org.jetbrains.kotlin.maven.test.JdkProvider
-import org.jetbrains.kotlin.maven.test.TestVersions
 import java.nio.file.Path
 import kotlin.io.path.Path
 

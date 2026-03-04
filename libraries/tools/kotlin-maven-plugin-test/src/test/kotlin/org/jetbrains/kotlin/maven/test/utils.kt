@@ -45,3 +45,13 @@ inline fun <reified T : Annotation> findAnnotationOrNull(context: ExtensionConte
             }
             .firstOrNull() as T?
 }
+
+fun Path.replaceFirstInFile(target: String, replacement: String) {
+    val content = toFile().readText()
+    val newContent = content.replaceFirst(target, replacement)
+    toFile().writeText(newContent)
+}
+
+fun Path.deleteFile() {
+    toFile().delete()
+}
