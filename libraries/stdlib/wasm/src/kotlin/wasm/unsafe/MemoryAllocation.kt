@@ -5,10 +5,11 @@
 
 package kotlin.wasm.unsafe
 
-import kotlin.wasm.internal.WasmOp
-import kotlin.wasm.internal.implementedAsIntrinsic
-import kotlin.contracts.*
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.internal.DoNotInlineOnFirstStage
+import kotlin.wasm.internal.wasm_memory_grow
+import kotlin.wasm.internal.wasm_memory_size
 
 /**
  * WebAssembly linear memory allocator.
@@ -112,18 +113,18 @@ internal class ScopedMemoryAllocator(
 
         availableAddress = result + size
 
-        val currentMaxSize = wasmMemorySize() * WASM_PAGE_SIZE_IN_BYTES
+        val currentMaxSize = wasm_memory_size() * WASM_PAGE_SIZE_IN_BYTES
         if (availableAddress >= currentMaxSize) {
 
             val numPagesToGrow =
                 (availableAddress - currentMaxSize) / WASM_PAGE_SIZE_IN_BYTES + 2
 
-            if (wasmMemoryGrow(numPagesToGrow) == -1) {
+            if (wasm_memory_grow(numPagesToGrow) == -1) {
                 error("Out of linear memory. memory.grow returned -1")
             }
         }
 
-        check(availableAddress < wasmMemorySize() * WASM_PAGE_SIZE_IN_BYTES)
+        check(availableAddress < wasm_memory_size() * WASM_PAGE_SIZE_IN_BYTES)
 
         return Pointer(result.toUInt())
     }
@@ -143,24 +144,3 @@ internal class ScopedMemoryAllocator(
 }
 
 private const val WASM_PAGE_SIZE_IN_BYTES = 65_536  // 64 KiB
-
-/**
- * Current linear memory size in pages
- */
-@WasmOp(WasmOp.MEMORY_SIZE)
-internal fun wasmMemorySize(): Int =
-    implementedAsIntrinsic
-
-/**
- * Grow memory by a given delta (in pages).
- * Return the previous size, or -1 if enough memory cannot be allocated.
- */
-@Suppress("UNUSED_PARAMETER")
-@WasmOp(WasmOp.MEMORY_GROW)
-internal fun wasmMemoryGrow(delta: Int): Int =
-    implementedAsIntrinsic
-
-@Suppress("UNUSED_PARAMETER")
-@WasmOp(WasmOp.MEMORY_COPY)
-internal fun wasmMemoryCopy(dst: Int, src: Int, size: Int): Unit =
-    implementedAsIntrinsic

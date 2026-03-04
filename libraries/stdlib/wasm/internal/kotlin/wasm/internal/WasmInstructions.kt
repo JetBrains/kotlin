@@ -515,6 +515,30 @@ internal fun wasm_i32_store(addr: Int, i: Int): Unit =
 internal fun wasm_i32_store16(addr: Int, c: Char): Unit =
     implementedAsIntrinsic
 
+/**
+ * Current linear memory size in pages
+ */
+@WasmOp(WasmOp.MEMORY_SIZE)
+internal fun wasm_memory_size(): Int =
+    implementedAsIntrinsic
+
+/**
+ * Grow memory by a given delta (in pages).
+ * Return the previous size, or -1 if enough memory cannot be allocated.
+ */
+@Suppress("UNUSED_PARAMETER")
+@WasmOp(WasmOp.MEMORY_GROW)
+internal fun wasm_memory_grow(delta: Int): Int =
+    implementedAsIntrinsic
+
+/**
+ * Copy `size` bytes from `src` to `dst` in linear memory.
+ */
+@Suppress("UNUSED_PARAMETER")
+@WasmOp(WasmOp.MEMORY_COPY)
+internal fun wasm_memory_copy(dst: Int, src: Int, size: Int): Unit =
+    implementedAsIntrinsic
+
 @WasmOp(WasmOp.I32_CLZ)
 internal fun wasm_i32_clz(a: Int): Int =
     implementedAsIntrinsic
