@@ -416,7 +416,9 @@ KtDotQualifiedExpression(818,836): 'i.prop1.hashCode()'
   null
 
 KtDotQualifiedExpression(818,825): 'i.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(818,819): 'i'
   null
@@ -455,7 +457,9 @@ KtDotQualifiedExpression(868,881): 'i.prop2.dec()'
   null
 
 KtDotQualifiedExpression(868,875): 'i.prop2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(868,869): 'i'
   null
@@ -494,7 +498,9 @@ KtDotQualifiedExpression(913,931): 'i.prop1.hashCode()'
   null
 
 KtDotQualifiedExpression(913,920): 'i.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(913,914): 'i'
   null
@@ -593,7 +599,9 @@ KtDotQualifiedExpression(1052,1065): 'i.prop2.dec()'
   null
 
 KtDotQualifiedExpression(1052,1059): 'i.prop2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(1052,1053): 'i'
   null
@@ -686,7 +694,9 @@ KtDotQualifiedExpression(1177,1196): 'v2.prop1.hashCode()'
   null
 
 KtDotQualifiedExpression(1177,1185): 'v2.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(1177,1179): 'v2'
   null
@@ -940,7 +950,9 @@ KtSafeQualifiedExpression(1512,1527): 'i?.prop2?.dec()'
   null
 
 KtSafeQualifiedExpression(1512,1520): 'i?.prop2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(1512,1513): 'i'
   null
@@ -1036,7 +1048,9 @@ KtSafeQualifiedExpression(1644,1665): 'v2?.prop1?.hashCode()'
   null
 
 KtSafeQualifiedExpression(1644,1653): 'v2?.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(1644,1646): 'v2'
   null

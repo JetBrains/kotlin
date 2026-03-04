@@ -77,7 +77,10 @@ KtProperty(270,306): 'val EnumOptionAlias = MyEnum.Option1'
   null
 
 KtDotQualifiedExpression(292,306): 'MyEnum.Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtNameReferenceExpression(292,298): 'MyEnum'
   null
@@ -89,7 +92,10 @@ KtProperty(308,340): 'val OptionAlias = MyEnum.Option2'
   null
 
 KtDotQualifiedExpression(326,340): 'MyEnum.Option2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option2
+    ]
 
 KtNameReferenceExpression(326,332): 'MyEnum'
   null

@@ -1,5 +1,5 @@
 KtSafeQualifiedExpression(45,49): 'a?.y'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

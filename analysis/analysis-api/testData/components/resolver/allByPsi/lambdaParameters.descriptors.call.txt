@@ -89,7 +89,7 @@ KtConstantExpression(74,75): '1'
   null
 
 KtDotQualifiedExpression(80,94): 'prop.action1()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []

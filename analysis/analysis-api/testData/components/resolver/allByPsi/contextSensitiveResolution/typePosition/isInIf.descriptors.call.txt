@@ -567,7 +567,7 @@ KtReturnExpression(571,592): 'return instance.prop1'
   null
 
 KtDotQualifiedExpression(578,592): 'instance.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -643,7 +643,7 @@ KtReturnExpression(655,676): 'return instance.prop1'
   null
 
 KtDotQualifiedExpression(662,676): 'instance.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -719,7 +719,7 @@ KtReturnExpression(721,746): 'return instance.innerProp'
   null
 
 KtDotQualifiedExpression(728,746): 'instance.innerProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: innerProp>
 
@@ -881,7 +881,7 @@ KtReturnExpression(890,911): 'return instance.prop2'
   null
 
 KtDotQualifiedExpression(897,911): 'instance.prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
@@ -957,7 +957,7 @@ KtReturnExpression(983,1004): 'return instance.prop3'
   null
 
 KtDotQualifiedExpression(990,1004): 'instance.prop3'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop3>
 

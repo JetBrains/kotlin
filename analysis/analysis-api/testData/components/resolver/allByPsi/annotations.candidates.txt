@@ -1032,7 +1032,7 @@ KtClassLiteralExpression(573,598): 'one.AnnoWithKClass::class'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(573,591): 'one.AnnoWithKClass'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1272,7 +1272,7 @@ KtClassLiteralExpression(648,673): 'one.AnnoWithKClass::class'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(648,666): 'one.AnnoWithKClass'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1528,7 +1528,7 @@ KtValueArgument(711,742): 'one.AnnoWithArray([10, 11, 12])'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(711,742): 'one.AnnoWithArray([10, 11, 12])'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

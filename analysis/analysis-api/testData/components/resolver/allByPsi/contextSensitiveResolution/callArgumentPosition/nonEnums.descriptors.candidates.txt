@@ -1407,7 +1407,7 @@ KtNameReferenceExpression(580,595): 'ForTypeMismatch'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(603,638): 'JavaClass.expectJavaClass(INSTANCE)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

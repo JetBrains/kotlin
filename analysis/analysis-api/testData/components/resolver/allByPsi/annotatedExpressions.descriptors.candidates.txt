@@ -137,7 +137,7 @@ KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -290,7 +290,7 @@ KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -568,7 +568,7 @@ KtNameReferenceExpression(182,189): 'integer'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -588,7 +588,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -608,7 +608,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -637,7 +637,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -666,7 +666,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'charset'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -695,7 +695,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -724,7 +724,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -753,7 +753,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -782,7 +782,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -811,7 +811,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -840,7 +840,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

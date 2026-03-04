@@ -185,7 +185,7 @@ KtCallExpression(339,344): 'foo()'
       /foo(): kotlin.Unit,
       /foo(): kotlin.Unit
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun foo(): Unit defined in root package in file contextParameters.kt
     public fun foo(): Unit defined in root package in file contextParameters.kt>
 
@@ -259,7 +259,7 @@ KtCallExpression(403,408): 'foo()'
       /foo(): kotlin.Unit,
       /foo(): kotlin.Unit
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public fun foo(): Unit defined in root package in file contextParameters.kt
     public fun foo(): Unit defined in root package in file contextParameters.kt>
 
@@ -385,7 +385,10 @@ KtBlockExpression(548,552): '"".a'
   null
 
 KtDotQualifiedExpression(548,552): '"".a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.String
+    ]
 
 KtStringTemplateExpression(548,550): '""'
   null

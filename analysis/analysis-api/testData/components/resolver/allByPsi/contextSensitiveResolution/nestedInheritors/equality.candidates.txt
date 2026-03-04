@@ -617,7 +617,7 @@ KtOperationReferenceExpression(428,430): '=='
     isInBestCandidates = true
 
 KtDotQualifiedExpression(431,456): 'Settings.SpecificSettings'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1389,7 +1389,7 @@ KtOperationReferenceExpression(839,841): '=='
     isInBestCandidates = true
 
 KtDotQualifiedExpression(842,875): 'OpenSettings.OpenSpecificSettings'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

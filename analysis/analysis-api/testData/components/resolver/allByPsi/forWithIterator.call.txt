@@ -104,7 +104,7 @@ KtProperty(133,166): 'var current = this@iterator.start'
   null
 
 KtDotQualifiedExpression(147,166): 'this@iterator.start'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -256,7 +256,7 @@ KtOperationReferenceExpression(204,206): '<='
       }
 
 KtDotQualifiedExpression(207,224): 'this@iterator.end'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

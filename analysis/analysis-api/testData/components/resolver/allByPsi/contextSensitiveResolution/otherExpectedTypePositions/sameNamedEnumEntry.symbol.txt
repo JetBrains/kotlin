@@ -56,7 +56,10 @@ KtWhenConditionWithExpression(150,153): 'A.A'
   null
 
 KtDotQualifiedExpression(150,153): 'A.A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.A
+    ]
 
 KtNameReferenceExpression(150,151): 'A'
   null
@@ -77,7 +80,10 @@ KtWhenConditionWithExpression(169,172): 'A.B'
   null
 
 KtDotQualifiedExpression(169,172): 'A.B'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.B
+    ]
 
 KtNameReferenceExpression(169,170): 'A'
   null

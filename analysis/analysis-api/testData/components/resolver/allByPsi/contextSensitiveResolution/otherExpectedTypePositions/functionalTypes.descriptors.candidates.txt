@@ -77,7 +77,7 @@ KtProperty(305,341): 'val EnumOptionAlias = MyEnum.Option1'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(327,341): 'MyEnum.Option1'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []

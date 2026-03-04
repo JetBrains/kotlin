@@ -176,7 +176,7 @@ KtProperty(303,349): 'val ClassMemberAlias = MyClass.NestedInheritor'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(326,349): 'MyClass.NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

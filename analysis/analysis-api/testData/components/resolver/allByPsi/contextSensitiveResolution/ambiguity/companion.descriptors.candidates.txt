@@ -487,7 +487,7 @@ KtOperationReferenceExpression(409,411): '=='
     isInBestCandidates = true
 
 KtDotQualifiedExpression(412,423): 'Companion.A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -753,7 +753,7 @@ KtWhenConditionWithExpression(667,678): 'Companion.A'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(667,678): 'Companion.A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

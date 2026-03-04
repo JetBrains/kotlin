@@ -71,7 +71,10 @@ KtBlockExpression(161,253): '{'
   null
 
 KtDotQualifiedExpression(167,185): 'MyAlias.function()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyClass.Companion.function(<dispatch receiver>: test.MyClass.Companion): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(167,174): 'MyAlias'
   null
@@ -89,7 +92,10 @@ KtValueArgumentList(183,185): '()'
   null
 
 KtDotQualifiedExpression(190,206): 'MyAlias.property'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val property: kotlin.Int
+    ]
 
 KtNameReferenceExpression(190,197): 'MyAlias'
   null

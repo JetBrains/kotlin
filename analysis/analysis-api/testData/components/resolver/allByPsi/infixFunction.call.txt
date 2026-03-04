@@ -431,7 +431,7 @@ KtProperty(176,249): 'val explicitForm = newParameter.plus(parameter.myMinus(one
   null
 
 KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreParameter))'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -562,7 +562,7 @@ KtValueArgument(213,248): 'parameter.myMinus(oneMoreParameter)'
   null
 
 KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

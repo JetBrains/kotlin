@@ -302,7 +302,7 @@ KtProperty(393,418): 'val foo = JavaClass.foo()'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -402,7 +402,7 @@ KtNameReferenceExpression(433,437): 'Left'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(441,446): 'foo.x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -481,7 +481,7 @@ KtNameReferenceExpression(458,463): 'Right'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(467,472): 'foo.y'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -629,7 +629,7 @@ KtNameReferenceExpression(640,644): 'Left'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(648,652): 'mg.x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -708,7 +708,7 @@ KtNameReferenceExpression(664,669): 'Right'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(673,677): 'mg.y'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:

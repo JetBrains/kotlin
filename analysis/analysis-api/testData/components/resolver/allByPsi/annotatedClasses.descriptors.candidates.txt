@@ -128,7 +128,7 @@ KtValueArgument(23,44): 'AnnotationTarget.TYPE'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(23,44): 'AnnotationTarget.TYPE'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []

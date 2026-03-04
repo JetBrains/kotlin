@@ -596,7 +596,7 @@ KtBlockExpression(94,156): '{'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(100,154): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6)).bar(0)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -633,7 +633,7 @@ KtDotQualifiedExpression(100,154): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(
     isInBestCandidates = true
 
 KtSafeQualifiedExpression(100,147): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -676,7 +676,7 @@ KtBinaryExpressionWithTypeRHS(101,124): '1.foo(2).bar(3) as? Int'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(101,116): '1.foo(2).bar(3)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -713,7 +713,7 @@ KtDotQualifiedExpression(101,116): '1.foo(2).bar(3)'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(101,109): '1.foo(2)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1011,7 +1011,7 @@ KtValueArgument(131,146): '4.bar(5).bar(6)'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(131,146): '4.bar(5).bar(6)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1048,7 +1048,7 @@ KtDotQualifiedExpression(131,146): '4.bar(5).bar(6)'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(131,139): '4.bar(5)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

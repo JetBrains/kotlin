@@ -89,7 +89,10 @@ KtConstantExpression(74,75): '1'
   null
 
 KtDotQualifiedExpression(80,94): 'prop.action1()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+    ]
 
 KtNameReferenceExpression(80,84): 'prop'
   null
@@ -125,7 +128,9 @@ KtNameReferenceExpression(107,111): 'prop'
   null
 
 KtDotQualifiedExpression(118,132): 'prop.action2()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2'.>
 
 KtNameReferenceExpression(118,122): 'prop'
   null

@@ -134,7 +134,7 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(28,42): '1.compareTo(2)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -171,7 +171,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Byte>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -208,7 +208,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Double>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -245,7 +245,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Float>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -281,7 +281,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -318,7 +318,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Long>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1096,7 +1096,7 @@ KtNameReferenceExpression(124,130): 'number'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

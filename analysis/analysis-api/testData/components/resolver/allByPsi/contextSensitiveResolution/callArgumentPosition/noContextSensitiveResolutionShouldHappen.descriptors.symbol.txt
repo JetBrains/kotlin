@@ -101,7 +101,9 @@ KtValueArgument(199,210): 'WrongEnum.X'
   null
 
 KtDotQualifiedExpression(199,210): 'WrongEnum.X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtNameReferenceExpression(199,208): 'WrongEnum'
   null

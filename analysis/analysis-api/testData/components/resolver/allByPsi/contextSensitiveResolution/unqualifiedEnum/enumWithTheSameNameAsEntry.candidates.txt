@@ -68,7 +68,7 @@ KtWhenConditionWithExpression(135,138): 'A.A'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(135,138): 'A.A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -141,7 +141,7 @@ KtWhenConditionWithExpression(150,153): 'A.B'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(150,153): 'A.B'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

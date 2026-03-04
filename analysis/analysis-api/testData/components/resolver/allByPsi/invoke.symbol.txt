@@ -131,7 +131,10 @@ KtNameReferenceExpression(196,199): 'foo'
   null
 
 KtDotQualifiedExpression(204,226): '(((foo)())()).invoke()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
 
 KtParenthesizedExpression(204,217): '(((foo)())())'
   null
@@ -176,7 +179,10 @@ KtValueArgumentList(224,226): '()'
   null
 
 KtDotQualifiedExpression(231,243): 'foo.invoke()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
 
 KtNameReferenceExpression(231,234): 'foo'
   null

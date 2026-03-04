@@ -590,7 +590,7 @@ KtProperty(416,447): 'val SECOND = test.Sample.SECOND'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(429,447): 'test.Sample.SECOND'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -611,7 +611,7 @@ KtDotQualifiedExpression(429,447): 'test.Sample.SECOND'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(429,440): 'test.Sample'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -722,7 +722,7 @@ KtProperty(492,521): 'val FIRST = test.Sample.THIRD'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(504,521): 'test.Sample.THIRD'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -743,7 +743,7 @@ KtDotQualifiedExpression(504,521): 'test.Sample.THIRD'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(504,515): 'test.Sample'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -907,7 +907,7 @@ KtWhenConditionWithExpression(607,624): 'test.Sample.FIRST'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(607,624): 'test.Sample.FIRST'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -928,7 +928,7 @@ KtDotQualifiedExpression(607,624): 'test.Sample.FIRST'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(607,618): 'test.Sample'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

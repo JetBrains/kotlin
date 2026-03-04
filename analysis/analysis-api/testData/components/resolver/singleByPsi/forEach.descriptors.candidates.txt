@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -38,7 +38,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -75,7 +75,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -112,7 +112,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -149,7 +149,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -186,7 +186,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -223,7 +223,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -260,7 +260,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -297,7 +297,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -334,7 +334,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -371,7 +371,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -408,7 +408,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -445,7 +445,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -482,7 +482,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -519,7 +519,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -557,7 +557,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -596,7 +596,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -632,7 +632,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -672,7 +672,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -712,7 +712,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

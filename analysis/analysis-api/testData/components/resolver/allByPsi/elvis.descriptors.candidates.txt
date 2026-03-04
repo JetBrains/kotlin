@@ -56,7 +56,7 @@ KtBinaryExpression(79,107): 'other?.equals(this) ?: false'
   NO_CANDIDATES
 
 KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

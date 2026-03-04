@@ -98,7 +98,7 @@ KtValueArgument(39,60): 'AnnotationTarget.TYPE'
   null
 
 KtDotQualifiedExpression(39,60): 'AnnotationTarget.TYPE'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1475,22 +1475,22 @@ KtBinaryExpression(406,415): '6 + inner'
         }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-    
+
     fun plus(other: Int): Int:
       Argument type mismatch: actual type is 'String', but 'Int' was expected.
-    
+
     fun plus(other: Byte): Int:
       Argument type mismatch: actual type is 'String', but 'Byte' was expected.
-    
+
     fun plus(other: Short): Int:
       Argument type mismatch: actual type is 'String', but 'Short' was expected.
-    
+
     fun plus(other: Long): Long:
       Argument type mismatch: actual type is 'String', but 'Long' was expected.
-    
+
     fun plus(other: Float): Float:
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
-    
+
     fun plus(other: Double): Double:
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
@@ -1700,22 +1700,22 @@ KtOperationReferenceExpression(408,409): '+'
         }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-    
+
     fun plus(other: Int): Int:
       Argument type mismatch: actual type is 'String', but 'Int' was expected.
-    
+
     fun plus(other: Byte): Int:
       Argument type mismatch: actual type is 'String', but 'Byte' was expected.
-    
+
     fun plus(other: Short): Int:
       Argument type mismatch: actual type is 'String', but 'Short' was expected.
-    
+
     fun plus(other: Long): Long:
       Argument type mismatch: actual type is 'String', but 'Long' was expected.
-    
+
     fun plus(other: Float): Float:
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
-    
+
     fun plus(other: Double): Double:
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
@@ -2038,22 +2038,22 @@ KtBinaryExpression(428,437): '7 + inner'
         }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-    
+
     fun plus(other: Int): Int:
       Argument type mismatch: actual type is 'String', but 'Int' was expected.
-    
+
     fun plus(other: Byte): Int:
       Argument type mismatch: actual type is 'String', but 'Byte' was expected.
-    
+
     fun plus(other: Short): Int:
       Argument type mismatch: actual type is 'String', but 'Short' was expected.
-    
+
     fun plus(other: Long): Long:
       Argument type mismatch: actual type is 'String', but 'Long' was expected.
-    
+
     fun plus(other: Float): Float:
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
-    
+
     fun plus(other: Double): Double:
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
@@ -2263,22 +2263,22 @@ KtOperationReferenceExpression(430,431): '+'
         }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-    
+
     fun plus(other: Int): Int:
       Argument type mismatch: actual type is 'String', but 'Int' was expected.
-    
+
     fun plus(other: Byte): Int:
       Argument type mismatch: actual type is 'String', but 'Byte' was expected.
-    
+
     fun plus(other: Short): Int:
       Argument type mismatch: actual type is 'String', but 'Short' was expected.
-    
+
     fun plus(other: Long): Long:
       Argument type mismatch: actual type is 'String', but 'Long' was expected.
-    
+
     fun plus(other: Float): Float:
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
-    
+
     fun plus(other: Double): Double:
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
@@ -2601,22 +2601,22 @@ KtBinaryExpression(450,459): '8 + inner'
         }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-    
+
     fun plus(other: Int): Int:
       Argument type mismatch: actual type is 'String', but 'Int' was expected.
-    
+
     fun plus(other: Byte): Int:
       Argument type mismatch: actual type is 'String', but 'Byte' was expected.
-    
+
     fun plus(other: Short): Int:
       Argument type mismatch: actual type is 'String', but 'Short' was expected.
-    
+
     fun plus(other: Long): Long:
       Argument type mismatch: actual type is 'String', but 'Long' was expected.
-    
+
     fun plus(other: Float): Float:
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
-    
+
     fun plus(other: Double): Double:
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
@@ -2826,22 +2826,22 @@ KtOperationReferenceExpression(452,453): '+'
         }
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-    
+
     fun plus(other: Int): Int:
       Argument type mismatch: actual type is 'String', but 'Int' was expected.
-    
+
     fun plus(other: Byte): Int:
       Argument type mismatch: actual type is 'String', but 'Byte' was expected.
-    
+
     fun plus(other: Short): Int:
       Argument type mismatch: actual type is 'String', but 'Short' was expected.
-    
+
     fun plus(other: Long): Long:
       Argument type mismatch: actual type is 'String', but 'Long' was expected.
-    
+
     fun plus(other: Float): Float:
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
-    
+
     fun plus(other: Double): Double:
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 

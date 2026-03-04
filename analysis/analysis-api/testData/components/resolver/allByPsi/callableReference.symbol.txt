@@ -290,7 +290,10 @@ KtBlockExpression(491,995): '{'
   null
 
 KtDotQualifiedExpression(497,538): 'MyClass::memberFunction.invoke(MyClass())'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
+    ]
 
 KtCallableReferenceExpression(497,520): 'MyClass::memberFunction'
   KaSymbolResolutionSuccess:
@@ -332,7 +335,10 @@ KtValueArgumentList(535,537): '()'
   null
 
 KtDotQualifiedExpression(543,571): 'MyClass::memberProperty.name'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
 
 KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
   KaSymbolResolutionSuccess:
@@ -350,7 +356,10 @@ KtNameReferenceExpression(567,571): 'name'
   null
 
 KtDotQualifiedExpression(577,614): 'Child::memberFunction.invoke(Child())'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
+    ]
 
 KtCallableReferenceExpression(577,598): 'Child::memberFunction'
   KaSymbolResolutionSuccess:
@@ -392,7 +401,10 @@ KtValueArgumentList(611,613): '()'
   null
 
 KtDotQualifiedExpression(619,645): 'Child::memberProperty.name'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
 
 KtCallableReferenceExpression(619,640): 'Child::memberProperty'
   KaSymbolResolutionSuccess:
@@ -482,7 +494,10 @@ KtNameReferenceExpression(794,811): 'extensionProperty'
   null
 
 KtDotQualifiedExpression(817,853): 'ChildWithType::functionWithType.name'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
 
 KtCallableReferenceExpression(817,848): 'ChildWithType::functionWithType'
   KaSymbolResolutionSuccess:
@@ -500,7 +515,10 @@ KtNameReferenceExpression(849,853): 'name'
   null
 
 KtDotQualifiedExpression(858,913): 'ChildWithType::propertyWithType.invoke(ChildWithType())'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KMutableProperty1.invoke(<dispatch receiver>: kotlin.reflect.KMutableProperty1<T, V>, p1: T): V
+    ]
 
 KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
   KaSymbolResolutionSuccess:
@@ -560,7 +578,9 @@ KtNameReferenceExpression(944,960): 'topLevelVariable'
   null
 
 KtDotQualifiedExpression(966,993): '::lateinitVar.isInitialized'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'isInitialized'.>
 
 KtCallableReferenceExpression(966,979): '::lateinitVar'
   KaSymbolResolutionSuccess:

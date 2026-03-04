@@ -287,7 +287,7 @@ KtProperty(86,129): 'val explicitIndex = list.get(implicitIndex)'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -323,7 +323,7 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -363,7 +363,7 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

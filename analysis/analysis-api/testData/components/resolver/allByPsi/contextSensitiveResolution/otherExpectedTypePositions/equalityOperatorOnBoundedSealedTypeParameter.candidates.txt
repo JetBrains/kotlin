@@ -307,7 +307,7 @@ KtProperty(257,275): 'val L = MySealed.X'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(265,275): 'MySealed.X'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

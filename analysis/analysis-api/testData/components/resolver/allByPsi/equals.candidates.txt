@@ -53,7 +53,7 @@ KtReturnExpression(72,98): 'return super.equals(other)'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(79,98): 'super.equals(other)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -298,7 +298,7 @@ KtReturnExpression(210,236): 'return super.equals(other)'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(217,236): 'super.equals(other)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -776,7 +776,7 @@ KtNameReferenceExpression(337,339): 'm2'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(344,357): 'm1.equals(m2)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1233,7 +1233,7 @@ KtNameReferenceExpression(410,412): 'm1'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(417,430): 'm2.equals(m1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1783,7 +1783,7 @@ KtValueArgumentList(573,575): '()'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(580,605): 'another.equals(Another())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2235,7 +2235,7 @@ KtNameReferenceExpression(717,724): 'myClass'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(729,750): 'child.equals(myClass)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2540,7 +2540,7 @@ KtOperationReferenceExpression(776,777): '!'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2803,7 +2803,7 @@ KtNameReferenceExpression(815,820): 'child'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(825,846): 'another.equals(child)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3066,7 +3066,7 @@ KtNameReferenceExpression(860,867): 'another'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(872,893): 'child.equals(another)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3329,7 +3329,7 @@ KtNameReferenceExpression(910,917): 'myClass'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(922,945): 'another.equals(myClass)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3634,7 +3634,7 @@ KtOperationReferenceExpression(973,974): '!'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

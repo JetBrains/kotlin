@@ -1,2 +1,5 @@
 KtSafeQualifiedExpression(45,49): 'a?.y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.Int
+    ]

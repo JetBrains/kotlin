@@ -475,7 +475,7 @@ KtOperationReferenceExpression(409,411): '=='
       }
 
 KtDotQualifiedExpression(412,423): 'Companion.A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -739,7 +739,7 @@ KtWhenConditionWithExpression(667,678): 'Companion.A'
   null
 
 KtDotQualifiedExpression(667,678): 'Companion.A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

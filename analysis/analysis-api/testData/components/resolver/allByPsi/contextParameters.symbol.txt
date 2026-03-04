@@ -86,7 +86,10 @@ KtBlockExpression(120,164): '{'
   null
 
 KtDotQualifiedExpression(130,140): 'this.bar()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.bar(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtThisExpression(130,134): 'this'
   null
@@ -107,7 +110,10 @@ KtValueArgumentList(138,140): '()'
   null
 
 KtDotQualifiedExpression(149,158): 'a.foo("")'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.foo(<dispatch receiver>: A, a: kotlin.String): kotlin.String
+    ]
 
 KtNameReferenceExpression(149,150): 'a'
   null
@@ -170,7 +176,10 @@ KtBlockExpression(229,292): '{'
   null
 
 KtDotQualifiedExpression(243,253): 'this.bar()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.bar(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtThisExpression(243,247): 'this'
   null
@@ -197,7 +206,10 @@ KtReturnExpression(266,282): 'return a.foo("")'
     ]
 
 KtDotQualifiedExpression(273,282): 'a.foo("")'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.foo(<dispatch receiver>: A, a: kotlin.String): kotlin.String
+    ]
 
 KtNameReferenceExpression(273,274): 'a'
   null

@@ -302,7 +302,7 @@ KtProperty(393,418): 'val foo = JavaClass.foo()'
   null
 
 KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -383,7 +383,7 @@ KtNameReferenceExpression(433,437): 'Left'
   null
 
 KtDotQualifiedExpression(441,446): 'foo.x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -459,7 +459,7 @@ KtNameReferenceExpression(458,463): 'Right'
   null
 
 KtDotQualifiedExpression(467,472): 'foo.y'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -602,7 +602,7 @@ KtNameReferenceExpression(640,644): 'Left'
   null
 
 KtDotQualifiedExpression(648,652): 'mg.x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -678,7 +678,7 @@ KtNameReferenceExpression(664,669): 'Right'
   null
 
 KtDotQualifiedExpression(673,677): 'mg.y'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -823,7 +823,7 @@ KtNameReferenceExpression(861,865): 'Left'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
 
 KtDotQualifiedExpression(869,873): 'cs.x'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 
@@ -867,7 +867,7 @@ KtNameReferenceExpression(885,890): 'Right'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtDotQualifiedExpression(894,898): 'cs.y'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 

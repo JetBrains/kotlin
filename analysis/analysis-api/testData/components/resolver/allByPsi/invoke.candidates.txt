@@ -267,7 +267,7 @@ KtNameReferenceExpression(196,199): 'foo'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(204,226): '(((foo)())()).invoke()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -425,7 +425,7 @@ KtValueArgumentList(224,226): '()'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(231,243): 'foo.invoke()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

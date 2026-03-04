@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> value }) { (idx, _) -> idx }'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

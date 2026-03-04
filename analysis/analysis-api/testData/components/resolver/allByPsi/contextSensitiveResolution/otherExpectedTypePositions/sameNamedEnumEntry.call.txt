@@ -70,7 +70,7 @@ KtWhenConditionWithExpression(150,153): 'A.A'
   null
 
 KtDotQualifiedExpression(150,153): 'A.A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -125,7 +125,7 @@ KtWhenConditionWithExpression(169,172): 'A.B'
   null
 
 KtDotQualifiedExpression(169,172): 'A.B'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

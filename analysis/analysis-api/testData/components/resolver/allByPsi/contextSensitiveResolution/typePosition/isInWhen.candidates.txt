@@ -487,7 +487,7 @@ KtNameReferenceExpression(545,561): 'SealedInheritor1'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(565,579): 'instance.prop1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -590,7 +590,7 @@ KtNameReferenceExpression(600,605): 'Inner'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(609,627): 'instance.innerProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -693,7 +693,7 @@ KtNameReferenceExpression(648,671): 'IndirectSealedInheritor'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(675,689): 'instance.prop1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -925,7 +925,7 @@ KtNameReferenceExpression(922,938): 'SealedInheritor1'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(942,956): 'instance.prop1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1004,7 +1004,7 @@ KtNameReferenceExpression(968,973): 'Inner'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(977,995): 'instance.innerProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1083,7 +1083,7 @@ KtNameReferenceExpression(1007,1030): 'IndirectSealedInheritor'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1034,1048): 'instance.prop1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1303,7 +1303,7 @@ KtNameReferenceExpression(1289,1312): 'IndirectSealedInheritor'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1316,1330): 'instance.prop1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1418,7 +1418,7 @@ KtNameReferenceExpression(1395,1411): 'SealedInheritor2'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1415,1429): 'instance.prop2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1533,7 +1533,7 @@ KtNameReferenceExpression(1474,1490): 'SealedInheritor1'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1494,1508): 'instance.prop1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1648,7 +1648,7 @@ KtNameReferenceExpression(1553,1575): 'SealedSealedInheritor1'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1579,1593): 'instance.prop3'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:

@@ -59,7 +59,10 @@ KtBinaryExpression(79,107): 'other?.equals(this) ?: false'
   null
 
 KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(79,84): 'other'
   null

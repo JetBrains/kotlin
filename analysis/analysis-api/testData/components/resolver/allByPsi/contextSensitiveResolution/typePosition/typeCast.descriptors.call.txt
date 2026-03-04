@@ -799,7 +799,7 @@ KtDotQualifiedExpression(818,836): 'i.prop1.hashCode()'
   null
 
 KtDotQualifiedExpression(818,825): 'i.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -872,7 +872,7 @@ KtDotQualifiedExpression(868,881): 'i.prop2.dec()'
   null
 
 KtDotQualifiedExpression(868,875): 'i.prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
@@ -945,7 +945,7 @@ KtDotQualifiedExpression(913,931): 'i.prop1.hashCode()'
   null
 
 KtDotQualifiedExpression(913,920): 'i.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -1094,7 +1094,7 @@ KtDotQualifiedExpression(1052,1065): 'i.prop2.dec()'
   null
 
 KtDotQualifiedExpression(1052,1059): 'i.prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
@@ -1251,7 +1251,7 @@ KtDotQualifiedExpression(1177,1196): 'v2.prop1.hashCode()'
   null
 
 KtDotQualifiedExpression(1177,1185): 'v2.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -1751,7 +1751,7 @@ KtSafeQualifiedExpression(1512,1527): 'i?.prop2?.dec()'
   null
 
 KtSafeQualifiedExpression(1512,1520): 'i?.prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
@@ -1911,7 +1911,7 @@ KtSafeQualifiedExpression(1644,1665): 'v2?.prop1?.hashCode()'
   null
 
 KtSafeQualifiedExpression(1644,1653): 'v2?.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 

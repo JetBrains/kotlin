@@ -205,7 +205,7 @@ KtProperty(86,129): 'val explicitIndex = list.get(implicitIndex)'
   null
 
 KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

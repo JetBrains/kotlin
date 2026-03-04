@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(48,54): 'A.y(1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -222,7 +222,7 @@ KtBlockExpression(94,156): '{'
   null
 
 KtDotQualifiedExpression(100,154): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6)).bar(0)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -258,7 +258,7 @@ KtDotQualifiedExpression(100,154): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(
       }
 
 KtSafeQualifiedExpression(100,147): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -300,7 +300,7 @@ KtBinaryExpressionWithTypeRHS(101,124): '1.foo(2).bar(3) as? Int'
   null
 
 KtDotQualifiedExpression(101,116): '1.foo(2).bar(3)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -336,7 +336,7 @@ KtDotQualifiedExpression(101,116): '1.foo(2).bar(3)'
       }
 
 KtDotQualifiedExpression(101,109): '1.foo(2)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -627,7 +627,7 @@ KtValueArgument(131,146): '4.bar(5).bar(6)'
   null
 
 KtDotQualifiedExpression(131,146): '4.bar(5).bar(6)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -663,7 +663,7 @@ KtDotQualifiedExpression(131,146): '4.bar(5).bar(6)'
       }
 
 KtDotQualifiedExpression(131,139): '4.bar(5)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

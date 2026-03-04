@@ -201,7 +201,7 @@ KtValueArgument(232,243): 'MyClass.bar'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(232,243): 'MyClass.bar'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -531,7 +531,7 @@ KtValueArgument(408,420): 'MyClass2.bar'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(408,420): 'MyClass2.bar'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

@@ -374,7 +374,7 @@ KtBlockExpression(491,995): '{'
   null
 
 KtDotQualifiedExpression(497,538): 'MyClass::memberFunction.invoke(MyClass())'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -562,7 +562,7 @@ KtValueArgumentList(535,537): '()'
   null
 
 KtDotQualifiedExpression(543,571): 'MyClass::memberProperty.name'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -639,7 +639,7 @@ KtNameReferenceExpression(567,571): 'name'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(577,614): 'Child::memberFunction.invoke(Child())'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -827,7 +827,7 @@ KtValueArgumentList(611,613): '()'
   null
 
 KtDotQualifiedExpression(619,645): 'Child::memberProperty.name'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1076,7 +1076,7 @@ KtNameReferenceExpression(794,811): 'extensionProperty'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(817,853): 'ChildWithType::functionWithType.name'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1153,7 +1153,7 @@ KtNameReferenceExpression(849,853): 'name'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(858,913): 'ChildWithType::propertyWithType.invoke(ChildWithType())'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1425,7 +1425,7 @@ KtNameReferenceExpression(944,960): 'topLevelVariable'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(966,993): '::lateinitVar.isInitialized'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: isInitialized>
 

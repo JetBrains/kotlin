@@ -77,7 +77,10 @@ KtProperty(86,129): 'val explicitIndex = list.get(implicitIndex)'
   null
 
 KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+    ]
 
 KtNameReferenceExpression(106,110): 'list'
   null

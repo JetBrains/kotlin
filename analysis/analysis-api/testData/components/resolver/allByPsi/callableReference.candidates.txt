@@ -352,7 +352,7 @@ KtBlockExpression(491,995): '{'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(497,538): 'MyClass::memberFunction.invoke(MyClass())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -548,7 +548,7 @@ KtValueArgumentList(535,537): '()'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(543,571): 'MyClass::memberProperty.name'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -630,7 +630,7 @@ KtNameReferenceExpression(567,571): 'name'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(577,614): 'Child::memberFunction.invoke(Child())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -826,7 +826,7 @@ KtValueArgumentList(611,613): '()'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(619,645): 'Child::memberProperty.name'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -929,7 +929,7 @@ KtCallableReferenceExpression(659,690): 'pack.MyClass::extensionFunction'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(659,671): 'pack.MyClass'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1096,7 +1096,7 @@ KtCallableReferenceExpression(782,811): 'pack.Child::extensionProperty'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(782,792): 'pack.Child'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1156,7 +1156,7 @@ KtNameReferenceExpression(794,811): 'extensionProperty'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(817,853): 'ChildWithType::functionWithType.name'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1238,7 +1238,7 @@ KtNameReferenceExpression(849,853): 'name'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(858,913): 'ChildWithType::propertyWithType.invoke(ChildWithType())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

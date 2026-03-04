@@ -32,7 +32,10 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
   null
 
 KtDotQualifiedExpression(28,42): '1.compareTo(2)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(28,29): '1'
   null
@@ -113,7 +116,10 @@ KtNameReferenceExpression(124,130): 'number'
   null
 
 KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(135,142): 'myClass'
   null

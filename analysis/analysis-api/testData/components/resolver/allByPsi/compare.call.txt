@@ -131,7 +131,7 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
       }
 
 KtDotQualifiedExpression(28,42): '1.compareTo(2)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -526,7 +526,7 @@ KtNameReferenceExpression(124,130): 'number'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

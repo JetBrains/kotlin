@@ -197,7 +197,10 @@ KtProperty(397,435): 'val explicitFoo = TopLevelObject.foo()'
   null
 
 KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(415,429): 'TopLevelObject'
   null
@@ -233,7 +236,10 @@ KtProperty(469,505): 'val explicitBar = TopLevelObject.bar'
   null
 
 KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val bar: kotlin.Int
+    ]
 
 KtNameReferenceExpression(487,501): 'TopLevelObject'
   null
@@ -269,7 +275,10 @@ KtProperty(641,692): 'val explicitBaz = TopLevelObject.NestedObject.baz()'
   null
 
 KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+    ]
 
 KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
   null
@@ -296,7 +305,10 @@ KtProperty(697,739): 'val explicitNestedBaz = NestedObject.baz()'
   null
 
 KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(721,733): 'NestedObject'
   null
@@ -332,7 +344,10 @@ KtProperty(773,822): 'val explicitDoo = TopLevelObject.NestedObject.doo'
   null
 
 KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var doo: kotlin.String
+    ]
 
 KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
   null
@@ -350,7 +365,10 @@ KtProperty(827,867): 'val explicitNestedDoo = NestedObject.doo'
   null
 
 KtDotQualifiedExpression(851,867): 'NestedObject.doo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var doo: kotlin.String
+    ]
 
 KtNameReferenceExpression(851,863): 'NestedObject'
   null

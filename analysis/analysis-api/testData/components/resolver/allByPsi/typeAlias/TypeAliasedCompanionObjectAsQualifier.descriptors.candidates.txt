@@ -71,7 +71,7 @@ KtBlockExpression(161,253): '{'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(167,185): 'MyAlias.function()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -140,7 +140,7 @@ KtValueArgumentList(183,185): '()'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(190,206): 'MyAlias.property'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

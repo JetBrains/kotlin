@@ -250,7 +250,7 @@ KtValueArgumentList(138,140): '()'
   null
 
 KtDotQualifiedExpression(145,166): 'MyClass().contains(2)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(137,160): 'handler.act(::callback)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

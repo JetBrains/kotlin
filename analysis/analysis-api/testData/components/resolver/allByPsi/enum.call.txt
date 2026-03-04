@@ -339,7 +339,7 @@ KtBlockExpression(220,254): '{'
   null
 
 KtDotQualifiedExpression(234,244): 'this.baz()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -429,7 +429,7 @@ KtBlockExpression(301,575): '{'
   null
 
 KtDotQualifiedExpression(307,319): 'with.ordinal'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -486,7 +486,7 @@ KtNameReferenceExpression(312,319): 'ordinal'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -529,7 +529,7 @@ KtNameReferenceExpression(345,350): 'Entry'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -549,7 +549,7 @@ KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(355,380): 'EnumWithConstructor.Entry'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -612,7 +612,7 @@ KtNameReferenceExpression(381,385): 'name'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -655,7 +655,7 @@ KtNameReferenceExpression(410,423): 'EntryWithBody'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -675,7 +675,7 @@ KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(428,461): 'EnumWithConstructor.EntryWithBody'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -738,7 +738,7 @@ KtNameReferenceExpression(462,463): 'i'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -781,7 +781,7 @@ KtNameReferenceExpression(492,499): 'entries'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -824,7 +824,7 @@ KtNameReferenceExpression(527,532): 'Entry'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

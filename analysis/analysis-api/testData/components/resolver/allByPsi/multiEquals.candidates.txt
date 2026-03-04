@@ -1486,7 +1486,7 @@ KtNameReferenceExpression(995,996): 'i'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(1002,1013): 'i.equals(m)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1639,7 +1639,7 @@ KtNameReferenceExpression(1011,1012): 'm'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(1018,1029): 'm.equals(i)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -89,7 +89,7 @@ KtConstantExpression(74,75): '1'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(80,94): 'prop.action1()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []

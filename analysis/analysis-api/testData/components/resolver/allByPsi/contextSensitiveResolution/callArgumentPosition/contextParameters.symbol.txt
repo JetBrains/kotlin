@@ -374,7 +374,10 @@ KtBlockExpression(548,552): '"".a'
   null
 
 KtDotQualifiedExpression(548,552): '"".a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.String
+    ]
 
 KtStringTemplateExpression(548,550): '""'
   null

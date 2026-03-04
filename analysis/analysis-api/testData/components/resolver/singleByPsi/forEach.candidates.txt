@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -37,7 +37,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

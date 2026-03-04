@@ -302,7 +302,7 @@ KtProperty(393,418): 'val foo = JavaClass.foo()'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -377,7 +377,7 @@ KtNameReferenceExpression(433,437): 'Left'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(441,446): 'foo.x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -397,7 +397,7 @@ KtDotQualifiedExpression(441,446): 'foo.x'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -492,7 +492,7 @@ KtNameReferenceExpression(458,463): 'Right'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(467,472): 'foo.y'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -512,7 +512,7 @@ KtDotQualifiedExpression(467,472): 'foo.y'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -220,7 +220,7 @@ KtNameReferenceExpression(196,199): 'foo'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(204,226): '(((foo)())()).invoke()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -355,7 +355,7 @@ KtValueArgumentList(224,226): '()'
   null
 
 KtDotQualifiedExpression(231,243): 'foo.invoke()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

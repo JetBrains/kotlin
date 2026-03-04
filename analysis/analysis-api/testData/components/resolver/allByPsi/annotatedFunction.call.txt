@@ -140,7 +140,7 @@ KtValueArgument(46,77): 'AnnotationTarget.TYPE_PARAMETER'
   null
 
 KtDotQualifiedExpression(46,77): 'AnnotationTarget.TYPE_PARAMETER'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -186,7 +186,7 @@ KtValueArgument(83,108): 'AnnotationTarget.FUNCTION'
   null
 
 KtDotQualifiedExpression(83,108): 'AnnotationTarget.FUNCTION'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -232,7 +232,7 @@ KtValueArgument(114,146): 'AnnotationTarget.VALUE_PARAMETER'
   null
 
 KtDotQualifiedExpression(114,146): 'AnnotationTarget.VALUE_PARAMETER'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -278,7 +278,7 @@ KtValueArgument(152,173): 'AnnotationTarget.TYPE'
   null
 
 KtDotQualifiedExpression(152,173): 'AnnotationTarget.TYPE'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

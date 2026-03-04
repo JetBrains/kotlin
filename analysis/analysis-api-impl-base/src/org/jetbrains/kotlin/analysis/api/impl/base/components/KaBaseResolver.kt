@@ -78,6 +78,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     final override fun KtReturnExpression.resolveSymbol(): KaFunctionSymbol? = resolveSymbolSafe()
     final override fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol? = resolveSymbolSafe()
     final override fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe()
+    final override fun KtQualifiedExpression.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe()
     final override fun KtInvokeFunctionReference.resolveSymbol(): KaNamedFunctionSymbol? = resolveSymbolSafe()
     final override fun KtDestructuringDeclarationReference.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe()
     final override fun KtConstructorDelegationReference.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe()
@@ -155,6 +156,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     final override fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall? = resolveSingleCallSafe()
     final override fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? = resolveSingleCallSafe()
     final override fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? = resolveCallSafe()
+    final override fun KtQualifiedExpression.resolveCall(): KaSingleCall<*, *>? = resolveCallSafe()
     final override fun KtForExpression.resolveCall(): KaForLoopCall? = resolveCallSafe()
     final override fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? = resolveCallSafe()
 

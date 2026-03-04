@@ -56,7 +56,10 @@ KtProperty(151,167): 'val L = MyEnum.X'
   null
 
 KtDotQualifiedExpression(159,167): 'MyEnum.X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.X
+    ]
 
 KtNameReferenceExpression(159,165): 'MyEnum'
   null

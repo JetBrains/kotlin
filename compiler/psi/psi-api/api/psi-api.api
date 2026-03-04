@@ -2520,7 +2520,7 @@ public abstract interface class org/jetbrains/kotlin/psi/KtPureElement {
 	public abstract fun getPsiOrParent ()Lorg/jetbrains/kotlin/psi/KtElement;
 }
 
-public abstract interface class org/jetbrains/kotlin/psi/KtQualifiedExpression : org/jetbrains/kotlin/psi/KtExpression {
+public abstract interface class org/jetbrains/kotlin/psi/KtQualifiedExpression : org/jetbrains/kotlin/psi/KtExpression, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public fun getOperationSign ()Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public fun getOperationTokenNode ()Lcom/intellij/lang/ASTNode;
 	public fun getReceiverExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;

@@ -557,7 +557,10 @@ KtValueArgument(711,742): 'one.AnnoWithArray([10, 11, 12])'
   null
 
 KtDotQualifiedExpression(711,742): 'one.AnnoWithArray([10, 11, 12])'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+    ]
 
 KtNameReferenceExpression(711,714): 'one'
   null

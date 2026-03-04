@@ -152,7 +152,7 @@ KtProperty(327,363): 'val EnumOptionAlias = MyEnum.Option1'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(349,363): 'MyEnum.Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

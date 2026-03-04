@@ -1039,7 +1039,6 @@ org.jetbrains.kotlin.psi.KtPureClassOrObject:hasExplicitPrimaryConstructor()
 org.jetbrains.kotlin.psi.KtPureClassOrObject:hasPrimaryConstructor()
 org.jetbrains.kotlin.psi.KtPureClassOrObject:isLocal()
 org.jetbrains.kotlin.psi.KtPureElement:getContainingKtFile()
-org.jetbrains.kotlin.psi.KtQualifiedExpression
 org.jetbrains.kotlin.psi.KtQualifiedExpression.operationSign
 org.jetbrains.kotlin.psi.KtQualifiedExpression.operationTokenNode
 org.jetbrains.kotlin.psi.KtQualifiedExpression.receiverExpression

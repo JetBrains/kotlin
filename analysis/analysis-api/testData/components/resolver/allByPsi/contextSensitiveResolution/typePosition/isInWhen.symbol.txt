@@ -314,7 +314,10 @@ KtNameReferenceExpression(545,561): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(565,579): 'instance.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtNameReferenceExpression(565,573): 'instance'
   null
@@ -347,7 +350,10 @@ KtNameReferenceExpression(600,605): 'Inner'
   null
 
 KtDotQualifiedExpression(609,627): 'instance.innerProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val innerProp: kotlin.String
+    ]
 
 KtNameReferenceExpression(609,617): 'instance'
   null
@@ -380,7 +386,10 @@ KtNameReferenceExpression(648,671): 'IndirectSealedInheritor'
   null
 
 KtDotQualifiedExpression(675,689): 'instance.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtNameReferenceExpression(675,683): 'instance'
   null
@@ -515,7 +524,10 @@ KtNameReferenceExpression(922,938): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(942,956): 'instance.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtNameReferenceExpression(942,950): 'instance'
   null
@@ -539,7 +551,10 @@ KtNameReferenceExpression(968,973): 'Inner'
   null
 
 KtDotQualifiedExpression(977,995): 'instance.innerProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val innerProp: kotlin.String
+    ]
 
 KtNameReferenceExpression(977,985): 'instance'
   null
@@ -563,7 +578,10 @@ KtNameReferenceExpression(1007,1030): 'IndirectSealedInheritor'
   null
 
 KtDotQualifiedExpression(1034,1048): 'instance.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtNameReferenceExpression(1034,1042): 'instance'
   null
@@ -701,7 +719,10 @@ KtNameReferenceExpression(1289,1312): 'IndirectSealedInheritor'
   null
 
 KtDotQualifiedExpression(1316,1330): 'instance.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtNameReferenceExpression(1316,1324): 'instance'
   null
@@ -746,7 +767,10 @@ KtNameReferenceExpression(1395,1411): 'SealedInheritor2'
   null
 
 KtDotQualifiedExpression(1415,1429): 'instance.prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop2: kotlin.Int
+    ]
 
 KtNameReferenceExpression(1415,1423): 'instance'
   null
@@ -791,7 +815,10 @@ KtNameReferenceExpression(1474,1490): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(1494,1508): 'instance.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtNameReferenceExpression(1494,1502): 'instance'
   null
@@ -836,7 +863,10 @@ KtNameReferenceExpression(1553,1575): 'SealedSealedInheritor1'
   null
 
 KtDotQualifiedExpression(1579,1593): 'instance.prop3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop3: kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1579,1587): 'instance'
   null

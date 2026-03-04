@@ -251,7 +251,7 @@ KtReturnExpression(315,336): 'return instance.prop1'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(322,336): 'instance.prop1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -363,7 +363,7 @@ KtReturnExpression(384,405): 'return instance.prop2'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(391,405): 'instance.prop2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -496,7 +496,7 @@ KtNameReferenceExpression(522,531): 'SCOption1'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(535,549): 'instance.prop1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -575,7 +575,7 @@ KtNameReferenceExpression(557,566): 'SCOption2'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(570,584): 'instance.prop2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -708,7 +708,7 @@ KtNameReferenceExpression(669,678): 'SCOption1'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(682,696): 'instance.prop1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -811,7 +811,7 @@ KtNameReferenceExpression(713,722): 'SCOption2'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(726,740): 'instance.prop2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:

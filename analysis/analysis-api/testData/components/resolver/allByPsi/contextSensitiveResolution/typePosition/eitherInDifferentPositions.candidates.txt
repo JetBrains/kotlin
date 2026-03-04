@@ -272,7 +272,7 @@ KtNameReferenceExpression(303,307): 'Left'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(311,325): 's.error.length'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -293,7 +293,7 @@ KtDotQualifiedExpression(311,325): 's.error.length'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(311,318): 's.error'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -639,7 +639,7 @@ KtBinaryExpression(348,359): 's.value * 1'
     isInBestCandidates = false
 
 KtDotQualifiedExpression(348,355): 's.value'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -973,7 +973,7 @@ KtBlockExpression(387,415): '{'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(397,409): 's.hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1140,7 +1140,7 @@ KtOperationReferenceExpression(427,429): '=='
     isInBestCandidates = true
 
 KtDotQualifiedExpression(430,443): '"".hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1248,7 +1248,7 @@ KtNameReferenceExpression(460,464): 'Left'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(473,487): 's.error.length'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1269,7 +1269,7 @@ KtDotQualifiedExpression(473,487): 's.error.length'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(473,480): 's.error'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1354,7 +1354,7 @@ KtNameReferenceExpression(481,487): 'length'
     isInBestCandidates = true
 
 KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1391,7 +1391,7 @@ KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1428,7 +1428,7 @@ KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1465,7 +1465,7 @@ KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1501,7 +1501,7 @@ KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1538,7 +1538,7 @@ KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1576,7 +1576,7 @@ KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
     isInBestCandidates = false
 
 KtSafeQualifiedExpression(499,519): '(s as? Right)?.value'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

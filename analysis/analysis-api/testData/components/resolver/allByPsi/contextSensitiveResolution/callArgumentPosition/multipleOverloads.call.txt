@@ -629,7 +629,7 @@ KtValueArgument(325,334): 'MyEnum1.X'
   null
 
 KtDotQualifiedExpression(325,334): 'MyEnum1.X'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -820,7 +820,7 @@ KtValueArgument(347,356): 'MyEnum1.X'
   null
 
 KtDotQualifiedExpression(347,356): 'MyEnum1.X'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1608,7 +1608,7 @@ KtValueArgument(493,502): 'MyEnum3.X'
   null
 
 KtDotQualifiedExpression(493,502): 'MyEnum3.X'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

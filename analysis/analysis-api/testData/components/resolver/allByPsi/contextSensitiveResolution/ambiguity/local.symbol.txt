@@ -581,7 +581,10 @@ KtWhenConditionWithExpression(827,844): 'Sealed.CompanionB'
   null
 
 KtDotQualifiedExpression(827,844): 'Sealed.CompanionB'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionB: foo.Sealed
+    ]
 
 KtNameReferenceExpression(827,833): 'Sealed'
   null
@@ -953,7 +956,10 @@ KtWhenConditionWithExpression(1479,1494): 'this.CompanionB'
   null
 
 KtDotQualifiedExpression(1479,1494): 'this.CompanionB'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionB: kotlin.Int
+    ]
 
 KtThisExpression(1479,1483): 'this'
   null
@@ -1130,7 +1136,10 @@ KtWhenConditionWithExpression(1760,1777): 'Sealed.CompanionA'
   null
 
 KtDotQualifiedExpression(1760,1777): 'Sealed.CompanionA'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionA: foo.Sealed
+    ]
 
 KtNameReferenceExpression(1760,1766): 'Sealed'
   null
@@ -1148,7 +1157,10 @@ KtWhenConditionWithExpression(1795,1812): 'Sealed.CompanionB'
   null
 
 KtDotQualifiedExpression(1795,1812): 'Sealed.CompanionB'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionB: foo.Sealed
+    ]
 
 KtNameReferenceExpression(1795,1801): 'Sealed'
   null

@@ -217,7 +217,7 @@ KtValueArgument(199,210): 'WrongEnum.X'
   null
 
 KtDotQualifiedExpression(199,210): 'WrongEnum.X'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 

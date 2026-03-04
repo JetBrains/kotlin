@@ -53,7 +53,7 @@ KtReturnExpression(72,98): 'return super.equals(other)'
   null
 
 KtDotQualifiedExpression(79,98): 'super.equals(other)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -292,7 +292,7 @@ KtReturnExpression(210,236): 'return super.equals(other)'
   null
 
 KtDotQualifiedExpression(217,236): 'super.equals(other)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -754,7 +754,7 @@ KtNameReferenceExpression(337,339): 'm2'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(344,357): 'm1.equals(m2)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1194,7 +1194,7 @@ KtNameReferenceExpression(410,412): 'm1'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(417,430): 'm2.equals(m1)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1723,7 +1723,7 @@ KtValueArgumentList(573,575): '()'
   null
 
 KtDotQualifiedExpression(580,605): 'another.equals(Another())'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2157,7 +2157,7 @@ KtNameReferenceExpression(717,724): 'myClass'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(729,750): 'child.equals(myClass)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2451,7 +2451,7 @@ KtOperationReferenceExpression(776,777): '!'
       valueArgumentMapping = {}
 
 KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2705,7 +2705,7 @@ KtNameReferenceExpression(815,820): 'child'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(825,846): 'another.equals(child)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2959,7 +2959,7 @@ KtNameReferenceExpression(860,867): 'another'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(872,893): 'child.equals(another)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3213,7 +3213,7 @@ KtNameReferenceExpression(910,917): 'myClass'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(922,945): 'another.equals(myClass)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3507,7 +3507,7 @@ KtOperationReferenceExpression(973,974): '!'
       valueArgumentMapping = {}
 
 KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

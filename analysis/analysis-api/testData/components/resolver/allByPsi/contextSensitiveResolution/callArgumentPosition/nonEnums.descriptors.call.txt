@@ -1328,7 +1328,7 @@ KtNameReferenceExpression(580,595): 'ForTypeMismatch'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: ForTypeMismatch>
 
 KtDotQualifiedExpression(603,638): 'JavaClass.expectJavaClass(INSTANCE)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

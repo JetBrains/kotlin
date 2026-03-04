@@ -574,7 +574,7 @@ KtProperty(416,447): 'val SECOND = test.Sample.SECOND'
   null
 
 KtDotQualifiedExpression(429,447): 'test.Sample.SECOND'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -656,7 +656,7 @@ KtProperty(492,521): 'val FIRST = test.Sample.THIRD'
   null
 
 KtDotQualifiedExpression(504,521): 'test.Sample.THIRD'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -788,7 +788,7 @@ KtWhenConditionWithExpression(607,624): 'test.Sample.FIRST'
   null
 
 KtDotQualifiedExpression(607,624): 'test.Sample.FIRST'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

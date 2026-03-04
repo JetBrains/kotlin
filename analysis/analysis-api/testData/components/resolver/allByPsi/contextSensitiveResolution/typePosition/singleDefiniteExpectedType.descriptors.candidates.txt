@@ -665,7 +665,7 @@ KtNameReferenceExpression(680,696): 'SealedInheritor2'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -685,7 +685,7 @@ KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -705,7 +705,7 @@ KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1049,7 +1049,7 @@ KtNameReferenceExpression(944,960): 'SealedInheritor2'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1069,7 +1069,7 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1089,7 +1089,7 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1373,7 +1373,7 @@ KtNameReferenceExpression(1128,1144): 'SealedInheritor2'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1393,7 +1393,7 @@ KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1413,7 +1413,7 @@ KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1904,7 +1904,7 @@ KtNameReferenceExpression(1619,1635): 'SealedInheritor2'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1924,7 +1924,7 @@ KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1944,7 +1944,7 @@ KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2798,7 +2798,7 @@ KtProperty(2590,2615): 'val i = JClass.staticProp'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(2598,2615): 'JClass.staticProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2852,7 +2852,7 @@ KtNameReferenceExpression(2630,2639): 'SCOption1'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(2643,2650): 'i.prop1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2872,7 +2872,7 @@ KtDotQualifiedExpression(2643,2650): 'i.prop1'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2967,7 +2967,7 @@ KtNameReferenceExpression(2662,2671): 'SCOption2'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(2675,2682): 'i.prop2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2987,7 +2987,7 @@ KtDotQualifiedExpression(2675,2682): 'i.prop2'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3217,7 +3217,7 @@ KtWhenExpression(2836,2936): 'when (arg.a) {'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(2842,2847): 'arg.a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

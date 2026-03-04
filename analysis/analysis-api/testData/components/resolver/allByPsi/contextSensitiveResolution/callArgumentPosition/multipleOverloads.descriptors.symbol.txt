@@ -190,7 +190,7 @@ KtCallExpression(306,316): 'foo(id(X))'
       /foo(x: MyEnum1): kotlin.Unit,
       /foo(x: MyEnum2): kotlin.Unit
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     public fun foo(x: MyEnum1): Unit defined in root package in file multipleOverloads.kt
     public fun foo(x: MyEnum2): Unit defined in root package in file multipleOverloads.kt>
 
@@ -238,7 +238,9 @@ KtValueArgument(325,334): 'MyEnum1.X'
   null
 
 KtDotQualifiedExpression(325,334): 'MyEnum1.X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with X>
 
 KtNameReferenceExpression(325,332): 'MyEnum1'
   null
@@ -277,7 +279,9 @@ KtValueArgument(347,356): 'MyEnum1.X'
   null
 
 KtDotQualifiedExpression(347,356): 'MyEnum1.X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with X>
 
 KtNameReferenceExpression(347,354): 'MyEnum1'
   null
@@ -410,7 +414,7 @@ KtCallExpression(473,483): 'bar(id(X))'
       bar(x: MyEnum1): kotlin.Unit,
       bar(x: MyEnum2): kotlin.Unit
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
     local final fun bar(x: MyEnum1): Unit defined in main2
     local final fun bar(x: MyEnum2): Unit defined in main2>
 
@@ -458,7 +462,9 @@ KtValueArgument(493,502): 'MyEnum3.X'
   null
 
 KtDotQualifiedExpression(493,502): 'MyEnum3.X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with X>
 
 KtNameReferenceExpression(493,500): 'MyEnum3'
   null

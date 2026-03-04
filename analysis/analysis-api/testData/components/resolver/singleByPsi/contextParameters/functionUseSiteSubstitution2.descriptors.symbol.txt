@@ -1,0 +1,5 @@
+KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Another.foo(<extension receiver>: B, <dispatch receiver>: Base<A, B, C>, v: C): kotlin.Unit
+    ]

@@ -257,10 +257,16 @@ KtNameReferenceExpression(303,307): 'Left'
   null
 
 KtDotQualifiedExpression(311,325): 's.error.length'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val length: kotlin.Int
+    ]
 
 KtDotQualifiedExpression(311,318): 's.error'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val error: E
+    ]
 
 KtNameReferenceExpression(311,312): 's'
   null
@@ -299,7 +305,10 @@ KtBinaryExpression(348,359): 's.value * 1'
   null
 
 KtDotQualifiedExpression(348,355): 's.value'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val value: A
+    ]
 
 KtNameReferenceExpression(348,349): 's'
   null
@@ -344,7 +353,10 @@ KtBlockExpression(387,415): '{'
   null
 
 KtDotQualifiedExpression(397,409): 's.hashCode()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtNameReferenceExpression(397,398): 's'
   null
@@ -377,7 +389,10 @@ KtOperationReferenceExpression(427,429): '=='
   null
 
 KtDotQualifiedExpression(430,443): '"".hashCode()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtStringTemplateExpression(430,432): '""'
   null
@@ -419,10 +434,16 @@ KtNameReferenceExpression(460,464): 'Left'
   null
 
 KtDotQualifiedExpression(473,487): 's.error.length'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val length: kotlin.Int
+    ]
 
 KtDotQualifiedExpression(473,480): 's.error'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val error: E
+    ]
 
 KtNameReferenceExpression(473,474): 's'
   null
@@ -434,10 +455,16 @@ KtNameReferenceExpression(481,487): 'length'
   null
 
 KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.div(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtSafeQualifiedExpression(499,519): '(s as? Right)?.value'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val value: A
+    ]
 
 KtParenthesizedExpression(499,512): '(s as? Right)'
   null

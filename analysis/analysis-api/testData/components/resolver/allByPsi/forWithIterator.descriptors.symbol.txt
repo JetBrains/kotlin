@@ -104,7 +104,10 @@ KtProperty(133,166): 'var current = this@iterator.start'
   null
 
 KtDotQualifiedExpression(147,166): 'this@iterator.start'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val start: kotlin.Int
+    ]
 
 KtThisExpression(147,160): 'this@iterator'
   null
@@ -143,7 +146,10 @@ KtOperationReferenceExpression(204,206): '<='
   null
 
 KtDotQualifiedExpression(207,224): 'this@iterator.end'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val end: kotlin.Int
+    ]
 
 KtThisExpression(207,220): 'this@iterator'
   null

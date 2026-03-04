@@ -47,7 +47,10 @@ KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
   null
 
 KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.EXPRESSION
+    ]
 
 KtNameReferenceExpression(46,62): 'AnnotationTarget'
   null
@@ -80,7 +83,10 @@ KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
   null
 
 KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationRetention.SOURCE
+    ]
 
 KtNameReferenceExpression(86,105): 'AnnotationRetention'
   null
@@ -155,7 +161,10 @@ KtNameReferenceExpression(182,189): 'integer'
   null
 
 KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
+    ]
 
 KtParenthesizedExpression(191,215): '(@Anno(integer) usage())'
   null

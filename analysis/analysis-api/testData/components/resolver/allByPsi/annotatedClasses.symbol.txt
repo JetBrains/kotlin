@@ -38,7 +38,10 @@ KtValueArgument(23,44): 'AnnotationTarget.TYPE'
   null
 
 KtDotQualifiedExpression(23,44): 'AnnotationTarget.TYPE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.TYPE
+    ]
 
 KtNameReferenceExpression(23,39): 'AnnotationTarget'
   null

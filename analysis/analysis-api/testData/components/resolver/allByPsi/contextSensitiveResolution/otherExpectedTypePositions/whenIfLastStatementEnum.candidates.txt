@@ -367,7 +367,7 @@ KtProperty(277,293): 'val L = MyEnum.X'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(285,293): 'MyEnum.X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -879,7 +879,7 @@ KtWhenExpression(561,633): 'when (i.hashCode()) {'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(567,579): 'i.hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1976,7 +1976,7 @@ KtWhenExpression(1145,1229): 'when (i.hashCode()) {'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1151,1163): 'i.hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

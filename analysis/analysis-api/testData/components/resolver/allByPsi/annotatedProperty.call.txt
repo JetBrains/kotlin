@@ -182,7 +182,7 @@ KtValueArgument(44,69): 'AnnotationTarget.PROPERTY'
   null
 
 KtDotQualifiedExpression(44,69): 'AnnotationTarget.PROPERTY'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -228,7 +228,7 @@ KtValueArgument(75,106): 'AnnotationTarget.TYPE_PARAMETER'
   null
 
 KtDotQualifiedExpression(75,106): 'AnnotationTarget.TYPE_PARAMETER'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -274,7 +274,7 @@ KtValueArgument(112,137): 'AnnotationTarget.FUNCTION'
   null
 
 KtDotQualifiedExpression(112,137): 'AnnotationTarget.FUNCTION'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -320,7 +320,7 @@ KtValueArgument(143,175): 'AnnotationTarget.VALUE_PARAMETER'
   null
 
 KtDotQualifiedExpression(143,175): 'AnnotationTarget.VALUE_PARAMETER'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -366,7 +366,7 @@ KtValueArgument(181,213): 'AnnotationTarget.PROPERTY_GETTER'
   null
 
 KtDotQualifiedExpression(181,213): 'AnnotationTarget.PROPERTY_GETTER'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -412,7 +412,7 @@ KtValueArgument(219,251): 'AnnotationTarget.PROPERTY_SETTER'
   null
 
 KtDotQualifiedExpression(219,251): 'AnnotationTarget.PROPERTY_SETTER'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -458,7 +458,7 @@ KtValueArgument(257,278): 'AnnotationTarget.TYPE'
   null
 
 KtDotQualifiedExpression(257,278): 'AnnotationTarget.TYPE'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(53,61): 's.action'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}

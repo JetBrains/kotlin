@@ -117,7 +117,7 @@ KtProperty(165,181): 'val L = MyEnum.X'
   null
 
 KtDotQualifiedExpression(173,181): 'MyEnum.X'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

@@ -106,7 +106,7 @@ KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -250,7 +250,7 @@ KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -889,7 +889,7 @@ KtNameReferenceExpression(182,189): 'integer'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -909,7 +909,7 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

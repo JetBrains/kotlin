@@ -320,7 +320,10 @@ KtReturnExpression(571,592): 'return instance.prop1'
     ]
 
 KtDotQualifiedExpression(578,592): 'instance.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtNameReferenceExpression(578,586): 'instance'
   null
@@ -365,7 +368,10 @@ KtReturnExpression(655,676): 'return instance.prop1'
     ]
 
 KtDotQualifiedExpression(662,676): 'instance.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtNameReferenceExpression(662,670): 'instance'
   null
@@ -410,7 +416,10 @@ KtReturnExpression(721,746): 'return instance.innerProp'
     ]
 
 KtDotQualifiedExpression(728,746): 'instance.innerProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val innerProp: kotlin.String
+    ]
 
 KtNameReferenceExpression(728,736): 'instance'
   null
@@ -509,7 +518,10 @@ KtReturnExpression(890,911): 'return instance.prop2'
     ]
 
 KtDotQualifiedExpression(897,911): 'instance.prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop2: kotlin.Int
+    ]
 
 KtNameReferenceExpression(897,905): 'instance'
   null
@@ -554,7 +566,10 @@ KtReturnExpression(983,1004): 'return instance.prop3'
     ]
 
 KtDotQualifiedExpression(990,1004): 'instance.prop3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop3: kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(990,998): 'instance'
   null

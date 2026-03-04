@@ -56,7 +56,9 @@ KtNameReferenceExpression(118,127): 'JCOption1'
   null
 
 KtDotQualifiedExpression(131,145): 'instance.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtNameReferenceExpression(131,139): 'instance'
   null
@@ -80,7 +82,9 @@ KtNameReferenceExpression(154,163): 'JCOption2'
   null
 
 KtDotQualifiedExpression(167,181): 'instance.prop2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
 
 KtNameReferenceExpression(167,175): 'instance'
   null
@@ -104,7 +108,9 @@ KtNameReferenceExpression(190,196): 'Nested'
   null
 
 KtDotQualifiedExpression(200,213): 'instance.prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
 
 KtNameReferenceExpression(200,208): 'instance'
   null
@@ -179,7 +185,10 @@ KtReturnExpression(315,336): 'return instance.prop1'
     ]
 
 KtDotQualifiedExpression(322,336): 'instance.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop1: kotlin.Int
+    ]
 
 KtNameReferenceExpression(322,330): 'instance'
   null
@@ -224,7 +233,10 @@ KtReturnExpression(384,405): 'return instance.prop2'
     ]
 
 KtDotQualifiedExpression(391,405): 'instance.prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop2: kotlin.Int
+    ]
 
 KtNameReferenceExpression(391,399): 'instance'
   null
@@ -290,7 +302,10 @@ KtNameReferenceExpression(522,531): 'SCOption1'
   null
 
 KtDotQualifiedExpression(535,549): 'instance.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop1: kotlin.Int
+    ]
 
 KtNameReferenceExpression(535,543): 'instance'
   null
@@ -314,7 +329,10 @@ KtNameReferenceExpression(557,566): 'SCOption2'
   null
 
 KtDotQualifiedExpression(570,584): 'instance.prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop2: kotlin.Int
+    ]
 
 KtNameReferenceExpression(570,578): 'instance'
   null
@@ -377,7 +395,10 @@ KtNameReferenceExpression(669,678): 'SCOption1'
   null
 
 KtDotQualifiedExpression(682,696): 'instance.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop1: kotlin.Int
+    ]
 
 KtNameReferenceExpression(682,690): 'instance'
   null
@@ -410,7 +431,10 @@ KtNameReferenceExpression(713,722): 'SCOption2'
   null
 
 KtDotQualifiedExpression(726,740): 'instance.prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop2: kotlin.Int
+    ]
 
 KtNameReferenceExpression(726,734): 'instance'
   null

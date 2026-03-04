@@ -125,7 +125,10 @@ KtProperty(176,249): 'val explicitForm = newParameter.plus(parameter.myMinus(one
   null
 
 KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreParameter))'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(195,207): 'newParameter'
   null
@@ -146,7 +149,10 @@ KtValueArgument(213,248): 'parameter.myMinus(oneMoreParameter)'
   null
 
 KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(213,222): 'parameter'
   null

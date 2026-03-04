@@ -276,7 +276,7 @@ KtDotQualifiedExpression(311,325): 's.error.length'
   null
 
 KtDotQualifiedExpression(311,318): 's.error'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: error>
 
@@ -349,7 +349,7 @@ KtBinaryExpression(348,359): 's.value * 1'
   null
 
 KtDotQualifiedExpression(348,355): 's.value'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: value>
 
@@ -428,7 +428,7 @@ KtBlockExpression(387,415): '{'
   null
 
 KtDotQualifiedExpression(397,409): 's.hashCode()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -589,7 +589,7 @@ KtOperationReferenceExpression(427,429): '=='
       }
 
 KtDotQualifiedExpression(430,443): '"".hashCode()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -698,7 +698,7 @@ KtDotQualifiedExpression(473,487): 's.error.length'
   null
 
 KtDotQualifiedExpression(473,480): 's.error'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: error>
 

@@ -1182,7 +1182,7 @@ KtProperty(176,249): 'val explicitForm = newParameter.plus(parameter.myMinus(one
   NO_CANDIDATES
 
 KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreParameter))'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1219,7 +1219,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1256,7 +1256,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1293,7 +1293,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1329,7 +1329,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1366,7 +1366,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1872,7 +1872,7 @@ KtValueArgument(213,248): 'parameter.myMinus(oneMoreParameter)'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

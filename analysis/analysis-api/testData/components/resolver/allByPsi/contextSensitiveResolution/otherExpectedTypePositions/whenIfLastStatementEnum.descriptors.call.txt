@@ -645,7 +645,7 @@ KtWhenExpression(561,633): 'when (i.hashCode()) {'
   null
 
 KtDotQualifiedExpression(567,579): 'i.hashCode()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1579,7 +1579,7 @@ KtWhenExpression(1145,1229): 'when (i.hashCode()) {'
   null
 
 KtDotQualifiedExpression(1151,1163): 'i.hashCode()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

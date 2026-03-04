@@ -1309,7 +1309,7 @@ KtValueArgument(711,742): 'one.AnnoWithArray([10, 11, 12])'
   null
 
 KtDotQualifiedExpression(711,742): 'one.AnnoWithArray([10, 11, 12])'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

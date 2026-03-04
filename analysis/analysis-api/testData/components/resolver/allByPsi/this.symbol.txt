@@ -44,7 +44,10 @@ KtValueArgumentList(69,71): '()'
   null
 
 KtDotQualifiedExpression(80,90): 'this.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
 
 KtThisExpression(80,84): 'this'
   null
@@ -65,7 +68,10 @@ KtValueArgumentList(88,90): '()'
   null
 
 KtDotQualifiedExpression(99,117): 'this@MyClass.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
 
 KtThisExpression(99,111): 'this@MyClass'
   null
@@ -131,7 +137,10 @@ KtValueArgumentList(206,208): '()'
   null
 
 KtDotQualifiedExpression(221,231): 'this.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
 
 KtThisExpression(221,225): 'this'
   null
@@ -152,7 +161,10 @@ KtValueArgumentList(229,231): '()'
   null
 
 KtDotQualifiedExpression(244,265): 'this@InnerOuter.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
 
 KtThisExpression(244,259): 'this@InnerOuter'
   null
@@ -182,7 +194,10 @@ KtValueArgumentList(263,265): '()'
   null
 
 KtDotQualifiedExpression(278,296): 'this@MyClass.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
 
 KtThisExpression(278,290): 'this@MyClass'
   null
@@ -248,7 +263,10 @@ KtValueArgumentList(406,408): '()'
   null
 
 KtDotQualifiedExpression(425,435): 'this.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
 
 KtThisExpression(425,429): 'this'
   null
@@ -269,7 +287,10 @@ KtValueArgumentList(433,435): '()'
   null
 
 KtDotQualifiedExpression(452,474): 'this@InnerNested.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
 
 KtThisExpression(452,468): 'this@InnerNested'
   null
@@ -299,7 +320,10 @@ KtValueArgumentList(472,474): '()'
   null
 
 KtDotQualifiedExpression(491,512): 'this@InnerOuter.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
 
 KtThisExpression(491,506): 'this@InnerOuter'
   null
@@ -329,7 +353,10 @@ KtValueArgumentList(510,512): '()'
   null
 
 KtDotQualifiedExpression(529,547): 'this@MyClass.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
 
 KtThisExpression(529,541): 'this@MyClass'
   null
@@ -413,7 +440,10 @@ KtValueArgumentList(628,630): '()'
   null
 
 KtDotQualifiedExpression(651,661): 'this.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
 
 KtThisExpression(651,655): 'this'
   null
@@ -434,7 +464,10 @@ KtValueArgumentList(659,661): '()'
   null
 
 KtDotQualifiedExpression(682,697): 'this@anon.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
 
 KtThisExpression(682,691): 'this@anon'
   null
@@ -484,7 +517,10 @@ KtValueArgumentList(695,697): '()'
   null
 
 KtDotQualifiedExpression(718,740): 'this@InnerNested.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
 
 KtThisExpression(718,734): 'this@InnerNested'
   null
@@ -514,7 +550,10 @@ KtValueArgumentList(738,740): '()'
   null
 
 KtDotQualifiedExpression(761,782): 'this@InnerOuter.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
 
 KtThisExpression(761,776): 'this@InnerOuter'
   null
@@ -544,7 +583,10 @@ KtValueArgumentList(780,782): '()'
   null
 
 KtDotQualifiedExpression(803,821): 'this@MyClass.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
 
 KtThisExpression(803,815): 'this@MyClass'
   null
@@ -613,7 +655,10 @@ KtValueArgumentList(894,896): '()'
   null
 
 KtDotQualifiedExpression(917,927): 'this.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
 
 KtThisExpression(917,921): 'this'
   null
@@ -634,7 +679,10 @@ KtValueArgumentList(925,927): '()'
   null
 
 KtDotQualifiedExpression(948,965): 'this@myWith.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
 
 KtThisExpression(948,959): 'this@myWith'
   null
@@ -684,7 +732,10 @@ KtValueArgumentList(963,965): '()'
   null
 
 KtDotQualifiedExpression(986,1008): 'this@InnerNested.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
 
 KtThisExpression(986,1002): 'this@InnerNested'
   null
@@ -714,7 +765,10 @@ KtValueArgumentList(1006,1008): '()'
   null
 
 KtDotQualifiedExpression(1029,1050): 'this@InnerOuter.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
+    ]
 
 KtThisExpression(1029,1044): 'this@InnerOuter'
   null
@@ -744,7 +798,10 @@ KtValueArgumentList(1048,1050): '()'
   null
 
 KtDotQualifiedExpression(1071,1089): 'this@MyClass.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
+    ]
 
 KtThisExpression(1071,1083): 'this@MyClass'
   null
@@ -804,7 +861,10 @@ KtBlockExpression(1160,1176): 'this@label.foo()'
   null
 
 KtDotQualifiedExpression(1160,1176): 'this@label.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
+    ]
 
 KtThisExpression(1160,1170): 'this@label'
   null

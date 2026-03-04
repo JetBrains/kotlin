@@ -302,7 +302,10 @@ KtProperty(393,418): 'val foo = JavaClass.foo()'
   null
 
 KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.foo(): MySealed!
+    ]
 
 KtNameReferenceExpression(403,412): 'JavaClass'
   null
@@ -335,7 +338,10 @@ KtNameReferenceExpression(433,437): 'Left'
   null
 
 KtDotQualifiedExpression(441,446): 'foo.x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val x: kotlin.String
+    ]
 
 KtNameReferenceExpression(441,444): 'foo'
   null
@@ -359,7 +365,10 @@ KtNameReferenceExpression(458,463): 'Right'
   null
 
 KtDotQualifiedExpression(467,472): 'foo.y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]
 
 KtNameReferenceExpression(467,470): 'foo'
   null
@@ -422,7 +431,10 @@ KtNameReferenceExpression(640,644): 'Left'
   null
 
 KtDotQualifiedExpression(648,652): 'mg.x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val x: kotlin.String
+    ]
 
 KtNameReferenceExpression(648,650): 'mg'
   null
@@ -446,7 +458,10 @@ KtNameReferenceExpression(664,669): 'Right'
   null
 
 KtDotQualifiedExpression(673,677): 'mg.y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]
 
 KtNameReferenceExpression(673,675): 'mg'
   null
@@ -509,7 +524,9 @@ KtNameReferenceExpression(861,865): 'Left'
   null
 
 KtDotQualifiedExpression(869,873): 'cs.x'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
 KtNameReferenceExpression(869,871): 'cs'
   null
@@ -533,7 +550,9 @@ KtNameReferenceExpression(885,890): 'Right'
   null
 
 KtDotQualifiedExpression(894,898): 'cs.y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>
 
 KtNameReferenceExpression(894,896): 'cs'
   null

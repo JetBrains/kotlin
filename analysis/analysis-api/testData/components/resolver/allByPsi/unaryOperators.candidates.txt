@@ -281,7 +281,7 @@ KtOperationReferenceExpression(87,88): '-'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -302,7 +302,7 @@ KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

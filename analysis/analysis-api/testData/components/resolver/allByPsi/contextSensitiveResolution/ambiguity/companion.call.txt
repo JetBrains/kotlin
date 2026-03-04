@@ -344,7 +344,7 @@ KtOperationReferenceExpression(328,330): '=='
       }
 
 KtDotQualifiedExpression(331,339): 'MyEnum.A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -509,7 +509,7 @@ KtOperationReferenceExpression(409,411): '=='
       }
 
 KtDotQualifiedExpression(412,423): 'Companion.A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -709,7 +709,7 @@ KtWhenConditionWithExpression(571,579): 'MyEnum.A'
   null
 
 KtDotQualifiedExpression(571,579): 'MyEnum.A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -837,7 +837,7 @@ KtWhenConditionWithExpression(667,678): 'Companion.A'
   null
 
 KtDotQualifiedExpression(667,678): 'Companion.A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

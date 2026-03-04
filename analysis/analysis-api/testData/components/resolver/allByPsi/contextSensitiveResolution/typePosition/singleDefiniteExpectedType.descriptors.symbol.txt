@@ -410,7 +410,9 @@ KtNameReferenceExpression(605,621): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(625,639): 'instance.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(625,633): 'instance'
   null
@@ -458,7 +460,9 @@ KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
   null
 
 KtDotQualifiedExpression(700,714): 'instance.prop2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(700,708): 'instance'
   null
@@ -575,7 +579,9 @@ KtNameReferenceExpression(869,885): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(889,903): 'instance.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(889,897): 'instance'
   null
@@ -623,7 +629,9 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
   null
 
 KtDotQualifiedExpression(964,978): 'instance.prop2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(964,972): 'instance'
   null
@@ -701,7 +709,9 @@ KtNameReferenceExpression(1086,1102): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(1106,1120): 'instance.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(1106,1114): 'instance'
   null
@@ -728,7 +738,9 @@ KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
   null
 
 KtDotQualifiedExpression(1148,1162): 'instance.prop2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(1148,1156): 'instance'
   null
@@ -998,7 +1010,9 @@ KtNameReferenceExpression(1577,1593): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(1597,1611): 'instance.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(1597,1605): 'instance'
   null
@@ -1025,7 +1039,9 @@ KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
   null
 
 KtDotQualifiedExpression(1639,1653): 'instance.prop2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(1639,1647): 'instance'
   null
@@ -1169,7 +1185,9 @@ KtNameReferenceExpression(1870,1885): 'NestedInheritor'
   null
 
 KtDotQualifiedExpression(1889,1902): 'instance.prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtNameReferenceExpression(1889,1897): 'instance'
   null
@@ -1193,7 +1211,9 @@ KtNameReferenceExpression(1918,1939): 'NestedNestedInheritor'
   null
 
 KtDotQualifiedExpression(1943,1962): 'instance.propNested'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propNested>
 
 KtNameReferenceExpression(1943,1951): 'instance'
   null
@@ -1334,7 +1354,9 @@ KtNameReferenceExpression(2176,2191): 'NestedInheritor'
   null
 
 KtDotQualifiedExpression(2195,2208): 'instance.prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtNameReferenceExpression(2195,2203): 'instance'
   null
@@ -1358,7 +1380,9 @@ KtNameReferenceExpression(2224,2245): 'NestedNestedInheritor'
   null
 
 KtDotQualifiedExpression(2249,2268): 'instance.propNested'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propNested>
 
 KtNameReferenceExpression(2249,2257): 'instance'
   null
@@ -1475,7 +1499,9 @@ KtNameReferenceExpression(2452,2467): 'NestedInheritor'
   null
 
 KtDotQualifiedExpression(2471,2484): 'instance.prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtNameReferenceExpression(2471,2479): 'instance'
   null
@@ -1499,7 +1525,9 @@ KtNameReferenceExpression(2492,2508): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(2512,2526): 'instance.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(2512,2520): 'instance'
   null
@@ -1547,7 +1575,10 @@ KtProperty(2590,2615): 'val i = JClass.staticProp'
   null
 
 KtDotQualifiedExpression(2598,2615): 'JClass.staticProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var staticProp: SealedJClass!
+    ]
 
 KtNameReferenceExpression(2598,2604): 'JClass'
   null
@@ -1712,7 +1743,10 @@ KtWhenExpression(2836,2936): 'when (arg.a) {'
   null
 
 KtDotQualifiedExpression(2842,2847): 'arg.a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: @R|kotlin.UnsafeVariance|()  T
+    ]
 
 KtNameReferenceExpression(2842,2845): 'arg'
   null

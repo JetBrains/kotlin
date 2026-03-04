@@ -53,7 +53,10 @@ KtProperty(124,146): 'val ONE = Second.THREE'
   null
 
 KtDotQualifiedExpression(134,146): 'Second.THREE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Second.THREE
+    ]
 
 KtNameReferenceExpression(134,140): 'Second'
   null

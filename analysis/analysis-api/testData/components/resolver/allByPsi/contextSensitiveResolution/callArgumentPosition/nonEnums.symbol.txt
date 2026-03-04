@@ -417,7 +417,10 @@ KtNameReferenceExpression(580,595): 'ForTypeMismatch'
   null
 
 KtDotQualifiedExpression(603,638): 'JavaClass.expectJavaClass(INSTANCE)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.expectJavaClass(j: JavaClass!): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(603,612): 'JavaClass'
   null

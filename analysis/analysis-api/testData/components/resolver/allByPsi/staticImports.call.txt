@@ -197,7 +197,7 @@ KtProperty(397,435): 'val explicitFoo = TopLevelObject.foo()'
   null
 
 KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -310,7 +310,7 @@ KtProperty(469,505): 'val explicitBar = TopLevelObject.bar'
   null
 
 KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -396,7 +396,7 @@ KtProperty(641,692): 'val explicitBaz = TopLevelObject.NestedObject.baz()'
   null
 
 KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -471,7 +471,7 @@ KtProperty(697,739): 'val explicitNestedBaz = NestedObject.baz()'
   null
 
 KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -584,7 +584,7 @@ KtProperty(773,822): 'val explicitDoo = TopLevelObject.NestedObject.doo'
   null
 
 KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -636,7 +636,7 @@ KtProperty(827,867): 'val explicitNestedDoo = NestedObject.doo'
   null
 
 KtDotQualifiedExpression(851,867): 'NestedObject.doo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

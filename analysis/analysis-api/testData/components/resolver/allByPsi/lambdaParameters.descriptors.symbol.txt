@@ -89,7 +89,10 @@ KtConstantExpression(74,75): '1'
   null
 
 KtDotQualifiedExpression(80,94): 'prop.action1()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<extension receiver>: P1<dispatch receiver>: kotlin.Function1<P1, R>): R
+    ]
 
 KtNameReferenceExpression(80,84): 'prop'
   null

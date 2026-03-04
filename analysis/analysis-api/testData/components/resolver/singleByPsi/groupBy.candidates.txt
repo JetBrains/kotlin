@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> value }) { (idx, _) -> idx }'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -53,7 +53,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -93,7 +93,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>>'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

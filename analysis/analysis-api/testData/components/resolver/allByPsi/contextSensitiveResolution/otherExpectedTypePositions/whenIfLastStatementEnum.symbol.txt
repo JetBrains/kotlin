@@ -209,7 +209,10 @@ KtProperty(277,293): 'val L = MyEnum.X'
   null
 
 KtDotQualifiedExpression(285,293): 'MyEnum.X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.X
+    ]
 
 KtNameReferenceExpression(285,291): 'MyEnum'
   null
@@ -371,7 +374,10 @@ KtWhenExpression(561,633): 'when (i.hashCode()) {'
   null
 
 KtDotQualifiedExpression(567,579): 'i.hashCode()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtNameReferenceExpression(567,568): 'i'
   null
@@ -671,7 +677,10 @@ KtWhenExpression(1145,1229): 'when (i.hashCode()) {'
   null
 
 KtDotQualifiedExpression(1151,1163): 'i.hashCode()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtNameReferenceExpression(1151,1152): 'i'
   null

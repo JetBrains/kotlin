@@ -97,7 +97,7 @@ KtBlockExpression(120,164): '{'
   null
 
 KtDotQualifiedExpression(130,140): 'this.bar()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -166,7 +166,7 @@ KtValueArgumentList(138,140): '()'
   null
 
 KtDotQualifiedExpression(149,158): 'a.foo("")'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -339,7 +339,7 @@ KtBlockExpression(229,292): '{'
   null
 
 KtDotQualifiedExpression(243,253): 'this.bar()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -411,7 +411,7 @@ KtReturnExpression(266,282): 'return a.foo("")'
   null
 
 KtDotQualifiedExpression(273,282): 'a.foo("")'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

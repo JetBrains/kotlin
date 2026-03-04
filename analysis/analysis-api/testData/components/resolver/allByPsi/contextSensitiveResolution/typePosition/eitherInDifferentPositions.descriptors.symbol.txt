@@ -260,7 +260,9 @@ KtDotQualifiedExpression(311,325): 's.error.length'
   null
 
 KtDotQualifiedExpression(311,318): 's.error'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: error>
 
 KtNameReferenceExpression(311,312): 's'
   null
@@ -299,7 +301,9 @@ KtBinaryExpression(348,359): 's.value * 1'
   null
 
 KtDotQualifiedExpression(348,355): 's.value'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: value>
 
 KtNameReferenceExpression(348,349): 's'
   null
@@ -344,7 +348,10 @@ KtBlockExpression(387,415): '{'
   null
 
 KtDotQualifiedExpression(397,409): 's.hashCode()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtNameReferenceExpression(397,398): 's'
   null
@@ -377,7 +384,10 @@ KtOperationReferenceExpression(427,429): '=='
   null
 
 KtDotQualifiedExpression(430,443): '"".hashCode()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtStringTemplateExpression(430,432): '""'
   null
@@ -422,7 +432,9 @@ KtDotQualifiedExpression(473,487): 's.error.length'
   null
 
 KtDotQualifiedExpression(473,480): 's.error'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: error>
 
 KtNameReferenceExpression(473,474): 's'
   null

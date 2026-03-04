@@ -599,7 +599,7 @@ KtWhenConditionWithExpression(486,494): 'Sealed.A'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(486,494): 'Sealed.A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -743,7 +743,7 @@ KtWhenConditionWithExpression(592,597): 'foo.A'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(592,597): 'foo.A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1650,7 +1650,7 @@ KtOperationReferenceExpression(1234,1236): '=='
     isInBestCandidates = true
 
 KtDotQualifiedExpression(1237,1245): 'Sealed.A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1826,7 +1826,7 @@ KtOperationReferenceExpression(1292,1294): '=='
     isInBestCandidates = true
 
 KtDotQualifiedExpression(1295,1300): 'foo.A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1986,7 +1986,7 @@ KtOperationReferenceExpression(1341,1343): '=='
     isInBestCandidates = true
 
 KtDotQualifiedExpression(1344,1352): 'Sealed.C'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

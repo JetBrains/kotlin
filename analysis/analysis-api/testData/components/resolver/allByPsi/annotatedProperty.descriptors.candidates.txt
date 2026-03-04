@@ -257,7 +257,7 @@ KtValueArgument(44,69): 'AnnotationTarget.PROPERTY'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(44,69): 'AnnotationTarget.PROPERTY'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -299,7 +299,7 @@ KtValueArgument(75,106): 'AnnotationTarget.TYPE_PARAMETER'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(75,106): 'AnnotationTarget.TYPE_PARAMETER'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -341,7 +341,7 @@ KtValueArgument(112,137): 'AnnotationTarget.FUNCTION'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(112,137): 'AnnotationTarget.FUNCTION'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -383,7 +383,7 @@ KtValueArgument(143,175): 'AnnotationTarget.VALUE_PARAMETER'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(143,175): 'AnnotationTarget.VALUE_PARAMETER'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -425,7 +425,7 @@ KtValueArgument(181,213): 'AnnotationTarget.PROPERTY_GETTER'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(181,213): 'AnnotationTarget.PROPERTY_GETTER'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -467,7 +467,7 @@ KtValueArgument(219,251): 'AnnotationTarget.PROPERTY_SETTER'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(219,251): 'AnnotationTarget.PROPERTY_SETTER'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -509,7 +509,7 @@ KtValueArgument(257,278): 'AnnotationTarget.TYPE'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(257,278): 'AnnotationTarget.TYPE'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []

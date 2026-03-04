@@ -272,7 +272,7 @@ KtNameReferenceExpression(303,307): 'Left'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(311,325): 's.error.length'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -292,7 +292,7 @@ KtDotQualifiedExpression(311,325): 's.error.length'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -571,7 +571,7 @@ KtBlockExpression(387,415): '{'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(397,409): 's.hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -738,7 +738,7 @@ KtOperationReferenceExpression(427,429): '=='
     isInBestCandidates = true
 
 KtDotQualifiedExpression(430,443): '"".hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -846,7 +846,7 @@ KtNameReferenceExpression(460,464): 'Left'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(473,487): 's.error.length'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -866,7 +866,7 @@ KtDotQualifiedExpression(473,487): 's.error.length'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -952,7 +952,7 @@ KtNameReferenceExpression(481,487): 'length'
     isInBestCandidates = false
 
 KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -972,7 +972,7 @@ KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -993,7 +993,7 @@ KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
     isInBestCandidates = false
 
 KtSafeQualifiedExpression(499,519): '(s as? Right)?.value'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1013,7 +1013,7 @@ KtSafeQualifiedExpression(499,519): '(s as? Right)?.value'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []

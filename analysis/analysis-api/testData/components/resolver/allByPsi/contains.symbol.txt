@@ -131,7 +131,10 @@ KtValueArgumentList(138,140): '()'
   null
 
 KtDotQualifiedExpression(145,166): 'MyClass().contains(2)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+    ]
 
 KtCallExpression(145,154): 'MyClass()'
   KaSymbolResolutionSuccess:

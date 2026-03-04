@@ -72,7 +72,7 @@ KtNameReferenceExpression(118,127): 'JCOption1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: JCOption1>
 
 KtDotQualifiedExpression(131,145): 'instance.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -116,7 +116,7 @@ KtNameReferenceExpression(154,163): 'JCOption2'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: JCOption2>
 
 KtDotQualifiedExpression(167,181): 'instance.prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
@@ -160,7 +160,7 @@ KtNameReferenceExpression(190,196): 'Nested'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Nested>
 
 KtDotQualifiedExpression(200,213): 'instance.prop'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
@@ -266,7 +266,7 @@ KtReturnExpression(315,336): 'return instance.prop1'
   null
 
 KtDotQualifiedExpression(322,336): 'instance.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -342,7 +342,7 @@ KtReturnExpression(384,405): 'return instance.prop2'
   null
 
 KtDotQualifiedExpression(391,405): 'instance.prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
@@ -439,7 +439,7 @@ KtNameReferenceExpression(522,531): 'SCOption1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SCOption1>
 
 KtDotQualifiedExpression(535,549): 'instance.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -483,7 +483,7 @@ KtNameReferenceExpression(557,566): 'SCOption2'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SCOption2>
 
 KtDotQualifiedExpression(570,584): 'instance.prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
@@ -580,7 +580,7 @@ KtNameReferenceExpression(669,678): 'SCOption1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SCOption1>
 
 KtDotQualifiedExpression(682,696): 'instance.prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -647,7 +647,7 @@ KtNameReferenceExpression(713,722): 'SCOption2'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SCOption2>
 
 KtDotQualifiedExpression(726,740): 'instance.prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 

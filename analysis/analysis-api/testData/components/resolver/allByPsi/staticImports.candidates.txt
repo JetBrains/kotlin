@@ -173,7 +173,7 @@ KtProperty(302,348): 'val explicitTopObject = one.two.TopLevelObject'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(326,348): 'one.two.TopLevelObject'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -245,7 +245,7 @@ KtProperty(397,435): 'val explicitFoo = TopLevelObject.foo()'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -379,7 +379,7 @@ KtProperty(469,505): 'val explicitBar = TopLevelObject.bar'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -466,7 +466,7 @@ KtProperty(537,591): 'val explicitNestedObject = TopLevelObject.NestedObject'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(564,591): 'TopLevelObject.NestedObject'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -548,7 +548,7 @@ KtProperty(641,692): 'val explicitBaz = TopLevelObject.NestedObject.baz()'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -569,7 +569,7 @@ KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -674,7 +674,7 @@ KtProperty(697,739): 'val explicitNestedBaz = NestedObject.baz()'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -808,7 +808,7 @@ KtProperty(773,822): 'val explicitDoo = TopLevelObject.NestedObject.doo'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -829,7 +829,7 @@ KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -910,7 +910,7 @@ KtProperty(827,867): 'val explicitNestedDoo = NestedObject.doo'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(851,867): 'NestedObject.doo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

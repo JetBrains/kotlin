@@ -95,7 +95,7 @@ KtValueArgument(23,44): 'AnnotationTarget.TYPE'
   null
 
 KtDotQualifiedExpression(23,44): 'AnnotationTarget.TYPE'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

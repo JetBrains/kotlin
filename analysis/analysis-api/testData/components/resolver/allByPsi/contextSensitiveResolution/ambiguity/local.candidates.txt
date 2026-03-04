@@ -396,7 +396,7 @@ KtNameReferenceExpression(335,341): 'Sealed'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(344,352): 'Sealed.A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -465,7 +465,7 @@ KtNameReferenceExpression(377,383): 'Sealed'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(386,394): 'Sealed.A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -811,7 +811,7 @@ KtWhenConditionWithExpression(750,758): 'Sealed.C'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(750,758): 'Sealed.C'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -925,7 +925,7 @@ KtWhenConditionWithExpression(827,844): 'Sealed.CompanionB'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(827,844): 'Sealed.CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1312,7 +1312,7 @@ KtWhenConditionWithExpression(1306,1312): 'Test.A'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1306,1312): 'Test.A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1402,7 +1402,7 @@ KtWhenConditionWithExpression(1357,1365): 'Sealed.C'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1357,1365): 'Sealed.C'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1516,7 +1516,7 @@ KtWhenConditionWithExpression(1446,1461): 'Test.CompanionA'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1446,1461): 'Test.CompanionA'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1582,7 +1582,7 @@ KtWhenConditionWithExpression(1479,1494): 'this.CompanionB'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1479,1494): 'this.CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1699,7 +1699,7 @@ KtWhenConditionWithExpression(1616,1624): 'Sealed.A'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1616,1624): 'Sealed.A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1789,7 +1789,7 @@ KtWhenConditionWithExpression(1671,1679): 'Sealed.C'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1671,1679): 'Sealed.C'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1903,7 +1903,7 @@ KtWhenConditionWithExpression(1760,1777): 'Sealed.CompanionA'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1760,1777): 'Sealed.CompanionA'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1973,7 +1973,7 @@ KtWhenConditionWithExpression(1795,1812): 'Sealed.CompanionB'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(1795,1812): 'Sealed.CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

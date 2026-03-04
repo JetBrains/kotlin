@@ -1,2 +1,5 @@
 KtDotQualifiedExpression(42,45): 'A.y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.Int
+    ]

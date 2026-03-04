@@ -98,7 +98,7 @@ KtBlockExpression(120,164): '{'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(130,140): 'this.bar()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -170,7 +170,7 @@ KtValueArgumentList(138,140): '()'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(149,158): 'a.foo("")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -190,7 +190,7 @@ KtDotQualifiedExpression(149,158): 'a.foo("")'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -344,7 +344,7 @@ KtBlockExpression(229,292): '{'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(243,253): 'this.bar()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -419,7 +419,7 @@ KtReturnExpression(266,282): 'return a.foo("")'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(273,282): 'a.foo("")'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -439,7 +439,7 @@ KtDotQualifiedExpression(273,282): 'a.foo("")'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -221,7 +221,7 @@ KtProperty(375,421): 'val ClassMemberAlias = MyClass.NestedInheritor'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(398,421): 'MyClass.NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1086,7 +1086,7 @@ KtBinaryExpression(675,699): 'MyClass.myClassProp to 1'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1233,7 +1233,7 @@ KtBinaryExpression(702,725): 'MyClass.stringProp to 2'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1380,7 +1380,7 @@ KtBinaryExpression(727,755): 'MyClass.NestedInheritor to 3'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(727,750): 'MyClass.NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1523,7 +1523,7 @@ KtBinaryExpression(757,790): 'MyClass.getNestedInheritor() to 4'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(757,785): 'MyClass.getNestedInheritor()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3822,7 +3822,7 @@ KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
     isInBestCandidates = false
 
 KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

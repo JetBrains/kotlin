@@ -195,7 +195,7 @@ KtValueArgument(232,243): 'MyClass.bar'
   null
 
 KtDotQualifiedExpression(232,243): 'MyClass.bar'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleVariableAccessCall:
         contextArguments = []
@@ -215,7 +215,7 @@ KtDotQualifiedExpression(232,243): 'MyClass.bar'
           callableId = /bar
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
     public val MyClass2.Companion.bar: MyClass2 defined in root package in file extensions.kt>
 
 KtNameReferenceExpression(232,239): 'MyClass'
@@ -242,7 +242,7 @@ KtNameReferenceExpression(240,243): 'bar'
           callableId = /bar
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
     public val MyClass2.Companion.bar: MyClass2 defined in root package in file extensions.kt>
 
 KtCallExpression(249,257): 'foo(bar)'
@@ -507,7 +507,7 @@ KtValueArgument(408,420): 'MyClass2.bar'
   null
 
 KtDotQualifiedExpression(408,420): 'MyClass2.bar'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

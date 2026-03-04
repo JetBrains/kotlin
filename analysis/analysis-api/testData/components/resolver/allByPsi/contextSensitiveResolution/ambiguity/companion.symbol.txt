@@ -149,7 +149,10 @@ KtOperationReferenceExpression(328,330): '=='
   null
 
 KtDotQualifiedExpression(331,339): 'MyEnum.A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/MyEnum.A
+    ]
 
 KtNameReferenceExpression(331,337): 'MyEnum'
   null
@@ -203,7 +206,10 @@ KtOperationReferenceExpression(409,411): '=='
   null
 
 KtDotQualifiedExpression(412,423): 'Companion.A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val A: kotlin.Any
+    ]
 
 KtNameReferenceExpression(412,421): 'Companion'
   null
@@ -308,7 +314,10 @@ KtWhenConditionWithExpression(571,579): 'MyEnum.A'
   null
 
 KtDotQualifiedExpression(571,579): 'MyEnum.A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/MyEnum.A
+    ]
 
 KtNameReferenceExpression(571,577): 'MyEnum'
   null
@@ -371,7 +380,10 @@ KtWhenConditionWithExpression(667,678): 'Companion.A'
   null
 
 KtDotQualifiedExpression(667,678): 'Companion.A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val A: kotlin.Any
+    ]
 
 KtNameReferenceExpression(667,676): 'Companion'
   null

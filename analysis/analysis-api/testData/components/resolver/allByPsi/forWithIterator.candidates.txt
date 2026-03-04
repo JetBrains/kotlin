@@ -104,7 +104,7 @@ KtProperty(133,166): 'var current = this@iterator.start'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(147,166): 'this@iterator.start'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -631,7 +631,7 @@ KtOperationReferenceExpression(204,206): '<='
     isInBestCandidates = false
 
 KtDotQualifiedExpression(207,224): 'this@iterator.end'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

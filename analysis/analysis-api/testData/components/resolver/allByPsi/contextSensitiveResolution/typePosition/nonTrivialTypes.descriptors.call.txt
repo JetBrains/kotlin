@@ -302,7 +302,7 @@ KtProperty(393,418): 'val foo = JavaClass.foo()'
   null
 
 KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -523,7 +523,7 @@ KtNameReferenceExpression(640,644): 'Left'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Left>
 
 KtDotQualifiedExpression(648,652): 'mg.x'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: x>
 
@@ -567,7 +567,7 @@ KtNameReferenceExpression(664,669): 'Right'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Right>
 
 KtDotQualifiedExpression(673,677): 'mg.y'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: y>
 
@@ -678,7 +678,7 @@ KtNameReferenceExpression(861,865): 'Left'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Left>
 
 KtDotQualifiedExpression(869,873): 'cs.x'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: x>
 
@@ -722,7 +722,7 @@ KtNameReferenceExpression(885,890): 'Right'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Right>
 
 KtDotQualifiedExpression(894,898): 'cs.y'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: y>
 

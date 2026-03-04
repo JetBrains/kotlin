@@ -402,7 +402,10 @@ KtBinaryExpression(675,699): 'MyClass.myClassProp to 1'
   null
 
 KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val myClassProp: MyClass
+    ]
 
 KtNameReferenceExpression(675,682): 'MyClass'
   null
@@ -423,7 +426,10 @@ KtBinaryExpression(702,725): 'MyClass.stringProp to 2'
   null
 
 KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtNameReferenceExpression(702,709): 'MyClass'
   null
@@ -465,7 +471,10 @@ KtBinaryExpression(757,790): 'MyClass.getNestedInheritor() to 4'
   null
 
 KtDotQualifiedExpression(757,785): 'MyClass.getNestedInheritor()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.Companion.getNestedInheritor(<dispatch receiver>: MyClass.Companion): MyClass.NestedInheritor
+    ]
 
 KtNameReferenceExpression(757,764): 'MyClass'
   null
@@ -797,7 +806,10 @@ KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
   null
 
 KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val myClassProp: MyClass
+    ]
 
 KtNameReferenceExpression(1248,1255): 'MyClass'
   null

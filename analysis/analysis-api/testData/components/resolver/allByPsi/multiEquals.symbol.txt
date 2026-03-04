@@ -701,7 +701,10 @@ KtNameReferenceExpression(995,996): 'i'
   null
 
 KtDotQualifiedExpression(1002,1013): 'i.equals(m)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1002,1003): 'i'
   null
@@ -725,7 +728,10 @@ KtNameReferenceExpression(1011,1012): 'm'
   null
 
 KtDotQualifiedExpression(1018,1029): 'm.equals(i)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1018,1019): 'm'
   null

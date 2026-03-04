@@ -383,7 +383,7 @@ KtProperty(410,432): 'val inner = c1.Inner()'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(422,432): 'c1.Inner()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -413,6 +413,27 @@ public interface KaResolver : KaSessionComponent {
     public fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol?
 
     /**
+     * Resolves the callable symbol targeted by the given [KtQualifiedExpression].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * val len = str.length
+     * //        ^________^
+     * ```
+     *
+     * Calling `resolveSymbol()` on the [KtQualifiedExpression] (`str.length`) returns the [KaCallableSymbol] of `length`
+     * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on qualified expressions
+     *
+     * @see tryResolveSymbols
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtQualifiedExpression.resolveSymbol(): KaCallableSymbol?
+
+    /**
      * Resolves the invoke operator function symbol targeted by the given [KtInvokeFunctionReference].
      *
      * #### Example
@@ -919,6 +940,27 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>?
+
+    /**
+     * Resolves the given [KtQualifiedExpression] to a call representing the member or extension access.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * val len = str.length
+     * //        ^________^
+     * ```
+     *
+     * Calling `resolveCall()` on the [KtQualifiedExpression] (`str.length`) returns the corresponding [KaSingleCall]
+     * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on qualified expressions
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtQualifiedExpression.resolveCall(): KaSingleCall<*, *>?
 
     /**
      * Resolves the given [KtForExpression] to a [KaForLoopCall] representing the desugared `for` loop.
@@ -1573,6 +1615,34 @@ public fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol? {
 }
 
 /**
+ * Resolves the callable symbol targeted by the given [KtQualifiedExpression].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * val len = str.length
+ * //        ^________^
+ * ```
+ *
+ * Calling `resolveSymbol()` on the [KtQualifiedExpression] (`str.length`) returns the [KaCallableSymbol] of `length`
+ * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on qualified expressions
+ *
+ * @see tryResolveSymbols
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtQualifiedExpression.resolveSymbol(): KaCallableSymbol? {
+    return with(session) {
+        resolveSymbol()
+    }
+}
+
+/**
  * Resolves the invoke operator function symbol targeted by the given [KtInvokeFunctionReference].
  *
  * #### Example
@@ -2208,6 +2278,34 @@ public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionS
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? {
+    return with(session) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtQualifiedExpression] to a call representing the member or extension access.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * val len = str.length
+ * //        ^________^
+ * ```
+ *
+ * Calling `resolveCall()` on the [KtQualifiedExpression] (`str.length`) returns the corresponding [KaSingleCall]
+ * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on qualified expressions
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtQualifiedExpression.resolveCall(): KaSingleCall<*, *>? {
     return with(session) {
         resolveCall()
     }

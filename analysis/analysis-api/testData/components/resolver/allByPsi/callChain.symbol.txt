@@ -128,10 +128,16 @@ KtBlockExpression(94,156): '{'
   null
 
 KtDotQualifiedExpression(100,154): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6)).bar(0)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+    ]
 
 KtSafeQualifiedExpression(100,147): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
+    ]
 
 KtParenthesizedExpression(100,125): '(1.foo(2).bar(3) as? Int)'
   null
@@ -140,10 +146,16 @@ KtBinaryExpressionWithTypeRHS(101,124): '1.foo(2).bar(3) as? Int'
   null
 
 KtDotQualifiedExpression(101,116): '1.foo(2).bar(3)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(101,109): '1.foo(2)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(101,102): '1'
   null
@@ -212,10 +224,16 @@ KtValueArgument(131,146): '4.bar(5).bar(6)'
   null
 
 KtDotQualifiedExpression(131,146): '4.bar(5).bar(6)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(131,139): '4.bar(5)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(131,132): '4'
   null

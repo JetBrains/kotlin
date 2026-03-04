@@ -413,10 +413,16 @@ KtNameReferenceExpression(797,813): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(818,836): 'i.prop1.hashCode()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(818,825): 'i.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtNameReferenceExpression(818,819): 'i'
   null
@@ -455,10 +461,16 @@ KtNameReferenceExpression(847,863): 'SealedInheritor2'
   null
 
 KtDotQualifiedExpression(868,881): 'i.prop2.dec()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(868,875): 'i.prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop2: kotlin.Int
+    ]
 
 KtNameReferenceExpression(868,869): 'i'
   null
@@ -497,10 +509,16 @@ KtNameReferenceExpression(892,908): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(913,931): 'i.prop1.hashCode()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(913,920): 'i.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtNameReferenceExpression(913,914): 'i'
   null
@@ -542,10 +560,16 @@ KtBlockExpression(974,1391): '{'
   null
 
 KtDotQualifiedExpression(980,1020): '(i as SealedInheritor1).prop1.hashCode()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(980,1009): '(i as SealedInheritor1).prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtParenthesizedExpression(980,1003): '(i as SealedInheritor1)'
   null
@@ -602,10 +626,16 @@ KtNameReferenceExpression(1031,1047): 'SealedInheritor2'
   null
 
 KtDotQualifiedExpression(1052,1065): 'i.prop2.dec()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(1052,1059): 'i.prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop2: kotlin.Int
+    ]
 
 KtNameReferenceExpression(1052,1053): 'i'
   null
@@ -647,10 +677,14 @@ KtNameReferenceExpression(1084,1100): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(1105,1123): 'v.prop1.hashCode()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtDotQualifiedExpression(1105,1112): 'v.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtNameReferenceExpression(1105,1106): 'v'
   null
@@ -700,10 +734,14 @@ KtNameReferenceExpression(1156,1172): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(1177,1196): 'v2.prop1.hashCode()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtDotQualifiedExpression(1177,1185): 'v2.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtNameReferenceExpression(1177,1179): 'v2'
   null
@@ -753,10 +791,14 @@ KtNameReferenceExpression(1234,1250): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(1255,1274): 'v3.prop1.hashCode()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtDotQualifiedExpression(1255,1263): 'v3.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtNameReferenceExpression(1255,1257): 'v3'
   null
@@ -901,10 +943,16 @@ KtBlockExpression(1430,1934): '{'
   null
 
 KtSafeQualifiedExpression(1436,1479): '(i as? SealedInheritor1)?.prop1?.hashCode()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtSafeQualifiedExpression(1436,1467): '(i as? SealedInheritor1)?.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtParenthesizedExpression(1436,1460): '(i as? SealedInheritor1)'
   null
@@ -961,10 +1009,14 @@ KtNameReferenceExpression(1491,1507): 'SealedInheritor2'
   null
 
 KtSafeQualifiedExpression(1512,1527): 'i?.prop2?.dec()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'dec'.>
 
 KtSafeQualifiedExpression(1512,1520): 'i?.prop2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
 
 KtNameReferenceExpression(1512,1513): 'i'
   null
@@ -1005,10 +1057,16 @@ KtNameReferenceExpression(1547,1563): 'SealedInheritor1'
   null
 
 KtSafeQualifiedExpression(1568,1588): 'v?.prop1?.hashCode()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtSafeQualifiedExpression(1568,1576): 'v?.prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtNameReferenceExpression(1568,1569): 'v'
   null
@@ -1062,10 +1120,14 @@ KtNameReferenceExpression(1623,1639): 'SealedInheritor1'
   null
 
 KtSafeQualifiedExpression(1644,1665): 'v2?.prop1?.hashCode()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtSafeQualifiedExpression(1644,1653): 'v2?.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtNameReferenceExpression(1644,1646): 'v2'
   null
@@ -1118,10 +1180,14 @@ KtNameReferenceExpression(1705,1721): 'SealedInheritor1'
   null
 
 KtSafeQualifiedExpression(1726,1747): 'v3?.prop1?.hashCode()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hashCode'.>
 
 KtSafeQualifiedExpression(1726,1735): 'v3?.prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtNameReferenceExpression(1726,1728): 'v3'
   null

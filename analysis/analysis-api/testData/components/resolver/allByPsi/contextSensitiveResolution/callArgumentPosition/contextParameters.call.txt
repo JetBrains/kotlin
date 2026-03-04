@@ -898,7 +898,7 @@ KtBlockExpression(548,552): '"".a'
   null
 
 KtDotQualifiedExpression(548,552): '"".a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = [
         KaImplicitReceiverValue:

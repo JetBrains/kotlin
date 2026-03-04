@@ -131,7 +131,9 @@ KtProperty(327,373): 'val ClassMemberAlias = MyClass.NestedInheritor'
   null
 
 KtDotQualifiedExpression(350,373): 'MyClass.NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with NestedInheritor>
 
 KtNameReferenceExpression(350,357): 'MyClass'
   null

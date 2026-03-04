@@ -503,7 +503,7 @@ KtBlockExpression(235,263): '{'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(245,257): 'super.call()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -56,7 +56,7 @@ KtBinaryExpression(79,107): 'other?.equals(this) ?: false'
   null
 
 KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -197,7 +197,10 @@ KtBlockExpression(235,263): '{'
   null
 
 KtDotQualifiedExpression(245,257): 'super.call()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
+    ]
 
 KtSuperExpression(245,250): 'super'
   null

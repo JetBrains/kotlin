@@ -1452,7 +1452,7 @@ KtNameReferenceExpression(995,996): 'i'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(1002,1013): 'i.equals(m)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1600,7 +1600,7 @@ KtNameReferenceExpression(1011,1012): 'm'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(1018,1029): 'm.equals(i)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

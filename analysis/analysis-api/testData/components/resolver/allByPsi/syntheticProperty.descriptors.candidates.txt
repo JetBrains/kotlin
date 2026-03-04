@@ -722,7 +722,7 @@ KtValueArgument(84,103): 'javaClass.something'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(84,103): 'javaClass.something'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -742,7 +742,7 @@ KtDotQualifiedExpression(84,103): 'javaClass.something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -878,7 +878,7 @@ KtBinaryExpression(109,132): 'javaClass.something = 1'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(109,128): 'javaClass.something'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -899,7 +899,7 @@ KtDotQualifiedExpression(109,128): 'javaClass.something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1089,7 +1089,7 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(137,156): 'javaClass.something'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1109,7 +1109,7 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1318,7 +1318,7 @@ KtPostfixExpression(166,187): 'javaClass.something++'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(166,185): 'javaClass.something'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1338,7 +1338,7 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1578,7 +1578,7 @@ KtOperationReferenceExpression(192,194): '--'
     isInBestCandidates = true
 
 KtDotQualifiedExpression(194,213): 'javaClass.something'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1598,7 +1598,7 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2193,7 +2193,7 @@ KtParenthesizedExpression(273,294): '(javaClass.something)'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(274,293): 'javaClass.something'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2214,7 +2214,7 @@ KtDotQualifiedExpression(274,293): 'javaClass.something'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -89,7 +89,7 @@ KtConstantExpression(74,75): '1'
   null
 
 KtDotQualifiedExpression(80,94): 'prop.action1()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -259,7 +259,7 @@ KtNameReferenceExpression(107,111): 'prop'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(118,132): 'prop.action2()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2' on receiver of type 'Int'.>
 

@@ -71,10 +71,16 @@ KtOperationReferenceExpression(87,88): '-'
   null
 
 KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.not(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtCallExpression(88,97): 'MyClass()'
   KaSymbolResolutionSuccess:

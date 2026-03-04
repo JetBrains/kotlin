@@ -277,7 +277,7 @@ KtNameReferenceExpression(368,391): 'IndirectSealedInheritor'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(395,408): 'instance.prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:

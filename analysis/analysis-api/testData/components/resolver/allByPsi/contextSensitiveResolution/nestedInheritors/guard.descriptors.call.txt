@@ -297,7 +297,7 @@ KtNameReferenceExpression(368,391): 'IndirectSealedInheritor'
   null
 
 KtDotQualifiedExpression(395,408): 'instance.prop'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
@@ -622,7 +622,7 @@ KtNameReferenceExpression(764,798): 'IndirectSealedInheritorOfOpenClass'
   null
 
 KtDotQualifiedExpression(802,815): 'instance.prop'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 

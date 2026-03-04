@@ -184,7 +184,7 @@ KtValueArgument(44,69): 'AnnotationTarget.PROPERTY'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(44,69): 'AnnotationTarget.PROPERTY'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -248,7 +248,7 @@ KtValueArgument(75,106): 'AnnotationTarget.TYPE_PARAMETER'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(75,106): 'AnnotationTarget.TYPE_PARAMETER'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -312,7 +312,7 @@ KtValueArgument(112,137): 'AnnotationTarget.FUNCTION'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(112,137): 'AnnotationTarget.FUNCTION'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -376,7 +376,7 @@ KtValueArgument(143,175): 'AnnotationTarget.VALUE_PARAMETER'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(143,175): 'AnnotationTarget.VALUE_PARAMETER'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -440,7 +440,7 @@ KtValueArgument(181,213): 'AnnotationTarget.PROPERTY_GETTER'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(181,213): 'AnnotationTarget.PROPERTY_GETTER'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -504,7 +504,7 @@ KtValueArgument(219,251): 'AnnotationTarget.PROPERTY_SETTER'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(219,251): 'AnnotationTarget.PROPERTY_SETTER'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -568,7 +568,7 @@ KtValueArgument(257,278): 'AnnotationTarget.TYPE'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(257,278): 'AnnotationTarget.TYPE'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

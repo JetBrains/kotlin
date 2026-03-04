@@ -323,7 +323,10 @@ KtProperty(410,432): 'val inner = c1.Inner()'
   null
 
 KtDotQualifiedExpression(422,432): 'c1.Inner()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+    ]
 
 KtNameReferenceExpression(422,424): 'c1'
   null

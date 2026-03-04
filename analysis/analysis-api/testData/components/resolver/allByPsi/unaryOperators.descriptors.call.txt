@@ -269,7 +269,7 @@ KtOperationReferenceExpression(87,88): '-'
       valueArgumentMapping = {}
 
 KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -289,7 +289,7 @@ KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
       valueArgumentMapping = {}
 
 KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

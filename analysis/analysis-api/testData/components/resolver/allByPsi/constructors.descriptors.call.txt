@@ -385,7 +385,7 @@ KtBlockExpression(235,263): '{'
   null
 
 KtDotQualifiedExpression(245,257): 'super.call()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

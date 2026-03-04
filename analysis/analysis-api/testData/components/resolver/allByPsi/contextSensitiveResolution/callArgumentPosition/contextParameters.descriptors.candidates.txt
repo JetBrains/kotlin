@@ -838,7 +838,7 @@ KtBlockExpression(548,552): '"".a'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(548,552): '"".a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

@@ -389,7 +389,7 @@ KtWhenConditionWithExpression(429,450): 'bar.Sealed.CompanionA'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(429,450): 'bar.Sealed.CompanionA'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -449,7 +449,7 @@ KtWhenConditionWithExpression(460,481): 'bar.Sealed.CompanionB'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(460,481): 'bar.Sealed.CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -707,7 +707,7 @@ KtWhenConditionWithExpression(693,707): 'foo.CompanionB'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(693,707): 'foo.CompanionB'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2126,7 +2126,7 @@ KtOperationReferenceExpression(1584,1586): '=='
     isInBestCandidates = true
 
 KtDotQualifiedExpression(1587,1604): 'Sealed.CompanionA'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
