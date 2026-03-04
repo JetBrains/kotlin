@@ -190,6 +190,182 @@ DELIVERABLE:
 
 ---
 
+### Iteration 7c: Type Parameter Scope Resolution
+
+**Status**: Ready for implementation  
+**Analysis**: See investigation in `implDocs/INVESTIGATION_TECHNIQUES.md`  
+**Expected Improvement**: 30-40 tests (majority of MISSING_DEPENDENCY_CLASS errors)
+
+#### Problem Statement
+
+When java-direct parses a type reference like `T` in Java code:
+```java
+class Foo<T> {
+    T getValue();           // "T" should resolve to the type parameter
+    List<T> getItems();     // "T" in generic argument should also resolve
+}
+```
+
+The current implementation treats `T` as a class name, causing `MISSING_DEPENDENCY_CLASS: Cannot access class 'T'`.
+
+**Error message examples**:
+- `Cannot access class 'T'` (35+ tests)
+- `Cannot access class 'E'`, `'R'`, `'U'`, `'S'`, `'K'`, `'V'`, `'F'` etc.
+- `Cannot access class '?'` (wildcard not handled)
+
+#### Root Cause
+
+`JavaClassifierTypeOverAst.classifier` only checks local classes via `resolutionContext.findLocalClass()`. It does NOT check if the name refers to a **type parameter** of the containing class or method.
+
+**PSI-based implementation** (working):
+```java
+// JavaClassifierImpl.java:32-38
+if (psiClass instanceof PsiTypeParameter) {
+    return new JavaTypeParameterImpl(...);  // Returns JavaTypeParameter!
+}
+```
+
+**Javac-based implementation** (working):
+```kotlin
+// ClassifierResolver.kt:199-205
+enclosingClass.typeParameters
+    .find { it.name == identifier }
+    ?.let { return it }  // Returns JavaTypeParameter!
+```
+
+**Java-direct** (broken): Returns `null`, then FIR uses `classifierQualifiedName = "T"` and tries to look it up as a class.
+
+#### Implementation Plan
+
+##### Phase 1: Add Type Parameter Scope to Resolution Context
+
+1. **Extend `JavaResolutionContext`** to track type parameters in scope:
+   ```kotlin
+   class JavaResolutionContext private constructor(
+       // ... existing fields ...
+       private val typeParametersInScope: Map<String, JavaTypeParameter>,
+   ) {
+       fun findTypeParameter(name: String): JavaTypeParameter? = 
+           typeParametersInScope[name]
+       
+       fun withTypeParameters(
+           typeParams: List<JavaTypeParameter>
+       ): JavaResolutionContext {
+           val newScope = typeParametersInScope + 
+               typeParams.associateBy { it.name.asString() }
+           return JavaResolutionContext(
+               source, packageFqName, simpleImports, starImports,
+               localClassProvider, newScope
+           )
+       }
+   }
+   ```
+
+2. **Update `JavaResolutionContext.create()`** to initialize with empty type parameter scope.
+
+##### Phase 2: Update Type Creation to Check Type Parameters
+
+3. **Modify `JavaClassifierTypeOverAst.classifier`** to check type parameters first:
+   ```kotlin
+   override val classifier: JavaClassifier? by lazy {
+       val simpleName = rawTypeName.split('.').first()
+       
+       // 1. Check type parameters in scope FIRST
+       resolutionContext.findTypeParameter(simpleName)?.let { return@lazy it }
+       
+       // 2. Then check local classes (existing logic)
+       val parts = rawTypeName.split('.')
+       var current: JavaClassifier? = resolutionContext.findLocalClass(Name.identifier(parts[0]))
+       // ... rest of existing logic ...
+   }
+   ```
+
+4. **Update `classifierQualifiedName`** similarly to return the type parameter name if matched.
+
+##### Phase 3: Propagate Type Parameters Through AST
+
+5. **Update `JavaClassOverAst`** to create context with class type parameters:
+   ```kotlin
+   private val innerContext: JavaResolutionContext by lazy {
+       val classTypeParams = typeParameters  // Already parsed
+       resolutionContext.withTypeParameters(classTypeParams)
+   }
+   ```
+
+6. **Update `JavaMethodOverAst`** to add method type parameters:
+   ```kotlin
+   private val methodContext: JavaResolutionContext by lazy {
+       val methodTypeParams = typeParameters  // Method's own type params
+       containingClass.innerContext.withTypeParameters(methodTypeParams)
+   }
+   ```
+
+7. **Pass the correct context** when creating types for:
+   - Method return types
+   - Method parameter types
+   - Field types
+   - Type parameter bounds
+
+##### Phase 4: Handle Wildcards
+
+8. **Add wildcard detection** in `createJavaType()`:
+   ```kotlin
+   fun createJavaType(node: JavaSyntaxNode, resolutionContext: JavaResolutionContext): JavaType {
+       // Check for wildcard (unbounded: ?, bounded: ? extends X, ? super X)
+       val questionMark = node.findChildByType("QUEST") // or whatever KMP uses
+       if (questionMark != null) {
+           val extendsKeyword = node.findChildByType("EXTENDS_KEYWORD")
+           val superKeyword = node.findChildByType("SUPER_KEYWORD")
+           val boundNode = node.findChildByType("TYPE")
+           val bound = boundNode?.let { createJavaType(it, resolutionContext) }
+           val isExtends = extendsKeyword != null || superKeyword == null
+           return JavaWildcardTypeOverAst(node, source, bound as? JavaClassifierType, isExtends)
+       }
+       // ... existing array/primitive/reference handling ...
+   }
+   ```
+
+##### Phase 5: Validation
+
+9. **Run targeted tests**:
+   ```bash
+   # Tests with type parameter errors
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testPropertyVarianceConflict" -q
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testKt42825" -q
+   ```
+
+10. **Run full suite**:
+    ```bash
+    ./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated*" -q
+    ```
+
+11. **Document results** in `ITERATION_RESULTS.md`.
+
+#### Expected Results
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Box tests passing | 96/138 (69.6%) | ~120-130/138 (87-94%) |
+| MISSING_DEPENDENCY_CLASS errors | 35+ | ~5 (non-type-param issues) |
+
+#### Key Files to Modify
+
+| File | Changes |
+|------|---------|
+| `JavaResolutionContext.kt` | Add type parameter scope, `withTypeParameters()` method |
+| `JavaTypeOverAst.kt` | Update `classifier` to check type parameters first |
+| `JavaTypeOverAst.kt` | Add wildcard type handling in `createJavaType()` |
+| `JavaClassOverAst.kt` | Create inner context with class type parameters |
+| `JavaMemberOverAst.kt` | Create method context with method type parameters |
+
+#### Risks and Considerations
+
+1. **Circular initialization**: Type parameters may reference each other in bounds. Use lazy evaluation.
+2. **Nested classes**: Inner classes see outer class type parameters, static nested classes don't.
+3. **Wildcard AST structure**: Need to verify KMP parser's representation of wildcards.
+
+---
+
 ## Iteration 8: Wildcards and Complex Generics
 
 **Reference**: See `AGENT_INSTRUCTIONS.md` and `IMPLEMENTATION_PLAN.md` section 3.3.
