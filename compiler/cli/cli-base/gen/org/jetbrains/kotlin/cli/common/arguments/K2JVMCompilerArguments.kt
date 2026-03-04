@@ -266,10 +266,10 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
         description = """Specify the behavior of 'jspecify' annotations.
 The default value is 'strict'.""",
     )
-    var jspecifyAnnotations: String? = "strict"
+    var jspecifyAnnotations: String? = null
         set(value) {
             checkFrozen()
-            field = if (value.isNullOrEmpty()) "strict" else value
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(
@@ -518,10 +518,10 @@ Example (Windows): -Xprofile=<PATH_TO_ASYNC_PROFILER>\async-profiler\build\libas
 -Xsam-conversions=class         Generate SAM conversions as explicit classes.
 The default value is 'indy'.""",
     )
-    var samConversions: String? = "indy"
+    var samConversions: String? = null
         set(value) {
             checkFrozen()
-            field = if (value.isNullOrEmpty()) "indy" else value
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(
@@ -568,10 +568,10 @@ default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.
         description = """Specify the behavior for Checker Framework 'compatqual' annotations ('NullableDecl'/'NonNullDecl').
 The default value is 'enable'.""",
     )
-    var supportCompatqualCheckerFrameworkAnnotations: String? = "enable"
+    var supportCompatqualCheckerFrameworkAnnotations: String? = null
         set(value) {
             checkFrozen()
-            field = if (value.isNullOrEmpty()) "enable" else value
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(

@@ -224,10 +224,7 @@ class AssertionsModeType : EnumType<AssertionsMode>(ReleaseDependent(true)) {
  */
 @Serializable
 class JspecifyAnnotationsModeType : EnumType<JspecifyAnnotationsMode>(ReleaseDependent(true)) {
-    override val defaultValue: ReleaseDependent<JspecifyAnnotationsMode?> = ReleaseDependent(
-        current = JspecifyAnnotationsMode.STRICT,
-        KotlinReleaseVersion.v1_4_30..KotlinReleaseVersion.v2_3_20 to null
-    )
+    override val defaultValue: ReleaseDependent<JspecifyAnnotationsMode?> = ReleaseDependent(null)
 }
 
 /**
@@ -243,10 +240,7 @@ class LambdasModeType : EnumType<LambdasMode>(ReleaseDependent(true)) {
  */
 @Serializable
 class SamConversionsModeType : EnumType<SamConversionsMode>(ReleaseDependent(true)) {
-    override val defaultValue: ReleaseDependent<SamConversionsMode?> = ReleaseDependent(
-        SamConversionsMode.INDY,
-        KotlinReleaseVersion.v1_5_0..KotlinReleaseVersion.v2_3_20 to null
-    )
+    override val defaultValue: ReleaseDependent<SamConversionsMode?> = ReleaseDependent(null)
 }
 
 /**
@@ -262,10 +256,7 @@ class StringConcatModeType : EnumType<StringConcatMode>(ReleaseDependent(true)) 
  */
 @Serializable
 class CompatqualAnnotationsModeType : EnumType<CompatqualAnnotationsMode>(ReleaseDependent(true)) {
-    override val defaultValue: ReleaseDependent<CompatqualAnnotationsMode?> = ReleaseDependent(
-        CompatqualAnnotationsMode.ENABLE,
-        KotlinReleaseVersion.v1_2_20..KotlinReleaseVersion.v2_3_20 to null
-    )
+    override val defaultValue: ReleaseDependent<CompatqualAnnotationsMode?> = ReleaseDependent(null)
 }
 
 /**

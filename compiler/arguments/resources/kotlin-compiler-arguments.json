@@ -6634,14 +6634,8 @@
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": "strict",
-                                        "valueInVersions": [
-                                            {
-                                                "minReleaseVersion": "1.4.30",
-                                                "maxReleaseVersion": "2.3.20",
-                                                "value": null
-                                            }
-                                        ]
+                                        "current": null,
+                                        "valueInVersions": []
                                     }
                                 }
                             },
@@ -7520,14 +7514,8 @@
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": "indy",
-                                        "valueInVersions": [
-                                            {
-                                                "minReleaseVersion": "1.5.0",
-                                                "maxReleaseVersion": "2.3.20",
-                                                "value": null
-                                            }
-                                        ]
+                                        "current": null,
+                                        "valueInVersions": []
                                     }
                                 }
                             },
@@ -7736,14 +7724,8 @@
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": "enable",
-                                        "valueInVersions": [
-                                            {
-                                                "minReleaseVersion": "1.2.20",
-                                                "maxReleaseVersion": "2.3.20",
-                                                "value": null
-                                            }
-                                        ]
+                                        "current": null,
+                                        "valueInVersions": []
                                     }
                                 }
                             },
