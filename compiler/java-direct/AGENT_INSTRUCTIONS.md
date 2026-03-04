@@ -206,6 +206,7 @@ From iterations 1-6 (see `ITERATION_RESULTS.md` for details):
 |----------|---------|
 | `FIXING_ITERATIONS.md` | Current iteration plans and tasks |
 | `IMPLEMENTATION_PLAN.md` | Architecture overview, type resolution design |
+| `implDocs/INVESTIGATION_TECHNIQUES.md` | **Debugging & analysis techniques** - exception-based debugging, error categorization |
 | `implDocs/ITERATION_7_PROBLEM_ANALYSIS.md` | Detailed problem analysis for iteration 7 |
 | `implDocs/archive/ITERATIONS_1_6_DETAILS.md` | Archived iteration 1-6 details |
 | `../AGENTS.md` | Compiler architecture overview (K1/K2, FIR, IR, backends) |
