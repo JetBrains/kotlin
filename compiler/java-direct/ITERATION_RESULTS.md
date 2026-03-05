@@ -9,7 +9,7 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 **Usage**: After completing each iteration, the agent MUST append a results section below.
 
-**Last Updated**: 2026-03-05 (Iteration 15 complete)
+**Last Updated**: 2026-03-05 (Iteration 16 complete)
 
 ---
 
@@ -37,7 +37,8 @@ This file captures key findings, decisions, and learnings from each iteration. I
 | 12 | 2026-03-05 | Fragmented Star Imports | 128/138 | 128/138 | Fixed star import parsing (annotation fix superseded by #13) |
 | 13 | 2026-03-05 | Annotation Callback Resolution | 511/601 | 511/601 | Unified annotation resolution with type resolution |
 | 14 | 2026-03-05 | Raw Type Detection for External Classes | 511/601 | 518/601 | ConeRawType creation for external raw types |
-| **15** | **2026-03-05** | **TYPE_USE Annotation Filtering** | **518/601** | **521/601** | **Filter non-TYPE_USE annotations from types** |
+| 15 | 2026-03-05 | TYPE_USE Annotation Filtering | 518/601 | 521/601 | Filter non-TYPE_USE annotations from types |
+| **16** | **2026-03-05** | **Raw Types & Type Parameter Scope** | **521/601** | **532/601** | **Fix raw type bounds + type param scope in bounds** |
 
 ### Key Architectural Decisions
 
@@ -103,6 +104,108 @@ After Iteration 6, 48 tests still fail. Likely causes:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 16: Raw Type Bounds & Type Parameter Scope - 2026-03-05
+
+### Status
+- ✅ Completed
+
+### Summary
+Fixed two related issues with type parameter bounds:
+
+1. **Raw Type Bounds**: `UPPER_BOUND_VIOLATED` error for raw type bounds when the bound class is in a separate file. Fixed by always resolving type parameter symbols for raw type detection in FIR.
+
+2. **Type Parameter Scope in Bounds**: When parsing `<E, S extends JsStubElement<E>>`, the `E` reference in the bound wasn't resolved because type parameters weren't in scope when parsing bounds. Fixed by updating resolution context after creating all type parameter instances.
+
+### Key Findings
+
+#### Part 1: Raw Type Bounds
+
+1. **Root Cause**: In `JavaTypeConversion.kt`'s `null` classifier branch, raw type detection only happened when `lowerBound == null`. The second call (upper bound construction) didn't detect raw types.
+
+2. **Two-Call Pattern for Flexible Types**: FIR builds flexible types with two calls:
+   - First call (`lowerBound = null`): builds lower bound with erased type arguments
+   - Second call (`lowerBound = <lower>`): builds upper bound with star projections
+   
+   For raw types, both calls need to know it's a raw type.
+
+3. **Upper Bound Should Use Star Projections**: For raw type `StubElement`, the flexible type should be `StubElement<Any!>..StubElement<*>?`.
+
+#### Part 2: Type Parameter Scope
+
+4. **Root Cause**: `JavaTypeParameterOverAst` was created with `resolutionContext` that didn't include sibling type parameters:
+   ```kotlin
+   // Before: E not in scope when parsing S's bound
+   typeParameters = nodes.map { JavaTypeParameterOverAst(it, resolutionContext) }
+   ```
+
+5. **Chicken-and-Egg Problem**: `memberResolutionContext` needs `typeParameters`, but type parameter bounds need all type parameters in scope. Solution: create instances first, then update their resolution context.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt` | In `null` classifier branch: always resolve `typeParameterSymbols`, use star projections for upper bounds of raw types. |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt` | Added `updateResolutionContext()` method to `JavaTypeParameterOverAst` to allow updating context after construction. |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt` | Updated `typeParameters` to create all instances first, then update their context with all type params in scope. |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt` | Same fix for method and constructor type parameters. |
+
+### Code Changes
+
+**JavaTypeConversion.kt** (FIR raw type fix):
+```kotlin
+// Always resolve to detect raw types, use star projections for upper bound
+val typeParameterSymbols = lookupTag.toRegularClassSymbol(session)?.typeParameterSymbols
+val isRawType = isRaw || (typeArguments.isEmpty() && typeParameterSymbols?.isNotEmpty() == true)
+
+val mappedTypeArguments = when {
+    isRawType -> {
+        when {
+            lowerBound != null -> typeParameterSymbols?.let { Array(it.size) { ConeStarProjection } }
+            // ...
+        }
+    }
+}
+```
+
+**JavaClassOverAst.kt** (Type parameter scope fix):
+```kotlin
+override val typeParameters: List<JavaTypeParameter> by lazy {
+    val typeParamNodes = node.findChildByType("TYPE_PARAMETER_LIST")?.getChildrenByType("TYPE_PARAMETER")
+        ?: return@lazy emptyList()
+    
+    // Create instances first
+    val typeParams = typeParamNodes.map { JavaTypeParameterOverAst(it, resolutionContext) }
+    
+    // Create context with ALL type parameters in scope
+    val contextWithTypeParams = resolutionContext.withTypeParameters(typeParams)
+    
+    // Update each to use enriched context for bounds resolution
+    typeParams.forEach { it.updateResolutionContext(contextWithTypeParams) }
+    
+    typeParams
+}
+```
+
+### Test Results
+- Total: **532/601 passing (88.5%)** - UP from 521/601 (+11 tests)
+
+### Tests Fixed
+| Test | Issue Fixed |
+|------|-------------|
+| `testRawOverride` | Raw type bound `X extends StubElement` now works |
+| `testRawTypeCrash` | Type parameter `E` in bound `S extends JsStubElement<E>` now resolves |
+| +9 diagnostic tests | Similar type parameter scope and raw type issues |
+
+### Key Learnings
+
+1. **Two-Phase Type Parameter Construction**: When type parameters can reference each other in bounds, create all instances first with a basic context, then update them with a context containing all siblings.
+
+2. **Flexible Type Upper Bounds**: For raw types, upper bounds must use star projections to allow any parameterized subtype.
+
+3. **Resolution Context Threading**: The resolution context must be carefully threaded through all AST nodes that may need to resolve type references.
+
+---
 
 ## Iteration 15: TYPE_USE Annotation Filtering - 2026-03-05
 

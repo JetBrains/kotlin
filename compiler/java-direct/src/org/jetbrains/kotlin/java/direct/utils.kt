@@ -9,6 +9,7 @@ import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 
 import com.intellij.platform.syntax.parser.prepareProduction
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 
 class JavaSyntaxNode(
     val type: SyntaxElementType,
@@ -102,3 +103,25 @@ fun JavaSyntaxNode.findChildByType(type: SyntaxElementType): JavaSyntaxNode? {
 fun JavaSyntaxNode.getChildrenByType(type: SyntaxElementType): List<JavaSyntaxNode> {
     return children.filter { it.type == type }
 }
+
+internal fun computeTypeParameters(
+    node: JavaSyntaxNode,
+    resolutionContext: JavaResolutionContext,
+): List<JavaTypeParameter> {
+    val typeParamNodes = node.findChildByType("TYPE_PARAMETER_LIST")
+        ?.getChildrenByType("TYPE_PARAMETER")
+        ?: return emptyList()
+
+    // Create type parameter instances first
+    val typeParams = typeParamNodes.map { JavaTypeParameterOverAst(it, resolutionContext) }
+
+    // Create a resolution context with ALL type parameters in scope.
+    // This is needed for resolving bounds like `<E, S extends List<E>>`.
+    val contextWithTypeParams = resolutionContext.withTypeParameters(typeParams)
+
+    // Update each type parameter to use the enriched context for bounds resolution
+    typeParams.forEach { it.updateResolutionContext(contextWithTypeParams) }
+
+    return typeParams
+}
+

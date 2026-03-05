@@ -283,16 +283,23 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             // Detect raw types for external classes (classifier == null).
             // A type is raw if no type arguments are provided but the class has type parameters.
             // This can happen when java-direct parses Java code that references Kotlin or library classes.
-            val typeParameterSymbols = lookupTag
-                .takeIf { lowerBound == null && mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
-                ?.toRegularClassSymbol(session)?.typeParameterSymbols
+            // 
+            // We always resolve typeParameterSymbols (regardless of lowerBound) to detect raw types,
+            // since java-direct may return isRaw=false for external types. Reading type parameter count
+            // is safe and doesn't trigger enhancement cycles.
+            val typeParameterSymbols = lookupTag.toRegularClassSymbol(session)?.typeParameterSymbols
             val isRawType = isRaw || (typeArguments.isEmpty() && typeParameterSymbols?.isNotEmpty() == true)
             
             val mappedTypeArguments = when {
                 isRawType -> {
-                    // Same handling as JavaClass branch for raw types
+                    // Same handling as JavaClass branch for raw types.
+                    // For lower bound (lowerBound == null), use erased upper bounds via getProjectionsForRawType.
+                    // For upper bound (lowerBound != null), use star projections.
+                    // In TYPE_PARAMETER_BOUND_FIRST_ROUND, always use star projections to avoid enhancement cycles.
                     when {
-                        mode.insideAnnotation -> typeParameterSymbols?.let { Array(it.size) { ConeStarProjection } }
+                        lowerBound != null -> typeParameterSymbols?.let { Array(it.size) { ConeStarProjection } }
+                        mode.insideAnnotation || mode == FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND -> 
+                            typeParameterSymbols?.let { Array(it.size) { ConeStarProjection } }
                         else -> typeParameterSymbols?.getProjectionsForRawType(session, nullabilities = null)
                     }
                 }

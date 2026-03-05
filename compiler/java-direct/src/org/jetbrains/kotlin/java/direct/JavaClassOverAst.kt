@@ -68,11 +68,9 @@ class JavaClassOverAst(
             else -> JavaVisibilities.PackageVisibility
         }
 
-    override val typeParameters: List<JavaTypeParameter>
-        get() = node.findChildByType("TYPE_PARAMETER_LIST")
-            ?.getChildrenByType("TYPE_PARAMETER")
-            ?.map { JavaTypeParameterOverAst(it, resolutionContext) }
-            ?: emptyList()
+    override val typeParameters: List<JavaTypeParameter> by lazy {
+        computeTypeParameters(node, resolutionContext)
+    }
 
     override val supertypes: Collection<JavaClassifierType>
         get() {

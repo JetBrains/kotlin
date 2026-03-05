@@ -78,10 +78,7 @@ class JavaMethodOverAst(
 ) : JavaMemberOverAst(node, containingClass), JavaMethod {
 
     override val typeParameters: List<JavaTypeParameter> by lazy {
-        node.findChildByType("TYPE_PARAMETER_LIST")
-            ?.getChildrenByType("TYPE_PARAMETER")
-            ?.map { JavaTypeParameterOverAst(it, containingClass.memberResolutionContext) }
-            ?: emptyList()
+        computeTypeParameters(node, containingClass.memberResolutionContext)
     }
 
     /**
@@ -130,10 +127,7 @@ class JavaConstructorOverAst(
 ) : JavaMemberOverAst(node, containingClass), JavaConstructor {
 
     override val typeParameters: List<JavaTypeParameter> by lazy {
-        node.findChildByType("TYPE_PARAMETER_LIST")
-            ?.getChildrenByType("TYPE_PARAMETER")
-            ?.map { JavaTypeParameterOverAst(it, containingClass.memberResolutionContext) }
-            ?: emptyList()
+        computeTypeParameters(node, containingClass.memberResolutionContext)
     }
 
     /**

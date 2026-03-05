@@ -275,8 +275,20 @@ fun createJavaTypeWithAnnotations(
 
 class JavaTypeParameterOverAst(
     node: JavaSyntaxNode,
-    private val resolutionContext: JavaResolutionContext,
+    initialResolutionContext: JavaResolutionContext,
 ) : JavaElementOverAst(node), JavaTypeParameter {
+
+    // Resolution context can be updated after construction to include all sibling type parameters.
+    // This is needed for resolving bounds like `S extends JsStubElement<E>` where E is another type param.
+    private var resolutionContext: JavaResolutionContext = initialResolutionContext
+
+    /**
+     * Updates the resolution context used for resolving upper bounds.
+     * Called after all type parameters are created to add them all to scope.
+     */
+    fun updateResolutionContext(newContext: JavaResolutionContext) {
+        resolutionContext = newContext
+    }
 
     override val name: Name
         get() = Name.identifier(node.findChildByType("IDENTIFIER")?.text ?: "<error>")
