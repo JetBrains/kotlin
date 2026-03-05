@@ -154,6 +154,11 @@ class CasesPublicAPITest {
         snapshotAPIAndCompare(testName.methodName)
     }
 
+    @Test
+    fun consts() {
+        snapshotAPIAndCompare(testName.methodName)
+    }
+
     private fun snapshotAPIAndCompareRoot(
         testClassRelativePath: String,
         includedClasses: Set<String> = emptySet(),
