@@ -769,6 +769,11 @@ class BodyGenerator(
             }
         }
 
+        if (call.symbol == wasmSymbols.resumeWithIntrinsic || call.symbol == wasmSymbols.resumeThrowIntrinsic) {
+            tryToGenerateIntrinsicCall(call, call.symbol.owner)
+            return
+        }
+
         call.arguments.forEach { generateExpression(it!!) }
 
         val callFunction = call.symbol.owner
