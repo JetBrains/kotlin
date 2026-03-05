@@ -258,11 +258,8 @@ class WasmSymbols(
     val resumeThrowIntrinsic = getInternalWasmFunction("resumeThrowIntrinsic")
     val nullable_contref_intrinsic = getInternalWasmFunction("nullable_contref_intrinsic")
     val resumeWithIntrinsic = getInternalWasmFunction("resumeWithIntrinsic")
-    val setWasmContinuation = getInternalWasmFunction("setWasmContinuation")
     val buildResumeIntrinsicSuspendResult = getInternalWasmFunction("buildResumeIntrinsicSuspendResult")
     val buildResumeIntrinsicValueResult = getInternalWasmFunction("buildResumeIntrinsicValueResult")
-    val resumeCompletionWithValue = getInternalWasmFunction("resumeCompletionWithValue")
-    val resumeCompletionWithException = getInternalWasmFunction("resumeCompletionWithException")
 
     // KProperty implementations
     val kLocalDelegatedPropertyImpl: IrClassSymbol = getInternalWasmClass("KLocalDelegatedPropertyImpl")

@@ -164,7 +164,6 @@ class WasmIrToText(
                 appendImmediate(it)
             }
         }
-//        return "(on ${handle.immediates.joinToString { (it as WasmImmediate.TagIdx).value.toString() }})"
     }
 
     private fun appendImmediate(x: WasmImmediate) {
@@ -294,24 +293,6 @@ class WasmIrToText(
             sameLineList("cont") {
                 appendModuleFieldReference(type.funType.owner)
             }
-//            sameLineList("func") {
-//                sameLineList("param") {
-//                    type.parameterTypes.forEach { appendType(it) }
-//                }
-//                if (type.resultTypes.isNotEmpty()) {
-//                    sameLineList("result") {
-//                        type.resultTypes.forEach { appendType(it) }
-//                    }
-//                }
-//            }
-//            appendModuleFieldReference(type)
-//            maybeSubType(type.superType?.owner) {
-//                sameLineList("struct") {
-//                    type.fields.forEach {
-//                        appendStructField(it)
-//                    }
-//                }
-//            }
         }
     }
 

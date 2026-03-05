@@ -110,32 +110,12 @@ internal fun buildResumeIntrinsicSuspendResult(
 @Suppress("UNUSED")
 @UsedFromCompilerGeneratedCode
 internal fun buildResumeIntrinsicValueResult(value: Any?): ResumeIntrinsicResult {
-    val remainingFunction: contref1? = nullable_contref_intrinsic()
-    return ResumeIntrinsicResult(null, remainingFunction, value)
+    return ResumeIntrinsicResult(null, nullable_contref_intrinsic(), value)
 }
 
 @ExcludedFromCodegen
 internal fun nullable_contref_intrinsic(): contref1? {
     implementedAsIntrinsic
-}
-
-@Suppress("UNUSED")
-@UsedFromCompilerGeneratedCode
-internal fun setWasmContinuation(cont: WasmContinuation<*, *>, b: contref1): Any? {
-    cont.wasmContBox = b
-    return cont
-}
-
-@Suppress("UNUSED")
-@UsedFromCompilerGeneratedCode
-internal fun resumeCompletionWithValue(completion: Continuation<Any?>, value: Any?) {
-    completion.resume(value)
-}
-
-@Suppress("UNUSED")
-@UsedFromCompilerGeneratedCode
-internal fun resumeCompletionWithException(completion: Continuation<Throwable>, exception: Throwable) {
-    completion.resumeWithException(exception)
 }
 
 @PublishedApi
