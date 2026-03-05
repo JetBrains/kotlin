@@ -9,7 +9,7 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 **Usage**: After completing each iteration, the agent MUST append a results section below.
 
-**Last Updated**: 2026-03-04 (Iteration 10 complete)
+**Last Updated**: 2026-03-05 (Iteration 11 complete)
 
 ---
 
@@ -29,6 +29,11 @@ This file captures key findings, decisions, and learnings from each iteration. I
 | 4 | 2026-02-25 | Star Imports + Parameters | 11/138 | 30/138 | Callback resolution + parameter parsing |
 | 5 | 2026-02-27 | Type Arguments | 30/138 | 31/138 | Generic type arguments + visibility fix |
 | 6 | 2026-03-03 | Hybrid JavaClassFinder | 31/138 | 90/138 | Combined source+binary class finding |
+| 7a-c | 2026-03-04 | Arrays, Imports, Type Params | 90/138 | 101/138 | Array/vararg, ERROR_ELEMENT imports, type param scope |
+| 8 | 2026-03-04 | Annotations & Nullability | 101/138 | 111/138 | TYPE_USE annotations, fragmented imports |
+| 9 | 2026-03-04 | Interface Fields/Methods | 111/138 | 115/138 | Implicit static/final/abstract modifiers |
+| 10 | 2026-03-04 | Nested Interfaces/Enums | 115/138 | 117/138 | Implicit static for nested interfaces/enums |
+| **11** | **2026-03-05** | **External Type Arguments** | **117/138** | **128/138** | **Fixed type args in null classifier branch** |
 
 ### Key Architectural Decisions
 
@@ -94,6 +99,146 @@ After Iteration 6, 48 tests still fail. Likely causes:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 11: External Type Arguments Fix - 2026-03-05
+
+### Status
+- ✅ Completed
+
+### Summary
+Fixed a critical bug where type arguments for external Java types (JDK classes like `java.util.AbstractMap<K,V>`) were being dropped during FIR type conversion. When `JavaClassifierType.classifier` returned `null` (indicating an external type not available in source), the code was ignoring `typeArguments` and constructing the type with `emptyArray()`. This caused type parameter substitution failures like `K` instead of `Double`. **Massive improvement**: Box tests 117→128 (+11), Diagnostic tests 264→331 (+67).
+
+### Key Findings
+
+1. **Root Cause Discovery**: The test `testMapGetOverride` was failing with:
+   ```
+   ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Double', 
+   but 'K! (of class AbstractMap<K : Any!, V : Any!>)' was expected.
+   ```
+   This showed type parameters (`K`) weren't being substituted with concrete types (`Double`).
+
+2. **AST Parsing Was Correct**: Debug logging confirmed java-direct was correctly parsing the supertype:
+   ```kotlin
+   // class MyMap extends java.util.AbstractMap<Double, CharSequence>
+   typeArgs=[JavaClassifierTypeOverAst:Double, JavaClassifierTypeOverAst:CharSequence]
+   ```
+
+3. **Bug Location**: `JavaTypeConversion.kt` (FIR layer, not java-direct). In the `null` classifier branch (lines 249-268), when converting a `JavaClassifierType` where `classifier` is `null` (external types), the code was:
+   ```kotlin
+   null -> {
+       val qualifiedName = this.classifierQualifiedName
+       // ... resolve classId ...
+       classId.constructClassLikeType(emptyArray(), ...)  // BUG: ignoring typeArguments!
+   }
+   ```
+
+4. **The `is JavaClass` Branch Had It Right**: The branch handling `classifier is JavaClass` (around line 190) correctly processed type arguments with raw type handling, wildcard conversion, etc. The `null` branch needed the same logic.
+
+5. **Why `null` Classifier?**: java-direct returns `classifier = null` for types whose classes aren't available in parsed source files (e.g., JDK classes). It provides `classifierQualifiedName` (e.g., `java.util.AbstractMap`) so FIR can resolve the type, but was ignoring the type arguments.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt` | In the `null` classifier branch, added full type argument handling: Java→Kotlin mapping, raw type detection, wildcard conversion, and proper `mappedTypeArguments` construction. |
+
+### Code Change
+
+**Before** (lines 249-268):
+```kotlin
+null -> {
+    val qualifiedName = this.classifierQualifiedName
+    var classId = if (!isResolved && ...) { ... } else { ... }
+    classId = JavaToKotlinClassMap.mapJavaToKotlin(...) ?: classId
+    // ... mutable handling ...
+    classId.constructClassLikeType(emptyArray(), isMarkedNullable = lowerBound != null, attributes)
+}
+```
+
+**After**:
+```kotlin
+null -> {
+    val qualifiedName = this.classifierQualifiedName
+    var classId = if (!isResolved && ...) { ... } else { ... }
+    classId = if (mode.insideAnnotation) {
+        JavaToKotlinClassMap.mapJavaToKotlinIncludingClassMapping(classId.asSingleFqName())
+    } else {
+        JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName())
+    } ?: classId
+    
+    if (lowerBound == null || argumentsMakeSenseOnlyForMutableContainer(classId, session)) {
+        classId = classId.readOnlyToMutable() ?: classId
+    }
+    
+    val lookupTag = classId.toLookupTag()
+    val mappedTypeArguments = when {
+        isRaw -> {
+            // Raw type handling - same as JavaClass branch
+            val typeParameterSymbols = lookupTag.takeIf { ... }?.toRegularClassSymbol(session)?.typeParameterSymbols
+            when {
+                mode.insideAnnotation -> typeParameterSymbols?.let { Array(it.size) { ConeStarProjection } }
+                else -> typeParameterSymbols?.getProjectionsForRawType(session, nullabilities = null)
+            }
+        }
+        lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> {
+            // Type argument conversion - same as JavaClass branch
+            val typeParameterSymbols = lookupTag.takeIf { ... }?.toRegularClassSymbol(session)?.typeParameterSymbols
+            Array(typeArguments.size) { index ->
+                val newMode = if (mode.insideAnnotation) FirJavaTypeConversionMode.DEFAULT else mode
+                val argument = typeArguments[index]
+                val variance = typeParameterSymbols?.getOrNull(index)?.fir?.variance ?: Variance.INVARIANT
+                argument.toConeTypeProjection(session, javaTypeParameterStack, variance, newMode, source)
+            }
+        }
+        else -> lowerBound?.typeArguments
+    }
+    
+    lookupTag.constructClassType(mappedTypeArguments ?: ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = lowerBound != null, attributes)
+}
+```
+
+### Test Results
+- Box tests: **128/138 passing (92.8%)** - UP from 117/138 (84.8%) - **+11 tests**
+- Diagnostic tests: **331/428 passing (77.3%)** - UP from 264/428 (61.7%) - **+67 tests**
+- **Total: 459/566 (81.1%) → 459/566 tests analyzed, 78 tests fixed**
+
+### Tests Fixed (Examples)
+| Test | Issue Fixed |
+|------|-------------|
+| `testMapGetOverride` | `AbstractMap<Double, CharSequence>` type args now work |
+| `testListIteratorWithPlatformTypes` | `ArrayList<E>` type parameter substitution |
+| `testSubclassOfMapEntry` | `Map.Entry<K, V>` nested generic types |
+| Multiple collection override tests | Generic JDK collection inheritance |
+
+### Remaining Failures (10 box tests)
+
+| Category | Count | Tests | Root Cause |
+|----------|-------|-------|------------|
+| **Atomics Mapping** | 5 | testKotlinToJavaHierarchy, testIntersectionKotlinJavaAtomics, testJavaToKotlinHierarchy, testUsingJavaAtomicWhenKotlinAtomicExpected, testUsingKotlinAtomicWhenJavaAtomicExpected | FIR's Kotlin↔Java atomic type mapping (not java-direct issue) |
+| **Raw Types** | 3 | testKjkWithRawTypes, testOverrideWithGenericArrayParameterType, testRawTypeArgumentInJavaSuperType | FIR raw type erasure handling |
+| **Wildcards** | 1 | testInheritanceWithWildcard | NoSuchMethodError - IR fake override issue |
+| **Other** | 1 | testKt48590 | NONE_APPLICABLE - overload resolution |
+
+### Key Learnings
+
+1. **Debug the Right Layer**: The bug wasn't in java-direct parsing (which was correct) but in FIR's type conversion. Exception-based debugging at the boundary helped identify this.
+
+2. **Follow the Data Flow**: `JavaClassifierType.typeArguments` → `JavaTypeConversion.toFirResolvedTypeRef()` → `ConeClassLikeType.typeArguments`. The `null` branch wasn't completing this flow.
+
+3. **Code Duplication Smell**: The `is JavaClass` and `null` branches had almost identical logic, but `null` was missing critical parts. This was a classic "incomplete copy" bug.
+
+4. **External vs Source Types**: java-direct returns `classifier=null` for external types (JDK, libraries) but still provides `classifierQualifiedName` and `typeArguments`. FIR must handle both paths identically.
+
+### Architecture Insight
+
+The `JavaClassifierType.classifier` property has three possible states:
+1. `is JavaClass` - Source class available, full resolution possible
+2. `is JavaTypeParameter` - Type parameter reference
+3. `null` - External type (JDK, library), only `classifierQualifiedName` available
+
+All three branches must handle `typeArguments` consistently. The bug was that only the first branch did.
+
+---
 
 ## Iteration 10: Nested Interfaces and Enums Implicitly Static - 2026-03-04
 

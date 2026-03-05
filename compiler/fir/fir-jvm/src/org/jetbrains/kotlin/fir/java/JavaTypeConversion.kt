@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -189,6 +190,19 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
     source: KtSourceElement?,
     lowerBound: ConeLookupTagBasedType? = null
 ): ConeLookupTagBasedType {
+    fun buildTypeProjections(lookupTag: ConeClassLikeLookupTagImpl): Array<ConeTypeProjection> {
+        val typeParameterSymbols =
+            lookupTag.takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
+                ?.toRegularClassSymbol(session)?.typeParameterSymbols
+        return Array(typeArguments.size) { index ->
+            // TODO: check this
+            val newMode = if (mode.insideAnnotation) FirJavaTypeConversionMode.DEFAULT else mode
+            val argument = typeArguments[index]
+            val variance = typeParameterSymbols?.getOrNull(index)?.fir?.variance ?: Variance.INVARIANT
+            argument.toConeTypeProjection(session, javaTypeParameterStack, variance, newMode, source)
+        }
+    }
+
     return when (val classifier = classifier) {
         is JavaClass -> {
             var classId = if (mode.insideAnnotation) {
@@ -217,20 +231,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                             ?: Array(classifier.allTypeParametersNumber()) { ConeStarProjection }
                     }
                 }
-
-                lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> {
-                    val typeParameterSymbols =
-                        lookupTag.takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
-                            ?.toRegularClassSymbol(session)?.typeParameterSymbols
-                    Array(typeArguments.size) { index ->
-                        // TODO: check this
-                        val newMode = if (mode.insideAnnotation) FirJavaTypeConversionMode.DEFAULT else mode
-                        val argument = typeArguments[index]
-                        val variance = typeParameterSymbols?.getOrNull(index)?.fir?.variance ?: Variance.INVARIANT
-                        argument.toConeTypeProjection(session, javaTypeParameterStack, variance, newMode, source)
-                    }
-                }
-
+                lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> buildTypeProjections(lookupTag)
                 else -> lowerBound?.typeArguments
             }
 
@@ -265,7 +266,17 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 classId = classId.readOnlyToMutable() ?: classId
             }
 
-            classId.constructClassLikeType(isMarkedNullable = lowerBound != null, attributes = attributes)
+            val lookupTag = classId.toLookupTag()
+            // See comments in the JavaClass branch above
+            val mappedTypeArguments = when {
+                isRaw -> errorWithAttachment("Unexpected raw type: ${this::class.java}") {
+                    withEntry("classId", classId) { it.toString() }
+                }
+                lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> buildTypeProjections(lookupTag)
+                else -> lowerBound?.typeArguments
+            }
+
+            lookupTag.constructClassType(mappedTypeArguments ?: ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = lowerBound != null, attributes)
         }
 
         else -> ConeErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))
