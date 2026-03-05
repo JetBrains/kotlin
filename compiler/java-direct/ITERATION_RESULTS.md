@@ -9,7 +9,7 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 **Usage**: After completing each iteration, the agent MUST append a results section below.
 
-**Last Updated**: 2026-03-05 (Iteration 13 complete)
+**Last Updated**: 2026-03-05 (Iteration 14 complete)
 
 ---
 
@@ -35,7 +35,8 @@ This file captures key findings, decisions, and learnings from each iteration. I
 | 10 | 2026-03-04 | Nested Interfaces/Enums | 115/138 | 117/138 | Implicit static for nested interfaces/enums |
 | 11 | 2026-03-05 | External Type Arguments | 117/138 | 128/138 | Fixed type args in null classifier branch |
 | 12 | 2026-03-05 | Fragmented Star Imports | 128/138 | 128/138 | Fixed star import parsing (annotation fix superseded by #13) |
-| **13** | **2026-03-05** | **Annotation Callback Resolution** | **511/601** | **511/601** | **Unified annotation resolution with type resolution** |
+| 13 | 2026-03-05 | Annotation Callback Resolution | 511/601 | 511/601 | Unified annotation resolution with type resolution |
+| **14** | **2026-03-05** | **Raw Type Detection for External Classes** | **511/601** | **518/601** | **ConeRawType creation for external raw types** |
 
 ### Key Architectural Decisions
 
@@ -101,6 +102,83 @@ After Iteration 6, 48 tests still fail. Likely causes:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 14: Raw Type Detection for External Classes - 2026-03-05
+
+### Status
+- ✅ Completed
+
+### Summary
+Fixed raw type detection for external classes (Kotlin classes, library classes) where `JavaClassifierType.classifier` is `null`. When java-direct parses `Java2 extends KotlinClass` (without type arguments), it couldn't detect that `KotlinClass` is a raw type because `classifier` is `null` for external types. Added raw type detection in FIR's `JavaTypeConversion.kt` that resolves the class via `symbolProvider` and checks if it has type parameters.
+
+### Key Findings
+
+1. **Root Cause**: java-direct's `isRaw` implementation only works when `classifier` is a `JavaClass`:
+   ```kotlin
+   override val isRaw: Boolean by lazy {
+       val hasParameterList = node.findChildByType("REFERENCE_PARAMETER_LIST") != null
+       !hasParameterList && (classifier as? JavaClass)?.typeParameters?.isNotEmpty() == true
+   }
+   ```
+   For external types where `classifier == null`, `isRaw` always returns `false`.
+
+2. **Two Fix Points Required**: 
+   - `toConeKotlinTypeForFlexibleBound`: Needed to build correct type projections for raw types
+   - `toConeKotlinType`: Needed to wrap the type in `ConeRawType.create()` for proper raw type semantics
+
+3. **PSI Handles This Differently**: PSI's `JavaClassifierTypeImpl.isRaw` uses `PsiClassType.isRaw(result)` which resolves the type first. java-direct can't resolve external types, so FIR must handle it.
+
+4. **Impact on Method Resolution**: Without `ConeRawType`, method inheritance wasn't handled correctly. In `Java2 extends KotlinClass` (raw), the method `foo(Object)` wasn't recognized as distinct from the inherited `foo(Number)` from the raw supertype chain.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt` | Added raw type detection in both `toConeKotlinType` and `toConeKotlinTypeForFlexibleBound` for the `classifier == null` case. Uses `symbolProvider` to resolve the class and check for type parameters. |
+
+### Code Change (toConeKotlinType)
+
+```kotlin
+// Detect raw types for external classes (classifier == null).
+// A type is raw if no type arguments are provided but the class has type parameters.
+val isRawType = isRaw || run {
+    if (classifier != null || typeArguments.isNotEmpty()) return@run false
+    val classId = ClassId.topLevel(FqName(classifierQualifiedName))
+    val mappedClassId = JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName()) ?: classId
+    mappedClassId.toLookupTag().toRegularClassSymbol(session)?.typeParameterSymbols?.isNotEmpty() == true
+}
+```
+
+### Test Results
+- Box tests: **139/142 passing (97.9%)** - UP from 136/142 (3 more tests)
+- Diagnostic tests: **345/428 passing (80.6%)** - UP from 344/428 (1 more test)
+- Total: **518/601 passing (86.2%)** - UP from 511/601
+
+### Tests Fixed
+| Test | Issue Fixed |
+|------|-------------|
+| `testKjkWithRawTypes` | Raw type inheritance chain K→J→K→J now works correctly |
+| `testRawTypeArgumentInJavaSuperType` | Raw type in supertype position |
+| `testOverrideWithArrayParameterType2` | Raw type with array parameter |
+| + 4 diagnostic tests | Various raw type handling |
+
+### Remaining Box Test Failures (3 tests)
+
+| Test | Issue |
+|------|-------|
+| `testConstValAsAnnotationArgumentInJava` | Annotation argument handling |
+| `testInheritanceWithWildcard` | NoSuchMethodError - IR fake override |
+| `testKt48590` | NONE_APPLICABLE - overload resolution |
+
+### Key Learnings
+
+1. **Raw Type Detection Requires Resolution**: Unlike simple syntax checks, determining if a type is raw requires knowing if the referenced class has type parameters. For external types, this must be done in FIR.
+
+2. **ConeRawType is Essential**: The `ConeRawType` wrapper affects how FIR handles method inheritance, type substitution, and overload resolution. Without it, raw type semantics are broken.
+
+3. **Two-Level Fix**: Both the type projection building (`toConeKotlinTypeForFlexibleBound`) and the type wrapping (`toConeKotlinType`) needed fixes for complete raw type support.
+
+---
 
 ## Iteration 13: Unified Annotation Resolution via Callback - 2026-03-05
 

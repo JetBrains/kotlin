@@ -119,12 +119,24 @@ private fun JavaType?.toConeTypeProjection(
             if (mode.insideAnnotation) {
                 return lowerBound
             }
-            if (!isRaw && classifier?.isTriviallyFlexible() == true) {
+            
+            // Detect raw types for external classes (classifier == null).
+            // A type is raw if no type arguments are provided but the class has type parameters.
+            val isRawType = isRaw || run {
+                if (classifier != null || typeArguments.isNotEmpty()) false
+                else {
+                    val classId = ClassId.topLevel(FqName(classifierQualifiedName))
+                    val mappedClassId = JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName()) ?: classId
+                    mappedClassId.toLookupTag().toRegularClassSymbol(session)?.typeParameterSymbols?.isNotEmpty() == true
+                }
+            }
+            
+            if (!isRawType && classifier?.isTriviallyFlexible() == true) {
                 lowerBound.toTrivialFlexibleType(session.typeContext)
             } else {
                 val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, source, lowerBound)
 
-                if (isRaw) {
+                if (isRawType) {
                     ConeRawType.create(lowerBound, upperBound)
                 } else {
                     ConeFlexibleType(lowerBound, upperBound, isTrivial = false)
@@ -267,10 +279,22 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             }
 
             val lookupTag = classId.toLookupTag()
-            // See comments in the JavaClass branch above
+            
+            // Detect raw types for external classes (classifier == null).
+            // A type is raw if no type arguments are provided but the class has type parameters.
+            // This can happen when java-direct parses Java code that references Kotlin or library classes.
+            val typeParameterSymbols = lookupTag
+                .takeIf { lowerBound == null && mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
+                ?.toRegularClassSymbol(session)?.typeParameterSymbols
+            val isRawType = isRaw || (typeArguments.isEmpty() && typeParameterSymbols?.isNotEmpty() == true)
+            
             val mappedTypeArguments = when {
-                isRaw -> errorWithAttachment("Unexpected raw type: ${this::class.java}") {
-                    withEntry("classId", classId) { it.toString() }
+                isRawType -> {
+                    // Same handling as JavaClass branch for raw types
+                    when {
+                        mode.insideAnnotation -> typeParameterSymbols?.let { Array(it.size) { ConeStarProjection } }
+                        else -> typeParameterSymbols?.getProjectionsForRawType(session, nullabilities = null)
+                    }
                 }
                 lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> buildTypeProjections(lookupTag)
                 else -> lowerBound?.typeArguments
