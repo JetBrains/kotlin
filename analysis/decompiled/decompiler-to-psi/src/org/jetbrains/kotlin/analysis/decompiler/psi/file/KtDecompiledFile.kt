@@ -43,7 +43,7 @@ abstract class KtDecompiledFile(private val provider: KotlinDecompiledFileViewPr
 
 private object CompiledStubBuilder : StubBuilder {
     override fun buildStubTree(file: PsiFile): KotlinFileStubImpl {
-        requireIsInstance<KtDecompiledFile>(file)
+        require(file is KtDecompiledFile) { "Expected ${KtDecompiledFile::class} instead of ${file::class} for $file" }
         val stub = readOrBuildCompiledStub(file)
 
         // A copy is required because stubs are stateful and mutable, so they cannot be shared as they are
