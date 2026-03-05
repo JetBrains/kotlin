@@ -96,6 +96,11 @@ fun main(args: Array<String>) {
         testGroup("wasm/wasm.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmJsCodegenBoxTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/boxWasmBenchmark")
+            }
+
+            testClass<AbstractFirWasmJsBenchmarkTest> {
+                model("codegen/boxWasmBenchmark")
             }
 
             testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest> {
