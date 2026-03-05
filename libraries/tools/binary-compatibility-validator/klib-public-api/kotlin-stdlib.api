@@ -13996,6 +13996,11 @@ final val kotlin.js/definedExternally // kotlin.js/definedExternally|{}definedEx
     final fun <get-definedExternally>(): kotlin/Nothing // kotlin.js/definedExternally.<get-definedExternally>|<get-definedExternally>(){}[0]
 
 // Targets: [wasmJs, wasmWasi]
+open annotation class kotlin.wasm.unsafe/ComponentModelInternalApi : kotlin/Annotation { // kotlin.wasm.unsafe/ComponentModelInternalApi|null[0]
+    constructor <init>() // kotlin.wasm.unsafe/ComponentModelInternalApi.<init>|<init>(){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
 open annotation class kotlin.wasm.unsafe/UnsafeWasmMemoryApi : kotlin/Annotation { // kotlin.wasm.unsafe/UnsafeWasmMemoryApi|null[0]
     constructor <init>() // kotlin.wasm.unsafe/UnsafeWasmMemoryApi.<init>|<init>(){}[0]
 }
@@ -14142,7 +14147,13 @@ final fun kotlin.wasm.internal/wasm_i64_shr_s(kotlin/Long, kotlin/Long): kotlin/
 final fun kotlin.wasm.internal/wasm_i64_shr_u(kotlin/Long, kotlin/Long): kotlin/Long // kotlin.wasm.internal/wasm_i64_shr_u|wasm_i64_shr_u(kotlin.Long;kotlin.Long){}[0]
 
 // Targets: [wasmJs, wasmWasi]
+final fun kotlin.wasm.unsafe/componentModelRealloc(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Int // kotlin.wasm.unsafe/componentModelRealloc|componentModelRealloc(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+
+// Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.unsafe/createAllocatorInTheNewScope(): kotlin.wasm.unsafe/ScopedMemoryAllocator // kotlin.wasm.unsafe/createAllocatorInTheNewScope|createAllocatorInTheNewScope(){}[0]
+
+// Targets: [wasmJs, wasmWasi]
+final fun kotlin.wasm.unsafe/freeAllComponentModelReallocAllocatedMemory() // kotlin.wasm.unsafe/freeAllComponentModelReallocAllocatedMemory|freeAllComponentModelReallocAllocatedMemory(){}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final fun kotlin/floatToUInt(kotlin/Float): kotlin/UInt // kotlin/floatToUInt|floatToUInt(kotlin.Float){}[0]
