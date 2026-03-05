@@ -64,3 +64,12 @@ ENV M2_HOME=/usr/lib/apache-maven-3.8.1 \
 
 ENV MAVEN_HOME=$M2_HOME
 ENV PATH="$PATH:$M2_HOME/bin"
+
+# For running under a non-root user, e. g. in TeamCity
+# The UID is assumed to be the same as the user on the host (e. g. the UID of the TeamCity user on agents)
+# so file ownership in mounted volumes are preserved
+ARG USERNAME=user
+ARG UID=1001
+ARG GID=$UID
+RUN groupadd --gid "$GID" "$USERNAME"
+RUN useradd --uid "$UID" --gid "$GID" --create-home "$USERNAME"
