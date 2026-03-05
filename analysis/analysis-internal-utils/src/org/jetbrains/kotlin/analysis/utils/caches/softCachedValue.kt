@@ -6,10 +6,11 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import kotlin.reflect.KProperty
 
-
+@Deprecated("Unintentionally exposed API. Do not use", level = DeprecationLevel.ERROR)
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun <T> CachedValue<T>.getValue(thisRef: Any?, property: KProperty<*>): T = value
 
+@Deprecated("Unintentionally exposed API. Do not use", level = DeprecationLevel.ERROR)
 public inline fun <T> softCachedValue(
     project: Project,
     vararg dependencies: Any,
