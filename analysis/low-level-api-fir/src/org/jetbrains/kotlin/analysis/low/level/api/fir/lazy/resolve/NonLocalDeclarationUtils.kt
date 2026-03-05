@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
-import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
