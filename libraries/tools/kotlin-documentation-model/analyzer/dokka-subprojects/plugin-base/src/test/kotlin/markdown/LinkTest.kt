@@ -1696,7 +1696,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlyDescriptors("#3385")
     fun `should resolve KDoc links that goes after markdown blocks`() {
         testInline(
             """
@@ -1725,6 +1724,31 @@ class LinkTest : BaseAbstractTest() {
                         "JavaNetCookieJar" to DRI("example", "JavaNetCookieJar"),
                     ),
                     module.getAllLinkDRIFrom("saveFromResponse")
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `should resolve KDoc link in indented @param tag`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |interface Call
+            |
+            |/**
+            | * @param text some description with reference.
+            | *     But with a few lines and indent [Call]
+            | */
+            |fun protocol(text: String) {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(
+                    DRI("example", "Call"),
+                    module.getLinkDRIFrom("protocol")
                 )
             }
         }
