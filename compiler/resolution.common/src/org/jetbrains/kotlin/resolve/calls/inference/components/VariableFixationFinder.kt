@@ -379,28 +379,32 @@ inline fun KotlinTypeMarker.isProperTypeForFixation(
 
 context(c: TypeSystemInferenceExtensionContext)
 fun KotlinTypeMarker.extractProjectionsForAllCapturedTypes(): Set<KotlinTypeMarker> {
+    return buildSet {
+        extractProjectionsForAllCapturedTypesInternal(this)
+    }
+}
+
+context(c: TypeSystemInferenceExtensionContext)
+private fun KotlinTypeMarker.extractProjectionsForAllCapturedTypesInternal(result: MutableSet<KotlinTypeMarker>) {
     if (isFlexible()) {
         val flexibleType = asFlexibleType()!!
-        return buildSet {
-            addAll(flexibleType.lowerBound().extractProjectionsForAllCapturedTypes())
-            addAll(flexibleType.upperBound().extractProjectionsForAllCapturedTypes())
-        }
+        flexibleType.lowerBound().extractProjectionsForAllCapturedTypesInternal(result)
+        flexibleType.upperBound().extractProjectionsForAllCapturedTypesInternal(result)
+        return
     }
     val simpleBaseType = asRigidType()?.asCapturedTypeUnwrappingDnn()
 
-    return buildSet {
-        val projectionType = if (simpleBaseType != null) {
-            val argumentType = simpleBaseType.typeConstructorProjection().getType() ?: return@buildSet
-            argumentType.also(::add)
-        } else {
-            this@extractProjectionsForAllCapturedTypes
-        }
-        val argumentsCount = projectionType.argumentsCount().takeIf { it != 0 } ?: return@buildSet
+    val projectionType = if (simpleBaseType != null) {
+        val argumentType = simpleBaseType.typeConstructorProjection().getType() ?: return
+        argumentType.also { result.add(it) }
+    } else {
+        this@extractProjectionsForAllCapturedTypesInternal
+    }
+    val argumentsCount = projectionType.argumentsCount().takeIf { it != 0 } ?: return
 
-        for (i in 0 until argumentsCount) {
-            val argumentType = projectionType.getArgument(i).getType() ?: continue
-            addAll(argumentType.extractProjectionsForAllCapturedTypes())
-        }
+    for (i in 0 until argumentsCount) {
+        val argumentType = projectionType.getArgument(i).getType() ?: continue
+        argumentType.extractProjectionsForAllCapturedTypesInternal(result)
     }
 }
 
