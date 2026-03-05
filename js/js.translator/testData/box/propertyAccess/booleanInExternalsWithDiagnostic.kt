@@ -1,6 +1,8 @@
 // TARGET_BACKEND: JS_IR
 // SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC: EXCEPTION
 
+package test
+
 @JsName("Error")
 open external class JsError(message: String) : Throwable
 
