@@ -283,7 +283,8 @@ private class BridgeFunctionDescriptor(
         }
     }
 
-    override fun argumentsForInvocation(): List<String> = allParameters.filter { it.isRenderable }.map {
+    override fun argumentsForInvocation(): List<String> = allParameters.map {
+        if (!it.isRenderable) return@map "_"
         it.name.takeIf { it == "self" } ?: it.name.swiftIdentifier
     }
 }
