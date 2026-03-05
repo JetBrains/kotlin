@@ -17,7 +17,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.ConcurrentFactoryMap
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
+import org.jetbrains.kotlin.analysis.api.impl.base.util.buildSmartList
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
