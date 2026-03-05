@@ -82,7 +82,6 @@ fun main(args: Array<String>) {
     }
 
     if (errors.isNotEmpty()) {
-        // Muted: #KT-35776
-        // throw AssertionError(errors)
+        throw AssertionError(errors)
     }
 }
