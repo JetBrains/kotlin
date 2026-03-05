@@ -9,7 +9,7 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 **Usage**: After completing each iteration, the agent MUST append a results section below.
 
-**Last Updated**: 2026-03-05 (Iteration 14 complete)
+**Last Updated**: 2026-03-05 (Iteration 15 complete)
 
 ---
 
@@ -36,7 +36,8 @@ This file captures key findings, decisions, and learnings from each iteration. I
 | 11 | 2026-03-05 | External Type Arguments | 117/138 | 128/138 | Fixed type args in null classifier branch |
 | 12 | 2026-03-05 | Fragmented Star Imports | 128/138 | 128/138 | Fixed star import parsing (annotation fix superseded by #13) |
 | 13 | 2026-03-05 | Annotation Callback Resolution | 511/601 | 511/601 | Unified annotation resolution with type resolution |
-| **14** | **2026-03-05** | **Raw Type Detection for External Classes** | **511/601** | **518/601** | **ConeRawType creation for external raw types** |
+| 14 | 2026-03-05 | Raw Type Detection for External Classes | 511/601 | 518/601 | ConeRawType creation for external raw types |
+| **15** | **2026-03-05** | **TYPE_USE Annotation Filtering** | **518/601** | **521/601** | **Filter non-TYPE_USE annotations from types** |
 
 ### Key Architectural Decisions
 
@@ -102,6 +103,88 @@ After Iteration 6, 48 tests still fail. Likely causes:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 15: TYPE_USE Annotation Filtering - 2026-03-05
+
+### Status
+- ✅ Completed
+
+### Summary
+Fixed incorrect `@Override` annotation appearing on return types in java-direct output. In Java, annotations from the method modifier list are syntactically before the return type, but only TYPE_USE annotations should appear on the type. Added filtering in java-direct's `JavaTypeOverAst` to exclude known non-TYPE_USE annotations (like `@Override`, `@Deprecated`) from the type's annotations. This mirrors javac-wrapper's `filterTypeAnnotations()` approach.
+
+### Key Findings
+
+1. **Root Cause**: `createJavaTypeWithAnnotations()` passes ALL annotations from the method modifier list to the return type's `extraAnnotations`. But annotations like `@Override` have `@Target(METHOD)`, not `TYPE_USE`, so they shouldn't appear on types.
+
+2. **javac-wrapper's Approach**: The javac-wrapper uses `filterTypeAnnotations()` which resolves each annotation class and checks if `TYPE_USE` is in its `@Target`. This is done at the Java model level in `TreeBasedType.annotations` getter.
+
+3. **java-direct Cannot Resolve Annotations**: At the Java model level, java-direct doesn't have access to FIR's symbolProvider, so it can't resolve annotation classes to check their `@Target`. 
+
+4. **FIR-Level Filtering Failed**: Initial attempt to filter at FIR level in `JavaTypeConversion.kt` broke other tests because annotations that appear directly on types in source (like `@NotNull V` in `List<@NotNull V>`) are already TYPE_USE by definition and shouldn't be filtered.
+
+5. **Solution: Hardcoded List**: Since java-direct can't resolve annotation classes, we use a hardcoded list of known non-TYPE_USE annotations from `java.lang.*`. This is practical because these are standard Java annotations with well-defined targets.
+
+6. **Filter Only Extra Annotations**: Only `extraAnnotations` (from method modifier list) need filtering. Annotations directly on the type node (`nodeAnnotations`) are already TYPE_USE by definition.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt` | Added `filterTypeAnnotations()` function with hardcoded lists of non-TYPE_USE annotations (both FQ names and simple names for unqualified `java.lang.*` annotations). Updated `annotations` getter to filter `extraAnnotations` before combining with `nodeAnnotations`. |
+
+### Code Change
+
+```kotlin
+private val NON_TYPE_USE_ANNOTATION_FQ_NAMES: Set<FqName> = setOf(
+    FqName("java.lang.Override"),           // @Target(METHOD)
+    FqName("java.lang.SafeVarargs"),        // @Target({CONSTRUCTOR, METHOD})
+    FqName("java.lang.FunctionalInterface"), // @Target(TYPE)
+    FqName("java.lang.Deprecated"),         // @Target({CONSTRUCTOR, FIELD, LOCAL_VARIABLE, METHOD, PACKAGE, MODULE, PARAMETER, TYPE})
+)
+
+private val NON_TYPE_USE_ANNOTATION_SIMPLE_NAMES: Set<String> = setOf(
+    "Override", "SafeVarargs", "FunctionalInterface", "Deprecated",
+)
+
+private fun Collection<JavaAnnotation>.filterTypeAnnotations(): Collection<JavaAnnotation> {
+    if (isEmpty()) return this
+    return filter { annotation ->
+        val classId = annotation.classId ?: return@filter true
+        val fqName = classId.asSingleFqName()
+        fqName !in NON_TYPE_USE_ANNOTATION_FQ_NAMES &&
+            fqName.shortName().asString() !in NON_TYPE_USE_ANNOTATION_SIMPLE_NAMES
+    }
+}
+```
+
+### Test Results
+- Box tests: **139/142 passing (97.9%)** - unchanged
+- Diagnostic tests: **382/459 passing (83.2%)** - UP from 379/459 (+3 tests)
+- Total: **521/601 passing (86.7%)** - UP from 518/601
+
+### Tests Fixed
+| Test | Issue Fixed |
+|------|-------------|
+| `testRemoveAt` | `@Override` no longer appears on return type |
+| + 2 diagnostic tests | Similar `@Override` / `@Deprecated` filtering issues |
+
+### Failed Approaches
+
+1. **FIR-Level Filtering (Attempt 1)**: Added `filterTypeUseAnnotations()` in `JavaTypeConversion.kt` that filtered ALL annotations. This broke `testNotNullTypeParameterWithKotlinNullable` because `@NotNull` on `List<@NotNull V>` was incorrectly filtered.
+
+2. **FIR-Level Filtering Only additionalAnnotations (Attempt 2)**: Modified to only filter `additionalAnnotations` parameter, not `this.annotations`. This still didn't work because java-direct merges extra annotations into `JavaType.annotations`, not as `additionalAnnotations` parameter.
+
+### Key Learnings
+
+1. **Annotations on Types vs From Modifier List**: Annotations that appear directly on a type in Java source are TYPE_USE by definition. Only annotations passed from the method modifier list need filtering.
+
+2. **Model-Level vs FIR-Level Filtering**: javac-wrapper filters at model level (in `TreeBasedType.annotations`), not FIR level. This is the correct place because it's where the Java model knows about annotation sources.
+
+3. **Hardcoded Lists Are Sometimes OK**: When annotation resolution isn't available, a hardcoded list of standard Java annotations is a practical solution. These are defined by the JLS and unlikely to change.
+
+4. **Simple Names Matter**: Unqualified annotations like `@Override` have classId `FqName("Override")`, not `FqName("java.lang.Override")`. Must check both FQ names and simple names.
+
+---
 
 ## Iteration 14: Raw Type Detection for External Classes - 2026-03-05
 

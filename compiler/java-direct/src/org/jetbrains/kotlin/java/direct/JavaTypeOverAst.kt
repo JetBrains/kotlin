@@ -9,6 +9,46 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * Standard Java annotations that do NOT have TYPE_USE in their @Target.
+ * These should be filtered out when they appear on types (from method modifier lists).
+ * Includes both fully qualified names and simple names (for java.lang.* annotations).
+ */
+private val NON_TYPE_USE_ANNOTATION_FQ_NAMES: Set<FqName> = setOf(
+    FqName("java.lang.Override"),           // @Target(METHOD)
+    FqName("java.lang.SafeVarargs"),        // @Target({CONSTRUCTOR, METHOD})
+    FqName("java.lang.FunctionalInterface"), // @Target(TYPE)
+    FqName("java.lang.Deprecated"),         // @Target({CONSTRUCTOR, FIELD, LOCAL_VARIABLE, METHOD, PACKAGE, MODULE, PARAMETER, TYPE})
+)
+
+/**
+ * Simple names of java.lang annotations that are NOT TYPE_USE.
+ * Used to filter unqualified annotations like @Override.
+ */
+private val NON_TYPE_USE_ANNOTATION_SIMPLE_NAMES: Set<String> = setOf(
+    "Override",
+    "SafeVarargs",
+    "FunctionalInterface",
+    "Deprecated",
+)
+
+/**
+ * Filters annotations to exclude known non-TYPE_USE annotations.
+ * This mimics javac-wrapper's filterTypeAnnotations() but uses a hardcoded list
+ * since java-direct doesn't have access to annotation class resolution at model level.
+ * TODO: consider other approach with some annotations resolution
+ */
+private fun Collection<JavaAnnotation>.filterTypeAnnotations(): Collection<JavaAnnotation> {
+    if (isEmpty()) return this
+    return filter { annotation ->
+        val classId = annotation.classId ?: return@filter true
+        val fqName = classId.asSingleFqName()
+        // Check both FQ name and simple name (for unqualified java.lang.* annotations)
+        fqName !in NON_TYPE_USE_ANNOTATION_FQ_NAMES &&
+            fqName.shortName().asString() !in NON_TYPE_USE_ANNOTATION_SIMPLE_NAMES
+    }
+}
+
 abstract class JavaTypeOverAst(
     val node: JavaSyntaxNode,
     protected val resolutionContext: JavaResolutionContext,
@@ -19,7 +59,9 @@ abstract class JavaTypeOverAst(
             val nodeAnnotations = node.findChildByType("MODIFIER_LIST")?.getChildrenByType("ANNOTATION")
                 ?.map { JavaAnnotationOverAst(it, resolutionContext) }
                 ?: emptyList()
-            return extraAnnotations + nodeAnnotations
+            // Filter extra annotations (from method modifier list) to exclude non-TYPE_USE annotations.
+            // Node annotations are already TYPE_USE by definition (they appear directly on the type).
+            return extraAnnotations.filterTypeAnnotations() + nodeAnnotations
         }
 
     override val isDeprecatedInJavaDoc: Boolean get() = false
