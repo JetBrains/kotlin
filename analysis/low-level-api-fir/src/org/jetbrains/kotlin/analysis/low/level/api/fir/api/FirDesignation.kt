@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
+import org.jetbrains.kotlin.analysis.api.impl.base.util.unexpectedElementError
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolByClassIdWithoutDependencies
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
-import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*

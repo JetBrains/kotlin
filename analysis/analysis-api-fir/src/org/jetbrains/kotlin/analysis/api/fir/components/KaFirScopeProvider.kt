@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeTypeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
+import org.jetbrains.kotlin.analysis.api.impl.base.util.unexpectedElementError
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerS
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
-import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
