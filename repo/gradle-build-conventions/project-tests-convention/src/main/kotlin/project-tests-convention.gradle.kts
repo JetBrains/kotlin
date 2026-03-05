@@ -47,7 +47,8 @@ tasks.withType<Test>().configureEach {
     outputs.cacheIf { workingDir != rootDir }
 
     develocity.testRetry {
-        maxRetries.set(if (kotlinBuildProperties.isTeamcityBuild.get()) 3 else 0)
+        maxRetries.set(kotlinBuildProperties.intProperty("kotlin.build.testRetry.maxRetries")
+                           .orElse(kotlinBuildProperties.isTeamcityBuild.map { if (it) 3 else 0 }))
         failOnPassedAfterRetry.set(extension.allowFlaky.convention(true).map { !it })
     }
     ignoreFailures = false
