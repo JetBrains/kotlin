@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.analysis.api.KaCustomContextParameterBridge
 import org.jetbrains.kotlin.analysis.api.KaNoContextParameterBridgeRequired
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.test.TestDataAssertions
+import org.jetbrains.kotlin.utils.PrettyPrinter
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -102,11 +102,11 @@ class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiSurfaceCodeba
         .filter { it.isPublic && !it.hasIgnoreBridgeMarker }
         .map { it.generateBridgeDeclaration() }
 
-    private fun KtCallableDeclaration.generateBridgeDeclaration(): String = PrettyPrinter(indentSize = BASE_INDENT_SIZE).apply {
-        val kDocEndOffset = docComment?.textRangeInParent?.endOffset?.plus(indentSize) ?: 0
+    private fun KtCallableDeclaration.generateBridgeDeclaration(): String = PrettyPrinter(indentation = BASE_INDENT).apply {
+        val kDocEndOffset = docComment?.textRangeInParent?.endOffset?.plus(BASE_INDENT_SIZE) ?: 0
 
         // Add indention to the beginning of the declaration to align indent for all lines
-        val callableTextWithIndentation = " ".repeat(indentSize) + text
+        val callableTextWithIndentation = " ".repeat(BASE_INDENT_SIZE) + text
         val callableKDoc = callableTextWithIndentation.take(kDocEndOffset)
 
         // Original KDoc
@@ -142,7 +142,7 @@ class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiSurfaceCodeba
         appendLine(')')
 
         val signatureEndOffset = typeConstraintList?.textRangeInParent?.endOffset ?: typeReference!!.textRangeInParent.endOffset
-        val signature = callableTextWithIndentation.substring(publicModifierStartOffset, signatureEndOffset + indentSize)
+        val signature = callableTextWithIndentation.substring(publicModifierStartOffset, signatureEndOffset + BASE_INDENT_SIZE)
 
         // Original signature without body
         append(signature.trimIndent())
@@ -172,7 +172,7 @@ class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiSurfaceCodeba
                         append(name)
                         append('(')
                         withIndent {
-                            printCollectionIfNotEmpty(valueParameters, separator = "", prefix = "\n") { parameter ->
+                            appendCollection(valueParameters, separator = "", prefix = "\n", skipIfEmpty = true) { parameter ->
                                 val name = parameter.name
                                 append(name)
                                 append(" = ")
@@ -194,6 +194,8 @@ class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiSurfaceCodeba
         private val BRIDGE_ANNOTATION_MARKER: String = KaContextParameterApi::class.simpleName!!
         private val CUSTOM_BRIDGE_ANNOTATION_MARKER: String = KaCustomContextParameterBridge::class.simpleName!!
         private val IGNORE_BRIDGE_ANNOTATION_MARKER: String = KaNoContextParameterBridgeRequired::class.simpleName!!
+
         private const val BASE_INDENT_SIZE = 4
+        private val BASE_INDENT = " ".repeat(BASE_INDENT_SIZE)
     }
 }

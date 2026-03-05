@@ -12,13 +12,14 @@ import org.jetbrains.kotlin.analysis.stubs.AbstractCompiledStubsTest
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.utils.PrettyPrinter
+import org.jetbrains.kotlin.utils.prettyPrint
 
 /**
  * This test is supposed to validate a decompiler text output
@@ -31,7 +32,7 @@ abstract class AbstractDecompiledTextTest(defaultTargetPlatform: TargetPlatform)
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         val files = mainModule.ktFiles.sortedBy(KtFile::getName)
 
-        val actual = prettyPrint {
+        val actual = prettyPrint(indentation = PrettyPrinter.TWO_SPACES) {
             if (files.isEmpty()) {
                 appendLine("NO FILES")
                 return@prettyPrint
@@ -41,7 +42,7 @@ abstract class AbstractDecompiledTextTest(defaultTargetPlatform: TargetPlatform)
             if (file != null) {
                 append(file.text)
             } else {
-                printCollection(files, separator = "\n") { file ->
+                appendCollection(files, separator = "\n") { file ->
                     appendLine("${file.name}:")
                     withIndent {
                         append(file.text)

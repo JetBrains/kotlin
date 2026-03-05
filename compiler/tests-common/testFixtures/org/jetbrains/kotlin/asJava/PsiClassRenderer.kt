@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
 import com.intellij.psi.util.MethodSignature
-import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
-import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiLiteral
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -16,7 +14,9 @@ import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.utils.PrettyPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.utils.prettyPrint
 
 fun PsiClass.renderClass() = PsiClassRenderer.renderClass(this)
 
@@ -70,7 +70,8 @@ class PsiClassRenderer private constructor(
                 psiClass.fields
                     .filterIsInstance<PsiEnumConstant>()
                     .filter { membersFilter.includeEnumConstant(it) }
-                    .joinTo(this, ",\n") { it.renderEnumConstant() }
+                    .map { it.renderEnumConstant() }
+                    .let { appendCollection(it, separator = ",\n") }
 
                 append(";\n\n")
             }
@@ -81,7 +82,7 @@ class PsiClassRenderer private constructor(
         append("}")
     }
 
-    private fun renderClass(psiClass: PsiClass): String = prettyPrint {
+    private fun renderClass(psiClass: PsiClass): String = prettyPrint(indentation = PrettyPrinter.TWO_SPACES) {
         renderClass(psiClass)
     }
 
@@ -289,7 +290,8 @@ class PsiClassRenderer private constructor(
     private fun <T> PrettyPrinter.appendSorted(list: List<T>, addPrefix: Boolean, render: (T) -> String) {
         if (list.isEmpty()) return
         val prefix = if (addPrefix) "\n\n" else ""
-        list.map(render).sorted().joinTo(this, separator = "\n\n", prefix = prefix)
+        val sortedChunks = list.map(render).sorted()
+        appendCollection(sortedChunks, separator = "\n\n", prefix = prefix)
     }
 
     private fun PsiAnnotation.renderAnnotation(): String {
