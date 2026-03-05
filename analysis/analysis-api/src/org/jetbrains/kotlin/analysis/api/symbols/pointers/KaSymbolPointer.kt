@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.pointers
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -32,7 +33,10 @@ public abstract class KaSymbolPointer<out S : KaSymbol> {
      */
     public open fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other
 
-    override fun toString(): String = renderAsDataClassToString()
+    override fun toString(): String {
+        @OptIn(KaExperimentalApi::class)
+        return renderAsDataClassToString()
+    }
 }
 
 @Deprecated(

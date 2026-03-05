@@ -23,6 +23,7 @@ dependencies {
     compileOnly(project(":core:compiler.common.jvm"))
     compileOnly(project(":core:compiler.common.js"))
     implementation(project(":analysis:analysis-internal-utils"))
+    implementation(kotlinxCollectionsImmutable())
 
     api(intellijCore())
     api(libs.intellij.asm)

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.stubs
 
 import com.intellij.psi.stubs.StubElement
-import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
-import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
+import org.jetbrains.kotlin.analysis.internal.utils.IndentedTextBuilder
+import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.name.FqName
@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import java.lang.reflect.Modifier
 
-internal fun extractAdditionalStubInfo(stub: KotlinFileStubImpl): String = prettyPrint {
-    extractAdditionInfo(stub)
+internal fun extractAdditionalStubInfo(stub: KotlinFileStubImpl): String {
+    return buildIndentedText(indentation = IndentedTextBuilder.TWO_SPACES) {
+        extractAdditionInfo(stub)
+    }
 }
 
-private fun PrettyPrinter.extractAdditionInfo(stub: StubElement<*>) {
+private fun IndentedTextBuilder.extractAdditionInfo(stub: StubElement<*>) {
     // Nodes are stored in the form "NodeType:Node" and have too much repeating information for Kotlin stubs
     // Remove all repeating information (See KotlinStubBaseImpl.toString())
     val adjustedStubText = stub.toString().substringAfter(STUB_TO_STRING_PREFIX).replace(", [", "[")
@@ -54,7 +56,7 @@ private fun PrettyPrinter.extractAdditionInfo(stub: StubElement<*>) {
     }
 }
 
-private fun PrettyPrinter.appendValue(value: Any?) {
+private fun IndentedTextBuilder.appendValue(value: Any?) {
     when (value) {
         is Map<*, *> -> appendValue(value.entries)
         is Collection<*> -> when (value.size) {
@@ -67,7 +69,7 @@ private fun PrettyPrinter.appendValue(value: Any?) {
                 append(" ]")
             }
 
-            else -> printCollection(value, separator = "\n", prefix = "[\n", postfix = "\n]") {
+            else -> appendCollection(value, separator = "\n", prefix = "[\n", postfix = "\n]") {
                 withIndent {
                     appendValue(it)
                 }
@@ -97,7 +99,7 @@ private fun PrettyPrinter.appendValue(value: Any?) {
     }
 }
 
-private fun PrettyPrinter.appendTypeInfo(typeBean: KotlinTypeBean) {
+private fun IndentedTextBuilder.appendTypeInfo(typeBean: KotlinTypeBean) {
     when (typeBean) {
         is KotlinClassTypeBean -> {
             append(typeBean.classId.asFqNameString())
@@ -145,7 +147,7 @@ private fun PrettyPrinter.appendTypeInfo(typeBean: KotlinTypeBean) {
 }
 
 class KotlinContractRenderer(
-    private val printer: PrettyPrinter,
+    private val printer: IndentedTextBuilder,
 ) : KtContractDescriptionVisitor<Unit, Nothing?, KotlinTypeBean, Nothing?>() {
     override fun visitConditionalEffectDeclaration(
         conditionalEffect: KtConditionalEffectDeclaration<KotlinTypeBean, Nothing?>,
