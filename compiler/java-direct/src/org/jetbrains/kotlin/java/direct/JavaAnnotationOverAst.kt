@@ -24,24 +24,65 @@ class JavaAnnotationOverAst(
             }
         }
 
+    /**
+     * The simple or qualified name of the annotation as it appears in source.
+     * For `@Deprecated`, returns "Deprecated".
+     * For `@java.lang.Deprecated`, returns "java.lang.Deprecated".
+     */
+    private val annotationName: String?
+        get() = node.findChildByType("JAVA_CODE_REFERENCE")?.text
+
     override val classId: ClassId?
         get() {
-            val reference = node.findChildByType("JAVA_CODE_REFERENCE")?.text ?: return null
+            val reference = annotationName ?: return null
             
             // If already qualified (contains dot), use as-is
             if (reference.contains('.')) {
                 return ClassId.topLevel(FqName(reference))
             }
             
-            // Try to resolve via imports
+            // Try to resolve via explicit imports
             val imported = resolutionContext.getSimpleImport(reference)
             if (imported != null) {
                 return ClassId.topLevel(imported)
             }
             
-            // Use the unqualified name - FIR will try to resolve via star imports and java.lang
+            // Return unqualified - FIR will need to resolve via resolveAnnotation
             return ClassId.topLevel(FqName(reference))
         }
+
+    /**
+     * Whether this annotation is already resolved.
+     * Returns false when the annotation name is unqualified and not explicitly imported.
+     */
+    override val isResolved: Boolean
+        get() {
+            val reference = annotationName ?: return true
+            // Resolved if fully qualified or explicitly imported
+            return reference.contains('.') || resolutionContext.getSimpleImport(reference) != null
+        }
+
+    /**
+     * Resolves this annotation's class using the provided callback.
+     * Uses the same resolution logic as types: same package, java.lang, star imports.
+     */
+    override fun resolveAnnotation(tryResolve: (String) -> Boolean): String? {
+        val reference = annotationName ?: return null
+        
+        // If already qualified, return as-is (but verify it exists)
+        if (reference.contains('.')) {
+            return if (tryResolve(reference)) reference else null
+        }
+        
+        // Try to resolve via explicit imports
+        val imported = resolutionContext.getSimpleImport(reference)
+        if (imported != null) {
+            return imported.asString()
+        }
+        
+        // Use the same resolution logic as types: same package, java.lang, star imports
+        return resolutionContext.resolveWithCallback(reference, tryResolve)
+    }
 
     override fun resolve(): JavaClass? = null
 }

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.java.declarations.buildJavaExternalAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -357,7 +358,16 @@ private fun buildFirAnnotation(
     session: FirSession,
     source: KtSourceElement?,
 ): AnnotationData {
-    val classId = javaAnnotation.classId
+    val classId = if (!javaAnnotation.isResolved) {
+        // Resolve unqualified annotation names via java.lang and star imports
+        val resolvedFqn = javaAnnotation.resolveAnnotation { candidateFqn ->
+            val candidateClassId = ClassId.topLevel(FqName(candidateFqn))
+            session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null
+        }
+        resolvedFqn?.let { ClassId.topLevel(FqName(it)) } ?: javaAnnotation.classId
+    } else {
+        javaAnnotation.classId
+    }
     val lookupTag = when (classId) {
         JvmStandardClassIds.Annotations.Java.Target -> StandardClassIds.Annotations.Target
         JvmStandardClassIds.Annotations.Java.Retention -> StandardClassIds.Annotations.Retention

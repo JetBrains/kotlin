@@ -102,6 +102,8 @@ class JavaParsingTest {
         val javaClass = parseFirstClass(source)
 
         assert(javaClass.annotations.size == 1)
+        // Unit test parses without FIR, so annotation is unresolved (just "Deprecated")
+        // FIR will resolve it to java.lang.Deprecated via resolveAnnotation
         assert(javaClass.annotations.first().classId?.asSingleFqName()?.asString() == "Deprecated")
     }
 

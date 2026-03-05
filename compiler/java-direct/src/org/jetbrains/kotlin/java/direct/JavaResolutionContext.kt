@@ -174,28 +174,71 @@ class JavaResolutionContext private constructor(
             }
             
             // Handle fragmented import patterns where parser splits import across sibling nodes
-            // Pattern: ERROR_ELEMENT(IMPORT_KEYWORD) followed eventually by TYPE(JAVA_CODE_REFERENCE)
+            // Pattern 1: ERROR_ELEMENT(IMPORT_KEYWORD) followed by TYPE(JAVA_CODE_REFERENCE) - simple import
+            // Pattern 2: ERROR_ELEMENT(import) followed by TYPE(pkg.) followed by ERROR_ELEMENT(*;) - star import
             // Parser may insert MODIFIER_LIST and other nodes between them
             val allChildren = root.children
             var i = 0
             while (i < allChildren.size) {
                 val node = allChildren[i]
-                if (node.type.toString() == "ERROR_ELEMENT" && 
-                    node.findChildByType("IMPORT_KEYWORD") != null) {
+                val nodeType = node.type.toString()
+                
+                // Check for ERROR_ELEMENT containing "import" keyword or text
+                val isImportError = nodeType == "ERROR_ELEMENT" && 
+                    (node.findChildByType("IMPORT_KEYWORD") != null || node.text.trim() == "import")
+                
+                if (isImportError) {
                     // Look for the next TYPE or JAVA_CODE_REFERENCE sibling, skipping whitespace and modifier list
+                    var typeNode: JavaSyntaxNode? = null
+                    var hasStar = false
+                    
                     for (j in (i + 1) until allChildren.size) {
                         val sibling = allChildren[j]
                         val sibType = sibling.type.toString()
-                        // Skip whitespace and empty modifier lists
+                        // Skip whitespace, empty modifier lists, and empty error elements
                         if (sibType == "WHITE_SPACE" || sibType == "MODIFIER_LIST") continue
+                        if (sibType == "ERROR_ELEMENT" && sibling.text.isBlank()) continue
+                        
                         if (sibType == "TYPE" || sibType == "JAVA_CODE_REFERENCE") {
-                            val ref = sibling.findChildByType("JAVA_CODE_REFERENCE") ?: sibling
-                            val fqName = ref.text.trim()
-                            if (fqName.contains('.')) {
+                            typeNode = sibling
+                            // Continue to check for star in following siblings (not just the next one)
+                            for (k in (j + 1) until allChildren.size) {
+                                val nextSib = allChildren[k]
+                                val nextSibType = nextSib.type.toString()
+                                if (nextSibType == "WHITE_SPACE" || nextSibType == "MODIFIER_LIST") continue
+                                if (nextSibType == "ERROR_ELEMENT" && nextSib.text.isBlank()) continue
+                                if (nextSibType == "ERROR_ELEMENT" && nextSib.text.contains("*")) {
+                                    hasStar = true
+                                    break
+                                }
+                                // Stop at CLASS or other significant nodes
+                                if (nextSibType == "CLASS" || nextSibType == "INTERFACE" || nextSibType == "ENUM") break
+                            }
+                            break
+                        }
+                        // Also check if ERROR_ELEMENT itself contains star (like "*;")
+                        if (sibType == "ERROR_ELEMENT" && sibling.text.contains("*")) {
+                            hasStar = true
+                        }
+                        // Stop at CLASS or other significant nodes
+                        if (sibType == "CLASS" || sibType == "INTERFACE" || sibType == "ENUM") break
+                    }
+                    
+                    if (typeNode != null) {
+                        val ref = typeNode.findChildByType("JAVA_CODE_REFERENCE") ?: typeNode
+                        var fqName = ref.text.trim()
+                        // Remove trailing dot if present (from fragmented star import like "org.jetbrains.annotations.")
+                        if (fqName.endsWith('.')) {
+                            fqName = fqName.dropLast(1)
+                        }
+                        
+                        if (fqName.contains('.')) {
+                            if (hasStar) {
+                                starImports.add(FqName(fqName))
+                            } else {
                                 simpleImports[fqName.substringAfterLast('.')] = FqName(fqName)
                             }
                         }
-                        break
                     }
                 }
                 i++

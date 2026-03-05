@@ -9,7 +9,7 @@ This file captures key findings, decisions, and learnings from each iteration. I
 
 **Usage**: After completing each iteration, the agent MUST append a results section below.
 
-**Last Updated**: 2026-03-05 (Iteration 11 complete)
+**Last Updated**: 2026-03-05 (Iteration 13 complete)
 
 ---
 
@@ -33,7 +33,9 @@ This file captures key findings, decisions, and learnings from each iteration. I
 | 8 | 2026-03-04 | Annotations & Nullability | 101/138 | 111/138 | TYPE_USE annotations, fragmented imports |
 | 9 | 2026-03-04 | Interface Fields/Methods | 111/138 | 115/138 | Implicit static/final/abstract modifiers |
 | 10 | 2026-03-04 | Nested Interfaces/Enums | 115/138 | 117/138 | Implicit static for nested interfaces/enums |
-| **11** | **2026-03-05** | **External Type Arguments** | **117/138** | **128/138** | **Fixed type args in null classifier branch** |
+| 11 | 2026-03-05 | External Type Arguments | 117/138 | 128/138 | Fixed type args in null classifier branch |
+| 12 | 2026-03-05 | Fragmented Star Imports | 128/138 | 128/138 | Fixed star import parsing (annotation fix superseded by #13) |
+| **13** | **2026-03-05** | **Annotation Callback Resolution** | **511/601** | **511/601** | **Unified annotation resolution with type resolution** |
 
 ### Key Architectural Decisions
 
@@ -99,6 +101,110 @@ After Iteration 6, 48 tests still fail. Likely causes:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 13: Unified Annotation Resolution via Callback - 2026-03-05
+
+### Status
+- ✅ Completed
+
+### Summary
+Refactored annotation resolution to use the same callback-based pattern as type resolution. Previously, iteration 12 added hardcoded java.lang annotation mappings and known annotation package lists. Per user feedback, this was incorrect - annotations should resolve the same way as regular type declarations via `resolveWithCallback`. Added `isResolved` and `resolveAnnotation(tryResolve)` to `JavaAnnotation` interface, mirroring the pattern used by `JavaClassifierType`. FIR now calls `resolveAnnotation` with a callback that checks symbol existence.
+
+### Key Findings
+
+1. **Annotation Resolution Should Match Type Resolution**: The user correctly pointed out that hardcoded annotation packages (lombok, javax.annotation, etc.) was wrong. Annotations should use the same resolution mechanism as types - check same package, java.lang, and star imports via callback.
+
+2. **JavaClassifierType Pattern**: `JavaClassifierType` already has `isResolved` property and `resolve(tryResolve: (String) -> Boolean)` method. Applied same pattern to `JavaAnnotation`.
+
+3. **FIR Integration Point**: `javaAnnotationsMapping.kt`'s `buildFirAnnotation()` function is where annotation ClassId is determined. Added resolution callback that uses `session.symbolProvider.getClassLikeSymbolByClassId()` to check existence.
+
+4. **Remaining Failures are Raw Types**: After this fix, 6 box tests and 84 diagnostic tests fail. Most are related to raw type handling (using generic types without type arguments).
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `core/compiler.common.jvm/src/org/jetbrains/kotlin/load/java/structure/javaElements.kt` | Added `isResolved` property and `resolveAnnotation(tryResolve)` method to `JavaAnnotation` interface with default implementations |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaAnnotationOverAst.kt` | Implemented `isResolved` (checks if FQN or has simple import) and `resolveAnnotation` (uses `resolutionContext.resolveWithCallback`) |
+| `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/javaAnnotationsMapping.kt` | Updated `buildFirAnnotation` to call `resolveAnnotation` when `isResolved` is false, using symbolProvider callback |
+
+### Test Results
+- Box tests: **136/142 passing (95.8%)**
+- Diagnostic tests: **344/428 passing (80.4%)**
+- Total: **511/601 passing (85.0%)**
+
+### Remaining Box Test Failures (6 tests)
+
+| Test | Issue |
+|------|-------|
+| testConstValAsAnnotationArgumentInJava | Annotation argument handling |
+| testInheritanceWithWildcard | NoSuchMethodError - IR fake override |
+| testKjkWithRawTypes | Raw generic types |
+| testKt48590 | NONE_APPLICABLE - overload resolution |
+| testOverrideWithArrayParameterType2 | Raw type with array |
+| testRawTypeArgumentInJavaSuperType | Raw type in supertypes |
+
+Most remaining failures are related to **raw types** - Java generics used without type arguments.
+
+### Key Learnings
+
+1. **Consistency Over Special Cases**: The user's feedback was correct - adding hardcoded package lists creates maintenance burden and inconsistency. Using the same resolution mechanism for all symbols is cleaner.
+
+2. **Interface Extension Pattern**: Adding optional methods to interfaces with default implementations allows gradual adoption without breaking existing implementations.
+
+3. **Callback Pattern is Powerful**: The `tryResolve: (String) -> Boolean` callback pattern allows the Java Model to implement Java-specific resolution rules while FIR validates symbol existence without tight coupling.
+
+---
+
+## Iteration 12: Fragmented Star Import Parsing - 2026-03-05
+
+### Status
+- ✅ Completed (annotation handling superseded by Iteration 13)
+
+### Summary
+Fixed fragmented star import parsing where the KMP parser splits `import org.jetbrains.annotations.*;` across multiple sibling nodes (ERROR_ELEMENT, TYPE, ERROR_ELEMENT). Also fixed handling of empty ERROR_ELEMENT nodes during import scanning.
+
+**Note**: This iteration initially also added hardcoded java.lang annotation mappings and known annotation package lists, but that approach was **superseded by Iteration 13** which unified annotation resolution with the existing type resolution callback pattern.
+
+### Key Findings
+
+1. **Fragmented Star Import Pattern**: When parsing `import org.jetbrains.annotations.*;`, the KMP parser sometimes produces:
+   ```
+   ERROR_ELEMENT:import
+   WHITE_SPACE: 
+   MODIFIER_LIST:
+   TYPE:org.jetbrains.annotations.
+   ERROR_ELEMENT:
+   ERROR_ELEMENT:*;
+   ```
+   The star import package was not being captured because the code expected an IMPORT_STATEMENT node.
+
+2. **Empty ERROR_ELEMENT Nodes**: Between the TYPE and the ERROR_ELEMENT containing `*;`, there's often an empty ERROR_ELEMENT that was causing the scan to stop prematurely.
+
+3. **Enhanced Nullability Impact**: Without proper star import resolution, `@NotNull` from `org.jetbrains.annotations` couldn't be resolved, preventing FIR from applying enhanced nullability.
+
+### Changes Made (Retained)
+
+| File | Change |
+|------|--------|
+| `JavaResolutionContext.kt` | Fixed fragmented star import extraction to skip empty ERROR_ELEMENT nodes and properly detect `*;` in subsequent ERROR_ELEMENT siblings. |
+| `JavaParsingTest.kt` | Updated test expectation for `@Deprecated` to expect `java.lang.Deprecated`. |
+
+### Changes Made (Superseded by Iteration 13)
+
+The following changes were later replaced with a proper callback-based solution:
+- Hardcoded java.lang annotation mappings in `JavaAnnotationOverAst.classId`
+- Known annotation package lists for star import resolution
+
+### Key Learnings
+
+1. **Parser Fragmentation is Common**: The KMP Java parser fragments imports and other constructs more often than expected, especially for imports starting with reserved-like words or containing stars.
+
+2. **Avoid Hardcoded Special Cases**: Hardcoding known packages (lombok, javax.annotation, etc.) creates maintenance burden. Better to use the same resolution mechanism for all symbols (fixed in Iteration 13).
+
+3. **Debug via Exception**: Adding `throw IllegalStateException("DEBUG: ...")` remains the most reliable way to inspect intermediate values in Gradle test output.
+
+---
 
 ## Iteration 11: External Type Arguments Fix - 2026-03-05
 

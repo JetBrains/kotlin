@@ -48,6 +48,23 @@ interface JavaAnnotation : JavaElement {
     }
 
     fun resolve(): JavaClass?
+
+    /**
+     * Whether the annotation class reference is already resolved to a fully qualified name.
+     * Returns true for PSI-based implementations (where PSI resolves names).
+     * Returns false for java-direct when the annotation name is unqualified and not imported.
+     */
+    val isResolved: Boolean
+        get() = true
+
+    /**
+     * Resolves the annotation class using the provided callback.
+     * Used by java-direct to resolve unqualified annotation names via java.lang and star imports.
+     *
+     * @param tryResolve callback that returns true if the given fully qualified name exists
+     * @return the resolved fully qualified name, or null if not resolved
+     */
+    fun resolveAnnotation(tryResolve: (String) -> Boolean): String? = classId?.asSingleFqName()?.asString()
 }
 
 interface MapBasedJavaAnnotationOwner : JavaAnnotationOwner {
