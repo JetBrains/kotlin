@@ -132,3 +132,38 @@ If there are many options for the JetBrains IDE MCP server, ask the user what MC
 ### MANDATORY - Verify After Writing Code
 
 Use JetBrains MCP `get_file_problems` with errorsOnly=false to check files for warnings. FIX any warnings related to the code changes made. You may ignore unrelated warnings.
+
+## Git MCP - Highly recommended for git operations
+
+When the Git MCP server is available, **prefer it over Bash `git` commands**. This is highly recommended but not mandatory — if the Git MCP server is unavailable, fall back to standard Bash `git` commands.
+
+### Why Git MCP over Bash git?
+
+- **Structured tool calls** — no shell escaping issues or output parsing fragility
+- **Consistent output** — results are returned in a structured format, reducing errors from parsing raw CLI output
+- **Safer operations** — tool parameters are explicit, reducing the risk of accidental flag misuse
+
+### MCP server configuration
+
+The Git MCP server is typically named `local_git`, but the name may vary by setup. If the server is not available, use standard Bash `git` commands as a fallback.
+
+### Tool mapping
+
+| Instead of (Bash)     | Use Git MCP          |
+|-----------------------|----------------------|
+| `git status`          | `git_status`         |
+| `git diff`            | `git_diff`           |
+| `git diff --staged`   | `git_diff_staged`    |
+| `git diff` (unstaged) | `git_diff_unstaged`  |
+| `git log`             | `git_log`            |
+| `git show`            | `git_show`           |
+| `git add`             | `git_add`            |
+| `git commit`          | `git_commit`         |
+| `git branch`          | `git_branch`         |
+| `git checkout`        | `git_checkout`       |
+| `git reset`           | `git_reset`          |
+| `git branch --create` | `git_create_branch`  |
+
+### Fallback
+
+If Git MCP is not available or a specific git operation is not covered by the MCP tools, use standard Bash `git` commands.
