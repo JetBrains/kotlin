@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.stubs
 
+import org.jetbrains.kotlin.analysis.internal.utils.IndentedTextBuilder
+import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
-import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
@@ -29,17 +29,17 @@ abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
         val files = mainModule.ktFiles
         val filesAndStubs = files.sortedBy(KtFile::getName).map { it to stubsTestEngine.compute(it) }
 
-        val actual = prettyPrint {
+        val actual = buildIndentedText(indentation = IndentedTextBuilder.TWO_SPACES) {
             if (filesAndStubs.isEmpty()) {
                 appendLine("NO FILES")
-                return@prettyPrint
+                return@buildIndentedText
             }
 
             val singleElement = filesAndStubs.singleOrNull()
             if (singleElement != null) {
                 printStub(singleElement.second)
             } else {
-                printCollection(filesAndStubs, separator = "\n\n") { element ->
+                appendCollection(filesAndStubs, separator = "\n\n") { element ->
                     appendLine("${element.first.name}:")
                     withIndent {
                         printStub(element.second)
@@ -66,7 +66,7 @@ abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    context(printer: PrettyPrinter)
+    context(printer: IndentedTextBuilder)
     private fun printStub(stub: KotlinFileStubImpl) {
         val stubRepresentation = stubsTestEngine.render(stub)
         printer.append(stubRepresentation)

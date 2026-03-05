@@ -11,7 +11,6 @@ com/intellij/psi/PsiMember
 com/intellij/psi/PsiType
 com/intellij/psi/search/GlobalSearchScope
 com/intellij/psi/tree/TokenSet
-org/jetbrains/kotlin/analysis/utils/printer/PrettyPrinter
 org/jetbrains/kotlin/builtins/functions/FunctionTypeKind
 org/jetbrains/kotlin/config/CompilerConfiguration
 org/jetbrains/kotlin/config/CompilerConfigurationKey
