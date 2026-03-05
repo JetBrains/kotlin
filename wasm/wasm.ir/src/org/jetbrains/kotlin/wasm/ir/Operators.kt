@@ -415,8 +415,8 @@ enum class WasmOp(
     BR_ON_CAST("br_on_cast", 0xFB_18, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
     BR_ON_CAST_FAIL("br_on_cast_fail", 0xFB_19, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
 
-    EXTERN_INTERNALIZE("extern.internalize", 0xFB_1A), // externref -> anyref
-    EXTERN_EXTERNALIZE("extern.externalize", 0xFB_1B), // anyref -> externref
+    EXTERN_INTERNALIZE("any.convert_extern", 0xFB_1A), // externref -> anyref
+    EXTERN_EXTERNALIZE("extern.convert_any", 0xFB_1B), // anyref -> externref
 
     // ============================================================
     // Stack switching
@@ -426,7 +426,8 @@ enum class WasmOp(
     SUSPEND("suspend", 0xE2, TAG_IDX),
     RESUME("resume", 0xE3, TYPE_IDX, ON_VECTOR),
     RESUME_THROW("resume_throw", 0xE4, TYPE_IDX, TAG_IDX, ON_VECTOR),
-    SWITCH("switch", 0xE5, TYPE_IDX, TAG_IDX),
+    RESUME_THROW_REF("resume_throw_ref", 0xE5, TYPE_IDX, ON_VECTOR),
+    SWITCH("switch", 0xE6, TYPE_IDX, TAG_IDX),
 
     // ============================================================
     // Exception handling

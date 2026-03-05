@@ -11,7 +11,7 @@ import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 internal abstract class CoroutineImpl<T, R>(private val resultContinuation: Continuation<R>, val rethrowExceptions: Boolean = false) : Continuation<T> {
     protected var state = 0
     protected var exceptionState = 0
-    protected var result: Any? = null
+    internal var result: Any? = null
     protected var exception: Throwable? = null
     protected var finallyPath: Array<Int>? = null
     internal var wasSuspended = false
@@ -54,6 +54,7 @@ internal abstract class CoroutineImpl<T, R>(private val resultContinuation: Cont
             if (rethrowExceptions && !wasSuspended) throw exception!!
             completion.resumeWithException(exception!!)
         } else {
+            if (rethrowExceptions && !wasSuspended) return // prevent double-completion
             completion.resume(this.result as R)
         }
         return
