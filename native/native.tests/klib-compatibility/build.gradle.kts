@@ -53,6 +53,10 @@ fun Project.customCompilerTest(
             enabled = false
         }
     }
+
+    // The same custom compiler of a certain version is used by multiple tasks:
+    // `testCustomFirstStage_$version`, `testCustomSecondStage_$version`, `testMinimalInAggregate_customFirstStage`, `testMinimalInAggregate_customSecondStage`
+    // So it makes sense to download and unarchive the custom compiler only once per compiler version.
     val customCompiler: Configuration = getOrCreateConfiguration("customCompiler_$version") {
         project.dependencies.add(
             name,
@@ -64,12 +68,17 @@ fun Project.customCompilerTest(
             implicitDependencies("org.jetbrains.kotlin:kotlin-native-prebuilt:${version.rawVersion}:linux-x86_64@tar.gz")
         }
     }
-    // Cannot use exactly `DependencyDirectories.localKonanDir`, since it's wrong to declare whole `~/.konan/` as an output of `unarchiveCustomCompiler_` task
-    // Should it be so, Gradle fails on implicit dependency: task `:kotlin-native:llvmInterop:genInteropStubs` uses files in `~/.konan/dependencies/llvm-19-aarch64*`
-    // So, a subfolder within `~/.konan/` is needed for output of `unarchiveCustomCompiler_` task
-    val unarchiveCustomCompiler = tasks.register("unarchiveCustomCompiler_${taskName}", Copy::class) {
-        from(customCompiler.map { file -> tarTree(file) }.single())
-        into(DependencyDirectories.localKonanDir.resolve("kotlin-native-prebuilt-releases"))
+    val unarchiveTaskName = "unarchiveCustomCompiler_$version"
+    val unarchiveCustomCompiler = if (!tasks.names.contains(unarchiveTaskName)) {
+        tasks.register<Copy>(unarchiveTaskName) {
+            from(customCompiler.map { file -> tarTree(file) }.single())
+            // Cannot use exactly `DependencyDirectories.localKonanDir`, since it's wrong to declare whole `~/.konan/` as an output of `unarchiveCustomCompiler_` task
+            // Should it be so, Gradle fails on implicit dependency: task `:kotlin-native:llvmInterop:genInteropStubs` uses files in `~/.konan/dependencies/llvm-19-aarch64*`
+            // So, a subfolder within `~/.konan/` is needed for output of `unarchiveCustomCompiler_$version` task
+            into(DependencyDirectories.localKonanDir.resolve("kotlin-native-prebuilt-releases"))
+        }
+    } else {
+        tasks.named<Copy>(unarchiveTaskName)
     }
     return projectTests.nativeTestTask(
         taskName,
@@ -135,12 +144,12 @@ fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
     )
 }
 
-fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task> {
+fun Project.customStagesAggregateTest(rawVersion: String, customStage: String): TaskProvider<out Task> {
     val version = CustomCompilerVersion(rawVersion)
     return customCompilerTest(
         version = version,
-        taskName = "testMinimalInAggregate",
-        tag = "aggregate"
+        taskName = "testMinimalInAggregate_${customStage}Stage",
+        tag = "custom-${customStage}-stage"
     )
 }
 
@@ -156,8 +165,19 @@ customFirstStageTest("2.3.0")
 customSecondStageTest("2.3.0")
 // add `customSecondStageTest("2.4.0-Beta1")`, as soon it is released
 
-// TODO: Keep updating the following compiler versions to be the previous major one.
-customStagesAggregateTest("2.3.0")
+// Backward and forward tests must be executed in the different Gradle tasks, depending on one configuration `customCompiler_$version` and task `unarchiveCustomCompiler_$version`
+// Rationale: versions of loaded Clang/LLVM shared objects(Linux) or dynamic libraries(MacOS) must be in perfect sync with versions of compilation stages.
+// For backward compatibility test,
+// - at 1st stage, cinterop tool must use old libclangstubs.{so|dylib}
+// - at 2nd stage, backend must use current version of libllvmstubs.{so|dylib}
+// For forward compatibility test -> vice versa
+// Should backward and forward tests be executed together in one Gradle task -> so/dylib versions would be inevitably mixed up
+
+// TODO: Drop these short tasks after KT-84712, when full tasks `testCustomFirstStage_$version` and `testCustomSecondStage_$version` will become very fast
+customStagesAggregateTest("2.3.0", "first")
+customStagesAggregateTest("2.3.0", "second")
+// TODO: Drop the next one after KTI migrates to execution of  `testMinimalInAggregate_firstStage` and `testMinimalInAggregate_secondStage`
+customCompilerTest(CustomCompilerVersion("2.3.0"), "testMinimalInAggregate", "aggregate-first-stage")
 
 projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeKlibCompatibilityTestsKt", generateTestsInBuildDirectory = true) {

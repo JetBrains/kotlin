@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseDummyTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.klib.AbstractCustomNativeCompilerFirstStageTest
@@ -48,7 +47,7 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "CustomNativeAggregateFirstStageTestGenerated",
                 annotations = listOf(
                     annotation(HeavyTest::class.java),
-                    aggregate(),
+                    annotation(Tag::class.java, "aggregate-first-stage"),
                     provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
@@ -58,7 +57,7 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "CustomNativeAggregateSecondStageTestGenerated",
                 annotations = listOf(
                     annotation(HeavyTest::class.java),
-                    aggregate(),
+                    annotation(Tag::class.java, "aggregate-second-stage"),
                     provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
@@ -68,4 +67,3 @@ fun main(args: Array<String>) {
     }
 }
 
-private fun aggregate(): AnnotationModel = annotation(Tag::class.java, "aggregate")
