@@ -1454,3 +1454,7 @@ public final class org/jetbrains/kotlin/analysis/api/types/TypeUtilsKt {
 	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;
 }
 
+public final class org/jetbrains/kotlin/analysis/utils/relfection/ToStringDataClassLikeKt {
+	public static final fun renderAsDataClassToString (Ljava/lang/Object;)Ljava/lang/String;
+}
+

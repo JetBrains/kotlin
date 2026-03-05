@@ -6,17 +6,17 @@
 package org.jetbrains.kotlin.analysis.stubs
 
 import com.intellij.psi.stubs.StubElement
-import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
-import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.utils.PrettyPrinter
+import org.jetbrains.kotlin.utils.prettyPrint
 import java.lang.reflect.Modifier
 
-internal fun extractAdditionalStubInfo(stub: KotlinFileStubImpl): String = prettyPrint {
+internal fun extractAdditionalStubInfo(stub: KotlinFileStubImpl): String = prettyPrint(indentation = PrettyPrinter.TWO_SPACES) {
     extractAdditionInfo(stub)
 }
 
@@ -67,7 +67,7 @@ private fun PrettyPrinter.appendValue(value: Any?) {
                 append(" ]")
             }
 
-            else -> printCollection(value, separator = "\n", prefix = "[\n", postfix = "\n]") {
+            else -> appendCollection(value, separator = "\n", prefix = "[\n", postfix = "\n]") {
                 withIndent {
                     appendValue(it)
                 }
