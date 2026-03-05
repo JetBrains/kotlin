@@ -19,7 +19,7 @@ public final class Bar: KotlinRuntime.KotlinBase {
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public var nullableNothingVariable: Swift.Never? {
@@ -27,7 +27,7 @@ public var nullableNothingVariable: Swift.Never? {
         return { __root___nullableNothingVariable_get(); return nil; }()
     }
     set {
-        return __root___nullableNothingVariable_set__TypesOfArguments__Swift_Optional_Swift_Never___()
+        return { __root___nullableNothingVariable_set__TypesOfArguments__Swift_Optional_Swift_Never___(true); return () }()
     }
 }
 public var value: Swift.Never {
@@ -54,7 +54,7 @@ public func meaningOfLife(
 public func meaningOfLife(
     input: Swift.Never?
 ) -> Swift.String {
-    return __root___meaningOfLife__TypesOfArguments__Swift_Optional_Swift_Never___()
+    return __root___meaningOfLife__TypesOfArguments__Swift_Optional_Swift_Never___(true)
 }
 public func meaningOfLife(
     p: Swift.Never
@@ -64,7 +64,7 @@ public func meaningOfLife(
 public func nullableNothingInput(
     input: Swift.Never?
 ) -> Swift.Void {
-    return __root___nullableNothingInput__TypesOfArguments__Swift_Optional_Swift_Never___()
+    return { __root___nullableNothingInput__TypesOfArguments__Swift_Optional_Swift_Never___(true); return () }()
 }
 public func nullableNothingOutput() -> Swift.Never? {
     return { __root___nullableNothingOutput(); return nil; }()

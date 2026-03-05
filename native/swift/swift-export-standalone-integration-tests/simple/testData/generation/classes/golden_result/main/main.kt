@@ -46,35 +46,35 @@ import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 @ExportedBridge("CLASS_WITH_SAME_NAME_foo")
 public fun CLASS_WITH_SAME_NAME_foo(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as CLASS_WITH_SAME_NAME
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return _result
 }
 
 @ExportedBridge("ClassWithNonPublicConstructor_a_get")
 public fun ClassWithNonPublicConstructor_a_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassWithNonPublicConstructor
-    val _result = __self.a
+    val _result = run { __self.a }
     return _result
 }
 
 @ExportedBridge("DATA_CLASS_WITH_MANY_FIELDS_a_get")
 public fun DATA_CLASS_WITH_MANY_FIELDS_a_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_MANY_FIELDS
-    val _result = __self.a
+    val _result = run { __self.a }
     return _result
 }
 
 @ExportedBridge("DATA_CLASS_WITH_MANY_FIELDS_b_get")
 public fun DATA_CLASS_WITH_MANY_FIELDS_b_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_MANY_FIELDS
-    val _result = __self.b
+    val _result = run { __self.b }
     return _result.objcPtr()
 }
 
 @ExportedBridge("DATA_CLASS_WITH_MANY_FIELDS_c_get")
 public fun DATA_CLASS_WITH_MANY_FIELDS_c_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_MANY_FIELDS
-    val _result = __self.c
+    val _result = run { __self.c }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -84,21 +84,21 @@ public fun DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift
     val __a = a
     val __b = interpretObjCPointer<kotlin.String>(b)
     val __c = kotlin.native.internal.ref.dereferenceExternalRCRef(c) as kotlin.Any
-    val _result = __self.copy(__a, __b, __c)
+    val _result = run { __self.copy(__a, __b, __c) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("DATA_CLASS_WITH_MANY_FIELDS_d_get")
 public fun DATA_CLASS_WITH_MANY_FIELDS_d_get(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_MANY_FIELDS
-    val _result = __self.d
+    val _result = run { __self.d }
     return _result
 }
 
 @ExportedBridge("DATA_CLASS_WITH_MANY_FIELDS_e_get")
 public fun DATA_CLASS_WITH_MANY_FIELDS_e_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_MANY_FIELDS
-    val _result = __self.e
+    val _result = run { __self.e }
     return _result.objcPtr()
 }
 
@@ -106,21 +106,21 @@ public fun DATA_CLASS_WITH_MANY_FIELDS_e_get(self: kotlin.native.internal.Native
 public fun DATA_CLASS_WITH_MANY_FIELDS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_MANY_FIELDS
     val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = __self.equals(__other)
+    val _result = run { __self.equals(__other) }
     return _result
 }
 
 @ExportedBridge("DATA_CLASS_WITH_MANY_FIELDS_hashCode")
 public fun DATA_CLASS_WITH_MANY_FIELDS_hashCode(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_MANY_FIELDS
-    val _result = __self.hashCode()
+    val _result = run { __self.hashCode() }
     return _result
 }
 
 @ExportedBridge("DATA_CLASS_WITH_MANY_FIELDS_toString")
 public fun DATA_CLASS_WITH_MANY_FIELDS_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_MANY_FIELDS
-    val _result = __self.toString()
+    val _result = run { __self.toString() }
     return _result.objcPtr()
 }
 
@@ -128,7 +128,7 @@ public fun DATA_CLASS_WITH_MANY_FIELDS_toString(self: kotlin.native.internal.Nat
 public fun DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_REF
     val __o = kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any
-    val _result = __self.copy(__o)
+    val _result = run { __self.copy(__o) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -136,35 +136,35 @@ public fun DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSuppor
 public fun DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_REF
     val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = __self.equals(__other)
+    val _result = run { __self.equals(__other) }
     return _result
 }
 
 @ExportedBridge("DATA_CLASS_WITH_REF_hashCode")
 public fun DATA_CLASS_WITH_REF_hashCode(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_REF
-    val _result = __self.hashCode()
+    val _result = run { __self.hashCode() }
     return _result
 }
 
 @ExportedBridge("DATA_CLASS_WITH_REF_o_get")
 public fun DATA_CLASS_WITH_REF_o_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_REF
-    val _result = __self.o
+    val _result = run { __self.o }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("DATA_CLASS_WITH_REF_toString")
 public fun DATA_CLASS_WITH_REF_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_REF
-    val _result = __self.toString()
+    val _result = run { __self.toString() }
     return _result.objcPtr()
 }
 
 @ExportedBridge("DATA_CLASS_a_get")
 public fun DATA_CLASS_a_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
-    val _result = __self.a
+    val _result = run { __self.a }
     return _result
 }
 
@@ -172,7 +172,7 @@ public fun DATA_CLASS_a_get(self: kotlin.native.internal.NativePtr): Int {
 public fun DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, a: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
     val __a = a
-    val _result = __self.copy(__a)
+    val _result = run { __self.copy(__a) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -180,189 +180,194 @@ public fun DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self: kotlin.native.
 public fun DATA_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
     val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = __self.equals(__other)
+    val _result = run { __self.equals(__other) }
     return _result
 }
 
 @ExportedBridge("DATA_CLASS_hashCode")
 public fun DATA_CLASS_hashCode(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
-    val _result = __self.hashCode()
+    val _result = run { __self.hashCode() }
     return _result
 }
 
 @ExportedBridge("DATA_CLASS_toString")
 public fun DATA_CLASS_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
-    val _result = __self.toString()
+    val _result = run { __self.toString() }
     return _result.objcPtr()
 }
 
 @ExportedBridge("ENUM_A")
 public fun ENUM_A(): kotlin.native.internal.NativePtr {
-    val _result = ENUM.A
+    val _result = run { ENUM.A }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("ENUM_B")
 public fun ENUM_B(): kotlin.native.internal.NativePtr {
-    val _result = ENUM.B
+    val _result = run { ENUM.B }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("ENUM_C")
 public fun ENUM_C(): kotlin.native.internal.NativePtr {
-    val _result = ENUM.C
+    val _result = run { ENUM.C }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("ENUM_INSIDE_ENUM_init_allocate")
 public fun ENUM_INSIDE_ENUM_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<ENUM.INSIDE_ENUM>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<ENUM.INSIDE_ENUM>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, ENUM.INSIDE_ENUM())
+    val _result = run { kotlin.native.internal.initInstance(____kt, ENUM.INSIDE_ENUM()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("Foo_Companion_get")
 public fun Foo_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = Foo.Companion
+    val _result = run { Foo.Companion }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Foo_Companion_my_func")
 public fun Foo_Companion_my_func(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.Companion
-    val _result = __self.my_func()
+    val _result = run { __self.my_func() }
     return _result
 }
 
 @ExportedBridge("Foo_Companion_my_value_inner_get")
 public fun Foo_Companion_my_value_inner_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.Companion
-    val _result = __self.my_value_inner
+    val _result = run { __self.my_value_inner }
     return _result
 }
 
 @ExportedBridge("Foo_Companion_my_variable_inner_get")
 public fun Foo_Companion_my_variable_inner_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.Companion
-    val _result = __self.my_variable_inner
+    val _result = run { __self.my_variable_inner }
     return _result
 }
 
 @ExportedBridge("Foo_Companion_my_variable_inner_set__TypesOfArguments__Swift_Int64__")
-public fun Foo_Companion_my_variable_inner_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+public fun Foo_Companion_my_variable_inner_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.Companion
     val __newValue = newValue
-    __self.my_variable_inner = __newValue
+    val _result = run { __self.my_variable_inner = __newValue }
+    return run { _result; true }
 }
 
 @ExportedBridge("Foo_INSIDE_CLASS_init_allocate")
 public fun Foo_INSIDE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<Foo.INSIDE_CLASS>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<Foo.INSIDE_CLASS>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, Foo.INSIDE_CLASS())
+    val _result = run { kotlin.native.internal.initInstance(____kt, Foo.INSIDE_CLASS()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("Foo_INSIDE_CLASS_my_func")
 public fun Foo_INSIDE_CLASS_my_func(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.INSIDE_CLASS
-    val _result = __self.my_func()
+    val _result = run { __self.my_func() }
     return _result
 }
 
 @ExportedBridge("Foo_INSIDE_CLASS_my_value_inner_get")
 public fun Foo_INSIDE_CLASS_my_value_inner_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.INSIDE_CLASS
-    val _result = __self.my_value_inner
+    val _result = run { __self.my_value_inner }
     return _result
 }
 
 @ExportedBridge("Foo_INSIDE_CLASS_my_variable_inner_get")
 public fun Foo_INSIDE_CLASS_my_variable_inner_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.INSIDE_CLASS
-    val _result = __self.my_variable_inner
+    val _result = run { __self.my_variable_inner }
     return _result
 }
 
 @ExportedBridge("Foo_INSIDE_CLASS_my_variable_inner_set__TypesOfArguments__Swift_Int64__")
-public fun Foo_INSIDE_CLASS_my_variable_inner_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+public fun Foo_INSIDE_CLASS_my_variable_inner_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.INSIDE_CLASS
     val __newValue = newValue
-    __self.my_variable_inner = __newValue
+    val _result = run { __self.my_variable_inner = __newValue }
+    return run { _result; true }
 }
 
 @ExportedBridge("Foo_foo")
 public fun Foo_foo(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return _result
 }
 
 @ExportedBridge("Foo_my_value_get")
 public fun Foo_my_value_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
-    val _result = __self.my_value
+    val _result = run { __self.my_value }
     return _result
 }
 
 @ExportedBridge("Foo_my_variable_get")
 public fun Foo_my_variable_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
-    val _result = __self.my_variable
+    val _result = run { __self.my_variable }
     return _result
 }
 
 @ExportedBridge("Foo_my_variable_set__TypesOfArguments__Swift_Int64__")
-public fun Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+public fun Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __newValue = newValue
-    __self.my_variable = __newValue
+    val _result = run { __self.my_variable = __newValue }
+    return run { _result; true }
 }
 
 @ExportedBridge("INLINE_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun INLINE_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as INLINE_CLASS_WITH_REF
     val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = __self.equals(__other)
+    val _result = run { __self.equals(__other) }
     return _result
 }
 
 @ExportedBridge("INLINE_CLASS_WITH_REF_hashCode")
 public fun INLINE_CLASS_WITH_REF_hashCode(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as INLINE_CLASS_WITH_REF
-    val _result = __self.hashCode()
+    val _result = run { __self.hashCode() }
     return _result
 }
 
 @ExportedBridge("INLINE_CLASS_WITH_REF_i_get")
 public fun INLINE_CLASS_WITH_REF_i_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as INLINE_CLASS_WITH_REF
-    val _result = __self.i
+    val _result = run { __self.i }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("INLINE_CLASS_WITH_REF_toString")
 public fun INLINE_CLASS_WITH_REF_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as INLINE_CLASS_WITH_REF
-    val _result = __self.toString()
+    val _result = run { __self.toString() }
     return _result.objcPtr()
 }
 
 @ExportedBridge("INLINE_CLASS_a_get")
 public fun INLINE_CLASS_a_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as INLINE_CLASS
-    val _result = __self.a
+    val _result = run { __self.a }
     return _result
 }
 
@@ -370,706 +375,739 @@ public fun INLINE_CLASS_a_get(self: kotlin.native.internal.NativePtr): Int {
 public fun INLINE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as INLINE_CLASS
     val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = __self.equals(__other)
+    val _result = run { __self.equals(__other) }
     return _result
 }
 
 @ExportedBridge("INLINE_CLASS_hashCode")
 public fun INLINE_CLASS_hashCode(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as INLINE_CLASS
-    val _result = __self.hashCode()
+    val _result = run { __self.hashCode() }
     return _result
 }
 
 @ExportedBridge("INLINE_CLASS_toString")
 public fun INLINE_CLASS_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as INLINE_CLASS
-    val _result = __self.toString()
+    val _result = run { __self.toString() }
     return _result.objcPtr()
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_allocate")
 public fun OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<OBJECT_NO_PACKAGE.Bar.CLASS_INSIDE_CLASS_INSIDE_OBJECT>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<OBJECT_NO_PACKAGE.Bar.CLASS_INSIDE_CLASS_INSIDE_OBJECT>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, OBJECT_NO_PACKAGE.Bar.CLASS_INSIDE_CLASS_INSIDE_OBJECT())
+    val _result = run { kotlin.native.internal.initInstance(____kt, OBJECT_NO_PACKAGE.Bar.CLASS_INSIDE_CLASS_INSIDE_OBJECT()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_Bar_NamedCompanion_foo")
 public fun OBJECT_NO_PACKAGE_Bar_NamedCompanion_foo(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE.Bar.NamedCompanion
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return _result
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_Bar_NamedCompanion_get")
 public fun OBJECT_NO_PACKAGE_Bar_NamedCompanion_get(): kotlin.native.internal.NativePtr {
-    val _result = OBJECT_NO_PACKAGE.Bar.NamedCompanion
+    val _result = run { OBJECT_NO_PACKAGE.Bar.NamedCompanion }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_Bar_bar")
 public fun OBJECT_NO_PACKAGE_Bar_bar(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE.Bar
-    val _result = __self.bar()
+    val _result = run { __self.bar() }
     return _result
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_Bar_i_get")
 public fun OBJECT_NO_PACKAGE_Bar_i_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE.Bar
-    val _result = __self.i
+    val _result = run { __self.i }
     return _result
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_Bar_init_allocate")
 public fun OBJECT_NO_PACKAGE_Bar_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<OBJECT_NO_PACKAGE.Bar>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<OBJECT_NO_PACKAGE.Bar>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
-public fun OBJECT_NO_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, i: Int): Unit {
+public fun OBJECT_NO_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, i: Int): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __i = i
-    kotlin.native.internal.initInstance(____kt, OBJECT_NO_PACKAGE.Bar(__i))
+    val _result = run { kotlin.native.internal.initInstance(____kt, OBJECT_NO_PACKAGE.Bar(__i)) }
+    return run { _result; true }
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_Foo_init_allocate")
 public fun OBJECT_NO_PACKAGE_Foo_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<OBJECT_NO_PACKAGE.Foo>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<OBJECT_NO_PACKAGE.Foo>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun OBJECT_NO_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun OBJECT_NO_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, OBJECT_NO_PACKAGE.Foo())
+    val _result = run { kotlin.native.internal.initInstance(____kt, OBJECT_NO_PACKAGE.Foo()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_OBJECT_INSIDE_OBJECT_get")
 public fun OBJECT_NO_PACKAGE_OBJECT_INSIDE_OBJECT_get(): kotlin.native.internal.NativePtr {
-    val _result = OBJECT_NO_PACKAGE.OBJECT_INSIDE_OBJECT
+    val _result = run { OBJECT_NO_PACKAGE.OBJECT_INSIDE_OBJECT }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_foo")
 public fun OBJECT_NO_PACKAGE_foo(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return _result
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_value_get")
 public fun OBJECT_NO_PACKAGE_value_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE
-    val _result = __self.value
+    val _result = run { __self.value }
     return _result
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_variable_get")
 public fun OBJECT_NO_PACKAGE_variable_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE
-    val _result = __self.variable
+    val _result = run { __self.variable }
     return _result
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__")
-public fun OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Unit {
+public fun OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE
     val __newValue = newValue
-    __self.variable = __newValue
+    val _result = run { __self.variable = __newValue }
+    return run { _result; true }
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_hasNext")
 public fun OBJECT_WITH_GENERIC_INHERITANCE_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
-    val _result = __self.hasNext()
+    val _result = run { __self.hasNext() }
     return _result
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious")
 public fun OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
-    val _result = __self.hasPrevious()
+    val _result = run { __self.hasPrevious() }
     return _result
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_next")
 public fun OBJECT_WITH_GENERIC_INHERITANCE_next(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
-    val _result = __self.next()
+    val _result = run { __self.next() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_nextIndex")
 public fun OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
-    val _result = __self.nextIndex()
+    val _result = run { __self.nextIndex() }
     return _result
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_previous")
 public fun OBJECT_WITH_GENERIC_INHERITANCE_previous(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
-    val _result = __self.previous()
+    val _result = run { __self.previous() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_previousIndex")
 public fun OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
-    val _result = __self.previousIndex()
+    val _result = run { __self.previousIndex() }
     return _result
 }
 
 @ExportedBridge("SEALED_C_init_allocate")
 public fun SEALED_C_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<SEALED.C>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<SEALED.C>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("SEALED_C_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun SEALED_C_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun SEALED_C_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, SEALED.C())
+    val _result = run { kotlin.native.internal.initInstance(____kt, SEALED.C()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("SEALED_O_get")
 public fun SEALED_O_get(): kotlin.native.internal.NativePtr {
-    val _result = SEALED.O
+    val _result = run { SEALED.O }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___CLASS_WITH_SAME_NAME_init_allocate")
 public fun __root___CLASS_WITH_SAME_NAME_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<CLASS_WITH_SAME_NAME>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<CLASS_WITH_SAME_NAME>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, CLASS_WITH_SAME_NAME())
+    val _result = run { kotlin.native.internal.initInstance(____kt, CLASS_WITH_SAME_NAME()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___DATA_CLASS_WITH_MANY_FIELDS_init_allocate")
 public fun __root___DATA_CLASS_WITH_MANY_FIELDS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<DATA_CLASS_WITH_MANY_FIELDS>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<DATA_CLASS_WITH_MANY_FIELDS>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt: kotlin.native.internal.NativePtr, a: Int, b: kotlin.native.internal.NativePtr, c: kotlin.native.internal.NativePtr): Unit {
+public fun __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt: kotlin.native.internal.NativePtr, a: Int, b: kotlin.native.internal.NativePtr, c: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __a = a
     val __b = interpretObjCPointer<kotlin.String>(b)
     val __c = kotlin.native.internal.ref.dereferenceExternalRCRef(c) as kotlin.Any
-    kotlin.native.internal.initInstance(____kt, DATA_CLASS_WITH_MANY_FIELDS(__a, __b, __c))
+    val _result = run { kotlin.native.internal.initInstance(____kt, DATA_CLASS_WITH_MANY_FIELDS(__a, __b, __c)) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___DATA_CLASS_WITH_REF_init_allocate")
 public fun __root___DATA_CLASS_WITH_REF_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<DATA_CLASS_WITH_REF>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<DATA_CLASS_WITH_REF>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): Unit {
+public fun __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __o = kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any
-    kotlin.native.internal.initInstance(____kt, DATA_CLASS_WITH_REF(__o))
+    val _result = run { kotlin.native.internal.initInstance(____kt, DATA_CLASS_WITH_REF(__o)) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___DATA_CLASS_init_allocate")
 public fun __root___DATA_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<DATA_CLASS>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<DATA_CLASS>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
-public fun __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, a: Int): Unit {
+public fun __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, a: Int): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __a = a
-    kotlin.native.internal.initInstance(____kt, DATA_CLASS(__a))
+    val _result = run { kotlin.native.internal.initInstance(____kt, DATA_CLASS(__a)) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___Foo_init_allocate")
 public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<Foo>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<Foo>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
-public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, a: Int): Unit {
+public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, a: Int): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __a = a
-    kotlin.native.internal.initInstance(____kt, Foo(__a))
+    val _result = run { kotlin.native.internal.initInstance(____kt, Foo(__a)) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__")
-public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__(__kt: kotlin.native.internal.NativePtr, f: Float): Unit {
+public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__(__kt: kotlin.native.internal.NativePtr, f: Float): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __f = f
-    kotlin.native.internal.initInstance(____kt, Foo(__f))
+    val _result = run { kotlin.native.internal.initInstance(____kt, Foo(__f)) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___GENERIC_CLASS_init_allocate")
 public fun __root___GENERIC_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<GENERIC_CLASS<kotlin.Any?>>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<GENERIC_CLASS<kotlin.Any?>>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, GENERIC_CLASS<kotlin.Any?>())
+    val _result = run { kotlin.native.internal.initInstance(____kt, GENERIC_CLASS<kotlin.Any?>()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___INHERITANCE_GENERIC_init_allocate")
 public fun __root___INHERITANCE_GENERIC_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<INHERITANCE_GENERIC>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<INHERITANCE_GENERIC>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___INHERITANCE_GENERIC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun __root___INHERITANCE_GENERIC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun __root___INHERITANCE_GENERIC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, INHERITANCE_GENERIC())
+    val _result = run { kotlin.native.internal.initInstance(____kt, INHERITANCE_GENERIC()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___INHERITANCE_UNSUPPORTED_BASE_init_allocate")
 public fun __root___INHERITANCE_UNSUPPORTED_BASE_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<INHERITANCE_UNSUPPORTED_BASE>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<INHERITANCE_UNSUPPORTED_BASE>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___INHERITANCE_UNSUPPORTED_BASE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun __root___INHERITANCE_UNSUPPORTED_BASE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun __root___INHERITANCE_UNSUPPORTED_BASE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, INHERITANCE_UNSUPPORTED_BASE())
+    val _result = run { kotlin.native.internal.initInstance(____kt, INHERITANCE_UNSUPPORTED_BASE()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___INLINE_CLASS_WITH_REF_init_allocate")
 public fun __root___INLINE_CLASS_WITH_REF_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<INLINE_CLASS_WITH_REF>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<INLINE_CLASS_WITH_REF>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___INLINE_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_DATA_CLASS_WITH_REF__")
-public fun __root___INLINE_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_DATA_CLASS_WITH_REF__(__kt: kotlin.native.internal.NativePtr, i: kotlin.native.internal.NativePtr): Unit {
+public fun __root___INLINE_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_DATA_CLASS_WITH_REF__(__kt: kotlin.native.internal.NativePtr, i: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __i = kotlin.native.internal.ref.dereferenceExternalRCRef(i) as DATA_CLASS_WITH_REF
-    kotlin.native.internal.initInstance(____kt, INLINE_CLASS_WITH_REF(__i))
+    val _result = run { kotlin.native.internal.initInstance(____kt, INLINE_CLASS_WITH_REF(__i)) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___INLINE_CLASS_init_allocate")
 public fun __root___INLINE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<INLINE_CLASS>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<INLINE_CLASS>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___INLINE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
-public fun __root___INLINE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, a: Int): Unit {
+public fun __root___INLINE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, a: Int): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __a = a
-    kotlin.native.internal.initInstance(____kt, INLINE_CLASS(__a))
+    val _result = run { kotlin.native.internal.initInstance(____kt, INLINE_CLASS(__a)) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___OBJECT_NO_PACKAGE_get")
 public fun __root___OBJECT_NO_PACKAGE_get(): kotlin.native.internal.NativePtr {
-    val _result = OBJECT_NO_PACKAGE
+    val _result = run { OBJECT_NO_PACKAGE }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___OBJECT_WITH_GENERIC_INHERITANCE_get")
 public fun __root___OBJECT_WITH_GENERIC_INHERITANCE_get(): kotlin.native.internal.NativePtr {
-    val _result = OBJECT_WITH_GENERIC_INHERITANCE
+    val _result = run { OBJECT_WITH_GENERIC_INHERITANCE }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Foo_INSIDE_CLASS_init_allocate")
 public fun namespace_Foo_INSIDE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.Foo.INSIDE_CLASS>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.Foo.INSIDE_CLASS>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun namespace_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun namespace_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, namespace.Foo.INSIDE_CLASS())
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.Foo.INSIDE_CLASS()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_Foo_foo")
 public fun namespace_Foo_foo(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Foo
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return _result
 }
 
 @ExportedBridge("namespace_Foo_init_allocate")
 public fun namespace_Foo_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.Foo>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.Foo>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun namespace_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun namespace_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, namespace.Foo())
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.Foo()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_Foo_my_value_get")
 public fun namespace_Foo_my_value_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Foo
-    val _result = __self.my_value
+    val _result = run { __self.my_value }
     return _result
 }
 
 @ExportedBridge("namespace_Foo_my_variable_get")
 public fun namespace_Foo_my_variable_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Foo
-    val _result = __self.my_variable
+    val _result = run { __self.my_variable }
     return _result
 }
 
 @ExportedBridge("namespace_Foo_my_variable_set__TypesOfArguments__Swift_Int64__")
-public fun namespace_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+public fun namespace_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Foo
     val __newValue = newValue
-    __self.my_variable = __newValue
+    val _result = run { __self.my_variable = __newValue }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_NAMESPACED_CLASS_init_allocate")
 public fun namespace_NAMESPACED_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.NAMESPACED_CLASS>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.NAMESPACED_CLASS>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, namespace.NAMESPACED_CLASS())
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.NAMESPACED_CLASS()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
     val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = __self.equals(__other)
+    val _result = run { __self.equals(__other) }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_foo")
 public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_foo(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_get")
 public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_get(): kotlin.native.internal.NativePtr {
-    val _result = namespace.deeper.DATA_OBJECT_WITH_PACKAGE
+    val _result = run { namespace.deeper.DATA_OBJECT_WITH_PACKAGE }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_hashCode")
 public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_hashCode(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
-    val _result = __self.hashCode()
+    val _result = run { __self.hashCode() }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_toString")
 public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
-    val _result = __self.toString()
+    val _result = run { __self.toString() }
     return _result.objcPtr()
 }
 
 @ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_value_get")
 public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_value_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
-    val _result = __self.value
+    val _result = run { __self.value }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_get")
 public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
-    val _result = __self.variable
+    val _result = run { __self.variable }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__")
-public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Unit {
+public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
     val __newValue = newValue
-    __self.variable = __newValue
+    val _result = run { __self.variable = __newValue }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_foo")
 public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_foo(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_allocate")
 public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS())
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_value_get")
 public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_value_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS
-    val _result = __self.my_value
+    val _result = run { __self.my_value }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_get")
 public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS
-    val _result = __self.my_variable
+    val _result = run { __self.my_variable }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__")
-public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS
     val __newValue = newValue
-    __self.my_variable = __newValue
+    val _result = run { __self.my_variable = __newValue }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_foo")
 public fun namespace_deeper_Foo_INSIDE_CLASS_foo(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_init_allocate")
 public fun namespace_deeper_Foo_INSIDE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.deeper.Foo.INSIDE_CLASS>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.deeper.Foo.INSIDE_CLASS>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun namespace_deeper_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun namespace_deeper_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, namespace.deeper.Foo.INSIDE_CLASS())
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.deeper.Foo.INSIDE_CLASS()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_my_value_get")
 public fun namespace_deeper_Foo_INSIDE_CLASS_my_value_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS
-    val _result = __self.my_value
+    val _result = run { __self.my_value }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_my_variable_get")
 public fun namespace_deeper_Foo_INSIDE_CLASS_my_variable_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS
-    val _result = __self.my_variable
+    val _result = run { __self.my_variable }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__")
-public fun namespace_deeper_Foo_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+public fun namespace_deeper_Foo_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS
     val __newValue = newValue
-    __self.my_variable = __newValue
+    val _result = run { __self.my_variable = __newValue }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_deeper_Foo_foo")
 public fun namespace_deeper_Foo_foo(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_Foo_init_allocate")
 public fun namespace_deeper_Foo_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.deeper.Foo>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.deeper.Foo>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_deeper_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun namespace_deeper_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun namespace_deeper_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, namespace.deeper.Foo())
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.deeper.Foo()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_deeper_Foo_internal_set_get")
 public fun namespace_deeper_Foo_internal_set_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo
-    val _result = __self.internal_set
+    val _result = run { __self.internal_set }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_Foo_my_value_get")
 public fun namespace_deeper_Foo_my_value_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo
-    val _result = __self.my_value
+    val _result = run { __self.my_value }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_Foo_my_variable_get")
 public fun namespace_deeper_Foo_my_variable_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo
-    val _result = __self.my_variable
+    val _result = run { __self.my_variable }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_Foo_my_variable_set__TypesOfArguments__Swift_Int64__")
-public fun namespace_deeper_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+public fun namespace_deeper_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, newValue: Long): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo
     val __newValue = newValue
-    __self.my_variable = __newValue
+    val _result = run { __self.my_variable = __newValue }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_deeper_Foo_private_set_get")
 public fun namespace_deeper_Foo_private_set_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo
-    val _result = __self.private_set
+    val _result = run { __self.private_set }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_NAMESPACED_CLASS_init_allocate")
 public fun namespace_deeper_NAMESPACED_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.deeper.NAMESPACED_CLASS>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.deeper.NAMESPACED_CLASS>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_deeper_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun namespace_deeper_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun namespace_deeper_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, namespace.deeper.NAMESPACED_CLASS())
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.deeper.NAMESPACED_CLASS()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_Bar_OBJECT_INSIDE_CLASS_get")
 public fun namespace_deeper_OBJECT_WITH_PACKAGE_Bar_OBJECT_INSIDE_CLASS_get(): kotlin.native.internal.NativePtr {
-    val _result = namespace.deeper.OBJECT_WITH_PACKAGE.Bar.OBJECT_INSIDE_CLASS
+    val _result = run { namespace.deeper.OBJECT_WITH_PACKAGE.Bar.OBJECT_INSIDE_CLASS }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_Bar_bar")
 public fun namespace_deeper_OBJECT_WITH_PACKAGE_Bar_bar(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE.Bar
-    val _result = __self.bar()
+    val _result = run { __self.bar() }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_Bar_i_get")
 public fun namespace_deeper_OBJECT_WITH_PACKAGE_Bar_i_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE.Bar
-    val _result = __self.i
+    val _result = run { __self.i }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_allocate")
 public fun namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.deeper.OBJECT_WITH_PACKAGE.Bar>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.deeper.OBJECT_WITH_PACKAGE.Bar>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
-public fun namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, i: Int): Unit {
+public fun namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, i: Int): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __i = i
-    kotlin.native.internal.initInstance(____kt, namespace.deeper.OBJECT_WITH_PACKAGE.Bar(__i))
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.deeper.OBJECT_WITH_PACKAGE.Bar(__i)) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_allocate")
 public fun namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.deeper.OBJECT_WITH_PACKAGE.Foo>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.deeper.OBJECT_WITH_PACKAGE.Foo>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, namespace.deeper.OBJECT_WITH_PACKAGE.Foo())
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.deeper.OBJECT_WITH_PACKAGE.Foo()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_OBJECT_INSIDE_OBJECT_get")
 public fun namespace_deeper_OBJECT_WITH_PACKAGE_OBJECT_INSIDE_OBJECT_get(): kotlin.native.internal.NativePtr {
-    val _result = namespace.deeper.OBJECT_WITH_PACKAGE.OBJECT_INSIDE_OBJECT
+    val _result = run { namespace.deeper.OBJECT_WITH_PACKAGE.OBJECT_INSIDE_OBJECT }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_foo")
 public fun namespace_deeper_OBJECT_WITH_PACKAGE_foo(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_get")
 public fun namespace_deeper_OBJECT_WITH_PACKAGE_get(): kotlin.native.internal.NativePtr {
-    val _result = namespace.deeper.OBJECT_WITH_PACKAGE
+    val _result = run { namespace.deeper.OBJECT_WITH_PACKAGE }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_value_get")
 public fun namespace_deeper_OBJECT_WITH_PACKAGE_value_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE
-    val _result = __self.value
+    val _result = run { __self.value }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_variable_get")
 public fun namespace_deeper_OBJECT_WITH_PACKAGE_variable_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE
-    val _result = __self.variable
+    val _result = run { __self.variable }
     return _result
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__")
-public fun namespace_deeper_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Unit {
+public fun namespace_deeper_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE
     val __newValue = newValue
-    __self.variable = __newValue
+    val _result = run { __self.variable = __newValue }
+    return run { _result; true }
 }
 
 @ExportedBridge("why_we_need_module_names_CLASS_WITH_SAME_NAME_foo")
-public fun why_we_need_module_names_CLASS_WITH_SAME_NAME_foo(self: kotlin.native.internal.NativePtr): Unit {
+public fun why_we_need_module_names_CLASS_WITH_SAME_NAME_foo(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as why_we_need_module_names.CLASS_WITH_SAME_NAME
-    __self.foo()
+    val _result = run { __self.foo() }
+    return run { _result; true }
 }
 
 @ExportedBridge("why_we_need_module_names_CLASS_WITH_SAME_NAME_init_allocate")
 public fun why_we_need_module_names_CLASS_WITH_SAME_NAME_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<why_we_need_module_names.CLASS_WITH_SAME_NAME>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<why_we_need_module_names.CLASS_WITH_SAME_NAME>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("why_we_need_module_names_CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun why_we_need_module_names_CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun why_we_need_module_names_CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, why_we_need_module_names.CLASS_WITH_SAME_NAME())
+    val _result = run { kotlin.native.internal.initInstance(____kt, why_we_need_module_names.CLASS_WITH_SAME_NAME()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("why_we_need_module_names_bar")
 public fun why_we_need_module_names_bar(): Int {
-    val _result = why_we_need_module_names.bar()
+    val _result = run { why_we_need_module_names.bar() }
     return _result
 }
 
 @ExportedBridge("why_we_need_module_names_foo")
 public fun why_we_need_module_names_foo(): kotlin.native.internal.NativePtr {
-    val _result = why_we_need_module_names.foo()
+    val _result = run { why_we_need_module_names.foo() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

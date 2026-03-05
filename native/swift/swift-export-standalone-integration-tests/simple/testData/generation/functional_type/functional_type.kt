@@ -115,3 +115,17 @@ class Bar
 inline fun foo(inlined: () -> Unit): Unit = TODO()
 
 inline fun bar(inlined: () -> Unit, noinline notInlined: () -> Unit): Unit = TODO()
+
+// MODULE: unit_param
+// EXPORT_TO_SWIFT
+// FILE: unit_param.kt
+
+fun foo(): (Unit) -> Unit = TODO()
+
+fun fooIn(block: (Unit) -> Unit): Unit = TODO()
+
+fun bar(): (String, Unit) -> Unit = TODO()
+
+fun barIn(block: (String, Unit) -> Unit): Unit = TODO()
+
+fun baz(): ((String, Unit) -> Unit) -> Unit = TODO()

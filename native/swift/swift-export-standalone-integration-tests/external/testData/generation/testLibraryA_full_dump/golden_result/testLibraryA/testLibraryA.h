@@ -5,7 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 void * org_jetbrains_a_MyLibraryA_init_allocate();
 
-void org_jetbrains_a_MyLibraryA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool org_jetbrains_a_MyLibraryA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 int32_t org_jetbrains_a_MyLibraryA_returnInt(void * self);
 

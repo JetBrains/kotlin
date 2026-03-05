@@ -14,14 +14,14 @@ public final class ConcreteSelfReferencing: f_bounded_type.SelfReferencing {
     public override init() {
         if Self.self != f_bounded_type.ConcreteSelfReferencing.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from f_bounded_type.ConcreteSelfReferencing ") }
         let __kt = __root___ConcreteSelfReferencing_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___ConcreteSelfReferencing_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___ConcreteSelfReferencing_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 open class SelfReferencing: KotlinRuntime.KotlinBase {
@@ -32,7 +32,7 @@ open class SelfReferencing: KotlinRuntime.KotlinBase {
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     open func compareTo(
         other: f_bounded_type.SelfReferencing

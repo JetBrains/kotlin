@@ -6,7 +6,6 @@ import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("__root___meaningOfLife")
 public fun __root___meaningOfLife(): Int {
-    val _result = meaningOfLife()
+    val _result = run { meaningOfLife() }
     return _result
 }
-

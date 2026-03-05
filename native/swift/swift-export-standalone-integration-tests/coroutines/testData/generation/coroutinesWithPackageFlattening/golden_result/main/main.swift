@@ -21,12 +21,12 @@ extension ExportedKotlinPackages.flattened {
                         }
                         cancellation = KotlinCoroutineSupport.KotlinTask(currentTask!)
 
-                        let _: () = flattened_testSuspendFunction({
+                        let _: Bool = flattened_testSuspendFunction({
                             let originalBlock = continuation
-                            return { arg0 in return { originalBlock(arg0); return 0 }() }
+                            return { arg0 in return { originalBlock(arg0); return true }() }
                         }(), {
                             let originalBlock = exception
-                            return { arg0 in return { originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()); return 0 }() }
+                            return { arg0 in return { originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()); return true }() }
                         }(), cancellation.__externalRCRef())
                     }
                 }

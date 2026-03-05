@@ -5,32 +5,34 @@ import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("__root___bar__TypesOfArguments__U2829202D_U20Swift_Void_U2829202D_U20Swift_Void__")
-public fun __root___bar__TypesOfArguments__U2829202D_U20Swift_Void_U2829202D_U20Swift_Void__(inlined: kotlin.native.internal.NativePtr, notInlined: kotlin.native.internal.NativePtr): Unit {
+public fun __root___bar__TypesOfArguments__U2829202D_U20Swift_Void_U2829202D_U20Swift_Void__(inlined: kotlin.native.internal.NativePtr, notInlined: kotlin.native.internal.NativePtr): Boolean {
     val __inlined = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(inlined);
+        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(inlined);
         {
             val _result = kotlinFun()
-            Unit
+            run<Unit> { _result }
         }
     }
     val __notInlined = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(notInlined);
+        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(notInlined);
         {
             val _result = kotlinFun()
-            Unit
+            run<Unit> { _result }
         }
     }
-    bar(__inlined, __notInlined)
+    val _result = run { bar(__inlined, __notInlined) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___foo__TypesOfArguments__U2829202D_U20Swift_Void__")
-public fun __root___foo__TypesOfArguments__U2829202D_U20Swift_Void__(inlined: kotlin.native.internal.NativePtr): Unit {
+public fun __root___foo__TypesOfArguments__U2829202D_U20Swift_Void__(inlined: kotlin.native.internal.NativePtr): Boolean {
     val __inlined = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(inlined);
+        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(inlined);
         {
             val _result = kotlinFun()
-            Unit
+            run<Unit> { _result }
         }
     }
-    foo(__inlined)
+    val _result = run { foo(__inlined) }
+    return run { _result; true }
 }

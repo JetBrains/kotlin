@@ -13,7 +13,7 @@ extension ExportedKotlinPackages.weird {
         public init() throws {
             if Self.self != ExportedKotlinPackages.weird.A.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.weird.A ") }
             let __kt = weird_A_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             var __error: UnsafeMutableRawPointer? = nil
             weird_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt, &__error)
             guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
@@ -22,17 +22,17 @@ extension ExportedKotlinPackages.weird {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         @available(*, unavailable, message: "")
         open func foo() -> Swift.Void {
-            return weird_A_foo(self.__externalRCRef())
+            return { weird_A_foo(self.__externalRCRef()); return () }()
         }
         open func `throws`() throws -> Swift.Void {
             var _out_error: UnsafeMutableRawPointer? = nil
             let _result = weird_A_throws(self.__externalRCRef(), &_out_error)
             guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
-            return _result
+            return { _result; return () }()
         }
     }
     public final class B: ExportedKotlinPackages.weird.A {
@@ -46,21 +46,21 @@ extension ExportedKotlinPackages.weird {
         public init() {
             if Self.self != ExportedKotlinPackages.weird.B.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.weird.B ") }
             let __kt = weird_B_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            weird_B_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { weird_B_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public func foo() -> Swift.Void {
-            return weird_B_foo(self.__externalRCRef())
+            return { weird_B_foo(self.__externalRCRef()); return () }()
         }
         @_nonoverride
         public func `throws`() -> Swift.Void {
-            return weird_B_throws(self.__externalRCRef())
+            return { weird_B_throws(self.__externalRCRef()); return () }()
         }
     }
 }

@@ -12,7 +12,7 @@ extension ExportedKotlinPackages.kotlin.collections {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public final func next() -> Swift.Bool {
             return kotlin_collections_BooleanIterator_next(self.__externalRCRef())
@@ -29,7 +29,7 @@ extension ExportedKotlinPackages.kotlin.collections {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public final func next() -> Swift.Int32 {
             return kotlin_collections_IntIterator_next(self.__externalRCRef())
@@ -55,7 +55,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public init(
             size: Swift.Int32,
@@ -72,7 +72,7 @@ extension ExportedKotlinPackages.kotlin {
             index: Swift.Int32,
             value: Swift.Bool
         ) -> Swift.Void {
-            return kotlin_BooleanArray_set__TypesOfArguments__Swift_Int32_Swift_Bool__(self.__externalRCRef(), index, value)
+            return { kotlin_BooleanArray_set__TypesOfArguments__Swift_Int32_Swift_Bool__(self.__externalRCRef(), index, value); return () }()
         }
         public func iterator() -> ExportedKotlinPackages.kotlin.collections.BooleanIterator {
             return ExportedKotlinPackages.kotlin.collections.BooleanIterator.__createClassWrapper(externalRCRef: kotlin_BooleanArray_iterator(self.__externalRCRef()))
@@ -103,7 +103,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public init(
             size: Swift.Int32,
@@ -120,7 +120,7 @@ extension ExportedKotlinPackages.kotlin {
             index: Swift.Int32,
             value: Swift.Int32
         ) -> Swift.Void {
-            return kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), index, value)
+            return { kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), index, value); return () }()
         }
         public func iterator() -> ExportedKotlinPackages.kotlin.collections.IntIterator {
             return ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: kotlin_IntArray_iterator(self.__externalRCRef()))
@@ -144,7 +144,7 @@ extension ExportedKotlinPackages.kotlin {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func toByte() -> Swift.Int8 {
             return kotlin_Number_toByte(self.__externalRCRef())

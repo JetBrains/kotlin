@@ -20,13 +20,13 @@ open class AbstractBase: KotlinRuntime.KotlinBase {
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     open func abstractFun1() -> Swift.Void {
-        return AbstractBase_abstractFun1(self.__externalRCRef())
+        return { AbstractBase_abstractFun1(self.__externalRCRef()); return () }()
     }
     open func abstractFun2() -> Swift.Void {
-        return AbstractBase_abstractFun2(self.__externalRCRef())
+        return { AbstractBase_abstractFun2(self.__externalRCRef()); return () }()
     }
 }
 open class AbstractDerived2: overrides.OpenDerived1 {
@@ -42,10 +42,10 @@ open class AbstractDerived2: overrides.OpenDerived1 {
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     open override func abstractFun1() -> Swift.Void {
-        return AbstractDerived2_abstractFun1(self.__externalRCRef())
+        return { AbstractDerived2_abstractFun1(self.__externalRCRef()); return () }()
     }
 }
 open class Child: overrides.Parent {
@@ -84,22 +84,22 @@ open class Child: overrides.Parent {
     ) {
         if Self.self != overrides.Child.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.Child ") }
         let __kt = __root___Child_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value); return () }()
     }
     public override init(
         value: Swift.String
     ) {
         if Self.self != overrides.Child.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.Child ") }
         let __kt = __root___Child_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public init(
         nullable: Swift.Int32,
@@ -108,8 +108,8 @@ open class Child: overrides.Parent {
     ) {
         if Self.self != overrides.Child.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.Child ") }
         let __kt = __root___Child_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_overrides_Parent_overrides_Parent__(__kt, nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef())
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_overrides_Parent_overrides_Parent__(__kt, nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef()); return () }()
     }
     public static func ==(
         this: overrides.Child,
@@ -122,7 +122,7 @@ open class Child: overrides.Parent {
         poly: overrides.Parent,
         nullablePoly: overrides.Parent?
     ) -> Swift.Void {
-        return Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent___(self.__externalRCRef(), nullable.map { it in NSNumber(value: it) } ?? nil, poly.__externalRCRef(), nullablePoly.map { it in it.__externalRCRef() } ?? nil)
+        return { Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent___(self.__externalRCRef(), nullable.map { it in NSNumber(value: it) } ?? nil, poly.__externalRCRef(), nullablePoly.map { it in it.__externalRCRef() } ?? nil); return () }()
     }
     open override func contains(
         element: Swift.Int32
@@ -135,7 +135,7 @@ open class Child: overrides.Parent {
         return Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
     }
     public final override func finalOverrideFunc() -> Swift.Void {
-        return Child_finalOverrideFunc(self.__externalRCRef())
+        return { Child_finalOverrideFunc(self.__externalRCRef()); return () }()
     }
     open func genericReturnTypeFunc() -> [overrides.Child] {
         return Child_genericReturnTypeFunc(self.__externalRCRef()) as! Swift.Array<overrides.Child>
@@ -154,7 +154,7 @@ open class Child: overrides.Parent {
         return { switch Child_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
     }
     open override func overrideChainFunc() -> Swift.Void {
-        return Child_overrideChainFunc(self.__externalRCRef())
+        return { Child_overrideChainFunc(self.__externalRCRef()); return () }()
     }
     open override func primitiveTypeFunc(
         arg: Swift.Int32
@@ -185,23 +185,23 @@ public final class GrandChild: overrides.Child {
     ) {
         if Self.self != overrides.GrandChild.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.GrandChild ") }
         let __kt = __root___GrandChild_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___GrandChild_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___GrandChild_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public override func finalOverrideHopFunc() -> Swift.Void {
-        return GrandChild_finalOverrideHopFunc(self.__externalRCRef())
+        return { GrandChild_finalOverrideHopFunc(self.__externalRCRef()); return () }()
     }
     public override func hopFunc() -> Swift.Void {
-        return GrandChild_hopFunc(self.__externalRCRef())
+        return { GrandChild_hopFunc(self.__externalRCRef()); return () }()
     }
     public override func overrideChainFunc() -> Swift.Void {
-        return GrandChild_overrideChainFunc(self.__externalRCRef())
+        return { GrandChild_overrideChainFunc(self.__externalRCRef()); return () }()
     }
 }
 open class OpenDerived1: overrides.AbstractBase {
@@ -213,28 +213,28 @@ open class OpenDerived1: overrides.AbstractBase {
     public override init() {
         if Self.self != overrides.OpenDerived1.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.OpenDerived1 ") }
         let __kt = __root___OpenDerived1_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     public override init(
         x: Swift.Int32
     ) {
         if Self.self != overrides.OpenDerived1.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.OpenDerived1 ") }
         let __kt = __root___OpenDerived1_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, x)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, x); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     open override func abstractFun1() -> Swift.Void {
-        return OpenDerived1_abstractFun1(self.__externalRCRef())
+        return { OpenDerived1_abstractFun1(self.__externalRCRef()); return () }()
     }
     open override func abstractFun2() -> Swift.Void {
-        return OpenDerived1_abstractFun2(self.__externalRCRef())
+        return { OpenDerived1_abstractFun2(self.__externalRCRef()); return () }()
     }
 }
 open class Parent: KotlinRuntime.KotlinBase {
@@ -278,14 +278,14 @@ open class Parent: KotlinRuntime.KotlinBase {
     ) {
         if Self.self != overrides.Parent.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from overrides.Parent ") }
         let __kt = __root___Parent_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___Parent_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___Parent_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public static func ==(
         this: overrides.Parent,
@@ -298,7 +298,7 @@ open class Parent: KotlinRuntime.KotlinBase {
         poly: overrides.Child,
         nullablePoly: overrides.Child
     ) -> Swift.Void {
-        return Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child__(self.__externalRCRef(), nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef())
+        return { Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child__(self.__externalRCRef(), nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef()); return () }()
     }
     open func contains(
         element: Swift.Int32
@@ -311,16 +311,16 @@ open class Parent: KotlinRuntime.KotlinBase {
         return Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
     }
     open func finalOverrideFunc() -> Swift.Void {
-        return Parent_finalOverrideFunc(self.__externalRCRef())
+        return { Parent_finalOverrideFunc(self.__externalRCRef()); return () }()
     }
     open func finalOverrideHopFunc() -> Swift.Void {
-        return Parent_finalOverrideHopFunc(self.__externalRCRef())
+        return { Parent_finalOverrideHopFunc(self.__externalRCRef()); return () }()
     }
     open func genericReturnTypeFunc() -> [overrides.Parent] {
         return Parent_genericReturnTypeFunc(self.__externalRCRef()) as! Swift.Array<overrides.Parent>
     }
     open func hopFunc() -> Swift.Void {
-        return Parent_hopFunc(self.__externalRCRef())
+        return { Parent_hopFunc(self.__externalRCRef()); return () }()
     }
     open func nonoverride() -> Swift.Int32 {
         return Parent_nonoverride(self.__externalRCRef())
@@ -336,7 +336,7 @@ open class Parent: KotlinRuntime.KotlinBase {
         return { switch Parent_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
     }
     open func overrideChainFunc() -> Swift.Void {
-        return Parent_overrideChainFunc(self.__externalRCRef())
+        return { Parent_overrideChainFunc(self.__externalRCRef()); return () }()
     }
     open func primitiveTypeFunc(
         arg: Swift.Int32

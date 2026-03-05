@@ -7,38 +7,38 @@ import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 @ExportedBridge("__root___accept__TypesOfArguments__Swift_ClosedRange_Swift_Int32___")
 public fun __root___accept__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(range_1: Int, range_2: Int): kotlin.native.internal.NativePtr {
     val __range = range_1 .. range_2
-    val _result = accept(__range)
+    val _result = run { accept(__range) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___acceptClosed__TypesOfArguments__Swift_ClosedRange_Swift_Int32___")
 public fun __root___acceptClosed__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(range_1: Int, range_2: Int): kotlin.native.internal.NativePtr {
     val __range = range_1 .. range_2
-    val _result = acceptClosed(__range)
+    val _result = run { acceptClosed(__range) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___bar")
 public fun __root___bar(): kotlin.native.internal.NativePtr {
-    val _result = bar()
+    val _result = run { bar() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___baz")
 public fun __root___baz(): kotlin.native.internal.NativePtr {
-    val _result = baz()
+    val _result = run { baz() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___foo")
 public fun __root___foo(): kotlin.native.internal.NativePtr {
-    val _result = foo()
+    val _result = run { foo() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___unsupported")
 public fun __root___unsupported(): kotlin.native.internal.NativePtr {
-    val _result = unsupported()
+    val _result = run { unsupported() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 

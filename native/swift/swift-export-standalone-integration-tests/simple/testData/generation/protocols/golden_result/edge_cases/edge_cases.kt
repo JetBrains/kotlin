@@ -10,24 +10,26 @@ import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("conflictingTypealiases_Bar_Conflict_init_allocate")
 public fun conflictingTypealiases_Bar_Conflict_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<conflictingTypealiases.Bar.Conflict>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<conflictingTypealiases.Bar.Conflict>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("conflictingTypealiases_Bar_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun conflictingTypealiases_Bar_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun conflictingTypealiases_Bar_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, conflictingTypealiases.Bar.Conflict())
+    val _result = run { kotlin.native.internal.initInstance(____kt, conflictingTypealiases.Bar.Conflict()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("conflictingTypealiases_Foo_Conflict_init_allocate")
 public fun conflictingTypealiases_Foo_Conflict_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<conflictingTypealiases.Foo.Conflict>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<conflictingTypealiases.Foo.Conflict>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("conflictingTypealiases_Foo_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun conflictingTypealiases_Foo_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun conflictingTypealiases_Foo_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, conflictingTypealiases.Foo.Conflict())
+    val _result = run { kotlin.native.internal.initInstance(____kt, conflictingTypealiases.Foo.Conflict()) }
+    return run { _result; true }
 }

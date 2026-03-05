@@ -165,11 +165,11 @@ private class BridgeFunctionDescriptor(
             Triple(
                 BridgedParameter.In(
                     name = "continuation",
-                    bridge = Bridge.AsContravariantBlock(parameters = listOf(returnType), returnType = Bridge.AsOutVoid)
+                    bridge = Bridge.AsContravariantBlock(parameters = listOf(returnType), returnType = Bridge.AsVoid)
                 ),
                 BridgedParameter.In(
                     name = "exception",
-                    bridge = Bridge.AsContravariantBlock(parameters = listOfNotNull(errorParameter?.bridge), returnType = Bridge.AsOutVoid)
+                    bridge = Bridge.AsContravariantBlock(parameters = listOfNotNull(errorParameter?.bridge), returnType = Bridge.AsVoid)
                 ),
                 BridgedParameter.In(
                     name = "cancellation",
@@ -283,7 +283,7 @@ private class BridgeFunctionDescriptor(
         }
     }
 
-    override fun argumentsForInvocation(): List<String> = allParameters.filter { it.isRenderable }.map {
+    override fun argumentsForInvocation(): List<String> = allParameters.map {
         it.name.takeIf { it == "self" } ?: it.name.swiftIdentifier
     }
 }
@@ -319,7 +319,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
     }
     add(
         "public fun $kotlinBridgeName(${
-            allParameters.filter { it.isRenderable && it.bridge.typeList.isNotEmpty() }.joinToString {
+            allParameters.filter { it.bridge.typeList.isNotEmpty() }.joinToString {
                 val bridge = it.bridge
                 val identifier = it.name.kotlinIdentifier
                 if (bridge.typeList.size > 1) {
@@ -363,8 +363,6 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
             }.alsoCancel(__${cancellation.name.kotlinIdentifier})
             """.trimIndent().prependIndent(indent)
         )
-    } else if (returnType.swiftType.isVoid && errorParameter == null) {
-        add("${indent}$callSite")
     } else {
         if (errorParameter != null) {
             // TODO: is it correct to use the first type only here?
@@ -372,7 +370,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
             add(
                 """
             try {
-                val $resultName = $callSite
+                val $resultName = run { $callSite }
                 return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}
             } catch (error: Throwable) {
                 __${errorParameter.name}.value = StableRef.create(error).asCPointer()
@@ -381,7 +379,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
             """.trimIndent().prependIndent(indent)
             )
         } else {
-            add("${indent}val $resultName = $callSite")
+            add("${indent}val $resultName = run { $callSite }")
             add("${indent}return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}")
         }
     }
@@ -389,7 +387,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
 }
 
 private fun BridgeFunctionDescriptor.swiftInvocationLineForCBridge(typeNamer: SirTypeNamer): String {
-    val parameters = allParameters.filter { it.isRenderable }.joinToString {
+    val parameters = allParameters.joinToString {
         // We fix ugly `self` escaping here. This is the only place we'd otherwise need full support for swift's contextual keywords
         it.bridge.inSwiftSources.swiftToKotlin(typeNamer, it.name.takeIf { it == "self" } ?: it.name.swiftIdentifier)
     }
@@ -425,7 +423,7 @@ private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer): St
                         }
                         ${cancellation.name.swiftIdentifier} = ${cancellation.bridge.swiftType.swiftName}(currentTask!)
                         
-                        let _: () = ${swiftInvocationLineForCBridge(typeNamer).prependIndentToTrailingLines(indent)}
+                        let _: Bool = ${swiftInvocationLineForCBridge(typeNamer).prependIndentToTrailingLines(indent)}
                     }            
                 }
             } onCancel: {
@@ -448,7 +446,7 @@ private fun BridgeFunctionDescriptor.cDeclaration() = buildString {
         returnType.render(buildString {
             append(cBridgeName)
             append("(")
-            allParameters.filter { it.isRenderable && it.bridge.typeList.isNotEmpty() }.joinTo(this) {
+            allParameters.filter { it.bridge.typeList.isNotEmpty() }.joinTo(this) {
                 val bridge = it.bridge
                 if (bridge.typeList.size > 1) {
                     var index = 0

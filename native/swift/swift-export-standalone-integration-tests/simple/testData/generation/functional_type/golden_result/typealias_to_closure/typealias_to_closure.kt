@@ -13,27 +13,27 @@ public fun __root___foo_flow_with_callback__TypesOfArguments__U2840escapingU2028
             _result
         }
     }
-    val _result = foo_flow_with_callback(__callback)
+    val _result = run { foo_flow_with_callback(__callback) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___typealias_demo__TypesOfArguments__U28Swift_Int32_U20Swift_Int32U29202D_U20Swift_Void__")
 public fun __root___typealias_demo__TypesOfArguments__U28Swift_Int32_U20Swift_Int32U29202D_U20Swift_Void__(input: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __input = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Int, Int)->Unit>(input);
+        val kotlinFun = convertBlockPtrToKotlinFunction<(Int, Int)->Boolean>(input);
         { arg0: Int, arg1: Int ->
             val _result = kotlinFun(arg0, arg1)
-            Unit
+            run<Unit> { _result }
         }
     }
-    val _result = typealias_demo(__input)
+    val _result = run { typealias_demo(__input) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("typealias_to_closure_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun typealias_to_closure_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock: kotlin.native.internal.NativePtr): Int {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val _result = (__pointerToBlock as Function0<Int>).invoke()
+    val _result = run { (__pointerToBlock as Function0<Int>).invoke() }
     return _result
 }
 
@@ -47,14 +47,15 @@ public fun typealias_to_closure_internal_functional_type_caller_SwiftU2EInt32__T
             _result
         }
     }
-    val _result = (__pointerToBlock as Function1<Function0<Int>, Int>).invoke(___1)
+    val _result = run { (__pointerToBlock as Function1<Function0<Int>, Int>).invoke(___1) }
     return _result
 }
 
 @ExportedBridge("typealias_to_closure_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Int32__")
-public fun typealias_to_closure_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Int32__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Int, _2: Int): Unit {
+public fun typealias_to_closure_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Int32__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Int, _2: Int): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
     val ___1 = _1
     val ___2 = _2
-    (__pointerToBlock as Function2<Int, Int, Unit>).invoke(___1, ___2)
+    val _result = run { (__pointerToBlock as Function2<Int, Int, Unit>).invoke(___1, ___2) }
+    return run { _result; true }
 }

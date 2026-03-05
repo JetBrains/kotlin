@@ -7,12 +7,13 @@ import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("test_factory_modules_ClassFromDependency_init_allocate")
 public fun test_factory_modules_ClassFromDependency_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<test.factory.modules.ClassFromDependency>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<test.factory.modules.ClassFromDependency>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("test_factory_modules_ClassFromDependency_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun test_factory_modules_ClassFromDependency_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun test_factory_modules_ClassFromDependency_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, test.factory.modules.ClassFromDependency())
+    val _result = run { kotlin.native.internal.initInstance(____kt, test.factory.modules.ClassFromDependency()) }
+    return run { _result; true }
 }

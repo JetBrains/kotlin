@@ -69,14 +69,14 @@ public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase {
     ) {
         if Self.self != main.ClassWithFactoryWithoutParameters.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ClassWithFactoryWithoutParameters ") }
         let __kt = __root___ClassWithFactoryWithoutParameters_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class ObjectWithFactory: KotlinRuntime.KotlinBase {
@@ -92,21 +92,21 @@ public final class ObjectWithFactory: KotlinRuntime.KotlinBase {
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class UtcOffset: KotlinRuntime.KotlinBase {
     public init() {
         if Self.self != main.UtcOffset.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.UtcOffset ") }
         let __kt = __root___UtcOffset_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___UtcOffset_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___UtcOffset_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public func FlattenedPackageClass(
@@ -154,14 +154,14 @@ extension ExportedKotlinPackages.test.factory {
         public init() {
             if Self.self != ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage ") }
             let __kt = test_factory_ClassWithFactoryInAPackage_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            test_factory_ClassWithFactoryInAPackage_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { test_factory_ClassWithFactoryInAPackage_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class Outer: KotlinRuntime.KotlinBase {
@@ -169,27 +169,27 @@ extension ExportedKotlinPackages.test.factory {
             public init() {
                 if Self.self != ExportedKotlinPackages.test.factory.Outer.Nested.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.test.factory.Outer.Nested ") }
                 let __kt = test_factory_Outer_Nested_init_allocate()
-                super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-                test_factory_Outer_Nested_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+                super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+                { test_factory_Outer_Nested_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
             }
             package override init(
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
         }
         public init() {
             if Self.self != ExportedKotlinPackages.test.factory.Outer.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.test.factory.Outer ") }
             let __kt = test_factory_Outer_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            test_factory_Outer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { test_factory_Outer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public func ClassWithFactoryInAPackage(
             arg: any KotlinRuntimeSupport._KotlinBridgeable

@@ -13,6 +13,6 @@ public fun __root___consume_block_with_string_id__TypesOfArguments__U28Swift_Str
             interpretObjCPointer<kotlin.String>(_result)
         }
     }
-    val _result = consume_block_with_string_id(__block)
+    val _result = run { consume_block_with_string_id(__block) }
     return _result.objcPtr()
 }

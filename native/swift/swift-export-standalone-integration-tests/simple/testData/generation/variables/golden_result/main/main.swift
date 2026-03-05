@@ -78,7 +78,7 @@ public var foo: any KotlinRuntimeSupport._KotlinBridgeable {
         return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: __root___foo_get())
     }
     set {
-        return __root___foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.__externalRCRef())
+        return { __root___foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.__externalRCRef()); return () }()
     }
 }
 public var lateinit_foo: any KotlinRuntimeSupport._KotlinBridgeable {
@@ -86,7 +86,7 @@ public var lateinit_foo: any KotlinRuntimeSupport._KotlinBridgeable {
         return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: __root___lateinit_foo_get())
     }
     set {
-        return __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.__externalRCRef())
+        return { __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.__externalRCRef()); return () }()
     }
 }
 extension ExportedKotlinPackages.inline {
@@ -95,7 +95,7 @@ extension ExportedKotlinPackages.inline {
             return inline_bar_get()
         }
         set {
-            return inline_bar_set__TypesOfArguments__Swift_Int32__(newValue)
+            return { inline_bar_set__TypesOfArguments__Swift_Int32__(newValue); return () }()
         }
     }
     public static var barGet: Swift.Int32 {
@@ -103,7 +103,7 @@ extension ExportedKotlinPackages.inline {
             return inline_barGet_get()
         }
         set {
-            return inline_barGet_set__TypesOfArguments__Swift_Int32__(newValue)
+            return { inline_barGet_set__TypesOfArguments__Swift_Int32__(newValue); return () }()
         }
     }
     public static var barSet: Swift.Int32 {
@@ -111,7 +111,7 @@ extension ExportedKotlinPackages.inline {
             return inline_barSet_get()
         }
         set {
-            return inline_barSet_set__TypesOfArguments__Swift_Int32__(newValue)
+            return { inline_barSet_set__TypesOfArguments__Swift_Int32__(newValue); return () }()
         }
     }
     public static var foo: Swift.String {
@@ -131,7 +131,7 @@ extension ExportedKotlinPackages.namespace.main {
             return namespace_main_bar_get()
         }
         set {
-            return namespace_main_bar_set__TypesOfArguments__Swift_Int32__(newValue)
+            return { namespace_main_bar_set__TypesOfArguments__Swift_Int32__(newValue); return () }()
         }
     }
     public static var foo: Swift.Int32 {

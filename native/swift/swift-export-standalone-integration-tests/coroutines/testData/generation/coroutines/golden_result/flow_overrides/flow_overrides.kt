@@ -14,129 +14,134 @@ import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 @ExportedBridge("namespace_Bar_foo")
 public fun namespace_Bar_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Bar
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Bar_init_allocate")
 public fun namespace_Bar_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.Bar>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.Bar>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun namespace_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun namespace_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, namespace.Bar())
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.Bar()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_Bar_voo_get")
 public fun namespace_Bar_voo_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Bar
-    val _result = __self.voo
+    val _result = run { __self.voo }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Foo_foo")
 public fun namespace_Foo_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Foo
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Foo_init_allocate")
 public fun namespace_Foo_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.Foo>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.Foo>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun namespace_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun namespace_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, namespace.Foo())
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.Foo()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_Foo_voo_get")
 public fun namespace_Foo_voo_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Foo
-    val _result = __self.voo
+    val _result = run { __self.voo }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Nar_foo")
 public fun namespace_Nar_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Nar
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Nar_init_allocate")
 public fun namespace_Nar_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.Nar>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.Nar>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Nar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun namespace_Nar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun namespace_Nar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, namespace.Nar())
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.Nar()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_Nar_voo_get")
 public fun namespace_Nar_voo_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Nar
-    val _result = __self.voo
+    val _result = run { __self.voo }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_StateFoo_foo")
 public fun namespace_StateFoo_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.StateFoo
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_StateFoo_init_allocate")
 public fun namespace_StateFoo_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.StateFoo>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.StateFoo>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_StateFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun namespace_StateFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun namespace_StateFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, namespace.StateFoo())
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.StateFoo()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_StateFoo_voo_get")
 public fun namespace_StateFoo_voo_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.StateFoo
-    val _result = __self.voo
+    val _result = run { __self.voo }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Zar_foo")
 public fun namespace_Zar_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Zar
-    val _result = __self.foo()
+    val _result = run { __self.foo() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Zar_init_allocate")
 public fun namespace_Zar_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<namespace.Zar>()
+    val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.Zar>() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Zar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun namespace_Zar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+public fun namespace_Zar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, namespace.Zar())
+    val _result = run { kotlin.native.internal.initInstance(____kt, namespace.Zar()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("namespace_Zar_voo_get")
 public fun namespace_Zar_voo_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Zar
-    val _result = __self.voo
+    val _result = run { __self.voo }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

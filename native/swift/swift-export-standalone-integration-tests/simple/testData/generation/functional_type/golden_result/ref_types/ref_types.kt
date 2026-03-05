@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("__root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_Swift_AnyHashable__U29202D_U20Swift_Optional_data_Foo___")
-public fun __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_Swift_AnyHashable__U29202D_U20Swift_Optional_data_Foo___(block: kotlin.native.internal.NativePtr): Unit {
+public fun __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_Swift_AnyHashable__U29202D_U20Swift_Optional_data_Foo___(block: kotlin.native.internal.NativePtr): Boolean {
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(block);
         { arg0: Int?, arg1: Bar?, arg2: kotlin.String?, arg3: kotlin.collections.Set<kotlin.Any>? ->
@@ -13,19 +13,21 @@ public fun __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_O
             if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Foo
         }
     }
-    consume_block_with_opt_reftype(__block)
+    val _result = run { consume_block_with_opt_reftype(__block) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___consume_block_with_reftype_consumer__TypesOfArguments__U28data_FooU29202D_U20Swift_Void__")
-public fun __root___consume_block_with_reftype_consumer__TypesOfArguments__U28data_FooU29202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Unit {
+public fun __root___consume_block_with_reftype_consumer__TypesOfArguments__U28data_FooU29202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Boolean {
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Unit>(block);
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(block);
         { arg0: Foo ->
             val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
-            Unit
+            run<Unit> { _result }
         }
     }
-    consume_block_with_reftype_consumer(__block)
+    val _result = run { consume_block_with_reftype_consumer(__block) }
+    return run { _result; true }
 }
 
 @ExportedBridge("__root___consume_block_with_reftype_factory__TypesOfArguments__U2829202D_U20data_Foo__")
@@ -37,7 +39,7 @@ public fun __root___consume_block_with_reftype_factory__TypesOfArguments__U28292
             kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Foo
         }
     }
-    val _result = consume_block_with_reftype_factory(__block)
+    val _result = run { consume_block_with_reftype_factory(__block) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -50,7 +52,7 @@ public fun __root___consume_block_with_reftype_unzip__TypesOfArguments__U28data_
             kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Foo
         }
     }
-    val _result = consume_block_with_reftype_unzip(__block)
+    val _result = run { consume_block_with_reftype_unzip(__block) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -63,6 +65,6 @@ public fun __root___consume_block_with_reftype_zip__TypesOfArguments__U28data_Fo
             kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Bar
         }
     }
-    val _result = consume_block_with_reftype_zip(__block)
+    val _result = run { consume_block_with_reftype_zip(__block) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

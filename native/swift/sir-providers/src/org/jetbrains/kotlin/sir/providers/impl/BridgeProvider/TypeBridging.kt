@@ -163,8 +163,6 @@ internal sealed interface BridgedParameter {
         override val bridge: Bridge,
         override val isExplicit: Boolean = false,
     ) : BridgedParameter
-
-    val isRenderable: Boolean get() = bridge !is AsOptionalNothing && bridge !is AsVoid
 }
 
 internal val SirType.isChar: Boolean
@@ -298,27 +296,21 @@ internal sealed class Bridge(
         override val inSwiftSources = IdentityValueConversion
     }
 
-    object AsVoid : WithSingleType(SirNominalType(SirSwiftModule.void), KotlinType.Unit, CType.Void) {
+    object AsVoid : WithSingleType(SirNominalType(SirSwiftModule.void), KotlinType.Boolean, CType.Bool) {
         override val inKotlinSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String = "Unit"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "run<Unit> { $valueExpression }"
 
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String = valueExpression
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "run { ${valueExpression}; true }"
         }
 
-        override val inSwiftSources = IdentityValueConversion
-    }
+        override val inSwiftSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "{ ${valueExpression}; return true }()"
 
-    object AsOutVoid : SwiftToKotlinBridgeWithSingleType(
-        SirNominalType(SirSwiftModule.void),
-        KotlinType.Unit,
-        CType.Int32
-    ) {
-        override val inKotlinSources = object : SwiftToKotlinValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String = valueExpression
-        }
-
-        override val inSwiftSources = object : SwiftToKotlinValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String = "{ $valueExpression; return 0 }()"
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "{ ${valueExpression}; return () }()"
         }
     }
 
@@ -654,16 +646,16 @@ internal sealed class Bridge(
 
     data object AsOptionalNothing : WithSingleType(
         SirNominalType(SirSwiftModule.optional, listOf(SirNominalType(SirSwiftModule.never))),
-        KotlinType.Unit,
-        CType.Void
+        KotlinType.Boolean,
+        CType.Bool
     ) {
         override val inKotlinSources = object : ValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "null"
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = "Unit"
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = "true"
         }
 
         override val inSwiftSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = error("unrepresentable")
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "true"
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "{ ${valueExpression}; return nil; }()"
         }
@@ -716,7 +708,6 @@ internal sealed class Bridge(
                     is AsContravariantBlock,
                     is AsIs,
                     is AsVoid,
-                    is AsOutVoid,
                     is AsOpaqueObject,
                     is AsOutError,
                         -> TODO("not yet supported")
@@ -799,8 +790,7 @@ internal sealed class Bridge(
                                 }
                             } ->"
                         }
-                    val callArgs = argsInClosure
-                        ?.let { it.joinToString { it.second.inKotlinSources.kotlinToSwift(typeNamer, it.first) } } ?: ""
+                    val callArgs = argsInClosure?.joinToString { it.second.inKotlinSources.kotlinToSwift(typeNamer, it.first) } ?: ""
                     return """run {    
                     |    val kotlinFun = convertBlockPtrToKotlinFunction<$kotlinFunctionTypeRendered>($valueExpression);
                     |    {${defineArgs ?: ""}
