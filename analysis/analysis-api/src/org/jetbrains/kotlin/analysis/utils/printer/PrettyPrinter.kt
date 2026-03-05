@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,21 +7,36 @@ package org.jetbrains.kotlin.analysis.utils.printer
 
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+@KaExperimentalApi
 @OptIn(ExperimentalContracts::class)
 public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
-    @PublishedApi
-    internal val builder: StringBuilder = StringBuilder()
+    private val result: StringBuilder = StringBuilder()
+    private var prefixes: PersistentList<String> = persistentListOf()
+    private var indentationLevel: Int = 0
 
-    @PublishedApi
-    internal var prefixesToPrint: PersistentList<String> = persistentListOf()
+    @Deprecated("Do not use. Left for binary compatibility", level = DeprecationLevel.HIDDEN)
+    public val builder: StringBuilder
+        get() = result
 
-    @PublishedApi
-    internal var indent: Int = 0
+    @Deprecated("Do not use. Left for binary compatibility", level = DeprecationLevel.HIDDEN)
+    public var prefixesToPrint: PersistentList<String>
+        get() = prefixes
+        set(value) {
+            prefixes = value
+        }
+
+    @Deprecated("Do not use. Left for binary compatibility", level = DeprecationLevel.HIDDEN)
+    public var indent: Int
+        get() = indentationLevel
+        set(value) {
+            indentationLevel = value
+        }
 
     override fun append(nullableSeq: CharSequence?): Appendable = apply {
         val seq = nullableSeq ?: "null"
@@ -29,13 +44,13 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
         printPrefixes()
         seq.split('\n').forEachIndexed { index, line ->
             if (index > 0) {
-                builder.append('\n')
+                result.append('\n')
             }
 
             // Skip indents if the line is empty.
             if (line.isNotEmpty()) {
                 appendIndentIfNeeded()
-                builder.append(line)
+                result.append(line)
             }
         }
     }
@@ -49,39 +64,39 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
         if (c != '\n') {
             appendIndentIfNeeded()
         }
-        builder.append(c)
+        result.append(c)
     }
 
     private fun printPrefixes() {
-        if (prefixesToPrint.isNotEmpty()) {
+        if (prefixes.isNotEmpty()) {
             appendIndentIfNeeded()
-            prefixesToPrint.forEach { builder.append(it) }
-            prefixesToPrint = persistentListOf()
+            prefixes.forEach { result.append(it) }
+            prefixes = persistentListOf()
         }
     }
 
-    public inline fun withIndent(block: PrettyPrinter.() -> Unit) {
-        indent += 1
+    public fun withIndent(block: PrettyPrinter.() -> Unit) {
+        indentationLevel += 1
         block(this)
-        indent -= 1
+        indentationLevel -= 1
     }
 
-    public inline fun withIndents(indentCount: Int, block: PrettyPrinter.() -> Unit) {
+    public fun withIndents(indentCount: Int, block: PrettyPrinter.() -> Unit) {
         require(indentCount >= 0) { "Number of indents should be non-negative" }
-        indent += indentCount
+        indentationLevel += indentCount
         block(this)
-        indent -= indentCount
+        indentationLevel -= indentCount
     }
 
-    public inline fun withIndentInBraces(block: PrettyPrinter.() -> Unit) {
+    public fun withIndentInBraces(block: PrettyPrinter.() -> Unit) {
         withIndentWrapped(before = "{", after = "}", block)
     }
 
-    public inline fun withIndentInSquareBrackets(block: PrettyPrinter.() -> Unit) {
+    public fun withIndentInSquareBrackets(block: PrettyPrinter.() -> Unit) {
         withIndentWrapped(before = "[", after = "]", block)
     }
 
-    public inline fun withIndentWrapped(before: String, after: String, block: PrettyPrinter.() -> Unit) {
+    public fun withIndentWrapped(before: String, after: String, block: PrettyPrinter.() -> Unit) {
         append(before)
         appendLine()
         withIndent(block)
@@ -120,33 +135,33 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
     }
 
     public fun printCharIfNotThere(char: Char) {
-        if (builder.lastOrNull() != char) {
+        if (result.lastOrNull() != char) {
             append(char)
         }
     }
 
     private fun appendIndentIfNeeded() {
-        if (builder.isEmpty() || builder[builder.lastIndex] == '\n') {
-            builder.append(" ".repeat(indentSize * indent))
+        if (result.isEmpty() || result[result.lastIndex] == '\n') {
+            result.append(" ".repeat(indentSize * indentationLevel))
         }
     }
 
     override fun toString(): String {
-        return builder.toString()
+        return result.toString()
     }
 
-    public inline fun checkIfPrinted(render: () -> Unit): Boolean {
+    public fun checkIfPrinted(render: () -> Unit): Boolean {
         contract { callsInPlace(render, InvocationKind.EXACTLY_ONCE) }
-        val initialSize = builder.length
+        val initialSize = result.length
         render()
-        return initialSize != builder.length
+        return initialSize != result.length
     }
 
     public inline operator fun invoke(print: PrettyPrinter.() -> Unit) {
         this.print()
     }
 
-    public inline fun String.separated(p1: () -> Unit, p2: () -> Unit) {
+    public fun String.separated(p1: () -> Unit, p2: () -> Unit) {
         contract {
             callsInPlace(p1, InvocationKind.EXACTLY_ONCE)
             callsInPlace(p2, InvocationKind.EXACTLY_ONCE)
@@ -159,7 +174,7 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
         }
     }
 
-    public inline fun String.separated(p1: () -> Unit, p2: () -> Unit, p3: () -> Unit) {
+    public fun String.separated(p1: () -> Unit, p2: () -> Unit, p3: () -> Unit) {
         contract {
             callsInPlace(p1, InvocationKind.EXACTLY_ONCE)
             callsInPlace(p2, InvocationKind.EXACTLY_ONCE)
@@ -168,7 +183,7 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
         separated({ separated(p1, p2) }, p3)
     }
 
-    public inline fun String.separated(p1: () -> Unit, p2: () -> Unit, p3: () -> Unit, p4: () -> Unit) {
+    public fun String.separated(p1: () -> Unit, p2: () -> Unit, p3: () -> Unit, p4: () -> Unit) {
         contract {
             callsInPlace(p1, InvocationKind.EXACTLY_ONCE)
             callsInPlace(p2, InvocationKind.EXACTLY_ONCE)
@@ -178,7 +193,7 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
         separated({ separated(p1, p2, p3) }, p4)
     }
 
-    public inline fun String.separated(p1: () -> Unit, p2: () -> Unit, p3: () -> Unit, p4: () -> Unit, p5: () -> Unit) {
+    public fun String.separated(p1: () -> Unit, p2: () -> Unit, p3: () -> Unit, p4: () -> Unit, p5: () -> Unit) {
         contract {
             callsInPlace(p1, InvocationKind.EXACTLY_ONCE)
             callsInPlace(p2, InvocationKind.EXACTLY_ONCE)
@@ -188,29 +203,31 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
         separated({ separated(p1, p2, p3, p4) }, p5)
     }
 
-    public inline fun withPrefix(prefix: String, print: () -> Unit) {
+    public fun withPrefix(prefix: String, print: () -> Unit) {
         contract {
             callsInPlace(print, InvocationKind.EXACTLY_ONCE)
         }
-        val currentPrefixes = prefixesToPrint
-        prefixesToPrint = prefixesToPrint.add(prefix)
+        val currentPrefixes = prefixes
+        prefixes = prefixes.add(prefix)
         try {
             print()
         } finally {
-            if (prefixesToPrint.isNotEmpty()) {
-                prefixesToPrint = currentPrefixes
+            if (prefixes.isNotEmpty()) {
+                prefixes = currentPrefixes
             }
         }
     }
 
-    public inline fun withSuffix(suffix: String, p1: () -> Unit) {
+    public fun withSuffix(suffix: String, p1: () -> Unit) {
         checkIfPrinted { p1() }.ifTrue { append(suffix) }
     }
 }
 
+@KaExperimentalApi
 public inline fun prettyPrint(body: PrettyPrinter.() -> Unit): String =
     PrettyPrinter().apply(body).toString()
 
+@KaExperimentalApi
 @OptIn(ExperimentalContracts::class)
 public inline fun prettyPrintWithSettingsFrom(other: PrettyPrinter, body: PrettyPrinter.() -> Unit): String {
     contract {

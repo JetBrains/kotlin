@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.analysis.decompiler.psi
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
+import org.jetbrains.kotlin.analysis.internal.utils.IndentedTextBuilder
+import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
 import org.jetbrains.kotlin.analysis.stubs.AbstractCompiledStubsTest
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
@@ -31,17 +32,17 @@ abstract class AbstractDecompiledTextTest(defaultTargetPlatform: TargetPlatform)
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         val files = mainModule.ktFiles.sortedBy(KtFile::getName)
 
-        val actual = prettyPrint {
+        val actual = buildIndentedText(indentation = IndentedTextBuilder.TWO_SPACES) {
             if (files.isEmpty()) {
                 appendLine("NO FILES")
-                return@prettyPrint
+                return@buildIndentedText
             }
 
             val file = files.singleOrNull()
             if (file != null) {
                 append(file.text)
             } else {
-                printCollection(files, separator = "\n") { file ->
+                appendCollection(files, separator = "\n") { file ->
                     appendLine("${file.name}:")
                     withIndent {
                         append(file.text)
