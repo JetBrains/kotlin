@@ -89,7 +89,7 @@ class ConstraintIncorporator(
         // \alpha <: constraint.type
         if (constraint.kind != ConstraintKind.LOWER) {
             typeVariable.forEachConstraint {
-                if (it.kind != ConstraintKind.UPPER) {
+                if (it !== constraint && it.kind != ConstraintKind.UPPER) {
                     inferenceLogger.withOrigins(
                         typeVariable, it,
                         typeVariable, constraint,
@@ -111,7 +111,7 @@ class ConstraintIncorporator(
         // constraint.type <: \alpha
         if (constraint.kind != ConstraintKind.UPPER) {
             typeVariable.forEachConstraint {
-                if (it.kind != ConstraintKind.LOWER) {
+                if (it !== constraint && it.kind != ConstraintKind.LOWER) {
                     val isFromDeclaredUpperBound =
                         it.position.from is DeclaredUpperBoundConstraintPosition<*> && !it.type.typeConstructor().isTypeVariable()
 
