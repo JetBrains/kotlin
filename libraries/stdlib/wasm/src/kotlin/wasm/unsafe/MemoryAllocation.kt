@@ -149,16 +149,19 @@ internal class ScopedMemoryAllocator(
 
 private const val WASM_PAGE_SIZE_IN_BYTES = 65_536  // 64 KiB
 
-@UnsafeWasmMemoryApi
+@OptIn(UnsafeWasmMemoryApi::class)
 private var reallocAllocator: ScopedMemoryAllocator? = null
 
 private var lastReallocAllocatedAddress: Int? = null
 
-// WebAssembly Component Model Canonical ABI realloc implementation.
-// This function is intended to be exported to a Component Model and must not be called directly.
-// Memory allocated by this function must be freed
-// by calling [freeAllComponentModelReallocAllocatedMemory] before calling any [withScopedMemoryAllocator].
-@UnsafeWasmMemoryApi
+/**
+ * WebAssembly Component Model Canonical ABI realloc implementation.
+ * This function is intended to be exported to a Component Model and must not be called directly.
+ * Memory allocated by this function must be freed
+ * by calling [freeAllComponentModelReallocAllocatedMemory] before calling any [withScopedMemoryAllocator].
+ */
+@OptIn(UnsafeWasmMemoryApi::class)
+@ComponentModelInternalApi
 public fun componentModelRealloc(
     originalPtr: Int,
     originalSize: Int,
@@ -193,8 +196,11 @@ public fun componentModelRealloc(
     return result
 }
 
-// Free memory allocated by all previous calls to componentModelRealloc.
-@UnsafeWasmMemoryApi
+/**
+ *  Frees memory allocated by all previous calls of [componentModelRealloc]. 
+ */
+@OptIn(UnsafeWasmMemoryApi::class)
+@ComponentModelInternalApi
 public fun freeAllComponentModelReallocAllocatedMemory() {
     if (reallocAllocator != null) {
         reallocAllocator!!.destroy()

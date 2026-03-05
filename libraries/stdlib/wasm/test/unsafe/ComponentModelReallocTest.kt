@@ -3,7 +3,7 @@ package test.wasm.unsafe
 import kotlin.wasm.unsafe.*
 import kotlin.test.*
 
-@OptIn(UnsafeWasmMemoryApi::class)
+@OptIn(UnsafeWasmMemoryApi::class, ComponentModelInternalApi::class)
 class ReallocTest {
     @Test
     fun freshReallocTest() {
