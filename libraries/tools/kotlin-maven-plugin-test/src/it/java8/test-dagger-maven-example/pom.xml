@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+<!--        <kotlin.compiler.jdkHome>${kotlinCompilerJdk}</kotlin.compiler.jdkHome>-->
         <junit.version>4.13.1</junit.version>
         <dagger.version>2.9</dagger.version>
         <main.class>coffee.CoffeeApp</main.class>

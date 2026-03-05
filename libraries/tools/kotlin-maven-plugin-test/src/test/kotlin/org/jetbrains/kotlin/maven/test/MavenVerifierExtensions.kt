@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.maven.test
 import org.apache.maven.shared.verifier.Verifier
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
-import java.io.File
 import java.util.jar.JarFile
 import kotlin.io.path.Path
+import kotlin.io.path.bufferedReader
 import kotlin.io.path.exists
 import kotlin.sequences.forEach
 
@@ -21,7 +21,7 @@ fun Verifier.printLog() {
 }
 
 inline fun Verifier.forEachBuildLogLine(action: (String) -> Unit) {
-    val logFile = basedir.let(::File).resolve(logFileName)
+    val logFile = Path(basedir).resolve(logFileName)
     logFile.bufferedReader().use { reader ->
         reader.lineSequence().forEach(action)
     }
@@ -54,8 +54,8 @@ fun Verifier.assertFileExists(
 
 fun Verifier.assertJarExistsAndNotEmpty(relativePath: String) {
     assertFileExists(relativePath)
-    val jarFile = Path(basedir).resolve(relativePath).toFile()
-    JarFile(jarFile).use { jar ->
+    val jarPath = Path(basedir).resolve(relativePath)
+    JarFile(jarPath.toFile()).use { jar ->
         val hasClassEntries = jar.entries().asSequence().any { it.name.endsWith(".class") }
         assertTrue(hasClassEntries) { "JAR $relativePath contains no .class files" }
     }
