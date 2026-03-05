@@ -1,8 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // ISSUE: KT-54978
 // RENDER_DIAGNOSTIC_ARGUMENTS
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextParameters
 
 // Case 1: Parameters and local variables
 fun f1(x: Int) {
@@ -40,11 +39,11 @@ class Receiver<A>
 val <A> Receiver<A>.hello1: String
     get() = "hello 1"
 
-context(Context<A>)
+context(_: Context<A>)
 val <A> hello2: String
     get() = "hello 2"
 
-context(Context<B>)
+context(_: Context<B>)
 val <A, B> Receiver<A>.hello3: String
     get() = "hello 3"
 
