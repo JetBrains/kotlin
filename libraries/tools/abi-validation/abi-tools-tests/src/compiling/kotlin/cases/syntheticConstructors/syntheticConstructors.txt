@@ -1,3 +1,31 @@
+public final class cases/syntheticConstructors/ExposeInternal {
+	public final fun getText ()Ljava/lang/String;
+}
+
+public final class cases/syntheticConstructors/ExposeInternal$Builder {
+	public fun <init> ()V
+	public final fun build ()Lcases/syntheticConstructors/ExposeInternal;
+}
+
+public final class cases/syntheticConstructors/ExposePrivate {
+	public final fun getText ()Ljava/lang/String;
+}
+
+public final class cases/syntheticConstructors/ExposePrivate$Builder {
+	public fun <init> ()V
+	public final fun build ()Lcases/syntheticConstructors/ExposePrivate;
+}
+
+public final class cases/syntheticConstructors/ExposePrivateMixed {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getText ()Ljava/lang/String;
+}
+
+public final class cases/syntheticConstructors/ExposePrivateMixed$Builder {
+	public fun <init> ()V
+	public final fun build ()Lcases/syntheticConstructors/ExposePrivateMixed;
+}
+
 public final class cases/syntheticConstructors/MixedParameters {
 	public final fun getA ()I
 	public final fun getB ()I

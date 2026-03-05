@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.abi.tools.impl.jvm
 import kotlin.metadata.jvm.*
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.*
+import kotlin.metadata.Visibility
 
 internal data class ClassBinarySignature(
     internal val name: String,
@@ -64,6 +65,7 @@ internal data class MethodBinarySignature(
                 && !isSuspendImplMethod()
                 && !isSyntheticConstructor(classVisibility?.primaryConstructorIsInternal)
                 && !isHiddenJvmOverloads(classVisibility)
+                && !isExposureConstructor(classVisibility)
 
     override fun findMemberVisibility(classVisibility: ClassVisibility?): MemberVisibility? {
         return super.findMemberVisibility(classVisibility)
@@ -93,6 +95,23 @@ internal data class MethodBinarySignature(
         } ?: return false
 
         return !isPublic(kotlinFunction.visibility, isPublishedApi)
+    }
+
+    private fun isExposureConstructor(classVisibility: ClassVisibility?): Boolean {
+        if (classVisibility == null) return false
+
+        if (!access.isSynthetic) return false
+        if (name != "<init>") return false
+        if (!desc.endsWith("Lkotlin/jvm/internal/DefaultConstructorMarker;)V")) return false
+        // skip as it checked in isDummyDefaultConstructor
+        if (desc == "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V") return false
+
+        val searchedDesc = desc.replace("Lkotlin/jvm/internal/DefaultConstructorMarker;)V", ")V")
+        val kotlinConstructor = classVisibility.members.values.firstOrNull { member ->
+            member.member.name == "<init>" && member.member.descriptor == searchedDesc
+        } ?: return false
+
+        return kotlinConstructor.visibility == Visibility.PRIVATE
     }
 
     /**

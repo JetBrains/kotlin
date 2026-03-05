@@ -7,7 +7,6 @@ public abstract class cases/protected/AbstractClass {
 
 public abstract class cases/protected/EnumClass : java/lang/Enum {
 	public static final field A Lcases/protected/EnumClass;
-	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcases/protected/EnumClass;
 	public static fun values ()[Lcases/protected/EnumClass;
