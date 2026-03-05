@@ -219,7 +219,6 @@ val commonCompilerModules = arrayOf(
     ":native:binary-options",
     ":native:kotlin-native-utils",
     ":compiler:build-tools:kotlin-build-statistics",
-    ":compiler:build-tools:kotlin-build-tools-api",
     ":js:js.config",
     ":js:js.frontend.common",
     ":wasm:wasm.config",
@@ -395,6 +394,7 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":kotlin-scripting-compiler",
                 ":kotlin-gradle-statistics",
                 ":jps:jps-common",
+                ":compiler:build-tools:kotlin-build-tools-api",
             ) +
             arrayOf(
                 ":compiler:ir.serialization.native",

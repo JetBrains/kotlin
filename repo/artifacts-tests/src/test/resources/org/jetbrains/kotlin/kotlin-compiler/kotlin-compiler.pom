@@ -56,5 +56,11 @@
       <version>1.8.0</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-build-tools-api</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 </project>

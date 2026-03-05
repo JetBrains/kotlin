@@ -18,7 +18,8 @@ val projects = commonCompilerModules.asList() - excludedCompilerModules + listOf
     ":kotlin-compiler-runner-unshaded",
     ":kotlin-preloader",
     ":daemon-common",
-    ":kotlin-daemon-client"
+    ":kotlin-daemon-client",
+    ":compiler:build-tools:kotlin-build-tools-api",
 )
 
 publishJarsForIde(
