@@ -29,9 +29,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.CompletableFuture
-import org.jetbrains.kotlin.gradle.utils.Future
-import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.tooling.core.MutableExtras
@@ -304,9 +301,6 @@ abstract class KotlinJsProjectExtension(project: Project) :
     fun js(configure: Action<KotlinJsTargetDsl>) = jsInternal {
         configure.execute(this)
     }
-
-    @Deprecated("Use js instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("js(body)"), level = DeprecationLevel.ERROR)
-    open fun target(body: KotlinJsTargetDsl.() -> Unit) = js(body)
 
     @Deprecated(
         "Needed for IDE import using the MPP import mechanism",
