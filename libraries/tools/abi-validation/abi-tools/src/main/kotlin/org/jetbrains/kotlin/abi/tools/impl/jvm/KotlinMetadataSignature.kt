@@ -63,6 +63,7 @@ internal data class MethodBinarySignature(
                 && !isDummyDefaultConstructor()
                 && !isSuspendImplMethod()
                 && !isSyntheticConstructor(classVisibility?.primaryConstructorIsInternal)
+                && !isHiddenJvmOverloads(classVisibility)
 
     override fun findMemberVisibility(classVisibility: ClassVisibility?): MemberVisibility? {
         return super.findMemberVisibility(classVisibility)
@@ -74,6 +75,25 @@ internal data class MethodBinarySignature(
 
     private fun isDummyDefaultConstructor() =
         access.isSynthetic && name == "<init>" && desc == "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V"
+
+    // TODO delete after implementing https://youtrack.jetbrains.com/issue/KT-27254
+    private fun isHiddenJvmOverloads(classVisibility: ClassVisibility?): Boolean {
+        if (classVisibility == null) return false
+
+        // annotated by @JvmOverloads
+        if (annotations.none { it.refersToName("kotlin/jvm/JvmOverloads") }) return false
+        // only method without params
+        if (!jvmMember.descriptor.startsWith("()")) return false
+        // find original Kotlin function
+        val kotlinFunction = classVisibility.members.values.firstOrNull { member ->
+            // method with the same name but with parameters
+            member.member.name == jvmMember.name
+                    && member.member.descriptor.startsWith("(")
+                    && !member.member.descriptor.startsWith("()")
+        } ?: return false
+
+        return !isPublic(kotlinFunction.visibility, isPublishedApi)
+    }
 
     /**
      * A synthetic constructor that is not marked with the ACC_SYNTHETIC flag

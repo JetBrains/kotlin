@@ -38,7 +38,7 @@ internal data class MemberVisibility(
     val propertyAnnotation: PropertyAnnotationHolders? = null
 )
 
-private fun isPublic(visibility: Visibility?, isPublishedApi: Boolean) =
+internal fun isPublic(visibility: Visibility?, isPublishedApi: Boolean) =
     visibility == null
             || visibility == Visibility.PUBLIC
             || visibility == Visibility.PROTECTED
