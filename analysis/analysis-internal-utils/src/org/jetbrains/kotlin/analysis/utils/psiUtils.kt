@@ -11,6 +11,10 @@ import com.intellij.psi.PsiClassOwner
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
+@Deprecated(
+    "Unintentionally exposed implementation detail. Get the 'ClassId' from the Java class symbol instead",
+    level = DeprecationLevel.ERROR
+)
 public val PsiClass.classId: ClassId?
     get() {
         val packageName = (containingFile as? PsiClassOwner)?.packageName ?: return null
@@ -25,8 +29,11 @@ public val PsiClass.classId: ClassId?
         return ClassId(FqName(packageName), FqName(classNames.joinToString(separator = ".")), isLocal = false)
     }
 
+@Deprecated("Unintentionally exposed implementation detail. Do not use", level = DeprecationLevel.ERROR)
 public fun PsiClass.isLocalClass(): Boolean {
     val qualifiedName = this.qualifiedName ?: return true
+
+    @Suppress("DEPRECATION_ERROR")
     val classId = classId ?: return true
 
     /*

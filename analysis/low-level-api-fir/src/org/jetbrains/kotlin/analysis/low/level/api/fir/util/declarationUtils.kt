@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import com.intellij.psi.PsiAnonymousClass
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
@@ -20,7 +22,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
-import org.jetbrains.kotlin.analysis.utils.classId
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -338,3 +340,39 @@ internal fun PsiClass.classIdOrError(): ClassId =
             )
             withEntry("qualifiedName", qualifiedName)
         }
+
+@KaImplementationDetail
+val PsiClass.classId: ClassId?
+    get() {
+        val packageName = (containingFile as? PsiClassOwner)?.packageName ?: return null
+        if (qualifiedName == null) return null
+
+        val classesChain = generateSequence(this) { it.containingClass }
+        if (classesChain.any { it is PsiAnonymousClass }) return null
+
+        val classNames = classesChain.mapTo(mutableListOf()) { it.name }.asReversed()
+        if (classNames.any { it == null }) return null
+
+        return ClassId(FqName(packageName), FqName(classNames.joinToString(separator = ".")), isLocal = false)
+    }
+
+@KaImplementationDetail
+fun PsiClass.isLocalClass(): Boolean {
+    val qualifiedName = this.qualifiedName ?: return true
+    val classId = classId ?: return true
+
+    /*
+    For a local class:
+    qualifiedName: javax.swing.JSlider$1SmartHashtable.LabelUIResource
+    classId.asFqNameString(): javax.swing.JSlider.SmartHashtable.LabelUIResource
+
+    For a nested class with:
+    qualifiedName: pckg.A$B
+    classId.asFqNameString(): pckg.A.B
+
+    For a class with $ in name:
+    qualifiedName: pckg.With$InName
+    classId.asFqNameString(): pckg.With$InName
+     */
+    return classId.asFqNameString().replace('$', '.') != qualifiedName.replace('$', '.')
+}
