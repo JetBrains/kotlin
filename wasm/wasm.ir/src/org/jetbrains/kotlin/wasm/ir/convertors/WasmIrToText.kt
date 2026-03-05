@@ -158,6 +158,14 @@ class WasmIrToText(
         }
     }
 
+    private fun appendContHandle(handle: WasmImmediate.ContHandle) {
+        sameLineList("on") {
+            handle.immediates.forEach {
+                appendImmediate(it)
+            }
+        }
+    }
+
     private fun appendImmediate(x: WasmImmediate) {
         when (x) {
             is WasmImmediate.ConstU8 -> appendElement(x.value.toString().lowercase())
@@ -197,7 +205,7 @@ class WasmIrToText(
 
             is WasmImmediate.Catch -> appendCatch(x)
 
-            is WasmImmediate.ContHandle -> TODO()
+            is WasmImmediate.ContHandle -> appendContHandle(x)
         }
     }
 
@@ -279,6 +287,15 @@ class WasmIrToText(
         }
     }
 
+    private fun appendContType(type: WasmContType) {
+        newLineList("type") {
+            appendModuleFieldReference(type)
+            sameLineList("cont") {
+                appendModuleFieldReference(type.funType.owner)
+            }
+        }
+    }
+
     private fun appendWasmTypeList(typeList: List<WasmTypeDeclaration>) {
         typeList.forEach { type ->
             when (type) {
@@ -288,7 +305,7 @@ class WasmIrToText(
                     appendArrayTypeDeclaration(type)
                 is WasmFunctionType ->
                     appendFunctionTypeDeclaration(type)
-                is WasmContType -> TODO()
+                is WasmContType -> appendContType(type)
             }
         }
     }

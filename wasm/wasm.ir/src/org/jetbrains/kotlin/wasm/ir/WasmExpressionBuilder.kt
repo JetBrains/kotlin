@@ -352,6 +352,14 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         buildInstr(WasmOp.RESUME_THROW, location, WasmImmediate.HeapType(contType), WasmImmediate.TagIdx(exceptionTag), contHandle)
     }
 
+    fun buildResumeThrowRef(
+        contType: WasmHeapType,
+        contHandle: WasmImmediate.ContHandle,
+        location: SourceLocation
+    ) {
+        buildInstr(WasmOp.RESUME_THROW_REF, location, WasmImmediate.HeapType(contType), contHandle)
+    }
+
     inline fun commentPreviousInstr(text: () -> String) {
         if (!skipCommentInstructions) {
             buildInstr(

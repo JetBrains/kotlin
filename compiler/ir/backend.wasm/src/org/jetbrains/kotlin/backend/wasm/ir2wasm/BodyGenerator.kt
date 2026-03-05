@@ -769,10 +769,12 @@ class BodyGenerator(
             }
         }
 
-        call.arguments.forEachIndexed { i, arg ->
-            val expectedType = call.symbol.owner.parameters[i].type
-            generateWithExpectedType(arg!!, expectedType)
+        if (call.symbol == wasmSymbols.resumeWithIntrinsic || call.symbol == wasmSymbols.resumeThrowIntrinsic) {
+            tryToGenerateIntrinsicCall(call, call.symbol.owner)
+            return
         }
+
+        call.arguments.forEach { generateExpression(it!!) }
 
         val callFunction = call.symbol.owner
 
@@ -1202,6 +1204,12 @@ class BodyGenerator(
                 body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicSuspendResult), location)
             }
 
+            wasmSymbols.nullable_contref_intrinsic -> {
+                val wasmToType = wasmFileCodegenContext.referenceContType(1)
+                val type = WasmImmediate.HeapType(WasmHeapType.Type(wasmToType))
+                body.buildInstr(WasmOp.REF_NULL, location, type)
+            }
+
             wasmSymbols.resumeWithIntrinsic -> {
                 val wasmContinuation = functionContext.referenceLocal(0)
 
@@ -1442,18 +1450,14 @@ class BodyGenerator(
 
         val expectedClassErased = expectedType.getRuntimeClass(irBuiltIns)
 
+        if (isBuiltInWasmRefType(actualType)) return
+
         // TYPE -> EXTERNAL -> TRUE
         if (expectedClassErased.isExternal) return
 
         val actualClassErased = actualType.getRuntimeClass(irBuiltIns)
-        val expectedTypeErased =
-            if (backendContext.inlineClassesUtils.isClassInlineLike(expectedClassErased))
-                backendContext.inlineClassesUtils.getInlineClassUnderlyingType(expectedClassErased)
-            else expectedClassErased.defaultType
-        val actualTypeErased =
-            if (backendContext.inlineClassesUtils.isClassInlineLike(actualClassErased))
-                backendContext.inlineClassesUtils.getInlineClassUnderlyingType(actualClassErased)
-            else actualClassErased.defaultType
+        val expectedTypeErased = expectedClassErased.defaultType
+        val actualTypeErased = actualClassErased.defaultType
 
         // TYPE -> TYPE -> TRUE
         if (expectedTypeErased == actualTypeErased) return
