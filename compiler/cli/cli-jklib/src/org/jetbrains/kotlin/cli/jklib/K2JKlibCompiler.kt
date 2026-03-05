@@ -281,7 +281,11 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         klibFactories = KlibMetadataFactories({ builtIns }, JavaFlexibleTypeDeserializer)
         val trace = BindingTraceContext(projectContext.project)
 
-        val sortedDependencies = loadLibraries(klibFiles, messageCollector)
+        val allDependencies = CommonKLibResolver.resolve(klibFiles, configuration.getLogger())
+        val moduleDependencies =
+            allDependencies.getFullResolvedList().associate { klib -> klib.library to klib.resolvedDependencies.map { d -> d.library } }
+                .toMap()
+        val sortedDependencies = sortDependencies(moduleDependencies)
 
         val jarDepsModuleDescriptor = createJarDependenciesModuleDescriptor(projectEnvironment, projectContext)
         val descriptors = sortedDependencies.map { getModuleDescriptor(it) } + jarDepsModuleDescriptor
@@ -509,7 +513,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 
             val klibFiles = configuration.getList(JVMConfigurationKeys.KLIB_PATHS)
 
-            val resolvedLibraries = loadLibraries(klibFiles, collector).map { KotlinResolvedLibraryImpl(it) }
+            val resolvedLibraries = klibFiles.map { KotlinResolvedLibraryImpl(resolveSingleFileKlib(File(it), collector)) }
             val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
             val ltFiles = groupedSources.let { it.commonSources + it.platformSources }.toList()
 
@@ -618,12 +622,12 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         return ExitCode.OK
     }
 
-    private fun loadLibraries(klibFiles: List<String>, collector: MessageCollector): List<KotlinLibrary> {
-        val loadingResult = KlibLoader { libraryPaths(klibFiles) }.load()
-        loadingResult.reportLoadingProblemsIfAny { _, message ->
+    private fun resolveSingleFileKlib(file: File, collector: MessageCollector): KotlinLibrary {
+        val klibLoadingResult = KlibLoader { libraryPaths(file.path) }.load()
+        klibLoadingResult.reportLoadingProblemsIfAny { _, message ->
             collector.report(ERROR, message)
         }
-        return loadingResult.librariesStdlibFirst
+        return klibLoadingResult.librariesStdlibFirst.single()
     }
 
     override fun executableScriptFileName(): String = "kotlinc"
