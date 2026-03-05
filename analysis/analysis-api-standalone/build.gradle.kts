@@ -39,7 +39,10 @@ kotlin {
     explicitApi()
 
     compilerOptions {
-        optIn.add("org.jetbrains.kotlin.analysis.api.KaPlatformInterface")
+        optIn.addAll(
+            "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+            "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+        )
     }
 
     @OptIn(ExperimentalAbiValidation::class)

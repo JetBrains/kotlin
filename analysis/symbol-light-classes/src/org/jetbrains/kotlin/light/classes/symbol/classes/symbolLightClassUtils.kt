@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -448,7 +447,7 @@ internal fun createField(
 
 private fun hasBackingField(property: KaPropertySymbol): Boolean {
     if (property is KaSyntheticJavaPropertySymbol) return true
-    requireIsInstance<KaKotlinPropertySymbol>(property)
+    require(property is KaKotlinPropertySymbol) { "Expected ${KaKotlinPropertySymbol::class} instead of ${property::class} for $property" }
 
     if (property.origin.cannotHasBackingField() || property.isStatic) return false
     if (property.isLateInit || property.isDelegatedProperty || property.isFromPrimaryConstructor) return true

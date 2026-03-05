@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.util
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 @KaImplementationDetail
 fun unexpectedElementError(elementName: String, element: Any?): Nothing {
@@ -18,4 +20,22 @@ fun unexpectedElementError(elementName: String, element: Any?): Nothing {
 @KaImplementationDetail
 inline fun <reified ELEMENT> unexpectedElementError(element: Any?): Nothing {
     unexpectedElementError(ELEMENT::class.simpleName ?: ELEMENT::class.java.name, element)
+}
+
+@KaImplementationDetail
+@OptIn(ExperimentalContracts::class)
+inline fun <reified T> requireIsInstance(obj: Any) {
+    contract {
+        returns() implies (obj is T)
+    }
+    require(obj is T) { "Expected ${T::class} instead of ${obj::class} for $obj" }
+}
+
+@KaImplementationDetail
+@OptIn(ExperimentalContracts::class)
+inline fun <reified T> checkIsInstance(obj: Any) {
+    contract {
+        returns() implies (obj is T)
+    }
+    check(obj is T) { "Expected ${T::class} instead of ${obj::class} for $obj" }
 }
