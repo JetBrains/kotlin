@@ -1,2 +1,0 @@
-KtCallExpression(134,137): 'c()'
-  null

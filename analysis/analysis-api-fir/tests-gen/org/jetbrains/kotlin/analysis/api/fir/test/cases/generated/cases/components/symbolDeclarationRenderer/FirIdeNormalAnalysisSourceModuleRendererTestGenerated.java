@@ -87,12 +87,6 @@ public class FirIdeNormalAnalysisSourceModuleRendererTestGenerated extends Abstr
   }
 
   @Test
-  @TestMetadata("contextReceiver.kt")
-  public void testContextReceiver() {
-    run("contextReceiver.kt");
-  }
-
-  @Test
   @TestMetadata("delegates.kt")
   public void testDelegates() {
     run("delegates.kt");

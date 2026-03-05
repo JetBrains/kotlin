@@ -659,12 +659,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
-    @TestMetadata("afterContextReceiverSmartCast.kt")
-    public void testAfterContextReceiverSmartCast() {
-      run("afterContextReceiverSmartCast.kt");
-    }
-
-    @Test
     @TestMetadata("afterSmartCastFunction.kt")
     public void testAfterSmartCastFunction() {
       run("afterSmartCastFunction.kt");
@@ -688,39 +682,15 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
-    @TestMetadata("anonymousFunctionContextReceiver2.kt")
-    public void testAnonymousFunctionContextReceiver2() {
-      run("anonymousFunctionContextReceiver2.kt");
-    }
-
-    @Test
-    @TestMetadata("anonymousFunctionContextReceiver3.kt")
-    public void testAnonymousFunctionContextReceiver3() {
-      run("anonymousFunctionContextReceiver3.kt");
-    }
-
-    @Test
     @TestMetadata("anonymousFunctionReceiverParameterWithContextParameter.kt")
     public void testAnonymousFunctionReceiverParameterWithContextParameter() {
       run("anonymousFunctionReceiverParameterWithContextParameter.kt");
     }
 
     @Test
-    @TestMetadata("anonymousFunctionReceiverParameterWithContextReceiver.kt")
-    public void testAnonymousFunctionReceiverParameterWithContextReceiver() {
-      run("anonymousFunctionReceiverParameterWithContextReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("anonymousFunctionTypeParameterWithContextParameter.kt")
     public void testAnonymousFunctionTypeParameterWithContextParameter() {
       run("anonymousFunctionTypeParameterWithContextParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("anonymousFunctionTypeParameterWithContextReceiver.kt")
-    public void testAnonymousFunctionTypeParameterWithContextReceiver() {
-      run("anonymousFunctionTypeParameterWithContextReceiver.kt");
     }
 
     @Test
@@ -733,18 +703,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("anonymousFunctionValueParameterWithContextParameterWithDefaultValue.kt")
     public void testAnonymousFunctionValueParameterWithContextParameterWithDefaultValue() {
       run("anonymousFunctionValueParameterWithContextParameterWithDefaultValue.kt");
-    }
-
-    @Test
-    @TestMetadata("anonymousFunctionValueParameterWithContextReceiver.kt")
-    public void testAnonymousFunctionValueParameterWithContextReceiver() {
-      run("anonymousFunctionValueParameterWithContextReceiver.kt");
-    }
-
-    @Test
-    @TestMetadata("anonymousFunctionValueParameterWithContextReceiverWithDefaultValue.kt")
-    public void testAnonymousFunctionValueParameterWithContextReceiverWithDefaultValue() {
-      run("anonymousFunctionValueParameterWithContextReceiverWithDefaultValue.kt");
     }
 
     @Test
@@ -766,21 +724,9 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
-    @TestMetadata("contextReceiverSmartCast.kt")
-    public void testContextReceiverSmartCast() {
-      run("contextReceiverSmartCast.kt");
-    }
-
-    @Test
     @TestMetadata("functionContextParameter.kt")
     public void testFunctionContextParameter() {
       run("functionContextParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("functionContextReceiver.kt")
-    public void testFunctionContextReceiver() {
-      run("functionContextReceiver.kt");
     }
 
     @Test
@@ -814,12 +760,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
-    @TestMetadata("memberLevelFunctionContextReceiver.kt")
-    public void testMemberLevelFunctionContextReceiver() {
-      run("memberLevelFunctionContextReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("memberLevelProperty.kt")
     public void testMemberLevelProperty() {
       run("memberLevelProperty.kt");
@@ -835,18 +775,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("memberLevelPropertyAccessor.kt")
     public void testMemberLevelPropertyAccessor() {
       run("memberLevelPropertyAccessor.kt");
-    }
-
-    @Test
-    @TestMetadata("memberLevelPropertyAccessorContextReceiver.kt")
-    public void testMemberLevelPropertyAccessorContextReceiver() {
-      run("memberLevelPropertyAccessorContextReceiver.kt");
-    }
-
-    @Test
-    @TestMetadata("memberLevelPropertyContextReceiver.kt")
-    public void testMemberLevelPropertyContextReceiver() {
-      run("memberLevelPropertyContextReceiver.kt");
     }
 
     @Test
@@ -910,18 +838,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
-    @TestMetadata("propertyContextReceiver.kt")
-    public void testPropertyContextReceiver() {
-      run("propertyContextReceiver.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyContextReceiverWithDefaultAccessor.kt")
-    public void testPropertyContextReceiverWithDefaultAccessor() {
-      run("propertyContextReceiverWithDefaultAccessor.kt");
-    }
-
-    @Test
     @TestMetadata("propertyReceiverParameterWithContextParameter.kt")
     public void testPropertyReceiverParameterWithContextParameter() {
       run("propertyReceiverParameterWithContextParameter.kt");
@@ -970,12 +886,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
-    @TestMetadata("topLevelFunctionContextReceiver.kt")
-    public void testTopLevelFunctionContextReceiver() {
-      run("topLevelFunctionContextReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("topLevelProperty.kt")
     public void testTopLevelProperty() {
       run("topLevelProperty.kt");
@@ -985,12 +895,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("topLevelProperty2.kt")
     public void testTopLevelProperty2() {
       run("topLevelProperty2.kt");
-    }
-
-    @Test
-    @TestMetadata("topLevelPropertyContextReceiver.kt")
-    public void testTopLevelPropertyContextReceiver() {
-      run("topLevelPropertyContextReceiver.kt");
     }
 
     @Test

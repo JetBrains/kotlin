@@ -87,12 +87,6 @@ public class FirIdeDependentAnalysisSourceModuleRendererTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("contextReceiver.kt")
-  public void testContextReceiver() {
-    run("contextReceiver.kt");
-  }
-
-  @Test
   @TestMetadata("delegates.kt")
   public void testDelegates() {
     run("delegates.kt");

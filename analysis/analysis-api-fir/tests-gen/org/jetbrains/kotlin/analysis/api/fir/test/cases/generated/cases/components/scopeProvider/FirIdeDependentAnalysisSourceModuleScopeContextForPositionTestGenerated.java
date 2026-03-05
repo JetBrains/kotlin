@@ -227,12 +227,6 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     }
 
     @Test
-    @TestMetadata("afterContextReceiverSmartCast.kt")
-    public void testAfterContextReceiverSmartCast() {
-      run("afterContextReceiverSmartCast.kt");
-    }
-
-    @Test
     @TestMetadata("afterSmartCastFunction.kt")
     public void testAfterSmartCastFunction() {
       run("afterSmartCastFunction.kt");
@@ -256,39 +250,15 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     }
 
     @Test
-    @TestMetadata("anonymousFunctionContextReceiver2.kt")
-    public void testAnonymousFunctionContextReceiver2() {
-      run("anonymousFunctionContextReceiver2.kt");
-    }
-
-    @Test
-    @TestMetadata("anonymousFunctionContextReceiver3.kt")
-    public void testAnonymousFunctionContextReceiver3() {
-      run("anonymousFunctionContextReceiver3.kt");
-    }
-
-    @Test
     @TestMetadata("anonymousFunctionReceiverParameterWithContextParameter.kt")
     public void testAnonymousFunctionReceiverParameterWithContextParameter() {
       run("anonymousFunctionReceiverParameterWithContextParameter.kt");
     }
 
     @Test
-    @TestMetadata("anonymousFunctionReceiverParameterWithContextReceiver.kt")
-    public void testAnonymousFunctionReceiverParameterWithContextReceiver() {
-      run("anonymousFunctionReceiverParameterWithContextReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("anonymousFunctionTypeParameterWithContextParameter.kt")
     public void testAnonymousFunctionTypeParameterWithContextParameter() {
       run("anonymousFunctionTypeParameterWithContextParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("anonymousFunctionTypeParameterWithContextReceiver.kt")
-    public void testAnonymousFunctionTypeParameterWithContextReceiver() {
-      run("anonymousFunctionTypeParameterWithContextReceiver.kt");
     }
 
     @Test
@@ -301,18 +271,6 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     @TestMetadata("anonymousFunctionValueParameterWithContextParameterWithDefaultValue.kt")
     public void testAnonymousFunctionValueParameterWithContextParameterWithDefaultValue() {
       run("anonymousFunctionValueParameterWithContextParameterWithDefaultValue.kt");
-    }
-
-    @Test
-    @TestMetadata("anonymousFunctionValueParameterWithContextReceiver.kt")
-    public void testAnonymousFunctionValueParameterWithContextReceiver() {
-      run("anonymousFunctionValueParameterWithContextReceiver.kt");
-    }
-
-    @Test
-    @TestMetadata("anonymousFunctionValueParameterWithContextReceiverWithDefaultValue.kt")
-    public void testAnonymousFunctionValueParameterWithContextReceiverWithDefaultValue() {
-      run("anonymousFunctionValueParameterWithContextReceiverWithDefaultValue.kt");
     }
 
     @Test
@@ -334,21 +292,9 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     }
 
     @Test
-    @TestMetadata("contextReceiverSmartCast.kt")
-    public void testContextReceiverSmartCast() {
-      run("contextReceiverSmartCast.kt");
-    }
-
-    @Test
     @TestMetadata("functionContextParameter.kt")
     public void testFunctionContextParameter() {
       run("functionContextParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("functionContextReceiver.kt")
-    public void testFunctionContextReceiver() {
-      run("functionContextReceiver.kt");
     }
 
     @Test
@@ -358,21 +304,9 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     }
 
     @Test
-    @TestMetadata("functionReceiverParameterWithContextReceiver.kt")
-    public void testFunctionReceiverParameterWithContextReceiver() {
-      run("functionReceiverParameterWithContextReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("functionTypeParameterWithContextParameter.kt")
     public void testFunctionTypeParameterWithContextParameter() {
       run("functionTypeParameterWithContextParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("functionTypeParameterWithContextReceiver.kt")
-    public void testFunctionTypeParameterWithContextReceiver() {
-      run("functionTypeParameterWithContextReceiver.kt");
     }
 
     @Test
@@ -388,27 +322,9 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     }
 
     @Test
-    @TestMetadata("functionValueParameterWithContextReceiver.kt")
-    public void testFunctionValueParameterWithContextReceiver() {
-      run("functionValueParameterWithContextReceiver.kt");
-    }
-
-    @Test
-    @TestMetadata("functionValueParameterWithContextReceiverWithDefaultValue.kt")
-    public void testFunctionValueParameterWithContextReceiverWithDefaultValue() {
-      run("functionValueParameterWithContextReceiverWithDefaultValue.kt");
-    }
-
-    @Test
     @TestMetadata("functionWithContextParameter.kt")
     public void testFunctionWithContextParameter() {
       run("functionWithContextParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("functionWithContextReceiver.kt")
-    public void testFunctionWithContextReceiver() {
-      run("functionWithContextReceiver.kt");
     }
 
     @Test
@@ -421,12 +337,6 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     @TestMetadata("memberLevelFunction2.kt")
     public void testMemberLevelFunction2() {
       run("memberLevelFunction2.kt");
-    }
-
-    @Test
-    @TestMetadata("memberLevelFunctionContextReceiver.kt")
-    public void testMemberLevelFunctionContextReceiver() {
-      run("memberLevelFunctionContextReceiver.kt");
     }
 
     @Test
@@ -445,18 +355,6 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     @TestMetadata("memberLevelPropertyAccessor.kt")
     public void testMemberLevelPropertyAccessor() {
       run("memberLevelPropertyAccessor.kt");
-    }
-
-    @Test
-    @TestMetadata("memberLevelPropertyAccessorContextReceiver.kt")
-    public void testMemberLevelPropertyAccessorContextReceiver() {
-      run("memberLevelPropertyAccessorContextReceiver.kt");
-    }
-
-    @Test
-    @TestMetadata("memberLevelPropertyContextReceiver.kt")
-    public void testMemberLevelPropertyContextReceiver() {
-      run("memberLevelPropertyContextReceiver.kt");
     }
 
     @Test
@@ -514,21 +412,9 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     }
 
     @Test
-    @TestMetadata("propertyContextReceiver.kt")
-    public void testPropertyContextReceiver() {
-      run("propertyContextReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("propertyReceiverParameterWithContextParameter.kt")
     public void testPropertyReceiverParameterWithContextParameter() {
       run("propertyReceiverParameterWithContextParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyReceiverParameterWithContextReceiver.kt")
-    public void testPropertyReceiverParameterWithContextReceiver() {
-      run("propertyReceiverParameterWithContextReceiver.kt");
     }
 
     @Test
@@ -538,21 +424,9 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     }
 
     @Test
-    @TestMetadata("propertyTypeParameterWithContextReceiver.kt")
-    public void testPropertyTypeParameterWithContextReceiver() {
-      run("propertyTypeParameterWithContextReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("propertyWithContextParameter.kt")
     public void testPropertyWithContextParameter() {
       run("propertyWithContextParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyWithContextReceiver.kt")
-    public void testPropertyWithContextReceiver() {
-      run("propertyWithContextReceiver.kt");
     }
 
     @Test
@@ -580,12 +454,6 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     }
 
     @Test
-    @TestMetadata("topLevelFunctionContextReceiver.kt")
-    public void testTopLevelFunctionContextReceiver() {
-      run("topLevelFunctionContextReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("topLevelProperty.kt")
     public void testTopLevelProperty() {
       run("topLevelProperty.kt");
@@ -595,12 +463,6 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     @TestMetadata("topLevelProperty2.kt")
     public void testTopLevelProperty2() {
       run("topLevelProperty2.kt");
-    }
-
-    @Test
-    @TestMetadata("topLevelPropertyContextReceiver.kt")
-    public void testTopLevelPropertyContextReceiver() {
-      run("topLevelPropertyContextReceiver.kt");
     }
 
     @Test

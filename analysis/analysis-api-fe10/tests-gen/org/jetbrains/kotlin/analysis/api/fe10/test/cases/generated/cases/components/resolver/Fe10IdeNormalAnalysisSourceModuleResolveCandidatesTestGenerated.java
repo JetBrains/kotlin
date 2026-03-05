@@ -2366,18 +2366,6 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
     }
 
     @Test
-    @TestMetadata("callableReferenceOnFunctionWithContextReceivers.kt")
-    public void testCallableReferenceOnFunctionWithContextReceivers() {
-      run("callableReferenceOnFunctionWithContextReceivers.kt");
-    }
-
-    @Test
-    @TestMetadata("callableReferenceOnFunctionWithContextReceivers_rhs.kt")
-    public void testCallableReferenceOnFunctionWithContextReceivers_rhs() {
-      run("callableReferenceOnFunctionWithContextReceivers_rhs.kt");
-    }
-
-    @Test
     @TestMetadata("callableReferenceOnPropertyWithContextParameters.kt")
     public void testCallableReferenceOnPropertyWithContextParameters() {
       run("callableReferenceOnPropertyWithContextParameters.kt");
@@ -2390,69 +2378,9 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
     }
 
     @Test
-    @TestMetadata("callableReferenceOnPropertyWithContextReceivers.kt")
-    public void testCallableReferenceOnPropertyWithContextReceivers() {
-      run("callableReferenceOnPropertyWithContextReceivers.kt");
-    }
-
-    @Test
-    @TestMetadata("callableReferenceOnPropertyWithContextReceivers_rhs.kt")
-    public void testCallableReferenceOnPropertyWithContextReceivers_rhs() {
-      run("callableReferenceOnPropertyWithContextReceivers_rhs.kt");
-    }
-
-    @Test
     @TestMetadata("functionDeclarationSiteSubstitution.kt")
     public void testFunctionDeclarationSiteSubstitution() {
       run("functionDeclarationSiteSubstitution.kt");
-    }
-
-    @Test
-    @TestMetadata("functionFromContextReceiverFromClass.kt")
-    public void testFunctionFromContextReceiverFromClass() {
-      run("functionFromContextReceiverFromClass.kt");
-    }
-
-    @Test
-    @TestMetadata("functionFromContextReceiverFromComplexCase.kt")
-    public void testFunctionFromContextReceiverFromComplexCase() {
-      run("functionFromContextReceiverFromComplexCase.kt");
-    }
-
-    @Test
-    @TestMetadata("functionFromContextReceiverFromComplexCase2.kt")
-    public void testFunctionFromContextReceiverFromComplexCase2() {
-      run("functionFromContextReceiverFromComplexCase2.kt");
-    }
-
-    @Test
-    @TestMetadata("functionFromContextReceiverFromFunction.kt")
-    public void testFunctionFromContextReceiverFromFunction() {
-      run("functionFromContextReceiverFromFunction.kt");
-    }
-
-    @Test
-    @TestMetadata("functionFromContextReceiverFromFunctionComplexCase.kt")
-    public void testFunctionFromContextReceiverFromFunctionComplexCase() {
-      run("functionFromContextReceiverFromFunctionComplexCase.kt");
-    }
-
-    @Test
-    @TestMetadata("functionFromContextReceiverFromFunctionComplexCaseWithReceiver.kt")
-    public void testFunctionFromContextReceiverFromFunctionComplexCaseWithReceiver() {
-      run("functionFromContextReceiverFromFunctionComplexCaseWithReceiver.kt");
-    }
-
-    @Test
-    @TestMetadata("functionFromContextReceiverFromProperty.kt")
-    public void testFunctionFromContextReceiverFromProperty() {
-      run("functionFromContextReceiverFromProperty.kt");
-    }
-
-    @Test
-    @TestMetadata("functionFromContextReceiverFromProperty2.kt")
-    public void testFunctionFromContextReceiverFromProperty2() {
-      run("functionFromContextReceiverFromProperty2.kt");
     }
 
     @Test
