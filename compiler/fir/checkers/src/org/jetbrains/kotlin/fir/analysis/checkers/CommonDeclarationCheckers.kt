@@ -53,6 +53,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirReturnValueOverrideChecker,
         FirImplicitReturnTypeAnnotationMissingDependencyChecker,
         FirCoroutineContextAsContextParameterDeclarationChecker,
+        FirCompanionExtensionChecker,
     )
 
     override val functionCheckers: Set<FirFunctionChecker> = setOf(

@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +CompanionBlocksAndExtensions
 class C {
     fun x() {}
     val y = 1

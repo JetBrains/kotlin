@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ForbidUselessTypeArgumentsIn25
+// LANGUAGE: +ForbidUselessTypeArgumentsIn25 +CompanionBlocksAndExtensions
 class C<T>
 
 typealias TA = C<String>
