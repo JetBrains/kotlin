@@ -580,4 +580,20 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
       runTest("compiler/testData/codegen/boxWasmJsInterop/escapedIdentifiers/topLevelLocalVariableMangling.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/boxWasmJsInterop/wasmJsStringBuiltins")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WasmJsStringBuiltins {
+    @Test
+    public void testAllFilesPresentInWasmJsStringBuiltins() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop/wasmJsStringBuiltins"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("builtins.kt")
+    public void testBuiltins() {
+      runTest("compiler/testData/codegen/boxWasmJsInterop/wasmJsStringBuiltins/builtins.kt");
+    }
+  }
 }
