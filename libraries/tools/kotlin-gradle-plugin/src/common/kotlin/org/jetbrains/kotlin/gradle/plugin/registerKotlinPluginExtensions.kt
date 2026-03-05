@@ -195,6 +195,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         if (isMultiplatform) {
             register(project, NativeVersionChecker)
             register(project, SupportedNativeHostChecker)
+            register(project, DeprecatedNativeHostChecker)
             register(project, MultipleSourceSetRootsInCompilationChecker)
             register(project, SwiftExportModuleNameChecker)
             register(project, CinteropCrossCompilationChecker)

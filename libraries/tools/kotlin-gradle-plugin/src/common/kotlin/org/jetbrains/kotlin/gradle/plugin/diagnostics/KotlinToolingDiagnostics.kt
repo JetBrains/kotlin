@@ -412,6 +412,20 @@ internal object KotlinToolingDiagnostics {
         )
     }
 
+    object DeprecatedNativeHostDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
+        operator fun invoke(hostName: String) = build {
+            title("Deprecated Kotlin/Native Host")
+                .description {
+                    "The current host platform '$hostName' is deprecated and will be removed in a future Kotlin release. " +
+                            "The Kotlin/Native compiler will no longer be distributed for this host."
+                }
+                .solution("Migrate your build to a non-deprecated supported host platform for Kotlin/Native.")
+                .documentationLink(URI("https://kotl.in/native-targets-tiers")) { url ->
+                    "Learn more about Kotlin/Native target support and migration: $url"
+                }
+        }
+    }
+
     object CommonMainOrTestWithDependsOnDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(suffix: String) = buildDiagnostic(
             title = "Invalid `dependsOn` Configuration in Common Source Set",
