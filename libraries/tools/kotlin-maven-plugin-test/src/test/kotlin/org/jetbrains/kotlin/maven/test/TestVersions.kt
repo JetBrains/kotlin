@@ -24,7 +24,7 @@ interface TestVersions {
             const val MAVEN_3_9_12 = "3.9.12"
             const val MAVEN_3_8_9 = "3.8.9"
             const val MAVEN_3_6_3 = "3.6.3"
-            const val MAVEN_4_0_0_RC4 = "4.0.0-rc-4"
+            const val MAVEN_4_0_0_RC5 = "4.0.0-rc-5"
 
             /**
              * Make sure it matches with`kotlin-project/pom.xml` -> `prerequisites` -> `maven`

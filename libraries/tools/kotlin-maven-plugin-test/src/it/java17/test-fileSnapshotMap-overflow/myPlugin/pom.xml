@@ -34,4 +34,16 @@
       <version>${maven.version}</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <configuration>
+          <goalPrefix>add-many-source-files</goalPrefix>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

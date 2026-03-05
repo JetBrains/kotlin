@@ -20,7 +20,6 @@ class MavenTestExecutionContext(
     val sharedMavenLocal: Path,
     val kotlinVersion: String,
     val kotlinBuildRepo: Path,
-    val verifyCommonBshLocation: Path,
 ) {
     fun getJavaHomeString(version: TestVersions.Java) = jdkProvider
         .getJavaHome(version)
@@ -81,11 +80,6 @@ fun createMavenTestExecutionContext(
              By default it is '{kotlinProjectDir}/build/repo'
         """.trimIndent())
 
-    val verifyCommonBshLocation = configProvider.get(
-        "kotlin.it.verify-common.bsh",
-        defaultValue = "${System.getProperty("user.dir")}/verify-common.bsh"
-    ) ?: error("kotlin.it.verify-common.bsh system property is not set")
-
     return MavenTestExecutionContext(
         jdkProvider = jdkProvider,
         testProjectsDir = Path(testProjectsDir),
@@ -93,6 +87,5 @@ fun createMavenTestExecutionContext(
         sharedMavenLocal = Path(mavenRepoLocal),
         kotlinVersion = kotlinVersion,
         kotlinBuildRepo = Path(kotlinBuildRepo),
-        verifyCommonBshLocation = Path(verifyCommonBshLocation),
     )
 }

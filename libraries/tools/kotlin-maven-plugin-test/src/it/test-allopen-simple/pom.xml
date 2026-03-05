@@ -41,7 +41,6 @@
             </plugins>
         </pluginManagement>
 
-        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <plugins>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -49,18 +48,30 @@
                 <version>${kotlin.version}</version>
                 <executions>
                     <execution>
-                        <id>compile</id>
-                        <phase>process-sources</phase>
+                        <id>kotlin-compile</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>src/main/kotlin</sourceDir>
+                                <sourceDir>src/main/java</sourceDir>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                     <execution>
-                        <id>test-compile</id>
-                        <phase>process-test-sources</phase>
+                        <id>kotlin-test-compile</id>
+                        <phase>test-compile</phase>
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>src/test/kotlin</sourceDir>
+                                <sourceDir>src/test/java</sourceDir>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                 </executions>
 
@@ -81,6 +92,35 @@
                         <version>${kotlin.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+
+                    <execution>
+                        <id>java-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>java-test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

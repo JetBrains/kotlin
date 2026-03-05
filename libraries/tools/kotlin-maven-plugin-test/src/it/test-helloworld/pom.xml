@@ -10,9 +10,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.14.3</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -27,7 +28,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
+                    <version>3.15.0</version>
                     <configuration>
                         <source>1.8</source>
                         <target>1.8</target>
@@ -36,30 +37,80 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>2.1.2</version>
+                    <version>3.4.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.5.3</version>
                 </plugin>
             </plugins>
         </pluginManagement>
 
-        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <plugins>
             <plugin>
-                <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
                 <executions>
                     <execution>
-                        <id>compile</id>
-                        <phase>process-sources</phase>
+                        <id>kotlin-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>src/main/kotlin</sourceDir>
+                                <!-- Ensure Kotlin code can reference Java code -->
+                                <sourceDir>src/main/java</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>kotlin-test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>src/test/kotlin</sourceDir>
+                                <sourceDir>src/test/java</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Maven compiler plugin configuration -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <!-- Disable default executions -->
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+
+                    <!-- Define custom executions -->
+                    <execution>
+                        <id>java-compile</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>test-compile</id>
-                        <phase>process-test-sources</phase>
+                        <id>java-test-compile</id>
+                        <phase>test-compile</phase>
                         <goals>
-                            <goal>test-compile</goal>
+                            <goal>testCompile</goal>
                         </goals>
                     </execution>
                 </executions>

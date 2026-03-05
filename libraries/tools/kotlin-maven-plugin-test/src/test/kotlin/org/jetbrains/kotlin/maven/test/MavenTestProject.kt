@@ -5,15 +5,9 @@
 
 package org.jetbrains.kotlin.maven.test
 
-import bsh.Interpreter
-import groovy.lang.Binding
-import groovy.util.GroovyScriptEngine
 import org.apache.maven.shared.verifier.Verifier
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeTrue
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
-import java.io.StringReader
 import java.nio.file.Path
 import kotlin.io.path.*
 
@@ -92,41 +86,6 @@ class MavenTestProject(
             throw e
         }
         return verifier
-    }
-
-    fun runVerifyScript() {
-        if (workDir.resolve("verify.bsh").exists()) verifyBsh()
-        if (workDir.resolve("verify.groovy").exists()) verifyGroovy()
-    }
-
-    fun verifyBsh() {
-        val outputBuffer = ByteArrayOutputStream()
-        val printStream = PrintStream(outputBuffer, true)
-        val noReader = StringReader("")
-        try {
-            val bsh = Interpreter(
-                noReader, printStream, printStream, false
-            )
-            bsh.set("basedir", this.workDir.toString())
-            bsh.source(workDir.resolve("verify.bsh").absolutePathString())
-        } catch (e: Exception) {
-            val capturedOutput = outputBuffer.toString()
-            throw RuntimeException("Verification script failed. Output:\n$capturedOutput", e)
-        }
-    }
-
-    fun verifyGroovy() {
-        val groovyScriptEngine = GroovyScriptEngine(arrayOf(workDir.toUri().toURL()))
-        val args = Binding(
-            mapOf(
-                "basedir" to workDir.toFile(),
-                "kotlinVersion" to context.kotlinVersion
-            )
-        )
-        val res = groovyScriptEngine.run("verify.groovy", args)
-        if (res is Boolean) {
-            assertTrue(res) { "verify.groovy returned false" }
-        }
     }
 
     @Suppress("unused")

@@ -34,8 +34,6 @@ abstract class KotlinMavenTestBase {
         val workDir = copyProjectDir(projectDir, mavenVersion.version)
         configureMavenWrapperInProjectDirectory(workDir, mavenVersion.version)
 
-        context.verifyCommonBshLocation.copyTo(workDir.resolve("verify-common.bsh"))
-
         val settingsXml = workDir.resolve("settings.xml")
         settingsXml.checkOrWriteKotlinMavenTestSettingsXml(context.kotlinBuildRepo)
 
