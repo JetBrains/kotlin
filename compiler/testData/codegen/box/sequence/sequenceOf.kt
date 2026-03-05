@@ -2,6 +2,7 @@
 
 fun box(): String {
     val seq = sequenceOf(1, 2, 3)
+    val array = arrayOf(1, 2, 3)
     val list = listOf(1, 2, 3)
     var index = 0
     for (item in seq) {
@@ -9,6 +10,11 @@ fun box(): String {
     }
     index = 0
     for (item in sequenceOf(1, 2, 3)) {
+        if (item != list[index++]) return "failed: sequence yielded: $item, while the expected was: ${list[index - 1]} at index: ${index - 1}"
+    }
+    val seq2 = sequenceOf(1, 2, 3)
+    index = 0
+    for (item in seq2) {
         if (item != list[index++]) return "failed: sequence yielded: $item, while the expected was: ${list[index - 1]} at index: ${index - 1}"
     }
     return "OK"

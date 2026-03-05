@@ -7,5 +7,8 @@ fun box(): String {
     for (item in seq) {
         if (item != list[index++]) return "failed: item '$item' does not match expected value '${list[index - 1]}'"
     }
+    if (index != list.size) {
+        return "failed: sequence length mismatch, sequence has length $index, but expected length is ${list.size}"
+    }
     return "OK"
 }
