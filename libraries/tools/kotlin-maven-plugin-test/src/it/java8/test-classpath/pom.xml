@@ -8,6 +8,10 @@
     <artifactId>test-classpath</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <kotlin.compiler.jdkHome>${kotlinCompilerJdk}</kotlin.compiler.jdkHome>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

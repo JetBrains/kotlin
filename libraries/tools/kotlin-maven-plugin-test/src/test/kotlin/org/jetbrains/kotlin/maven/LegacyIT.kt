@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.maven
 import org.jetbrains.kotlin.maven.test.*
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
+import kotlin.io.path.Path
+import kotlin.io.path.reader
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
@@ -22,7 +24,6 @@ class LegacyIT : KotlinMavenTestBase() {
                 expectedToFail = true,
                 buildOptions = buildOptions.copy(
                     javaVersion = TestVersions.Java.JDK_1_8,
-                    useKotlinDaemon = false,
                     extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
                 )
             ) {
@@ -146,7 +147,12 @@ class LegacyIT : KotlinMavenTestBase() {
                 assertDependencyTreeContains("org.jetbrains.kotlin", "kotlin-stdlib-jdk8", kotlinVersion)
                 assertDependencyTreeContains("org.jetbrains.kotlin", "kotlin-reflect", kotlinVersion)
                 assertDependencyTreeContains("org.jetbrains.kotlin", "kotlin-test", kotlinVersion, scope = "test")
-                assertDependencyTreeContains("org.jetbrains.kotlin", "kotlin-test-junit5", kotlinVersion, scope = "test")
+                assertDependencyTreeContains(
+                    "org.jetbrains.kotlin",
+                    "kotlin-test-junit5",
+                    kotlinVersion,
+                    scope = "test"
+                )
             }
         }
     }
@@ -538,8 +544,8 @@ class LegacyIT : KotlinMavenTestBase() {
                 "package",
                 expectedToFail = false
             ) {
+                assertPluginApplied("test-me")
                 assertBuildLogContains(
-                    "[INFO] Applied plugin: 'test-me'",
                     "[INFO] Configuring test plugin with arguments",
                     "[INFO] Plugin applied",
                     "[INFO] Option value: my-special-value",
@@ -715,8 +721,6 @@ class LegacyIT : KotlinMavenTestBase() {
         }
     }
 
-    // Kotlin daemon is disabled for JDK 8 tests: the daemon may be reused from a concurrent
-    // compilation with a higher JDK, causing incorrect compilation results.
     @MavenTest
     fun `java8-test-classpath`(mavenVersion: TestVersions.Maven) {
         testProject("java8/test-classpath", mavenVersion) {
@@ -725,7 +729,6 @@ class LegacyIT : KotlinMavenTestBase() {
                 expectedToFail = false,
                 buildOptions = buildOptions.copy(
                     javaVersion = TestVersions.Java.JDK_1_8,
-                    useKotlinDaemon = false,
                     extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
                 )
             ) {
@@ -743,8 +746,10 @@ class LegacyIT : KotlinMavenTestBase() {
                 expectedToFail = false,
                 buildOptions = buildOptions.copy(
                     javaVersion = TestVersions.Java.JDK_1_8,
-                    useKotlinDaemon = false,
                     extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
+                ).withoutKotlinDaemon(
+                    "https://youtrack.jetbrains.com/issue/KT-71048: Dagger 2.9 hits ConcurrentModificationException in HashMap.computeIfAbsent on JDK 9+. " +
+                            "The daemon may reuse a JDK 17+ process, so we force in-process compilation on JDK 8."
                 )
             ) {
                 assertJarExistsAndNotEmpty("target/dagger-maven-example-1.0-SNAPSHOT.jar")
@@ -760,8 +765,10 @@ class LegacyIT : KotlinMavenTestBase() {
                 expectedToFail = false,
                 buildOptions = buildOptions.copy(
                     javaVersion = TestVersions.Java.JDK_1_8,
-                    useKotlinDaemon = false,
                     extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
+                ).withoutKotlinDaemon(
+                    "https://youtrack.jetbrains.com/issue/KT-71048: Dagger 2.9 hits ConcurrentModificationException in HashMap.computeIfAbsent on JDK 9+. " +
+                            "The daemon may reuse a JDK 17+ process, so we force in-process compilation on JDK 8."
                 )
             ) {
                 assertJarExistsAndNotEmpty("target/dagger-maven-example-1.0-SNAPSHOT.jar")
@@ -778,8 +785,10 @@ class LegacyIT : KotlinMavenTestBase() {
                 expectedToFail = false,
                 buildOptions = buildOptions.copy(
                     javaVersion = TestVersions.Java.JDK_1_8,
-                    useKotlinDaemon = false,
                     extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
+                ).withoutKotlinDaemon(
+                    "https://youtrack.jetbrains.com/issue/KT-71048: Dagger 2.9 hits ConcurrentModificationException in HashMap.computeIfAbsent on JDK 9+. " +
+                            "The daemon may reuse a JDK 17+ process, so we force in-process compilation on JDK 8."
                 )
             ) {
                 assertJarExistsAndNotEmpty("target/test-enable-extensions-kapt-allopen-1.0-SNAPSHOT.jar")
@@ -797,7 +806,7 @@ class LegacyIT : KotlinMavenTestBase() {
             ) {
                 assertFileExists("jlinked/target/maven-jlink/release")
 
-                val releaseFile = java.io.File(basedir, "jlinked/target/maven-jlink/release")
+                val releaseFile = Path(basedir).resolve("jlinked/target/maven-jlink/release")
                 val props = java.util.Properties()
                 releaseFile.reader().use { props.load(it) }
 

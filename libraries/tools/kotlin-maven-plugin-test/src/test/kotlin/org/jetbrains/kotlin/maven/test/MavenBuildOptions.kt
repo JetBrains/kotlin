@@ -15,3 +15,12 @@ data class MavenBuildOptions(
         extraMavenProperties.forEach { (key, value) -> add("-D$key=$value") }
     }
 }
+
+/**
+ * Disables the Kotlin compiler daemon with a mandatory [reason].
+ *
+ * Use this instead of setting `useKotlinDaemon = false` directly,
+ * so that each call site documents why the daemon is being disabled explicitly.
+ */
+fun MavenBuildOptions.withoutKotlinDaemon(@Suppress("UNUSED_PARAMETER") reason: String): MavenBuildOptions =
+    copy(useKotlinDaemon = false)
