@@ -272,11 +272,14 @@ class FirPCLAInferenceSession(
         }
 
         val callSite = callInfo.callSite
-        // Annotation calls and collection literals (allowed only inside annotations)
-        // should be completed independently since that can't somehow affect PCLA
-        if (callSite is FirAnnotationCall || callSite is FirCollectionLiteral) return true
+        // Annotation calls should be completed independently since that can't somehow affect PCLA
+        if (callSite is FirAnnotationCall) return true
+        if (callSite is FirCollectionLiteral) {
+            // It's not actually entirely correct thing to do in pre-CollectionLiterals resolve of array literals.
+            // Some usages of collection literals inside PCLA lambdas may still lead to compiler failures there.
+            return !inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)
+        }
 
-        // I'd say that this might be an assertion, but let's do an early return
         if (callSite !is FirResolvable && callSite !is FirVariableAssignment) return false
 
         // We can't analyze independently the calls which have postponed receivers
@@ -304,7 +307,7 @@ class FirPCLAInferenceSession(
         when (this) {
             // Callable references might be unresolved at this stage, so obtaining `resolvedType` would lead to exceptions
             // Anyway, they should lead to integrated resolution of containing call
-            is FirCallableReferenceAccess -> false
+            is FirCallableReferenceAccess, is FirCollectionLiteral -> false
 
             is FirResolvable -> when (val candidate = candidate()) {
                 null -> !resolvedType.containsNotFixedTypeVariables()

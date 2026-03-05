@@ -195,7 +195,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                 continue
 
             // Stage 8: analyze remaining CLs
-            if (completionMode == ConstraintSystemCompletionMode.FULL && collectionLiteralWithBoundsForFixation != null) {
+            if (completionMode.allLambdasShouldBeAnalyzed && collectionLiteralWithBoundsForFixation != null) {
                 analyzer.analyze(collectionLiteralWithBoundsForFixation)
                 continue
             }

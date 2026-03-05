@@ -136,7 +136,7 @@ class FirCallCompleter(
 
                 inferenceSession.processPartiallyResolvedCall(call, resolutionMode, completionMode)
 
-                if (candidate.isSyntheticCallForTopLevelLambda()) {
+                if (candidate.isSyntheticCallForTopLevelLambda() || candidate.isSyntheticCallForTopLevelCL()) {
                     // This piece is only relevant for top-level lambdas inside PCLA.
                     // For a non-PCLA case, their synthetic call would be complete in the FULL mode.
                     // See FirSyntheticCallGenerator.resolveAnonymousFunctionExpressionWithSyntheticOuterCall
@@ -149,6 +149,8 @@ class FirCallCompleter(
                     // not-fixed outer type variables.
                     //
                     // Frankly speaking, this is some sort of hack, which currently I don't know how to resolve properly.
+                    //
+                    // Similarly, we need to replace top-level collection literals with function calls.
                     val storage = candidate.system.currentStorage()
                     val finalSubstitutor = storage
                         .buildCurrentSubstitutor(session.typeContext, emptyMap()).asCone()
@@ -168,6 +170,9 @@ class FirCallCompleter(
     }
 
     private fun Candidate.isSyntheticCallForTopLevelLambda(): Boolean = callInfo.callSite is FirAnonymousFunctionExpression
+    private fun Candidate.isSyntheticCallForTopLevelCL(): Boolean {
+        return symbol is FirSyntheticFunctionSymbol && callInfo.callSite is FirCollectionLiteral
+    }
 
     private fun checkStorageConstraintsAfterFullCompletion(storage: ConstraintStorage) {
         // Fast path for sake of optimization
