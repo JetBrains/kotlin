@@ -96,6 +96,8 @@ public inline infix fun BigInteger.shr(n: Int): BigInteger = this.shiftRight(n)
 
 /**
  * Returns the value of this [Int] number as a [BigInteger].
+ *
+ * @sample samples.misc.BigIntegers.intToBigInteger
  */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
@@ -103,6 +105,8 @@ public inline fun Int.toBigInteger(): BigInteger = BigInteger.valueOf(this.toLon
 
 /**
  * Returns the value of this [Long] number as a [BigInteger].
+ *
+ * @sample samples.misc.BigIntegers.longToBigInteger
  */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
