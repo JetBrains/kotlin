@@ -1195,6 +1195,11 @@ class BodyGenerator(
                 body.buildFunctionTypedBlock("on_suspend", blockTypeSymbol) { idx ->
                     // Throwable
                     body.buildGetLocal(functionContext.referenceLocal(0), location)
+
+                    if (backendContext.isWasmJsTarget) {
+                        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getJsError), location)
+                    }
+
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
                     body.buildResumeThrow(zeroArgContType, exceptionTagId, contHandle, location)

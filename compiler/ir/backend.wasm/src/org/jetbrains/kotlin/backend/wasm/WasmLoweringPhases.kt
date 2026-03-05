@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.backend.js.lower.*
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -343,7 +341,7 @@ private val addContinuationToNonLocalSuspendFunctionsLoweringPhase = makeIrModul
 )
 
 private val addContinuationToFunctionCallsLoweringPhase = makeIrModulePhase(
-    ::AddContinuationToFunctionCallsLowering,
+    ::WasmAddContinuationToFunctionCallsLowering,
     name = "AddContinuationToFunctionCallsLowering",
     prerequisite = setOf(
         addContinuationToNonLocalSuspendFunctionsLoweringPhase,

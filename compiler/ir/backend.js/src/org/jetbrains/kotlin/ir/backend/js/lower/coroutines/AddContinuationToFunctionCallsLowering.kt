@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
  * Requires [AddContinuationToLocalSuspendFunctionsLowering] and
  * [AddContinuationToNonLocalSuspendFunctionsLowering] to transform function declarations first.
  */
-class AddContinuationToFunctionCallsLowering(
+open class AddContinuationToFunctionCallsLowering(
     override val context: JsCommonBackendContext
 ) : AbstractAddContinuationToFunctionCallsLowering() {
     override fun IrSimpleFunction.isContinuationItself(): Boolean = overriddenSymbols.any { overriddenSymbol ->
