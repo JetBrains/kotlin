@@ -8,11 +8,14 @@
 #include "Allocator.hpp"
 #include "GCScheduler.hpp"
 #include "GCState.hpp"
+#include "MemoryUsageInfo.hpp"
 #include "Utils.hpp"
 #include "concurrent/UtilityThread.hpp"
 #include "GlobalData.hpp"
 #include "GCStatistics.hpp"
 #include "MarkAndSweepUtils.hpp"
+
+extern "C" RUNTIME_NOTHROW void Kotlin_MemoryUsageInfo_dumpWithHeapTool();
 
 namespace kotlin::gc::internal {
 
@@ -40,6 +43,16 @@ private:
         mark_.requestShutdown();
     }
 
+    void checkHeapUsage(int64_t epoch) noexcept {
+        auto peakRss = peakResidentSetSizeBytes();
+        size_t maxPeakRss = 75'000'000;
+        if (peakRss > maxPeakRss) {
+            Kotlin_MemoryUsageInfo_dumpWithHeapTool();
+            GCLogWarning(epoch, "Terminating due to peak footrpint %zu exceeding the limit %zu", peakRss, maxPeakRss);
+            std::abort();
+        }
+    }
+
     void PerformFullGC(int64_t epoch) noexcept {
         auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
 
@@ -48,6 +61,7 @@ private:
         mark_.setupBeforeSTW(gcHandle);
 
         stopTheWorld(gcHandle, "GC stop the world: mark");
+        checkHeapUsage(epoch);
 
         gcScheduler_.onGCStart();
 
@@ -64,6 +78,7 @@ private:
         }
         allocator_.prepareForGC();
 
+        checkHeapUsage(epoch);
         if (GCTraits::kConcurrentSweep) {
             resumeTheWorld(gcHandle);
         }

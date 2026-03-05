@@ -82,7 +82,7 @@ extern "C" RUNTIME_NOTHROW KLong Kotlin_MemoryUsageInfo_getPeakResidentSetSizeBy
 
 extern "C" RUNTIME_NOTHROW void Kotlin_MemoryUsageInfo_dumpWithHeapTool() {
 #if KONAN_MACOSX
-    ThreadStateGuard guard(ThreadState::kNative); // No need to take chances here.
+    // ThreadStateGuard guard(ThreadState::kNative); // No need to take chances here.
 
     {
         konan::consolePrintf(">>> FOOTPRINT <<<\n");

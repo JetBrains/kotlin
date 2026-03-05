@@ -116,11 +116,13 @@ class PeakRSSChecker(private val rssDiffLimitBytes: Long) {
 
     fun check(): Long {
         val diffBytes = MemoryUsageInfo.peakResidentSetSizeBytes - initialBytes
+        /*
         if (diffBytes > rssDiffLimitBytes) {
             while (!willReportAndFail.compareAndSet(0, 1)) {}
             MemoryUsageInfo.dumpWithHeapTool()
             error("Increased peak RSS by $diffBytes bytes which is more than $rssDiffLimitBytes")
         }
+        */
         return diffBytes
     }
 }
