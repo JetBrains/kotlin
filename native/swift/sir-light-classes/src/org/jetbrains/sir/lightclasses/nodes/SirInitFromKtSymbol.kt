@@ -191,7 +191,7 @@ internal class SirRegularInitFromKtSymbol(
                     "let ${obj.name} = $it"
                 })
 
-                add("super.init(__externalRCRefUnsafe: ${obj.name}, options: .asBoundBridge)")
+                add("super.init(__externalRCRefUnsafe: ${obj.name}, options: .asBoundBridge);")
 
                 addAll(initDescriptor.createSwiftInvocation(resultTransformer = null))
             })

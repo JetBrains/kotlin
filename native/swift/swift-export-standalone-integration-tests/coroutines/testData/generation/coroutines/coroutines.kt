@@ -31,6 +31,10 @@ typealias AliasedAsyncFunctionType = suspend (Float) -> Long
 
 suspend fun produce_suspend_function_typealias(): AliasedAsyncFunctionType = TODO()
 
+suspend fun returnUnit(): Unit = TODO()
+
+fun returnSuspendUnit(): suspend () -> Unit = TODO()
+
 // MODULE: flow_overrides
 // FILE: flow_overrides.kt
 package namespace

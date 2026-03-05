@@ -11,14 +11,14 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         public init() {
             if Self.self != main.ENUM.INSIDE_ENUM.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ENUM.INSIDE_ENUM ") }
             let __kt = ENUM_INSIDE_ENUM_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public var description: Swift.String {
@@ -85,21 +85,21 @@ open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class CLASS_WITH_SAME_NAME: KotlinRuntime.KotlinBase {
     public init() {
         if Self.self != main.CLASS_WITH_SAME_NAME.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.CLASS_WITH_SAME_NAME ") }
         let __kt = __root___CLASS_WITH_SAME_NAME_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public func foo() -> Swift.Int32 {
         return CLASS_WITH_SAME_NAME_foo(self.__externalRCRef())
@@ -115,7 +115,7 @@ public final class ClassWithNonPublicConstructor: KotlinRuntime.KotlinBase {
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class DATA_CLASS: KotlinRuntime.KotlinBase {
@@ -129,14 +129,14 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase {
     ) {
         if Self.self != main.DATA_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.DATA_CLASS ") }
         let __kt = __root___DATA_CLASS_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public static func ==(
         this: main.DATA_CLASS,
@@ -191,7 +191,7 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase {
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public init(
         a: Swift.Int32,
@@ -200,8 +200,8 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase {
     ) {
         if Self.self != main.DATA_CLASS_WITH_MANY_FIELDS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.DATA_CLASS_WITH_MANY_FIELDS ") }
         let __kt = __root___DATA_CLASS_WITH_MANY_FIELDS_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, a, b, c.__externalRCRef())
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, a, b, c.__externalRCRef()); return () }()
     }
     public static func ==(
         this: main.DATA_CLASS_WITH_MANY_FIELDS,
@@ -239,14 +239,14 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     ) {
         if Self.self != main.DATA_CLASS_WITH_REF.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.DATA_CLASS_WITH_REF ") }
         let __kt = __root___DATA_CLASS_WITH_REF_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, o.__externalRCRef())
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, o.__externalRCRef()); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public static func ==(
         this: main.DATA_CLASS_WITH_REF,
@@ -283,7 +283,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
                 return Foo_Companion_my_variable_inner_get(self.__externalRCRef())
             }
             set {
-                return Foo_Companion_my_variable_inner_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
+                return { Foo_Companion_my_variable_inner_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue); return () }()
             }
         }
         public static var shared: main.Foo.Companion {
@@ -298,7 +298,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public func my_func() -> Swift.Bool {
             return Foo_Companion_my_func(self.__externalRCRef())
@@ -315,20 +315,20 @@ public final class Foo: KotlinRuntime.KotlinBase {
                 return Foo_INSIDE_CLASS_my_variable_inner_get(self.__externalRCRef())
             }
             set {
-                return Foo_INSIDE_CLASS_my_variable_inner_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
+                return { Foo_INSIDE_CLASS_my_variable_inner_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue); return () }()
             }
         }
         public init() {
             if Self.self != main.Foo.INSIDE_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo.INSIDE_CLASS ") }
             let __kt = Foo_INSIDE_CLASS_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public func my_func() -> Swift.Bool {
             return Foo_INSIDE_CLASS_my_func(self.__externalRCRef())
@@ -344,7 +344,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
             return Foo_my_variable_get(self.__externalRCRef())
         }
         set {
-            return Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
+            return { Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue); return () }()
         }
     }
     public init(
@@ -352,22 +352,22 @@ public final class Foo: KotlinRuntime.KotlinBase {
     ) {
         if Self.self != main.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo ") }
         let __kt = __root___Foo_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a); return () }()
     }
     public init(
         f: Swift.Float
     ) {
         if Self.self != main.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo ") }
         let __kt = __root___Foo_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__(__kt, f)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__(__kt, f); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public func foo() -> Swift.Bool {
         return Foo_foo(self.__externalRCRef())
@@ -377,42 +377,42 @@ open class GENERIC_CLASS: KotlinRuntime.KotlinBase {
     public init() {
         if Self.self != main.GENERIC_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.GENERIC_CLASS ") }
         let __kt = __root___GENERIC_CLASS_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 open class INHERITANCE_GENERIC: main.GENERIC_CLASS {
     public override init() {
         if Self.self != main.INHERITANCE_GENERIC.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.INHERITANCE_GENERIC ") }
         let __kt = __root___INHERITANCE_GENERIC_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___INHERITANCE_GENERIC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___INHERITANCE_GENERIC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class INHERITANCE_UNSUPPORTED_BASE: main.INHERITANCE_GENERIC {
     public override init() {
         if Self.self != main.INHERITANCE_UNSUPPORTED_BASE.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.INHERITANCE_UNSUPPORTED_BASE ") }
         let __kt = __root___INHERITANCE_UNSUPPORTED_BASE_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___INHERITANCE_UNSUPPORTED_BASE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___INHERITANCE_UNSUPPORTED_BASE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class INLINE_CLASS: KotlinRuntime.KotlinBase {
@@ -426,14 +426,14 @@ public final class INLINE_CLASS: KotlinRuntime.KotlinBase {
     ) {
         if Self.self != main.INLINE_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.INLINE_CLASS ") }
         let __kt = __root___INLINE_CLASS_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___INLINE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___INLINE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public static func ==(
         this: main.INLINE_CLASS,
@@ -464,14 +464,14 @@ public final class INLINE_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     ) {
         if Self.self != main.INLINE_CLASS_WITH_REF.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.INLINE_CLASS_WITH_REF ") }
         let __kt = __root___INLINE_CLASS_WITH_REF_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___INLINE_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_DATA_CLASS_WITH_REF__(__kt, i.__externalRCRef())
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___INLINE_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_DATA_CLASS_WITH_REF__(__kt, i.__externalRCRef()); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public static func ==(
         this: main.INLINE_CLASS_WITH_REF,
@@ -497,14 +497,14 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase {
             public init() {
                 if Self.self != main.OBJECT_NO_PACKAGE.Bar.CLASS_INSIDE_CLASS_INSIDE_OBJECT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.OBJECT_NO_PACKAGE.Bar.CLASS_INSIDE_CLASS_INSIDE_OBJECT ") }
                 let __kt = OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_allocate()
-                super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-                OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+                super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+                { OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
             }
             package override init(
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
         }
         public final class NamedCompanion: KotlinRuntime.KotlinBase {
@@ -520,7 +520,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             public func foo() -> Swift.Int32 {
                 return OBJECT_NO_PACKAGE_Bar_NamedCompanion_foo(self.__externalRCRef())
@@ -536,14 +536,14 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase {
         ) {
             if Self.self != main.OBJECT_NO_PACKAGE.Bar.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.OBJECT_NO_PACKAGE.Bar ") }
             let __kt = OBJECT_NO_PACKAGE_Bar_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            OBJECT_NO_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, i)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { OBJECT_NO_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, i); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public func bar() -> Swift.Int32 {
             return OBJECT_NO_PACKAGE_Bar_bar(self.__externalRCRef())
@@ -553,14 +553,14 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != main.OBJECT_NO_PACKAGE.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.OBJECT_NO_PACKAGE.Foo ") }
             let __kt = OBJECT_NO_PACKAGE_Foo_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            OBJECT_NO_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { OBJECT_NO_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class OBJECT_INSIDE_OBJECT: KotlinRuntime.KotlinBase {
@@ -576,7 +576,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public static var shared: main.OBJECT_NO_PACKAGE {
@@ -594,7 +594,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase {
             return OBJECT_NO_PACKAGE_variable_get(self.__externalRCRef())
         }
         set {
-            return OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
+            return { OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue); return () }()
         }
     }
     private init() {
@@ -604,7 +604,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase {
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public func foo() -> Swift.Int32 {
         return OBJECT_NO_PACKAGE_foo(self.__externalRCRef())
@@ -623,7 +623,7 @@ public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase {
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public func hasNext() -> Swift.Bool {
         return OBJECT_WITH_GENERIC_INHERITANCE_hasNext(self.__externalRCRef())
@@ -649,14 +649,14 @@ open class SEALED: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != main.SEALED.C.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SEALED.C ") }
             let __kt = SEALED_C_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            SEALED_C_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { SEALED_C_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class O: main.SEALED {
@@ -672,14 +672,14 @@ open class SEALED: KotlinRuntime.KotlinBase {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 extension ExportedKotlinPackages.namespace.deeper {
@@ -699,7 +699,7 @@ extension ExportedKotlinPackages.namespace.deeper {
                 return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_get(self.__externalRCRef())
             }
             set {
-                return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
+                return { namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue); return () }()
             }
         }
         private init() {
@@ -709,7 +709,7 @@ extension ExportedKotlinPackages.namespace.deeper {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public static func ==(
             this: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE,
@@ -745,20 +745,20 @@ extension ExportedKotlinPackages.namespace.deeper {
                         return namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_get(self.__externalRCRef())
                     }
                     set {
-                        return namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
+                        return { namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue); return () }()
                     }
                 }
                 public init() {
                     if Self.self != ExportedKotlinPackages.namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS ") }
                     let __kt = namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_allocate()
-                    super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-                    namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+                    super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+                    { namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
                 }
                 package override init(
                     __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                     options: KotlinRuntime.KotlinBaseConstructionOptions
                 ) {
-                    super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                    super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
                 }
                 public func foo() -> Swift.Bool {
                     return namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_foo(self.__externalRCRef())
@@ -774,20 +774,20 @@ extension ExportedKotlinPackages.namespace.deeper {
                     return namespace_deeper_Foo_INSIDE_CLASS_my_variable_get(self.__externalRCRef())
                 }
                 set {
-                    return namespace_deeper_Foo_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
+                    return { namespace_deeper_Foo_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue); return () }()
                 }
             }
             public init() {
                 if Self.self != ExportedKotlinPackages.namespace.deeper.Foo.INSIDE_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.deeper.Foo.INSIDE_CLASS ") }
                 let __kt = namespace_deeper_Foo_INSIDE_CLASS_init_allocate()
-                super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-                namespace_deeper_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+                super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+                { namespace_deeper_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
             }
             package override init(
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             public func foo() -> Swift.Bool {
                 return namespace_deeper_Foo_INSIDE_CLASS_foo(self.__externalRCRef())
@@ -808,7 +808,7 @@ extension ExportedKotlinPackages.namespace.deeper {
                 return namespace_deeper_Foo_my_variable_get(self.__externalRCRef())
             }
             set {
-                return namespace_deeper_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
+                return { namespace_deeper_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue); return () }()
             }
         }
         public var private_set: Swift.Int32 {
@@ -819,14 +819,14 @@ extension ExportedKotlinPackages.namespace.deeper {
         public init() {
             if Self.self != ExportedKotlinPackages.namespace.deeper.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.deeper.Foo ") }
             let __kt = namespace_deeper_Foo_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            namespace_deeper_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { namespace_deeper_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public func foo() -> Swift.Bool {
             return namespace_deeper_Foo_foo(self.__externalRCRef())
@@ -836,14 +836,14 @@ extension ExportedKotlinPackages.namespace.deeper {
         public init() {
             if Self.self != ExportedKotlinPackages.namespace.deeper.NAMESPACED_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.deeper.NAMESPACED_CLASS ") }
             let __kt = namespace_deeper_NAMESPACED_CLASS_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            namespace_deeper_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { namespace_deeper_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
     public final class OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {
@@ -861,7 +861,7 @@ extension ExportedKotlinPackages.namespace.deeper {
                     __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                     options: KotlinRuntime.KotlinBaseConstructionOptions
                 ) {
-                    super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                    super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
                 }
             }
             public var i: Swift.Int32 {
@@ -874,14 +874,14 @@ extension ExportedKotlinPackages.namespace.deeper {
             ) {
                 if Self.self != ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.Bar.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.Bar ") }
                 let __kt = namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_allocate()
-                super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-                namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, i)
+                super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+                { namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, i); return () }()
             }
             package override init(
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
             public func bar() -> Swift.Int32 {
                 return namespace_deeper_OBJECT_WITH_PACKAGE_Bar_bar(self.__externalRCRef())
@@ -891,14 +891,14 @@ extension ExportedKotlinPackages.namespace.deeper {
             public init() {
                 if Self.self != ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.Foo ") }
                 let __kt = namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_allocate()
-                super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-                namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+                super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+                { namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
             }
             package override init(
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
         }
         public final class OBJECT_INSIDE_OBJECT: KotlinRuntime.KotlinBase {
@@ -914,7 +914,7 @@ extension ExportedKotlinPackages.namespace.deeper {
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
         }
         public static var shared: ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE {
@@ -932,7 +932,7 @@ extension ExportedKotlinPackages.namespace.deeper {
                 return namespace_deeper_OBJECT_WITH_PACKAGE_variable_get(self.__externalRCRef())
             }
             set {
-                return namespace_deeper_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
+                return { namespace_deeper_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue); return () }()
             }
         }
         private init() {
@@ -942,7 +942,7 @@ extension ExportedKotlinPackages.namespace.deeper {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public func foo() -> Swift.Int32 {
             return namespace_deeper_OBJECT_WITH_PACKAGE_foo(self.__externalRCRef())
@@ -955,14 +955,14 @@ extension ExportedKotlinPackages.namespace {
             public init() {
                 if Self.self != ExportedKotlinPackages.namespace.Foo.INSIDE_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.Foo.INSIDE_CLASS ") }
                 let __kt = namespace_Foo_INSIDE_CLASS_init_allocate()
-                super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-                namespace_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+                super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+                { namespace_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
             }
             package override init(
                 __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
         }
         public var my_value: Swift.UInt32 {
@@ -975,20 +975,20 @@ extension ExportedKotlinPackages.namespace {
                 return namespace_Foo_my_variable_get(self.__externalRCRef())
             }
             set {
-                return namespace_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
+                return { namespace_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue); return () }()
             }
         }
         public init() {
             if Self.self != ExportedKotlinPackages.namespace.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.Foo ") }
             let __kt = namespace_Foo_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            namespace_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { namespace_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public func foo() -> Swift.Bool {
             return namespace_Foo_foo(self.__externalRCRef())
@@ -998,14 +998,14 @@ extension ExportedKotlinPackages.namespace {
         public init() {
             if Self.self != ExportedKotlinPackages.namespace.NAMESPACED_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.NAMESPACED_CLASS ") }
             let __kt = namespace_NAMESPACED_CLASS_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
 }
@@ -1014,17 +1014,17 @@ extension ExportedKotlinPackages.why_we_need_module_names {
         public init() {
             if Self.self != ExportedKotlinPackages.why_we_need_module_names.CLASS_WITH_SAME_NAME.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.why_we_need_module_names.CLASS_WITH_SAME_NAME ") }
             let __kt = why_we_need_module_names_CLASS_WITH_SAME_NAME_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            why_we_need_module_names_CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { why_we_need_module_names_CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         public func foo() -> Swift.Void {
-            return why_we_need_module_names_CLASS_WITH_SAME_NAME_foo(self.__externalRCRef())
+            return { why_we_need_module_names_CLASS_WITH_SAME_NAME_foo(self.__externalRCRef()); return () }()
         }
     }
     public static func bar() -> Swift.Int32 {

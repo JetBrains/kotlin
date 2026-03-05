@@ -7,7 +7,7 @@ _Bool kotlin_BooleanArray_get__TypesOfArguments__Swift_Int32__(void * self, int3
 
 void * kotlin_BooleanArray_iterator(void * self);
 
-void kotlin_BooleanArray_set__TypesOfArguments__Swift_Int32_Swift_Bool__(void * self, int32_t index, _Bool value);
+_Bool kotlin_BooleanArray_set__TypesOfArguments__Swift_Int32_Swift_Bool__(void * self, int32_t index, _Bool value);
 
 int32_t kotlin_BooleanArray_size_get(void * self);
 
@@ -15,7 +15,7 @@ int32_t kotlin_IntArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_
 
 void * kotlin_IntArray_iterator(void * self);
 
-void kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self, int32_t index, int32_t value);
+_Bool kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self, int32_t index, int32_t value);
 
 int32_t kotlin_IntArray_size_get(void * self);
 

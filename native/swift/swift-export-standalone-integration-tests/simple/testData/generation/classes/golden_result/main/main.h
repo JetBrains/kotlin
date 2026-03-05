@@ -53,7 +53,7 @@ void * ENUM_C();
 
 void * ENUM_INSIDE_ENUM_init_allocate();
 
-void ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * Foo_Companion_get();
 
@@ -63,11 +63,11 @@ uint32_t Foo_Companion_my_value_inner_get(void * self);
 
 int64_t Foo_Companion_my_variable_inner_get(void * self);
 
-void Foo_Companion_my_variable_inner_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
+_Bool Foo_Companion_my_variable_inner_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
 
 void * Foo_INSIDE_CLASS_init_allocate();
 
-void Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 _Bool Foo_INSIDE_CLASS_my_func(void * self);
 
@@ -75,7 +75,7 @@ uint32_t Foo_INSIDE_CLASS_my_value_inner_get(void * self);
 
 int64_t Foo_INSIDE_CLASS_my_variable_inner_get(void * self);
 
-void Foo_INSIDE_CLASS_my_variable_inner_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
+_Bool Foo_INSIDE_CLASS_my_variable_inner_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
 
 _Bool Foo_foo(void * self);
 
@@ -83,7 +83,7 @@ uint32_t Foo_my_value_get(void * self);
 
 int64_t Foo_my_variable_get(void * self);
 
-void Foo_my_variable_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
+_Bool Foo_my_variable_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
 
 _Bool INLINE_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
@@ -103,7 +103,7 @@ NSString * INLINE_CLASS_toString(void * self);
 
 void * OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_allocate();
 
-void OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 int32_t OBJECT_NO_PACKAGE_Bar_NamedCompanion_foo(void * self);
 
@@ -115,11 +115,11 @@ int32_t OBJECT_NO_PACKAGE_Bar_i_get(void * self);
 
 void * OBJECT_NO_PACKAGE_Bar_init_allocate();
 
-void OBJECT_NO_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t i);
+_Bool OBJECT_NO_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t i);
 
 void * OBJECT_NO_PACKAGE_Foo_init_allocate();
 
-void OBJECT_NO_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool OBJECT_NO_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * OBJECT_NO_PACKAGE_OBJECT_INSIDE_OBJECT_get();
 
@@ -129,7 +129,7 @@ int32_t OBJECT_NO_PACKAGE_value_get(void * self);
 
 int32_t OBJECT_NO_PACKAGE_variable_get(void * self);
 
-void OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
+_Bool OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
 
 _Bool OBJECT_WITH_GENERIC_INHERITANCE_hasNext(void * self);
 
@@ -145,51 +145,51 @@ int32_t OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(void * self);
 
 void * SEALED_C_init_allocate();
 
-void SEALED_C_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool SEALED_C_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * SEALED_O_get();
 
 void * __root___CLASS_WITH_SAME_NAME_init_allocate();
 
-void __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * __root___DATA_CLASS_WITH_MANY_FIELDS_init_allocate();
 
-void __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * __kt, int32_t a, NSString * b, void * c);
+_Bool __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * __kt, int32_t a, NSString * b, void * c);
 
 void * __root___DATA_CLASS_WITH_REF_init_allocate();
 
-void __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * __kt, void * o);
+_Bool __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * __kt, void * o);
 
 void * __root___DATA_CLASS_init_allocate();
 
-void __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t a);
+_Bool __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t a);
 
 void * __root___Foo_init_allocate();
 
-void __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t a);
+_Bool __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t a);
 
-void __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__(void * __kt, float f);
+_Bool __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__(void * __kt, float f);
 
 void * __root___GENERIC_CLASS_init_allocate();
 
-void __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * __root___INHERITANCE_GENERIC_init_allocate();
 
-void __root___INHERITANCE_GENERIC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool __root___INHERITANCE_GENERIC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * __root___INHERITANCE_UNSUPPORTED_BASE_init_allocate();
 
-void __root___INHERITANCE_UNSUPPORTED_BASE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool __root___INHERITANCE_UNSUPPORTED_BASE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * __root___INLINE_CLASS_WITH_REF_init_allocate();
 
-void __root___INLINE_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_DATA_CLASS_WITH_REF__(void * __kt, void * i);
+_Bool __root___INLINE_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_DATA_CLASS_WITH_REF__(void * __kt, void * i);
 
 void * __root___INLINE_CLASS_init_allocate();
 
-void __root___INLINE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t a);
+_Bool __root___INLINE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t a);
 
 void * __root___OBJECT_NO_PACKAGE_get();
 
@@ -197,23 +197,23 @@ void * __root___OBJECT_WITH_GENERIC_INHERITANCE_get();
 
 void * namespace_Foo_INSIDE_CLASS_init_allocate();
 
-void namespace_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool namespace_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 _Bool namespace_Foo_foo(void * self);
 
 void * namespace_Foo_init_allocate();
 
-void namespace_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool namespace_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 uint32_t namespace_Foo_my_value_get(void * self);
 
 int64_t namespace_Foo_my_variable_get(void * self);
 
-void namespace_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
+_Bool namespace_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
 
 void * namespace_NAMESPACED_CLASS_init_allocate();
 
-void namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 _Bool namespace_deeper_DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
@@ -229,37 +229,37 @@ int32_t namespace_deeper_DATA_OBJECT_WITH_PACKAGE_value_get(void * self);
 
 int32_t namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_get(void * self);
 
-void namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
+_Bool namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
 
 _Bool namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_foo(void * self);
 
 void * namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_allocate();
 
-void namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 uint32_t namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_value_get(void * self);
 
 int64_t namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_get(void * self);
 
-void namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
+_Bool namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
 
 _Bool namespace_deeper_Foo_INSIDE_CLASS_foo(void * self);
 
 void * namespace_deeper_Foo_INSIDE_CLASS_init_allocate();
 
-void namespace_deeper_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool namespace_deeper_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 uint32_t namespace_deeper_Foo_INSIDE_CLASS_my_value_get(void * self);
 
 int64_t namespace_deeper_Foo_INSIDE_CLASS_my_variable_get(void * self);
 
-void namespace_deeper_Foo_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
+_Bool namespace_deeper_Foo_INSIDE_CLASS_my_variable_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
 
 _Bool namespace_deeper_Foo_foo(void * self);
 
 void * namespace_deeper_Foo_init_allocate();
 
-void namespace_deeper_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool namespace_deeper_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 int32_t namespace_deeper_Foo_internal_set_get(void * self);
 
@@ -267,13 +267,13 @@ uint32_t namespace_deeper_Foo_my_value_get(void * self);
 
 int64_t namespace_deeper_Foo_my_variable_get(void * self);
 
-void namespace_deeper_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
+_Bool namespace_deeper_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
 
 int32_t namespace_deeper_Foo_private_set_get(void * self);
 
 void * namespace_deeper_NAMESPACED_CLASS_init_allocate();
 
-void namespace_deeper_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool namespace_deeper_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * namespace_deeper_OBJECT_WITH_PACKAGE_Bar_OBJECT_INSIDE_CLASS_get();
 
@@ -283,11 +283,11 @@ int32_t namespace_deeper_OBJECT_WITH_PACKAGE_Bar_i_get(void * self);
 
 void * namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_allocate();
 
-void namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t i);
+_Bool namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t i);
 
 void * namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_allocate();
 
-void namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * namespace_deeper_OBJECT_WITH_PACKAGE_OBJECT_INSIDE_OBJECT_get();
 
@@ -299,13 +299,13 @@ int32_t namespace_deeper_OBJECT_WITH_PACKAGE_value_get(void * self);
 
 int32_t namespace_deeper_OBJECT_WITH_PACKAGE_variable_get(void * self);
 
-void namespace_deeper_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
+_Bool namespace_deeper_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
 
-void why_we_need_module_names_CLASS_WITH_SAME_NAME_foo(void * self);
+_Bool why_we_need_module_names_CLASS_WITH_SAME_NAME_foo(void * self);
 
 void * why_we_need_module_names_CLASS_WITH_SAME_NAME_init_allocate();
 
-void why_we_need_module_names_CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+_Bool why_we_need_module_names_CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 int32_t why_we_need_module_names_bar();
 

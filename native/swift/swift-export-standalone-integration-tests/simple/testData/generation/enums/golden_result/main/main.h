@@ -37,7 +37,7 @@ void * Enum_b();
 
 int32_t Enum_i_get(void * self);
 
-void Enum_i_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
+_Bool Enum_i_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
 
 NSString * Enum_print(void * self);
 

@@ -8,7 +8,7 @@ public final class Object: KotlinRuntime.KotlinBase {
     ) throws {
         if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, arg.__externalRCRef(), &__error)
         guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
@@ -18,7 +18,7 @@ public final class Object: KotlinRuntime.KotlinBase {
     ) throws {
         if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(__kt, arg, &__error)
         guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
@@ -28,7 +28,7 @@ public final class Object: KotlinRuntime.KotlinBase {
     ) throws {
         if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Unicode_UTF16_CodeUnit__(__kt, arg, &__error)
         guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
@@ -38,7 +38,7 @@ public final class Object: KotlinRuntime.KotlinBase {
     ) throws {
         if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double__(__kt, arg, &__error)
         guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
@@ -48,7 +48,7 @@ public final class Object: KotlinRuntime.KotlinBase {
     ) throws {
         if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, arg, &__error)
         guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
@@ -58,7 +58,7 @@ public final class Object: KotlinRuntime.KotlinBase {
     ) throws {
         if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Object__(__kt, arg.__externalRCRef(), &__error)
         guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
@@ -68,7 +68,7 @@ public final class Object: KotlinRuntime.KotlinBase {
     ) throws {
         if Self.self != main.Object.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object ") }
         let __kt = __root___Object_init_allocate()
-        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, arg.map { it in it.__externalRCRef() } ?? nil, &__error)
         guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
@@ -77,7 +77,7 @@ public final class Object: KotlinRuntime.KotlinBase {
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public func throwing_fun_any() throws -> any KotlinRuntimeSupport._KotlinBridgeable {
@@ -188,5 +188,5 @@ public func throwing_fun_void() throws -> Swift.Void {
     var _out_error: UnsafeMutableRawPointer? = nil
     let _result = __root___throwing_fun_void(&_out_error)
     guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
-    return _result
+    return { _result; return () }()
 }

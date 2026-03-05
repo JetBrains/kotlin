@@ -6,18 +6,18 @@ import data
 public func consume_block_with_opt_reftype(
     block: @escaping (Swift.Int32?, data.Bar?, Swift.String?, Swift.Set<Swift.AnyHashable>?) -> data.Foo?
 ) -> Swift.Void {
-    return __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_Swift_AnyHashable__U29202D_U20Swift_Optional_data_Foo___({
+    return { __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_Swift_AnyHashable__U29202D_U20Swift_Optional_data_Foo___({
         let originalBlock = block
         return { arg0, arg1, arg2, arg3 in return originalBlock(arg0.map { it in it.int32Value }, { switch arg1 { case nil: .none; case let res: data.Bar.__createClassWrapper(externalRCRef: res); } }(), arg2, arg3.map { it in it as! Swift.Set<Swift.AnyHashable> }).map { it in it.__externalRCRef() } ?? nil }
-    }())
+    }()); return () }()
 }
 public func consume_block_with_reftype_consumer(
     block: @escaping (data.Foo) -> Swift.Void
 ) -> Swift.Void {
-    return __root___consume_block_with_reftype_consumer__TypesOfArguments__U28data_FooU29202D_U20Swift_Void__({
+    return { __root___consume_block_with_reftype_consumer__TypesOfArguments__U28data_FooU29202D_U20Swift_Void__({
         let originalBlock = block
-        return { arg0 in return originalBlock(data.Foo.__createClassWrapper(externalRCRef: arg0)) }
-    }())
+        return { arg0 in return { originalBlock(data.Foo.__createClassWrapper(externalRCRef: arg0)); return true }() }
+    }()); return () }()
 }
 public func consume_block_with_reftype_factory(
     block: @escaping () -> data.Foo
