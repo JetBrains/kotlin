@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.util
 
 import com.intellij.psi.*
 import com.intellij.psi.util.MethodSignature
-import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
-import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
+import org.jetbrains.kotlin.analysis.internal.utils.IndentedTextBuilder
+import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiLiteral
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -49,7 +49,7 @@ class PsiClassRenderer private constructor(
         }
     }
 
-    private fun PrettyPrinter.renderClass(psiClass: PsiClass) {
+    private fun IndentedTextBuilder.renderClass(psiClass: PsiClass) {
         val classWord = when {
             psiClass.isRecord -> "record"
             psiClass.isAnnotationType -> "@interface"
@@ -75,7 +75,8 @@ class PsiClassRenderer private constructor(
                 psiClass.fields
                     .filterIsInstance<PsiEnumConstant>()
                     .filter { membersFilter.includeEnumConstant(it) }
-                    .joinTo(this, ",\n") { it.renderEnumConstant() }
+                    .map { it.renderEnumConstant() }
+                    .let { appendCollection(it, separator = ",\n") }
 
                 append(";\n\n")
             }
@@ -86,7 +87,7 @@ class PsiClassRenderer private constructor(
         append("}")
     }
 
-    private fun renderClass(psiClass: PsiClass): String = prettyPrint {
+    private fun renderClass(psiClass: PsiClass): String = buildIndentedText(indentation = IndentedTextBuilder.TWO_SPACES) {
         renderClass(psiClass)
     }
 
@@ -260,7 +261,7 @@ class PsiClassRenderer private constructor(
             ?: ""
 
         val initializingClass = initializingClass ?: return "$annotations$name"
-        return prettyPrint {
+        return buildIndentedText {
             append(annotations)
             appendLine("$name {")
             renderMembers(initializingClass)
@@ -268,7 +269,7 @@ class PsiClassRenderer private constructor(
         }
     }
 
-    private fun PrettyPrinter.renderMembers(psiClass: PsiClass) {
+    private fun IndentedTextBuilder.renderMembers(psiClass: PsiClass) {
         var wasRendered = false
         val fields = psiClass.fields.filterNot { it is PsiEnumConstant }.filter { membersFilter.includeField(it) }
         appendSorted(fields, wasRendered) {
@@ -298,10 +299,11 @@ class PsiClassRenderer private constructor(
         }
     }
 
-    private fun <T> PrettyPrinter.appendSorted(list: List<T>, addPrefix: Boolean, render: (T) -> String) {
+    private fun <T> IndentedTextBuilder.appendSorted(list: List<T>, addPrefix: Boolean, render: (T) -> String) {
         if (list.isEmpty()) return
         val prefix = if (addPrefix) "\n\n" else ""
-        list.map(render).sorted().joinTo(this, separator = "\n\n", prefix = prefix)
+        val sortedChunks = list.map(render).sorted()
+        appendCollection(sortedChunks, separator = "\n\n", prefix = prefix)
     }
 
     private fun PsiAnnotation.renderAnnotation(): String {
