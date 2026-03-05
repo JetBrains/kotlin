@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION_ERROR")
-package org.jetbrains.kotlin.analysis.utils.caches
+
+package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.CachedValue
@@ -13,17 +13,15 @@ import com.intellij.util.CachedValueBase
 import com.intellij.util.containers.ContainerUtil
 import java.util.concurrent.ConcurrentHashMap
 
-@Deprecated("Unintentionally exposed API. Do not use", level = DeprecationLevel.ERROR)
-public abstract class SoftCachedMap<K : Any, V : Any> {
-    public abstract fun getOrPut(key: K, create: () -> V): V
+internal abstract class SoftCachedMap<K : Any, V : Any> {
+    abstract fun getOrPut(key: K, create: () -> V): V
 
-    public abstract fun clear()
+    abstract fun clear()
 
-    public abstract fun clearCachedValues()
+    abstract fun clearCachedValues()
 
-    @Deprecated("Unintentionally exposed API. Do not use", level = DeprecationLevel.ERROR)
-    public companion object {
-        public fun <K : Any, V : Any> create(
+    companion object {
+        fun <K : Any, V : Any> create(
             project: Project,
             kind: Kind,
             trackers: List<Any>
@@ -33,8 +31,7 @@ public abstract class SoftCachedMap<K : Any, V : Any> {
         }
     }
 
-    @Deprecated("Unintentionally exposed API. Do not use", level = DeprecationLevel.ERROR)
-    public enum class Kind {
+    enum class Kind {
         SOFT_KEYS_SOFT_VALUES,
         STRONG_KEYS_SOFT_VALUES
     }
