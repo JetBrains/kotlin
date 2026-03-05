@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalMainFunctionArgumentsDsl
@@ -24,8 +22,6 @@ abstract class KotlinNodeJsIr
 @Inject
 internal constructor(
     target: KotlinJsIrTarget,
-    private val objects: ObjectFactory,
-    private val providers: ProviderFactory,
 ) :
     KotlinJsIrNpmBasedSubTarget(target, "node"),
     KotlinJsNodeDsl {
@@ -77,7 +73,7 @@ internal constructor(
                 nodeJsRoot.taskRequirements.addTaskRequirements(test)
             }
         } else {
-            test.testFramework = KotlinWasmNode(test, objects, providers)
+            test.testFramework = KotlinWasmNode(test)
         }
     }
 }
