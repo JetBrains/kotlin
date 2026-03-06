@@ -53,9 +53,7 @@ KtProperty(124,146): 'val ONE = Second.THREE'
   null
 
 KtDotQualifiedExpression(134,146): 'Second.THREE'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with THREE>
+  null
 
 KtNameReferenceExpression(134,140): 'Second'
   null

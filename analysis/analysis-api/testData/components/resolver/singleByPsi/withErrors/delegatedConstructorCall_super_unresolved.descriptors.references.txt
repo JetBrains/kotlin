@@ -3,6 +3,6 @@ KtConstructorDelegationReferenceExpression(108,113): 'super'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
+    diagnostic: ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>
     symbols:
       (in Base) constructor(p1: kotlin.Int)

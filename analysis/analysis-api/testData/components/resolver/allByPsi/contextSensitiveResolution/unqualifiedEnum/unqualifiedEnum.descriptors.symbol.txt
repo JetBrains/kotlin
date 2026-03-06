@@ -224,9 +224,7 @@ KtProperty(416,447): 'val SECOND = test.Sample.SECOND'
   null
 
 KtDotQualifiedExpression(429,447): 'test.Sample.SECOND'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with SECOND>
+  null
 
 KtDotQualifiedExpression(429,440): 'test.Sample'
   null
@@ -274,9 +272,7 @@ KtProperty(492,521): 'val FIRST = test.Sample.THIRD'
   null
 
 KtDotQualifiedExpression(504,521): 'test.Sample.THIRD'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with THIRD>
+  null
 
 KtDotQualifiedExpression(504,515): 'test.Sample'
   null
@@ -333,9 +329,7 @@ KtWhenConditionWithExpression(607,624): 'test.Sample.FIRST'
   null
 
 KtDotQualifiedExpression(607,624): 'test.Sample.FIRST'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with FIRST>
+  null
 
 KtDotQualifiedExpression(607,618): 'test.Sample'
   null

@@ -392,9 +392,7 @@ KtWhenConditionWithExpression(486,494): 'Sealed.A'
   null
 
 KtDotQualifiedExpression(486,494): 'Sealed.A'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with A>
+  null
 
 KtNameReferenceExpression(486,492): 'Sealed'
   null
@@ -475,9 +473,7 @@ KtWhenConditionWithExpression(592,597): 'foo.A'
   null
 
 KtDotQualifiedExpression(592,597): 'foo.A'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with A>
+  null
 
 KtNameReferenceExpression(592,595): 'foo'
   null
@@ -1074,9 +1070,7 @@ KtOperationReferenceExpression(1234,1236): '=='
   null
 
 KtDotQualifiedExpression(1237,1245): 'Sealed.A'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with A>
+  null
 
 KtNameReferenceExpression(1237,1243): 'Sealed'
   null
@@ -1121,9 +1115,7 @@ KtOperationReferenceExpression(1292,1294): '=='
   null
 
 KtDotQualifiedExpression(1295,1300): 'foo.A'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with A>
+  null
 
 KtNameReferenceExpression(1295,1298): 'foo'
   null
@@ -1168,9 +1160,7 @@ KtOperationReferenceExpression(1341,1343): '=='
   null
 
 KtDotQualifiedExpression(1344,1352): 'Sealed.C'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with C>
+  null
 
 KtNameReferenceExpression(1344,1350): 'Sealed'
   null

@@ -56,9 +56,7 @@ KtWhenConditionWithExpression(150,153): 'A.A'
   null
 
 KtDotQualifiedExpression(150,153): 'A.A'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with A>
+  null
 
 KtNameReferenceExpression(150,151): 'A'
   null
@@ -79,9 +77,7 @@ KtWhenConditionWithExpression(169,172): 'A.B'
   null
 
 KtDotQualifiedExpression(169,172): 'A.B'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with B>
+  null
 
 KtNameReferenceExpression(169,170): 'A'
   null

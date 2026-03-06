@@ -26,9 +26,7 @@ KtProperty(110,126): 'val L = MyEnum.Y'
   null
 
 KtDotQualifiedExpression(118,126): 'MyEnum.Y'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with Y>
+  null
 
 KtNameReferenceExpression(118,124): 'MyEnum'
   null

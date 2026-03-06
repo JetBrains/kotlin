@@ -77,9 +77,7 @@ KtProperty(270,306): 'val EnumOptionAlias = MyEnum.Option1'
   null
 
 KtDotQualifiedExpression(292,306): 'MyEnum.Option1'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with Option1>
+  null
 
 KtNameReferenceExpression(292,298): 'MyEnum'
   null
@@ -91,9 +89,7 @@ KtProperty(308,340): 'val OptionAlias = MyEnum.Option2'
   null
 
 KtDotQualifiedExpression(326,340): 'MyEnum.Option2'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with Option2>
+  null
 
 KtNameReferenceExpression(326,332): 'MyEnum'
   null

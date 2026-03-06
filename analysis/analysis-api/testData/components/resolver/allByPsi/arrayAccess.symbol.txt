@@ -143,7 +143,10 @@ KtLiteralStringTemplateEntry(146,156): 'SOME_ERROR'
   null
 
 KtArrayAccessExpression(159,166): 'list[1]'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+    ]
 
 KtNameReferenceExpression(159,163): 'list'
   null
@@ -167,7 +170,10 @@ KtParenthesizedExpression(177,186): '(list[2])'
   null
 
 KtArrayAccessExpression(178,185): 'list[2]'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+    ]
 
 KtNameReferenceExpression(178,182): 'list'
   null
@@ -284,7 +290,10 @@ KtParenthesizedExpression(268,277): '(list[2])'
   null
 
 KtArrayAccessExpression(269,276): 'list[2]'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+    ]
 
 KtNameReferenceExpression(269,273): 'list'
   null

@@ -41,9 +41,7 @@ KtValueArgument(39,60): 'AnnotationTarget.TYPE'
   null
 
 KtDotQualifiedExpression(39,60): 'AnnotationTarget.TYPE'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with TYPE>
+  null
 
 KtNameReferenceExpression(39,55): 'AnnotationTarget'
   null

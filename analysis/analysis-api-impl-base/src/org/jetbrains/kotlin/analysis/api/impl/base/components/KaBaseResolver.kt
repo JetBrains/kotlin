@@ -38,6 +38,25 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
 
     final override fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? = withValidityAssertion {
         when (this) {
+            // Technically, symbol resolution can be more efficient than calls,
+            // because calls require collecting more information (e.g., argument mappings).
+            // However, the tradeoff is almost complete code duplication and duplicate caches that seem too high.
+            // In reality, the reuse of call resolution is actually a benefit because its result is cached and
+            // effectively reused at all entry points into the resolver API
+            is KtResolvableCall -> when (val callAttempt = tryResolveCall()) {
+                is KaCallResolutionError -> KaBaseSymbolResolutionError(
+                    backingDiagnostic = callAttempt.diagnostic,
+                    backingCandidateSymbols = callAttempt.candidateCalls.flatMap(KaSingleOrMultiCall::symbols)
+                )
+
+                is KaCallResolutionSuccess -> KaBaseSymbolResolutionSuccess(
+                    backingSymbols = callAttempt.call.symbols,
+                    token = callAttempt.token,
+                )
+
+                null -> null
+            }
+
             is KtElement -> {
                 checkValidity()
                 performSymbolResolution(this)

@@ -106,13 +106,6 @@ internal class KaFe10Resolver(
     }
 
     override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? {
-        when (psi) {
-            is KtCallableReferenceExpression -> return performSymbolResolution(psi.callableReference)
-            is KtWhenConditionInRange -> return performSymbolResolution(psi.operationReference)
-            is KtForExpression -> return resolveForLoopSymbols(psi)
-            is KtPropertyDelegate -> return resolveDelegatedPropertySymbols(psi)
-        }
-
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val resolvedCall = psi.getResolvedCall(bindingContext)
         if (resolvedCall != null) {
@@ -877,20 +870,6 @@ internal class KaFe10Resolver(
         return Fe10DelegateResolvedCalls(bindingContext, getValueResolvedCall, setValueResolvedCall, provideDelegateResolvedCall)
     }
 
-    private fun resolveDelegatedPropertySymbols(psi: KtPropertyDelegate): KaSymbolResolutionAttempt? {
-        val (_, getValueResolvedCall, setValueResolvedCall, provideDelegateResolvedCall) =
-            extractDelegateResolvedCalls(psi) ?: return null
-
-        val symbols = listOfNotNull(
-            getValueResolvedCall.candidateDescriptor.toKtSymbol(analysisContext),
-            setValueResolvedCall?.candidateDescriptor?.toKtSymbol(analysisContext),
-            provideDelegateResolvedCall?.candidateDescriptor?.toKtSymbol(analysisContext),
-        )
-
-        if (symbols.isEmpty()) return null
-        return KaBaseSymbolResolutionSuccess(symbols, token)
-    }
-
     private fun resolveDelegatedPropertyCall(psi: KtPropertyDelegate): KaCallResolutionAttempt? {
         val (bindingContext, getValueResolvedCall, setValueResolvedCall, provideDelegateResolvedCall) =
             extractDelegateResolvedCalls(psi) ?: return null
@@ -921,20 +900,6 @@ internal class KaFe10Resolver(
         val nextResolvedCall = bindingContext.get(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange) ?: return null
 
         return Fe10ForLoopResolvedCalls(bindingContext, iteratorResolvedCall, hasNextResolvedCall, nextResolvedCall)
-    }
-
-    private fun resolveForLoopSymbols(psi: KtForExpression): KaSymbolResolutionAttempt? {
-        val (_, iteratorResolvedCall, hasNextResolvedCall, nextResolvedCall) =
-            extractForLoopResolvedCalls(psi) ?: return null
-
-        val symbols = listOfNotNull(
-            iteratorResolvedCall.candidateDescriptor.toKtSymbol(analysisContext),
-            hasNextResolvedCall.candidateDescriptor.toKtSymbol(analysisContext),
-            nextResolvedCall.candidateDescriptor.toKtSymbol(analysisContext),
-        )
-
-        if (symbols.isEmpty()) return null
-        return KaBaseSymbolResolutionSuccess(symbols, token)
     }
 
     private fun resolveForLoopCall(psi: KtForExpression): KaCallResolutionAttempt? {

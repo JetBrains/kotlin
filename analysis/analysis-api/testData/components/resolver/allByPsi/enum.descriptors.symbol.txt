@@ -206,9 +206,7 @@ KtNameReferenceExpression(312,319): 'ordinal'
   null
 
 KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with Entry>
+  null
 
 KtNameReferenceExpression(325,344): 'EnumWithConstructor'
   null
@@ -235,9 +233,7 @@ KtNameReferenceExpression(381,385): 'name'
   null
 
 KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with EntryWithBody>
+  null
 
 KtNameReferenceExpression(390,409): 'EnumWithConstructor'
   null
@@ -276,9 +272,7 @@ KtNameReferenceExpression(492,499): 'entries'
   null
 
 KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with Entry>
+  null
 
 KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
   null
@@ -287,9 +281,7 @@ KtNameReferenceExpression(527,532): 'Entry'
   null
 
 KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with EntryWithBody>
+  null
 
 KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
   null

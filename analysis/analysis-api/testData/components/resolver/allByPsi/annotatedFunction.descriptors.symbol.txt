@@ -41,9 +41,7 @@ KtValueArgument(46,77): 'AnnotationTarget.TYPE_PARAMETER'
   null
 
 KtDotQualifiedExpression(46,77): 'AnnotationTarget.TYPE_PARAMETER'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with TYPE_PARAMETER>
+  null
 
 KtNameReferenceExpression(46,62): 'AnnotationTarget'
   null
@@ -55,9 +53,7 @@ KtValueArgument(83,108): 'AnnotationTarget.FUNCTION'
   null
 
 KtDotQualifiedExpression(83,108): 'AnnotationTarget.FUNCTION'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with FUNCTION>
+  null
 
 KtNameReferenceExpression(83,99): 'AnnotationTarget'
   null
@@ -69,9 +65,7 @@ KtValueArgument(114,146): 'AnnotationTarget.VALUE_PARAMETER'
   null
 
 KtDotQualifiedExpression(114,146): 'AnnotationTarget.VALUE_PARAMETER'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with VALUE_PARAMETER>
+  null
 
 KtNameReferenceExpression(114,130): 'AnnotationTarget'
   null
@@ -83,9 +77,7 @@ KtValueArgument(152,173): 'AnnotationTarget.TYPE'
   null
 
 KtDotQualifiedExpression(152,173): 'AnnotationTarget.TYPE'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with TYPE>
+  null
 
 KtNameReferenceExpression(152,168): 'AnnotationTarget'
   null

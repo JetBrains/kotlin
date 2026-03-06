@@ -173,9 +173,7 @@ KtProperty(302,348): 'val explicitTopObject = one.two.TopLevelObject'
   null
 
 KtDotQualifiedExpression(326,348): 'one.two.TopLevelObject'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with TopLevelObject>
+  null
 
 KtDotQualifiedExpression(326,333): 'one.two'
   null
@@ -259,9 +257,7 @@ KtProperty(537,591): 'val explicitNestedObject = TopLevelObject.NestedObject'
   null
 
 KtDotQualifiedExpression(564,591): 'TopLevelObject.NestedObject'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with NestedObject>
+  null
 
 KtNameReferenceExpression(564,578): 'TopLevelObject'
   null

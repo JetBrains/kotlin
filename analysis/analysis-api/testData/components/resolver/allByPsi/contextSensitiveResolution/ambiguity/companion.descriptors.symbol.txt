@@ -149,9 +149,7 @@ KtOperationReferenceExpression(328,330): '=='
   null
 
 KtDotQualifiedExpression(331,339): 'MyEnum.A'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with A>
+  null
 
 KtNameReferenceExpression(331,337): 'MyEnum'
   null
@@ -313,9 +311,7 @@ KtWhenConditionWithExpression(571,579): 'MyEnum.A'
   null
 
 KtDotQualifiedExpression(571,579): 'MyEnum.A'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with A>
+  null
 
 KtNameReferenceExpression(571,577): 'MyEnum'
   null

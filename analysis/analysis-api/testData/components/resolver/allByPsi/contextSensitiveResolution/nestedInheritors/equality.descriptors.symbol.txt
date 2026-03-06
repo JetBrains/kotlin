@@ -218,9 +218,7 @@ KtOperationReferenceExpression(428,430): '=='
   null
 
 KtDotQualifiedExpression(431,456): 'Settings.SpecificSettings'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with SpecificSettings>
+  null
 
 KtNameReferenceExpression(431,439): 'Settings'
   null
@@ -460,9 +458,7 @@ KtOperationReferenceExpression(839,841): '=='
   null
 
 KtDotQualifiedExpression(842,875): 'OpenSettings.OpenSpecificSettings'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with OpenSpecificSettings>
+  null
 
 KtNameReferenceExpression(842,854): 'OpenSettings'
   null

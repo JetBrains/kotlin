@@ -251,9 +251,7 @@ KtProperty(332,350): 'val L = MySealed.X'
   null
 
 KtDotQualifiedExpression(340,350): 'MySealed.X'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with X>
+  null
 
 KtNameReferenceExpression(340,348): 'MySealed'
   null
@@ -709,9 +707,7 @@ KtLabelReferenceExpression(852,858): '@myRun'
     ]
 
 KtDotQualifiedExpression(859,869): 'MySealed.X'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with X>
+  null
 
 KtNameReferenceExpression(859,867): 'MySealed'
   null

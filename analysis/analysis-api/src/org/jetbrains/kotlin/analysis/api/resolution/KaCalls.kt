@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.resolution.KtResolvableCall
@@ -148,4 +149,17 @@ public val KaSingleOrMultiCall.calls: List<KaSingleCall<*, *>>
     get() = when (this) {
         is KaSingleCall<*, *> -> listOf(this)
         is KaMultiCall -> calls
+    }
+
+/**
+ * The flattened list of [KaSymbol]s for the resolved calls.
+ *
+ * - If [this] is an instance of [KaSingleCall], the list will contain only the [KaSingleCall.signature]'s symbol
+ * - If [this] is an instance of [KaMultiCall], the list will contain symbols from all [KaMultiCall.calls]
+ */
+@KaExperimentalApi
+public val KaSingleOrMultiCall.symbols: List<KaSymbol>
+    get() = when (this) {
+        is KaSingleCall<*, *> -> listOf(signature.symbol)
+        is KaMultiCall -> calls.map { it.signature.symbol }
     }

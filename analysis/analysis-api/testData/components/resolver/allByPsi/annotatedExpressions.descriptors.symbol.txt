@@ -47,9 +47,7 @@ KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
   null
 
 KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with EXPRESSION>
+  null
 
 KtNameReferenceExpression(46,62): 'AnnotationTarget'
   null
@@ -82,9 +80,7 @@ KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
   null
 
 KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: SUCCESS with SOURCE>
+  null
 
 KtNameReferenceExpression(86,105): 'AnnotationRetention'
   null
