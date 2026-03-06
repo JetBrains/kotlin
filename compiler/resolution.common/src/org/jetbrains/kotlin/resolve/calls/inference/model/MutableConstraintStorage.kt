@@ -133,6 +133,7 @@ class MutableVariableWithConstraints private constructor(
         for (previousConstraint in getConstraintsWithSameTypeHashCode(constraint)) {
             if (previousConstraint.type == constraint.type
                 && previousConstraint.isNullabilityConstraint == constraint.isNullabilityConstraint
+                && previousConstraint.isNoInfer == constraint.isNoInfer
             ) {
                 if (newConstraintIsUseless(previousConstraint, constraint)) {
                     return previousConstraint to false
@@ -153,7 +154,7 @@ class MutableVariableWithConstraints private constructor(
                             constraint.typeHashCode,
                             derivedFrom = constraint.derivedFrom,
                             isNullabilityConstraint = false,
-                            isNoInfer = constraint.isNoInfer && previousConstraint.isNoInfer,
+                            isNoInfer = constraint.isNoInfer,
                         ).also {
                             inferenceLogger.withOrigins(
                                 typeVariable, previousConstraint,
