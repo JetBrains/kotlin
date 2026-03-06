@@ -74,7 +74,15 @@ if (typeNode.text.contains("[")) {
 ```
 
 ### Comparing with Working Implementation
-Compare with PSI-based implementation in `compiler/frontend.java/src/org/jetbrains/kotlin/load/java/structure/impl/` or javac-based in `compiler/javac-wrapper/src/org/jetbrains/kotlin/javac/`.
+Compare with PSI-based implementation in `compiler/frontend.common.jvm/src/org/jetbrains/kotlin/load/java/structure/impl/` or javac-based in `compiler/javac-wrapper/src/org/jetbrains/kotlin/javac/`.
+
+### Finding Test Data Files
+Test names map to files in `compiler/testData/`. Use MCP tools to find them:
+```kotlin
+// Example: testJavaAnnotation → 
+mcp__jetbrains__find_files_by_name_keyword("javaAnnotation", ...)
+// Then read the test file to understand the exact scenario
+```
 
 ---
 
@@ -101,16 +109,20 @@ Compare with PSI-based implementation in `compiler/frontend.java/src/org/jetbrai
 | Issue | Solution |
 |-------|----------|
 | `MISSING_DEPENDENCY_CLASS: 'T'` | Type parameter not in scope - use `resolutionContext.withTypeParameters()` |
+| `MISSING_DEPENDENCY_CLASS: 'Outer.Inner'` | Nested class in binary - need to resolve outer first, then lookup nested |
 | Raw type errors | Check `isRaw` detection, ensure `ConeRawType.create()` wrapping in FIR |
 | Annotation not resolved | Use callback pattern via `resolveAnnotation(tryResolve)` |
+| `IR annotation has null argument` | `JavaAnnotationArgument` must implement value subinterfaces (Literal/Array/Enum/etc) |
 | `@Override` on return type | Filter non-TYPE_USE annotations in `JavaTypeOverAst.annotations` |
 | Nested interface wrong `isInner` | `isStatic` must return `true` for nested interfaces/enums |
+| Nullability check fails | TYPE_USE annotations on type arguments need parsing |
 
 ### What NOT to Do
 - **Don't hardcode package lists** for annotation resolution - use callback pattern
 - **Don't modify FIR layer** unless java-direct model is correct but FIR handling is wrong
 - **Don't assume AST structure** - always dump and verify with exception debugging
 - **Don't skip empty ERROR_ELEMENT nodes** when scanning siblings
+- **Don't implement partial interfaces** - e.g., `JavaAnnotationArgument` requires value subinterfaces (`JavaLiteralAnnotationArgument`, etc.), not just `name`
 
 ---
 
@@ -129,28 +141,58 @@ Compare with PSI-based implementation in `compiler/frontend.java/src/org/jetbrai
 ```
 
 ### 2. Categorize Failures
+
+**Important**: Test results are in nested XML files. Use recursive glob:
+
 ```python
 import xml.etree.ElementTree as ET
 import glob
 from collections import defaultdict
+import re
 
 results_dir = "compiler/java-direct/build/test-results/test"
 failures = defaultdict(list)
 
-for xml_file in glob.glob(f"{results_dir}/*.xml"):
-    tree = ET.parse(xml_file)
-    for tc in tree.findall('.//testcase'):
-        failure = tc.find('failure')
-        if failure is not None:
-            name = tc.get('name').replace('()','')
-            text = (failure.text or '') + (failure.get('message', '') or '')
-            if 'MISSING_DEPENDENCY_CLASS' in text:
-                failures['MISSING_DEPENDENCY_CLASS'].append(name)
-            # ... more patterns
+def categorize(text):
+    """Extract error category from failure text"""
+    patterns = [
+        (r'MISSING_DEPENDENCY_CLASS', 'MISSING_DEP_CLASS'),
+        (r'MISSING_DEPENDENCY_SUPERCLASS', 'MISSING_DEP_SUPER'),
+        (r'IR annotation has null argument', 'ANNOTATION_NULL_ARG'),
+        (r"UNRESOLVED_REFERENCE.*value", 'ANNOTATION_VALUE_UNRESOLVED'),
+        (r'NoSuchMethodError', 'NO_SUCH_METHOD'),
+        (r'INVISIBLE_REFERENCE', 'INVISIBLE_REF'),
+        (r'ABSTRACT_MEMBER_NOT_IMPLEMENTED', 'ABSTRACT_NOT_IMPL'),
+        (r'Actual data differs from file content', 'BASELINE_DIFF'),
+        (r'Content is not equal', 'CONTENT_DIFF'),
+        (r'should throw on get\(\)', 'NULLABILITY_CHECK_FAIL'),
+        (r'There should left no projections', 'STAR_PROJECTION_BUG'),
+    ]
+    for pattern, cat in patterns:
+        if re.search(pattern, text, re.IGNORECASE):
+            return cat
+    return 'OTHER'
 
-for cat, tests in sorted(failures.items(), key=lambda x: -len(x[1])):
-    print(f"\n=== {cat} ({len(tests)} tests) ===")
-    for t in tests: print(f"  - {t}")
+# Use recursive glob to find all XML files (tests are in nested directories)
+for xml_file in glob.glob(f"{results_dir}/**/*.xml", recursive=True):
+    try:
+        tree = ET.parse(xml_file)
+        for tc in tree.findall('.//testcase'):
+            failure = tc.find('failure')
+            if failure is not None:
+                name = tc.get('name').replace('()','')
+                classname = tc.get('classname', '')
+                text = (failure.text or '') + (failure.get('message', '') or '')
+                test_type = 'box' if 'Box' in classname else 'phased'
+                cat = categorize(text)
+                failures[f"{test_type}:{cat}"].append((name, text[:200]))
+    except: pass
+
+for key in sorted(failures.keys(), key=lambda k: -len(failures[k])):
+    tests = failures[key]
+    print(f"\n=== {key} ({len(tests)} tests) ===")
+    for name, text in tests[:5]:
+        print(f"  - {name}")
 ```
 
 ### 3. Debug, Fix, Verify
@@ -177,6 +219,10 @@ Update `ITERATION_RESULTS.md` with findings, changes, and test counts.
 | `JavaResolutionContext.kt` | Import/type parameter scope management |
 | `JavaAnnotationOverAst.kt` | Annotation parsing and resolution |
 | `JavaDirectComponentRegistrar.kt` | Plugin registration, hybrid finder setup |
+
+**Reference implementations** (for comparison when implementing new features):
+- `compiler/frontend.common.jvm/src/.../load/java/structure/impl/annotationArgumentsImpl.kt` — annotation argument handling
+- `compiler/frontend.common.jvm/src/.../load/java/structure/impl/JavaTypeImpl.kt` — type construction
 
 **FIR integration** (may need changes for external type handling):
 - `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt` — type conversion, raw type detection
@@ -225,11 +271,17 @@ For precise coverage of a fix or feature, add tests to `JavaParsingTest` in `tes
 
 ## Remaining Work (176 failing tests)
 
-| Category | Count | Notes |
-|----------|-------|-------|
-| Box tests | 91 | Various runtime issues |
-| Phased tests | 85 | Diagnostic/type checking edge cases |
+| Category | Count | Priority | Notes |
+|----------|-------|----------|-------|
+| Annotation Arguments | ~30 | HIGH | Need to implement value subinterfaces |
+| Nested Class Resolution | ~10 | HIGH | `Outer.Inner` in binary classes |
+| TYPE_USE on Type Args | ~5 | MEDIUM | `List<@NotNull T>` parsing |
+| Wildcard Edge Cases | ~5 | MEDIUM | Complex generics, delegation |
+| Raw Type Visibility | ~3 | LOW | Protected field access |
+| Baseline Diffs | ~120 | VARIES | May auto-resolve with above fixes |
+
+See `FIXING_ITERATIONS.md` for detailed iteration plans (17-21).
 
 ---
 
-*Last updated: 2026-03-06 (iteration 16 complete)*
+*Last updated: 2026-03-06 (iteration 16 complete, iteration 17-21 planned)*
