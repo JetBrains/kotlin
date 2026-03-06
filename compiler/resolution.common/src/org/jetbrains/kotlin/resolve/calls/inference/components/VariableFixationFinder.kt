@@ -396,7 +396,8 @@ private fun KotlinTypeMarker.extractProjectionsForAllCapturedTypesInternal(resul
 
     val projectionType = if (simpleBaseType != null) {
         val argumentType = simpleBaseType.typeConstructorProjection().getType() ?: return
-        argumentType.also { result.add(it) }
+        if (!result.add(argumentType)) return
+        argumentType
     } else {
         this@extractProjectionsForAllCapturedTypesInternal
     }
