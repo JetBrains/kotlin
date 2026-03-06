@@ -21,7 +21,7 @@ abstract class SwiftImportExtension @Inject constructor(
     val watchosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
     val tvosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
 
-    val discoverModulesImplicitly: Property<Boolean> = objects.property(Boolean::class.java)
+    val discoverClangModulesImplicitly: Property<Boolean> = objects.property(Boolean::class.java)
         .convention(true)
 
     abstract val xcodeProjectPathForKmpIJPlugin: RegularFileProperty
@@ -40,10 +40,10 @@ abstract class SwiftImportExtension @Inject constructor(
     fun product(
         name: String,
         platforms: Set<SwiftPMDependency.Platform>? = null,
-        importedModules: Set<String> = if (platforms != null) setOf(name) else emptySet(),
+        importedClangModules: Set<String> = if (platforms != null) setOf(name) else emptySet(),
     ): SwiftPMDependency.Product = SwiftPMDependency.Product(
         name,
-        importedModules,
+        importedClangModules,
         platforms
     )
     fun iOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.iOS
@@ -56,7 +56,7 @@ abstract class SwiftImportExtension @Inject constructor(
         version: String,
         products: List<String>,
         packageName: String = inferPackageName(url),
-        importedModules: List<String> = products,
+        importedClangModules: List<String> = products,
         traits: Set<String> = setOf(),
     ) {
         spmDependencies.add(
@@ -65,7 +65,7 @@ abstract class SwiftImportExtension @Inject constructor(
                 version = Version.From(version),
                 packageName = packageName,
                 products = products.map { SwiftPMDependency.Product(it) },
-                cinteropClangModules = importedModules.map {
+                cinteropClangModules = importedClangModules.map {
                     SwiftPMDependency.CinteropClangModule(it)
                 },
                 traits = traits
@@ -78,7 +78,7 @@ abstract class SwiftImportExtension @Inject constructor(
         version: Version,
         products: List<SwiftPMDependency.Product>,
         packageName: String = inferPackageName(url.value),
-        importedModules: List<String> = products.filter {
+        importedClangModules: List<String> = products.filter {
             it.platformConstraints == null && it.cinteropClangModules.isEmpty()
         }.map { it.name },
         traits: Set<String> = setOf(),
@@ -89,7 +89,7 @@ abstract class SwiftImportExtension @Inject constructor(
                 version = version,
                 packageName = packageName,
                 products = products,
-                cinteropClangModules = importedModules.map {
+                cinteropClangModules = importedClangModules.map {
                     SwiftPMDependency.CinteropClangModule(it)
                 } + products.flatMap { product ->
                     product.cinteropClangModules.map {
@@ -106,7 +106,7 @@ abstract class SwiftImportExtension @Inject constructor(
         version: Version,
         products: List<SwiftPMDependency.Product>,
         packageName: String,
-        importedModules: List<String> = products.filter {
+        importedClangModules: List<String> = products.filter {
             it.platformConstraints == null && it.cinteropClangModules.isEmpty()
         }.map { it.name },
         traits: Set<String> = setOf(),
@@ -117,7 +117,7 @@ abstract class SwiftImportExtension @Inject constructor(
                 version = version,
                 packageName = packageName,
                 products = products,
-                cinteropClangModules = importedModules.map {
+                cinteropClangModules = importedClangModules.map {
                     SwiftPMDependency.CinteropClangModule(it)
                 } + products.flatMap { product ->
                     product.cinteropClangModules.map {
@@ -135,7 +135,7 @@ abstract class SwiftImportExtension @Inject constructor(
      * @param directory The directory containing the SwiftPM package (must contain Package.swift)
      * @param products List of SwiftPM product names to import
      * @param packageName Optional package name (inferred from directory name if not specified)
-     * @param importedModules List of modules to import (defaults to products list)
+     * @param importedClangModules List of modules to import (defaults to products list)
      * @param traits SwiftPM traits to enable
      *
      * Example:
@@ -150,7 +150,7 @@ abstract class SwiftImportExtension @Inject constructor(
         directory: Directory,
         products: List<String>,
         packageName: String = inferLocalPackageName(directory),
-        importedModules: List<String> = products,
+        importedClangModules: List<String> = products,
         traits: Set<String> = setOf(),
     ) {
         val absolutePath = directory.asFile.normalizedAbsoluteFile()
@@ -160,7 +160,7 @@ abstract class SwiftImportExtension @Inject constructor(
                 absolutePath = absolutePath,
                 packageName = packageName,
                 products = products.map { SwiftPMDependency.Product(it) },
-                cinteropClangModules = importedModules.map {
+                cinteropClangModules = importedClangModules.map {
                     SwiftPMDependency.CinteropClangModule(it)
                 },
                 traits = traits,
@@ -174,14 +174,14 @@ abstract class SwiftImportExtension @Inject constructor(
      * @param directory The directory containing the SwiftPM package (must contain Package.swift)
      * @param products List of SwiftPM products with platform constraints
      * @param packageName Optional package name (inferred from directory name if not specified)
-     * @param importedModules List of modules to import
+     * @param importedClangModules List of modules to import
      * @param traits SwiftPM traits to enable
      */
     fun localSwiftPackage(
         directory: Directory,
         products: List<SwiftPMDependency.Product>,
         packageName: String = inferLocalPackageName(directory),
-        importedModules: List<String> = products.filter {
+        importedClangModules: List<String> = products.filter {
             it.platformConstraints == null && it.cinteropClangModules.isEmpty()
         }.map { it.name },
         traits: Set<String> = setOf(),
@@ -194,7 +194,7 @@ abstract class SwiftImportExtension @Inject constructor(
                 absolutePath = absolutePath,
                 packageName = packageName,
                 products = products,
-                cinteropClangModules = importedModules.map {
+                cinteropClangModules = importedClangModules.map {
                     SwiftPMDependency.CinteropClangModule(it)
                 } + products.flatMap { product ->
                     product.cinteropClangModules.map {

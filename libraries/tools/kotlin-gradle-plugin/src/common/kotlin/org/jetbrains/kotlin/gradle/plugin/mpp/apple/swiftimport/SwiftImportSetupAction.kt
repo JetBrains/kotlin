@@ -272,7 +272,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             it.xcodebuildSdk.set(targetSdk)
             it.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { it.swiftPMDependenciesCheckout.get() })
             it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
-            it.discoverModulesImplicitly.set(swiftPMImportExtension.discoverModulesImplicitly)
+            it.discoverModulesImplicitly.set(swiftPMImportExtension.discoverClangModulesImplicitly)
             it.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.flatMap { it.filesToTrackFromLocalPackages })
             it.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
         }
