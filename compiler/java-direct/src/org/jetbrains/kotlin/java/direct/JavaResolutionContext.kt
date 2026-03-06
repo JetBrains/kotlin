@@ -66,15 +66,61 @@ class JavaResolutionContext private constructor(
     }
 
     /**
-     * Resolve a simple type name using the callback for external resolution.
+     * Resolve a type name using the callback for external resolution.
      * Called by [JavaClassifierTypeOverAst.resolve] when FIR needs to resolve star imports.
      *
      * Resolution order (per JLS):
      * 1. Same package
      * 2. java.lang.* (automatic import)
      * 3. Explicit star imports
+     *
+     * For nested class references (e.g., "Map.Entry"), the outer class is resolved first,
+     * then the nested class name is appended.
      */
-    fun resolveWithCallback(simpleName: String, tryResolve: (String) -> Boolean): String? {
+    fun resolveWithCallback(name: String, tryResolve: (String) -> Boolean): String? {
+        // Handle nested class references like "Map.Entry"
+        if (name.contains('.')) {
+            return resolveNestedClass(name, tryResolve)
+        }
+        return resolveSimpleName(name, tryResolve)
+    }
+
+    /**
+     * Resolve a nested class reference like "Map.Entry" or "Outer.Inner.Deep".
+     */
+    private fun resolveNestedClass(name: String, tryResolve: (String) -> Boolean): String? {
+        val parts = name.split('.')
+        
+        // Try resolving increasing prefixes as the outer class
+        // For "A.B.C", try: A (then A.B.C), A.B (then A.B.C)
+        for (i in 1 until parts.size) {
+            val outerParts = parts.subList(0, i).joinToString(".")
+            val nestedParts = parts.subList(i, parts.size).joinToString(".")
+            
+            // Resolve the outer class
+            val resolvedOuter = if (outerParts.contains('.')) {
+                resolveNestedClass(outerParts, tryResolve)
+            } else {
+                resolveSimpleName(outerParts, tryResolve)
+            }
+            
+            if (resolvedOuter != null) {
+                // Try the full nested class path
+                val fullNested = "$resolvedOuter.$nestedParts"
+                if (tryResolve(fullNested)) return fullNested
+            }
+        }
+        
+        // Also try as a fully qualified name directly
+        if (tryResolve(name)) return name
+        
+        return null
+    }
+
+    /**
+     * Resolve a simple (non-nested) type name.
+     */
+    private fun resolveSimpleName(simpleName: String, tryResolve: (String) -> Boolean): String? {
         // 1. Same package
         if (!packageFqName.isRoot) {
             val samePackageFqn = "${packageFqName.asString()}.$simpleName"

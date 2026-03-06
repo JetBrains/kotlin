@@ -156,10 +156,25 @@ class JavaClassifierTypeOverAst(
     }
 
     override val isResolved: Boolean
-        get() = classifier != null
-                || rawTypeName.contains('.')
-                || resolutionContext.getSimpleImport(rawTypeName) != null
-                || resolutionContext.findTypeParameter(rawTypeName) != null
+        get() {
+            // Already resolved if we found a local classifier (including inner classes)
+            if (classifier != null) return true
+            
+            val parts = rawTypeName.split('.')
+            
+            // Type parameter reference (single name only)
+            if (parts.size == 1 && resolutionContext.findTypeParameter(rawTypeName) != null) return true
+            
+            // Explicit simple import for the first part resolves it
+            if (resolutionContext.getSimpleImport(parts[0]) != null) return true
+            
+            // For unqualified names (no dots), we need resolution
+            // For qualified names like "Map.Entry", we need to resolve the outer class
+            // Only fully qualified names starting with a package are considered resolved
+            // We can't reliably distinguish "java.util.Map" from "Outer.Inner" by case alone
+            // So we consider anything that didn't match above as unresolved
+            return false
+        }
 
     override fun resolve(tryResolve: (String) -> Boolean): String? {
         return resolutionContext.resolveWithCallback(rawTypeName, tryResolve)

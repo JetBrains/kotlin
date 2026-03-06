@@ -5,7 +5,7 @@
 This document contains iteration plans for the `java-direct` module.
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration  
-**Status**: Iteration 16 complete — 1317/1493 tests passing (88.2%)  
+**Status**: Iteration 18 complete — 1100/1166 box tests passing (94.3%)  
 **Last Updated**: 2026-03-06
 
 ---
@@ -331,417 +331,117 @@ sealed class JavaAnnotationArgumentImpl(override val name: Name?) : JavaAnnotati
 
 ## Iteration 17b: Annotation Method Default Values
 
-**Status**: 🔲 Planned  
-**Expected Impact**: ~20 tests  
+**Status**: ✅ Completed  
+**Actual Impact**: +8 tests (1092/1166 → test passing)  
 **Priority**: HIGH  
 **Complexity**: LOW-MEDIUM
 
-### Problem Statement
+### What Was Done
 
-Annotation method default values are not being parsed. When a Java annotation declares a method with a `default` value, the java-direct module returns `null` instead of the default value.
+Implemented annotation method default values parsing. When a Java annotation declares a method with a `default` value (e.g., `String value() default "OK"`), the java-direct module now correctly parses and returns this value via `annotationParameterDefaultValue`.
 
-```java
-public @interface MyAnnotation {
-    String value() default "default";  // ← default value not parsed
-    int count() default 42;
-}
-```
+### Key Findings
 
-This causes Kotlin code using these annotations to fail with `NAMED_PARAMETER_NOT_FOUND` or `TOO_MANY_ARGUMENTS` when:
-- Omitting parameters that have defaults
-- Using named parameters syntax
+1. **ANNOTATION_METHOD vs METHOD**: Annotation interface methods use `ANNOTATION_METHOD` node type, not `METHOD`. The initial fix for `annotationParameterDefaultValue` didn't work because `getMethods()` wasn't returning `ANNOTATION_METHOD` nodes.
 
-### Root Cause
-
-In `JavaMethodOverAst` (`compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt`), the annotation default value properties are hardcoded:
-
-```kotlin
-override val annotationParameterDefaultValue: JavaAnnotationArgument? get() = null
-override val hasAnnotationParameterDefaultValue: Boolean get() = false
-```
-
-### Reference Implementation
-
-PSI implementation in `JavaMethodImpl.java` (`compiler/frontend.common.jvm/src/org/jetbrains/kotlin/load/java/structure/impl/JavaMethodImpl.java`):
-
-```java
-@Override
-@Nullable
-public JavaAnnotationArgument getAnnotationParameterDefaultValue() {
-    PsiMethod psiMethod = getPsi();
-    if (psiMethod instanceof PsiAnnotationMethod) {
-        PsiAnnotationMemberValue defaultValue = ((PsiAnnotationMethod) psiMethod).getDefaultValue();
-        if (defaultValue != null) {
-            return JavaAnnotationArgumentImpl.Factory.create(defaultValue, null, getSourceFactory());
-        }
-    }
-    return null;
-}
-```
-
-### Affected Tests (20+ tests)
-
-**NAMED_PARAMETER_NOT_FOUND (11 tests)**:
-- `testAnnotationsOnNonExistentAccessors`
-- `testCallableReferencesOnEnumMembers`
-- `testEnumCtorAnnotation`
-- `testEnumInteractionWithJava`
-- `testJavaToKotlinAnnotationConflictingTargets`
-- `testKotlinAnnotations`
-- `testSimpleEnumWithSingleArg`
-- `testPropertyAnnotations`
-- `testAnnotatedEnumEntry`
-- `testEnumArgWithDefault`
-- `testJavaFieldAccessedAsProperty`
-
-**TOO_MANY_ARGUMENTS (9 tests)**:
-- `testEnumEntryWithAnnotation`
-- `testEnumWithCompanion`
-- `testEnumWithDefaultParameter`
-- `testAnnotationUseSiteTarget`
-- `testEnumConstructorInnerClass`
-- `testJavaAnnotationOnKotlinClass`
-- `testEnumEntryCtorCall`
-- `testEnumEntryWithLambda`
-- `testAnnotationDefaultArgs`
-
-### Symptoms
-
-```
-NAMED_PARAMETER_NOT_FOUND: Cannot find a parameter with this name: value
-```
-
-```
-TOO_MANY_ARGUMENTS: Too many arguments for @MyAnnotation()
-```
-
-When FIR processes annotation usage, it expects to find default values from `javaMethod.annotationParameterDefaultValue` (used in `FirJavaFacade.kt:384`):
-
-```kotlin
-javaMethod.annotationParameterDefaultValue?.let { javaDefaultValue ->
-    firValueParameter.lazyDefaultValue = lazy {
-        javaDefaultValue.toFirExpression(...)
-    }
-}
-```
-
-### Phase 1: Analysis
-
-**Goal**: Understand AST structure for annotation method default values
-
-1. Find test data with annotation defaults:
-   ```bash
-   grep -r "default" compiler/testData/codegen/box/annotations/ | grep "\.java:" | head -5
-   ```
-
-2. Create minimal test case and dump AST:
-   ```java
-   public @interface TestAnnotation {
-       String value() default "hello";
-   }
-   ```
-
-3. Add debug in `JavaMethodOverAst`:
-   ```kotlin
-   override val annotationParameterDefaultValue: JavaAnnotationArgument?
-       get() {
-           // Look for DEFAULT node or "default" keyword
-           val methodNode = node // assuming node is the method declaration
-           throw IllegalStateException("DEBUG: method AST dump:\n${methodNode.dump()}")
-       }
-   ```
-
-4. Expected AST structure (to verify):
+2. **DEFAULT_KEYWORD Structure**: The AST structure for annotation method defaults is:
    ```
    ANNOTATION_METHOD
-   ├── TYPE
-   │   └── JAVA_CODE_REFERENCE (String)
+   ├── TYPE (String)
    ├── IDENTIFIER (value)
    ├── PARAMETER_LIST
    ├── DEFAULT_KEYWORD (default)
-   └── LITERAL_EXPRESSION ("hello")
+   └── LITERAL_EXPRESSION ("OK")
    ```
 
-### Phase 2: Implementation
+3. **Enum ClassId Resolution Bug**: When parsing enum values in annotation defaults (e.g., `MyEnum.FIRST`), the `enumClassId` was incorrectly resolving to `java.lang.MyEnum` instead of the correct package. Fixed by assuming same package for unqualified enum class names.
 
-**File to modify**: `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt`
+4. **Enum Constants Not Exposed**: `JavaClassOverAst.fields` only returned `FIELD` nodes, missing `ENUM_CONSTANT` nodes. This prevented FIR from finding enum entries when resolving annotation default values.
 
-1. **Check if method is in an annotation interface**:
-   ```kotlin
-   private fun isAnnotationMethod(): Boolean {
-       // The containing class should be an annotation (@interface)
-       val containingClass = containingClass
-       return containingClass.isAnnotationType
-   }
-   ```
+5. **Enum Entry Type**: `JavaFieldOverAst.type` used `createJavaType()` which doesn't work for `ENUM_CONSTANT` nodes. Created new `JavaClassifierTypeForEnumEntry` class that returns the containing enum class as the type.
 
-2. **Parse the default value**:
-   ```kotlin
-   override val annotationParameterDefaultValue: JavaAnnotationArgument?
-       get() {
-           if (!isAnnotationMethod()) return null
-           
-           // Look for default value in AST
-           // Structure may be: METHOD -> ... -> DEFAULT_KEYWORD -> VALUE_EXPRESSION
-           // Or: ANNOTATION_METHOD -> DEFAULT_VALUE -> EXPRESSION
-           
-           val defaultKeyword = node.findChildByType("DEFAULT_KEYWORD") ?: return null
-           
-           // The value expression should follow the default keyword
-           val valueNode = defaultKeyword.nextSibling() 
-               ?: node.children.dropWhile { it != defaultKeyword }.drop(1).firstOrNull()
-               ?: return null
-           
-           // Reuse the annotation argument creation logic from Iteration 17
-           return createAnnotationArgument(valueNode, resolutionContext)
-       }
-   
-   override val hasAnnotationParameterDefaultValue: Boolean
-       get() = annotationParameterDefaultValue != null
-   ```
+6. **WHITE_SPACE in Annotation Arguments**: The `createAnnotationArgument` function wasn't filtering `WHITE_SPACE` nodes, causing them to be passed to `createAnnotationArgumentFromValue` and producing errors.
 
-3. **Alternative if AST structure differs**:
-   ```kotlin
-   override val annotationParameterDefaultValue: JavaAnnotationArgument?
-       get() {
-           if (!isAnnotationMethod()) return null
-           
-           // Try finding a DEFAULT_VALUE child node
-           val defaultValue = node.findChildByType("DEFAULT_VALUE")
-           if (defaultValue != null) {
-               val valueExpr = defaultValue.children.firstOrNull() ?: return null
-               return createAnnotationArgument(valueExpr, resolutionContext)
-           }
-           
-           // Try finding default keyword followed by value
-           val text = node.text
-           val defaultIdx = text.indexOf(" default ")
-           if (defaultIdx >= 0) {
-               // Parse value after "default "
-               // This is a fallback - prefer structured AST parsing
-           }
-           
-           return null
-       }
-   ```
+### Changes Made
 
-4. **Ensure `createAnnotationArgument` is accessible** from `JavaMethodOverAst`:
-   - Either move it to a shared utility class
-   - Or make it a top-level function in the same package
-   - It was implemented in `JavaAnnotationOverAst.kt` during Iteration 17
-
-### Phase 3: Validation
-
-1. Run a single affected test:
-   ```bash
-   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Annotations\$*testKotlinAnnotations*" -q
-   ```
-
-2. Run all annotation tests:
-   ```bash
-   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Annotations.*" -q
-   ```
-
-3. Run full suite:
-   ```bash
-   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated" -q 2>&1 | tail -5
-   ```
-
-### Success Criteria
-
-- `NAMED_PARAMETER_NOT_FOUND` errors for annotation defaults are resolved
-- `TOO_MANY_ARGUMENTS` errors for annotation defaults are resolved
-- ~20 test improvements expected
-- No regressions in existing annotation tests
-
-### Implementation Notes
-
-1. **Sharing code with Iteration 17**: The `createAnnotationArgument()` function created in Iteration 17 should be reusable here. Consider refactoring it to a shared location.
-
-2. **Null handling**: Some annotation methods don't have defaults. Make sure to return `null` correctly in those cases.
-
-3. **Type consistency**: The default value should be convertible to the method's declared return type. FIR handles this validation, but ensure the value types are correct.
+| File | Change |
+|------|--------|
+| `JavaClassOverAst.kt` | Added `ANNOTATION_METHOD` to method discovery. Added `ENUM_CONSTANT` to fields getter. |
+| `JavaMemberOverAst.kt` | Implemented `annotationParameterDefaultValue` to find value after `DEFAULT_KEYWORD`. Fixed `JavaFieldOverAst` for enum constants (type, isStatic, isFinal). |
+| `JavaAnnotationOverAst.kt` | Fixed `enumClassId` to use same package instead of java.lang fallback. Added `WHITE_SPACE` filtering in `createAnnotationArgument`. |
+| `JavaTypeOverAst.kt` | Added `JavaClassifierTypeForEnumEntry` class for enum constant field types. |
+| `FirJavaFacade.kt` | Fixed `enumEntriesOrigin` to use `FirDeclarationOrigin.Enhancement`. |
 
 ---
 
 ## Iteration 18: Nested Class Resolution
 
-**Status**: 🔲 Planned  
-**Expected Impact**: ~10 tests  
+**Status**: ✅ Completed  
+**Actual Impact**: +8 tests (74 → 66 failing)  
 **Priority**: HIGH  
 **Complexity**: MEDIUM
 
-### Problem Statement
+### What Was Done
 
-When resolving type references like `Outer.Inner`, `Map.Entry`, or `KotlinTypeChecker.TypeConstructorEquality`, the java-direct module fails to resolve nested classes when the outer class is in binary (JDK or library classes).
+Fixed resolution of nested class references like `Map.Entry`, `Outer.Inner`, etc. when the outer class is in binary (JDK or library classes).
 
-### Symptoms
+### Root Cause
 
+1. **`isResolved` was incorrect**: It returned `true` for any name containing a dot (e.g., `Map.Entry`), assuming dot-separated names were already fully qualified. But `Map.Entry` needs resolution - `Map` must be resolved to `java.util.Map` first.
+
+2. **Initial fix used unreliable heuristic**: First attempted to distinguish packages from classes by case (lowercase = package, uppercase = class). This is fragile and doesn't handle unconventional naming.
+
+### Correct Approach (following javac-wrapper pattern)
+
+The proper solution is to **probe the symbol provider** with different package/class boundary splits until one resolves:
+
+1. For `java.util.Map.Entry`, try:
+   - `ClassId("java.util.Map", "Entry")` - not found
+   - `ClassId("java.util", "Map.Entry")` - found! ✓
+
+2. The resolution callback resolves the outer class first (`Map` → `java.util.Map`), then appends the nested class name.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `JavaTypeOverAst.kt` | Fixed `isResolved` to return `false` for names that aren't explicitly imported or locally resolved. Removed case-based heuristic. |
+| `JavaResolutionContext.kt` | Added `resolveNestedClass()` that resolves outer class first (via same package, java.lang, star imports), then appends nested class name. |
+| `JavaTypeConversion.kt` (FIR) | Replaced `createClassIdFromFqn` with `findClassId` that probes different package/class splits using the symbol provider until one resolves. |
+
+### Key Code Change (FIR)
+
+```kotlin
+private fun findClassId(fqn: String, session: FirSession): ClassId? {
+    val parts = fqn.split('.')
+    
+    // Try progressively longer class names (shorter package prefixes)
+    for (classStartIndex in (parts.size - 1) downTo 0) {
+        val packageFqName = if (classStartIndex == 0) FqName.ROOT
+                           else FqName.fromSegments(parts.subList(0, classStartIndex))
+        val relativeClassName = FqName.fromSegments(parts.subList(classStartIndex, parts.size))
+        val classId = ClassId(packageFqName, relativeClassName, isLocal = false)
+        
+        if (session.symbolProvider.getClassLikeSymbolByClassId(classId) != null) {
+            return classId
+        }
+    }
+    return null
+}
 ```
-MISSING_DEPENDENCY_CLASS: Cannot access class 'Outer.Inner'. Check your module classpath.
-MISSING_DEPENDENCY_SUPERCLASS: Cannot access 'Map.Entry' which is a supertype.
-MISSING_DEPENDENCY_CLASS: Cannot access class 'KotlinTypeChecker.TypeConstructorEquality'.
-```
 
-### Affected Tests
+### Why This Is Better Than Heuristics
 
-- `testSerializableBoundInnerConstructorRef` — `Outer.Inner`
-- `testSerializableInnerConstructorRef` — `Outer.Inner`
-- `testMapEntry` — `Map.Entry` (JDK)
-- `testSamWithEquals` — `KotlinTypeChecker.TypeConstructorEquality`
-- `testHugeMixedCapturedType` — nested class 'A'
-- `testOuterInnerClasses` — `KotlinInner` superclass
+1. **No guessing**: Instead of assuming based on case, we verify with the symbol provider
+2. **Handles edge cases**: Works for unconventional package/class names (e.g., `com.ACME.Foo`)
+3. **Consistent with existing implementations**: Follows the same pattern as javac-wrapper's `ClassifierResolver`
 
-### Phase 1: Analysis
+### Tests Fixed
 
-**Goal**: Understand how nested class names appear in AST and how resolution currently works
-
-1. Debug with a failing test:
-   ```bash
-   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$BuiltinStubMethods\$ExtendJavaClasses.testMapEntry" -q
-   ```
-
-2. Add exception-based debugging in `JavaResolutionContext.resolveWithCallback`:
-   ```kotlin
-   fun resolveWithCallback(simpleName: String, tryResolve: (String) -> Boolean): String? {
-       if (simpleName.contains(".")) {
-           throw IllegalStateException("DEBUG: nested class reference: $simpleName")
-       }
-       // existing code...
-   }
-   ```
-
-3. Trace how `Map.Entry` flows through the resolution:
-   - Is it coming as `Map.Entry` or separately?
-   - At what point does resolution fail?
-
-### Phase 2: Understanding the Resolution Flow
-
-The current resolution in `JavaResolutionContext.resolveWithCallback`:
-1. Try same package: `packageFqName.child(simpleName)`
-2. Try `java.lang` package
-3. Try star imports
-
-**Problem**: This assumes `simpleName` is a simple name (no dots). When we have `Map.Entry`:
-- We need to resolve `Map` first to get `java.util.Map`
-- Then look for nested class `Entry` inside `Map`
-
-### Phase 3: Implementation
-
-**Files to modify**: 
-- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResolutionContext.kt`
-- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`
-
-1. **Handle dot-separated names in `classifierQualifiedName`**:
-   ```kotlin
-   // In JavaClassifierTypeOverAst.classifierQualifiedName
-   override val classifierQualifiedName: String?
-       get() {
-           val reference = typeReference ?: return null
-           
-           // Check if it's already a qualified name (contains dots)
-           if (reference.contains('.')) {
-               // Could be:
-               // 1. Fully qualified: java.util.Map.Entry
-               // 2. Outer.Inner where Outer needs resolution
-               
-               // First try as fully qualified
-               // If that fails, try splitting and resolving outer class
-               return reference
-           }
-           
-           // Simple name resolution (existing logic)
-           // ...
-       }
-   ```
-
-2. **Add nested class resolution to callback pattern**:
-   ```kotlin
-   // In JavaResolutionContext
-   fun resolveWithCallback(name: String, tryResolve: (String) -> Boolean): String? {
-       // Handle nested class references (e.g., "Outer.Inner")
-       if (name.contains('.')) {
-           return resolveNestedClass(name, tryResolve)
-       }
-       
-       // Existing simple name resolution...
-   }
-   
-   private fun resolveNestedClass(name: String, tryResolve: (String) -> Boolean): String? {
-       // Try as fully qualified first
-       if (tryResolve(name)) return name
-       
-       // Split into potential outer class and nested class
-       val dotIndex = name.indexOf('.')
-       val outerName = name.substring(0, dotIndex)
-       val nestedPart = name.substring(dotIndex + 1)
-       
-       // Resolve outer class
-       val resolvedOuter = resolveWithCallback(outerName, tryResolve) ?: return null
-       
-       // Try outer + nested (using $ for JVM nested class convention)
-       val nestedFqName = "$resolvedOuter.$nestedPart"
-       if (tryResolve(nestedFqName)) return nestedFqName
-       
-       // Also try with $ separator (JVM internal name)
-       val nestedJvmName = "$resolvedOuter\$$nestedPart"
-       if (tryResolve(nestedJvmName)) return nestedJvmName
-       
-       return null
-   }
-   ```
-
-3. **Handle deeply nested classes** (e.g., `A.B.C`):
-   ```kotlin
-   private fun resolveNestedClass(name: String, tryResolve: (String) -> Boolean): String? {
-       // Try as fully qualified first
-       if (tryResolve(name)) return name
-       
-       // Progressive resolution: try resolving more of the prefix
-       val parts = name.split('.')
-       for (i in 1 until parts.size) {
-           val outerParts = parts.subList(0, i)
-           val nestedParts = parts.subList(i, parts.size)
-           
-           val outerName = outerParts.joinToString(".")
-           val resolvedOuter = if (outerName.contains('.')) {
-               resolveNestedClass(outerName, tryResolve)
-           } else {
-               resolveSimpleName(outerName, tryResolve)
-           }
-           
-           if (resolvedOuter != null) {
-               val fullNested = "$resolvedOuter.${nestedParts.joinToString(".")}"
-               if (tryResolve(fullNested)) return fullNested
-           }
-       }
-       return null
-   }
-   ```
-
-### Phase 4: Validation
-
-1. Test `Map.Entry` resolution:
-   ```bash
-   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$BuiltinStubMethods\$ExtendJavaClasses.testMapEntry" -q
-   ```
-
-2. Test inner class constructor refs:
-   ```bash
-   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Invokedynamic\$Serializable.testSerializableInnerConstructorRef" -q
-   ```
-
-3. Test SAM with nested interface:
-   ```bash
-   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated\$Resolve\$SamConversions.testSamWithEquals" -q
-   ```
-
-### Success Criteria
-
-- `testMapEntry` passes
-- `testSerializableInnerConstructorRef` passes
-- `testSamWithEquals` passes
-- ~8-10 test improvements expected
+- `testMapEntry` — `Map.Entry` (JDK nested interface)
+- `testSerializableInnerConstructorRef` — inner class constructor refs
+- `testSerializableBoundInnerConstructorRef` — bound inner class refs
+- +5 more nested class related tests
 
 ---
 
@@ -1081,30 +781,29 @@ fun Base<Any>.confirmOrFail(): String {
 
 ## Remaining Work
 
-### Current Status After Iteration 17: 1321/1493 (88.5%)
+### Current Status After Iteration 17b: 1092/1166 box tests (93.7%)
 
-| Category | Count | Notes |
-|----------|-------|-------|
-| Baseline/Content Diffs | 104 | Need individual triage |
-| Nested Class Resolution | 12 | `Outer.Inner` in binary classes |
-| Missing Dep Superclass | 8 | Supertype resolution |
-| Visibility Issues | 6 | Protected/package-private |
-| Nullability TYPE_USE | 5 | `List<@NotNull T>` |
-| Abstract Member | 3 | Override detection |
-| Const Val in Annotations | 2 | Reference expression resolution |
-| Annotation Method Access | 2 | Annotation instantiation feature |
-| Other Edge Cases | 30 | Various |
+| Category | Count | Example Tests |
+|----------|-------|---------------|
+| Inner/Nested Classes | ~8 | `testBoundInnerConstructorRef`, `testInheritedInnerAndNested` |
+| TYPE_USE on Type Args | 5 | `testJavaCollectionOfNotNullToTypedArrayFailFast` |
+| Wildcards/Projections | 3 | `testInheritanceWithWildcard`, `testJavaGenericSynthProperty` |
+| Visibility Issues | 2 | `testContractAndRawField` |
+| Annotation Edge Cases | ~10 | `testJavaAnnotation`, `testConstValAsAnnotationArgumentInJava` |
+| Enum Handling | ~6 | `testJavaEnumValues`, `testEnumEntriesFromJava` |
+| Reflection/Metadata | ~5 | `testDelegatedMembers`, `testCallableReferenceToJavaField` |
+| Other Edge Cases | ~35 | Various |
 
 ### Realistic Expectations for Iterations 18-21
 
 | Iteration | Target | Expected Tests Fixed |
 |-----------|--------|---------------------|
-| 18 | Nested Class Resolution | ~10-12 |
+| 18 | Nested Class Resolution | ~8-10 |
 | 19 | TYPE_USE on Type Args | ~5 |
 | 20 | Wildcard Edge Cases | ~3-5 |
-| 21 | Visibility Issues | ~6 |
+| 21 | Visibility Issues | ~3 |
 
-**Projected Status**: ~1350/1493 (~90.4%)
+**Projected Status**: ~1115/1166 (~95.6%)
 
 ### Key Insight: Baseline Diffs Dominate
 

@@ -262,8 +262,9 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         null -> {
             val qualifiedName = this.classifierQualifiedName
 
-            var classId = if (!isResolved && !qualifiedName.contains('.')) {
-                resolveSimpleName(qualifiedName, this, session, source)
+            var classId = if (!isResolved) {
+                // Resolve the name - this handles both simple names and nested class references like "Map.Entry"
+                resolveTypeName(qualifiedName, this, session, source)
             } else {
                 ClassId.topLevel(FqName(qualifiedName))
             }
@@ -314,25 +315,56 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
     }
 }
 
-private fun resolveSimpleName(
-    simpleName: String,
+private fun resolveTypeName(
+    name: String,
     javaType: JavaClassifierType,
     session: FirSession,
     source: KtSourceElement?
 ): ClassId {
+    // Try to resolve the type name using the Java type's resolve callback.
+    // The callback will try different package/class combinations and return
+    // the fully qualified name if found (e.g., "java.util.Map.Entry").
     val resolvedFqn = javaType.resolve { candidateFqn ->
-        val classId = ClassId.topLevel(FqName(candidateFqn))
-        session.symbolProvider.getClassLikeSymbolByClassId(classId) != null
+        // Try to find the class by probing different package/class boundaries
+        findClassId(candidateFqn, session) != null
+    }
+    
+    val fqnToUse = resolvedFqn ?: name
+    return findClassId(fqnToUse, session) ?: ClassId.topLevel(FqName(fqnToUse))
+}
+
+/**
+ * Finds the correct ClassId for a fully qualified name that may include nested classes.
+ * For example, "java.util.Map.Entry" becomes ClassId(FqName("java.util"), FqName("Map.Entry")).
+ *
+ * This function probes different package/class boundaries using the symbol provider
+ * to find which split actually resolves to a class.
+ */
+private fun findClassId(fqn: String, session: FirSession): ClassId? {
+    val parts = fqn.split('.')
+    if (parts.isEmpty()) return null
+
+    // Try progressively longer class names (shorter package prefixes)
+    // For "java.util.Map.Entry", try:
+    //   1. ClassId("java.util.Map", "Entry")
+    //   2. ClassId("java.util", "Map.Entry")
+    //   3. ClassId("java", "util.Map.Entry")
+    //   4. ClassId("", "java.util.Map.Entry")
+    for (classStartIndex in (parts.size - 1) downTo 0) {
+        val packageFqName = if (classStartIndex == 0) {
+            FqName.ROOT
+        } else {
+            FqName.fromSegments(parts.subList(0, classStartIndex))
+        }
+        val relativeClassName = FqName.fromSegments(parts.subList(classStartIndex, parts.size))
+        val classId = ClassId(packageFqName, relativeClassName, isLocal = false)
+
+        if (session.symbolProvider.getClassLikeSymbolByClassId(classId) != null) {
+            return classId
+        }
     }
 
-    return when {
-        resolvedFqn != null -> {
-            ClassId.topLevel(FqName(resolvedFqn))
-        }
-        else -> {
-            ClassId.topLevel(FqName(simpleName))
-        }
-    }
+    return null
 }
 
 private fun JavaClass.allTypeParametersNumber(): Int {
