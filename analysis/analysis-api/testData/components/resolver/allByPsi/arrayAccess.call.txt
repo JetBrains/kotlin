@@ -1185,7 +1185,7 @@ KtValueArgument(245,254): '--list[i]'
   null
 
 KtPrefixExpression(245,254): '--list[i]'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
@@ -1478,7 +1478,7 @@ KtNameReferenceExpression(256,260): 'list'
       typeArgumentsMapping = {}
 
 KtPrefixExpression(266,277): '++(list[2])'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

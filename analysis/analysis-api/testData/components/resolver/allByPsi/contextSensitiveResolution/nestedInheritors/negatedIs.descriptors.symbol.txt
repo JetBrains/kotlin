@@ -104,9 +104,7 @@ KtWhenConditionWithExpression(230,230): ''
   null
 
 KtPrefixExpression(231,248): '!USELESS_IS_CHECK'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
+  null
 
 KtOperationReferenceExpression(231,232): '!'
   null
@@ -124,9 +122,7 @@ KtIsExpression(248,262): '!>!is Right<!>'
   null
 
 KtPrefixExpression(248,250): '!>'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
+  null
 
 KtOperationReferenceExpression(248,249): '!'
   null
@@ -165,9 +161,7 @@ KtWhenConditionWithExpression(284,284): ''
   null
 
 KtPrefixExpression(285,308): '!REDUNDANT_ELSE_IN_WHEN'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
+  null
 
 KtOperationReferenceExpression(285,286): '!'
   null
@@ -182,9 +176,7 @@ KtWhenConditionWithExpression(308,310): '!>'
   null
 
 KtPrefixExpression(308,310): '!>'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
+  null
 
 KtOperationReferenceExpression(308,309): '!'
   null

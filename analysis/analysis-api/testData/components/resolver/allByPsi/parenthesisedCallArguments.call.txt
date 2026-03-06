@@ -817,7 +817,7 @@ KtParenthesizedExpression(381,390): '(++value)'
   null
 
 KtPrefixExpression(382,389): '++value'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

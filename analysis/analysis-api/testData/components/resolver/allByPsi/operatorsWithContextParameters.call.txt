@@ -921,7 +921,7 @@ KtNameReferenceExpression(877,881): 'this'
   null
 
 KtPrefixExpression(890,899): '+thisProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -1042,7 +1042,7 @@ KtNameReferenceExpression(891,899): 'thisProp'
       typeArgumentsMapping = {}
 
 KtPrefixExpression(908,910): '+a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -3249,7 +3249,7 @@ KtConstantExpression(1140,1141): '1'
   null
 
 KtPrefixExpression(1150,1152): '+b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -4241,7 +4241,7 @@ KtValueArgumentList(1299,1301): '()'
   null
 
 KtPrefixExpression(1307,1309): '+a'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5105,7 +5105,7 @@ KtConstantExpression(1380,1381): '1'
   null
 
 KtPrefixExpression(1386,1388): '+b'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

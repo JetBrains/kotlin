@@ -180,7 +180,7 @@ KtValueArgumentList(223,225): '()'
   null
 
 KtPrefixExpression(230,232): '+a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -237,7 +237,7 @@ KtNameReferenceExpression(231,232): 'a'
       typeArgumentsMapping = {}
 
 KtPrefixExpression(237,239): '-a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -294,7 +294,7 @@ KtNameReferenceExpression(238,239): 'a'
       typeArgumentsMapping = {}
 
 KtPrefixExpression(244,246): '!a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -351,7 +351,7 @@ KtNameReferenceExpression(245,246): 'a'
       typeArgumentsMapping = {}
 
 KtPrefixExpression(251,254): '++a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -444,7 +444,7 @@ KtNameReferenceExpression(253,254): 'a'
       typeArgumentsMapping = {}
 
 KtPrefixExpression(259,262): '--a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC

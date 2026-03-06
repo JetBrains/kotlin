@@ -2498,7 +2498,7 @@ KtNameReferenceExpression(766,771): 'child'
     isInBestCandidates = true
 
 KtPrefixExpression(776,798): '!myClass.equals(child)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3592,7 +3592,7 @@ KtNameReferenceExpression(961,968): 'another'
     isInBestCandidates = true
 
 KtPrefixExpression(973,997): '!myClass.equals(another)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

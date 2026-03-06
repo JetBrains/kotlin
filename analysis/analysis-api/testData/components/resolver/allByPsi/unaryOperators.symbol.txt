@@ -26,7 +26,10 @@ KtProperty(34,53): 'val negative = -one'
   null
 
 KtPrefixExpression(49,53): '-one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(49,50): '-'
   null
@@ -38,7 +41,10 @@ KtProperty(58,77): 'val positive = +one'
   null
 
 KtPrefixExpression(73,77): '+one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(73,74): '+'
   null
@@ -47,7 +53,10 @@ KtNameReferenceExpression(74,77): 'one'
   null
 
 KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.not(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtOperationReferenceExpression(83,84): '!'
   null
@@ -56,7 +65,10 @@ KtParenthesizedExpression(84,118): '(+(-MyClass().unaryMinus().not()))'
   null
 
 KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.unaryPlus(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtOperationReferenceExpression(85,86): '+'
   null
@@ -65,7 +77,10 @@ KtParenthesizedExpression(86,117): '(-MyClass().unaryMinus().not())'
   null
 
 KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
+    ]
 
 KtOperationReferenceExpression(87,88): '-'
   null

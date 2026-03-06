@@ -608,7 +608,10 @@ KtNameReferenceExpression(766,771): 'child'
   null
 
 KtPrefixExpression(776,798): '!myClass.equals(child)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
+    ]
 
 KtOperationReferenceExpression(776,777): '!'
   null
@@ -770,7 +773,10 @@ KtNameReferenceExpression(961,968): 'another'
   null
 
 KtPrefixExpression(973,997): '!myClass.equals(another)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
+    ]
 
 KtOperationReferenceExpression(973,974): '!'
   null

@@ -832,7 +832,7 @@ KtParenthesizedExpression(381,390): '(++value)'
   NO_CANDIDATES
 
 KtPrefixExpression(382,389): '++value'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

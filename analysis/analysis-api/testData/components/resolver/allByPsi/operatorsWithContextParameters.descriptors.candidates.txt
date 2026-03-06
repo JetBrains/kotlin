@@ -1004,7 +1004,7 @@ KtNameReferenceExpression(877,881): 'this'
     isInBestCandidates = false
 
 KtPrefixExpression(890,899): '+thisProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1064,7 +1064,7 @@ KtNameReferenceExpression(891,899): 'thisProp'
     isInBestCandidates = true
 
 KtPrefixExpression(908,910): '+a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2294,7 +2294,7 @@ KtConstantExpression(1140,1141): '1'
   NO_CANDIDATES
 
 KtPrefixExpression(1150,1152): '+b'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2970,7 +2970,7 @@ KtValueArgumentList(1299,1301): '()'
   NO_CANDIDATES
 
 KtPrefixExpression(1307,1309): '+a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3634,7 +3634,7 @@ KtConstantExpression(1380,1381): '1'
   NO_CANDIDATES
 
 KtPrefixExpression(1386,1388): '+b'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

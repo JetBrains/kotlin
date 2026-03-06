@@ -26,7 +26,7 @@ KtProperty(34,53): 'val negative = -one'
   NO_CANDIDATES
 
 KtPrefixExpression(49,53): '-one'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -89,7 +89,7 @@ KtProperty(58,77): 'val positive = +one'
   NO_CANDIDATES
 
 KtPrefixExpression(73,77): '+one'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -149,7 +149,7 @@ KtNameReferenceExpression(74,77): 'one'
     isInBestCandidates = true
 
 KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -194,7 +194,7 @@ KtParenthesizedExpression(84,118): '(+(-MyClass().unaryMinus().not()))'
   NO_CANDIDATES
 
 KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -239,7 +239,7 @@ KtParenthesizedExpression(86,117): '(-MyClass().unaryMinus().not())'
   NO_CANDIDATES
 
 KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

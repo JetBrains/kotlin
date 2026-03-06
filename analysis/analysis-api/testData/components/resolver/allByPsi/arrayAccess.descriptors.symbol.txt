@@ -254,7 +254,12 @@ KtValueArgument(245,254): '--list[i]'
   null
 
 KtPrefixExpression(245,254): '--list[i]'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E,
+      kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int,
+      kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+    ]
 
 KtOperationReferenceExpression(245,247): '--'
   null
@@ -281,7 +286,10 @@ KtNameReferenceExpression(256,260): 'list'
   null
 
 KtPrefixExpression(266,277): '++(list[2])'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(266,268): '++'
   null

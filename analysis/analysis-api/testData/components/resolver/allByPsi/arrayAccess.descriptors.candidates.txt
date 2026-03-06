@@ -1380,7 +1380,7 @@ KtValueArgument(245,254): '--list[i]'
   NO_CANDIDATES
 
 KtPrefixExpression(245,254): '--list[i]'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
@@ -1724,7 +1724,7 @@ KtNameReferenceExpression(256,260): 'list'
     isInBestCandidates = true
 
 KtPrefixExpression(266,277): '++(list[2])'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

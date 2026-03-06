@@ -1,5 +1,5 @@
 KtPrefixExpression(138,148): '--variable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC

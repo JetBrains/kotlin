@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 /**
  * Represents a prefix unary expression where the operator precedes the operand.
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
  * //      ^^
  * }</pre>
  */
-public class KtPrefixExpression extends KtUnaryExpression {
+public class KtPrefixExpression extends KtUnaryExpression implements KtResolvableCall {
     public KtPrefixExpression(@NotNull ASTNode node) {
         super(node);
     }

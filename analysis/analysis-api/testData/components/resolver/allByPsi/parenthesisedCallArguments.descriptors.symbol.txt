@@ -398,7 +398,11 @@ KtParenthesizedExpression(381,390): '(++value)'
   null
 
 KtPrefixExpression(382,389): '++value'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var value: kotlin.Int,
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(382,384): '++'
   null

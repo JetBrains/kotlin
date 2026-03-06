@@ -182,7 +182,7 @@ KtValueArgumentList(223,225): '()'
   NO_CANDIDATES
 
 KtPrefixExpression(230,232): '+a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -242,7 +242,7 @@ KtNameReferenceExpression(231,232): 'a'
     isInBestCandidates = true
 
 KtPrefixExpression(237,239): '-a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -302,7 +302,7 @@ KtNameReferenceExpression(238,239): 'a'
     isInBestCandidates = true
 
 KtPrefixExpression(244,246): '!a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -362,7 +362,7 @@ KtNameReferenceExpression(245,246): 'a'
     isInBestCandidates = true
 
 KtPrefixExpression(251,254): '++a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -458,7 +458,7 @@ KtNameReferenceExpression(253,254): 'a'
     isInBestCandidates = true
 
 KtPrefixExpression(259,262): '--a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC

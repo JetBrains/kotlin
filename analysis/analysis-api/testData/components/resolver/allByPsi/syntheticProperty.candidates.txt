@@ -1378,7 +1378,7 @@ KtOperationReferenceExpression(185,187): '++'
     isInBestCandidates = true
 
 KtPrefixExpression(192,213): '--javaClass.something'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC

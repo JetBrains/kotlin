@@ -716,7 +716,10 @@ KtNameReferenceExpression(877,881): 'this'
   null
 
 KtPrefixExpression(890,899): '+thisProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /unaryPlus(<extension receiver>: A): kotlin.Unit
+    ]
 
 KtOperationReferenceExpression(890,891): '+'
   null
@@ -725,7 +728,10 @@ KtNameReferenceExpression(891,899): 'thisProp'
   null
 
 KtPrefixExpression(908,910): '+a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /unaryPlus(<extension receiver>: A): kotlin.Unit
+    ]
 
 KtOperationReferenceExpression(908,909): '+'
   null
@@ -949,7 +955,10 @@ KtConstantExpression(1140,1141): '1'
   null
 
 KtPrefixExpression(1150,1152): '+b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.unaryPlus(<dispatch receiver>: SimpleOperators): kotlin.Unit
+    ]
 
 KtOperationReferenceExpression(1150,1151): '+'
   null
@@ -1082,7 +1091,11 @@ KtValueArgumentList(1299,1301): '()'
   null
 
 KtPrefixExpression(1307,1309): '+a'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /unaryPlus(<extension receiver>: A): kotlin.Unit
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtOperationReferenceExpression(1307,1308): '+'
   null
@@ -1203,7 +1216,11 @@ KtConstantExpression(1380,1381): '1'
   null
 
 KtPrefixExpression(1386,1388): '+b'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /SimpleOperators.unaryPlus(<dispatch receiver>: SimpleOperators): kotlin.Unit
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtOperationReferenceExpression(1386,1387): '+'
   null

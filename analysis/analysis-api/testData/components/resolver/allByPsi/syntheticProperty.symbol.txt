@@ -129,7 +129,11 @@ KtOperationReferenceExpression(185,187): '++'
   null
 
 KtPrefixExpression(192,213): '--javaClass.something'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int,
+      kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(192,194): '--'
   null
