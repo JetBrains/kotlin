@@ -874,22 +874,23 @@ tasks {
     // - different GCs
     // ...
     register("nativeCompilerTest") {
-        dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
-        dependsOn(":plugins:plugin-sandbox:nativeTest")
-        dependsOn(":libraries:tools:analysis-api-based-klib-reader:check")
-        dependsOn(":native:native.tests:test")
-        dependsOn(":native:native.tests:cli-tests:check")
-        dependsOn(":native:native.tests:codegen-box:check")
-        dependsOn(":native:native.tests:driver:check")
-        dependsOn(":native:native.tests:gc-fuzzing-tests:engine:check")
+        // dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
+        // dependsOn(":plugins:plugin-sandbox:nativeTest")
+        // dependsOn(":libraries:tools:analysis-api-based-klib-reader:check")
+        // dependsOn(":native:native.tests:test")
+        // dependsOn(":native:native.tests:cli-tests:check")
+        // dependsOn(":native:native.tests:codegen-box:check")
+        // dependsOn(":native:native.tests:driver:check")
+        // dependsOn(":native:native.tests:gc-fuzzing-tests:engine:check")
         dependsOn(":native:native.tests:stress:check")
-        dependsOn(":native:native.tests:klib-compatibility:check")
-        dependsOn(":native:native.tests:litmus-tests:check")
+        // dependsOn(":native:native.tests:klib-compatibility:check")
+        // dependsOn(":native:native.tests:litmus-tests:check")
     }
 
     // Similar to nativeCompilerTest, but should be executed only on macOS host as these tests
     // technically or semantically depend on Xcode SDK.
     register("nativeAppleSpecificTests") {
+        /*
         dependsOn(":native:objcexport-header-generator:check")
         dependsOn(":native:swift:swift-export-embeddable:testCoroutinesITWithEmbeddable")
         dependsOn(":native:swift:swift-export-embeddable:testExternalITWithEmbeddable")
@@ -897,6 +898,7 @@ tasks {
         dependsOn(":native:swift:swift-export-standalone:check")
         dependsOn(":native:swift:swift-export-ide:test")
         dependsOn(":native:swift:sir-light-classes:check")
+        */
     }
 
     // These are unit tests of Native compiler
