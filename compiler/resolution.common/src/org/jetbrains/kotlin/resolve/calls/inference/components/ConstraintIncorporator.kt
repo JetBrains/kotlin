@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
 
@@ -360,7 +359,7 @@ class ConstraintIncorporator(
 
     context(c: Context)
     private fun KotlinTypeMarker.containsConstrainingTypeWithoutProjection(otherConstraint: Constraint): Boolean {
-        return getNestedArguments().any {
+        return anyNestedArgument {
             it.getType()?.typeConstructor() == otherConstraint.type.typeConstructor() && it.getVariance() == TypeVariance.INV
         }
     }
@@ -379,7 +378,7 @@ class ConstraintIncorporator(
 
     context(c: Context)
     private fun KotlinTypeMarker.containsNestedTypeVariable(targetVariable: TypeVariableMarker): Boolean {
-        return getNestedArguments().any { typeArgument ->
+        return anyNestedArgument { typeArgument ->
             targetVariable == typeArgument.getType()?.let { c.getTypeVariable(it.typeConstructor().unwrapStubTypeVariableConstructor()) }
         }
     }
@@ -405,8 +404,7 @@ class ConstraintIncorporator(
 }
 
 context(c: TypeSystemInferenceExtensionContext)
-private fun KotlinTypeMarker.getNestedArguments(): List<TypeArgumentMarker> {
-    val result = SmartList<TypeArgumentMarker>()
+private inline fun KotlinTypeMarker.anyNestedArgument(predicate: (TypeArgumentMarker) -> Boolean): Boolean {
     val stack = ArrayDeque<TypeArgumentMarker>()
 
     when (this) {
@@ -429,15 +427,16 @@ private fun KotlinTypeMarker.getNestedArguments(): List<TypeArgumentMarker> {
         val typeProjection = stack.pop()
         val typeProjectionType = typeProjection.getType() ?: continue
 
-        result.add(typeProjection)
+        if (predicate(typeProjection)) return true
 
-        when (val projectedType = typeProjectionType) {
+        when (typeProjectionType) {
             is FlexibleTypeMarker -> {
-                addArgumentsToStack(projectedType.lowerBound())
-                addArgumentsToStack(projectedType.upperBound())
+                addArgumentsToStack(typeProjectionType.lowerBound())
+                addArgumentsToStack(typeProjectionType.upperBound())
             }
-            else -> addArgumentsToStack(projectedType)
+            else -> addArgumentsToStack(typeProjectionType)
         }
     }
-    return result
+
+    return false
 }
