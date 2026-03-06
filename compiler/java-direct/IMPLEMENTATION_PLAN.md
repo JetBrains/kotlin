@@ -4,13 +4,13 @@
 
 Replace IntelliJ platform-based Java parsing with a custom implementation using KMP Java Parser. Goal: eliminate platform dependency while maintaining Java-Kotlin bidirectional interoperability.
 
-**Status**: 90/138 tests passing (65.2%) after iteration 6  
-**Last Updated**: 2026-03-03
+**Status**: 532/601 tests passing (88.5%) after iteration 16  
+**Last Updated**: 2026-03-06
 
 **Related docs**:
-- `AGENT_INSTRUCTIONS.md` — Agent guidelines and iteration workflow
+- `AGENT_INSTRUCTIONS.md` — Agent guidelines, learnings, debugging techniques
 - `ITERATION_RESULTS.md` — Progress history and key findings
-- `FIRSESSION_RESOLUTION_ANALYSIS.md` — Type resolution architecture decision
+- `FIXING_ITERATIONS.md` — Iteration plans and archive links
 
 ---
 
@@ -89,18 +89,21 @@ Star import resolution uses callback pattern: Java Model tries candidates, FIR v
 - Import handling with callback pattern
 - Type arguments parsing
 - Hybrid class finder
-- **90/138 tests passing (65.2%)**
+- 90/138 tests passing (65.2%)
 
-### 🔲 Milestone 3: Remaining Issues
-Focus areas for 48 failing tests:
-- Type parameters (`T`, `U`) being treated as class names
-- Complex generics (`? extends`, `? super`)
-- SAM lambda inference
+### ✅ Milestone 3: Core Features (Complete)
+- Type parameter scope resolution
+- Wildcard types (`? extends`, `? super`)
+- Annotation parsing and TYPE_USE handling
+- Interface implicit modifiers
+- External type argument handling
+- Raw type detection
+- **532/601 tests passing (88.5%)**
 
 ### 🔲 Milestone 4: Production Readiness
 - Modern Java features (records, sealed classes)
 - Performance optimization
-- Error handling improvements
+- Remaining edge cases (3 box tests, ~66 diagnostic tests)
 - Target: >95% test pass rate
 
 ---
@@ -142,6 +145,7 @@ Focus areas for 48 failing tests:
 
 ## Change Log
 
+- 2026-03-06: Updated status after iteration 16 (88.5% pass rate)
 - 2026-03-03: Condensed document after iteration 6; archived detailed sections
 - 2026-02-23: Added type resolution architecture (FIR layer, not Java Model)
 - 2026-02-10: Initial version

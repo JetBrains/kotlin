@@ -4,8 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Status** | Iteration 11 complete (Analysis milestone) |
-| **Tests** | 117/138 passing (84.8%) |
+| **Status** | Iteration 16 complete |
+| **Box Tests** | 139/142 passing (97.9%) |
+| **Diagnostic Tests** | 393/459 passing (85.6%) |
+| **Total** | 532/601 passing (88.5%) |
 
 **Key files**: `JavaClassFinderOverAstImpl.kt`, `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaMemberOverAst.kt`, `JavaResolutionContext.kt`
 
@@ -27,38 +29,32 @@
 
 ---
 
-## Iteration Workflow
+## Key Architecture Decisions
 
-### 1. Pick ONE Failing Test
-```bash
-# Get current failure statistics
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q 2>&1 | tee test_output.txt
-grep -E "(FAIL|Exception)" test_output.txt | sort | uniq -c | sort -rn | head -10
-```
-Pick the **simplest** test with the **most common** error pattern.
+### 1. Type Resolution in FIR Layer (Not Java Model)
+Java Model provides names (`classifierQualifiedName`), FIR resolves them via `session.symbolProvider`. **No `FirSession` access in Java Model**.
 
-### 2. Debug That Single Test
-```bash
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testSpecificName" -q
-```
-Use exception-based debugging (see below) to understand the failure.
+### 2. Callback Pattern for Resolution
+`resolve(tryResolve: (String) -> Boolean)` in `JavaClassifierType` allows Java Model to implement Java resolution rules while FIR validates existence. Same pattern used for annotations via `resolveAnnotation()`.
 
-### 3. Fix and Verify
-1. Implement fix
-2. Verify single test passes
-3. Run related tests (10-20 with similar pattern)
-4. Run full suite to measure progress
+### 3. Hybrid Class Finder
+`CombinedJavaClassFinder` tries source class finder first, falls back to binary class finder for JDK/library classes.
 
-### 4. Document
-Update `ITERATION_RESULTS.md` with findings, changes, and test counts.
+### 4. Resolution Context Pattern
+`JavaResolutionContext` encapsulates all resolution data (package, imports, type parameters, containing class). Passed through AST nodes. Use `withTypeParameters()`, `withContainingClass()` to extend scope.
+
+### 5. Two-Phase Type Parameter Construction
+When type parameters can reference each other in bounds (e.g., `<E, S extends Element<E>>`):
+1. Create all instances first with basic context
+2. Update context with all siblings via `updateResolutionContext()`
 
 ---
 
-## Debugging: Exception-Based Inspection
+## Proven Debugging Techniques
 
+### Exception-Based Inspection
 **Why**: println/logging doesn't appear in Gradle test output.
 
-**Pattern**:
 ```kotlin
 throw IllegalStateException("DEBUG: value='$value', context='$context'")
 ```
@@ -66,49 +62,72 @@ throw IllegalStateException("DEBUG: value='$value', context='$context'")
 **Conditional** (debug specific cases only):
 ```kotlin
 if (classId.shortClassName.asString() == "TargetClass") {
-    throw IllegalStateException("DEBUG: classId=$classId, supertypes=${supertypes.size}")
+    throw IllegalStateException("DEBUG: classId=$classId")
 }
 ```
-
-Remove debug exceptions before committing.
 
 ### AST Structure Discovery
-
-To understand how the KMP Java Parser represents a construct, use exception-based debugging with `node.dump()`:
-
 ```kotlin
-// In the relevant getter (e.g., JavaValueParameterOverAst.type):
-if (typeNode.text.contains("[")) {  // or other condition
-    throw IllegalStateException(
-        "DEBUG: typeNode.dump=\n${typeNode.dump()}"
-    )
+if (typeNode.text.contains("[")) {
+    throw IllegalStateException("DEBUG: typeNode.dump=\n${typeNode.dump()}")
 }
 ```
 
-Example output for `String[]`:
-```
-TYPE: String[]
-  TYPE: String
-    JAVA_CODE_REFERENCE: String
-      IDENTIFIER: String
-  LBRACKET: [
-  RBRACKET: ]
-```
+### Comparing with Working Implementation
+Compare with PSI-based implementation in `compiler/frontend.java/src/org/jetbrains/kotlin/load/java/structure/impl/` or javac-based in `compiler/javac-wrapper/src/org/jetbrains/kotlin/javac/`.
 
 ---
 
-## Test Failure Analysis
+## Lessons Learned from Iterations
 
-### Categorizing Failures
+### Java Language Implicit Rules
+- **Interface fields**: implicitly `public static final`
+- **Interface methods without body**: implicitly `public abstract`
+- **Nested interfaces/enums**: implicitly `static` (even without keyword)
+- **Nested classes**: only static if explicitly marked
 
-Run full test suite and analyze XML results:
+### KMP Parser Edge Cases
+- **Reserved words in imports**: `import kotlin.*` may parse as `ERROR_ELEMENT`, not `IMPORT_STATEMENT`
+- **Fragmented imports**: Parser may split constructs across sibling nodes
+- **Recovery needed**: `ERROR_ELEMENT` nodes often contain recoverable info
 
+### FIR Integration Points
+- **Type conversion**: `JavaTypeConversion.kt` - handles `classifier==null` for external types
+- **Raw types**: Must create `ConeRawType` for proper method inheritance semantics
+- **Flexible types**: Two calls - lower bound with erased args, upper bound with star projections
+- **TYPE_USE annotations**: Annotations from method modifier list need filtering before attaching to return type
+
+### Common Fixes
+| Issue | Solution |
+|-------|----------|
+| `MISSING_DEPENDENCY_CLASS: 'T'` | Type parameter not in scope - use `resolutionContext.withTypeParameters()` |
+| Raw type errors | Check `isRaw` detection, ensure `ConeRawType.create()` wrapping in FIR |
+| Annotation not resolved | Use callback pattern via `resolveAnnotation(tryResolve)` |
+| `@Override` on return type | Filter non-TYPE_USE annotations in `JavaTypeOverAst.annotations` |
+| Nested interface wrong `isInner` | `isStatic` must return `true` for nested interfaces/enums |
+
+### What NOT to Do
+- **Don't hardcode package lists** for annotation resolution - use callback pattern
+- **Don't modify FIR layer** unless java-direct model is correct but FIR handling is wrong
+- **Don't assume AST structure** - always dump and verify with exception debugging
+- **Don't skip empty ERROR_ELEMENT nodes** when scanning siblings
+
+---
+
+## Iteration Workflow
+
+### 1. Pick ONE Failing Test
 ```bash
-# Run all tests
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q 2>&1
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q 2>&1 | tee test_output.txt
+```
+or
+```bash
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyDiagnosticTestGenerated" -q 2>&1 | tee test_output.txt
+```
 
-# Parse results with Python
-python3 << 'EOF'
+
+### 2. Categorize Failures
+```python
 import xml.etree.ElementTree as ET
 import glob
 from collections import defaultdict
@@ -123,35 +142,25 @@ for xml_file in glob.glob(f"{results_dir}/*.xml"):
         if failure is not None:
             name = tc.get('name').replace('()','')
             text = (failure.text or '') + (failure.get('message', '') or '')
-            # Categorize by error pattern
             if 'MISSING_DEPENDENCY_CLASS' in text:
                 failures['MISSING_DEPENDENCY_CLASS'].append(name)
-            elif 'NOTHING_TO_OVERRIDE' in text:
-                failures['NOTHING_TO_OVERRIDE'].append(name)
-            # Add more patterns as needed...
+            # ... more patterns
 
 for cat, tests in sorted(failures.items(), key=lambda x: -len(x[1])):
     print(f"\n=== {cat} ({len(tests)} tests) ===")
     for t in tests: print(f"  - {t}")
-EOF
 ```
 
-### Finding Test Data Files
+### 3. Debug, Fix, Verify
+1. Add exception-based debugging
+2. Implement fix
+3. Verify single test passes
+4. Run full suite to measure progress
+5. Look through the test report and try to spot similar cases
+6. If found, try to modify the fix to accommodate the similar cases
 
-```bash
-# Find test data for a specific test
-find compiler/testData/codegen/box/javaInterop -name "*testName*"
-```
-
----
-
-## Key Architecture Decisions
-
-From iterations 1-6 (see `ITERATION_RESULTS.md` for details):
-
-1. **Type resolution in FIR layer** — Java Model provides names via `classifierQualifiedName`, FIR resolves them
-2. **Callback pattern for star imports** — `resolve(tryResolve: (String) -> Boolean)` in `JavaClassifierType`
-3. **Hybrid finder** — `CombinedJavaClassFinder` tries sources first, falls back to binaries
+### 4. Document
+Update `ITERATION_RESULTS.md` with findings, changes, and test counts.
 
 ---
 
@@ -160,15 +169,16 @@ From iterations 1-6 (see `ITERATION_RESULTS.md` for details):
 | File | Purpose |
 |------|---------|
 | `JavaClassFinderOverAstImpl.kt` | Source class finder, file indexing |
-| `JavaClassOverAst.kt` | Java class model |
-| `JavaTypeOverAst.kt` | Type representations, `classifierQualifiedName` |
-| `JavaImports.kt` | Import handling |
+| `JavaClassOverAst.kt` | Java class model, `memberResolutionContext` |
+| `JavaTypeOverAst.kt` | Type representations, `classifierQualifiedName`, wildcards |
 | `JavaMemberOverAst.kt` | Methods, fields, parameters |
+| `JavaResolutionContext.kt` | Import/type parameter scope management |
+| `JavaAnnotationOverAst.kt` | Annotation parsing and resolution |
 | `JavaDirectComponentRegistrar.kt` | Plugin registration, hybrid finder setup |
 
-**FIR integration** (reference, don't modify unless necessary):
-- `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt` — uses `resolve()` callback
-- `compiler/fir/fir-jvm/src/.../FirJavaFacade.kt` — converts Java Model to FIR
+**FIR integration** (may need changes for external type handling):
+- `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt` — type conversion, raw type detection
+- `compiler/fir/fir-jvm/src/.../javaAnnotationsMapping.kt` — annotation resolution
 
 ---
 
@@ -179,23 +189,8 @@ From iterations 1-6 (see `ITERATION_RESULTS.md` for details):
 | Circular FIR↔Java dependency | Use lazy evaluation |
 | Wrong terminology | Use FIR names (simpleImports, starImports) |
 | Using wrong tools | Use MCP tools, not Read/Edit/Grep |
-| Eager evaluation | Make everything lazy |
-| No tests | Every fix needs a passing test |
-
----
-
-## Useful Commands
-
-```bash
-# Single test
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated.testName" -q
-
-# All box tests
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q
-
-# Build module
-./gradlew :compiler:java-direct:build -q
-```
+| Type params not in scope | Use `withTypeParameters()` before parsing bounds |
+| External type args dropped | Check FIR's `null` classifier branch in `JavaTypeConversion.kt` |
 
 ---
 
@@ -203,28 +198,21 @@ From iterations 1-6 (see `ITERATION_RESULTS.md` for details):
 
 | Document | Purpose |
 |----------|---------|
-| `FIXING_ITERATIONS.md` | Current iteration plans and tasks |
-| `IMPLEMENTATION_PLAN.md` | Architecture overview, type resolution design |
-| `implDocs/INVESTIGATION_TECHNIQUES.md` | **Debugging & analysis techniques** - exception-based debugging, error categorization |
-| `implDocs/ITERATION_7_PROBLEM_ANALYSIS.md` | Detailed problem analysis for iteration 7 |
-| `implDocs/archive/ITERATIONS_1_6_DETAILS.md` | Archived iteration 1-6 details |
-| `../AGENTS.md` | Compiler architecture overview (K1/K2, FIR, IR, backends) |
-| `../../.ai/guidelines.md` | **MANDATORY** - Project-wide coding guidelines |
+| `FIXING_ITERATIONS.md` | Current iteration plans (8-14) and archive links |
+| `IMPLEMENTATION_PLAN.md` | Architecture overview |
+| `ITERATION_RESULTS.md` | Progress history, key findings |
+| `implDocs/INVESTIGATION_TECHNIQUES.md` | Detailed debugging techniques |
+| `implDocs/archive/` | Archived iteration details and design documents |
 
 ---
 
-## Remaining Work (42 failing tests)
+## Remaining Work (69 failing tests)
 
-After iteration 7 completion:
-
-| Category | Count | Priority |
-|----------|-------|----------|
-| MISSING_DEPENDENCY_CLASS | ~15 | Medium (Kotlin classes from Java) |
-| Wrong NPE behavior | 6 | Low |
-| CANNOT_INFER_PARAMETER_TYPE | ~5 | Medium |
-| Raw types (List...) | ~3 | Medium |
-| Other | ~13 | Varies |
+| Category | Count | Notes |
+|----------|-------|-------|
+| Diagnostic tests | ~66 | Various type checking edge cases |
+| Box tests | 3 | Annotation args, wildcards, overload resolution |
 
 ---
 
-*Last updated: 2026-03-04 (iteration 7 complete)*
+*Last updated: 2026-03-06 (iteration 16 complete)*
