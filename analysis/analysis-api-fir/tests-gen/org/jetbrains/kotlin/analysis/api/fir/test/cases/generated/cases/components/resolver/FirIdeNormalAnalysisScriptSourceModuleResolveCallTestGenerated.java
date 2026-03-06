@@ -68,6 +68,12 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated exte
     run("ScriptThis.kts");
   }
 
+  @Test
+  @TestMetadata("ScriptThisExpression.kts")
+  public void testScriptThisExpression() {
+    run("ScriptThisExpression.kts");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/annotations")
   @TestDataPath("$PROJECT_ROOT")
