@@ -248,7 +248,38 @@ KtWhenExpression(293,353): 'when (this) {'
   null
 
 KtThisExpression(299,303): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: [
+            KaTypeParameterType:
+              annotations: []
+              type: E
+            KaTypeParameterType:
+              annotations: []
+              type: A
+          ]
+          type: Either<E, A>
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(299,303): 'this'
   null

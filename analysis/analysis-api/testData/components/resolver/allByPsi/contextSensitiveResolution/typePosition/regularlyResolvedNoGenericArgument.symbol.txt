@@ -131,7 +131,30 @@ KtWhenExpression(258,323): 'when (this) {'
   null
 
 KtThisExpression(264,268): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: MySealed
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(264,268): 'this'
   null

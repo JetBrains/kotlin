@@ -338,7 +338,30 @@ KtReturnExpression(330,341): 'return this'
     ]
 
 KtThisExpression(337,341): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/inc)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: A
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(337,341): 'this'
   null
@@ -614,7 +637,10 @@ KtReturnExpression(746,773): 'return this@SimpleOperators'
     ]
 
 KtThisExpression(753,773): 'this@SimpleOperators'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators
+    ]
 
 KtNameReferenceExpression(753,757): 'this'
   null
@@ -722,7 +748,30 @@ KtProperty(862,881): 'var thisProp = this'
   null
 
 KtThisExpression(877,881): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: A
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(877,881): 'this'
   null

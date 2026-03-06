@@ -113,7 +113,31 @@ KtWhenExpression(176,226): 'when (this) {'
   null
 
 KtThisExpression(182,186): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse1)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: MySealed
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(182,186): 'this'
   null
@@ -179,7 +203,31 @@ KtWhenExpression(251,301): 'when (this) {'
   null
 
 KtThisExpression(257,261): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse2)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(257,261): 'this'
   null

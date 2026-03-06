@@ -50,7 +50,31 @@ KtNameReferenceExpression(44,48): 'Test'
   null
 
 KtThisExpression(51,55): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/plus)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(51,55): 'this'
   null
@@ -137,7 +161,31 @@ KtNameReferenceExpression(136,140): 'Test'
   null
 
 KtThisExpression(143,147): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/minus)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(143,147): 'this'
   null
@@ -224,7 +272,31 @@ KtNameReferenceExpression(227,231): 'Test'
   null
 
 KtThisExpression(234,238): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/div)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(234,238): 'this'
   null
@@ -311,7 +383,31 @@ KtNameReferenceExpression(318,322): 'Test'
   null
 
 KtThisExpression(325,329): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/times)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(325,329): 'this'
   null
@@ -398,7 +494,31 @@ KtNameReferenceExpression(409,413): 'Test'
   null
 
 KtThisExpression(416,420): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/rem)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(416,420): 'this'
   null

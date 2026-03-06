@@ -209,7 +209,10 @@ KtDotQualifiedExpression(245,257): 'super.call()'
     ]
 
 KtSuperExpression(245,250): 'super'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/BaseClass
+    ]
 
 KtNameReferenceExpression(245,250): 'super'
   null

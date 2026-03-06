@@ -50,12 +50,12 @@ KtBinaryExpression(27,35): 'this + a'
     ]
 
 KtThisExpression(27,31): 'this'
-  KaSymbolResolutionSuccess:
-    symbols = [
+  KaSymbolResolutionError:
+    candidateSymbols = [
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -72,8 +72,9 @@ KtThisExpression(27,31): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        visibility: PUBLIC
+        visibility: LOCAL
     ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(27,31): 'this'
   null
@@ -136,12 +137,12 @@ KtBinaryExpression(71,80): 'this ?: b'
   null
 
 KtThisExpression(71,75): 'this'
-  KaSymbolResolutionSuccess:
-    symbols = [
+  KaSymbolResolutionError:
+    candidateSymbols = [
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -158,8 +159,9 @@ KtThisExpression(71,75): 'this'
           annotations: []
           typeArguments: []
           type: kotlin/Int?
-        visibility: PUBLIC
+        visibility: LOCAL
     ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(71,75): 'this'
   null

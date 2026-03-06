@@ -1797,7 +1797,7 @@ public class org/jetbrains/kotlin/psi/KtInitializerList : org/jetbrains/kotlin/p
 	public fun getInitializers ()Ljava/util/List;
 }
 
-public abstract class org/jetbrains/kotlin/psi/KtInstanceExpressionWithLabel : org/jetbrains/kotlin/psi/KtExpressionWithLabel {
+public abstract class org/jetbrains/kotlin/psi/KtInstanceExpressionWithLabel : org/jetbrains/kotlin/psi/KtExpressionWithLabel, org/jetbrains/kotlin/resolution/KtResolvable {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun getInstanceReference ()Lorg/jetbrains/kotlin/psi/KtReferenceExpression;
 }

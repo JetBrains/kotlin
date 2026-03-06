@@ -653,6 +653,44 @@ public interface KaResolver : KaSessionComponent {
     public fun KtNameReferenceExpression.resolveSymbol(): KaDeclarationSymbol?
 
     /**
+     * Resolves the declaration symbol referenced by the given [KtInstanceExpressionWithLabel].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * class Foo {
+     *     fun bar() = this
+     * //              ^^^^  resolves to the class `Foo`
+     * }
+     *
+     * fun String.ext() = this
+     * //                 ^^^^  resolves to the receiver parameter of `ext`
+     *
+     * open class Base {
+     *     open fun baz() {}
+     * }
+     *
+     * class Derived : Base() {
+     *     override fun baz() {
+     *         super.baz()
+     * //      ^^^^^  resolves to the class `Base`
+     *     }
+     * }
+     * ```
+     *
+     * Calling `resolveSymbol()` on a [KtInstanceExpressionWithLabel] (`this` or `super`) returns the [KaDeclarationSymbol]
+     * of the referenced class, receiver, or other target declaration if resolution succeeds; otherwise, it returns `null`
+     * (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on instance expressions
+     *
+     * @see tryResolveSymbols
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtInstanceExpressionWithLabel.resolveSymbol(): KaDeclarationSymbol?
+
+    /**
      * Attempts to resolve the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -2004,6 +2042,51 @@ public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? {
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtNameReferenceExpression.resolveSymbol(): KaDeclarationSymbol? {
+    return with(session) {
+        resolveSymbol()
+    }
+}
+
+/**
+ * Resolves the declaration symbol referenced by the given [KtInstanceExpressionWithLabel].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * class Foo {
+ *     fun bar() = this
+ * //              ^^^^  resolves to the class `Foo`
+ * }
+ *
+ * fun String.ext() = this
+ * //                 ^^^^  resolves to the receiver parameter of `ext`
+ *
+ * open class Base {
+ *     open fun baz() {}
+ * }
+ *
+ * class Derived : Base() {
+ *     override fun baz() {
+ *         super.baz()
+ * //      ^^^^^  resolves to the class `Base`
+ *     }
+ * }
+ * ```
+ *
+ * Calling `resolveSymbol()` on a [KtInstanceExpressionWithLabel] (`this` or `super`) returns the [KaDeclarationSymbol]
+ * of the referenced class, receiver, or other target declaration if resolution succeeds; otherwise, it returns `null`
+ * (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on instance expressions
+ *
+ * @see tryResolveSymbols
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtInstanceExpressionWithLabel.resolveSymbol(): KaDeclarationSymbol? {
     return with(session) {
         resolveSymbol()
     }

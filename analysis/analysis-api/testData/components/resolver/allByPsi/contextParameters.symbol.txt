@@ -95,7 +95,10 @@ KtDotQualifiedExpression(130,140): 'this.bar()'
     ]
 
 KtThisExpression(130,134): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base
+    ]
 
 KtNameReferenceExpression(130,134): 'this'
   null
@@ -194,7 +197,10 @@ KtDotQualifiedExpression(243,253): 'this.bar()'
     ]
 
 KtThisExpression(243,247): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base
+    ]
 
 KtNameReferenceExpression(243,247): 'this'
   null

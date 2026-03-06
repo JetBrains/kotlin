@@ -998,7 +998,10 @@ KtDotQualifiedExpression(1479,1494): 'this.CompanionB'
     ]
 
 KtThisExpression(1479,1483): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Test
+    ]
 
 KtNameReferenceExpression(1479,1483): 'this'
   null

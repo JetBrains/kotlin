@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirScriptReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -316,7 +317,25 @@ internal class KaFirResolver(
             return toKaSymbolResolutionError(psi)
         }
 
-        val symbol = symbol?.buildSymbol(firSymbolBuilder) ?: return null
+        val firSymbolToBuild = when (this) {
+            is FirSuperReference -> {
+                val resolvedTypeRef = superTypeRef as? FirResolvedTypeRef ?: return null
+                resolvedTypeRef.toRegularClassSymbol(analysisSession.firSession)
+            }
+
+            else -> when (val symbol = symbol) {
+                is FirReceiverParameterSymbol if symbol.fir is FirScriptReceiverParameter -> {
+                    // Probably the workaround for a script receiver parameter should be dropped
+                    // as soon as `KaScriptSymbol` API will be properly designed KT-76360
+                    // (currently we don't have a dedicated KaSymbol for script receiver parameter)
+                    symbol.containingDeclarationSymbol
+                }
+
+                else -> symbol
+            }
+        }
+
+        val symbol = firSymbolToBuild?.buildSymbol(firSymbolBuilder) ?: return null
         return KaBaseSymbolResolutionSuccess(backingSymbol = symbol)
     }
 

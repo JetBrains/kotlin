@@ -125,6 +125,11 @@ internal class KaFe10Resolver(
         }
 
         when (psi) {
+            is KtInstanceExpressionWithLabel -> {
+                val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, psi.instanceReference] ?: return null
+                val symbol = descriptor.toKtSymbol(analysisContext) ?: return null
+                return KaBaseSymbolResolutionSuccess(symbol)
+            }
             is KtLabelReferenceExpression -> return psi.toKaSymbolResolutionAttempt(bindingContext)
             is KtReturnExpression -> return psi.toKaSymbolResolutionAttempt(bindingContext)
         }

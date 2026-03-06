@@ -53,7 +53,32 @@ KtDotQualifiedExpression(80,90): 'this.foo()'
     ]
 
 KtThisExpression(80,84): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(80,84): 'this'
   null
@@ -80,7 +105,32 @@ KtDotQualifiedExpression(99,117): 'this@MyClass.foo()'
     ]
 
 KtThisExpression(99,111): 'this@MyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(99,103): 'this'
   null
@@ -155,7 +205,32 @@ KtDotQualifiedExpression(221,231): 'this.foo()'
     ]
 
 KtThisExpression(221,225): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(221,225): 'this'
   null
@@ -182,7 +257,32 @@ KtDotQualifiedExpression(244,265): 'this@InnerOuter.foo()'
     ]
 
 KtThisExpression(244,259): 'this@InnerOuter'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(244,248): 'this'
   null
@@ -218,7 +318,32 @@ KtDotQualifiedExpression(278,296): 'this@MyClass.foo()'
     ]
 
 KtThisExpression(278,290): 'this@MyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(278,282): 'this'
   null
@@ -293,7 +418,32 @@ KtDotQualifiedExpression(425,435): 'this.foo()'
     ]
 
 KtThisExpression(425,429): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(425,429): 'this'
   null
@@ -320,7 +470,32 @@ KtDotQualifiedExpression(452,474): 'this@InnerNested.foo()'
     ]
 
 KtThisExpression(452,468): 'this@InnerNested'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(452,456): 'this'
   null
@@ -356,7 +531,32 @@ KtDotQualifiedExpression(491,512): 'this@InnerOuter.foo()'
     ]
 
 KtThisExpression(491,506): 'this@InnerOuter'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(491,495): 'this'
   null
@@ -392,7 +592,32 @@ KtDotQualifiedExpression(529,547): 'this@MyClass.foo()'
     ]
 
 KtThisExpression(529,541): 'this@MyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(529,533): 'this'
   null
@@ -485,7 +710,31 @@ KtDotQualifiedExpression(651,661): 'this.foo()'
     ]
 
 KtThisExpression(651,655): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(651,655): 'this'
   null
@@ -512,7 +761,31 @@ KtDotQualifiedExpression(682,697): 'this@anon.foo()'
     ]
 
 KtThisExpression(682,691): 'this@anon'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(682,686): 'this'
   null
@@ -548,7 +821,32 @@ KtDotQualifiedExpression(718,740): 'this@InnerNested.foo()'
     ]
 
 KtThisExpression(718,734): 'this@InnerNested'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(718,722): 'this'
   null
@@ -584,7 +882,32 @@ KtDotQualifiedExpression(761,782): 'this@InnerOuter.foo()'
     ]
 
 KtThisExpression(761,776): 'this@InnerOuter'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(761,765): 'this'
   null
@@ -620,7 +943,32 @@ KtDotQualifiedExpression(803,821): 'this@MyClass.foo()'
     ]
 
 KtThisExpression(803,815): 'this@MyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(803,807): 'this'
   null
@@ -701,7 +1049,31 @@ KtDotQualifiedExpression(917,927): 'this.foo()'
     ]
 
 KtThisExpression(917,921): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(917,921): 'this'
   null
@@ -728,7 +1100,31 @@ KtDotQualifiedExpression(948,965): 'this@myWith.foo()'
     ]
 
 KtThisExpression(948,959): 'this@myWith'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(948,952): 'this'
   null
@@ -764,7 +1160,32 @@ KtDotQualifiedExpression(986,1008): 'this@InnerNested.foo()'
     ]
 
 KtThisExpression(986,1002): 'this@InnerNested'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(986,990): 'this'
   null
@@ -800,7 +1221,32 @@ KtDotQualifiedExpression(1029,1050): 'this@InnerOuter.foo()'
     ]
 
 KtThisExpression(1029,1044): 'this@InnerOuter'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(1029,1033): 'this'
   null
@@ -836,7 +1282,32 @@ KtDotQualifiedExpression(1071,1089): 'this@MyClass.foo()'
     ]
 
 KtThisExpression(1071,1083): 'this@MyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(1071,1075): 'this'
   null
@@ -905,7 +1376,31 @@ KtDotQualifiedExpression(1160,1176): 'this@label.foo()'
     ]
 
 KtThisExpression(1160,1170): 'this@label'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(1160,1164): 'this'
   null
@@ -1022,7 +1517,30 @@ KtValueArgument(1277,1281): 'this'
   null
 
 KtThisExpression(1277,1281): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(one/myWith)
+        receiverParameter: null
+        returnType: KaTypeParameterType:
+          annotations: []
+          type: T
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(1277,1281): 'this'
   null

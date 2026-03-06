@@ -637,9 +637,7 @@ org.jetbrains.kotlin.psi.KtImportsFactory:createImportDirectivesNotCached(Collec
 org.jetbrains.kotlin.psi.KtInitializerList:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtInitializerList:constructor(KotlinPlaceHolderStub<KtInitializerList>)
 org.jetbrains.kotlin.psi.KtInitializerList:getInitializers()
-org.jetbrains.kotlin.psi.KtInstanceExpressionWithLabel
 org.jetbrains.kotlin.psi.KtInstanceExpressionWithLabel:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtInstanceExpressionWithLabel:getInstanceReference()
 org.jetbrains.kotlin.psi.KtIntersectionType.getLeftTypeRef()
 org.jetbrains.kotlin.psi.KtIntersectionType.getRightTypeRef()
 org.jetbrains.kotlin.psi.KtIntersectionType:constructor(ASTNode)

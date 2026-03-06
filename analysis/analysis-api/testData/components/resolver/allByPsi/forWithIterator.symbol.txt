@@ -110,7 +110,30 @@ KtDotQualifiedExpression(147,166): 'this@iterator.start'
     ]
 
 KtThisExpression(147,160): 'this@iterator'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: f/IntProgression
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(147,151): 'this'
   null
@@ -181,7 +204,30 @@ KtDotQualifiedExpression(207,224): 'this@iterator.end'
     ]
 
 KtThisExpression(207,220): 'this@iterator'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: f/IntProgression
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(207,211): 'this'
   null
