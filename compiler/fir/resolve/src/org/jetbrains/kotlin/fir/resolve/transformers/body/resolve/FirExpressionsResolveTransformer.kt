@@ -222,7 +222,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
                 // NB: here we can get raw expression because of dropped qualifiers (see transform callee),
                 // so candidate existence must be checked before calling completion
-                if (transformedCallee is FirQualifiedAccessExpression && transformedCallee.candidate() != null) {
+                if (transformedCallee is FirQualifiedAccessExpression && transformedCallee.candidate() != null
+                    && !isUsedForContextSensitiveAlternative
+                ) {
                     if (!transformedCallee.isAcceptableResolvedQualifiedAccess()) {
                         return qualifiedAccessExpression.alsoRecordLookup()
                     }
