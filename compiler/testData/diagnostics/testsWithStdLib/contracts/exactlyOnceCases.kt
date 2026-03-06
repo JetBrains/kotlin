@@ -28,7 +28,7 @@ fun foo() {
     }
     println(y)
 
-    val x: Int
+    val <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!>: Int
     barWithContractAtMostOnce {
         x = 2
     }
