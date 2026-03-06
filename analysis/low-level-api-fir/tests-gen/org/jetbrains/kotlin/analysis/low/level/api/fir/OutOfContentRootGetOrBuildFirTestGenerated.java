@@ -60,6 +60,102 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("annotatedParameterTypeArgument.kt")
+    public void testAnnotatedParameterTypeArgument() {
+      run("annotatedParameterTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedParameterTypeArgument2.kt")
+    public void testAnnotatedParameterTypeArgument2() {
+      run("annotatedParameterTypeArgument2.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedParameterTypeArgumentAnnotationArguments.kt")
+    public void testAnnotatedParameterTypeArgumentAnnotationArguments() {
+      run("annotatedParameterTypeArgumentAnnotationArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedParameterTypeArgumentAnnotationArguments2.kt")
+    public void testAnnotatedParameterTypeArgumentAnnotationArguments2() {
+      run("annotatedParameterTypeArgumentAnnotationArguments2.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedParameterTypeArgumentDifferentTypes.kt")
+    public void testAnnotatedParameterTypeArgumentDifferentTypes() {
+      run("annotatedParameterTypeArgumentDifferentTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedParameterTypeArgumentDifferentTypes2.kt")
+    public void testAnnotatedParameterTypeArgumentDifferentTypes2() {
+      run("annotatedParameterTypeArgumentDifferentTypes2.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedParameterTypeArgumentNested.kt")
+    public void testAnnotatedParameterTypeArgumentNested() {
+      run("annotatedParameterTypeArgumentNested.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedParameterTypeArgumentNested2.kt")
+    public void testAnnotatedParameterTypeArgumentNested2() {
+      run("annotatedParameterTypeArgumentNested2.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedParameterTypeArgumentNestedDeep.kt")
+    public void testAnnotatedParameterTypeArgumentNestedDeep() {
+      run("annotatedParameterTypeArgumentNestedDeep.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedParameterTypeArgumentNestedDeep2.kt")
+    public void testAnnotatedParameterTypeArgumentNestedDeep2() {
+      run("annotatedParameterTypeArgumentNestedDeep2.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedParameterTypeArgumentNestedInside.kt")
+    public void testAnnotatedParameterTypeArgumentNestedInside() {
+      run("annotatedParameterTypeArgumentNestedInside.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedParameterTypeArgumentNestedInside2.kt")
+    public void testAnnotatedParameterTypeArgumentNestedInside2() {
+      run("annotatedParameterTypeArgumentNestedInside2.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedReturnType.kt")
+    public void testAnnotatedReturnType() {
+      run("annotatedReturnType.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedReturnType2.kt")
+    public void testAnnotatedReturnType2() {
+      run("annotatedReturnType2.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedReturnTypeArgument.kt")
+    public void testAnnotatedReturnTypeArgument() {
+      run("annotatedReturnTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedReturnTypeArgumentWithCachedScope.kt")
+    public void testAnnotatedReturnTypeArgumentWithCachedScope() {
+      run("annotatedReturnTypeArgumentWithCachedScope.kt");
+    }
+
+    @Test
     @TestMetadata("annotationApplicationArgument.kt")
     public void testAnnotationApplicationArgument() {
       run("annotationApplicationArgument.kt");

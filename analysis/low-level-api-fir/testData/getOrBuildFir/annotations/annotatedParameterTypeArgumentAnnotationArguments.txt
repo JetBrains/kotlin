@@ -1,0 +1,32 @@
+KT element: KtProperty
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] lval x: R|@R|Anno|(value = Boolean(true) [evaluated = Boolean(true)])  kotlin/String| = R|<local>/foo|.R|SubstitutionOverride</Foo.value: R|@R|Anno|(value = Boolean(true) [evaluated = Boolean(true)])  kotlin/String|>|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] anno.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.value] value: R|kotlin/Boolean|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Boolean| = R|<local>/value|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Boolean|
+
+    }
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] first.kt
+    public final [ResolvedTo(CONTRACTS)] class Foo<[ResolvedTo(CONTRACTS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(CONTRACTS)] T>([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.value] value: R|T|): R|Foo<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|T|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] foo: R|Foo<@R|Anno|(value = Boolean(true) [evaluated = Boolean(true)])  kotlin/String>|): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|@R|Anno|(value = Boolean(true) [evaluated = Boolean(true)])  kotlin/String| = R|<local>/foo|.R|SubstitutionOverride</Foo.value: R|@R|Anno|(value = Boolean(true) [evaluated = Boolean(true)])  kotlin/String|>|
+    }
