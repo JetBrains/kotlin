@@ -235,6 +235,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
+    @TestMetadata("issueWithVariablesHiddening.kt")
+    public void testIssueWithVariablesHiddening() {
+      run("issueWithVariablesHiddening.kt");
+    }
+
+    @Test
     @TestMetadata("KeepGeneratedSerializer.kt")
     public void testKeepGeneratedSerializer() {
       run("KeepGeneratedSerializer.kt");
