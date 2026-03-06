@@ -36,26 +36,17 @@ class WasmKlibExportingDeclaration(
     companion object {
         fun collectDeclarations(
             cleanFiles: List<SerializedIrFile>,
-            dirtyFiles: List<IrFile>,
-            exportedNames: ExportNamesMap,
-        ) = buildList {
-            for (serializedFile in cleanFiles) {
+            exportedNames: Sequence<WasmKlibExportingDeclaration>,
+        ): List<WasmKlibExportingDeclaration> {
+            val cleanFileDeclarations = cleanFiles.asSequence().flatMap { serializedFile ->
                 val fileMetadata = WasmIrFileMetadata.fromByteArray(serializedFile.fileMetadata)
-                for ((exportKind, exportedNames) in fileMetadata.exportNames) {
-                    for (exportedName in exportedNames) {
-                        add(WasmKlibExportingDeclaration(exportedName, serializedFile, exportKind))
+                fileMetadata.exportNames.asSequence().flatMap { (exportKind, names) ->
+                    names.asSequence().map { name ->
+                        WasmKlibExportingDeclaration(name, serializedFile, exportKind)
                     }
                 }
             }
-
-            for ((exportKind, exportNamesFileMap) in exportedNames) {
-                for (dirtyFile in dirtyFiles) {
-                    val exportedDeclarations = exportNamesFileMap[dirtyFile] ?: continue
-                    for ((declaration, exportedName) in exportedDeclarations) {
-                        add(WasmKlibExportingDeclaration(exportedName, dirtyFile, declaration, exportKind))
-                    }
-                }
-            }
+            return (cleanFileDeclarations + exportedNames).toList()
         }
     }
 }

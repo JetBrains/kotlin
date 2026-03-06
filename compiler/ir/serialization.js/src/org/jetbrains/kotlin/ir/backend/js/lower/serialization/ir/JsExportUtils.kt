@@ -31,13 +31,30 @@ private val IrDeclarationWithName.exportedJsExportName: String
 internal fun IrConstructorCall.getSingleConstStringArgument() =
     (arguments[0] as IrConst).value as String
 
-fun IrModuleFragment.collectJsExportNames(): Map<IrFile, Map<IrDeclarationWithName, String>> =
-    files.associateWith { irFile ->
-        val isFileJsExported = irFile.annotations.hasAnnotation(JsStandardClassIds.Annotations.JsExport.asSingleFqName())
+fun IrModuleFragment.collectJsExportNamesSequence(): Sequence<Triple<IrFile, IrDeclarationWithName, String>> =
+    files.asSequence().flatMap { irFile ->
+        val isFileJsExported = irFile.annotations.hasAnnotation(
+            JsStandardClassIds.Annotations.JsExport.asSingleFqName()
+        )
 
         irFile.declarations.asSequence()
             .filterIsInstance<IrDeclarationWithName>()
-            .filter { if (isFileJsExported) !it.isJsExportIgnoreDeclaration() else it.isJsExportDeclaration() }
+            .filter { declaration ->
+                if (isFileJsExported) !declaration.isJsExportIgnoreDeclaration()
+                else declaration.isJsExportDeclaration()
+            }
             .filter { !it.isEffectivelyExternal() && !it.isExpect }
-            .associateWith { it.exportedJsExportName }
+            .map { declaration ->
+                Triple(irFile, declaration, declaration.exportedJsExportName)
+            }
     }
+
+fun IrModuleFragment.collectJsExportNames(): Map<IrFile, Map<IrDeclarationWithName, String>> {
+    val result = mutableMapOf<IrFile, MutableMap<IrDeclarationWithName, String>>()
+
+    collectJsExportNamesSequence().forEach { (file, decl, name) ->
+        result.getOrPut(file) { mutableMapOf() }[decl] = name
+    }
+
+    return result
+}

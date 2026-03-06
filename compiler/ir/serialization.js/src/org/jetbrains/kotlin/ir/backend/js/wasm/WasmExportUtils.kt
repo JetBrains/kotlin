@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.wasm
 
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectJsExportNames
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectJsExportNamesSequence
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -16,10 +16,6 @@ import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.name.WasmStandardClassIds
-import kotlin.sequences.associateWith
-import kotlin.sequences.filter
-
-typealias ExportNamesMap = Map<ExportKind, Map<IrFile, Map<IrDeclarationWithName, String>>>
 
 enum class ExportKind(
     val clashError: KtDiagnosticFactory3<String, String, List<WasmKlibExportingDeclaration>>,
@@ -45,13 +41,22 @@ fun IrDeclarationWithName.getWasmExportName(): String {
     return nameFromAnnotation ?: name.identifier
 }
 
-fun IrModuleFragment.collectWasmExportNames(): Map<IrFile, Map<IrDeclarationWithName, String>> =
-    files.associateWith { irFile ->
+fun IrModuleFragment.collectWasmExportNamesSequence(): Sequence<Triple<IrFile, IrDeclarationWithName, String>> =
+    files.asSequence().flatMap { irFile ->
         irFile.declarations.asSequence()
             .filterIsInstance<IrDeclarationWithName>()
             .filter { it.isWasmExportDeclaration() && !it.isEffectivelyExternal() }
-            .associateWith { it.getWasmExportName() }
+            .map { declaration ->
+                Triple(irFile, declaration, declaration.getWasmExportName())
+            }
     }
 
-fun IrModuleFragment.collectAllExportNames(): ExportNamesMap =
-    mapOf(ExportKind.JsExport to collectJsExportNames(), ExportKind.WasmExport to collectWasmExportNames())
+fun IrModuleFragment.collectAllExportNamesSequence(): Sequence<WasmKlibExportingDeclaration> = sequence {
+    collectWasmExportNamesSequence().forEach { (file, decl, name) ->
+        yield(WasmKlibExportingDeclaration(name, file, decl, ExportKind.WasmExport))
+    }
+
+    collectJsExportNamesSequence().forEach { (file, decl, name) ->
+        yield(WasmKlibExportingDeclaration(name, file, decl, ExportKind.JsExport))
+    }
+}

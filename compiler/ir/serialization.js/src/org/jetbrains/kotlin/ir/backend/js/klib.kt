@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
 import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibCheckers
-import org.jetbrains.kotlin.ir.backend.js.wasm.collectAllExportNames
+import org.jetbrains.kotlin.ir.backend.js.wasm.collectAllExportNamesSequence
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
@@ -514,7 +514,7 @@ fun serializeModuleIntoKlib(
                         irDiagnosticReporter,
                         configuration,
                         cleanFilesIrData,
-                        moduleFragment.collectAllExportNames(),
+                        moduleFragment.collectAllExportNamesSequence(),
                     )
                 }.takeIf { builtInsPlatform == BuiltInsPlatform.WASM }
             ),

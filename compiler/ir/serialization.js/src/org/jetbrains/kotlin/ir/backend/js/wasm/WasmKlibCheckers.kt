@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibDiagnosticContext
 import org.jetbrains.kotlin.ir.backend.js.wasm.declarations.WasmKlibExportsChecker
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.library.SerializedIrFile
@@ -21,14 +19,14 @@ object WasmKlibCheckers {
         diagnosticReporter: IrDiagnosticReporter,
         configuration: CompilerConfiguration,
         cleanFiles: List<SerializedIrFile> = listOf(),
-        exportedNames: ExportNamesMap = mapOf()
+        exportedNames: Sequence<WasmKlibExportingDeclaration> = sequenceOf()
     ): IrVisitorVoid {
         return object : IrVisitorVoid() {
             private val diagnosticContext = JsKlibDiagnosticContext(configuration)
 
             override fun visitModuleFragment(declaration: IrModuleFragment) {
                 val exportedDeclarations =
-                    WasmKlibExportingDeclaration.collectDeclarations(cleanFiles, declaration.files, exportedNames)
+                    WasmKlibExportingDeclaration.collectDeclarations(cleanFiles, exportedNames)
                 WasmKlibExportsChecker.check(exportedDeclarations, this.diagnosticContext, diagnosticReporter)
             }
         }
