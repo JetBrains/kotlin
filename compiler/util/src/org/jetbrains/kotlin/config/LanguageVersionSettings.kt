@@ -478,6 +478,7 @@ enum class LanguageFeature(
     DisableMaxTypeDepthFromInitialConstraints(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-372"),
     JsAllowExportingSuspendFunctions(sinceVersion = KOTLIN_2_4, "KT-56281"),
     ImprovedResolutionInSecondaryConstructors(sinceVersion = KOTLIN_2_4, "KT-77275"),
+    ReportTypeVarianceConflictsInDnnAndFlexible(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true, "KT-84743"),
     CacheLocalVariableScopes(sinceVersion = KOTLIN_2_4, "KT-68606"),
     ContextParameters(sinceVersion = KOTLIN_2_4, "KT-72222"),
     OverloadResolutionSpecificityForEnhancedJvmPrimitiveWrappers(sinceVersion = KOTLIN_2_4, "KT-9182"),

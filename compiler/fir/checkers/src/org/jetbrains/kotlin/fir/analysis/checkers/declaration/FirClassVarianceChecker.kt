@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -131,62 +133,78 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
         source: KtSourceElement? = null,
         isInAbbreviation: Boolean = false,
     ) {
-        if (type is ConeTypeParameterType) {
-            val fullyExpandedType = type.fullyExpandedType()
-            val typeParameterSymbol = type.lookupTag.typeParameterSymbol
-            val resultSource = source ?: typeRef?.source
-            if (resultSource != null &&
-                !typeParameterSymbol.variance.allowsPosition(variance) &&
-                !fullyExpandedType.attributes.contains(CompilerConeAttributes.UnsafeVariance)
-            ) {
-                val factory =
-                    if (isInAbbreviation) FirErrors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE else FirErrors.TYPE_VARIANCE_CONFLICT_ERROR
-                reporter.reportOn(
-                    resultSource,
-                    factory,
-                    typeParameterSymbol,
-                    typeParameterSymbol.variance,
-                    variance,
-                    containingType
-                )
+        when (type) {
+            is ConeTypeParameterType -> {
+                val fullyExpandedType = type.fullyExpandedType()
+                val typeParameterSymbol = type.lookupTag.typeParameterSymbol
+                val resultSource = source ?: typeRef?.source
+                if (resultSource != null &&
+                    !typeParameterSymbol.variance.allowsPosition(variance) &&
+                    !fullyExpandedType.attributes.contains(CompilerConeAttributes.UnsafeVariance)
+                ) {
+                    val factory =
+                        if (isInAbbreviation) FirErrors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE else FirErrors.TYPE_VARIANCE_CONFLICT_ERROR
+                    reporter.reportOn(
+                        resultSource,
+                        factory,
+                        typeParameterSymbol,
+                        typeParameterSymbol.variance,
+                        variance,
+                        containingType
+                    )
+                }
             }
-            return
-        }
+            is ConeClassLikeType -> {
+                val fullyExpandedType = type.fullyExpandedType()
+                val classSymbol = fullyExpandedType.lookupTag.toSymbol()
+                if (classSymbol is FirClassSymbol<*>) {
+                    val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef)
+                    for ((index, typeArgument) in fullyExpandedType.typeArguments.withIndex()) {
+                        val paramVariance = classSymbol.typeParameterSymbols.getOrNull(index)?.variance ?: continue
 
-        if (type is ConeClassLikeType) {
-            val fullyExpandedType = type.fullyExpandedType()
-            val classSymbol = fullyExpandedType.lookupTag.toSymbol()
-            if (classSymbol is FirClassSymbol<*>) {
-                val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef)
-                for ((index, typeArgument) in fullyExpandedType.typeArguments.withIndex()) {
-                    val paramVariance = classSymbol.typeParameterSymbols.getOrNull(index)?.variance ?: continue
+                        val argVariance = when (typeArgument.kind) {
+                            ProjectionKind.IN -> Variance.IN_VARIANCE
+                            ProjectionKind.OUT -> Variance.OUT_VARIANCE
+                            ProjectionKind.INVARIANT -> Variance.INVARIANT
+                            else -> continue
+                        }
 
-                    val argVariance = when (typeArgument.kind) {
-                        ProjectionKind.IN -> Variance.IN_VARIANCE
-                        ProjectionKind.OUT -> Variance.OUT_VARIANCE
-                        ProjectionKind.INVARIANT -> Variance.INVARIANT
-                        else -> continue
-                    }
+                        val typeArgumentType = typeArgument.type ?: continue
 
-                    val typeArgumentType = typeArgument.type ?: continue
+                        val newVariance = when (EnrichedProjectionKind.getEffectiveProjectionKind(paramVariance, argVariance)) {
+                            EnrichedProjectionKind.OUT -> variance
+                            EnrichedProjectionKind.IN -> variance.opposite()
+                            EnrichedProjectionKind.INV -> Variance.INVARIANT
+                            EnrichedProjectionKind.STAR -> null // CONFLICTING_PROJECTION error was reported
+                        }
 
-                    val newVariance = when (EnrichedProjectionKind.getEffectiveProjectionKind(paramVariance, argVariance)) {
-                        EnrichedProjectionKind.OUT -> variance
-                        EnrichedProjectionKind.IN -> variance.opposite()
-                        EnrichedProjectionKind.INV -> Variance.INVARIANT
-                        EnrichedProjectionKind.STAR -> null // CONFLICTING_PROJECTION error was reported
-                    }
+                        if (newVariance != null) {
+                            val subTypeRefAndSource = typeRefAndSourcesForArguments?.getOrNull(index)
 
-                    if (newVariance != null) {
-                        val subTypeRefAndSource = typeRefAndSourcesForArguments?.getOrNull(index)
-
-                        checkVarianceConflict(
-                            typeArgumentType, newVariance, subTypeRefAndSource?.typeRef, containingType,
-                            subTypeRefAndSource?.typeRef?.source ?: source, type.isTypealiasExpansion
-                        )
+                            checkVarianceConflict(
+                                typeArgumentType, newVariance, subTypeRefAndSource?.typeRef, containingType,
+                                subTypeRefAndSource?.typeRef?.source ?: source, type.isTypealiasExpansion
+                            )
+                        }
                     }
                 }
             }
+            is ConeDefinitelyNotNullType -> {
+                if (LanguageFeature.ReportTypeVarianceConflictsInDnnAndFlexible.isEnabled()) {
+                    checkVarianceConflict(type.original, variance, typeRef, containingType, source, isInAbbreviation)
+                }
+            }
+            is ConeFlexibleType -> {
+                if (LanguageFeature.ReportTypeVarianceConflictsInDnnAndFlexible.isEnabled()) {
+                    checkVarianceConflict(type.lowerBound, variance, typeRef, containingType, source, isInAbbreviation)
+                }
+            }
+            is ConeIntersectionType -> {
+                type.intersectedTypes.forEach {
+                    checkVarianceConflict(it, variance, typeRef, containingType, source, isInAbbreviation)
+                }
+            }
+            else -> error("Unexpected type ${type.javaClass} in checkVarianceConflict")
         }
     }
 }
