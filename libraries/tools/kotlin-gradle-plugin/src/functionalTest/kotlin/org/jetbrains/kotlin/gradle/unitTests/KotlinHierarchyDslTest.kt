@@ -61,12 +61,12 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("iosArm64Main", "iosSimulatorArm64Main"),
+            stringSetOf("iosArm64Main", "iosSimulatorArm64Main", "iosX64Main"),
             kotlin.dependingSourceSetNames("iosMain")
         )
 
         assertEquals(
-            stringSetOf("iosArm64Test", "iosSimulatorArm64Test"),
+            stringSetOf("iosArm64Test", "iosSimulatorArm64Test", "iosX64Test"),
             kotlin.dependingSourceSetNames("iosTest")
         )
 
@@ -162,7 +162,8 @@ class KotlinHierarchyDslTest {
                 │   ├── appleMain
                 │   │   ├── iosMain
                 │   │   │   ├── iosArm64Main
-                │   │   │   └── iosSimulatorArm64Main
+                │   │   │   ├── iosSimulatorArm64Main
+                │   │   │   └── iosX64Main
                 │   │   ├── macosMain
                 │   │   │   └── macosArm64Main
                 │   │   ├── tvosMain
@@ -199,7 +200,8 @@ class KotlinHierarchyDslTest {
                 │   ├── appleTest
                 │   │   ├── iosTest
                 │   │   │   ├── iosArm64Test
-                │   │   │   └── iosSimulatorArm64Test
+                │   │   │   ├── iosSimulatorArm64Test
+                │   │   │   └── iosX64Test
                 │   │   ├── macosTest
                 │   │   │   └── macosArm64Test
                 │   │   ├── tvosTest
@@ -580,6 +582,7 @@ class KotlinHierarchyDslTest {
                         iosMain,
                         iosArm64Main,
                         iosSimulatorArm64Main,
+                        iosX64Main,
                         macosMain,
                         macosArm64Main,
                         tvosMain,
@@ -612,6 +615,7 @@ class KotlinHierarchyDslTest {
                         iosTest,
                         iosArm64Test,
                         iosSimulatorArm64Test,
+                        iosX64Test,
                         macosTest,
                         macosArm64Test,
                         tvosTest,
