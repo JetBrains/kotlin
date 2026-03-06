@@ -55,7 +55,7 @@ internal class FirThreadSafeCachesFactory(private val project: Project) : FirCac
             return createCache(createValue)
         }
 
-        val builder = Caffeine<K, V>.newBuilder()
+        val builder = Caffeine.newBuilder()
 
         if (expirationAfterAccess != null) {
             builder.expireAfterAccess(expirationAfterAccess.toJavaDuration())
