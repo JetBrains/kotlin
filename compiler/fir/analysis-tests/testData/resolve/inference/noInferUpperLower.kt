@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83250
 // DIAGNOSTICS: -ERROR_SUPPRESSION
 // FIR_DUMP
@@ -23,7 +23,7 @@ fun baz(x: In<Base>, base: Base, derived: Derived) {
     // Derived <: T
     //
     // Should fix T to Derived and report and error
-    foo(x, base, derived) { x -> overload(x) }
+    <!TYPE_MISMATCH!>foo(x, base, derived) { x -> overload(x) }<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, in, interfaceDeclaration, lambdaLiteral, nullableType,

@@ -13,7 +13,7 @@ FILE: noInferUpperLower.kt
     public final fun overload(x: R|Derived|): R|kotlin/Unit| {
     }
     public final fun baz(x: R|In<Base>|, base: R|Base|, derived: R|Derived|): R|kotlin/Unit| {
-        R|/foo|<R|Base|>(R|<local>/x|, R|<local>/base|, R|<local>/derived|, <L> = foo@fun <anonymous>(x: R|Base|): R|kotlin/Unit| <inline=NoInline>  {
+        R|/foo<CS errors: /foo>#|<R|Derived|>(R|<local>/x|, R|<local>/base|, R|<local>/derived|, <L> = foo@fun <anonymous>(x: R|Derived|): R|kotlin/Unit| <inline=NoInline>  {
             R|/overload|(R|<local>/x|)
         }
         )
