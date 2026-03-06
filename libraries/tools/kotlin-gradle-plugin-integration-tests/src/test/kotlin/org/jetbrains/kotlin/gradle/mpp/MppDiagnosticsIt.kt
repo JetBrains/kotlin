@@ -38,7 +38,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
                 // is to compare blocks ignoring the order
                 assertBlocksEqual(
                     expectedOutputFile().extractBlocksFromExpectedOutput(),
-                    filteredDiagnosticsOutput(),
+                    extractProjectsAndTheirDiagnosticsInBlocks(),
                 )
             }
         }
@@ -72,7 +72,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
             buildAndFail("assemble") {
                 assertEqualsToFile(
                     expectedOutputFile("assemble"),
-                    filteredDiagnosticsOutput().asString()
+                    extractProjectsAndTheirDiagnostics()
                 )
             }
 
@@ -80,7 +80,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
             build("clean") {
                 assertEqualsToFile(
                     expectedOutputFile("clean"),
-                    filteredDiagnosticsOutput().asString()
+                    extractProjectsAndTheirDiagnostics()
                 )
             }
 
@@ -88,7 +88,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
             build("myTask", "--rerun-tasks") {
                 assertEqualsToFile(
                     expectedOutputFile("customTask"),
-                    filteredDiagnosticsOutput().asString()
+                    extractProjectsAndTheirDiagnostics()
                 )
             }
 
@@ -96,7 +96,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
             build("commonize") {
                 assertEqualsToFile(
                     expectedOutputFile("commonize"),
-                    filteredDiagnosticsOutput().asString()
+                    extractProjectsAndTheirDiagnostics()
                 )
             }
         }
@@ -110,7 +110,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
                 assertConfigurationCacheStored()
                 assertEqualsToFile(
                     expectedOutputFile("assemble"),
-                    filteredDiagnosticsOutput().asString()
+                    extractProjectsAndTheirDiagnostics()
                 )
             }
 
@@ -119,7 +119,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
                 assertConfigurationCacheReused()
                 assertEqualsToFile(
                     expectedOutputFile("assemble-cache-reused"),
-                    filteredDiagnosticsOutput().asString()
+                    extractProjectsAndTheirDiagnostics()
                 )
             }
         }
@@ -129,16 +129,10 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testErrorDiagnosticBuildSucceeds(gradleVersion: GradleVersion) {
         project("errorDiagnosticBuildSucceeds", gradleVersion) {
             build("assemble") {
-                assertEqualsToFile(
-                    expectedOutputFile("assemble"),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile("assemble"), extractProjectsAndTheirDiagnostics())
             }
             build("myTask", "--rerun-tasks") {
-                assertEqualsToFile(
-                    expectedOutputFile("customTask"),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile("customTask"), extractProjectsAndTheirDiagnostics())
             }
         }
     }
@@ -148,10 +142,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         project("suppressGradlePluginErrors", gradleVersion) {
             // build succeeds
             build("assemble") {
-                assertEqualsToFile(
-                    expectedOutputFile(),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
             }
         }
     }
@@ -172,10 +163,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testSuppressGradlePluginWarnings(gradleVersion: GradleVersion) {
         project("suppressGradlePluginWarnings", gradleVersion) {
             build("assemble") {
-                assertEqualsToFile(
-                    expectedOutputFile(),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
             }
         }
     }
@@ -184,10 +172,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testSuppressGradlePluginFatals(gradleVersion: GradleVersion) {
         project("suppressGradlePluginFatals", gradleVersion) {
             buildAndFail("assemble") {
-                assertEqualsToFile(
-                    expectedOutputFile(),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
             }
         }
     }
@@ -201,39 +186,24 @@ class MppDiagnosticsIt : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
         ) {
             buildAndFail("brokenProjectA:assemble") {
-                assertEqualsToFile(
-                    expectedOutputFile("brokenA"),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile("brokenA"), extractProjectsAndTheirDiagnostics())
             }
 
             buildAndFail("brokenProjectB:assemble") {
-                assertEqualsToFile(
-                    expectedOutputFile("brokenB"),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile("brokenB"), extractProjectsAndTheirDiagnostics())
             }
 
             build("healthyProject:assemble") {
-                assertEqualsToFile(
-                    expectedOutputFile("healthy"),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile("healthy"), extractProjectsAndTheirDiagnostics())
             }
 
             // Turn off parallel execution so that order of execution (and therefore the testdata) is stable
             buildAndFail("assemble", buildOptions = buildOptions.copy(parallel = false)) {
-                assertEqualsToFile(
-                    expectedOutputFile("root"),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile("root"), extractProjectsAndTheirDiagnostics())
             }
 
             buildAndFail("assemble", "--continue", buildOptions = buildOptions.copy(parallel = false)) {
-                assertEqualsToFile(
-                    expectedOutputFile("root-with-continue"),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile("root-with-continue"), extractProjectsAndTheirDiagnostics())
             }
         }
     }
@@ -242,10 +212,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testEarlyTasksMaterializationDoesntBreakReports(gradleVersion: GradleVersion) {
         project("earlyTasksMaterializationDoesntBreakReports", gradleVersion) {
             buildAndFail("assemble") {
-                assertEqualsToFile(
-                    expectedOutputFile(),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
             }
         }
     }
@@ -262,24 +229,15 @@ class MppDiagnosticsIt : KGPBaseTest() {
             // need to override that to mimic real-life scenarios
             val options = buildOptions.copy(showDiagnosticsStacktrace = null, stacktraceMode = null)
             build("help", buildOptions = options) {
-                assertEqualsToFile(
-                    expectedOutputFile("without-stacktrace"),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile("without-stacktrace"), extractProjectsAndTheirDiagnostics())
             }
 
             build("help", "--stacktrace", buildOptions = options) {
-                assertEqualsToFile(
-                    expectedOutputFile("with-stacktrace"),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile("with-stacktrace"), extractProjectsAndTheirDiagnostics())
             }
 
             build("help", "--full-stacktrace", buildOptions = options) {
-                assertEqualsToFile(
-                    expectedOutputFile("with-full-stacktrace"),
-                    filteredDiagnosticsOutput().asString()
-                )
+                assertEqualsToFile(expectedOutputFile("with-full-stacktrace"), extractProjectsAndTheirDiagnostics())
             }
         }
     }
@@ -371,8 +329,6 @@ class MppDiagnosticsIt : KGPBaseTest() {
         val suffixIfAny = if (suffix != null) "-$suffix" else ""
         return projectPath.resolve("expectedOutput$suffixIfAny.txt").toFile()
     }
-
-    private fun List<String>.asString(): String = joinToString(separator = "\n").trim()
 
     private fun TestProject.checkDeprecatedProperties(isDeprecationExpected: Boolean) {
         build {

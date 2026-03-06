@@ -41,7 +41,7 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
             build(":compileKotlinIosArm64") {
                 assertEqualsToFile(
                     projectPath.resolve("data/diagnostics.txt").toFile(),
-                    filteredDiagnosticsOutput().joinToString(separator = "\n").trim()
+                    extractProjectsAndTheirDiagnostics()
                 )
                 assertTasksSkipped(":compileKotlinIosArm64")
             }

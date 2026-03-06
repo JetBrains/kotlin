@@ -73,25 +73,19 @@ fun BuildResult.extractProjectsAndTheirDiagnostics(): String = extractProjectsAn
     .joinToString(separator = "\n")
     .trim()
 
-/**
- * Filters out some diagnostics from diagnostics output:
- * - KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning: This warning is host-dependent and is already tested in GeneralNativeIT
- * - KotlinToolingDiagnostics.DeprecatedGradleVersionWarning: generic diagnostic that have dedicated test
- * - KotlinToolingDiagnostics.OldNativeVersionDiagnostic: causing test failures on non CI runs due to Native Distribution snapshot usage
- */
-internal fun BuildResult.filteredDiagnosticsOutput(): List<String> = extractProjectsAndTheirDiagnosticsInBlocks()
-    .filterNot {
-        KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning.id in it ||
-                KotlinToolingDiagnostics.DeprecatedGradleVersionWarning.id in it ||
-                KotlinToolingDiagnostics.OldNativeVersionDiagnostic.id in it
-    }
-
 
 /**
  * NB: Needs parsable formatting of diagnostics, see [org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.internalDiagnosticsUseParsableFormat]
  * Because this mode is enabled by the 'kotlin.internal'-property, actual output will always contain
  * [org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed].
  * For the sake of clarity, this diagnostic is filtered by default.
+ *
+ * [org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning] is also
+ * filtered because it is host-dependent and tested separately.
+ * [org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.OldNativeVersionDiagnostic] is also
+ * filtered because local Kotlin/Native versions may differ from CI setup.
+ * [org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.DeprecatedGradleVersionWarning] is also
+ * filtered because it is a generic diagnostic that has a dedicated test.
  */
 fun BuildResult.extractProjectsAndTheirDiagnosticsInBlocks(): List<String> {
     val blocks = mutableListOf<String>()
@@ -135,11 +129,28 @@ fun BuildResult.extractProjectsAndTheirDiagnosticsInBlocks(): List<String> {
 
         currentDiagnostic += line
 
-        if (KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed.id in currentDiagnostic.first()) {
-            val cleanedDiagnostic = filterKgpUtilityPropertiesFromDiagnostic(currentDiagnostic)
-            if (cleanedDiagnostic.isNotEmpty()) blocks += cleanedDiagnostic.joinToString(separator = "\n", postfix = "\n")
-        } else {
-            blocks += currentDiagnostic.joinToString(separator = "\n", postfix = "\n")
+        val firstDiagnosticLine = currentDiagnostic.first()
+        when {
+            KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning.id in firstDiagnosticLine -> {
+                // Host-dependent and asserted separately in dedicated integration tests.
+            }
+
+            KotlinToolingDiagnostics.OldNativeVersionDiagnostic.id in firstDiagnosticLine -> {
+                // Environment-dependent and expected to differ between local and CI setups.
+            }
+
+            KotlinToolingDiagnostics.DeprecatedGradleVersionWarning.id in firstDiagnosticLine -> {
+                // Generic diagnostic that has a dedicated test.
+            }
+
+            KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed.id in firstDiagnosticLine -> {
+                val cleanedDiagnostic = filterKgpUtilityPropertiesFromDiagnostic(currentDiagnostic)
+                if (cleanedDiagnostic.isNotEmpty()) blocks += cleanedDiagnostic.joinToString(separator = "\n", postfix = "\n")
+            }
+
+            else -> {
+                blocks += currentDiagnostic.joinToString(separator = "\n", postfix = "\n")
+            }
         }
 
         currentDiagnostic.clear()
