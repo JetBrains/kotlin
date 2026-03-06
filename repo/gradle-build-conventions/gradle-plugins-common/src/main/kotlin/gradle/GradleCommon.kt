@@ -674,9 +674,8 @@ fun Project.configureBuildToolsApiVersionForGradleCompatibility() {
     tasks.withType<KotlinCompile>().configureEach {
         compilerExecutionStrategy.set(KotlinCompilerExecutionStrategy.IN_PROCESS) // avoid spawning multiple Kotlin daemons for different bootstrap versions
         compilerOptions {
-            val kgpCompilerMajorVersion = kgpCompilerVersion.substringBeforeLast(".").let { KotlinVersion.fromVersion(it) }
-            languageVersion.set(kgpCompilerMajorVersion)
-            apiVersion.set(kgpCompilerMajorVersion)
+            languageVersion.set(KotlinVersion.KOTLIN_1_8)
+            apiVersion.set(KotlinVersion.KOTLIN_1_8)
         }
     }
     project.extra["kotlin.compiler.runViaBuildToolsApi"] = true
