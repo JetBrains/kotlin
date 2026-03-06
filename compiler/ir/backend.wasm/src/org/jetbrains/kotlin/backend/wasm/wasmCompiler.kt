@@ -119,8 +119,7 @@ fun compileToLoweredIr(
         for (file in module.files)
             markExportedDeclarations(context, file, exportedDeclarations)
 
-    // check clashing JsExport/WasmExport exporting names, that appeared after
-    // linking all modules (not caught by Frontend checks)
+    // Check clashing JsExport/WasmExport exporting names, that appeared after linking all modules (not caught by Frontend checks)
     checkCrossModuleExportClashes(allModules, configuration)
 
     val typeScriptFragment = runIf(configuration.generateDts) {
