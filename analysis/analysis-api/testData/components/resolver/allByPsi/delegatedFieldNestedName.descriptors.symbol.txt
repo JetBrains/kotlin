@@ -23,7 +23,10 @@ KtAnnotationEntry(31,61): '@Target(AnnotationTarget.TYPE)'
     ]
 
 KtConstructorCalleeExpression(32,38): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+    ]
 
 KtTypeReference(32,38): 'Target'
   null
@@ -140,7 +143,10 @@ KtAnnotationEntry(225,241): '@Anno(0 + outer)'
     ]
 
 KtConstructorCalleeExpression(226,230): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(226,230): 'Anno'
   null
@@ -197,7 +203,10 @@ KtAnnotationEntry(247,263): '@Anno(1 + outer)'
     ]
 
 KtConstructorCalleeExpression(248,252): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(248,252): 'Anno'
   null
@@ -254,7 +263,10 @@ KtAnnotationEntry(269,285): '@Anno(2 + outer)'
     ]
 
 KtConstructorCalleeExpression(270,274): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(270,274): 'Anno'
   null
@@ -311,7 +323,10 @@ KtAnnotationEntry(310,326): '@Anno(4 + outer)'
     ]
 
 KtConstructorCalleeExpression(311,315): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(311,315): 'Anno'
   null
@@ -368,7 +383,10 @@ KtAnnotationEntry(334,350): '@Anno(5 + outer)'
     ]
 
 KtConstructorCalleeExpression(335,339): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(335,339): 'Anno'
   null
@@ -437,7 +455,10 @@ KtAnnotationEntry(400,416): '@Anno(6 + inner)'
     ]
 
 KtConstructorCalleeExpression(401,405): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(401,405): 'Anno'
   null
@@ -491,7 +512,10 @@ KtAnnotationEntry(422,438): '@Anno(7 + inner)'
     ]
 
 KtConstructorCalleeExpression(423,427): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(423,427): 'Anno'
   null
@@ -545,7 +569,10 @@ KtAnnotationEntry(444,460): '@Anno(8 + inner)'
     ]
 
 KtConstructorCalleeExpression(445,449): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(445,449): 'Anno'
   null
@@ -623,7 +650,10 @@ KtAnnotationEntry(559,575): '@Anno(9 + inner)'
     ]
 
 KtConstructorCalleeExpression(560,564): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(560,564): 'Anno'
   null
@@ -680,7 +710,10 @@ KtAnnotationEntry(583,600): '@Anno(10 + inner)'
     ]
 
 KtConstructorCalleeExpression(584,588): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): second.Anno
+    ]
 
 KtTypeReference(584,588): 'Anno'
   null

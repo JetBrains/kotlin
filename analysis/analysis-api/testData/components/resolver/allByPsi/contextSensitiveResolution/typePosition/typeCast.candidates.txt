@@ -69,7 +69,7 @@ KtSuperTypeCallEntry(163,176): 'SealedClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(163,174): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -146,7 +146,7 @@ KtSuperTypeCallEntry(225,238): 'SealedClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(225,236): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -226,7 +226,7 @@ KtSuperTypeCallEntry(308,321): 'SealedClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(308,319): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -290,7 +290,7 @@ KtSuperTypeCallEntry(358,376): 'SealedInheritor1()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(358,374): 'SealedInheritor1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -360,7 +360,7 @@ KtSuperTypeCallEntry(438,451): 'SealedClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(438,449): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -424,7 +424,7 @@ KtSuperTypeCallEntry(501,519): 'SealedInheritor1()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(501,517): 'SealedInheritor1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -515,7 +515,7 @@ KtSuperTypeCallEntry(588,601): 'SealedClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(588,599): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

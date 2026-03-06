@@ -41,7 +41,7 @@ KtSuperTypeCallEntry(130,139): 'MyClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(130,137): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -683,7 +683,7 @@ KtSuperTypeCallEntry(791,803): 'OtherClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(791,801): 'OtherClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -752,7 +752,7 @@ KtSuperTypeCallEntry(819,825): 'Base()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(819,823): 'Base'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -821,7 +821,7 @@ KtSuperTypeCallEntry(840,846): 'Base()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(840,844): 'Base'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -890,7 +890,7 @@ KtSuperTypeCallEntry(863,875): 'OtherClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(863,873): 'OtherClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1229,7 +1229,7 @@ KtSuperTypeCallEntry(1206,1217): 'OpenClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(1206,1215): 'OpenClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

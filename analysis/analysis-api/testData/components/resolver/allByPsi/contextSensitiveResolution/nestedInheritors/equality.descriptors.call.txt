@@ -702,7 +702,7 @@ KtSuperTypeCallEntry(540,554): 'OpenSettings()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(540,552): 'OpenSettings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -774,7 +774,7 @@ KtSuperTypeCallEntry(594,608): 'OpenSettings()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(594,606): 'OpenSettings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

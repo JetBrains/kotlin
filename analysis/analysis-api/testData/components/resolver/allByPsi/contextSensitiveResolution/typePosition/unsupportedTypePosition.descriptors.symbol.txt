@@ -101,7 +101,10 @@ KtSuperTypeCallEntry(258,271): 'SealedClass()'
     ]
 
 KtConstructorCalleeExpression(258,269): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtTypeReference(258,269): 'SealedClass'
   null
@@ -149,7 +152,10 @@ KtSuperTypeCallEntry(320,333): 'SealedClass()'
     ]
 
 KtConstructorCalleeExpression(320,331): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtTypeReference(320,331): 'SealedClass'
   null
@@ -200,7 +206,10 @@ KtSuperTypeCallEntry(403,416): 'SealedClass()'
     ]
 
 KtConstructorCalleeExpression(403,414): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtTypeReference(403,414): 'SealedClass'
   null
@@ -227,7 +236,10 @@ KtSuperTypeCallEntry(453,471): 'SealedInheritor1()'
     ]
 
 KtConstructorCalleeExpression(453,469): 'SealedInheritor1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+    ]
 
 KtTypeReference(453,469): 'SealedInheritor1'
   null
@@ -260,7 +272,10 @@ KtSuperTypeCallEntry(533,546): 'SealedClass()'
     ]
 
 KtConstructorCalleeExpression(533,544): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtTypeReference(533,544): 'SealedClass'
   null
@@ -287,7 +302,10 @@ KtSuperTypeCallEntry(596,614): 'SealedInheritor1()'
     ]
 
 KtConstructorCalleeExpression(596,612): 'SealedInheritor1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+    ]
 
 KtTypeReference(596,612): 'SealedInheritor1'
   null
@@ -341,7 +359,10 @@ KtSuperTypeCallEntry(683,696): 'SealedClass()'
     ]
 
 KtConstructorCalleeExpression(683,694): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtTypeReference(683,694): 'SealedClass'
   null
@@ -507,7 +528,9 @@ KtSuperTypeCallEntry(1110,1128): 'SealedInheritor1()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritor1>
 
 KtConstructorCalleeExpression(1110,1126): 'SealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritor1>
 
 KtTypeReference(1110,1126): 'SealedInheritor1'
   null

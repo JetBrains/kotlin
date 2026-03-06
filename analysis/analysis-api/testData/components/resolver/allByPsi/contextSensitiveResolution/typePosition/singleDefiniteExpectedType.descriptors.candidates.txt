@@ -150,7 +150,7 @@ KtSuperTypeCallEntry(291,304): 'SealedClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(291,302): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -243,7 +243,7 @@ KtSuperTypeCallEntry(353,366): 'SealedClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(353,364): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -354,7 +354,7 @@ KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(442,458): 'SealedGeneric<T>'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -465,7 +465,7 @@ KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(501,517): 'SealedGeneric<T>'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3118,7 +3118,7 @@ KtAnnotationEntry(2751,2766): '@UnsafeVariance'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(2752,2766): 'UnsafeVariance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -41,7 +41,7 @@ KtSuperTypeCallEntry(143,152): 'MyClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(143,150): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

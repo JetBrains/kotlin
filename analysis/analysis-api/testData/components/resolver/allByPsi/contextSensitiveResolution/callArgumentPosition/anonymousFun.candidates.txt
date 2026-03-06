@@ -87,7 +87,7 @@ KtSuperTypeCallEntry(257,266): 'MyClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(257,264): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -161,7 +161,7 @@ KtSuperTypeCallEntry(332,341): 'MyClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(332,339): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -241,7 +241,7 @@ KtSuperTypeCallEntry(428,435): 'Super()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(428,433): 'Super'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

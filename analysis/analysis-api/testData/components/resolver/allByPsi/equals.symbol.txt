@@ -104,7 +104,10 @@ KtSuperTypeCallEntry(142,151): 'Another()'
     ]
 
 KtConstructorCalleeExpression(142,149): 'Another'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Another
+    ]
 
 KtTypeReference(142,149): 'Another'
   null

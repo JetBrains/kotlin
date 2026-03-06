@@ -109,7 +109,7 @@ KtSuperTypeCallEntry(314,323): 'MyClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(314,321): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -166,7 +166,7 @@ KtSuperTypeCallEntry(354,363): 'MyClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(354,361): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -232,7 +232,7 @@ KtSuperTypeCallEntry(441,450): 'MySuper()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(441,448): 'MySuper'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

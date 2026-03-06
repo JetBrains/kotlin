@@ -248,7 +248,7 @@ KtSuperTypeCallEntry(388,405): 'ItemCallback<T>()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(388,403): 'ItemCallback<T>'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -553,7 +553,7 @@ KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(615,630): 'ItemCallback<T>'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -810,7 +810,7 @@ KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(784,799): 'ItemCallback<T>'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

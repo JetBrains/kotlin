@@ -125,7 +125,10 @@ KtAnnotationEntry(135,158): '@Suppress("SOME_ERROR")'
     ]
 
 KtConstructorCalleeExpression(136,144): 'Suppress'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg names: kotlin.String): kotlin.Suppress
+    ]
 
 KtTypeReference(136,144): 'Suppress'
   null

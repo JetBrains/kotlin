@@ -233,7 +233,10 @@ KtSuperTypeCallEntry(388,405): 'ItemCallback<T>()'
     ]
 
 KtConstructorCalleeExpression(388,403): 'ItemCallback<T>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): ItemCallback<T>
+    ]
 
 KtTypeReference(388,403): 'ItemCallback<T>'
   null
@@ -410,7 +413,10 @@ KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
     ]
 
 KtConstructorCalleeExpression(615,630): 'ItemCallback<T>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): ItemCallback<T>
+    ]
 
 KtTypeReference(615,630): 'ItemCallback<T>'
   null
@@ -539,7 +545,10 @@ KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
     ]
 
 KtConstructorCalleeExpression(784,799): 'ItemCallback<T>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): ItemCallback<T>
+    ]
 
 KtTypeReference(784,799): 'ItemCallback<T>'
   null

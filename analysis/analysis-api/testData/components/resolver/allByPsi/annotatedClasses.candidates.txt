@@ -48,7 +48,7 @@ KtAnnotationEntry(15,45): '@Target(AnnotationTarget.TYPE)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(16,22): 'Target'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -243,7 +243,7 @@ KtAnnotationEntry(148,177): '@Anno("parameter type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(149,153): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -371,7 +371,7 @@ KtAnnotationEntry(183,219): '@Anno("nested parameter type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(184,188): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -499,7 +499,7 @@ KtAnnotationEntry(231,274): '@Anno("nested nested parameter type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(232,236): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -621,7 +621,7 @@ KtAnnotationEntry(286,313): '@Anno("defaultValue $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(287,291): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -743,7 +743,7 @@ KtAnnotationEntry(321,368): '@Anno("anonymousFunction parameter type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(322,326): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -865,7 +865,7 @@ KtAnnotationEntry(375,419): '@Anno("anonymousFunction return type $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(376,380): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1027,7 +1027,7 @@ KtSuperTypeCallEntry(480,618): '@Anno("super type call $prop") AbstractClass<@An
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(480,616): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1088,7 +1088,7 @@ KtAnnotationEntry(480,510): '@Anno("super type call $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(481,485): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1216,7 +1216,7 @@ KtAnnotationEntry(525,561): '@Anno("nested super type ref $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(526,530): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1344,7 +1344,7 @@ KtAnnotationEntry(567,610): '@Anno("nested nested super type ref $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(568,572): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1462,7 +1462,7 @@ KtSuperTypeCallEntry(653,791): '@Anno("super type call $prop") AbstractClass<@An
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(653,789): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1523,7 +1523,7 @@ KtAnnotationEntry(653,683): '@Anno("super type call $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(654,658): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1651,7 +1651,7 @@ KtAnnotationEntry(698,734): '@Anno("nested super type ref $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(699,703): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1779,7 +1779,7 @@ KtAnnotationEntry(740,783): '@Anno("nested nested super type ref $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(741,745): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1916,7 +1916,7 @@ KtAnnotationEntry(840,869): '@Anno("super type ref $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(841,845): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2044,7 +2044,7 @@ KtAnnotationEntry(875,911): '@Anno("nested super type ref $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(876,880): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2172,7 +2172,7 @@ KtAnnotationEntry(917,960): '@Anno("nested nested super type ref $prop")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(918,922): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

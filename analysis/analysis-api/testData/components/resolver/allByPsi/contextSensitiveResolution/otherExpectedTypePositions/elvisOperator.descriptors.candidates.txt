@@ -42,7 +42,7 @@ KtSuperTypeCallEntry(128,137): 'MyClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(128,135): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

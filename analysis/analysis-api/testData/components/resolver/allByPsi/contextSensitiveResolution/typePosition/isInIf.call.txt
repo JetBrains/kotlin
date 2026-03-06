@@ -68,7 +68,7 @@ KtSuperTypeCallEntry(163,176): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(163,174): 'SealedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -143,7 +143,7 @@ KtSuperTypeCallEntry(225,238): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(225,236): 'SealedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -221,7 +221,7 @@ KtSuperTypeCallEntry(308,321): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(308,319): 'SealedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -283,7 +283,7 @@ KtSuperTypeCallEntry(358,376): 'SealedInheritor1()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(358,374): 'SealedInheritor1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -372,7 +372,7 @@ KtSuperTypeCallEntry(439,452): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(439,450): 'SealedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

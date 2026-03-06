@@ -107,7 +107,7 @@ KtAnnotationEntry(101,126): '@Anno("a type $constant")'
       }
 
 KtConstructorCalleeExpression(102,106): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -235,7 +235,7 @@ KtAnnotationEntry(132,164): '@Anno("a nested type $constant")'
       }
 
 KtConstructorCalleeExpression(133,137): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -360,7 +360,7 @@ KtAnnotationEntry(176,215): '@Anno("a nested nested type $constant")'
       }
 
 KtConstructorCalleeExpression(177,181): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -482,7 +482,7 @@ KtAnnotationEntry(234,259): '@Anno("b type $constant")'
       }
 
 KtConstructorCalleeExpression(235,239): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -610,7 +610,7 @@ KtAnnotationEntry(266,298): '@Anno("b nested type $constant")'
       }
 
 KtConstructorCalleeExpression(267,271): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -735,7 +735,7 @@ KtAnnotationEntry(304,343): '@Anno("b nested nested type $constant")'
       }
 
 KtConstructorCalleeExpression(305,309): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -866,7 +866,7 @@ KtAnnotationEntry(376,398): '@Anno("destr 1 $prop")'
       }
 
 KtConstructorCalleeExpression(377,381): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -996,7 +996,7 @@ KtAnnotationEntry(404,420): '@Anno("a $prop")'
       }
 
 KtConstructorCalleeExpression(405,409): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1126,7 +1126,7 @@ KtAnnotationEntry(424,440): '@Anno("b $prop")'
       }
 
 KtConstructorCalleeExpression(425,429): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1348,7 +1348,7 @@ KtAnnotationEntry(464,486): '@Anno("destr 1 $prop")'
       }
 
 KtConstructorCalleeExpression(465,469): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1478,7 +1478,7 @@ KtAnnotationEntry(492,508): '@Anno("c $prop")'
       }
 
 KtConstructorCalleeExpression(493,497): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1608,7 +1608,7 @@ KtAnnotationEntry(512,528): '@Anno("d $prop")'
       }
 
 KtConstructorCalleeExpression(513,517): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

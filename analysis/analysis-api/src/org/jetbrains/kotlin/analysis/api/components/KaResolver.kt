@@ -607,6 +607,29 @@ public interface KaResolver : KaSessionComponent {
     public fun KtDefaultAnnotationArgumentReference.resolveSymbol(): KaValueParameterSymbol?
 
     /**
+     * Resolves the constructor symbol referenced by the given [KtConstructorCalleeExpression].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * open class Base(i: Int)
+     *
+     * class Derived : Base(1)
+     * //              ^^^^
+     * ```
+     *
+     * Calling `resolveSymbol()` on the [KtConstructorCalleeExpression] (`Base`) returns the [KaConstructorSymbol] of `Base`'s
+     * constructor if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on constructor callee expressions
+     *
+     * @see tryResolveSymbols
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol?
+
+    /**
      * Attempts to resolve the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -1016,6 +1039,29 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall?
+
+    /**
+     * Resolves the given [KtConstructorCalleeExpression] to a constructor call.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * open class Base(i: Int)
+     *
+     * class Derived : Base(1)
+     * //              ^^^^
+     * ```
+     *
+     * Returns the corresponding [KaFunctionCall] if resolution succeeds;
+     * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on constructor callee expressions
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstructorSymbol>?
 
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
@@ -1858,6 +1904,36 @@ public fun KtDefaultAnnotationArgumentReference.resolveSymbol(): KaValueParamete
 }
 
 /**
+ * Resolves the constructor symbol referenced by the given [KtConstructorCalleeExpression].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * open class Base(i: Int)
+ *
+ * class Derived : Base(1)
+ * //              ^^^^
+ * ```
+ *
+ * Calling `resolveSymbol()` on the [KtConstructorCalleeExpression] (`Base`) returns the [KaConstructorSymbol] of `Base`'s
+ * constructor if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on constructor callee expressions
+ *
+ * @see tryResolveSymbols
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? {
+    return with(session) {
+        resolveSymbol()
+    }
+}
+
+/**
  * Attempts to resolve the call for the given [KtResolvableCall].
  *
  * ### Usage Example:
@@ -2375,6 +2451,36 @@ public fun KtForExpression.resolveCall(): KaForLoopCall? {
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? {
+    return with(session) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtConstructorCalleeExpression] to a constructor call.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * open class Base(i: Int)
+ *
+ * class Derived : Base(1)
+ * //              ^^^^
+ * ```
+ *
+ * Returns the corresponding [KaFunctionCall] if resolution succeeds;
+ * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on constructor callee expressions
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstructorSymbol>? {
     return with(session) {
         resolveCall()
     }

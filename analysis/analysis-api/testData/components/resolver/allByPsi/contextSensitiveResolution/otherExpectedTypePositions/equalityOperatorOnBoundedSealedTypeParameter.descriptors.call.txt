@@ -44,7 +44,7 @@ KtSuperTypeCallEntry(122,132): 'MySealed()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(122,130): 'MySealed'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -125,7 +125,7 @@ KtSuperTypeCallEntry(178,188): 'MySealed()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(178,186): 'MySealed'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

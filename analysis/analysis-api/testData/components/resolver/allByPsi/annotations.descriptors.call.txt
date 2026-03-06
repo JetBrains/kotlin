@@ -52,7 +52,7 @@ KtAnnotationEntry(59,70): '@Repeatable'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(60,70): 'Repeatable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -133,7 +133,7 @@ KtAnnotationEntry(122,133): '@Repeatable'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(123,133): 'Repeatable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -220,7 +220,7 @@ KtAnnotationEntry(185,196): '@Repeatable'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(186,196): 'Repeatable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -413,7 +413,7 @@ KtAnnotationEntry(423,448): '@AnnoWithArray([1, 2, 3])'
       }
 
 KtConstructorCalleeExpression(424,437): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -580,7 +580,7 @@ KtAnnotationEntry(449,480): '@AnnoWithArray(arr = [4, 5, 6])'
       }
 
 KtConstructorCalleeExpression(450,463): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -753,7 +753,7 @@ KtAnnotationEntry(481,516): '@AnnoWithArray(intArrayOf(7, 8, 9))'
       }
 
 KtConstructorCalleeExpression(482,495): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -979,7 +979,7 @@ KtAnnotationEntry(517,555): '@AnnoWithKClass(AnnoWithKClass::class)'
       }
 
 KtConstructorCalleeExpression(518,532): 'AnnoWithKClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1099,7 +1099,7 @@ KtAnnotationEntry(558,599): 'AnnoWithKClass(one.AnnoWithKClass::class)'
       }
 
 KtConstructorCalleeExpression(558,572): 'AnnoWithKClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1222,7 +1222,7 @@ KtAnnotationEntry(601,675): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.
       }
 
 KtConstructorCalleeExpression(602,623): 'AnnoWithArrayOfKClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1393,7 +1393,7 @@ KtAnnotationEntry(676,783): '@AnnoWithAnotherAnnotation(arrayOf(one.AnnoWithArra
       }
 
 KtConstructorCalleeExpression(677,702): 'AnnoWithAnotherAnnotation'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1948,7 +1948,7 @@ KtAnnotationEntry(784,826): '@AnnoWithString(stringConstant + " 1.2.3")'
       }
 
 KtConstructorCalleeExpression(785,799): 'AnnoWithString'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

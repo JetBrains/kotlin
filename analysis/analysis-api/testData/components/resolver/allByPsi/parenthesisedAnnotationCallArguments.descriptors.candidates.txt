@@ -141,7 +141,7 @@ KtAnnotationEntry(167,183): '@MyAnno((("A")))'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(168,174): 'MyAnno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -279,7 +279,7 @@ KtAnnotationEntry(199,223): '@MyAnno(value = (("A")))'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(200,206): 'MyAnno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -423,7 +423,7 @@ KtAnnotationEntry(239,269): '@MyAnno((((("A")) as String)))'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(240,246): 'MyAnno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -596,7 +596,7 @@ KtAnnotationEntry(285,341): '@MyAnnoVararg((("A")), "B", *((arrayOf("A", "B", "C
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(286,298): 'MyAnnoVararg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -910,7 +910,7 @@ KtAnnotationEntry(357,403): '@MyAnnoVararg(value = ((arrayOf(("A"), "B"))))'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(358,370): 'MyAnnoVararg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1158,7 +1158,7 @@ KtAnnotationEntry(419,453): '@MyAnnoKClass((((String::class))))'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(420,432): 'MyAnnoKClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

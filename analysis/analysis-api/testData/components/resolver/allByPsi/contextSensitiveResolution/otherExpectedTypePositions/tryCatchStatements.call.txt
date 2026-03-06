@@ -41,7 +41,7 @@ KtSuperTypeCallEntry(128,137): 'MyClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(128,135): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -223,7 +223,7 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
       }
 
 KtConstructorCalleeExpression(372,381): 'Exception'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -347,7 +347,7 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
       }
 
 KtConstructorCalleeExpression(406,415): 'Exception'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -471,7 +471,7 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
       }
 
 KtConstructorCalleeExpression(440,449): 'Exception'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

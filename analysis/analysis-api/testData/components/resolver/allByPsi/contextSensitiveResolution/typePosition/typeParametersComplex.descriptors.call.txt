@@ -71,7 +71,7 @@ KtSuperTypeCallEntry(150,168): 'SealedGeneric<T>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(150,166): 'SealedGeneric<T>'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -179,7 +179,7 @@ KtSuperTypeCallEntry(209,227): 'SealedGeneric<T>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(209,225): 'SealedGeneric<T>'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

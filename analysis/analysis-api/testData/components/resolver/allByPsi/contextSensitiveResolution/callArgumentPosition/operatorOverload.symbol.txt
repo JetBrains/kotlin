@@ -41,7 +41,10 @@ KtSuperTypeCallEntry(166,175): 'MyClass()'
     ]
 
 KtConstructorCalleeExpression(166,173): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtTypeReference(166,173): 'MyClass'
   null

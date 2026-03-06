@@ -51,7 +51,7 @@ KtSuperTypeCallEntry(119,130): 'A<String>()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(119,128): 'A<String>'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -250,7 +250,7 @@ KtSuperTypeCallEntry(191,202): 'A<String>()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(191,200): 'A<String>'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -446,7 +446,7 @@ KtSuperTypeCallEntry(255,263): 'A<Int>()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(255,261): 'A<Int>'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

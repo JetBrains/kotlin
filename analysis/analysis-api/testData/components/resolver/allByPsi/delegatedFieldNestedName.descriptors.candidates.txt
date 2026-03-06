@@ -51,7 +51,7 @@ KtAnnotationEntry(31,61): '@Target(AnnotationTarget.TYPE)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(32,38): 'Target'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -288,7 +288,7 @@ KtAnnotationEntry(225,241): '@Anno(0 + outer)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(226,230): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -515,7 +515,7 @@ KtAnnotationEntry(247,263): '@Anno(1 + outer)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(248,252): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -742,7 +742,7 @@ KtAnnotationEntry(269,285): '@Anno(2 + outer)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(270,274): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -969,7 +969,7 @@ KtAnnotationEntry(310,326): '@Anno(4 + outer)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(311,315): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1196,7 +1196,7 @@ KtAnnotationEntry(334,350): '@Anno(5 + outer)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(335,339): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1435,7 +1435,7 @@ KtAnnotationEntry(400,416): '@Anno(6 + inner)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(401,405): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1594,7 +1594,7 @@ KtAnnotationEntry(422,438): '@Anno(7 + inner)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(423,427): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1753,7 +1753,7 @@ KtAnnotationEntry(444,460): '@Anno(8 + inner)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(445,449): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1936,7 +1936,7 @@ KtAnnotationEntry(559,575): '@Anno(9 + inner)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(560,564): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2183,7 +2183,7 @@ KtAnnotationEntry(583,600): '@Anno(10 + inner)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(584,588): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

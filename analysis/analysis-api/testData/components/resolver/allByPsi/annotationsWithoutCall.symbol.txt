@@ -29,7 +29,10 @@ KtAnnotationEntry(36,41): '@Anno'
     ]
 
 KtConstructorCalleeExpression(37,41): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): one.Anno
+    ]
 
 KtTypeReference(37,41): 'Anno'
   null

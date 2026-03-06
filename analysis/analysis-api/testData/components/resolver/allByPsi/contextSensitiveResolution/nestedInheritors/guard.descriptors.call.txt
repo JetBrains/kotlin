@@ -68,7 +68,7 @@ KtSuperTypeCallEntry(161,174): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(161,172): 'SealedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -145,7 +145,7 @@ KtSuperTypeCallEntry(210,227): 'SealedInheritor()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(210,225): 'SealedInheritor'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -393,7 +393,7 @@ KtSuperTypeCallEntry(530,541): 'OpenClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(530,539): 'OpenClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -470,7 +470,7 @@ KtSuperTypeCallEntry(588,616): 'SealedInheritorOfOpenClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(588,614): 'SealedInheritorOfOpenClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

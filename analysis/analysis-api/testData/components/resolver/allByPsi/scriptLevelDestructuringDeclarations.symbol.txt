@@ -80,7 +80,10 @@ KtAnnotationEntry(101,126): '@Anno("a type $constant")'
     ]
 
 KtConstructorCalleeExpression(102,106): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(102,106): 'Anno'
   null
@@ -137,7 +140,10 @@ KtAnnotationEntry(132,164): '@Anno("a nested type $constant")'
     ]
 
 KtConstructorCalleeExpression(133,137): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(133,137): 'Anno'
   null
@@ -191,7 +197,10 @@ KtAnnotationEntry(176,215): '@Anno("a nested nested type $constant")'
     ]
 
 KtConstructorCalleeExpression(177,181): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(177,181): 'Anno'
   null
@@ -242,7 +251,10 @@ KtAnnotationEntry(234,259): '@Anno("b type $constant")'
     ]
 
 KtConstructorCalleeExpression(235,239): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(235,239): 'Anno'
   null
@@ -299,7 +311,10 @@ KtAnnotationEntry(266,298): '@Anno("b nested type $constant")'
     ]
 
 KtConstructorCalleeExpression(267,271): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(267,271): 'Anno'
   null
@@ -353,7 +368,10 @@ KtAnnotationEntry(304,343): '@Anno("b nested nested type $constant")'
     ]
 
 KtConstructorCalleeExpression(305,309): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(305,309): 'Anno'
   null
@@ -413,7 +431,10 @@ KtAnnotationEntry(376,398): '@Anno("destr 1 $prop")'
     ]
 
 KtConstructorCalleeExpression(377,381): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(377,381): 'Anno'
   null
@@ -458,7 +479,10 @@ KtAnnotationEntry(404,420): '@Anno("a $prop")'
     ]
 
 KtConstructorCalleeExpression(405,409): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(405,409): 'Anno'
   null
@@ -503,7 +527,10 @@ KtAnnotationEntry(424,440): '@Anno("b $prop")'
     ]
 
 KtConstructorCalleeExpression(425,429): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(425,429): 'Anno'
   null
@@ -569,7 +596,10 @@ KtAnnotationEntry(464,486): '@Anno("destr 1 $prop")'
     ]
 
 KtConstructorCalleeExpression(465,469): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(465,469): 'Anno'
   null
@@ -614,7 +644,10 @@ KtAnnotationEntry(492,508): '@Anno("c $prop")'
     ]
 
 KtConstructorCalleeExpression(493,497): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(493,497): 'Anno'
   null
@@ -659,7 +692,10 @@ KtAnnotationEntry(512,528): '@Anno("d $prop")'
     ]
 
 KtConstructorCalleeExpression(513,517): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
 
 KtTypeReference(513,517): 'Anno'
   null

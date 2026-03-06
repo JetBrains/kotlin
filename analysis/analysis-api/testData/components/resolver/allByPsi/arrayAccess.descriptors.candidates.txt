@@ -748,7 +748,7 @@ KtAnnotationEntry(135,158): '@Suppress("SOME_ERROR")'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(136,144): 'Suppress'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -193,7 +193,7 @@ KtAnnotationEntry(159,178): '@Anno(0 + constant)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtConstructorCalleeExpression(160,164): 'Anno'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -392,7 +392,7 @@ KtAnnotationEntry(184,203): '@Anno(1 + constant)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtConstructorCalleeExpression(185,189): 'Anno'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -591,7 +591,7 @@ KtAnnotationEntry(209,228): '@Anno(2 + constant)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtConstructorCalleeExpression(210,214): 'Anno'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}

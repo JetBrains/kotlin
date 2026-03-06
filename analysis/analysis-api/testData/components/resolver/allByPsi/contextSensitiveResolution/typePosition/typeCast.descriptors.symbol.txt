@@ -56,7 +56,10 @@ KtSuperTypeCallEntry(163,176): 'SealedClass()'
     ]
 
 KtConstructorCalleeExpression(163,174): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtTypeReference(163,174): 'SealedClass'
   null
@@ -104,7 +107,10 @@ KtSuperTypeCallEntry(225,238): 'SealedClass()'
     ]
 
 KtConstructorCalleeExpression(225,236): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtTypeReference(225,236): 'SealedClass'
   null
@@ -155,7 +161,10 @@ KtSuperTypeCallEntry(308,321): 'SealedClass()'
     ]
 
 KtConstructorCalleeExpression(308,319): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtTypeReference(308,319): 'SealedClass'
   null
@@ -182,7 +191,10 @@ KtSuperTypeCallEntry(358,376): 'SealedInheritor1()'
     ]
 
 KtConstructorCalleeExpression(358,374): 'SealedInheritor1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+    ]
 
 KtTypeReference(358,374): 'SealedInheritor1'
   null
@@ -215,7 +227,10 @@ KtSuperTypeCallEntry(438,451): 'SealedClass()'
     ]
 
 KtConstructorCalleeExpression(438,449): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtTypeReference(438,449): 'SealedClass'
   null
@@ -242,7 +257,10 @@ KtSuperTypeCallEntry(501,519): 'SealedInheritor1()'
     ]
 
 KtConstructorCalleeExpression(501,517): 'SealedInheritor1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+    ]
 
 KtTypeReference(501,517): 'SealedInheritor1'
   null
@@ -296,7 +314,10 @@ KtSuperTypeCallEntry(588,601): 'SealedClass()'
     ]
 
 KtConstructorCalleeExpression(588,599): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtTypeReference(588,599): 'SealedClass'
   null

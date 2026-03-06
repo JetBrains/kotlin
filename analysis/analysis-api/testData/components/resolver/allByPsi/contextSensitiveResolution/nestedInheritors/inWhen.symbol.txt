@@ -29,7 +29,10 @@ KtSuperTypeCallEntry(130,139): 'MyClass()'
     ]
 
 KtConstructorCalleeExpression(130,137): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtTypeReference(130,137): 'MyClass'
   null
@@ -332,7 +335,10 @@ KtSuperTypeCallEntry(791,803): 'OtherClass()'
     ]
 
 KtConstructorCalleeExpression(791,801): 'OtherClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OtherClass
+    ]
 
 KtTypeReference(791,801): 'OtherClass'
   null
@@ -359,7 +365,10 @@ KtSuperTypeCallEntry(819,825): 'Base()'
     ]
 
 KtConstructorCalleeExpression(819,823): 'Base'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OtherClass.Base
+    ]
 
 KtTypeReference(819,823): 'Base'
   null
@@ -386,7 +395,10 @@ KtSuperTypeCallEntry(840,846): 'Base()'
     ]
 
 KtConstructorCalleeExpression(840,844): 'Base'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OtherClass.Base
+    ]
 
 KtTypeReference(840,844): 'Base'
   null
@@ -413,7 +425,10 @@ KtSuperTypeCallEntry(863,875): 'OtherClass()'
     ]
 
 KtConstructorCalleeExpression(863,873): 'OtherClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OtherClass
+    ]
 
 KtTypeReference(863,873): 'OtherClass'
   null
@@ -587,7 +602,10 @@ KtSuperTypeCallEntry(1206,1217): 'OpenClass()'
     ]
 
 KtConstructorCalleeExpression(1206,1215): 'OpenClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OpenClass
+    ]
 
 KtTypeReference(1206,1215): 'OpenClass'
   null

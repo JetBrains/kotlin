@@ -59,7 +59,10 @@ KtAnnotationEntry(157,163): '@A1(X)'
     ]
 
 KtConstructorCalleeExpression(158,160): 'A1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: MyEnum): A1
+    ]
 
 KtTypeReference(158,160): 'A1'
   null
@@ -125,7 +128,10 @@ KtAnnotationEntry(233,242): '@A2(X, Y)'
     ]
 
 KtConstructorCalleeExpression(234,236): 'A2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg value: MyEnum): A2
+    ]
 
 KtTypeReference(234,236): 'A2'
   null
@@ -170,7 +176,10 @@ KtAnnotationEntry(259,271): '@A2(*[X, Y])'
     ]
 
 KtConstructorCalleeExpression(260,262): 'A2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg value: MyEnum): A2
+    ]
 
 KtTypeReference(260,262): 'A2'
   null
@@ -258,7 +267,10 @@ KtAnnotationEntry(342,350): '@A3([X])'
     ]
 
 KtConstructorCalleeExpression(343,345): 'A3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.Array<MyEnum>): A3
+    ]
 
 KtTypeReference(343,345): 'A3'
   null
@@ -305,7 +317,11 @@ KtAnnotationEntry(367,382): '@A3(arrayOf(X))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
 
 KtConstructorCalleeExpression(368,370): 'A3'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(value: kotlin.Array<MyEnum>): A3
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
 
 KtTypeReference(368,370): 'A3'
   null
@@ -384,7 +400,10 @@ KtAnnotationEntry(443,457): '@A4(MAX_VALUE)'
     ]
 
 KtConstructorCalleeExpression(444,446): 'A4'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.Int): A4
+    ]
 
 KtTypeReference(444,446): 'A4'
   null
@@ -423,7 +442,10 @@ KtAnnotationEntry(473,492): '@Retention(RUNTIME)'
     ]
 
 KtConstructorCalleeExpression(474,483): 'Retention'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+    ]
 
 KtTypeReference(474,483): 'Retention'
   null
@@ -450,7 +472,10 @@ KtAnnotationEntry(493,517): '@Target(CLASS, PROPERTY)'
     ]
 
 KtConstructorCalleeExpression(494,500): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+    ]
 
 KtTypeReference(494,500): 'Target'
   null
@@ -489,7 +514,10 @@ KtAnnotationEntry(549,562): '@MyAnnotation'
     ]
 
 KtConstructorCalleeExpression(550,562): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyAnnotation
+    ]
 
 KtTypeReference(550,562): 'MyAnnotation'
   null
@@ -525,7 +553,10 @@ KtAnnotationEntry(579,592): '@MyAnnotation'
     ]
 
 KtConstructorCalleeExpression(580,592): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyAnnotation
+    ]
 
 KtTypeReference(580,592): 'MyAnnotation'
   null
@@ -549,7 +580,10 @@ KtAnnotationEntry(608,621): '@MyAnnotation'
     ]
 
 KtConstructorCalleeExpression(609,621): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyAnnotation
+    ]
 
 KtTypeReference(609,621): 'MyAnnotation'
   null

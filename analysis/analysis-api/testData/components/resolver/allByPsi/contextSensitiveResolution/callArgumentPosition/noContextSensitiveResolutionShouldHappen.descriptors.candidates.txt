@@ -252,7 +252,7 @@ KtAnnotationEntry(215,225): '@DslMarker'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(216,225): 'DslMarker'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -318,7 +318,7 @@ KtAnnotationEntry(250,256): '@MyDsl'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(251,256): 'MyDsl'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -384,7 +384,7 @@ KtAnnotationEntry(266,272): '@MyDsl'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(267,272): 'MyDsl'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

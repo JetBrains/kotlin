@@ -268,7 +268,7 @@ KtAnnotationEntry(215,225): '@DslMarker'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(216,225): 'DslMarker'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -317,7 +317,7 @@ KtAnnotationEntry(250,256): '@MyDsl'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(251,256): 'MyDsl'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -366,7 +366,7 @@ KtAnnotationEntry(266,272): '@MyDsl'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(267,272): 'MyDsl'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

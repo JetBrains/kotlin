@@ -71,7 +71,7 @@ KtAnnotationEntry(33,176): '@Target('
       }
 
 KtConstructorCalleeExpression(34,40): 'Target'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -393,7 +393,7 @@ KtAnnotationEntry(259,282): '@Anno("function $prop")'
       }
 
 KtConstructorCalleeExpression(260,264): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -509,7 +509,7 @@ KtAnnotationEntry(288,317): '@Anno("type parameter $prop")'
       }
 
 KtConstructorCalleeExpression(289,293): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -622,7 +622,7 @@ KtAnnotationEntry(322,347): '@Anno("bound type $prop")'
       }
 
 KtConstructorCalleeExpression(323,327): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -747,7 +747,7 @@ KtAnnotationEntry(353,385): '@Anno("nested bound type $prop")'
       }
 
 KtConstructorCalleeExpression(354,358): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -869,7 +869,7 @@ KtAnnotationUseSiteTarget(396,404): 'receiver'
   null
 
 KtConstructorCalleeExpression(405,409): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -976,7 +976,7 @@ KtAnnotationEntry(428,456): '@Anno("receiver type $prop")'
       }
 
 KtConstructorCalleeExpression(429,433): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1101,7 +1101,7 @@ KtAnnotationEntry(462,497): '@Anno("nested receiver type $prop")'
       }
 
 KtConstructorCalleeExpression(463,467): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1226,7 +1226,7 @@ KtAnnotationEntry(503,545): '@Anno("nested nested receiver type $prop")'
       }
 
 KtConstructorCalleeExpression(504,508): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1348,7 +1348,7 @@ KtAnnotationEntry(561,585): '@Anno("parameter $prop")'
       }
 
 KtConstructorCalleeExpression(562,566): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1461,7 +1461,7 @@ KtAnnotationEntry(593,622): '@Anno("parameter type $prop")'
       }
 
 KtConstructorCalleeExpression(594,598): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1586,7 +1586,7 @@ KtAnnotationEntry(634,670): '@Anno("nested parameter type $prop")'
       }
 
 KtConstructorCalleeExpression(635,639): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1711,7 +1711,7 @@ KtAnnotationEntry(676,719): '@Anno("nested nested parameter type $prop")'
       }
 
 KtConstructorCalleeExpression(677,681): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1833,7 +1833,7 @@ KtAnnotationEntry(735,761): '@Anno("return type $prop")'
       }
 
 KtConstructorCalleeExpression(736,740): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1958,7 +1958,7 @@ KtAnnotationEntry(767,800): '@Anno("nested return type $prop")'
       }
 
 KtConstructorCalleeExpression(768,772): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2083,7 +2083,7 @@ KtAnnotationEntry(806,846): '@Anno("nested nested return type $prop")'
       }
 
 KtConstructorCalleeExpression(807,811): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2211,7 +2211,7 @@ KtAnnotationEntry(871,901): '@Anno("constraint type $prop")'
       }
 
 KtConstructorCalleeExpression(872,876): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2339,7 +2339,7 @@ KtAnnotationEntry(913,950): '@Anno("nested constraint type $prop")'
       }
 
 KtConstructorCalleeExpression(914,918): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

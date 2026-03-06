@@ -50,7 +50,7 @@ KtSuperTypeCallEntry(119,130): 'A<String>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(119,128): 'A<String>'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -192,7 +192,7 @@ KtSuperTypeCallEntry(191,202): 'A<String>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(191,200): 'A<String>'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -331,7 +331,7 @@ KtSuperTypeCallEntry(255,263): 'A<Int>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(255,261): 'A<Int>'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

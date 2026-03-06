@@ -150,7 +150,11 @@ KtAnnotationEntry(159,178): '@Anno(0 + constant)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtConstructorCalleeExpression(160,164): 'Anno'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtTypeReference(160,164): 'Anno'
   null
@@ -208,7 +212,11 @@ KtAnnotationEntry(184,203): '@Anno(1 + constant)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtConstructorCalleeExpression(185,189): 'Anno'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtTypeReference(185,189): 'Anno'
   null
@@ -266,7 +274,11 @@ KtAnnotationEntry(209,228): '@Anno(2 + constant)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtConstructorCalleeExpression(210,214): 'Anno'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(str: kotlin.String): util.Anno
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtTypeReference(210,214): 'Anno'
   null

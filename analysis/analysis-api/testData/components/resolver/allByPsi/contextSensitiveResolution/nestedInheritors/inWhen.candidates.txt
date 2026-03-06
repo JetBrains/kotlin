@@ -42,7 +42,7 @@ KtSuperTypeCallEntry(130,139): 'MyClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(130,137): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -724,7 +724,7 @@ KtSuperTypeCallEntry(791,803): 'OtherClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(791,801): 'OtherClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -780,7 +780,7 @@ KtSuperTypeCallEntry(819,825): 'Base()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(819,823): 'Base'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -836,7 +836,7 @@ KtSuperTypeCallEntry(840,846): 'Base()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(840,844): 'Base'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -892,7 +892,7 @@ KtSuperTypeCallEntry(863,875): 'OtherClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(863,873): 'OtherClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1238,7 +1238,7 @@ KtSuperTypeCallEntry(1206,1217): 'OpenClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(1206,1215): 'OpenClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

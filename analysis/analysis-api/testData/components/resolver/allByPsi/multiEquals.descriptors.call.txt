@@ -245,7 +245,7 @@ KtSuperTypeCallEntry(388,405): 'ItemCallback<T>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(388,403): 'ItemCallback<T>'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -555,7 +555,7 @@ KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(615,630): 'ItemCallback<T>'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -817,7 +817,7 @@ KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(784,799): 'ItemCallback<T>'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

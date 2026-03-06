@@ -113,7 +113,7 @@ KtSuperTypeCallEntry(258,271): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(258,269): 'SealedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -188,7 +188,7 @@ KtSuperTypeCallEntry(320,333): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(320,331): 'SealedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -266,7 +266,7 @@ KtSuperTypeCallEntry(403,416): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(403,414): 'SealedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -328,7 +328,7 @@ KtSuperTypeCallEntry(453,471): 'SealedInheritor1()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(453,469): 'SealedInheritor1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -396,7 +396,7 @@ KtSuperTypeCallEntry(533,546): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(533,544): 'SealedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -458,7 +458,7 @@ KtSuperTypeCallEntry(596,614): 'SealedInheritor1()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(596,612): 'SealedInheritor1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -547,7 +547,7 @@ KtSuperTypeCallEntry(683,696): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(683,694): 'SealedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -774,7 +774,7 @@ KtSuperTypeCallEntry(1110,1128): 'SealedInheritor1()'
     diagnostic = ERROR<OTHER_ERROR: Erroneous delegated constructor call>
 
 KtConstructorCalleeExpression(1110,1126): 'SealedInheritor1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<OTHER_ERROR: Erroneous delegated constructor call>
 

@@ -140,7 +140,7 @@ KtAnnotationEntry(167,183): '@MyAnno((("A")))'
       }
 
 KtConstructorCalleeExpression(168,174): 'MyAnno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -245,7 +245,7 @@ KtAnnotationEntry(199,223): '@MyAnno(value = (("A")))'
       }
 
 KtConstructorCalleeExpression(200,206): 'MyAnno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -356,7 +356,7 @@ KtAnnotationEntry(239,269): '@MyAnno((((("A")) as String)))'
       }
 
 KtConstructorCalleeExpression(240,246): 'MyAnno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -496,7 +496,7 @@ KtAnnotationEntry(285,341): '@MyAnnoVararg((("A")), "B", *((arrayOf("A", "B", "C
       }
 
 KtConstructorCalleeExpression(286,298): 'MyAnnoVararg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -761,7 +761,7 @@ KtAnnotationEntry(357,403): '@MyAnnoVararg(value = ((arrayOf(("A"), "B"))))'
       }
 
 KtConstructorCalleeExpression(358,370): 'MyAnnoVararg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -974,7 +974,7 @@ KtAnnotationEntry(419,453): '@MyAnnoKClass((((String::class))))'
       }
 
 KtConstructorCalleeExpression(420,432): 'MyAnnoKClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

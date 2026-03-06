@@ -3,4 +3,4 @@ KtConstructorCalleeExpression(40,41): 'A'
     candidateSymbols = [
       <constructor>(x: kotlin.String): A
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>

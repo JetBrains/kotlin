@@ -1,5 +1,5 @@
 KtConstructorCalleeExpression(31,32): 'A'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaDelegatedConstructorCall:
         contextArgumentMapping = {}
@@ -17,4 +17,4 @@ KtConstructorCalleeExpression(31,32): 'A'
         typeArgumentsMapping = {}
         valueArgumentMapping = {}
     ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor A() defined in A>

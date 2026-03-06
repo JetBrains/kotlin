@@ -649,7 +649,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
     isInBestCandidates = false
 
 KtConstructorCalleeExpression(294,303): 'BaseClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -683,7 +683,7 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

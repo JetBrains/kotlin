@@ -48,7 +48,7 @@ KtSuperTypeCallEntry(114,122): 'Sealed()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(114,120): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -141,7 +141,7 @@ KtSuperTypeCallEntry(154,162): 'Sealed()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(154,160): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -216,7 +216,7 @@ KtSuperTypeCallEntry(183,191): 'Sealed()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(183,189): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -309,7 +309,7 @@ KtSuperTypeCallEntry(223,231): 'Sealed()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(223,229): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -408,7 +408,7 @@ KtSuperTypeCallEntry(278,286): 'Sealed()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(278,284): 'Sealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

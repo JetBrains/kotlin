@@ -57,7 +57,7 @@ KtAnnotationEntry(38,74): '@Target(AnnotationTarget.EXPRESSION)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(39,45): 'Target'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -210,7 +210,7 @@ KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(76,85): 'Retention'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -393,7 +393,7 @@ KtAnnotationEntry(172,190): '@Anno(0 + integer)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(173,177): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -910,7 +910,7 @@ KtAnnotationEntry(192,206): '@Anno(integer)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(193,197): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

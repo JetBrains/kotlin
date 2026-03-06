@@ -47,7 +47,10 @@ KtSuperTypeCallEntry(54,57): '(1)'
     ]
 
 KtConstructorCalleeExpression(54,54): ''
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
 
 KtTypeReference(54,54): ''
   null
@@ -83,7 +86,10 @@ KtSuperTypeCallEntry(76,79): '(2)'
     ]
 
 KtConstructorCalleeExpression(76,76): ''
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
 
 KtTypeReference(76,76): ''
   null

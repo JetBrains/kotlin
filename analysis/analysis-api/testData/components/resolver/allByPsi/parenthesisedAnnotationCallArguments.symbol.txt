@@ -113,7 +113,10 @@ KtAnnotationEntry(167,183): '@MyAnno((("A")))'
     ]
 
 KtConstructorCalleeExpression(168,174): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): MyAnno
+    ]
 
 KtTypeReference(168,174): 'MyAnno'
   null
@@ -161,7 +164,10 @@ KtAnnotationEntry(199,223): '@MyAnno(value = (("A")))'
     ]
 
 KtConstructorCalleeExpression(200,206): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): MyAnno
+    ]
 
 KtTypeReference(200,206): 'MyAnno'
   null
@@ -215,7 +221,10 @@ KtAnnotationEntry(239,269): '@MyAnno((((("A")) as String)))'
     ]
 
 KtConstructorCalleeExpression(240,246): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): MyAnno
+    ]
 
 KtTypeReference(240,246): 'MyAnno'
   null
@@ -284,7 +293,10 @@ KtAnnotationEntry(285,341): '@MyAnnoVararg((("A")), "B", *((arrayOf("A", "B", "C
     ]
 
 KtConstructorCalleeExpression(286,298): 'MyAnnoVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg value: kotlin.String): MyAnnoVararg
+    ]
 
 KtTypeReference(286,298): 'MyAnnoVararg'
   null
@@ -389,7 +401,10 @@ KtAnnotationEntry(357,403): '@MyAnnoVararg(value = ((arrayOf(("A"), "B"))))'
     ]
 
 KtConstructorCalleeExpression(358,370): 'MyAnnoVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg value: kotlin.String): MyAnnoVararg
+    ]
 
 KtTypeReference(358,370): 'MyAnnoVararg'
   null
@@ -470,7 +485,10 @@ KtAnnotationEntry(419,453): '@MyAnnoKClass((((String::class))))'
     ]
 
 KtConstructorCalleeExpression(420,432): 'MyAnnoKClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.reflect.KClass<*>): MyAnnoKClass
+    ]
 
 KtTypeReference(420,432): 'MyAnnoKClass'
   null

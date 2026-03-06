@@ -239,7 +239,10 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
     ]
 
 KtConstructorCalleeExpression(294,303): 'BaseClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): r.BaseClass
+    ]
 
 KtTypeReference(294,303): 'BaseClass'
   null

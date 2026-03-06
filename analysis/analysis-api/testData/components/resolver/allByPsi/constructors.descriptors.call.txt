@@ -500,7 +500,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
       }
 
 KtConstructorCalleeExpression(294,303): 'BaseClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

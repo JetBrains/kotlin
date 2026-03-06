@@ -40,7 +40,7 @@ KtAnnotationEntry(36,41): '@Anno'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(37,41): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

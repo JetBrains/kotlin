@@ -76,7 +76,7 @@ KtSuperTypeCallEntry(54,57): '(1)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(54,54): ''
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -202,7 +202,7 @@ KtSuperTypeCallEntry(76,79): '(2)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(76,76): ''
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

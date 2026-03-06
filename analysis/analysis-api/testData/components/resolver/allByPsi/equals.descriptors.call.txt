@@ -220,7 +220,7 @@ KtSuperTypeCallEntry(142,151): 'Another()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(142,149): 'Another'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

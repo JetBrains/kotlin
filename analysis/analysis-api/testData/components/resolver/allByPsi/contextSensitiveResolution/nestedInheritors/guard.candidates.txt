@@ -69,7 +69,7 @@ KtSuperTypeCallEntry(161,174): 'SealedClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(161,172): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -133,7 +133,7 @@ KtSuperTypeCallEntry(210,227): 'SealedInheritor()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(210,225): 'SealedInheritor'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -411,7 +411,7 @@ KtSuperTypeCallEntry(530,541): 'OpenClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(530,539): 'OpenClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -475,7 +475,7 @@ KtSuperTypeCallEntry(588,616): 'SealedInheritorOfOpenClass()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(588,614): 'SealedInheritorOfOpenClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

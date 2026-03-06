@@ -778,7 +778,7 @@ KtSuperTypeCallEntry(540,554): 'OpenSettings()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(540,552): 'OpenSettings'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -837,7 +837,7 @@ KtSuperTypeCallEntry(594,608): 'OpenSettings()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(594,606): 'OpenSettings'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

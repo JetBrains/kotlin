@@ -45,7 +45,7 @@ KtSuperTypeCallEntry(122,132): 'MySealed()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(122,130): 'MySealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -129,7 +129,7 @@ KtSuperTypeCallEntry(178,188): 'MySealed()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(178,186): 'MySealed'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

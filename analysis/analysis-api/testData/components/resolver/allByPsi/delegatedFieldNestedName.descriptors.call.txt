@@ -50,7 +50,7 @@ KtAnnotationEntry(31,61): '@Target(AnnotationTarget.TYPE)'
       }
 
 KtConstructorCalleeExpression(32,38): 'Target'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -254,7 +254,7 @@ KtAnnotationEntry(225,241): '@Anno(0 + outer)'
       }
 
 KtConstructorCalleeExpression(226,230): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -475,7 +475,7 @@ KtAnnotationEntry(247,263): '@Anno(1 + outer)'
       }
 
 KtConstructorCalleeExpression(248,252): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -696,7 +696,7 @@ KtAnnotationEntry(269,285): '@Anno(2 + outer)'
       }
 
 KtConstructorCalleeExpression(270,274): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -917,7 +917,7 @@ KtAnnotationEntry(310,326): '@Anno(4 + outer)'
       }
 
 KtConstructorCalleeExpression(311,315): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1138,7 +1138,7 @@ KtAnnotationEntry(334,350): '@Anno(5 + outer)'
       }
 
 KtConstructorCalleeExpression(335,339): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1371,7 +1371,7 @@ KtAnnotationEntry(400,416): '@Anno(6 + inner)'
       }
 
 KtConstructorCalleeExpression(401,405): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1526,7 +1526,7 @@ KtAnnotationEntry(422,438): '@Anno(7 + inner)'
       }
 
 KtConstructorCalleeExpression(423,427): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1681,7 +1681,7 @@ KtAnnotationEntry(444,460): '@Anno(8 + inner)'
       }
 
 KtConstructorCalleeExpression(445,449): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1860,7 +1860,7 @@ KtAnnotationEntry(559,575): '@Anno(9 + inner)'
       }
 
 KtConstructorCalleeExpression(560,564): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2083,7 +2083,7 @@ KtAnnotationEntry(583,600): '@Anno(10 + inner)'
       }
 
 KtConstructorCalleeExpression(584,588): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

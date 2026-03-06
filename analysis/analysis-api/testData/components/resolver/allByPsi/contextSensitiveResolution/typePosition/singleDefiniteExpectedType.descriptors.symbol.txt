@@ -137,7 +137,10 @@ KtSuperTypeCallEntry(291,304): 'SealedClass()'
     ]
 
 KtConstructorCalleeExpression(291,302): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtTypeReference(291,302): 'SealedClass'
   null
@@ -185,7 +188,10 @@ KtSuperTypeCallEntry(353,366): 'SealedClass()'
     ]
 
 KtConstructorCalleeExpression(353,364): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtTypeReference(353,364): 'SealedClass'
   null
@@ -251,7 +257,10 @@ KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
     ]
 
 KtConstructorCalleeExpression(442,458): 'SealedGeneric<T>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedGeneric<T>
+    ]
 
 KtTypeReference(442,458): 'SealedGeneric<T>'
   null
@@ -317,7 +326,10 @@ KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
     ]
 
 KtConstructorCalleeExpression(501,517): 'SealedGeneric<T>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedGeneric<T>
+    ]
 
 KtTypeReference(501,517): 'SealedGeneric<T>'
   null
@@ -1674,7 +1686,10 @@ KtAnnotationEntry(2751,2766): '@UnsafeVariance'
     ]
 
 KtConstructorCalleeExpression(2752,2766): 'UnsafeVariance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): kotlin.UnsafeVariance
+    ]
 
 KtTypeReference(2752,2766): 'UnsafeVariance'
   null

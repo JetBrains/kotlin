@@ -29,7 +29,10 @@ KtAnnotationEntry(38,74): '@Target(AnnotationTarget.EXPRESSION)'
     ]
 
 KtConstructorCalleeExpression(39,45): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+    ]
 
 KtTypeReference(39,45): 'Target'
   null
@@ -62,7 +65,10 @@ KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
     ]
 
 KtConstructorCalleeExpression(76,85): 'Retention'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+    ]
 
 KtTypeReference(76,85): 'Retention'
   null
@@ -125,7 +131,10 @@ KtAnnotationEntry(172,190): '@Anno(0 + integer)'
     ]
 
 KtConstructorCalleeExpression(173,177): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(number: kotlin.Int): Anno
+    ]
 
 KtTypeReference(173,177): 'Anno'
   null
@@ -176,7 +185,10 @@ KtAnnotationEntry(192,206): '@Anno(integer)'
     ]
 
 KtConstructorCalleeExpression(193,197): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(number: kotlin.Int): Anno
+    ]
 
 KtTypeReference(193,197): 'Anno'
   null

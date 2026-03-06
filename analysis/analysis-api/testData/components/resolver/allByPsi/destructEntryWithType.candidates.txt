@@ -193,7 +193,7 @@ KtAnnotationEntry(159,178): '@Anno(0 + constant)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(160,164): 'Anno'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -761,7 +761,7 @@ KtAnnotationEntry(184,203): '@Anno(1 + constant)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(185,189): 'Anno'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1329,7 +1329,7 @@ KtAnnotationEntry(209,228): '@Anno(2 + constant)'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(210,214): 'Anno'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

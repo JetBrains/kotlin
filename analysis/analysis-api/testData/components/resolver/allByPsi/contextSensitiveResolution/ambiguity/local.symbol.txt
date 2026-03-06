@@ -35,7 +35,10 @@ KtSuperTypeCallEntry(114,122): 'Sealed()'
     ]
 
 KtConstructorCalleeExpression(114,120): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): foo.Sealed
+    ]
 
 KtTypeReference(114,120): 'Sealed'
   null
@@ -83,7 +86,10 @@ KtSuperTypeCallEntry(154,162): 'Sealed()'
     ]
 
 KtConstructorCalleeExpression(154,160): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): foo.Sealed
+    ]
 
 KtTypeReference(154,160): 'Sealed'
   null
@@ -113,7 +119,10 @@ KtSuperTypeCallEntry(183,191): 'Sealed()'
     ]
 
 KtConstructorCalleeExpression(183,189): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): foo.Sealed
+    ]
 
 KtTypeReference(183,189): 'Sealed'
   null
@@ -161,7 +170,10 @@ KtSuperTypeCallEntry(223,231): 'Sealed()'
     ]
 
 KtConstructorCalleeExpression(223,229): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): foo.Sealed
+    ]
 
 KtTypeReference(223,229): 'Sealed'
   null
@@ -215,7 +227,10 @@ KtSuperTypeCallEntry(278,286): 'Sealed()'
     ]
 
 KtConstructorCalleeExpression(278,284): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): foo.Sealed
+    ]
 
 KtTypeReference(278,284): 'Sealed'
   null

@@ -142,7 +142,7 @@ KtSuperTypeCallEntry(186,195): 'Base<C>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(186,193): 'Base<C>'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

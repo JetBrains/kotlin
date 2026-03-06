@@ -86,7 +86,7 @@ KtAnnotationEntry(157,163): '@A1(X)'
       }
 
 KtConstructorCalleeExpression(158,160): 'A1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -233,7 +233,7 @@ KtAnnotationEntry(233,242): '@A2(X, Y)'
       }
 
 KtConstructorCalleeExpression(234,236): 'A2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -376,7 +376,7 @@ KtAnnotationEntry(259,271): '@A2(*[X, Y])'
       }
 
 KtConstructorCalleeExpression(260,262): 'A2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -590,7 +590,7 @@ KtAnnotationEntry(342,350): '@A3([X])'
       }
 
 KtConstructorCalleeExpression(343,345): 'A3'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -738,7 +738,7 @@ KtAnnotationEntry(367,382): '@A3(arrayOf(X))'
       }
 
 KtConstructorCalleeExpression(368,370): 'A3'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -951,7 +951,7 @@ KtAnnotationEntry(443,457): '@A4(MAX_VALUE)'
       }
 
 KtConstructorCalleeExpression(444,446): 'A4'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1064,7 +1064,7 @@ KtAnnotationEntry(473,492): '@Retention(RUNTIME)'
       }
 
 KtConstructorCalleeExpression(474,483): 'Retention'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1172,7 +1172,7 @@ KtAnnotationEntry(493,517): '@Target(CLASS, PROPERTY)'
       }
 
 KtConstructorCalleeExpression(494,500): 'Target'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1293,7 +1293,7 @@ KtAnnotationEntry(549,562): '@MyAnnotation'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(550,562): 'MyAnnotation'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1354,7 +1354,7 @@ KtAnnotationEntry(579,592): '@MyAnnotation'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(580,592): 'MyAnnotation'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1403,7 +1403,7 @@ KtAnnotationEntry(608,621): '@MyAnnotation'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(609,621): 'MyAnnotation'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

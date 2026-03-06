@@ -104,7 +104,7 @@ KtSuperTypeCallEntry(86,93): 'Base(x)'
       }
 
 KtConstructorCalleeExpression(86,90): 'Base'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

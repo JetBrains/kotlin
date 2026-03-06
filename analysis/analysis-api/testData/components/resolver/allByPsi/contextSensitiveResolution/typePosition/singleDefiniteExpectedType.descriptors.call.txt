@@ -149,7 +149,7 @@ KtSuperTypeCallEntry(291,304): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(291,302): 'SealedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -239,7 +239,7 @@ KtSuperTypeCallEntry(353,366): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(353,364): 'SealedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -347,7 +347,7 @@ KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(442,458): 'SealedGeneric<T>'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -455,7 +455,7 @@ KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(501,517): 'SealedGeneric<T>'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2319,7 +2319,7 @@ KtAnnotationEntry(2751,2766): '@UnsafeVariance'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(2752,2766): 'UnsafeVariance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

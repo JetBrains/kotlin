@@ -199,6 +199,7 @@ internal class KaFe10Resolver(
         when (psi) {
             is KtCallableReferenceExpression -> return performCallResolution(psi.callableReference)
             is KtConstructorDelegationReferenceExpression -> return (psi.parent as? KtElement)?.let(::performCallResolution)
+            is KtConstructorCalleeExpression -> return (psi.parent as? KtCallElement)?.let(::performCallResolution)
             is KtForExpression -> return resolveForLoopCall(psi)
             is KtPropertyDelegate -> return resolveDelegatedPropertyCall(psi)
         }

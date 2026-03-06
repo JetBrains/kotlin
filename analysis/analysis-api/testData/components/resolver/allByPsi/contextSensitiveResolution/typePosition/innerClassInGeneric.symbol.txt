@@ -38,7 +38,10 @@ KtSuperTypeCallEntry(119,130): 'A<String>()'
     ]
 
 KtConstructorCalleeExpression(119,128): 'A<String>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A<T>
+    ]
 
 KtTypeReference(119,128): 'A<String>'
   null
@@ -113,7 +116,10 @@ KtSuperTypeCallEntry(191,202): 'A<String>()'
     ]
 
 KtConstructorCalleeExpression(191,200): 'A<String>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A<T>
+    ]
 
 KtTypeReference(191,200): 'A<String>'
   null
@@ -185,7 +191,10 @@ KtSuperTypeCallEntry(255,263): 'A<Int>()'
     ]
 
 KtConstructorCalleeExpression(255,261): 'A<Int>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A<T>
+    ]
 
 KtTypeReference(255,261): 'A<Int>'
   null

@@ -143,7 +143,7 @@ KtSuperTypeCallEntry(186,195): 'Base<C>()'
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(186,193): 'Base<C>'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
