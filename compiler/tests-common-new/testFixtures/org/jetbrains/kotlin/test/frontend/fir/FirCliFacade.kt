@@ -42,11 +42,12 @@ abstract class FirCliFacade<Phase, OutputPipelineArtifact>(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val input = ConfigurationPipelineArtifact(
             configuration = configuration,
+            diagnosticCollector = org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl(),
             rootDisposable = testServices.compilerConfigurationProvider.testRootDisposable,
         )
 
         var output = phase.executePhase(input)
-            ?: return processErrorFromCliPhase(configuration, testServices)
+            ?: return processErrorFromCliPhase(configuration.messageCollector, testServices)
 
         output = FrontendFilesForPluginsGenerationPipelinePhase<OutputPipelineArtifact>().executePhase(output)
 
@@ -97,9 +98,8 @@ fun SingleModuleFrontendOutput.toTestOutputPart(
     )
 }
 
-fun processErrorFromCliPhase(configuration: CompilerConfiguration, testServices: TestServices): Nothing? {
-    CheckDiagnosticCollector.reportToMessageCollector(configuration)
-    if (configuration.messageCollector.hasErrors()) {
+fun processErrorFromCliPhase(messageCollector: MessageCollector, testServices: TestServices): Nothing? {
+    if (messageCollector.hasErrors()) {
         if (CHECK_COMPILER_OUTPUT in testServices.moduleStructure.allDirectives) {
             // errors from message collector would be checked separately
             return null
