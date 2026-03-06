@@ -77,7 +77,7 @@ class LegacyIT : KotlinMavenTestBase() {
         testProject("test-customJdk", mavenVersion) {
             build(
                 "package",
-                expectedToFail = true,
+                expectedToFail = false,
                 buildOptions = buildOptions.copy(
                     javaVersion = TestVersions.Java.JDK_1_8,
                     extraMavenProperties = mapOf("kotlinCompilerJdk" to context.javaHomeProvider(TestVersions.Java.JDK_1_8).absolutePathString())
