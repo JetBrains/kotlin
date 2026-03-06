@@ -143,6 +143,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 """.trimMargin())
             throw e
+        } finally {
+            CheckDiagnosticCollector.reportToMessageCollector(configuration)
         }
 
         return ExitCode.OK
