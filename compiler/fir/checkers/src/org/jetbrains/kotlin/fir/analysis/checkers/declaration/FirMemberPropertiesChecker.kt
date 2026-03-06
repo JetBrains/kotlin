@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -145,13 +147,21 @@ internal fun checkProperty(
         val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
         if (hasOpenModifier &&
             containingDeclaration.isInterface &&
-            !hasAbstractModifier &&
-            propertySymbol.isAbstract &&
-            !isInsideExpectClass(containingDeclaration.symbol)
+            shouldReportOpenInInterface(propertySymbol, containingDeclaration.symbol)
         ) {
             propertySymbol.source?.let {
                 reporter.reportOn(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE)
             }
         }
     }
+}
+
+context(context: CheckerContext)
+fun shouldReportOpenInInterface(symbol: FirCallableSymbol<*>, containingClassSymbol: FirClassSymbol<*>): Boolean {
+    val modifierList = symbol.source.getModifierList()
+    val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
+
+    return !hasAbstractModifier &&
+            symbol.isAbstract &&
+            !isInsideExpectClass(containingClassSymbol)
 }
