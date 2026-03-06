@@ -765,7 +765,7 @@ KtCallExpression(843,1229): 'with(A()){'
                 a += 1
                 thisProp++
                 a = a++
-        
+
                 b + 1
                 +b
                 b[1]
@@ -839,7 +839,7 @@ KtNameReferenceExpression(843,847): 'with'
                 a += 1
                 thisProp++
                 a = a++
-        
+
                 b + 1
                 +b
                 b[1]
@@ -1833,7 +1833,7 @@ KtConstantExpression(1090,1091): '1'
   null
 
 KtPostfixExpression(1100,1110): 'thisProp++'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -1980,7 +1980,7 @@ KtOperationReferenceExpression(1121,1122): '='
       typeArgumentsMapping = {}
 
 KtPostfixExpression(1123,1126): 'a++'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -2529,7 +2529,7 @@ KtConstantExpression(1210,1211): '1'
   null
 
 KtPostfixExpression(1220,1223): 'b++'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -3167,7 +3167,7 @@ KtConstantExpression(1361,1362): '1'
   null
 
 KtPostfixExpression(1367,1370): 'a++'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -3716,7 +3716,7 @@ KtConstantExpression(1430,1431): '1'
   null
 
 KtPostfixExpression(1436,1439): 'b++'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

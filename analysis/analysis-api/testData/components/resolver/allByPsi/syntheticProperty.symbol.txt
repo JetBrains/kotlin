@@ -107,7 +107,11 @@ KtConstantExpression(160,161): '1'
   null
 
 KtPostfixExpression(166,187): 'javaClass.something++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int,
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(166,185): 'javaClass.something'
   KaSymbolResolutionSuccess:
@@ -143,7 +147,11 @@ KtNameReferenceExpression(204,213): 'something'
   null
 
 KtPostfixExpression(219,230): 'something++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int,
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(219,228): 'something'
   null
@@ -152,7 +160,11 @@ KtOperationReferenceExpression(228,230): '++'
   null
 
 KtPostfixExpression(235,248): '(something)++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int,
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtParenthesizedExpression(235,246): '(something)'
   null

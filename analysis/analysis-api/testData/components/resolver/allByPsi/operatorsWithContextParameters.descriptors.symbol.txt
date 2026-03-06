@@ -902,7 +902,11 @@ KtConstantExpression(1090,1091): '1'
   null
 
 KtPostfixExpression(1100,1110): 'thisProp++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var thisProp: A,
+      /inc(<extension receiver>: A): A
+    ]
 
 KtNameReferenceExpression(1100,1108): 'thisProp'
   null
@@ -920,7 +924,11 @@ KtOperationReferenceExpression(1121,1122): '='
   null
 
 KtPostfixExpression(1123,1126): 'a++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A,
+      /inc(<extension receiver>: A): A
+    ]
 
 KtNameReferenceExpression(1123,1124): 'a'
   null
@@ -1022,7 +1030,11 @@ KtConstantExpression(1210,1211): '1'
   null
 
 KtPostfixExpression(1220,1223): 'b++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators,
+      /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
+    ]
 
 KtNameReferenceExpression(1220,1221): 'b'
   null
@@ -1163,7 +1175,11 @@ KtConstantExpression(1361,1362): '1'
   null
 
 KtPostfixExpression(1367,1370): 'a++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A,
+      /inc(<extension receiver>: A): A
+    ]
 
 KtNameReferenceExpression(1367,1368): 'a'
   null
@@ -1265,7 +1281,11 @@ KtConstantExpression(1430,1431): '1'
   null
 
 KtPostfixExpression(1436,1439): 'b++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators,
+      /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
+    ]
 
 KtNameReferenceExpression(1436,1437): 'b'
   null

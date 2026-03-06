@@ -2099,7 +2099,7 @@ public class org/jetbrains/kotlin/psi/KtParenthesizedExpression : org/jetbrains/
 	public fun getExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
 }
 
-public class org/jetbrains/kotlin/psi/KtPostfixExpression : org/jetbrains/kotlin/psi/KtUnaryExpression {
+public class org/jetbrains/kotlin/psi/KtPostfixExpression : org/jetbrains/kotlin/psi/KtUnaryExpression, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getBaseExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;

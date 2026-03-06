@@ -200,7 +200,11 @@ KtNameReferenceExpression(261,262): 'a'
   null
 
 KtPostfixExpression(267,270): 'a++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A,
+      /A.inc(<dispatch receiver>: A): A
+    ]
 
 KtNameReferenceExpression(267,268): 'a'
   null
@@ -209,7 +213,11 @@ KtOperationReferenceExpression(268,270): '++'
   null
 
 KtPostfixExpression(275,278): 'a--'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A,
+      /A.dec(<dispatch receiver>: A): A
+    ]
 
 KtNameReferenceExpression(275,276): 'a'
   null

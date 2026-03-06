@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 /**
  * Represents a postfix unary expression where the operator follows the operand.
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
  * // ^_^
  * }</pre>
  */
-public class KtPostfixExpression extends KtUnaryExpression {
+public class KtPostfixExpression extends KtUnaryExpression implements KtResolvableCall {
     public KtPostfixExpression(@NotNull ASTNode node) {
         super(node);
     }

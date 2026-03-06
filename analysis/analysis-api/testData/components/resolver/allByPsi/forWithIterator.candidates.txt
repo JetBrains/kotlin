@@ -703,7 +703,7 @@ KtNameReferenceExpression(250,253): 'Int'
   NO_CANDIDATES
 
 KtPostfixExpression(256,265): 'current++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

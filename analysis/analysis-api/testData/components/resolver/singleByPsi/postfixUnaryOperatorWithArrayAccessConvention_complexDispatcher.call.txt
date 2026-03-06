@@ -1,5 +1,5 @@
 KtPostfixExpression(182,190): 'm["a"]++'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

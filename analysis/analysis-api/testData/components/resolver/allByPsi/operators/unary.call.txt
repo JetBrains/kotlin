@@ -537,7 +537,7 @@ KtNameReferenceExpression(261,262): 'a'
       typeArgumentsMapping = {}
 
 KtPostfixExpression(267,270): 'a++'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -630,7 +630,7 @@ KtOperationReferenceExpression(268,270): '++'
         typeArgumentsMapping = {}
 
 KtPostfixExpression(275,278): 'a--'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC

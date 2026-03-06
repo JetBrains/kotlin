@@ -1276,7 +1276,7 @@ KtConstantExpression(160,161): '1'
   NO_CANDIDATES
 
 KtPostfixExpression(166,187): 'javaClass.something++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -1712,7 +1712,7 @@ KtNameReferenceExpression(204,213): 'something'
     isInBestCandidates = true
 
 KtPostfixExpression(219,230): 'something++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -1874,7 +1874,7 @@ KtOperationReferenceExpression(228,230): '++'
     isInBestCandidates = true
 
 KtPostfixExpression(235,248): '(something)++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

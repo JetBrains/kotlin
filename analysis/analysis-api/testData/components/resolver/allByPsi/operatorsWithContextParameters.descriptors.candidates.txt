@@ -826,7 +826,7 @@ KtCallExpression(843,1229): 'with(A()){'
                 a += 1
                 thisProp++
                 a = a++
-        
+
                 b + 1
                 +b
                 b[1]
@@ -901,7 +901,7 @@ KtNameReferenceExpression(843,847): 'with'
                 a += 1
                 thisProp++
                 a = a++
-        
+
                 b + 1
                 +b
                 b[1]
@@ -1950,7 +1950,7 @@ KtConstantExpression(1090,1091): '1'
   NO_CANDIDATES
 
 KtPostfixExpression(1100,1110): 'thisProp++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -2103,7 +2103,7 @@ KtOperationReferenceExpression(1121,1122): '='
     isInBestCandidates = true
 
 KtPostfixExpression(1123,1126): 'a++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -2781,7 +2781,7 @@ KtConstantExpression(1210,1211): '1'
   NO_CANDIDATES
 
 KtPostfixExpression(1220,1223): 'b++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -3443,7 +3443,7 @@ KtConstantExpression(1361,1362): '1'
   NO_CANDIDATES
 
 KtPostfixExpression(1367,1370): 'a++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -4121,7 +4121,7 @@ KtConstantExpression(1430,1431): '1'
   NO_CANDIDATES
 
 KtPostfixExpression(1436,1439): 'b++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

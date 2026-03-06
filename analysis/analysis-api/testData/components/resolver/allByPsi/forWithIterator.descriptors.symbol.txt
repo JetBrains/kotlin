@@ -188,7 +188,11 @@ KtNameReferenceExpression(250,253): 'Int'
   null
 
 KtPostfixExpression(256,265): 'current++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var current: kotlin.Int,
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(256,263): 'current'
   null

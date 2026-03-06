@@ -554,7 +554,7 @@ KtNameReferenceExpression(261,262): 'a'
     isInBestCandidates = true
 
 KtPostfixExpression(267,270): 'a++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -650,7 +650,7 @@ KtOperationReferenceExpression(268,270): '++'
     isInBestCandidates = true
 
 KtPostfixExpression(275,278): 'a--'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
