@@ -16,9 +16,9 @@ This file captures key findings, decisions, and learnings from each iteration.
 | 7-10 | 2026-03-04 | Core features | 90/138 | 117/138 (84.8%) |
 | 11-16 | 2026-03-05 | External types, raw types | 117/138 | 532/601 (88.5%) |
 
-**Current Status**: 532/601 tests passing (88.5%)
-- Box tests: 139/142 (97.9%)
-- Diagnostic tests: 393/459 (85.6%)
+**Current Status**: 1317/1493 tests passing (88.2%)
+- Box tests (`JavaUsingAstBoxTestGenerated`): 1075/1166 (92.2%)
+- Phased tests (`JavaUsingAstPhasedTestGenerated`): 242/327 (74.0%)
 
 ---
 

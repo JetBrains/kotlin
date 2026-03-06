@@ -4,7 +4,7 @@
 
 Replace IntelliJ platform-based Java parsing with a custom implementation using KMP Java Parser. Goal: eliminate platform dependency while maintaining Java-Kotlin bidirectional interoperability.
 
-**Status**: 532/601 tests passing (88.5%) after iteration 16  
+**Status**: 1317/1493 tests passing (88.2%) after iteration 16  
 **Last Updated**: 2026-03-06
 
 **Related docs**:
@@ -98,12 +98,12 @@ Star import resolution uses callback pattern: Java Model tries candidates, FIR v
 - Interface implicit modifiers
 - External type argument handling
 - Raw type detection
-- **532/601 tests passing (88.5%)**
+- **1317/1493 tests passing (88.2%)**
 
 ### 🔲 Milestone 4: Production Readiness
 - Modern Java features (records, sealed classes)
 - Performance optimization
-- Remaining edge cases (3 box tests, ~66 diagnostic tests)
+- Remaining edge cases (91 box tests, 85 phased tests)
 - Target: >95% test pass rate
 
 ---

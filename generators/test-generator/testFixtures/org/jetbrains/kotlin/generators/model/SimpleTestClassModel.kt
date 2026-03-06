@@ -50,6 +50,7 @@ class SimpleTestClassModel(
     override val testKClass: Class<*>,
     override val isSmokeTest: Boolean,
     override val smokeTestLimit: Int,
+    val additionalFileFilter: ((File) -> Boolean)? = null,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -86,6 +87,7 @@ class SimpleTestClassModel(
                 testKClass,
                 isSmokeTest,
                 smokeTestLimit
+                additionalFileFilter,
             )
         }.sortedWith(BY_NAME)
     }
@@ -144,6 +146,9 @@ class SimpleTestClassModel(
                                 "Consider removing empty directory or revert removing of its' contents."
                     )
                 }
+
+                if (additionalFileFilter != null && !additionalFileFilter(file)) return@l null
+
                 SimpleTestMethodModel(
                     testInfraRevision,
                     rootFile,

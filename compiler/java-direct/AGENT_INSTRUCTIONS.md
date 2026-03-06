@@ -5,9 +5,9 @@
 | Metric | Value |
 |--------|-------|
 | **Status** | Iteration 16 complete |
-| **Box Tests** | 139/142 passing (97.9%) |
-| **Diagnostic Tests** | 393/459 passing (85.6%) |
-| **Total** | 532/601 passing (88.5%) |
+| **Box Tests** | 1075/1166 passing (92.2%) |
+| **Phased Tests** | 242/327 passing (74.0%) |
+| **Total** | 1317/1493 passing (88.2%) |
 
 **Key files**: `JavaClassFinderOverAstImpl.kt`, `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaMemberOverAst.kt`, `JavaResolutionContext.kt`
 
@@ -116,15 +116,17 @@ Compare with PSI-based implementation in `compiler/frontend.java/src/org/jetbrai
 
 ## Iteration Workflow
 
-### 1. Pick ONE Failing Test
+### 1. Run Tests
 ```bash
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyBoxTestGenerated" -q 2>&1 | tee test_output.txt
-```
-or
-```bash
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstLegacyDiagnosticTestGenerated" -q 2>&1 | tee test_output.txt
-```
+# Run box tests (1166 tests)
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated" -q 2>&1 | tee test_output.txt
 
+# Run phased/diagnostic tests (327 tests)
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" -q 2>&1 | tee test_output.txt
+
+# Run a specific test
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated.testSpecificName" -q
+```
 
 ### 2. Categorize Failures
 ```python
@@ -194,11 +196,26 @@ Update `ITERATION_RESULTS.md` with findings, changes, and test counts.
 
 ---
 
+## Testing
+
+### Test Classes
+- **`JavaUsingAstBoxTestGenerated`** — Box tests (runtime behavior verification)
+- **`JavaUsingAstPhasedTestGenerated`** — Phased/diagnostic tests (compilation diagnostics)
+- **`JavaParsingTest`** — Custom unit tests for precise coverage of specific parsing features
+
+### Adding Custom Tests
+For precise coverage of a fix or feature, add tests to `JavaParsingTest` in `testFixtures/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`. This is useful when:
+- Testing specific AST parsing behavior
+- Verifying edge cases not covered by generated tests
+- Quick iteration during development
+
+---
+
 ## Related Documents
 
 | Document | Purpose |
 |----------|---------|
-| `FIXING_ITERATIONS.md` | Current iteration plans (8-14) and archive links |
+| `FIXING_ITERATIONS.md` | Current iteration plans and archive links |
 | `IMPLEMENTATION_PLAN.md` | Architecture overview |
 | `ITERATION_RESULTS.md` | Progress history, key findings |
 | `implDocs/INVESTIGATION_TECHNIQUES.md` | Detailed debugging techniques |
@@ -206,12 +223,12 @@ Update `ITERATION_RESULTS.md` with findings, changes, and test counts.
 
 ---
 
-## Remaining Work (69 failing tests)
+## Remaining Work (176 failing tests)
 
 | Category | Count | Notes |
 |----------|-------|-------|
-| Diagnostic tests | ~66 | Various type checking edge cases |
-| Box tests | 3 | Annotation args, wildcards, overload resolution |
+| Box tests | 91 | Various runtime issues |
+| Phased tests | 85 | Diagnostic/type checking edge cases |
 
 ---
 

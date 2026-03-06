@@ -5,7 +5,7 @@
 This document contains iteration plans for the `java-direct` module.
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration  
-**Status**: Iteration 16 complete — 532/601 tests passing (88.5%)  
+**Status**: Iteration 16 complete — 1317/1493 tests passing (88.2%)  
 **Last Updated**: 2026-03-06
 
 ---
@@ -79,12 +79,12 @@ This proved more effective than detailed upfront planning for the later iteratio
 
 ## Remaining Work
 
-### Current Status: 532/601 (88.5%)
+### Current Status: 1317/1493 (88.2%)
 
 | Category | Count | Notes |
 |----------|-------|-------|
-| Box tests | 3 failing | Annotation args, wildcards, overloads |
-| Diagnostic tests | 66 failing | Various edge cases |
+| Box tests | 91 failing | Various runtime issues |
+| Phased tests | 85 failing | Diagnostic edge cases |
 
 ### Remaining Box Test Failures
 

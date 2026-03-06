@@ -132,6 +132,7 @@ class TestGroup(
             skipTestAllFilesCheck: Boolean = defaultSkipTestAllFilesCheck,
             smokeTest: Boolean = false,
             smokeTestLimit: Int = 1,
+            additionalFileFilter: ((File) -> Boolean)? = null,
         ) {
             val rootFile = File("$testDataRoot/$relativeRootPath")
             val compiledPattern = Pattern.compile(pattern)
@@ -149,7 +150,8 @@ class TestGroup(
                     targetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, annotations,
                     extractTagsFromDirectory(rootFile), methodModels, skipTestAllFilesCheck, testKClass,
                     isSmokeTest = smokeTest,
-                    smokeTestLimit = smokeTestLimit
+                    smokeTestLimit = smokeTestLimit,
+                    additionalFileFilter,
                 )
             )
         }
