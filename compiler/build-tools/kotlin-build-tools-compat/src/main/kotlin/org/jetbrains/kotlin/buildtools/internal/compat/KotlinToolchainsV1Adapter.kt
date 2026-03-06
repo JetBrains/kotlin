@@ -433,8 +433,6 @@ private class JvmCompilationOperationV1Adapter private constructor(
 
             val FORCE_RECOMPILATION: Option<Boolean> = Option("FORCE_RECOMPILATION", false)
 
-            val RECOMPILATION_CLEANUP_DIRS: Option<Path> = Option("REBUILD_CLEANUP_DIRS")
-
             val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS", null)
 
             val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> =

@@ -71,6 +71,7 @@ internal class JvmCompilationOperationImpl private constructor(
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
 ) : CancellableBuildOperationImpl<CompilationResult>(), JvmCompilationOperation, JvmCompilationOperation.Builder,
     DeepCopyable<JvmCompilationOperationImpl> {
+
     constructor(
         sources: List<Path>,
         destinationDirectory: Path,
@@ -82,7 +83,9 @@ internal class JvmCompilationOperationImpl private constructor(
         destinationDirectory = destinationDirectory,
         compilerArguments = compilerArguments,
         buildIdToSessionFlagFile = buildIdToSessionFlagFile
-    )
+    ) {
+        initializeOptions(this::class, options)
+    }
 
     override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
 

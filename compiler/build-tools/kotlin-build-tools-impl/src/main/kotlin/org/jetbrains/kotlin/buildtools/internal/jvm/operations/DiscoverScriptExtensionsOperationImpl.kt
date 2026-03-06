@@ -22,7 +22,9 @@ internal class DiscoverScriptExtensionsOperationImpl private constructor(
 ) : BuildOperationImpl<Collection<String>>(), DiscoverScriptExtensionsOperation, DiscoverScriptExtensionsOperation.Builder,
     DeepCopyable<DiscoverScriptExtensionsOperation> {
 
-    constructor(classpath: List<Path>) : this(Options(DiscoverScriptExtensionsOperation::class), classpath)
+    constructor(classpath: List<Path>) : this(Options(DiscoverScriptExtensionsOperation::class), classpath) {
+        initializeOptions(this::class, options)
+    }
 
     override fun executeImpl(
         projectId: ProjectId,
@@ -53,6 +55,17 @@ internal class DiscoverScriptExtensionsOperationImpl private constructor(
     override fun build(): DiscoverScriptExtensionsOperation = deepCopy()
 
     override fun deepCopy(): DiscoverScriptExtensionsOperationImpl = DiscoverScriptExtensionsOperationImpl(options.deepCopy(), classpath)
+
+    private operator fun <V> get(key: Option<V>): V = options[key]
+
+    private operator fun <V> set(key: Option<V>, value: V) {
+        options[key] = value
+    }
+
+    class Option<V> : BaseOptionWithDefault<V> {
+        constructor(id: String) : super(id)
+        constructor(id: String, default: V) : super(id, default = default)
+    }
 
     companion object {
         val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> =

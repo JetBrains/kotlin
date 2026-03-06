@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.BaseKotlinCompile
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
@@ -135,6 +136,7 @@ val businessLogicTestSuits = setOf(
     "testCompilerPlugins",
     "testBuildMetrics",
     "testKotlinLogger",
+    "testDefaultOptions",
 )
 
 fun JvmTestSuite.addSnapshotBuildToolsImpl() {
@@ -255,6 +257,19 @@ testing {
         named<JvmTestSuite>("testEscapableCharacters") {
             configurations.named(sources.runtimeClasspathConfigurationName) {
                 testSymlinkTransformation.resolveAgainstSymlinkedArtifacts(this)
+            }
+        }
+
+        named<JvmTestSuite>("testDefaultOptions") testSuite@{
+            kotlin.target.compilations.named(this@testSuite.name).configure {
+                compileTaskProvider.configure compileTask@{
+                    (this@compileTask as BaseKotlinCompile).friendPaths.from(buildToolsApiImplResolvable.get())
+                }
+            }
+            dependencies {
+                implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
+                implementation(project(":daemon-common"))
+                implementation(project(":compiler:build-tools:kotlin-build-tools-impl"))
             }
         }
 

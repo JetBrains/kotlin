@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
+import org.jetbrains.kotlin.buildtools.internal.initializeOptions
 import java.nio.file.Path
 
-internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
+internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl private constructor(
     workingDirectory: Path,
     sourcesChanges: SourcesChanges,
     dependenciesSnapshotFiles: List<Path>,
@@ -24,7 +25,7 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
     @Deprecated("Use `get` and `set` directly instead. This property will be removed in a future release.") // Remove in 2.7
     override val options: JvmSnapshotBasedIncrementalCompilationOptionsImpl = JvmSnapshotBasedIncrementalCompilationOptionsImpl(
         Options(
-            JvmSnapshotBasedIncrementalCompilationConfiguration::class
+            JvmSnapshotBasedIncrementalCompilationConfiguration::class,
         )
     ),
 ) : JvmSnapshotBasedIncrementalCompilationConfiguration(
@@ -34,6 +35,25 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
     shrunkClasspathSnapshot,
     options
 ), JvmSnapshotBasedIncrementalCompilationConfiguration.Builder, DeepCopyable<JvmSnapshotBasedIncrementalCompilationConfigurationImpl>, HasSnapshotBasedIcOptionsAccessor {
+
+    constructor(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
+        shrunkClasspathSnapshot: Path,
+    ) : this(
+        workingDirectory,
+        sourcesChanges,
+        dependenciesSnapshotFiles,
+        shrunkClasspathSnapshot,
+        JvmSnapshotBasedIncrementalCompilationOptionsImpl(
+            Options(
+                JvmSnapshotBasedIncrementalCompilationConfiguration::class,
+            )
+        ),
+    ) {
+        initializeOptions(JvmSnapshotBasedIncrementalCompilationOptionsImpl::class, options.options)
+    }
 
     override fun build(): JvmSnapshotBasedIncrementalCompilationConfiguration = deepCopy()
 
@@ -71,12 +91,12 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
 // Remove in 2.7
 @Deprecated("Use `JvmSnapshotBasedIncrementalCompilationConfiguration` and `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`. This interface will be removed in a future release.")
 internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl internal constructor(
-    internal val options: Options = Options(
-        JvmSnapshotBasedIncrementalCompilationOptions::class
-    ),
+    internal val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class),
 ) : JvmSnapshotBasedIncrementalCompilationOptions, DeepCopyable<JvmSnapshotBasedIncrementalCompilationOptionsImpl>, HasSnapshotBasedIcOptionsAccessor {
 
-    constructor() : this(Options(JvmSnapshotBasedIncrementalCompilationOptions::class))
+    constructor() : this(Options(JvmSnapshotBasedIncrementalCompilationOptions::class)) {
+        initializeOptions(this::class, options)
+    }
 
     override fun deepCopy(): JvmSnapshotBasedIncrementalCompilationOptionsImpl =
         JvmSnapshotBasedIncrementalCompilationOptionsImpl(options.deepCopy())
@@ -113,8 +133,6 @@ internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl internal constr
         val KEEP_IC_CACHES_IN_MEMORY: Option<Boolean> = Option("KEEP_IC_CACHES_IN_MEMORY", false)
 
         val FORCE_RECOMPILATION: Option<Boolean> = Option("FORCE_RECOMPILATION", false)
-
-        val RECOMPILATION_CLEANUP_DIRS: Option<Path> = Option("REBUILD_CLEANUP_DIRS")
 
         val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS", null)
 

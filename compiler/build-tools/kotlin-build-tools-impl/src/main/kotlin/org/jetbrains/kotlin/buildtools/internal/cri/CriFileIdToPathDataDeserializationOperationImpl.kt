@@ -12,12 +12,17 @@ import org.jetbrains.kotlin.buildtools.api.cri.CriFileIdToPathDataDeserializatio
 import org.jetbrains.kotlin.buildtools.api.cri.FileIdToPathEntry
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.Options
+import org.jetbrains.kotlin.buildtools.internal.initializeOptions
 
 internal class CriFileIdToPathDataDeserializationOperationImpl(
     private val deserializer: CriDataDeserializerImpl,
     private val data: ByteArray,
 ) : BuildOperationImpl<Iterable<FileIdToPathEntry>>(), CriFileIdToPathDataDeserializationOperation {
     override val options: Options = Options(CriFileIdToPathDataDeserializationOperation::class)
+
+    init {
+        initializeOptions(this::class, options)
+    }
 
     override fun executeImpl(
         projectId: ProjectId,

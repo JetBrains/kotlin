@@ -25,7 +25,9 @@ internal class JvmClasspathSnapshottingOperationImpl private constructor(
     constructor(classpathEntry: Path) : this(
         options = Options(JvmClasspathSnapshottingOperation::class),
         classpathEntry = classpathEntry
-    )
+    ) {
+        initializeOptions(this::class, options)
+    }
 
     override fun toBuilder(): JvmClasspathSnapshottingOperation.Builder = deepCopy()
 
@@ -64,10 +66,8 @@ internal class JvmClasspathSnapshottingOperationImpl private constructor(
     }
 
     companion object {
-        @JvmField
         val GRANULARITY: Option<ClassSnapshotGranularity> = Option("GRANULARITY", ClassSnapshotGranularity.CLASS_MEMBER_LEVEL)
 
-        @JvmField
         val PARSE_INLINED_LOCAL_CLASSES: Option<Boolean> = Option("PARSE_INLINED_LOCAL_CLASSES", true)
     }
 }

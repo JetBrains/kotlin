@@ -12,12 +12,17 @@ import org.jetbrains.kotlin.buildtools.api.cri.CriSubtypeDataDeserializationOper
 import org.jetbrains.kotlin.buildtools.api.cri.SubtypeEntry
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.Options
+import org.jetbrains.kotlin.buildtools.internal.initializeOptions
 
 internal class CriSubtypeDataDeserializationOperationImpl(
     private val deserializer: CriDataDeserializerImpl,
     private val data: ByteArray,
 ) : BuildOperationImpl<Iterable<SubtypeEntry>>(), CriSubtypeDataDeserializationOperation {
     override val options: Options = Options(CriSubtypeDataDeserializationOperation::class)
+
+    init {
+        initializeOptions(this::class, options)
+    }
 
     override fun executeImpl(
         projectId: ProjectId,
