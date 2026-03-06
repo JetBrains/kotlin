@@ -23,7 +23,7 @@ fun test() {
 
     Yes<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, String><!>::class
     Yes2<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_GET_CLASS_WARNING!><Int, String><!>::class
-    Yes2<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_GET_CLASS_WARNING!><Int, String><!>::class
+    Yes3<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_GET_CLASS_WARNING!><Int, String><!>::class
 }
 
 /* GENERATED_FIR_TAGS: classReference, functionDeclaration, nullableType, typeAliasDeclaration,
