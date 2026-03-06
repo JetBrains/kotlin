@@ -43,28 +43,28 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
     override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(
             WasmKlibErrors.EXPORTING_JS_NAME_CLASH,
-            "JsExport exporting name ''{0}'' of ''{1}'' clashes with JsExport exporting name(s) {2}",
+            "JsExport exporting name ''{0}'' of ''{1}'' clashes with exporting name(s) of JsExport(s) {2}",
             CommonRenderers.STRING,
             CommonRenderers.STRING,
             KLIB_EXPORTS_LIST
         )
         map.put(
             WasmKlibErrors.EXPORTING_JS_NAME_WASM_EXPORT_CLASH,
-            "JsExport exporting name ''{0}'' of ''{1}'' clashes with WasmExport exporting name(s) {2}",
+            "JsExport exporting name ''{0}'' of ''{1}'' clashes with exporting name(s) of WasmExport(s) {2}",
             CommonRenderers.STRING,
             CommonRenderers.STRING,
             KLIB_EXPORTS_LIST
         )
         map.put(
             WasmKlibErrors.WASM_EXPORT_CLASH,
-            "WasmExport exporting name ''{0}'' of ''{1}'' clashes with WasmExport exporting name(s) {2}",
+            "WasmExport exporting name ''{0}'' of ''{1}'' clashes with exporting name(s) of WasmExport(s) {2}",
             CommonRenderers.STRING,
             CommonRenderers.STRING,
             KLIB_EXPORTS_LIST
         )
         map.put(
             WasmKlibErrors.WASM_EXPORT_EXPORTING_JS_NAME_CLASH,
-            "WasmExport exporting name ''{0}'' of ''{1}'' clashes with JsExport exporting name(s) {2}",
+            "WasmExport exporting name ''{0}'' of ''{1}'' clashes with exporting name(s) of JsExport(s) {2}",
             CommonRenderers.STRING,
             CommonRenderers.STRING,
             KLIB_EXPORTS_LIST
