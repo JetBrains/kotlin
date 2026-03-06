@@ -313,7 +313,7 @@ class ConstraintIncorporator(
         newConstraintType: KotlinTypeMarker,
         isSubtype: Boolean,
     ) {
-        if (targetVariable in newConstraintType.getNestedTypeVariables()) return
+        if (newConstraintType.containsNestedTypeVariable(targetVariable)) return
 
         val isUsefulForNullabilityConstraint =
             newConstraintType.isPotentialUsefulNullabilityConstraint(
@@ -378,9 +378,9 @@ class ConstraintIncorporator(
     }
 
     context(c: Context)
-    private fun KotlinTypeMarker.getNestedTypeVariables(): List<TypeVariableMarker> {
-        return getNestedArguments().mapNotNullTo(SmartList()) { typeArgument ->
-            typeArgument.getType()?.let { c.getTypeVariable(it.typeConstructor().unwrapStubTypeVariableConstructor()) }
+    private fun KotlinTypeMarker.containsNestedTypeVariable(targetVariable: TypeVariableMarker): Boolean {
+        return getNestedArguments().any { typeArgument ->
+            targetVariable == typeArgument.getType()?.let { c.getTypeVariable(it.typeConstructor().unwrapStubTypeVariableConstructor()) }
         }
     }
 
