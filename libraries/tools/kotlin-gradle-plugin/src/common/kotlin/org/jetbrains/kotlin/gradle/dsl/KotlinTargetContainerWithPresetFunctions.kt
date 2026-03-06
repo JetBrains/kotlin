@@ -173,29 +173,20 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 
     fun iosArm64(configure: Action<KotlinNativeTarget>) = iosArm64 { configure.execute(this) }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     fun iosX64(
         name: String = "iosX64",
         configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
     ): KotlinNativeTargetWithSimulatorTests
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
-    @Suppress("DEPRECATION")
     fun iosX64() = iosX64("iosX64") { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
-    @Suppress("DEPRECATION")
     fun iosX64(name: String) = iosX64(name) { }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
-    @Suppress("DEPRECATION")
     fun iosX64(
         name: String,
         configure: Action<KotlinNativeTargetWithSimulatorTests>
     ) = iosX64(name) { configure.execute(this) }
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
-    @Suppress("DEPRECATION")
     fun iosX64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = iosX64 { configure.execute(this) }
 
     fun iosSimulatorArm64(
@@ -574,7 +565,6 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
             configure
         )
 
-    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     override fun iosX64(
         name: String,
         configure: KotlinNativeTargetWithSimulatorTests.() -> Unit
