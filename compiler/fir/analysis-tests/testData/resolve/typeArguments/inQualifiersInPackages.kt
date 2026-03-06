@@ -1,6 +1,6 @@
 // ISSUE: KT-83652, KT-84154
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS
+// LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS, -ForbidUselessTypeArgumentsIn25
 
 // FILE: part1/part2/GenericJava.java
 
@@ -104,8 +104,8 @@ fun testJavaCallableReferences() {
 fun testJavaStatics() {
     part1<Int>.part2.GenericJava.S()
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.GenericJava<!>.S()
-    part1<Int>.part2.GenericJava<Int>.S()
-    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.GenericJava<Int><!>.S()
+    part1<Int>.part2.GenericJava<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.S()
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.GenericJava<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!><!>.S()
 
     part1<Int>.part2.NonGenericJava.S()
     <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>part1.part2<Int>.NonGenericJava<!>.S()

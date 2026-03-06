@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CompanionBlocksAndExtensions
+// LANGUAGE: +CompanionBlocksAndExtensions, +ForbidUselessTypeArgumentsIn25
 // COMPARE_WITH_LIGHT_TREE
 // FILE: C.kt
 class C {
@@ -34,10 +34,9 @@ fun test() {
     TA2.bar
     TA2.baz
 
-    // Illegal type arguments should be fixed by KT-84185
-    TA2<String>.foo()
-    TA2<String>.bar
-    TA2<String>.baz
+    TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.foo()
+    TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.bar
+    TA2<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.baz
 }
 
 // FILE: other.kt
