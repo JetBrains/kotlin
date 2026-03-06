@@ -212,3 +212,13 @@ fun CompilerConfiguration.checkForUnexpectedKlibLibraries(
         )
     }
 }
+
+fun CompilerConfiguration.prohibitExportKlibToOlderAbiVersionAtSecondStage() {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.ExportKlibToOlderAbiVersion)) {
+        report(
+            COMPILER_ARGUMENTS_ERROR,
+            "The language feature 'ExportKlibToOlderAbiVersion' is only intended for producing KLIBs " +
+                    "and cannot be used during the second stage of compilation (KLIB to executable/binary)."
+        )
+    }
+}

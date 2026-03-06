@@ -225,7 +225,10 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
 
         configuration.libraries += libraries
         configuration.friendLibraries += friendLibraries
-        arguments.includes?.let { configuration.includes = it }
+        arguments.includes?.let {
+            configuration.includes = it
+            configuration.prohibitExportKlibToOlderAbiVersionAtSecondStage()
+        }
         val commonSourcesArray = arguments.commonSources
         val commonSources = commonSourcesArray.toSet()
         val hmppCliModuleStructure = configuration.hmppModuleStructure

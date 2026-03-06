@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
+import org.jetbrains.kotlin.cli.common.prohibitExportKlibToOlderAbiVersionAtSecondStage
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
@@ -129,6 +130,8 @@ class KonanDriver(
             configuration.report(CompilerMessageSeverity.STRONG_WARNING,
                     "target ${config.target} is deprecated and will be removed soon. See: $DEPRECATION_LINK")
         }
+
+        configuration.prohibitExportKlibToOlderAbiVersionAtSecondStage()
 
         ensureModuleName(config)
 
