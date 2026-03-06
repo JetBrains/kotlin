@@ -1167,7 +1167,6 @@ org.jetbrains.kotlin.psi.KtTypeReference.nameForReceiverLabel()
 org.jetbrains.kotlin.psi.KtTypeReference.typeElement
 org.jetbrains.kotlin.psi.KtTypeReference:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtTypeReference:constructor(KotlinPlaceHolderStub<KtTypeReference>)
-org.jetbrains.kotlin.psi.KtUnaryExpression
 org.jetbrains.kotlin.psi.KtUnaryExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtUnaryExpression:getBaseExpression()
 org.jetbrains.kotlin.psi.KtUnaryExpression:getOperationToken()
