@@ -581,12 +581,15 @@ object NativeTestSupport {
 
         val mode = findPartialLinkageMode(enclosingTestClass)
             ?: enclosingTestClass.declaredClasses.firstNotNullOfOrNull { findPartialLinkageMode(it) }
-            ?: UsePartialLinkage.Mode.ENABLED_WITH_ERROR // The default mode.
+            ?: UsePartialLinkage.Mode.ERROR // The default mode for testing.
 
         val config = when (mode) {
-            UsePartialLinkage.Mode.DISABLED -> PartialLinkageConfig(PartialLinkageMode.DISABLE, PartialLinkageLogLevel.ERROR)
-            UsePartialLinkage.Mode.DEFAULT -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.DEFAULT)
-            UsePartialLinkage.Mode.ENABLED_WITH_ERROR -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR)
+            UsePartialLinkage.Mode.DISABLED -> PartialLinkageConfig(PartialLinkageMode.DISABLE, PartialLinkageLogLevel.SILENT)
+            UsePartialLinkage.Mode.DEFAULT -> PartialLinkageConfig.DEFAULT
+            UsePartialLinkage.Mode.SILENT -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.SILENT)
+            UsePartialLinkage.Mode.INFO -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.INFO)
+            UsePartialLinkage.Mode.WARNING -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING)
+            UsePartialLinkage.Mode.ERROR -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR)
         }
 
         return UsedPartialLinkageConfig(config)
