@@ -5,32 +5,36 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.cfa.util.followingCfgNodes
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
-import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
+import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableReference
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
@@ -38,16 +42,14 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -56,12 +58,12 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.CAST_ERROR
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.CAST_TARGET_WARNING
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_EXTENSION_PROPERTY_SHADOWED
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA_SCHEMA_DECLARATION_VISIBILITY
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.ERROR
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_EXTENSION_PROPERTY_SHADOWED
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.flatten
 import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
@@ -82,6 +84,10 @@ class ExpressionAnalysisAdditionalChecker(
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(DataSchemaDeclarationChecker)
         override val propertyCheckers: Set<FirPropertyChecker> = setOf(DataFramePropertyChecker)
+        override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf(
+            DataFrameControlFlowChecker,
+//            UnreachableCodeChecker, TODO, for testing
+        )
     }
 }
 
@@ -94,6 +100,7 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR by error1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val DATAFRAME_EXTENSION_PROPERTY_SHADOWED by warning1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val DATAFRAME_UNREACHABLE_CODE by warning2<KtElement, Set<KtSourceElement>, Set<KtSourceElement>>(SourceElementPositioningStrategies.UNREACHABLE_CODE)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = DataFrameDiagnosticMessages
 }
@@ -236,6 +243,108 @@ private data object DataFrameFunctionCallTransformationContextChecker : FirFunct
                     "DataFrame compiler plugin is not yet supported in property accessors bodies. Use property with initializer or a function instead"
                 )
             }
+        }
+    }
+}
+
+/**
+ * Reports [FirDataFrameErrors.DATAFRAME_UNREACHABLE_CODE] for all code
+ * flows following a return of `DataFrame<Nothing>`.
+ *
+ * This is experimental and will change.
+ *
+ * Code adapted from [org.jetbrains.kotlin.fir.analysis.checkers.extra.UnreachableCodeChecker].
+ */
+@OptIn(UnresolvedExpressionTypeAccess::class, CfgInternals::class)
+private data object DataFrameControlFlowChecker : FirControlFlowChecker(mppKind = MppCheckerKind.Common) {
+
+    class CfgDfNode(val node: CFGNode<*>, var isDeadByDf: Boolean = false)
+
+    fun killForDf(nodes: List<CFGNode<*>>): List<CfgDfNode> {
+        val nodesById = nodes.associate { it.id to CfgDfNode(it) }.toMutableMap()
+
+        fun CFGNode<*>.killRecursively() {
+            val dfNode = nodesById.getOrPut(this.id) { CfgDfNode(this) }
+            if (dfNode.isDeadByDf) return
+            dfNode.isDeadByDf = true
+            for (node in followingCfgNodes) {
+                node.killRecursively()
+            }
+        }
+        for (node in nodes) {
+            if (node !is FunctionCallExitNode) continue
+            val coneType = node.fir.coneTypeOrNull
+            if (coneType?.lookupTagIfAny?.name?.toString() != "DataFrame") continue
+            if ((coneType.typeArguments.single() as? ConeKotlinType)?.lookupTagIfAny?.name?.toString() != "Nothing") continue
+            node.killRecursively()
+        }
+        return nodesById.values.toList()
+    }
+
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun analyze(graph: ControlFlowGraph) {
+        val nodes = graph.allNodes()
+            .filterNot { it.isDead } // no need to report nodes that are already dead, UnreachableCodeChecker will do that already
+        val dfNodes = killForDf(nodes)
+        val (unreachableNodes, reachableNodes) = dfNodes
+            .filterNot { it.node.skipNode() }
+            .partition { it.isDeadByDf }
+        if (unreachableNodes.isEmpty()) return
+        val unreachableSources = unreachableNodes.mapNotNull { it.node.fir.source }.toSet()
+        val reachableSources = reachableNodes.mapNotNull { it.node.fir.source }.toSet()
+        val unreachableElements = unreachableNodes.map { it.node.fir }
+        val innerNodes = mutableSetOf<FirElement>()
+        unreachableElements.forEach { it.collectInnerNodes(innerNodes) }
+        unreachableElements.distinctBy { it.source }.forEach { element ->
+            if (element !in innerNodes && element.source != null) {
+                reporter.reportOn(element.source, FirDataFrameErrors.DATAFRAME_UNREACHABLE_CODE, reachableSources, unreachableSources)
+            }
+        }
+    }
+
+    private fun ControlFlowGraph.allNodes(acc: MutableList<CFGNode<*>> = mutableListOf()): List<CFGNode<*>> {
+        acc.addAll(this.nodes)
+        subGraphs.forEach { it.allNodes(acc) }
+        return acc
+    }
+
+    private val sourceKindsToSkip = setOf(
+        KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody,
+        KtFakeSourceElementKind.ImplicitReturn.FromLastStatement,
+        KtFakeSourceElementKind.DesugaredForLoop
+    )
+
+    private fun CFGNode<*>.skipNode(): Boolean {
+        val skipType = this is ExitNodeMarker ||
+                this is EnterNodeMarker ||
+                this is StubNode ||
+                this is SplitPostponedLambdasNode ||
+                this is PostponedLambdaExitNode ||
+                this is MergePostponedLambdaExitsNode ||
+                this is FunctionCallExitNode ||
+                this is BooleanOperatorExitLeftOperandNode ||
+                this is BooleanOperatorEnterRightOperandNode ||
+                this is WhenSyntheticElseBranchNode ||
+                this is WhenBranchResultEnterNode ||
+                this is WhenBranchResultExitNode ||
+                this is ExitSafeCallNode ||
+                this is ElvisLhsExitNode ||
+                this is ElvisLhsIsNotNullNode
+        val allowType = this is LoopEnterNode ||
+                this is LoopBlockEnterNode ||
+                this is TryExpressionEnterNode
+        return !allowType && (skipType || sourceKindsToSkip.contains(this.fir.source?.kind))
+    }
+
+
+    private fun FirElement.collectInnerNodes(nodes: MutableSet<FirElement>) {
+        acceptChildren(CollectNodesVisitor(nodes))
+    }
+
+    private class CollectNodesVisitor(private val nodes: MutableSet<FirElement>) : FirVisitorVoid() {
+        override fun visitElement(element: FirElement) {
+            nodes.add(element)
+            element.acceptChildren(this)
         }
     }
 }
