@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChe
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.extra.UnreachableCodeChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -86,7 +87,7 @@ class ExpressionAnalysisAdditionalChecker(
         override val propertyCheckers: Set<FirPropertyChecker> = setOf(DataFramePropertyChecker)
         override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf(
             DataFrameControlFlowChecker,
-//            UnreachableCodeChecker, TODO, for testing
+//            UnreachableCodeChecker, // TODO, for testing
         )
     }
 }
@@ -284,10 +285,9 @@ private data object DataFrameControlFlowChecker : FirControlFlowChecker(mppKind 
     context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun analyze(graph: ControlFlowGraph) {
         val nodes = graph.allNodes()
-            .filterNot { it.isDead } // no need to report nodes that are already dead, UnreachableCodeChecker will do that already
         val dfNodes = killForDf(nodes)
         val (unreachableNodes, reachableNodes) = dfNodes
-            .filterNot { it.node.skipNode() }
+            .filterNot { it.node.skipNode() || it.node.isDead } // no need to report nodes that are already dead, UnreachableCodeChecker will do that already
             .partition { it.isDeadByDf }
         if (unreachableNodes.isEmpty()) return
         val unreachableSources = unreachableNodes.mapNotNull { it.node.fir.source }.toSet()
