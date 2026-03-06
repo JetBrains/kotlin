@@ -25,6 +25,7 @@ object WasmKlibExportsChecker {
                     reporter.at(declaration, context).report(
                         exportedDeclaration.exportKind.clashError,
                         exportedDeclaration.exportingName,
+                        exportedDeclaration.render(),
                         sameExportType
                     )
                 }
@@ -33,6 +34,7 @@ object WasmKlibExportsChecker {
                     reporter.at(declaration, context).report(
                         exportedDeclaration.exportKind.crossClashError,
                         exportedDeclaration.exportingName,
+                        exportedDeclaration.render(),
                         differentExportType
                     )
                 }

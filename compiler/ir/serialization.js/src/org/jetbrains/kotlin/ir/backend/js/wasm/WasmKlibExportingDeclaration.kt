@@ -31,7 +31,7 @@ class WasmKlibExportingDeclaration(
 
     val containingPackageFqName = packageFqName.takeIf { it != "<root>" } ?: ""
     override val fqName = "$containingPackageFqName${".".takeIf { containingPackageFqName.isNotEmpty() } ?: ""}$exportingName"
-    override fun render() = "exporting name '$exportingName' from file '$containingFile'"
+    override fun render() = "'$fqName' from file '$containingFile'"
 
     companion object {
         fun collectDeclarations(
