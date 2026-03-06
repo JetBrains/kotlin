@@ -44,7 +44,7 @@ KtNameReferenceExpression(21,24): 'Int'
   null
 
 KtBinaryExpression(27,35): 'this + a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -116,7 +116,10 @@ KtConstantExpression(234,235): '1'
   null
 
 KtBinaryExpression(240,245): 'x = 2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var x: kotlin.Int
+    ]
 
 KtNameReferenceExpression(240,241): 'x'
   null

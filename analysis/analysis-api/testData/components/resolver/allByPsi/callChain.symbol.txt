@@ -44,7 +44,10 @@ KtNameReferenceExpression(21,24): 'Int'
   null
 
 KtBinaryExpression(27,35): 'this + a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtThisExpression(27,31): 'this'
   null

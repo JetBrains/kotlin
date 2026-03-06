@@ -1115,7 +1115,7 @@ KtBlockExpression(920,940): 'i == InheritorObject'
   NO_CANDIDATES
 
 KtBinaryExpression(920,940): 'i == InheritorObject'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1324,7 +1324,7 @@ KtBlockExpression(998,1014): 'i == propMyClass'
   NO_CANDIDATES
 
 KtBinaryExpression(998,1014): 'i == propMyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1533,7 +1533,7 @@ KtBlockExpression(1072,1095): 'i == propInheritorClass'
   NO_CANDIDATES
 
 KtBinaryExpression(1072,1095): 'i == propInheritorClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1742,7 +1742,7 @@ KtBlockExpression(1153,1177): 'i == propInheritorObject'
   NO_CANDIDATES
 
 KtBinaryExpression(1153,1177): 'i == propInheritorObject'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1951,7 +1951,7 @@ KtBlockExpression(1236,1245): 'i == prop'
   NO_CANDIDATES
 
 KtBinaryExpression(1236,1245): 'i == prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2160,7 +2160,7 @@ KtBlockExpression(1303,1317): 'i == superProp'
   NO_CANDIDATES
 
 KtBinaryExpression(1303,1317): 'i == superProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2369,7 +2369,7 @@ KtBlockExpression(1375,1389): 'i == constProp'
   NO_CANDIDATES
 
 KtBinaryExpression(1375,1389): 'i == constProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2578,7 +2578,7 @@ KtBlockExpression(1447,1460): 'i == lazyProp'
   NO_CANDIDATES
 
 KtBinaryExpression(1447,1460): 'i == lazyProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2787,7 +2787,7 @@ KtBlockExpression(1519,1536): 'i == NestedObject'
   NO_CANDIDATES
 
 KtBinaryExpression(1519,1536): 'i == NestedObject'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2996,7 +2996,7 @@ KtBlockExpression(1594,1609): 'i == lambdaProp'
   NO_CANDIDATES
 
 KtBinaryExpression(1594,1609): 'i == lambdaProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3205,7 +3205,7 @@ KtBlockExpression(1668,1679): 'i == func()'
   NO_CANDIDATES
 
 KtBinaryExpression(1668,1679): 'i == func()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3420,7 +3420,7 @@ KtBlockExpression(1737,1753): 'i == superFunc()'
   NO_CANDIDATES
 
 KtBinaryExpression(1737,1753): 'i == superFunc()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3635,7 +3635,7 @@ KtBlockExpression(1811,1832): 'i == InheritorClass()'
   NO_CANDIDATES
 
 KtBinaryExpression(1811,1832): 'i == InheritorClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

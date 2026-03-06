@@ -383,7 +383,10 @@ KtNameReferenceExpression(890,893): 'doo'
   null
 
 KtBinaryExpression(899,910): 'doo = "str"'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var doo: kotlin.String
+    ]
 
 KtNameReferenceExpression(899,902): 'doo'
   null

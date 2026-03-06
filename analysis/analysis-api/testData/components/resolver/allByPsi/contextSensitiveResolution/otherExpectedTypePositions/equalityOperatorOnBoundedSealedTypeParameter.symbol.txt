@@ -185,7 +185,10 @@ KtContainerNode(285,291): 'a == X'
   null
 
 KtBinaryExpression(285,291): 'a == X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(285,286): 'a'
   null
@@ -209,7 +212,10 @@ KtContainerNode(304,310): 'a == Y'
   null
 
 KtBinaryExpression(304,310): 'a == Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(304,305): 'a'
   null
@@ -233,7 +239,10 @@ KtContainerNode(323,329): 'a != X'
   null
 
 KtBinaryExpression(323,329): 'a != X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(323,324): 'a'
   null
@@ -257,7 +266,10 @@ KtContainerNode(342,348): 'a != Y'
   null
 
 KtBinaryExpression(342,348): 'a != Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(342,343): 'a'
   null
@@ -377,7 +389,10 @@ KtContainerNode(441,447): 'a == L'
   null
 
 KtBinaryExpression(441,447): 'a == L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(441,442): 'a'
   null
@@ -476,7 +491,10 @@ KtContainerNode(685,691): 'X == a'
   null
 
 KtBinaryExpression(685,691): 'X == a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(685,686): 'X'
   null
@@ -500,7 +518,10 @@ KtContainerNode(704,710): 'L == a'
   null
 
 KtBinaryExpression(704,710): 'L == a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X.equals(<dispatch receiver>: MySealed.X, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(704,705): 'L'
   null
@@ -524,7 +545,10 @@ KtContainerNode(913,923): 'a == id(X)'
   null
 
 KtBinaryExpression(913,923): 'a == id(X)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(913,914): 'a'
   null
@@ -563,7 +587,10 @@ KtContainerNode(936,946): 'a == id(L)'
   null
 
 KtBinaryExpression(936,946): 'a == id(L)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(936,937): 'a'
   null
@@ -605,7 +632,10 @@ KtWhenConditionWithExpression(971,977): 'a == X'
   null
 
 KtBinaryExpression(971,977): 'a == X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(971,972): 'a'
   null
@@ -626,7 +656,10 @@ KtWhenConditionWithExpression(992,998): 'a != Y'
   null
 
 KtBinaryExpression(992,998): 'a != Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(992,993): 'a'
   null
@@ -671,7 +704,10 @@ KtWhenConditionWithExpression(1053,1059): 'a == L'
   null
 
 KtBinaryExpression(1053,1059): 'a == L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1053,1054): 'a'
   null

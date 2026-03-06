@@ -325,7 +325,7 @@ KtBlockExpression(325,352): '{'
   NO_CANDIDATES
 
 KtBinaryExpression(331,350): 'value == EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -474,7 +474,7 @@ KtBlockExpression(393,420): '{'
   NO_CANDIDATES
 
 KtBinaryExpression(399,418): 'value == EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

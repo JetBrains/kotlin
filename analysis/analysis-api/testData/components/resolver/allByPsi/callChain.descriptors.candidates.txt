@@ -44,7 +44,7 @@ KtNameReferenceExpression(21,24): 'Int'
   NO_CANDIDATES
 
 KtBinaryExpression(27,35): 'this + a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

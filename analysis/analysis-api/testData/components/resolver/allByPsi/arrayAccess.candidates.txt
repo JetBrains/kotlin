@@ -44,7 +44,7 @@ KtBlockExpression(34,193): '{'
   NO_CANDIDATES
 
 KtBinaryExpression(40,49): 'list += 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -82,7 +82,7 @@ KtBinaryExpression(40,49): 'list += 1'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -121,7 +121,7 @@ KtBinaryExpression(40,49): 'list += 1'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Array<Int>' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -160,7 +160,7 @@ KtBinaryExpression(40,49): 'list += 1'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Iterable<Int>' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -597,7 +597,7 @@ KtNameReferenceExpression(115,128): 'implicitIndex'
     isInBestCandidates = true
 
 KtBinaryExpression(134,172): '(@Suppress("SOME_ERROR") list[1]) += 2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -990,7 +990,7 @@ KtConstantExpression(171,172): '2'
   NO_CANDIDATES
 
 KtBinaryExpression(177,191): '(list[2]) += 3'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN

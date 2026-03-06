@@ -44,7 +44,10 @@ KtBlockExpression(34,193): '{'
   null
 
 KtBinaryExpression(40,49): 'list += 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(40,44): 'list'
   null
@@ -104,7 +107,10 @@ KtNameReferenceExpression(115,128): 'implicitIndex'
   null
 
 KtBinaryExpression(134,172): '(@Suppress("SOME_ERROR") list[1]) += 2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtParenthesizedExpression(134,167): '(@Suppress("SOME_ERROR") list[1])'
   null
@@ -164,7 +170,10 @@ KtConstantExpression(171,172): '2'
   null
 
 KtBinaryExpression(177,191): '(list[2]) += 3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtParenthesizedExpression(177,186): '(list[2])'
   null

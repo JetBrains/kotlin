@@ -442,7 +442,7 @@ KtValueArgumentList(241,243): '()'
   NO_CANDIDATES
 
 KtBinaryExpression(248,252): 'a..b'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -552,7 +552,7 @@ KtNameReferenceExpression(251,252): 'b'
     isInBestCandidates = true
 
 KtBinaryExpression(257,262): 'a..<b'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

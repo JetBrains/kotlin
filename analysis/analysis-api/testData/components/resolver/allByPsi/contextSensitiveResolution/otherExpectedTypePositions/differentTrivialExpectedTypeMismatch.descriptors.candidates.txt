@@ -290,7 +290,7 @@ KtConstantExpression(489,493): 'null'
   NO_CANDIDATES
 
 KtBinaryExpression(498,503): 'm = Y'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -350,7 +350,7 @@ KtNameReferenceExpression(502,503): 'Y'
   NO_CANDIDATES
 
 KtBinaryExpression(508,513): 'm = X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

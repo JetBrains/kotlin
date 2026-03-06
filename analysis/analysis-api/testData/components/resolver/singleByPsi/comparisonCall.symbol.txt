@@ -1,2 +1,5 @@
 KtBinaryExpression(31,36): 'i < j'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]

@@ -740,7 +740,10 @@ KtNameReferenceExpression(909,910): 'a'
   null
 
 KtBinaryExpression(919,931): 'thisProp + 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /plus(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(919,927): 'thisProp'
   null
@@ -752,7 +755,10 @@ KtConstantExpression(930,931): '1'
   null
 
 KtBinaryExpression(940,945): 'a + 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /plus(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(940,941): 'a'
   null
@@ -884,7 +890,10 @@ KtValueArgumentList(1052,1054): '()'
   null
 
 KtBinaryExpression(1063,1076): 'thisProp += 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /plusAssign(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1063,1071): 'thisProp'
   null
@@ -896,7 +905,10 @@ KtConstantExpression(1075,1076): '1'
   null
 
 KtBinaryExpression(1085,1091): 'a += 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /plusAssign(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1085,1086): 'a'
   null
@@ -921,7 +933,10 @@ KtOperationReferenceExpression(1108,1110): '++'
   null
 
 KtBinaryExpression(1119,1126): 'a = a++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtNameReferenceExpression(1119,1120): 'a'
   null
@@ -943,7 +958,10 @@ KtOperationReferenceExpression(1124,1126): '++'
   null
 
 KtBinaryExpression(1136,1141): 'b + 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.plus(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1136,1137): 'b'
   null
@@ -1027,7 +1045,10 @@ KtValueArgumentList(1194,1196): '()'
   null
 
 KtBinaryExpression(1205,1211): 'b += 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.plusAssign(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1205,1206): 'b'
   null
@@ -1103,7 +1124,10 @@ KtNameReferenceExpression(1308,1309): 'a'
   null
 
 KtBinaryExpression(1314,1319): 'a + 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /plus(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1314,1315): 'a'
   null
@@ -1175,7 +1199,10 @@ KtValueArgumentList(1349,1351): '()'
   null
 
 KtBinaryExpression(1356,1362): 'a += 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /plusAssign(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1356,1357): 'a'
   null
@@ -1200,7 +1227,10 @@ KtOperationReferenceExpression(1368,1370): '++'
   null
 
 KtBinaryExpression(1376,1381): 'b + 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.plus(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1376,1377): 'b'
   null
@@ -1284,7 +1314,10 @@ KtValueArgumentList(1418,1420): '()'
   null
 
 KtBinaryExpression(1425,1431): 'b += 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.plusAssign(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1425,1426): 'b'
   null

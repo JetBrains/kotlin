@@ -165,7 +165,10 @@ KtBlockExpression(325,352): '{'
   null
 
 KtBinaryExpression(331,350): 'value == EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(331,336): 'value'
   null
@@ -213,7 +216,10 @@ KtBlockExpression(393,420): '{'
   null
 
 KtBinaryExpression(399,418): 'value == EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(399,404): 'value'
   null

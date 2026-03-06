@@ -1,5 +1,5 @@
 KtBinaryExpression(238,262): 'variable[0] += MyClass()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN

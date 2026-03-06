@@ -186,7 +186,7 @@ KtContainerNode(191,197): 'a == X'
   NO_CANDIDATES
 
 KtBinaryExpression(191,197): 'a == X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -293,7 +293,7 @@ KtContainerNode(210,216): 'a != X'
   NO_CANDIDATES
 
 KtBinaryExpression(210,216): 'a != X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -478,7 +478,7 @@ KtContainerNode(269,275): 'a == L'
   NO_CANDIDATES
 
 KtBinaryExpression(269,275): 'a == L'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -600,7 +600,7 @@ KtContainerNode(459,465): 'X == a'
   NO_CANDIDATES
 
 KtBinaryExpression(459,465): 'X == a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -620,7 +620,7 @@ KtBinaryExpression(459,465): 'X == a'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -715,7 +715,7 @@ KtContainerNode(478,484): 'L == a'
   NO_CANDIDATES
 
 KtBinaryExpression(478,484): 'L == a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -837,7 +837,7 @@ KtContainerNode(687,697): 'a == id(X)'
   NO_CANDIDATES
 
 KtBinaryExpression(687,697): 'a == id(X)'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1026,7 +1026,7 @@ KtContainerNode(710,720): 'a == id(L)'
   NO_CANDIDATES
 
 KtBinaryExpression(710,720): 'a == id(L)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1229,7 +1229,7 @@ KtWhenConditionWithExpression(745,751): 'a == X'
   NO_CANDIDATES
 
 KtBinaryExpression(745,751): 'a == X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1333,7 +1333,7 @@ KtWhenConditionWithExpression(766,772): 'a != Y'
   NO_CANDIDATES
 
 KtBinaryExpression(766,772): 'a != Y'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1509,7 +1509,7 @@ KtWhenConditionWithExpression(831,837): 'a == L'
   NO_CANDIDATES
 
 KtBinaryExpression(831,837): 'a == L'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

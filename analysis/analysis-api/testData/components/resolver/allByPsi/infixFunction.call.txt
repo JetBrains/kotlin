@@ -47,7 +47,7 @@ KtNameReferenceExpression(31,34): 'Int'
   null
 
 KtBinaryExpression(37,45): 'this - i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -166,7 +166,7 @@ KtProperty(79,117): 'val newParameter = parameter myMinus 5'
   null
 
 KtBinaryExpression(98,117): 'parameter myMinus 5'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -261,7 +261,7 @@ KtProperty(122,171): 'val oneMoreParameter = newParameter + 1 myMinus 4'
   null
 
 KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -297,7 +297,7 @@ KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
       }
 
 KtBinaryExpression(145,161): 'newParameter + 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

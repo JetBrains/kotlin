@@ -1,5 +1,5 @@
 KtBinaryExpression(73,79): 'l += 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

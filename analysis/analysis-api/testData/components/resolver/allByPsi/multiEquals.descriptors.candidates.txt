@@ -353,7 +353,7 @@ KtNameReferenceExpression(469,476): 'Boolean'
   NO_CANDIDATES
 
 KtBinaryExpression(479,497): 'oldItem == newItem'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -670,7 +670,7 @@ KtNameReferenceExpression(696,703): 'Boolean'
   NO_CANDIDATES
 
 KtBinaryExpression(706,724): 'oldItem == newItem'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -939,7 +939,7 @@ KtNameReferenceExpression(865,872): 'Boolean'
   NO_CANDIDATES
 
 KtBinaryExpression(875,893): 'oldItem == newItem'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1082,7 +1082,7 @@ KtBlockExpression(950,1031): '{'
   NO_CANDIDATES
 
 KtBinaryExpression(956,962): 'i == m'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1192,7 +1192,7 @@ KtNameReferenceExpression(961,962): 'm'
     isInBestCandidates = true
 
 KtBinaryExpression(967,973): 'i != m'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1302,7 +1302,7 @@ KtNameReferenceExpression(972,973): 'm'
     isInBestCandidates = true
 
 KtBinaryExpression(979,985): 'm == i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1412,7 +1412,7 @@ KtNameReferenceExpression(984,985): 'i'
     isInBestCandidates = true
 
 KtBinaryExpression(990,996): 'm != i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

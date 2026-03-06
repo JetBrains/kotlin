@@ -514,7 +514,7 @@ KtContainerNode(425,443): '1 == "".hashCode()'
   null
 
 KtBinaryExpression(425,443): '1 == "".hashCode()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

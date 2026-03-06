@@ -140,7 +140,10 @@ KtBlockExpression(333,403): '{'
   null
 
 KtBinaryExpression(339,353): 'i + EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(339,340): 'i'
   null
@@ -152,7 +155,10 @@ KtNameReferenceExpression(343,353): 'EnumValue1'
   null
 
 KtBinaryExpression(358,377): 'i + InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(358,359): 'i'
   null
@@ -164,7 +170,10 @@ KtNameReferenceExpression(362,377): 'InheritorObject'
   null
 
 KtBinaryExpression(382,401): 'i - InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder.minus(<dispatch receiver>: OperatorHolder, arg: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(382,383): 'i'
   null

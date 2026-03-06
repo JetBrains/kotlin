@@ -152,7 +152,10 @@ KtWhenConditionWithExpression(302,312): 's == FIRST'
   null
 
 KtBinaryExpression(302,312): 's == FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(302,303): 's'
   null
@@ -173,7 +176,10 @@ KtWhenConditionWithExpression(326,337): 's == SECOND'
   null
 
 KtBinaryExpression(326,337): 's == SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(326,327): 's'
   null
@@ -194,7 +200,10 @@ KtWhenConditionWithExpression(351,361): 's == THIRD'
   null
 
 KtBinaryExpression(351,361): 's == THIRD'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(351,352): 's'
   null

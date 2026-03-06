@@ -168,7 +168,10 @@ KtValueArgument(165,177): '0 + constant'
   null
 
 KtBinaryExpression(165,177): '0 + constant'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(165,166): '0'
   null
@@ -223,7 +226,10 @@ KtValueArgument(190,202): '1 + constant'
   null
 
 KtBinaryExpression(190,202): '1 + constant'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(190,191): '1'
   null
@@ -278,7 +284,10 @@ KtValueArgument(215,227): '2 + constant'
   null
 
 KtBinaryExpression(215,227): '2 + constant'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(215,216): '2'
   null

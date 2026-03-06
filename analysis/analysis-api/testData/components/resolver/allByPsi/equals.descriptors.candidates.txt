@@ -572,7 +572,7 @@ KtNameReferenceExpression(311,313): 'm2'
     isInBestCandidates = true
 
 KtBinaryExpression(318,326): 'm1 == m2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -682,7 +682,7 @@ KtNameReferenceExpression(324,326): 'm2'
     isInBestCandidates = true
 
 KtBinaryExpression(331,339): 'm1 != m2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1029,7 +1029,7 @@ KtNameReferenceExpression(384,386): 'm1'
     isInBestCandidates = true
 
 KtBinaryExpression(391,399): 'm2 == m1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1139,7 +1139,7 @@ KtNameReferenceExpression(397,399): 'm1'
     isInBestCandidates = true
 
 KtBinaryExpression(404,412): 'm2 != m1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1605,7 +1605,7 @@ KtNameReferenceExpression(518,525): 'another'
     isInBestCandidates = true
 
 KtBinaryExpression(530,550): 'another == Another()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1753,7 +1753,7 @@ KtValueArgumentList(548,550): '()'
   NO_CANDIDATES
 
 KtBinaryExpression(555,575): 'another != Another()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2294,7 +2294,7 @@ KtNameReferenceExpression(697,702): 'child'
     isInBestCandidates = true
 
 KtBinaryExpression(708,724): 'child == myClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2623,7 +2623,7 @@ KtNameReferenceExpression(742,749): 'myClass'
     isInBestCandidates = true
 
 KtBinaryExpression(755,771): 'myClass != child'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2994,7 +2994,7 @@ KtNameReferenceExpression(792,797): 'child'
     isInBestCandidates = true
 
 KtBinaryExpression(804,820): 'another == child'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3291,7 +3291,7 @@ KtNameReferenceExpression(840,845): 'child'
     isInBestCandidates = true
 
 KtBinaryExpression(851,867): 'child == another'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3588,7 +3588,7 @@ KtNameReferenceExpression(885,892): 'another'
     isInBestCandidates = true
 
 KtBinaryExpression(899,917): 'another == myClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3951,7 +3951,7 @@ KtNameReferenceExpression(937,944): 'myClass'
     isInBestCandidates = true
 
 KtBinaryExpression(950,968): 'myClass != another'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

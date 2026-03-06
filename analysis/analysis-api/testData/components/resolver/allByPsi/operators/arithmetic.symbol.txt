@@ -233,7 +233,10 @@ KtValueArgumentList(265,267): '()'
   null
 
 KtBinaryExpression(272,277): 'a + b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.plus(<dispatch receiver>: A, other: A): A
+    ]
 
 KtNameReferenceExpression(272,273): 'a'
   null
@@ -245,7 +248,10 @@ KtNameReferenceExpression(276,277): 'b'
   null
 
 KtBinaryExpression(282,287): 'a - b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.minus(<dispatch receiver>: A, other: A): A
+    ]
 
 KtNameReferenceExpression(282,283): 'a'
   null
@@ -257,7 +263,10 @@ KtNameReferenceExpression(286,287): 'b'
   null
 
 KtBinaryExpression(292,297): 'a * b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.times(<dispatch receiver>: A, other: A): A
+    ]
 
 KtNameReferenceExpression(292,293): 'a'
   null
@@ -269,7 +278,10 @@ KtNameReferenceExpression(296,297): 'b'
   null
 
 KtBinaryExpression(302,307): 'a / b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.div(<dispatch receiver>: A, other: A): A
+    ]
 
 KtNameReferenceExpression(302,303): 'a'
   null
@@ -281,7 +293,10 @@ KtNameReferenceExpression(306,307): 'b'
   null
 
 KtBinaryExpression(312,317): 'a % b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.rem(<dispatch receiver>: A, other: A): A
+    ]
 
 KtNameReferenceExpression(312,313): 'a'
   null

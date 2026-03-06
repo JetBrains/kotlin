@@ -92,7 +92,10 @@ KtReturnExpression(250,263): 'return x == A'
     ]
 
 KtBinaryExpression(257,263): 'x == A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(257,258): 'x'
   null
@@ -140,7 +143,10 @@ KtReturnExpression(319,339): 'return x == MyEnum.A'
     ]
 
 KtBinaryExpression(326,339): 'x == MyEnum.A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(326,327): 'x'
   null
@@ -197,7 +203,10 @@ KtReturnExpression(400,423): 'return x == Companion.A'
     ]
 
 KtBinaryExpression(407,423): 'x == Companion.A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(407,408): 'x'
   null

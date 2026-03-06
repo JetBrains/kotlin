@@ -563,7 +563,7 @@ KtContainerNode(439,445): 'i == 0'
   NO_CANDIDATES
 
 KtBinaryExpression(439,445): 'i == 0'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -691,7 +691,7 @@ KtContainerNode(466,472): 'i == 1'
   NO_CANDIDATES
 
 KtBinaryExpression(466,472): 'i == 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1350,7 +1350,7 @@ KtContainerNode(856,862): 'i == 0'
   NO_CANDIDATES
 
 KtBinaryExpression(856,862): 'i == 0'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1478,7 +1478,7 @@ KtContainerNode(883,889): 'i == 1'
   NO_CANDIDATES
 
 KtBinaryExpression(883,889): 'i == 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2505,7 +2505,7 @@ KtContainerNode(1500,1506): 'i == 0'
   NO_CANDIDATES
 
 KtBinaryExpression(1500,1506): 'i == 0'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2633,7 +2633,7 @@ KtContainerNode(1527,1533): 'i == 1'
   NO_CANDIDATES
 
 KtBinaryExpression(1527,1533): 'i == 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2893,7 +2893,7 @@ KtContainerNode(1615,1621): 'i == 0'
   NO_CANDIDATES
 
 KtBinaryExpression(1615,1621): 'i == 0'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3021,7 +3021,7 @@ KtContainerNode(1642,1648): 'i == 1'
   NO_CANDIDATES
 
 KtBinaryExpression(1642,1648): 'i == 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

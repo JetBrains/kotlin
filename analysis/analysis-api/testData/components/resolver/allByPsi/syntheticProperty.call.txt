@@ -167,7 +167,7 @@ KtNameReferenceExpression(94,103): 'something'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(109,132): 'javaClass.something = 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -271,7 +271,7 @@ KtConstantExpression(131,132): '1'
   null
 
 KtBinaryExpression(137,161): 'javaClass.something += 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -1045,7 +1045,7 @@ KtOperationReferenceExpression(246,248): '++'
         typeArgumentsMapping = {}
 
 KtBinaryExpression(253,268): '(something) = 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -1171,7 +1171,7 @@ KtConstantExpression(267,268): '1'
   null
 
 KtBinaryExpression(273,298): '(javaClass.something) = 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

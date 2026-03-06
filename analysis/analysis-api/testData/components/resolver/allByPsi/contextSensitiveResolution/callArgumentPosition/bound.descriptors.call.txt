@@ -316,7 +316,7 @@ KtBlockExpression(325,352): '{'
   null
 
 KtBinaryExpression(331,350): 'value == EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -446,7 +446,7 @@ KtBlockExpression(393,420): '{'
   null
 
 KtBinaryExpression(399,418): 'value == EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

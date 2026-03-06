@@ -127,7 +127,10 @@ KtContainerNode(125,129): '0..1'
   null
 
 KtBinaryExpression(125,129): '0..1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+    ]
 
 KtConstantExpression(125,126): '0'
   null

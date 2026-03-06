@@ -206,7 +206,7 @@ KtConstantExpression(234,235): '1'
   NO_CANDIDATES
 
 KtBinaryExpression(240,245): 'x = 2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

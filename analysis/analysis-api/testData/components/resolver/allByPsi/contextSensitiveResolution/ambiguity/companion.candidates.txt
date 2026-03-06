@@ -116,7 +116,7 @@ KtReturnExpression(250,263): 'return x == A'
   NO_CANDIDATES
 
 KtBinaryExpression(257,263): 'x == A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -261,7 +261,7 @@ KtReturnExpression(319,339): 'return x == MyEnum.A'
   NO_CANDIDATES
 
 KtBinaryExpression(326,339): 'x == MyEnum.A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -447,7 +447,7 @@ KtReturnExpression(400,423): 'return x == Companion.A'
   NO_CANDIDATES
 
 KtBinaryExpression(407,423): 'x == Companion.A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

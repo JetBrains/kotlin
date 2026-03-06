@@ -360,7 +360,7 @@ KtNameReferenceExpression(534,541): 'Option1'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(546,557): 'm = Option1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -434,7 +434,7 @@ KtNameReferenceExpression(550,557): 'Option1'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(562,577): 'm = OptionAlias'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -505,7 +505,7 @@ KtNameReferenceExpression(566,577): 'OptionAlias'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(582,596): 'm = stringProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

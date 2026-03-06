@@ -328,7 +328,7 @@ KtValueArgument(231,240): '0 + outer'
   NO_CANDIDATES
 
 KtBinaryExpression(231,240): '0 + outer'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -365,7 +365,7 @@ KtBinaryExpression(231,240): '0 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -402,7 +402,7 @@ KtBinaryExpression(231,240): '0 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -439,7 +439,7 @@ KtBinaryExpression(231,240): '0 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -475,7 +475,7 @@ KtBinaryExpression(231,240): '0 + outer'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -512,7 +512,7 @@ KtBinaryExpression(231,240): '0 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -894,7 +894,7 @@ KtValueArgument(253,262): '1 + outer'
   NO_CANDIDATES
 
 KtBinaryExpression(253,262): '1 + outer'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -931,7 +931,7 @@ KtBinaryExpression(253,262): '1 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -968,7 +968,7 @@ KtBinaryExpression(253,262): '1 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1005,7 +1005,7 @@ KtBinaryExpression(253,262): '1 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1041,7 +1041,7 @@ KtBinaryExpression(253,262): '1 + outer'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1078,7 +1078,7 @@ KtBinaryExpression(253,262): '1 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1460,7 +1460,7 @@ KtValueArgument(275,284): '2 + outer'
   NO_CANDIDATES
 
 KtBinaryExpression(275,284): '2 + outer'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1497,7 +1497,7 @@ KtBinaryExpression(275,284): '2 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1534,7 +1534,7 @@ KtBinaryExpression(275,284): '2 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1571,7 +1571,7 @@ KtBinaryExpression(275,284): '2 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1607,7 +1607,7 @@ KtBinaryExpression(275,284): '2 + outer'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1644,7 +1644,7 @@ KtBinaryExpression(275,284): '2 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2042,7 +2042,7 @@ KtValueArgument(316,325): '4 + outer'
   NO_CANDIDATES
 
 KtBinaryExpression(316,325): '4 + outer'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2079,7 +2079,7 @@ KtBinaryExpression(316,325): '4 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2116,7 +2116,7 @@ KtBinaryExpression(316,325): '4 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2153,7 +2153,7 @@ KtBinaryExpression(316,325): '4 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2189,7 +2189,7 @@ KtBinaryExpression(316,325): '4 + outer'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2226,7 +2226,7 @@ KtBinaryExpression(316,325): '4 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2608,7 +2608,7 @@ KtValueArgument(340,349): '5 + outer'
   NO_CANDIDATES
 
 KtBinaryExpression(340,349): '5 + outer'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2645,7 +2645,7 @@ KtBinaryExpression(340,349): '5 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2682,7 +2682,7 @@ KtBinaryExpression(340,349): '5 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2719,7 +2719,7 @@ KtBinaryExpression(340,349): '5 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2755,7 +2755,7 @@ KtBinaryExpression(340,349): '5 + outer'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2792,7 +2792,7 @@ KtBinaryExpression(340,349): '5 + outer'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3202,7 +3202,7 @@ KtValueArgument(406,415): '6 + inner'
   NO_CANDIDATES
 
 KtBinaryExpression(406,415): '6 + inner'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3239,7 +3239,7 @@ KtBinaryExpression(406,415): '6 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3276,7 +3276,7 @@ KtBinaryExpression(406,415): '6 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3313,7 +3313,7 @@ KtBinaryExpression(406,415): '6 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3350,7 +3350,7 @@ KtBinaryExpression(406,415): '6 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3387,7 +3387,7 @@ KtBinaryExpression(406,415): '6 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3424,7 +3424,7 @@ KtBinaryExpression(406,415): '6 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3462,7 +3462,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun BigDecimal.plus(other: BigDecimal): BigDecimal>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3500,7 +3500,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun BigInteger.plus(other: BigInteger): BigInteger>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3538,7 +3538,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Array<T>.plus(element: T): Array<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3576,7 +3576,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Array<T>.plus(elements: Array<out T>): Array<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3614,7 +3614,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Array<T>.plus(elements: Collection<T>): Array<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3652,7 +3652,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun BooleanArray.plus(element: Boolean): BooleanArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3690,7 +3690,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun BooleanArray.plus(elements: BooleanArray): BooleanArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3728,7 +3728,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3766,7 +3766,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun ByteArray.plus(element: Byte): ByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3804,7 +3804,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun ByteArray.plus(elements: ByteArray): ByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3842,7 +3842,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun ByteArray.plus(elements: Collection<Byte>): ByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3880,7 +3880,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun Char.plus(other: String): String>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3918,7 +3918,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun CharArray.plus(element: Char): CharArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3956,7 +3956,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun CharArray.plus(elements: CharArray): CharArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3994,7 +3994,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun CharArray.plus(elements: Collection<Char>): CharArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4032,7 +4032,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun DoubleArray.plus(element: Double): DoubleArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4070,7 +4070,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun DoubleArray.plus(elements: DoubleArray): DoubleArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4108,7 +4108,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun DoubleArray.plus(elements: Collection<Double>): DoubleArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4146,7 +4146,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun FloatArray.plus(element: Float): FloatArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4184,7 +4184,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun FloatArray.plus(elements: FloatArray): FloatArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4222,7 +4222,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun FloatArray.plus(elements: Collection<Float>): FloatArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4260,7 +4260,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun IntArray.plus(element: Int): IntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4298,7 +4298,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun IntArray.plus(elements: IntArray): IntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4336,7 +4336,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun IntArray.plus(elements: Collection<Int>): IntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4374,7 +4374,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun LongArray.plus(element: Long): LongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4412,7 +4412,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun LongArray.plus(elements: LongArray): LongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4450,7 +4450,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun LongArray.plus(elements: Collection<Long>): LongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4488,7 +4488,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun ShortArray.plus(element: Short): ShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4526,7 +4526,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun ShortArray.plus(elements: ShortArray): ShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4564,7 +4564,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun ShortArray.plus(elements: Collection<Short>): ShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4602,7 +4602,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun String?.plus(other: Any?): String>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4640,7 +4640,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun UByteArray.plus(element: UByte): UByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4678,7 +4678,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun UByteArray.plus(elements: UByteArray): UByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4716,7 +4716,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun UByteArray.plus(elements: Collection<UByte>): UByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4754,7 +4754,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun UIntArray.plus(element: UInt): UIntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4792,7 +4792,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun UIntArray.plus(elements: UIntArray): UIntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4830,7 +4830,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun UIntArray.plus(elements: Collection<UInt>): UIntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4868,7 +4868,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun ULongArray.plus(element: ULong): ULongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4906,7 +4906,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun ULongArray.plus(elements: ULongArray): ULongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4944,7 +4944,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun ULongArray.plus(elements: Collection<ULong>): ULongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -4982,7 +4982,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun UShortArray.plus(element: UShort): UShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5020,7 +5020,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun UShortArray.plus(elements: UShortArray): UShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5058,7 +5058,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun UShortArray.plus(elements: Collection<UShort>): UShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5096,7 +5096,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Collection<T>.plus(element: T): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5134,7 +5134,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Collection<T>.plus(elements: Array<out T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5172,7 +5172,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Collection<T>.plus(elements: Iterable<T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5210,7 +5210,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Collection<T>.plus(elements: Sequence<T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5248,7 +5248,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Iterable<T>.plus(element: T): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5286,7 +5286,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Iterable<T>.plus(elements: Array<out T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5324,7 +5324,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5362,7 +5362,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5400,7 +5400,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <K, V> Map<out K, V>.plus(map: Map<out K, V>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5438,7 +5438,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <K, V> Map<out K, V>.plus(pair: Pair<K, V>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5476,7 +5476,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <K, V> Map<out K, V>.plus(pairs: Array<out Pair<K, V>>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5514,7 +5514,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <K, V> Map<out K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5552,7 +5552,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <K, V> Map<out K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5590,7 +5590,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Set<T>.plus(element: T): Set<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5628,7 +5628,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Set<T>.plus(elements: Array<out T>): Set<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5666,7 +5666,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Set<T>.plus(elements: Iterable<T>): Set<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5704,7 +5704,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Set<T>.plus(elements: Sequence<T>): Set<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5742,7 +5742,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Sequence<T>.plus(element: T): Sequence<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5780,7 +5780,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Sequence<T>.plus(elements: Array<out T>): Sequence<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -5818,7 +5818,7 @@ KtBinaryExpression(406,415): '6 + inner'
     fun <T> Sequence<T>.plus(elements: Iterable<T>): Sequence<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8634,7 +8634,7 @@ KtValueArgument(428,437): '7 + inner'
   NO_CANDIDATES
 
 KtBinaryExpression(428,437): '7 + inner'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8671,7 +8671,7 @@ KtBinaryExpression(428,437): '7 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8708,7 +8708,7 @@ KtBinaryExpression(428,437): '7 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8745,7 +8745,7 @@ KtBinaryExpression(428,437): '7 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8782,7 +8782,7 @@ KtBinaryExpression(428,437): '7 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8819,7 +8819,7 @@ KtBinaryExpression(428,437): '7 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8856,7 +8856,7 @@ KtBinaryExpression(428,437): '7 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8894,7 +8894,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun BigDecimal.plus(other: BigDecimal): BigDecimal>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8932,7 +8932,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun BigInteger.plus(other: BigInteger): BigInteger>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8970,7 +8970,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Array<T>.plus(element: T): Array<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9008,7 +9008,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Array<T>.plus(elements: Array<out T>): Array<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9046,7 +9046,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Array<T>.plus(elements: Collection<T>): Array<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9084,7 +9084,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun BooleanArray.plus(element: Boolean): BooleanArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9122,7 +9122,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun BooleanArray.plus(elements: BooleanArray): BooleanArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9160,7 +9160,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9198,7 +9198,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun ByteArray.plus(element: Byte): ByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9236,7 +9236,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun ByteArray.plus(elements: ByteArray): ByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9274,7 +9274,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun ByteArray.plus(elements: Collection<Byte>): ByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9312,7 +9312,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun Char.plus(other: String): String>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9350,7 +9350,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun CharArray.plus(element: Char): CharArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9388,7 +9388,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun CharArray.plus(elements: CharArray): CharArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9426,7 +9426,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun CharArray.plus(elements: Collection<Char>): CharArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9464,7 +9464,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun DoubleArray.plus(element: Double): DoubleArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9502,7 +9502,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun DoubleArray.plus(elements: DoubleArray): DoubleArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9540,7 +9540,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun DoubleArray.plus(elements: Collection<Double>): DoubleArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9578,7 +9578,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun FloatArray.plus(element: Float): FloatArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9616,7 +9616,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun FloatArray.plus(elements: FloatArray): FloatArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9654,7 +9654,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun FloatArray.plus(elements: Collection<Float>): FloatArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9692,7 +9692,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun IntArray.plus(element: Int): IntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9730,7 +9730,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun IntArray.plus(elements: IntArray): IntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9768,7 +9768,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun IntArray.plus(elements: Collection<Int>): IntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9806,7 +9806,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun LongArray.plus(element: Long): LongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9844,7 +9844,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun LongArray.plus(elements: LongArray): LongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9882,7 +9882,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun LongArray.plus(elements: Collection<Long>): LongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9920,7 +9920,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun ShortArray.plus(element: Short): ShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9958,7 +9958,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun ShortArray.plus(elements: ShortArray): ShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -9996,7 +9996,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun ShortArray.plus(elements: Collection<Short>): ShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10034,7 +10034,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun String?.plus(other: Any?): String>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10072,7 +10072,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun UByteArray.plus(element: UByte): UByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10110,7 +10110,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun UByteArray.plus(elements: UByteArray): UByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10148,7 +10148,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun UByteArray.plus(elements: Collection<UByte>): UByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10186,7 +10186,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun UIntArray.plus(element: UInt): UIntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10224,7 +10224,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun UIntArray.plus(elements: UIntArray): UIntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10262,7 +10262,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun UIntArray.plus(elements: Collection<UInt>): UIntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10300,7 +10300,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun ULongArray.plus(element: ULong): ULongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10338,7 +10338,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun ULongArray.plus(elements: ULongArray): ULongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10376,7 +10376,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun ULongArray.plus(elements: Collection<ULong>): ULongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10414,7 +10414,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun UShortArray.plus(element: UShort): UShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10452,7 +10452,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun UShortArray.plus(elements: UShortArray): UShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10490,7 +10490,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun UShortArray.plus(elements: Collection<UShort>): UShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10528,7 +10528,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Collection<T>.plus(element: T): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10566,7 +10566,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Collection<T>.plus(elements: Array<out T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10604,7 +10604,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Collection<T>.plus(elements: Iterable<T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10642,7 +10642,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Collection<T>.plus(elements: Sequence<T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10680,7 +10680,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Iterable<T>.plus(element: T): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10718,7 +10718,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Iterable<T>.plus(elements: Array<out T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10756,7 +10756,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10794,7 +10794,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10832,7 +10832,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <K, V> Map<out K, V>.plus(map: Map<out K, V>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10870,7 +10870,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <K, V> Map<out K, V>.plus(pair: Pair<K, V>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10908,7 +10908,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <K, V> Map<out K, V>.plus(pairs: Array<out Pair<K, V>>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10946,7 +10946,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <K, V> Map<out K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -10984,7 +10984,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <K, V> Map<out K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11022,7 +11022,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Set<T>.plus(element: T): Set<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11060,7 +11060,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Set<T>.plus(elements: Array<out T>): Set<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11098,7 +11098,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Set<T>.plus(elements: Iterable<T>): Set<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11136,7 +11136,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Set<T>.plus(elements: Sequence<T>): Set<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11174,7 +11174,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Sequence<T>.plus(element: T): Sequence<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11212,7 +11212,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Sequence<T>.plus(elements: Array<out T>): Sequence<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11250,7 +11250,7 @@ KtBinaryExpression(428,437): '7 + inner'
     fun <T> Sequence<T>.plus(elements: Iterable<T>): Sequence<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14066,7 +14066,7 @@ KtValueArgument(450,459): '8 + inner'
   NO_CANDIDATES
 
 KtBinaryExpression(450,459): '8 + inner'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14103,7 +14103,7 @@ KtBinaryExpression(450,459): '8 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14140,7 +14140,7 @@ KtBinaryExpression(450,459): '8 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14177,7 +14177,7 @@ KtBinaryExpression(450,459): '8 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14214,7 +14214,7 @@ KtBinaryExpression(450,459): '8 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14251,7 +14251,7 @@ KtBinaryExpression(450,459): '8 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14288,7 +14288,7 @@ KtBinaryExpression(450,459): '8 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14326,7 +14326,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun BigDecimal.plus(other: BigDecimal): BigDecimal>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14364,7 +14364,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun BigInteger.plus(other: BigInteger): BigInteger>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14402,7 +14402,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Array<T>.plus(element: T): Array<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14440,7 +14440,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Array<T>.plus(elements: Array<out T>): Array<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14478,7 +14478,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Array<T>.plus(elements: Collection<T>): Array<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14516,7 +14516,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun BooleanArray.plus(element: Boolean): BooleanArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14554,7 +14554,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun BooleanArray.plus(elements: BooleanArray): BooleanArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14592,7 +14592,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14630,7 +14630,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun ByteArray.plus(element: Byte): ByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14668,7 +14668,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun ByteArray.plus(elements: ByteArray): ByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14706,7 +14706,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun ByteArray.plus(elements: Collection<Byte>): ByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14744,7 +14744,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun Char.plus(other: String): String>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14782,7 +14782,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun CharArray.plus(element: Char): CharArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14820,7 +14820,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun CharArray.plus(elements: CharArray): CharArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14858,7 +14858,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun CharArray.plus(elements: Collection<Char>): CharArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14896,7 +14896,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun DoubleArray.plus(element: Double): DoubleArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14934,7 +14934,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun DoubleArray.plus(elements: DoubleArray): DoubleArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -14972,7 +14972,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun DoubleArray.plus(elements: Collection<Double>): DoubleArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15010,7 +15010,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun FloatArray.plus(element: Float): FloatArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15048,7 +15048,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun FloatArray.plus(elements: FloatArray): FloatArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15086,7 +15086,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun FloatArray.plus(elements: Collection<Float>): FloatArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15124,7 +15124,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun IntArray.plus(element: Int): IntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15162,7 +15162,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun IntArray.plus(elements: IntArray): IntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15200,7 +15200,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun IntArray.plus(elements: Collection<Int>): IntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15238,7 +15238,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun LongArray.plus(element: Long): LongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15276,7 +15276,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun LongArray.plus(elements: LongArray): LongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15314,7 +15314,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun LongArray.plus(elements: Collection<Long>): LongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15352,7 +15352,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun ShortArray.plus(element: Short): ShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15390,7 +15390,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun ShortArray.plus(elements: ShortArray): ShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15428,7 +15428,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun ShortArray.plus(elements: Collection<Short>): ShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15466,7 +15466,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun String?.plus(other: Any?): String>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15504,7 +15504,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun UByteArray.plus(element: UByte): UByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15542,7 +15542,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun UByteArray.plus(elements: UByteArray): UByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15580,7 +15580,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun UByteArray.plus(elements: Collection<UByte>): UByteArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15618,7 +15618,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun UIntArray.plus(element: UInt): UIntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15656,7 +15656,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun UIntArray.plus(elements: UIntArray): UIntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15694,7 +15694,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun UIntArray.plus(elements: Collection<UInt>): UIntArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15732,7 +15732,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun ULongArray.plus(element: ULong): ULongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15770,7 +15770,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun ULongArray.plus(elements: ULongArray): ULongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15808,7 +15808,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun ULongArray.plus(elements: Collection<ULong>): ULongArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15846,7 +15846,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun UShortArray.plus(element: UShort): UShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15884,7 +15884,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun UShortArray.plus(elements: UShortArray): UShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15922,7 +15922,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun UShortArray.plus(elements: Collection<UShort>): UShortArray>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15960,7 +15960,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Collection<T>.plus(element: T): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -15998,7 +15998,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Collection<T>.plus(elements: Array<out T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16036,7 +16036,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Collection<T>.plus(elements: Iterable<T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16074,7 +16074,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Collection<T>.plus(elements: Sequence<T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16112,7 +16112,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Iterable<T>.plus(element: T): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16150,7 +16150,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Iterable<T>.plus(elements: Array<out T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16188,7 +16188,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16226,7 +16226,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16264,7 +16264,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <K, V> Map<out K, V>.plus(map: Map<out K, V>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16302,7 +16302,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <K, V> Map<out K, V>.plus(pair: Pair<K, V>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16340,7 +16340,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <K, V> Map<out K, V>.plus(pairs: Array<out Pair<K, V>>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16378,7 +16378,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <K, V> Map<out K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16416,7 +16416,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <K, V> Map<out K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16454,7 +16454,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Set<T>.plus(element: T): Set<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16492,7 +16492,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Set<T>.plus(elements: Array<out T>): Set<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16530,7 +16530,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Set<T>.plus(elements: Iterable<T>): Set<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16568,7 +16568,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Set<T>.plus(elements: Sequence<T>): Set<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16606,7 +16606,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Sequence<T>.plus(element: T): Sequence<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16644,7 +16644,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Sequence<T>.plus(elements: Array<out T>): Sequence<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16682,7 +16682,7 @@ KtBinaryExpression(450,459): '8 + inner'
     fun <T> Sequence<T>.plus(elements: Iterable<T>): Sequence<T>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19522,7 +19522,7 @@ KtValueArgument(565,574): '9 + inner'
   NO_CANDIDATES
 
 KtBinaryExpression(565,574): '9 + inner'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19559,7 +19559,7 @@ KtBinaryExpression(565,574): '9 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19596,7 +19596,7 @@ KtBinaryExpression(565,574): '9 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19633,7 +19633,7 @@ KtBinaryExpression(565,574): '9 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19669,7 +19669,7 @@ KtBinaryExpression(565,574): '9 + inner'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19706,7 +19706,7 @@ KtBinaryExpression(565,574): '9 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -20107,7 +20107,7 @@ KtValueArgument(589,599): '10 + inner'
   NO_CANDIDATES
 
 KtBinaryExpression(589,599): '10 + inner'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -20144,7 +20144,7 @@ KtBinaryExpression(589,599): '10 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -20181,7 +20181,7 @@ KtBinaryExpression(589,599): '10 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -20218,7 +20218,7 @@ KtBinaryExpression(589,599): '10 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -20254,7 +20254,7 @@ KtBinaryExpression(589,599): '10 + inner'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -20291,7 +20291,7 @@ KtBinaryExpression(589,599): '10 + inner'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

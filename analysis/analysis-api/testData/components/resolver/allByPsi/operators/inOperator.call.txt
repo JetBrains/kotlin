@@ -96,7 +96,7 @@ KtValueArgumentList(111,113): '()'
   null
 
 KtBinaryExpression(118,124): '1 in c'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -188,7 +188,7 @@ KtNameReferenceExpression(123,124): 'c'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(129,136): '2 !in c'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

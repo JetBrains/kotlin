@@ -114,7 +114,7 @@ KtReturnExpression(250,263): 'return x == A'
   null
 
 KtBinaryExpression(257,263): 'x == A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -255,7 +255,7 @@ KtReturnExpression(319,339): 'return x == MyEnum.A'
   null
 
 KtBinaryExpression(326,339): 'x == MyEnum.A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -386,7 +386,7 @@ KtReturnExpression(400,423): 'return x == Companion.A'
   null
 
 KtBinaryExpression(407,423): 'x == Companion.A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

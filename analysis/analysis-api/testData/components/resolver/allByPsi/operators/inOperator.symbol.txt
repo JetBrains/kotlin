@@ -71,7 +71,10 @@ KtValueArgumentList(111,113): '()'
   null
 
 KtBinaryExpression(118,124): '1 in c'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Container.contains(<dispatch receiver>: Container, element: kotlin.Int): kotlin.Boolean
+    ]
 
 KtConstantExpression(118,119): '1'
   null
@@ -83,7 +86,10 @@ KtNameReferenceExpression(123,124): 'c'
   null
 
 KtBinaryExpression(129,136): '2 !in c'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Container.contains(<dispatch receiver>: Container, element: kotlin.Int): kotlin.Boolean
+    ]
 
 KtConstantExpression(129,130): '2'
   null

@@ -1046,7 +1046,7 @@ KtValueArgument(675,699): 'MyClass.myClassProp to 1'
   NO_CANDIDATES
 
 KtBinaryExpression(675,699): 'MyClass.myClassProp to 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1193,7 +1193,7 @@ KtValueArgument(702,725): 'MyClass.stringProp to 2'
   NO_CANDIDATES
 
 KtBinaryExpression(702,725): 'MyClass.stringProp to 2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1340,7 +1340,7 @@ KtValueArgument(727,755): 'MyClass.NestedInheritor to 3'
   NO_CANDIDATES
 
 KtBinaryExpression(727,755): 'MyClass.NestedInheritor to 3'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1483,7 +1483,7 @@ KtValueArgument(757,790): 'MyClass.getNestedInheritor() to 4'
   NO_CANDIDATES
 
 KtBinaryExpression(757,790): 'MyClass.getNestedInheritor() to 4'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2334,7 +2334,7 @@ KtNameReferenceExpression(1226,1237): 'myClassProp'
     isInBestCandidates = true
 
 KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2370,7 +2370,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2408,7 +2408,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun MyClass.contains(that: MyClass): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2449,7 +2449,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun <T : Comparable<T>, R : ClosedRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2489,7 +2489,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun <T : Comparable<T>, R : OpenEndRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2527,7 +2527,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun ClosedRange<Byte>.contains(value: Int): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2565,7 +2565,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun ClosedRange<Byte>.contains(value: Long): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2603,7 +2603,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun ClosedRange<Byte>.contains(value: Short): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2641,7 +2641,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun ClosedRange<Double>.contains(value: Float): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2679,7 +2679,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun ClosedRange<Float>.contains(value: Double): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2717,7 +2717,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun ClosedRange<Int>.contains(value: Byte): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2755,7 +2755,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun ClosedRange<Int>.contains(value: Long): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2793,7 +2793,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun ClosedRange<Int>.contains(value: Short): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2831,7 +2831,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun ClosedRange<Long>.contains(value: Byte): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2869,7 +2869,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun ClosedRange<Long>.contains(value: Int): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2907,7 +2907,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun ClosedRange<Long>.contains(value: Short): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2945,7 +2945,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun ClosedRange<Short>.contains(value: Byte): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2983,7 +2983,7 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
     fun ClosedRange<Short>.contains(value: Int): Boolean>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3745,7 +3745,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
     isInBestCandidates = false
 
 KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3781,7 +3781,7 @@ KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

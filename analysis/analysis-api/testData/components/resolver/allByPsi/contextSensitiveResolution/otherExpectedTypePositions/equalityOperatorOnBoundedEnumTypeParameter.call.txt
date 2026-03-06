@@ -181,7 +181,7 @@ KtContainerNode(199,205): 'a == X'
   null
 
 KtBinaryExpression(199,205): 'a == X'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -302,7 +302,7 @@ KtContainerNode(218,224): 'a != X'
   null
 
 KtBinaryExpression(218,224): 'a != X'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -533,7 +533,7 @@ KtContainerNode(277,283): 'a == L'
   null
 
 KtBinaryExpression(277,283): 'a == L'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -651,7 +651,7 @@ KtContainerNode(467,473): 'X == a'
   null
 
 KtBinaryExpression(467,473): 'X == a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -757,7 +757,7 @@ KtContainerNode(486,492): 'L == a'
   null
 
 KtBinaryExpression(486,492): 'L == a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -875,7 +875,7 @@ KtContainerNode(695,705): 'a == id(X)'
   null
 
 KtBinaryExpression(695,705): 'a == id(X)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1057,7 +1057,7 @@ KtContainerNode(718,728): 'a == id(L)'
   null
 
 KtBinaryExpression(718,728): 'a == id(L)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1254,7 +1254,7 @@ KtWhenConditionWithExpression(753,759): 'a == X'
   null
 
 KtBinaryExpression(753,759): 'a == X'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1372,7 +1372,7 @@ KtWhenConditionWithExpression(774,780): 'a != Y'
   null
 
 KtBinaryExpression(774,780): 'a != Y'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1594,7 +1594,7 @@ KtWhenConditionWithExpression(839,845): 'a == L'
   null
 
 KtBinaryExpression(839,845): 'a == L'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -227,7 +227,7 @@ KtValueArgumentList(260,262): '()'
   NO_CANDIDATES
 
 KtBinaryExpression(267,273): 'a += b'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -337,7 +337,7 @@ KtNameReferenceExpression(272,273): 'b'
     isInBestCandidates = true
 
 KtBinaryExpression(278,284): 'a -= b'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -447,7 +447,7 @@ KtNameReferenceExpression(283,284): 'b'
     isInBestCandidates = true
 
 KtBinaryExpression(289,295): 'a *= b'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -557,7 +557,7 @@ KtNameReferenceExpression(294,295): 'b'
     isInBestCandidates = true
 
 KtBinaryExpression(300,306): 'a /= b'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -667,7 +667,7 @@ KtNameReferenceExpression(305,306): 'b'
     isInBestCandidates = true
 
 KtBinaryExpression(311,317): 'a %= b'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

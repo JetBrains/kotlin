@@ -404,7 +404,7 @@ KtValueArgument(178,189): '0 + integer'
   null
 
 KtBinaryExpression(178,189): '0 + integer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

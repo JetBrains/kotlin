@@ -47,7 +47,10 @@ KtNameReferenceExpression(31,34): 'Int'
   null
 
 KtBinaryExpression(37,45): 'this - i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.minus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtThisExpression(37,41): 'this'
   null
@@ -86,7 +89,10 @@ KtProperty(79,117): 'val newParameter = parameter myMinus 5'
   null
 
 KtBinaryExpression(98,117): 'parameter myMinus 5'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(98,107): 'parameter'
   null
@@ -101,10 +107,16 @@ KtProperty(122,171): 'val oneMoreParameter = newParameter + 1 myMinus 4'
   null
 
 KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+    ]
 
 KtBinaryExpression(145,161): 'newParameter + 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(145,157): 'newParameter'
   null

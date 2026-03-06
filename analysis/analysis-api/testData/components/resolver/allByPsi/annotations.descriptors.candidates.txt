@@ -2074,7 +2074,7 @@ KtValueArgument(800,825): 'stringConstant + " 1.2.3"'
   NO_CANDIDATES
 
 KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

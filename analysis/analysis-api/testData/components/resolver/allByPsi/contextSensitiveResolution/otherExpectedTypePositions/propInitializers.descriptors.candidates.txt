@@ -197,7 +197,7 @@ KtNameReferenceExpression(534,541): 'Option1'
   NO_CANDIDATES
 
 KtBinaryExpression(546,557): 'm = Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -257,7 +257,7 @@ KtNameReferenceExpression(550,557): 'Option1'
   NO_CANDIDATES
 
 KtBinaryExpression(562,577): 'm = OptionAlias'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -332,7 +332,7 @@ KtNameReferenceExpression(566,577): 'OptionAlias'
     isInBestCandidates = true
 
 KtBinaryExpression(582,596): 'm = stringProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

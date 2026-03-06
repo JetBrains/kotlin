@@ -230,7 +230,10 @@ KtValueArgumentList(241,243): '()'
   null
 
 KtBinaryExpression(248,252): 'a..b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.rangeTo(<dispatch receiver>: A, other: A): kotlin.ranges.ClosedRange<A>
+    ]
 
 KtNameReferenceExpression(248,249): 'a'
   null
@@ -242,7 +245,10 @@ KtNameReferenceExpression(251,252): 'b'
   null
 
 KtBinaryExpression(257,262): 'a..<b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.rangeUntil(<dispatch receiver>: A, other: A): kotlin.ranges.OpenEndRange<A>
+    ]
 
 KtNameReferenceExpression(257,258): 'a'
   null

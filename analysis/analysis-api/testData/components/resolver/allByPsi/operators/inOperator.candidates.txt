@@ -98,7 +98,7 @@ KtValueArgumentList(111,113): '()'
   NO_CANDIDATES
 
 KtBinaryExpression(118,124): '1 in c'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -193,7 +193,7 @@ KtNameReferenceExpression(123,124): 'c'
     isInBestCandidates = true
 
 KtBinaryExpression(129,136): '2 !in c'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

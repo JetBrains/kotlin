@@ -263,7 +263,10 @@ KtConstantExpression(489,493): 'null'
   null
 
 KtBinaryExpression(498,503): 'm = Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyClass?
+    ]
 
 KtNameReferenceExpression(498,499): 'm'
   null
@@ -275,7 +278,10 @@ KtNameReferenceExpression(502,503): 'Y'
   null
 
 KtBinaryExpression(508,513): 'm = X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyClass?
+    ]
 
 KtNameReferenceExpression(508,509): 'm'
   null

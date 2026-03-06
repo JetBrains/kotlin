@@ -464,7 +464,10 @@ KtBlockExpression(920,940): 'i == InheritorObject'
   null
 
 KtBinaryExpression(920,940): 'i == InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(920,921): 'i'
   null
@@ -527,7 +530,10 @@ KtBlockExpression(998,1014): 'i == propMyClass'
   null
 
 KtBinaryExpression(998,1014): 'i == propMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(998,999): 'i'
   null
@@ -590,7 +596,10 @@ KtBlockExpression(1072,1095): 'i == propInheritorClass'
   null
 
 KtBinaryExpression(1072,1095): 'i == propInheritorClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1072,1073): 'i'
   null
@@ -653,7 +662,10 @@ KtBlockExpression(1153,1177): 'i == propInheritorObject'
   null
 
 KtBinaryExpression(1153,1177): 'i == propInheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1153,1154): 'i'
   null
@@ -716,7 +728,10 @@ KtBlockExpression(1236,1245): 'i == prop'
   null
 
 KtBinaryExpression(1236,1245): 'i == prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1236,1237): 'i'
   null
@@ -779,7 +794,10 @@ KtBlockExpression(1303,1317): 'i == superProp'
   null
 
 KtBinaryExpression(1303,1317): 'i == superProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1303,1304): 'i'
   null
@@ -842,7 +860,10 @@ KtBlockExpression(1375,1389): 'i == constProp'
   null
 
 KtBinaryExpression(1375,1389): 'i == constProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1375,1376): 'i'
   null
@@ -905,7 +926,10 @@ KtBlockExpression(1447,1460): 'i == lazyProp'
   null
 
 KtBinaryExpression(1447,1460): 'i == lazyProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1447,1448): 'i'
   null
@@ -968,7 +992,10 @@ KtBlockExpression(1519,1536): 'i == NestedObject'
   null
 
 KtBinaryExpression(1519,1536): 'i == NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1519,1520): 'i'
   null
@@ -1031,7 +1058,10 @@ KtBlockExpression(1594,1609): 'i == lambdaProp'
   null
 
 KtBinaryExpression(1594,1609): 'i == lambdaProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1594,1595): 'i'
   null
@@ -1094,7 +1124,10 @@ KtBlockExpression(1668,1679): 'i == func()'
   null
 
 KtBinaryExpression(1668,1679): 'i == func()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1668,1669): 'i'
   null
@@ -1165,7 +1198,10 @@ KtBlockExpression(1737,1753): 'i == superFunc()'
   null
 
 KtBinaryExpression(1737,1753): 'i == superFunc()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1737,1738): 'i'
   null
@@ -1236,7 +1272,10 @@ KtBlockExpression(1811,1832): 'i == InheritorClass()'
   null
 
 KtBinaryExpression(1811,1832): 'i == InheritorClass()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1811,1812): 'i'
   null

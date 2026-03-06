@@ -1,2 +1,5 @@
 KtBinaryExpression(56,71): '4 infixOp "str"'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /infixOp(<extension receiver>: kotlin.Int, rhs: kotlin.String): kotlin.Unit
+    ]

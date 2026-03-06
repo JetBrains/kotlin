@@ -251,7 +251,10 @@ KtNameReferenceExpression(311,313): 'm2'
   null
 
 KtBinaryExpression(318,326): 'm1 == m2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(318,320): 'm1'
   null
@@ -263,7 +266,10 @@ KtNameReferenceExpression(324,326): 'm2'
   null
 
 KtBinaryExpression(331,339): 'm1 != m2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(331,333): 'm1'
   null
@@ -326,7 +332,10 @@ KtNameReferenceExpression(384,386): 'm1'
   null
 
 KtBinaryExpression(391,399): 'm2 == m1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(391,393): 'm2'
   null
@@ -338,7 +347,10 @@ KtNameReferenceExpression(397,399): 'm1'
   null
 
 KtBinaryExpression(404,412): 'm2 != m1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(404,406): 'm2'
   null
@@ -425,7 +437,10 @@ KtNameReferenceExpression(518,525): 'another'
   null
 
 KtBinaryExpression(530,550): 'another == Another()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(530,537): 'another'
   null
@@ -446,7 +461,10 @@ KtValueArgumentList(548,550): '()'
   null
 
 KtBinaryExpression(555,575): 'another != Another()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(555,562): 'another'
   null
@@ -557,7 +575,10 @@ KtNameReferenceExpression(697,702): 'child'
   null
 
 KtBinaryExpression(708,724): 'child == myClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(708,713): 'child'
   null
@@ -596,7 +617,10 @@ KtNameReferenceExpression(742,749): 'myClass'
   null
 
 KtBinaryExpression(755,771): 'myClass != child'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(755,762): 'myClass'
   null
@@ -644,7 +668,10 @@ KtNameReferenceExpression(792,797): 'child'
   null
 
 KtBinaryExpression(804,820): 'another == child'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(804,811): 'another'
   null
@@ -683,7 +710,10 @@ KtNameReferenceExpression(840,845): 'child'
   null
 
 KtBinaryExpression(851,867): 'child == another'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(851,856): 'child'
   null
@@ -722,7 +752,10 @@ KtNameReferenceExpression(885,892): 'another'
   null
 
 KtBinaryExpression(899,917): 'another == myClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(899,906): 'another'
   null
@@ -761,7 +794,10 @@ KtNameReferenceExpression(937,944): 'myClass'
   null
 
 KtBinaryExpression(950,968): 'myClass != another'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(950,957): 'myClass'
   null

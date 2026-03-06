@@ -110,7 +110,10 @@ KtBlockExpression(120,300): '{'
   null
 
 KtBinaryExpression(126,140): '1 in MyClass()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+    ]
 
 KtConstantExpression(126,127): '1'
   null
@@ -167,7 +170,10 @@ KtConstantExpression(164,165): '2'
   null
 
 KtBinaryExpression(171,186): '2 !in MyClass()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+    ]
 
 KtConstantExpression(171,172): '2'
   null

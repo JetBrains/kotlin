@@ -47,7 +47,7 @@ KtNameReferenceExpression(31,34): 'Int'
   NO_CANDIDATES
 
 KtBinaryExpression(37,45): 'this - i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -169,7 +169,7 @@ KtProperty(79,117): 'val newParameter = parameter myMinus 5'
   NO_CANDIDATES
 
 KtBinaryExpression(98,117): 'parameter myMinus 5'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -267,7 +267,7 @@ KtProperty(122,171): 'val oneMoreParameter = newParameter + 1 myMinus 4'
   NO_CANDIDATES
 
 KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -304,7 +304,7 @@ KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
     isInBestCandidates = true
 
 KtBinaryExpression(145,161): 'newParameter + 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

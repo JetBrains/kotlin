@@ -107,7 +107,10 @@ KtContainerNode(191,197): 'a == X'
   null
 
 KtBinaryExpression(191,197): 'a == X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(191,192): 'a'
   null
@@ -131,7 +134,10 @@ KtContainerNode(210,216): 'a != X'
   null
 
 KtBinaryExpression(210,216): 'a != X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(210,211): 'a'
   null
@@ -203,7 +209,10 @@ KtContainerNode(269,275): 'a == L'
   null
 
 KtBinaryExpression(269,275): 'a == L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(269,270): 'a'
   null
@@ -251,7 +260,10 @@ KtContainerNode(478,484): 'L == a'
   null
 
 KtBinaryExpression(478,484): 'L == a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(478,479): 'L'
   null
@@ -275,7 +287,11 @@ KtContainerNode(687,697): 'a == id(X)'
   null
 
 KtBinaryExpression(687,697): 'a == id(X)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with equals>
 
 KtNameReferenceExpression(687,688): 'a'
   null
@@ -315,7 +331,10 @@ KtContainerNode(710,720): 'a == id(L)'
   null
 
 KtBinaryExpression(710,720): 'a == id(L)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(710,711): 'a'
   null
@@ -357,7 +376,10 @@ KtWhenConditionWithExpression(745,751): 'a == X'
   null
 
 KtBinaryExpression(745,751): 'a == X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(745,746): 'a'
   null
@@ -378,7 +400,10 @@ KtWhenConditionWithExpression(766,772): 'a != Y'
   null
 
 KtBinaryExpression(766,772): 'a != Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(766,767): 'a'
   null
@@ -441,7 +466,10 @@ KtWhenConditionWithExpression(831,837): 'a == L'
   null
 
 KtBinaryExpression(831,837): 'a == L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(831,832): 'a'
   null

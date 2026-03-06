@@ -402,7 +402,10 @@ KtValueArgument(675,699): 'MyClass.myClassProp to 1'
   null
 
 KtBinaryExpression(675,699): 'MyClass.myClassProp to 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+    ]
 
 KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
   KaSymbolResolutionSuccess:
@@ -426,7 +429,10 @@ KtValueArgument(702,725): 'MyClass.stringProp to 2'
   null
 
 KtBinaryExpression(702,725): 'MyClass.stringProp to 2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+    ]
 
 KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
   KaSymbolResolutionSuccess:
@@ -450,7 +456,10 @@ KtValueArgument(727,755): 'MyClass.NestedInheritor to 3'
   null
 
 KtBinaryExpression(727,755): 'MyClass.NestedInheritor to 3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+    ]
 
 KtDotQualifiedExpression(727,750): 'MyClass.NestedInheritor'
   null
@@ -471,7 +480,10 @@ KtValueArgument(757,790): 'MyClass.getNestedInheritor() to 4'
   null
 
 KtBinaryExpression(757,790): 'MyClass.getNestedInheritor() to 4'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+    ]
 
 KtDotQualifiedExpression(757,785): 'MyClass.getNestedInheritor()'
   KaSymbolResolutionSuccess:
@@ -796,7 +808,10 @@ KtNameReferenceExpression(1226,1237): 'myClassProp'
   null
 
 KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/ranges/ClosedFloatingPointRange.contains(<dispatch receiver>: kotlin.ranges.ClosedFloatingPointRange<T>, value: T): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1242,1243): 'a'
   null
@@ -805,7 +820,10 @@ KtOperationReferenceExpression(1244,1247): '!in'
   null
 
 KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /rangeTo(<extension receiver>: MyClass, that: MyClass): kotlin.ranges.ClosedFloatingPointRange<MyClass>
+    ]
 
 KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
   KaSymbolResolutionSuccess:

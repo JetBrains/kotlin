@@ -1287,7 +1287,7 @@ KtNameReferenceExpression(1173,1180): 'Boolean'
   null
 
 KtBinaryExpression(1183,1189): 's == A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1406,7 +1406,7 @@ KtNameReferenceExpression(1222,1229): 'Boolean'
   null
 
 KtBinaryExpression(1232,1245): 's == Sealed.A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1531,7 +1531,7 @@ KtNameReferenceExpression(1280,1287): 'Boolean'
   null
 
 KtBinaryExpression(1290,1300): 's == foo.A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1656,7 +1656,7 @@ KtNameReferenceExpression(1329,1336): 'Boolean'
   null
 
 KtBinaryExpression(1339,1352): 's == Sealed.C'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

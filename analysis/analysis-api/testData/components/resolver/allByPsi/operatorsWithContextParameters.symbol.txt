@@ -740,7 +740,10 @@ KtNameReferenceExpression(909,910): 'a'
   null
 
 KtBinaryExpression(919,931): 'thisProp + 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /plus(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(919,927): 'thisProp'
   null
@@ -752,7 +755,10 @@ KtConstantExpression(930,931): '1'
   null
 
 KtBinaryExpression(940,945): 'a + 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /plus(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(940,941): 'a'
   null
@@ -794,7 +800,10 @@ KtConstantExpression(976,977): '1'
   null
 
 KtBinaryExpression(987,1004): 'thisProp[1] = A()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
+    ]
 
 KtArrayAccessExpression(987,998): 'thisProp[1]'
   KaSymbolResolutionSuccess:
@@ -827,7 +836,10 @@ KtValueArgumentList(1002,1004): '()'
   null
 
 KtBinaryExpression(1013,1023): 'a[1] = A()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
+    ]
 
 KtArrayAccessExpression(1013,1017): 'a[1]'
   KaSymbolResolutionSuccess:
@@ -884,7 +896,10 @@ KtValueArgumentList(1052,1054): '()'
   null
 
 KtBinaryExpression(1063,1076): 'thisProp += 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /plusAssign(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1063,1071): 'thisProp'
   null
@@ -896,7 +911,10 @@ KtConstantExpression(1075,1076): '1'
   null
 
 KtBinaryExpression(1085,1091): 'a += 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /plusAssign(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1085,1086): 'a'
   null
@@ -921,7 +939,10 @@ KtOperationReferenceExpression(1108,1110): '++'
   null
 
 KtBinaryExpression(1119,1126): 'a = a++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtNameReferenceExpression(1119,1120): 'a'
   null
@@ -943,7 +964,10 @@ KtOperationReferenceExpression(1124,1126): '++'
   null
 
 KtBinaryExpression(1136,1141): 'b + 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.plus(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1136,1137): 'b'
   null
@@ -982,7 +1006,10 @@ KtConstantExpression(1163,1164): '1'
   null
 
 KtBinaryExpression(1174,1184): 'b[1] = A()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.set(<dispatch receiver>: SimpleOperators, b: kotlin.Int, x: A): kotlin.Unit
+    ]
 
 KtArrayAccessExpression(1174,1178): 'b[1]'
   KaSymbolResolutionSuccess:
@@ -1027,7 +1054,10 @@ KtValueArgumentList(1194,1196): '()'
   null
 
 KtBinaryExpression(1205,1211): 'b += 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.plusAssign(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1205,1206): 'b'
   null
@@ -1104,7 +1134,11 @@ KtNameReferenceExpression(1308,1309): 'a'
   null
 
 KtBinaryExpression(1314,1319): 'a + 1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /plus(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtNameReferenceExpression(1314,1315): 'a'
   null
@@ -1132,7 +1166,11 @@ KtConstantExpression(1326,1327): '1'
   null
 
 KtBinaryExpression(1333,1343): 'a[1] = A()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtArrayAccessExpression(1333,1337): 'a[1]'
   KaSymbolResolutionError:
@@ -1179,7 +1217,11 @@ KtValueArgumentList(1349,1351): '()'
   null
 
 KtBinaryExpression(1356,1362): 'a += 1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /plusAssign(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtNameReferenceExpression(1356,1357): 'a'
   null
@@ -1204,7 +1246,11 @@ KtOperationReferenceExpression(1368,1370): '++'
   null
 
 KtBinaryExpression(1376,1381): 'b + 1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /SimpleOperators.plus(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtNameReferenceExpression(1376,1377): 'b'
   null
@@ -1245,7 +1291,11 @@ KtConstantExpression(1395,1396): '1'
   null
 
 KtBinaryExpression(1402,1412): 'b[1] = A()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /SimpleOperators.set(<dispatch receiver>: SimpleOperators, b: kotlin.Int, x: A): kotlin.Unit
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtArrayAccessExpression(1402,1406): 'b[1]'
   KaSymbolResolutionError:
@@ -1292,7 +1342,11 @@ KtValueArgumentList(1418,1420): '()'
   null
 
 KtBinaryExpression(1425,1431): 'b += 1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /SimpleOperators.plusAssign(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtNameReferenceExpression(1425,1426): 'b'
   null

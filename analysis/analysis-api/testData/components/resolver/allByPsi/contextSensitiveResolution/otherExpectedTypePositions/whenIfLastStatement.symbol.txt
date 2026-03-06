@@ -233,7 +233,10 @@ KtContainerNode(467,473): 'i == 0'
   null
 
 KtBinaryExpression(467,473): 'i == 0'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(467,468): 'i'
   null
@@ -266,7 +269,10 @@ KtContainerNode(560,566): 'i == 1'
   null
 
 KtBinaryExpression(560,566): 'i == 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(560,561): 'i'
   null
@@ -314,7 +320,10 @@ KtContainerNode(693,699): 'i == 2'
   null
 
 KtBinaryExpression(693,699): 'i == 2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(693,694): 'i'
   null
@@ -380,7 +389,10 @@ KtContainerNode(824,830): 'i == 0'
   null
 
 KtBinaryExpression(824,830): 'i == 0'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(824,825): 'i'
   null
@@ -413,7 +425,10 @@ KtContainerNode(941,947): 'i == 1'
   null
 
 KtBinaryExpression(941,947): 'i == 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(941,942): 'i'
   null
@@ -446,7 +461,10 @@ KtContainerNode(1050,1056): 'i == 2'
   null
 
 KtBinaryExpression(1050,1056): 'i == 2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1050,1051): 'i'
   null
@@ -495,7 +513,10 @@ KtContainerNode(1153,1159): 'i == 3'
   null
 
 KtBinaryExpression(1153,1159): 'i == 3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1153,1154): 'i'
   null
@@ -567,7 +588,10 @@ KtContainerNode(1311,1317): 'i == 0'
   null
 
 KtBinaryExpression(1311,1317): 'i == 0'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1311,1312): 'i'
   null
@@ -600,7 +624,10 @@ KtContainerNode(1428,1434): 'i == 1'
   null
 
 KtBinaryExpression(1428,1434): 'i == 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1428,1429): 'i'
   null

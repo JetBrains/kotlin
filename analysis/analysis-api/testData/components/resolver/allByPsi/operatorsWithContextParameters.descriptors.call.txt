@@ -1035,7 +1035,7 @@ KtNameReferenceExpression(909,910): 'a'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(919,931): 'thisProp + 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1127,7 +1127,7 @@ KtConstantExpression(930,931): '1'
   null
 
 KtBinaryExpression(940,945): 'a + 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1649,7 +1649,7 @@ KtValueArgumentList(1052,1054): '()'
   null
 
 KtBinaryExpression(1063,1076): 'thisProp += 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1741,7 +1741,7 @@ KtConstantExpression(1075,1076): '1'
   null
 
 KtBinaryExpression(1085,1091): 'a += 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1926,7 +1926,7 @@ KtOperationReferenceExpression(1108,1110): '++'
         typeArgumentsMapping = {}
 
 KtBinaryExpression(1119,1126): 'a = a++'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2073,7 +2073,7 @@ KtOperationReferenceExpression(1124,1126): '++'
         typeArgumentsMapping = {}
 
 KtBinaryExpression(1136,1141): 'b + 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2437,7 +2437,7 @@ KtValueArgumentList(1194,1196): '()'
   null
 
 KtBinaryExpression(1205,1211): 'b += 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2768,7 +2768,7 @@ KtNameReferenceExpression(1308,1309): 'a'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(1314,1319): 'a + 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3075,7 +3075,7 @@ KtValueArgumentList(1349,1351): '()'
   null
 
 KtBinaryExpression(1356,1362): 'a += 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3260,7 +3260,7 @@ KtOperationReferenceExpression(1368,1370): '++'
         typeArgumentsMapping = {}
 
 KtBinaryExpression(1376,1381): 'b + 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3624,7 +3624,7 @@ KtValueArgumentList(1418,1420): '()'
   null
 
 KtBinaryExpression(1425,1431): 'b += 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

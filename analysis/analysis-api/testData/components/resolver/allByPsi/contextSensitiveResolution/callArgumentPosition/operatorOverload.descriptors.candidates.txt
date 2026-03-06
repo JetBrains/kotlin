@@ -185,7 +185,7 @@ KtBlockExpression(333,403): '{'
   NO_CANDIDATES
 
 KtBinaryExpression(339,353): 'i + EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -280,7 +280,7 @@ KtNameReferenceExpression(343,353): 'EnumValue1'
   NO_CANDIDATES
 
 KtBinaryExpression(358,377): 'i + InheritorObject'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -375,7 +375,7 @@ KtNameReferenceExpression(362,377): 'InheritorObject'
   NO_CANDIDATES
 
 KtBinaryExpression(382,401): 'i - InheritorObject'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

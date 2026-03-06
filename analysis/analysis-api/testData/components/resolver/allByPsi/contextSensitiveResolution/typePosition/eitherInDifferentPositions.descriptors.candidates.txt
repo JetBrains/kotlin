@@ -417,7 +417,7 @@ KtNameReferenceExpression(339,344): 'Right'
   NO_CANDIDATES
 
 KtBinaryExpression(348,359): 's.value * 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -437,7 +437,7 @@ KtBinaryExpression(348,359): 's.value * 1'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -661,7 +661,7 @@ KtContainerNode(425,443): '1 == "".hashCode()'
   NO_CANDIDATES
 
 KtBinaryExpression(425,443): '1 == "".hashCode()'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

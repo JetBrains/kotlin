@@ -166,7 +166,7 @@ KtWhenConditionWithExpression(302,312): 's == FIRST'
   null
 
 KtBinaryExpression(302,312): 's == FIRST'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -269,7 +269,7 @@ KtWhenConditionWithExpression(326,337): 's == SECOND'
   null
 
 KtBinaryExpression(326,337): 's == SECOND'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -372,7 +372,7 @@ KtWhenConditionWithExpression(351,361): 's == THIRD'
   null
 
 KtBinaryExpression(351,361): 's == THIRD'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

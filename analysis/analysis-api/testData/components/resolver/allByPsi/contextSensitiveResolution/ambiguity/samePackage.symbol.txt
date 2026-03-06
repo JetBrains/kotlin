@@ -1022,7 +1022,10 @@ KtNameReferenceExpression(1173,1180): 'Boolean'
   null
 
 KtBinaryExpression(1183,1189): 's == A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1183,1184): 's'
   null
@@ -1061,7 +1064,10 @@ KtNameReferenceExpression(1222,1229): 'Boolean'
   null
 
 KtBinaryExpression(1232,1245): 's == Sealed.A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1232,1233): 's'
   null
@@ -1106,7 +1112,10 @@ KtNameReferenceExpression(1280,1287): 'Boolean'
   null
 
 KtBinaryExpression(1290,1300): 's == foo.A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1290,1291): 's'
   null
@@ -1151,7 +1160,10 @@ KtNameReferenceExpression(1329,1336): 'Boolean'
   null
 
 KtBinaryExpression(1339,1352): 's == Sealed.C'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1339,1340): 's'
   null

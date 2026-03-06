@@ -143,7 +143,10 @@ KtValueArgument(178,189): '0 + integer'
   null
 
 KtBinaryExpression(178,189): '0 + integer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(178,179): '0'
   null

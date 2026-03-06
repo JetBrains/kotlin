@@ -34,7 +34,10 @@ KtContainerNode(39,44): '1..<5'
   null
 
 KtBinaryExpression(39,44): '1..<5'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.rangeUntil(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+    ]
 
 KtConstantExpression(39,40): '1'
   null

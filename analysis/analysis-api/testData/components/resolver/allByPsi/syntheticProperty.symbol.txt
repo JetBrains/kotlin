@@ -65,7 +65,10 @@ KtNameReferenceExpression(94,103): 'something'
   null
 
 KtBinaryExpression(109,132): 'javaClass.something = 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtDotQualifiedExpression(109,128): 'javaClass.something'
   KaSymbolResolutionSuccess:
@@ -86,7 +89,11 @@ KtConstantExpression(131,132): '1'
   null
 
 KtBinaryExpression(137,161): 'javaClass.something += 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(137,156): 'javaClass.something'
   KaSymbolResolutionSuccess:
@@ -180,7 +187,10 @@ KtOperationReferenceExpression(246,248): '++'
   null
 
 KtBinaryExpression(253,268): '(something) = 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtParenthesizedExpression(253,264): '(something)'
   null
@@ -195,7 +205,10 @@ KtConstantExpression(267,268): '1'
   null
 
 KtBinaryExpression(273,298): '(javaClass.something) = 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtParenthesizedExpression(273,294): '(javaClass.something)'
   null

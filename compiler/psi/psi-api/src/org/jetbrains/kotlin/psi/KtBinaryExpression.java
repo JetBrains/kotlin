@@ -11,6 +11,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 import java.util.Arrays;
 
@@ -23,7 +24,7 @@ import java.util.Arrays;
  * //      ^___^
  * }</pre>
  */
-public class KtBinaryExpression extends KtExpressionImpl implements KtOperationExpression {
+public class KtBinaryExpression extends KtExpressionImpl implements KtOperationExpression, KtResolvableCall {
     public KtBinaryExpression(@NotNull ASTNode node) {
         super(node);
     }

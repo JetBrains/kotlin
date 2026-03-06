@@ -268,7 +268,7 @@ KtContainerNode(400,406): 'i == 0'
   NO_CANDIDATES
 
 KtBinaryExpression(400,406): 'i == 0'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -378,7 +378,7 @@ KtContainerNode(441,447): 'i == 1'
   NO_CANDIDATES
 
 KtBinaryExpression(441,447): 'i == 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -488,7 +488,7 @@ KtContainerNode(478,484): 'i == 2'
   NO_CANDIDATES
 
 KtBinaryExpression(478,484): 'i == 2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

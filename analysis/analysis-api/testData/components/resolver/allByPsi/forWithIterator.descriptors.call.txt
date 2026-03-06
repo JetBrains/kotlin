@@ -165,7 +165,7 @@ KtParameterList(191,193): '()'
   null
 
 KtBinaryExpression(196,224): 'current <= this@iterator.end'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

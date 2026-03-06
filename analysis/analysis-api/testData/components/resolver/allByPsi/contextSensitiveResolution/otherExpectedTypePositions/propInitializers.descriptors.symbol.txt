@@ -182,7 +182,10 @@ KtNameReferenceExpression(534,541): 'Option1'
   null
 
 KtBinaryExpression(546,557): 'm = Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(546,547): 'm'
   null
@@ -194,7 +197,10 @@ KtNameReferenceExpression(550,557): 'Option1'
   null
 
 KtBinaryExpression(562,577): 'm = OptionAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(562,563): 'm'
   null
@@ -206,7 +212,10 @@ KtNameReferenceExpression(566,577): 'OptionAlias'
   null
 
 KtBinaryExpression(582,596): 'm = stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(582,583): 'm'
   null

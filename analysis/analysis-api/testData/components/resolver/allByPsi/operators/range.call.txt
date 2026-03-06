@@ -330,7 +330,7 @@ KtValueArgumentList(241,243): '()'
   null
 
 KtBinaryExpression(248,252): 'a..b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -436,7 +436,7 @@ KtNameReferenceExpression(251,252): 'b'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(257,262): 'a..<b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

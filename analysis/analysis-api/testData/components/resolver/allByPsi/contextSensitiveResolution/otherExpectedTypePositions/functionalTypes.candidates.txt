@@ -883,7 +883,7 @@ KtBlockExpression(975,1005): 'contextOf<MyEnum>() == Option1'
   NO_CANDIDATES
 
 KtBinaryExpression(975,1005): 'contextOf<MyEnum>() == Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

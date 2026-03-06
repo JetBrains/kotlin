@@ -1,5 +1,5 @@
 KtBinaryExpression(56,71): '4 infixOp "str"'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

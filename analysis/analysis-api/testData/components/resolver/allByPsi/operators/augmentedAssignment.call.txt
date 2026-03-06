@@ -223,7 +223,7 @@ KtValueArgumentList(260,262): '()'
   null
 
 KtBinaryExpression(267,273): 'a += b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -329,7 +329,7 @@ KtNameReferenceExpression(272,273): 'b'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(278,284): 'a -= b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -435,7 +435,7 @@ KtNameReferenceExpression(283,284): 'b'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(289,295): 'a *= b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -541,7 +541,7 @@ KtNameReferenceExpression(294,295): 'b'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(300,306): 'a /= b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -647,7 +647,7 @@ KtNameReferenceExpression(305,306): 'b'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(311,317): 'a %= b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

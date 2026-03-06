@@ -668,7 +668,10 @@ KtValueArgument(800,825): 'stringConstant + " 1.2.3"'
   null
 
 KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+    ]
 
 KtNameReferenceExpression(800,814): 'stringConstant'
   null

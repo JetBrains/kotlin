@@ -701,7 +701,7 @@ KtNameReferenceExpression(890,893): 'doo'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(899,910): 'doo = "str"'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:

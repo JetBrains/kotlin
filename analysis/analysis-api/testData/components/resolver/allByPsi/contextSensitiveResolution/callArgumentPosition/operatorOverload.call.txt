@@ -167,7 +167,7 @@ KtBlockExpression(333,403): '{'
   null
 
 KtBinaryExpression(339,353): 'i + EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -276,7 +276,7 @@ KtNameReferenceExpression(343,353): 'EnumValue1'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(358,377): 'i + InheritorObject'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -370,7 +370,7 @@ KtNameReferenceExpression(362,377): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
 KtBinaryExpression(382,401): 'i - InheritorObject'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

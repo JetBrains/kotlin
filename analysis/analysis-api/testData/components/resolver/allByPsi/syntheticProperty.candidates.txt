@@ -823,7 +823,7 @@ KtNameReferenceExpression(94,103): 'something'
     isInBestCandidates = true
 
 KtBinaryExpression(109,132): 'javaClass.something = 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -973,7 +973,7 @@ KtConstantExpression(131,132): '1'
   NO_CANDIDATES
 
 KtBinaryExpression(137,161): 'javaClass.something += 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -1891,7 +1891,7 @@ KtOperationReferenceExpression(246,248): '++'
     isInBestCandidates = true
 
 KtBinaryExpression(253,268): '(something) = 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -2020,7 +2020,7 @@ KtConstantExpression(267,268): '1'
   NO_CANDIDATES
 
 KtBinaryExpression(273,298): '(javaClass.something) = 1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

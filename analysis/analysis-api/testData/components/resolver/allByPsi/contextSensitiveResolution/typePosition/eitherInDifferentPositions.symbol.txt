@@ -302,7 +302,10 @@ KtNameReferenceExpression(339,344): 'Right'
   null
 
 KtBinaryExpression(348,359): 's.value * 1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.times(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(348,355): 's.value'
   KaSymbolResolutionSuccess:
@@ -380,7 +383,10 @@ KtContainerNode(425,443): '1 == "".hashCode()'
   null
 
 KtBinaryExpression(425,443): '1 == "".hashCode()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtConstantExpression(425,426): '1'
   null

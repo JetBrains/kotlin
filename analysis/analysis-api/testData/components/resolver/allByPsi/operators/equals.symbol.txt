@@ -89,7 +89,10 @@ KtValueArgumentList(108,110): '()'
   null
 
 KtBinaryExpression(115,121): 'a == b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(115,116): 'a'
   null
@@ -101,7 +104,10 @@ KtNameReferenceExpression(120,121): 'b'
   null
 
 KtBinaryExpression(126,132): 'a != b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(126,127): 'a'
   null

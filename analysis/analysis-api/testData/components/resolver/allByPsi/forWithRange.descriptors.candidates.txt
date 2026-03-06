@@ -76,7 +76,7 @@ KtContainerNode(39,44): '1..<5'
   NO_CANDIDATES
 
 KtBinaryExpression(39,44): '1..<5'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

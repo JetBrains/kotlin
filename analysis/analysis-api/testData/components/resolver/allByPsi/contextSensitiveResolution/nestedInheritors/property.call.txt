@@ -248,7 +248,7 @@ KtContainerNode(400,406): 'i == 0'
   null
 
 KtBinaryExpression(400,406): 'i == 0'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -355,7 +355,7 @@ KtContainerNode(441,447): 'i == 1'
   null
 
 KtBinaryExpression(441,447): 'i == 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -479,7 +479,7 @@ KtContainerNode(478,484): 'i == 2'
   null
 
 KtBinaryExpression(478,484): 'i == 2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

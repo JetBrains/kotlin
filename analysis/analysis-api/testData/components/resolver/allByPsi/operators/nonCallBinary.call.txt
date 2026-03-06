@@ -200,7 +200,7 @@ KtConstantExpression(234,235): '1'
   null
 
 KtBinaryExpression(240,245): 'x = 2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

@@ -536,7 +536,10 @@ KtBlockExpression(975,1005): 'contextOf<MyEnum>() == Option1'
   null
 
 KtBinaryExpression(975,1005): 'contextOf<MyEnum>() == Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtCallExpression(975,994): 'contextOf<MyEnum>()'
   KaSymbolResolutionSuccess:

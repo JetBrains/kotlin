@@ -328,7 +328,7 @@ KtContainerNode(467,473): 'i == 0'
   null
 
 KtBinaryExpression(467,473): 'i == 0'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -445,7 +445,7 @@ KtContainerNode(560,566): 'i == 1'
   null
 
 KtBinaryExpression(560,566): 'i == 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -591,7 +591,7 @@ KtContainerNode(693,699): 'i == 2'
   null
 
 KtBinaryExpression(693,699): 'i == 2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -854,7 +854,7 @@ KtContainerNode(824,830): 'i == 0'
   null
 
 KtBinaryExpression(824,830): 'i == 0'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -971,7 +971,7 @@ KtContainerNode(941,947): 'i == 1'
   null
 
 KtBinaryExpression(941,947): 'i == 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1088,7 +1088,7 @@ KtContainerNode(1050,1056): 'i == 2'
   null
 
 KtBinaryExpression(1050,1056): 'i == 2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1221,7 +1221,7 @@ KtContainerNode(1153,1159): 'i == 3'
   null
 
 KtBinaryExpression(1153,1159): 'i == 3'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1476,7 +1476,7 @@ KtContainerNode(1311,1317): 'i == 0'
   null
 
 KtBinaryExpression(1311,1317): 'i == 0'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1593,7 +1593,7 @@ KtContainerNode(1428,1434): 'i == 1'
   null
 
 KtBinaryExpression(1428,1434): 'i == 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -125,7 +125,7 @@ KtContainerNode(304,329): 'settings == BasicSettings'
   null
 
 KtBinaryExpression(304,329): 'settings == BasicSettings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -306,7 +306,7 @@ KtContainerNode(354,387): 'basicSettings == SpecificSettings'
   null
 
 KtBinaryExpression(354,387): 'basicSettings == SpecificSettings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -487,7 +487,7 @@ KtContainerNode(414,456): 'basicSettings == Settings.SpecificSettings'
   null
 
 KtBinaryExpression(414,456): 'basicSettings == Settings.SpecificSettings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -864,7 +864,7 @@ KtContainerNode(707,736): 'settings == OpenBasicSettings'
   null
 
 KtBinaryExpression(707,736): 'settings == OpenBasicSettings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1045,7 +1045,7 @@ KtContainerNode(761,798): 'basicSettings == OpenSpecificSettings'
   null
 
 KtBinaryExpression(761,798): 'basicSettings == OpenSpecificSettings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1226,7 +1226,7 @@ KtContainerNode(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings'
   null
 
 KtBinaryExpression(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

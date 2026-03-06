@@ -139,7 +139,7 @@ KtValueArgumentList(108,110): '()'
   null
 
 KtBinaryExpression(115,121): 'a == b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -245,7 +245,7 @@ KtNameReferenceExpression(120,121): 'b'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(126,132): 'a != b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

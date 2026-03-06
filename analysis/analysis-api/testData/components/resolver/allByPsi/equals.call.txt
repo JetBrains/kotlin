@@ -542,7 +542,7 @@ KtNameReferenceExpression(311,313): 'm2'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(318,326): 'm1 == m2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -648,7 +648,7 @@ KtNameReferenceExpression(324,326): 'm2'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(331,339): 'm1 != m2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -982,7 +982,7 @@ KtNameReferenceExpression(384,386): 'm1'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(391,399): 'm2 == m1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1088,7 +1088,7 @@ KtNameReferenceExpression(397,399): 'm1'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(404,412): 'm2 != m1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1471,7 +1471,7 @@ KtNameReferenceExpression(518,525): 'another'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(530,550): 'another == Another()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1597,7 +1597,7 @@ KtValueArgumentList(548,550): '()'
   null
 
 KtBinaryExpression(555,575): 'another != Another()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2051,7 +2051,7 @@ KtNameReferenceExpression(697,702): 'child'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(708,724): 'child == myClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2305,7 +2305,7 @@ KtNameReferenceExpression(742,749): 'myClass'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(755,771): 'myClass != child'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2599,7 +2599,7 @@ KtNameReferenceExpression(792,797): 'child'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(804,820): 'another == child'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2853,7 +2853,7 @@ KtNameReferenceExpression(840,845): 'child'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(851,867): 'child == another'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3107,7 +3107,7 @@ KtNameReferenceExpression(885,892): 'another'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(899,917): 'another == myClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3361,7 +3361,7 @@ KtNameReferenceExpression(937,944): 'myClass'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(950,968): 'myClass != another'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

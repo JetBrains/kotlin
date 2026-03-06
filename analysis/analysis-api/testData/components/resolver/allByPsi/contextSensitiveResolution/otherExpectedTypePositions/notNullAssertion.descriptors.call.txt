@@ -851,7 +851,7 @@ KtValueArgument(675,699): 'MyClass.myClassProp to 1'
   null
 
 KtBinaryExpression(675,699): 'MyClass.myClassProp to 1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -978,7 +978,7 @@ KtValueArgument(702,725): 'MyClass.stringProp to 2'
   null
 
 KtBinaryExpression(702,725): 'MyClass.stringProp to 2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1105,7 +1105,7 @@ KtValueArgument(727,755): 'MyClass.NestedInheritor to 3'
   null
 
 KtBinaryExpression(727,755): 'MyClass.NestedInheritor to 3'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1198,7 +1198,7 @@ KtValueArgument(757,790): 'MyClass.getNestedInheritor() to 4'
   null
 
 KtBinaryExpression(757,790): 'MyClass.getNestedInheritor() to 4'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1810,7 +1810,7 @@ KtNameReferenceExpression(1226,1237): 'myClassProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: myClassProp>
 
 KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1899,7 +1899,7 @@ KtOperationReferenceExpression(1244,1247): '!in'
       }
 
 KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

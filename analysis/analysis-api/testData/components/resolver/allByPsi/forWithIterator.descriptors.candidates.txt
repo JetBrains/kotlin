@@ -167,7 +167,7 @@ KtParameterList(191,193): '()'
   NO_CANDIDATES
 
 KtBinaryExpression(196,224): 'current <= this@iterator.end'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

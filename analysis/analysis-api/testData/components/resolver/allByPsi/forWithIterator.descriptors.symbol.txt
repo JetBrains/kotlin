@@ -137,7 +137,10 @@ KtParameterList(191,193): '()'
   null
 
 KtBinaryExpression(196,224): 'current <= this@iterator.end'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(196,203): 'current'
   null

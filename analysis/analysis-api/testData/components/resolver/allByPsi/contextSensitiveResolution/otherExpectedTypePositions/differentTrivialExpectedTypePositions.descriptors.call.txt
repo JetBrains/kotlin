@@ -231,7 +231,7 @@ KtNameReferenceExpression(344,345): 'X'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtBinaryExpression(350,355): 'm = Y'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -290,7 +290,7 @@ KtNameReferenceExpression(354,355): 'Y'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtBinaryExpression(360,365): 'm = L'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

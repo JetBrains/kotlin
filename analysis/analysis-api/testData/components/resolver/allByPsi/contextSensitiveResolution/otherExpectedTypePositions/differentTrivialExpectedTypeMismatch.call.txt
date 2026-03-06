@@ -441,7 +441,7 @@ KtConstantExpression(489,493): 'null'
   null
 
 KtBinaryExpression(498,503): 'm = Y'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -515,7 +515,7 @@ KtNameReferenceExpression(502,503): 'Y'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(508,513): 'm = X'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

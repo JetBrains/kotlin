@@ -75,7 +75,7 @@ KtContainerNode(39,44): '1..<5'
   null
 
 KtBinaryExpression(39,44): '1..<5'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

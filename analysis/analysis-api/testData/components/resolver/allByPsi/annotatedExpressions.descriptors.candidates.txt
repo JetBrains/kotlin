@@ -473,7 +473,7 @@ KtValueArgument(178,189): '0 + integer'
   NO_CANDIDATES
 
 KtBinaryExpression(178,189): '0 + integer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
