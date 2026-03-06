@@ -125,6 +125,10 @@ open class AbstractFirWasmJsCodegenBoxTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
+            +WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
+        }
     }
 }
 
@@ -420,6 +424,10 @@ open class AbstractFirWasmJsBenchmarkTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
+            +WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
+        }
     }
 }
 
