@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -460,26 +459,18 @@ kotlin {
 
             prepareJsIrMainSources.configure {
                 val ignoredFileNames = setOf("Atomics.kt", "AtomicArrays.kt")
-                val unimplementedNativeBuiltIns =
-                    (file(jvmBuiltinsDir).list()!!.toSortedSet() - file("$jsDir/builtins/").list()!!)
-                        .filterNot { ignoredFileNames.contains(it) }
-                        .map { "$jvmBuiltinsRelativeDir/$it" }
+                val jsBuiltins: FileCollection = layout.projectDirectory.dir("js/builtins").asFileTree
+                val jvmBuiltins: FileCollection = layout.projectDirectory.dir("jvm/builtins").asFileTree
+                val jsBuiltinsSrcDirFile = layout.buildDirectory.dir("src/js-builtin-sources")
 
-                val sources = unimplementedNativeBuiltIns
-
-                sources.forEach { path ->
-                    from("$rootDir/$path") {
-                        into(path.dropLastWhile { it != '/' })
+                into(jsBuiltinsSrcDirFile)
+                from(jvmBuiltins) {
+                    into("kotlin")
+                    ignoredFileNames.forEach {
+                        exclude(it)
                     }
-                }
-
-                into(jsBuiltinsSrcDir)
-
-                doLast {
-                    unimplementedNativeBuiltIns.forEach { path ->
-                        val file = File("$destinationDir/$path")
-                        val sourceCode = file.readText()
-                        file.writeText(sourceCode)
+                    jsBuiltins.files.forEach {
+                        exclude(it.name)
                     }
                 }
             }
@@ -515,28 +506,26 @@ kotlin {
                 srcDir("wasm/stubs")
             }
             prepareWasmBuiltinSources.configure {
-                val unimplementedNativeBuiltIns =
-                    (file(jvmBuiltinsDir).list().toSortedSet() - file("wasm/builtins/kotlin/").list())
-                        .map { "$jvmBuiltinsRelativeDir/$it" }
-
-                val sources = unimplementedNativeBuiltIns
-
+                val wasmBuiltins: FileCollection = layout.projectDirectory.dir("wasm/builtins/kotlin/").asFileTree
+                val jvmBuiltins: FileCollection = layout.projectDirectory.dir("jvm/builtins").asFileTree
+                val wasmBuiltinsSrcDirFile = layout.buildDirectory.dir("src/wasm-builtin-sources")
                 val excluded = listOf(
                     "Atomics.kt", "AtomicArrays.kt",
                     // Included with K/N collections
                     "Collections.kt", "Iterator.kt"
                 )
 
-                sources.forEach { path ->
-                    from("$rootDir/$path") {
-                        into(path.dropLastWhile { it != '/' })
-                        excluded.forEach {
-                            exclude(it)
-                        }
+                into(wasmBuiltinsSrcDirFile)
+                from(jvmBuiltins) {
+                    into("kotlin")
+                    excluded.forEach {
+                        exclude(it)
                     }
-                }
+                    wasmBuiltins.files.forEach {
+                        exclude(it.name)
+                    }
 
-                into(layout.buildDirectory.dir("src/wasm-builtin-sources"))
+                }
             }
 
         }
