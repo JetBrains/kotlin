@@ -170,7 +170,7 @@ KtContainerNode(399,402): 'arg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(399,402): 'arg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -319,7 +319,7 @@ KtContainerNode(484,487): 'arg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(484,487): 'arg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -415,7 +415,7 @@ KtContainerNode(594,597): 'arg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(594,597): 'arg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -508,7 +508,7 @@ KtContainerNode(716,719): 'arg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(716,719): 'arg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -634,7 +634,7 @@ KtContainerNode(889,892): 'arg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(889,892): 'arg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -774,7 +774,7 @@ KtCallExpression(975,994): 'contextOf<MyEnum>()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(975,984): 'contextOf'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

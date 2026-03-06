@@ -35,7 +35,7 @@ KtPostfixExpression(27,30): 'a!!'
   null
 
 KtNameReferenceExpression(27,28): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

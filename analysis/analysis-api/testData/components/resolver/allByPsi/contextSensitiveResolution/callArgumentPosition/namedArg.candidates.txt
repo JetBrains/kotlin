@@ -59,7 +59,7 @@ KtProperty(228,255): 'val EnumValue3 = EnumValue1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(245,255): 'EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -328,7 +328,7 @@ KtCallExpression(486,492): 'TODO()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(486,490): 'TODO'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -345,7 +345,7 @@ KtNameReferenceExpression(486,490): 'TODO'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -405,7 +405,7 @@ KtCallExpression(542,558): 'InheritorClass()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(542,556): 'InheritorClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -438,7 +438,7 @@ KtNameReferenceExpression(592,607): 'InheritorObject'
   NO_CANDIDATES
 
 KtNameReferenceExpression(610,625): 'InheritorObject'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -531,7 +531,7 @@ KtCallExpression(686,692): 'TODO()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(686,690): 'TODO'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -548,7 +548,7 @@ KtNameReferenceExpression(686,690): 'TODO'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -753,7 +753,7 @@ KtCallExpression(725,734): 'lazy {""}'
     isInBestCandidates = false
 
 KtNameReferenceExpression(725,729): 'lazy'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -788,7 +788,7 @@ KtNameReferenceExpression(725,729): 'lazy'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -831,7 +831,7 @@ KtNameReferenceExpression(725,729): 'lazy'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -902,7 +902,7 @@ KtBlockExpression(761,776): 'InheritorObject'
   NO_CANDIDATES
 
 KtNameReferenceExpression(761,776): 'InheritorObject'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1032,7 +1032,7 @@ KtCallExpression(914,1001): 'namedArgumentsHolder('
     isInBestCandidates = true
 
 KtNameReferenceExpression(914,934): 'namedArgumentsHolder'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1092,7 +1092,7 @@ KtNameReferenceExpression(944,947): 'arg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(950,965): 'InheritorObject'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1120,7 +1120,7 @@ KtNameReferenceExpression(975,982): 'enumArg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(985,995): 'EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1189,7 +1189,7 @@ KtCallExpression(1006,1087): 'namedArgumentsHolder('
     isInBestCandidates = true
 
 KtNameReferenceExpression(1006,1026): 'namedArgumentsHolder'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1249,7 +1249,7 @@ KtNameReferenceExpression(1036,1043): 'enumArg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1046,1056): 'EnumValue3'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1279,7 +1279,7 @@ KtNameReferenceExpression(1066,1069): 'arg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1072,1081): 'propClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1335,7 +1335,7 @@ KtCallExpression(1092,1123): 'namedArgumentHolder(arg = prop)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1092,1111): 'namedArgumentHolder'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1382,7 +1382,7 @@ KtNameReferenceExpression(1112,1115): 'arg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1118,1122): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1438,7 +1438,7 @@ KtCallExpression(1128,1164): 'namedArgumentHolder(arg = superProp)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1128,1147): 'namedArgumentHolder'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1485,7 +1485,7 @@ KtNameReferenceExpression(1148,1151): 'arg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1154,1163): 'superProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1540,7 +1540,7 @@ KtCallExpression(1169,1202): 'namedArgumentHolder(arg = func())'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1169,1188): 'namedArgumentHolder'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1629,7 +1629,7 @@ KtCallExpression(1207,1245): 'namedArgumentHolder(arg = superFunc())'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1207,1226): 'namedArgumentHolder'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1719,7 +1719,7 @@ KtCallExpression(1250,1285): 'namedArgumentHolder(arg = lazyProp)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1250,1269): 'namedArgumentHolder'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1766,7 +1766,7 @@ KtNameReferenceExpression(1270,1273): 'arg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1276,1284): 'lazyProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

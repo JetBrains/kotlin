@@ -269,7 +269,10 @@ KtNameReferenceExpression(314,318): 'Left'
   null
 
 KtNameReferenceExpression(322,329): 'default'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      default: A
+    ]
 
 KtWhenEntry(334,351): 'is Right -> value'
   null
@@ -287,4 +290,7 @@ KtNameReferenceExpression(337,342): 'Right'
   null
 
 KtNameReferenceExpression(346,351): 'value'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val value: A
+    ]

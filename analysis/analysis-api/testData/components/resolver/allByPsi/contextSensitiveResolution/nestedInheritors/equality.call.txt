@@ -161,7 +161,7 @@ KtBinaryExpression(304,329): 'settings == BasicSettings'
       }
 
 KtNameReferenceExpression(304,312): 'settings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -253,7 +253,7 @@ KtCallExpression(331,344): 'work("Basic")'
       }
 
 KtNameReferenceExpression(331,335): 'work'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -340,7 +340,7 @@ KtBinaryExpression(354,387): 'basicSettings == SpecificSettings'
       }
 
 KtNameReferenceExpression(354,367): 'basicSettings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -432,7 +432,7 @@ KtCallExpression(389,405): 'work("Specific")'
       }
 
 KtNameReferenceExpression(389,393): 'work'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -519,7 +519,7 @@ KtBinaryExpression(414,456): 'basicSettings == Settings.SpecificSettings'
       }
 
 KtNameReferenceExpression(414,427): 'basicSettings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -617,7 +617,7 @@ KtCallExpression(458,474): 'work("Specific")'
       }
 
 KtNameReferenceExpression(458,462): 'work'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -866,7 +866,7 @@ KtBinaryExpression(707,736): 'settings == OpenBasicSettings'
       }
 
 KtNameReferenceExpression(707,715): 'settings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -958,7 +958,7 @@ KtCallExpression(738,751): 'work("Basic")'
       }
 
 KtNameReferenceExpression(738,742): 'work'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1045,7 +1045,7 @@ KtBinaryExpression(761,798): 'basicSettings == OpenSpecificSettings'
       }
 
 KtNameReferenceExpression(761,774): 'basicSettings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1098,7 +1098,7 @@ KtOperationReferenceExpression(775,777): '=='
       }
 
 KtNameReferenceExpression(778,798): 'OpenSpecificSettings'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'OpenSpecificSettings'.>
 
@@ -1139,7 +1139,7 @@ KtCallExpression(800,816): 'work("Specific")'
       }
 
 KtNameReferenceExpression(800,804): 'work'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1226,7 +1226,7 @@ KtBinaryExpression(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings
       }
 
 KtNameReferenceExpression(825,838): 'basicSettings'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1324,7 +1324,7 @@ KtCallExpression(877,893): 'work("Specific")'
       }
 
 KtNameReferenceExpression(877,881): 'work'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

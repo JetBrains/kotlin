@@ -136,7 +136,7 @@ KtLabelReferenceExpression(151,160): '@iterator'
   null
 
 KtNameReferenceExpression(161,166): 'start'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -201,7 +201,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
       }
 
 KtNameReferenceExpression(196,203): 'current'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -288,7 +288,7 @@ KtLabelReferenceExpression(211,220): '@iterator'
   null
 
 KtNameReferenceExpression(221,224): 'end'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -366,7 +366,7 @@ KtPostfixExpression(256,265): 'current++'
         typeArgumentsMapping = {}
 
 KtNameReferenceExpression(256,263): 'current'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -536,7 +536,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
       }
 
 KtNameReferenceExpression(297,311): 'IntProgression'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

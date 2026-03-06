@@ -121,7 +121,7 @@ KtNameReferenceExpression(39,55): 'AnnotationTarget'
   null
 
 KtNameReferenceExpression(56,60): 'TYPE'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -381,7 +381,7 @@ KtOperationReferenceExpression(233,234): '+'
       }
 
 KtNameReferenceExpression(235,240): 'outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -572,7 +572,7 @@ KtOperationReferenceExpression(255,256): '+'
       }
 
 KtNameReferenceExpression(257,262): 'outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -763,7 +763,7 @@ KtOperationReferenceExpression(277,278): '+'
       }
 
 KtNameReferenceExpression(279,284): 'outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -954,7 +954,7 @@ KtOperationReferenceExpression(318,319): '+'
       }
 
 KtNameReferenceExpression(320,325): 'outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1145,7 +1145,7 @@ KtOperationReferenceExpression(342,343): '+'
       }
 
 KtNameReferenceExpression(344,349): 'outer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1720,7 +1720,7 @@ KtOperationReferenceExpression(408,409): '+'
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(410,415): 'inner'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2283,7 +2283,7 @@ KtOperationReferenceExpression(430,431): '+'
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(432,437): 'inner'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2846,7 +2846,7 @@ KtOperationReferenceExpression(452,453): '+'
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(454,459): 'inner'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -3061,7 +3061,7 @@ KtOperationReferenceExpression(567,568): '+'
       }
 
 KtNameReferenceExpression(569,574): 'inner'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -3254,7 +3254,7 @@ KtOperationReferenceExpression(592,593): '+'
       }
 
 KtNameReferenceExpression(594,599): 'inner'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:

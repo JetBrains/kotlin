@@ -67,7 +67,7 @@ KtUserType(128,135): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(128,135): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -128,7 +128,7 @@ KtCallExpression(197,206): 'MyClass()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(197,204): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -589,7 +589,7 @@ KtUserType(372,381): 'Exception'
   NO_CANDIDATES
 
 KtNameReferenceExpression(372,381): 'Exception'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -608,7 +608,7 @@ KtNameReferenceExpression(372,381): 'Exception'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -643,7 +643,7 @@ KtNameReferenceExpression(372,381): 'Exception'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -677,7 +677,7 @@ KtNameReferenceExpression(372,381): 'Exception'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -719,7 +719,7 @@ KtNameReferenceExpression(372,381): 'Exception'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -782,7 +782,7 @@ KtValueArgument(382,383): 'm'
   NO_CANDIDATES
 
 KtNameReferenceExpression(382,383): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1204,7 +1204,7 @@ KtUserType(406,415): 'Exception'
   NO_CANDIDATES
 
 KtNameReferenceExpression(406,415): 'Exception'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1223,7 +1223,7 @@ KtNameReferenceExpression(406,415): 'Exception'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1258,7 +1258,7 @@ KtNameReferenceExpression(406,415): 'Exception'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1292,7 +1292,7 @@ KtNameReferenceExpression(406,415): 'Exception'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1334,7 +1334,7 @@ KtNameReferenceExpression(406,415): 'Exception'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1397,7 +1397,7 @@ KtValueArgument(416,417): 'm'
   NO_CANDIDATES
 
 KtNameReferenceExpression(416,417): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1819,7 +1819,7 @@ KtUserType(440,449): 'Exception'
   NO_CANDIDATES
 
 KtNameReferenceExpression(440,449): 'Exception'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1838,7 +1838,7 @@ KtNameReferenceExpression(440,449): 'Exception'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1873,7 +1873,7 @@ KtNameReferenceExpression(440,449): 'Exception'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1907,7 +1907,7 @@ KtNameReferenceExpression(440,449): 'Exception'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1949,7 +1949,7 @@ KtNameReferenceExpression(440,449): 'Exception'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2012,7 +2012,7 @@ KtValueArgument(450,451): 'm'
   NO_CANDIDATES
 
 KtNameReferenceExpression(450,451): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2120,7 +2120,7 @@ KtCallExpression(507,510): 'b()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(507,508): 'b'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2234,7 +2234,7 @@ KtBlockExpression(1070,1102): '{'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1080,1096): 'ClassMemberAlias'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2302,7 +2302,7 @@ KtCallExpression(1108,1497): 'receive<MyClass>('
     isInBestCandidates = true
 
 KtNameReferenceExpression(1108,1115): 'receive'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2484,7 +2484,7 @@ KtBlockExpression(1451,1491): '{'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1465,1481): 'ClassMemberAlias'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2605,7 +2605,7 @@ KtCallExpression(1503,1887): 'run<MyClass> {'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1503,1506): 'run'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2656,7 +2656,7 @@ KtNameReferenceExpression(1503,1506): 'run'
       }
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2846,7 +2846,7 @@ KtBlockExpression(1841,1881): '{'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1855,1871): 'ClassMemberAlias'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

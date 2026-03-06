@@ -310,7 +310,7 @@ KtValueArgument(176,178): 'ci'
   NO_CANDIDATES
 
 KtNameReferenceExpression(176,178): 'ci'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -476,7 +476,7 @@ KtValueArgument(216,218): 'cs'
   NO_CANDIDATES
 
 KtNameReferenceExpression(216,218): 'cs'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -551,7 +551,7 @@ KtCallExpression(251,257): 'call()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(251,255): 'call'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

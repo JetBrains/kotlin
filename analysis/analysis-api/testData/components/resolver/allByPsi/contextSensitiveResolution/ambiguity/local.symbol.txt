@@ -353,7 +353,10 @@ KtWhenExpression(483,617): 'when (s) {'
   null
 
 KtNameReferenceExpression(489,490): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: foo.Sealed
+    ]
 
 KtWhenEntry(502,511): 'is B -> 2'
   null
@@ -428,7 +431,10 @@ KtWhenConditionWithExpression(576,586): 'CompanionB'
   null
 
 KtNameReferenceExpression(576,586): 'CompanionB'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionB: kotlin.Int
+    ]
 
 KtConstantExpression(590,591): '7'
   null
@@ -497,7 +503,10 @@ KtWhenExpression(706,875): 'when (s) {'
   null
 
 KtNameReferenceExpression(712,713): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: foo.Sealed
+    ]
 
 KtWhenEntry(725,741): 'is Sealed.B -> 2'
   null
@@ -605,7 +614,10 @@ KtNameReferenceExpression(827,833): 'Sealed'
   null
 
 KtNameReferenceExpression(834,844): 'CompanionB'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionB: foo.Sealed
+    ]
 
 KtConstantExpression(848,849): '7'
   null
@@ -686,7 +698,10 @@ KtWhenExpression(1015,1224): 'when (s) {'
   null
 
 KtNameReferenceExpression(1021,1022): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: foo.Sealed
+    ]
 
 KtWhenEntry(1038,1044): 'A -> 1'
   null
@@ -785,7 +800,10 @@ KtWhenConditionWithExpression(1175,1185): 'CompanionB'
   null
 
 KtNameReferenceExpression(1175,1185): 'CompanionB'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionB: kotlin.Int
+    ]
 
 KtConstantExpression(1189,1190): '7'
   null
@@ -836,7 +854,10 @@ KtWhenExpression(1283,1533): 'when (s) {'
   null
 
 KtNameReferenceExpression(1289,1290): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: foo.Sealed
+    ]
 
 KtWhenEntry(1306,1317): 'Test.A -> 1'
   null
@@ -983,7 +1004,10 @@ KtNameReferenceExpression(1479,1483): 'this'
   null
 
 KtNameReferenceExpression(1484,1494): 'CompanionB'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionB: kotlin.Int
+    ]
 
 KtConstantExpression(1498,1499): '7'
   null
@@ -1034,7 +1058,10 @@ KtWhenExpression(1593,1851): 'when (s) {'
   null
 
 KtNameReferenceExpression(1599,1600): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: foo.Sealed
+    ]
 
 KtWhenEntry(1616,1629): 'Sealed.A -> 1'
   null
@@ -1160,7 +1187,10 @@ KtNameReferenceExpression(1760,1766): 'Sealed'
   null
 
 KtNameReferenceExpression(1767,1777): 'CompanionA'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionA: foo.Sealed
+    ]
 
 KtConstantExpression(1781,1782): '6'
   null
@@ -1181,7 +1211,10 @@ KtNameReferenceExpression(1795,1801): 'Sealed'
   null
 
 KtNameReferenceExpression(1802,1812): 'CompanionB'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionB: foo.Sealed
+    ]
 
 KtConstantExpression(1816,1817): '7'
   null

@@ -44,7 +44,10 @@ KtCallExpression(34,42): 'action()'
     ]
 
 KtNameReferenceExpression(34,40): 'action'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      action: kotlin.Function0<kotlin.Unit>
+    ]
 
 KtValueArgumentList(40,42): '()'
   null
@@ -65,7 +68,10 @@ KtCallExpression(64,102): 'foo label@{'
     ]
 
 KtNameReferenceExpression(64,67): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+    ]
 
 KtLambdaArgument(68,102): 'label@{'
   null

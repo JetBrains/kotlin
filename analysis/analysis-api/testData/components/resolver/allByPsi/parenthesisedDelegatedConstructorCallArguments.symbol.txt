@@ -98,7 +98,10 @@ KtParenthesizedExpression(68,71): '(i)'
   null
 
 KtNameReferenceExpression(69,70): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: T
+    ]
 
 KtSecondaryConstructor(79,128): 'constructor(i: T, value: Int) : this(i = (((i))))'
   null
@@ -164,7 +167,10 @@ KtParenthesizedExpression(122,125): '(i)'
   null
 
 KtNameReferenceExpression(123,124): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: T
+    ]
 
 KtClass(132,301): 'class B : A<(((Int)))> {'
   null
@@ -284,7 +290,10 @@ KtParenthesizedExpression(232,239): '(value)'
   null
 
 KtNameReferenceExpression(233,238): 'value'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      value: kotlin.Int
+    ]
 
 KtSecondaryConstructor(247,299): 'constructor(value: String) : super(i = ((5)) as Int)'
   null

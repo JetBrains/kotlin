@@ -125,7 +125,7 @@ KtNameReferenceExpression(393,399): 'MyEnum'
   NO_CANDIDATES
 
 KtNameReferenceExpression(402,413): 'OptionAlias'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -216,7 +216,7 @@ KtBinaryExpression(546,557): 'm = Option1'
     isInBestCandidates = true
 
 KtNameReferenceExpression(546,547): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -276,7 +276,7 @@ KtBinaryExpression(562,577): 'm = OptionAlias'
     isInBestCandidates = true
 
 KtNameReferenceExpression(562,563): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -314,7 +314,7 @@ KtOperationReferenceExpression(564,565): '='
     isInBestCandidates = true
 
 KtNameReferenceExpression(566,577): 'OptionAlias'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -351,7 +351,7 @@ KtBinaryExpression(582,596): 'm = stringProp'
     isInBestCandidates = true
 
 KtNameReferenceExpression(582,583): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

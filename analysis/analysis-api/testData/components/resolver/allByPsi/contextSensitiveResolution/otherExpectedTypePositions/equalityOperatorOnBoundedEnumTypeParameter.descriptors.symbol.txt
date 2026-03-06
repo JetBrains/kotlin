@@ -62,7 +62,10 @@ KtCallExpression(132,138): 'TODO()'
     ]
 
 KtNameReferenceExpression(132,136): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(136,138): '()'
   null
@@ -128,13 +131,18 @@ KtBinaryExpression(199,205): 'a == X'
     ]
 
 KtNameReferenceExpression(199,200): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtOperationReferenceExpression(201,203): '=='
   null
 
 KtNameReferenceExpression(204,205): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtContainerNodeForControlStructureBody(207,209): '{}'
   null
@@ -155,13 +163,18 @@ KtBinaryExpression(218,224): 'a != X'
     ]
 
 KtNameReferenceExpression(218,219): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtOperationReferenceExpression(220,222): '!='
   null
 
 KtNameReferenceExpression(223,224): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtContainerNodeForControlStructureBody(226,228): '{}'
   null
@@ -179,13 +192,18 @@ KtBinaryExpression(237,244): 'a === X'
   null
 
 KtNameReferenceExpression(237,238): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtOperationReferenceExpression(239,242): '==='
   null
 
 KtNameReferenceExpression(243,244): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtContainerNodeForControlStructureBody(246,248): '{}'
   null
@@ -203,13 +221,18 @@ KtBinaryExpression(257,264): 'a !== X'
   null
 
 KtNameReferenceExpression(257,258): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtOperationReferenceExpression(259,262): '!=='
   null
 
 KtNameReferenceExpression(263,264): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtContainerNodeForControlStructureBody(266,268): '{}'
   null
@@ -230,13 +253,19 @@ KtBinaryExpression(277,283): 'a == L'
     ]
 
 KtNameReferenceExpression(277,278): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtOperationReferenceExpression(279,281): '=='
   null
 
 KtNameReferenceExpression(282,283): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtContainerNodeForControlStructureBody(285,287): '{}'
   null
@@ -254,13 +283,18 @@ KtBinaryExpression(467,473): 'X == a'
   null
 
 KtNameReferenceExpression(467,468): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtOperationReferenceExpression(469,471): '=='
   null
 
 KtNameReferenceExpression(472,473): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtContainerNodeForControlStructureBody(475,477): '{}'
   null
@@ -281,13 +315,19 @@ KtBinaryExpression(486,492): 'L == a'
     ]
 
 KtNameReferenceExpression(486,487): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtOperationReferenceExpression(488,490): '=='
   null
 
 KtNameReferenceExpression(491,492): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtContainerNodeForControlStructureBody(494,496): '{}'
   null
@@ -309,7 +349,10 @@ KtBinaryExpression(695,705): 'a == id(X)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with equals>
 
 KtNameReferenceExpression(695,696): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtOperationReferenceExpression(697,699): '=='
   null
@@ -322,7 +365,11 @@ KtCallExpression(700,705): 'id(X)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(700,702): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(702,705): '(X)'
   null
@@ -331,7 +378,9 @@ KtValueArgument(703,704): 'X'
   null
 
 KtNameReferenceExpression(703,704): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtContainerNodeForControlStructureBody(707,709): '{}'
   null
@@ -352,7 +401,10 @@ KtBinaryExpression(718,728): 'a == id(L)'
     ]
 
 KtNameReferenceExpression(718,719): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtOperationReferenceExpression(720,722): '=='
   null
@@ -364,7 +416,10 @@ KtCallExpression(723,728): 'id(L)'
     ]
 
 KtNameReferenceExpression(723,725): 'id'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtValueArgumentList(725,728): '(L)'
   null
@@ -373,7 +428,10 @@ KtValueArgument(726,727): 'L'
   null
 
 KtNameReferenceExpression(726,727): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtContainerNodeForControlStructureBody(730,732): '{}'
   null
@@ -397,13 +455,18 @@ KtBinaryExpression(753,759): 'a == X'
     ]
 
 KtNameReferenceExpression(753,754): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtOperationReferenceExpression(755,757): '=='
   null
 
 KtNameReferenceExpression(758,759): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtBlockExpression(763,765): '{}'
   null
@@ -421,13 +484,18 @@ KtBinaryExpression(774,780): 'a != Y'
     ]
 
 KtNameReferenceExpression(774,775): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtOperationReferenceExpression(776,778): '!='
   null
 
 KtNameReferenceExpression(779,780): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtBlockExpression(784,786): '{}'
   null
@@ -442,13 +510,18 @@ KtBinaryExpression(795,802): 'a === X'
   null
 
 KtNameReferenceExpression(795,796): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtOperationReferenceExpression(797,800): '==='
   null
 
 KtNameReferenceExpression(801,802): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtBlockExpression(806,808): '{}'
   null
@@ -463,13 +536,18 @@ KtBinaryExpression(817,824): 'a !== Y'
   null
 
 KtNameReferenceExpression(817,818): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtOperationReferenceExpression(819,822): '!=='
   null
 
 KtNameReferenceExpression(823,824): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtBlockExpression(828,830): '{}'
   null
@@ -487,13 +565,19 @@ KtBinaryExpression(839,845): 'a == L'
     ]
 
 KtNameReferenceExpression(839,840): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtOperationReferenceExpression(841,843): '=='
   null
 
 KtNameReferenceExpression(844,845): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtBlockExpression(849,851): '{}'
   null
@@ -502,7 +586,10 @@ KtWhenExpression(863,914): 'when (a) {'
   null
 
 KtNameReferenceExpression(869,870): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtWhenEntry(882,889): 'X -> {}'
   null
@@ -511,7 +598,9 @@ KtWhenConditionWithExpression(882,883): 'X'
   null
 
 KtNameReferenceExpression(882,883): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtBlockExpression(887,889): '{}'
   null
@@ -523,13 +612,18 @@ KtWhenConditionWithExpression(898,899): 'Y'
   null
 
 KtNameReferenceExpression(898,899): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtWhenConditionWithExpression(901,902): 'L'
   null
 
 KtNameReferenceExpression(901,902): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtBlockExpression(906,908): '{}'
   null
@@ -541,7 +635,10 @@ KtProperty(926,935): 'val c = a'
   null
 
 KtNameReferenceExpression(934,935): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtWhenEntry(947,954): 'X -> {}'
   null
@@ -550,7 +647,9 @@ KtWhenConditionWithExpression(947,948): 'X'
   null
 
 KtNameReferenceExpression(947,948): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtBlockExpression(952,954): '{}'
   null
@@ -562,13 +661,18 @@ KtWhenConditionWithExpression(963,964): 'Y'
   null
 
 KtNameReferenceExpression(963,964): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtWhenConditionWithExpression(966,967): 'L'
   null
 
 KtNameReferenceExpression(966,967): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtBlockExpression(971,973): '{}'
   null
@@ -577,7 +681,10 @@ KtWhenExpression(985,1067): 'when (a) {'
   null
 
 KtNameReferenceExpression(991,992): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtWhenEntry(1004,1015): 'id(X) -> {}'
   null
@@ -593,7 +700,11 @@ KtCallExpression(1004,1009): 'id(X)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(1004,1006): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(1006,1009): '(X)'
   null
@@ -602,7 +713,9 @@ KtValueArgument(1007,1008): 'X'
   null
 
 KtNameReferenceExpression(1007,1008): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtBlockExpression(1013,1015): '{}'
   null
@@ -621,7 +734,11 @@ KtCallExpression(1024,1029): 'id(Y)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(1024,1026): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(1026,1029): '(Y)'
   null
@@ -630,7 +747,9 @@ KtValueArgument(1027,1028): 'Y'
   null
 
 KtNameReferenceExpression(1027,1028): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtWhenConditionWithExpression(1031,1036): 'id(L)'
   null
@@ -642,7 +761,10 @@ KtCallExpression(1031,1036): 'id(L)'
     ]
 
 KtNameReferenceExpression(1031,1033): 'id'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtValueArgumentList(1033,1036): '(L)'
   null
@@ -651,7 +773,10 @@ KtValueArgument(1034,1035): 'L'
   null
 
 KtNameReferenceExpression(1034,1035): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtBlockExpression(1040,1042): '{}'
   null
@@ -669,7 +794,10 @@ KtProperty(1079,1088): 'val c = a'
   null
 
 KtNameReferenceExpression(1087,1088): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: T
+    ]
 
 KtWhenEntry(1100,1111): 'id(X) -> {}'
   null
@@ -685,7 +813,11 @@ KtCallExpression(1100,1105): 'id(X)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(1100,1102): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(1102,1105): '(X)'
   null
@@ -694,7 +826,9 @@ KtValueArgument(1103,1104): 'X'
   null
 
 KtNameReferenceExpression(1103,1104): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtBlockExpression(1109,1111): '{}'
   null
@@ -713,7 +847,11 @@ KtCallExpression(1120,1125): 'id(Y)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(1120,1122): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(1122,1125): '(Y)'
   null
@@ -722,7 +860,9 @@ KtValueArgument(1123,1124): 'Y'
   null
 
 KtNameReferenceExpression(1123,1124): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtWhenConditionWithExpression(1127,1132): 'id(L)'
   null
@@ -734,7 +874,10 @@ KtCallExpression(1127,1132): 'id(L)'
     ]
 
 KtNameReferenceExpression(1127,1129): 'id'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtValueArgumentList(1129,1132): '(L)'
   null
@@ -743,7 +886,10 @@ KtValueArgument(1130,1131): 'L'
   null
 
 KtNameReferenceExpression(1130,1131): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtBlockExpression(1136,1138): '{}'
   null

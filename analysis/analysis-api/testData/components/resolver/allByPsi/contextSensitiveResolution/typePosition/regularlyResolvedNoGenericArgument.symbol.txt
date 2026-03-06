@@ -149,10 +149,14 @@ KtUserType(279,283): 'Left'
   null
 
 KtNameReferenceExpression(279,283): 'Left'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<NO_TYPE_ARGUMENTS_ON_RHS: One type argument expected. Use 'Left<*>' if you do not intend to pass type arguments.>
 
 KtNameReferenceExpression(287,288): 'z'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'z'.>
 
 KtWhenEntry(293,306): 'is Right -> y'
   null
@@ -170,7 +174,10 @@ KtNameReferenceExpression(296,301): 'Right'
   null
 
 KtNameReferenceExpression(305,306): 'y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]
 
 KtWhenEntry(311,321): 'else -> ""'
   null

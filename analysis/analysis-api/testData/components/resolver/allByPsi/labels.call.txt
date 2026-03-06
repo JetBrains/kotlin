@@ -58,7 +58,7 @@ KtCallExpression(34,42): 'action()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(34,40): 'action'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -122,7 +122,7 @@ KtCallExpression(64,102): 'foo label@{'
       }
 
 KtNameReferenceExpression(64,67): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

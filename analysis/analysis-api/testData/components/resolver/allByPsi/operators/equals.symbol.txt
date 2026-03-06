@@ -68,7 +68,10 @@ KtCallExpression(91,94): 'A()'
     ]
 
 KtNameReferenceExpression(91,92): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(92,94): '()'
   null
@@ -83,7 +86,10 @@ KtCallExpression(107,110): 'A()'
     ]
 
 KtNameReferenceExpression(107,108): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(108,110): '()'
   null
@@ -95,13 +101,19 @@ KtBinaryExpression(115,121): 'a == b'
     ]
 
 KtNameReferenceExpression(115,116): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
 
 KtOperationReferenceExpression(117,119): '=='
   null
 
 KtNameReferenceExpression(120,121): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
 
 KtBinaryExpression(126,132): 'a != b'
   KaSymbolResolutionSuccess:
@@ -110,34 +122,52 @@ KtBinaryExpression(126,132): 'a != b'
     ]
 
 KtNameReferenceExpression(126,127): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
 
 KtOperationReferenceExpression(128,130): '!='
   null
 
 KtNameReferenceExpression(131,132): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
 
 KtBinaryExpression(137,144): 'a === b'
   null
 
 KtNameReferenceExpression(137,138): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
 
 KtOperationReferenceExpression(139,142): '==='
   null
 
 KtNameReferenceExpression(143,144): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
 
 KtBinaryExpression(149,156): 'a !== b'
   null
 
 KtNameReferenceExpression(149,150): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
 
 KtOperationReferenceExpression(151,154): '!=='
   null
 
 KtNameReferenceExpression(155,156): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]

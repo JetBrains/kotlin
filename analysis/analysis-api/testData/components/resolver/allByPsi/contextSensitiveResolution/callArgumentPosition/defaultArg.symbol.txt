@@ -89,7 +89,10 @@ KtCallExpression(230,236): 'TODO()'
     ]
 
 KtNameReferenceExpression(230,234): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(234,236): '()'
   null
@@ -113,7 +116,10 @@ KtNameReferenceExpression(282,288): 'MyEnum'
   null
 
 KtNameReferenceExpression(291,301): 'EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtParameter(307,343): 'sealedArg: MyClass = InheritorObject'
   null
@@ -148,7 +154,9 @@ KtCallExpression(371,377): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(371,375): 'func'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtValueArgumentList(375,377): '()'
   null

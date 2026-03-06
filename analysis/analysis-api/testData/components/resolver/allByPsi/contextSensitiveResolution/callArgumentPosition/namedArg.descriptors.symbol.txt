@@ -95,7 +95,10 @@ KtUserType(314,321): 'MyClass'
   null
 
 KtNameReferenceExpression(314,321): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(321,323): '()'
   null
@@ -128,7 +131,10 @@ KtUserType(354,361): 'MyClass'
   null
 
 KtNameReferenceExpression(354,361): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(361,363): '()'
   null
@@ -170,7 +176,10 @@ KtUserType(441,448): 'MySuper'
   null
 
 KtNameReferenceExpression(441,448): 'MySuper'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MySuper
+    ]
 
 KtValueArgumentList(448,450): '()'
   null
@@ -197,7 +206,10 @@ KtCallExpression(486,492): 'TODO()'
     ]
 
 KtNameReferenceExpression(486,490): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(490,492): '()'
   null
@@ -221,7 +233,10 @@ KtCallExpression(542,558): 'InheritorClass()'
     ]
 
 KtNameReferenceExpression(542,556): 'InheritorClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass.InheritorClass
+    ]
 
 KtValueArgumentList(556,558): '()'
   null
@@ -278,7 +293,10 @@ KtCallExpression(686,692): 'TODO()'
     ]
 
 KtNameReferenceExpression(686,690): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(690,692): '()'
   null
@@ -308,7 +326,10 @@ KtCallExpression(725,734): 'lazy {""}'
     ]
 
 KtNameReferenceExpression(725,729): 'lazy'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+    ]
 
 KtLambdaArgument(730,734): '{""}'
   null
@@ -410,7 +431,10 @@ KtCallExpression(914,1001): 'namedArgumentsHolder('
     ]
 
 KtNameReferenceExpression(914,934): 'namedArgumentsHolder'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /namedArgumentsHolder(enumArg: MyEnum, arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(934,1001): '('
   null
@@ -425,7 +449,9 @@ KtNameReferenceExpression(944,947): 'arg'
   null
 
 KtNameReferenceExpression(950,965): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtValueArgument(975,995): 'enumArg = EnumValue1'
   null
@@ -437,7 +463,9 @@ KtNameReferenceExpression(975,982): 'enumArg'
   null
 
 KtNameReferenceExpression(985,995): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtCallExpression(1006,1087): 'namedArgumentsHolder('
   KaSymbolResolutionSuccess:
@@ -446,7 +474,10 @@ KtCallExpression(1006,1087): 'namedArgumentsHolder('
     ]
 
 KtNameReferenceExpression(1006,1026): 'namedArgumentsHolder'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /namedArgumentsHolder(enumArg: MyEnum, arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(1026,1087): '('
   null
@@ -461,7 +492,9 @@ KtNameReferenceExpression(1036,1043): 'enumArg'
   null
 
 KtNameReferenceExpression(1046,1056): 'EnumValue3'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue3>
 
 KtValueArgument(1066,1081): 'arg = propClass'
   null
@@ -473,7 +506,9 @@ KtNameReferenceExpression(1066,1069): 'arg'
   null
 
 KtNameReferenceExpression(1072,1081): 'propClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propClass>
 
 KtCallExpression(1092,1123): 'namedArgumentHolder(arg = prop)'
   KaSymbolResolutionSuccess:
@@ -482,7 +517,10 @@ KtCallExpression(1092,1123): 'namedArgumentHolder(arg = prop)'
     ]
 
 KtNameReferenceExpression(1092,1111): 'namedArgumentHolder'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /namedArgumentHolder(arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(1111,1123): '(arg = prop)'
   null
@@ -497,7 +535,9 @@ KtNameReferenceExpression(1112,1115): 'arg'
   null
 
 KtNameReferenceExpression(1118,1122): 'prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtCallExpression(1128,1164): 'namedArgumentHolder(arg = superProp)'
   KaSymbolResolutionSuccess:
@@ -506,7 +546,10 @@ KtCallExpression(1128,1164): 'namedArgumentHolder(arg = superProp)'
     ]
 
 KtNameReferenceExpression(1128,1147): 'namedArgumentHolder'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /namedArgumentHolder(arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(1147,1164): '(arg = superProp)'
   null
@@ -521,7 +564,9 @@ KtNameReferenceExpression(1148,1151): 'arg'
   null
 
 KtNameReferenceExpression(1154,1163): 'superProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superProp>
 
 KtCallExpression(1169,1202): 'namedArgumentHolder(arg = func())'
   KaSymbolResolutionSuccess:
@@ -530,7 +575,10 @@ KtCallExpression(1169,1202): 'namedArgumentHolder(arg = func())'
     ]
 
 KtNameReferenceExpression(1169,1188): 'namedArgumentHolder'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /namedArgumentHolder(arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(1188,1202): '(arg = func())'
   null
@@ -550,7 +598,9 @@ KtCallExpression(1195,1201): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
 
 KtNameReferenceExpression(1195,1199): 'func'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
 
 KtValueArgumentList(1199,1201): '()'
   null
@@ -562,7 +612,10 @@ KtCallExpression(1207,1245): 'namedArgumentHolder(arg = superFunc())'
     ]
 
 KtNameReferenceExpression(1207,1226): 'namedArgumentHolder'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /namedArgumentHolder(arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(1226,1245): '(arg = superFunc())'
   null
@@ -582,7 +635,9 @@ KtCallExpression(1233,1244): 'superFunc()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superFunc>
 
 KtNameReferenceExpression(1233,1242): 'superFunc'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superFunc>
 
 KtValueArgumentList(1242,1244): '()'
   null
@@ -594,7 +649,10 @@ KtCallExpression(1250,1285): 'namedArgumentHolder(arg = lazyProp)'
     ]
 
 KtNameReferenceExpression(1250,1269): 'namedArgumentHolder'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /namedArgumentHolder(arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(1269,1285): '(arg = lazyProp)'
   null
@@ -609,4 +667,6 @@ KtNameReferenceExpression(1270,1273): 'arg'
   null
 
 KtNameReferenceExpression(1276,1284): 'lazyProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lazyProp>

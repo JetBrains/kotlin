@@ -83,7 +83,10 @@ KtWhenExpression(168,206): 'when (f) {'
   null
 
 KtNameReferenceExpression(174,175): 'f'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      f: first.First
+    ]
 
 KtWhenEntry(183,191): 'ONE -> 1'
   null
@@ -92,7 +95,10 @@ KtWhenConditionWithExpression(183,186): 'ONE'
   null
 
 KtNameReferenceExpression(183,186): 'ONE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val ONE: second.Second
+    ]
 
 KtConstantExpression(190,191): '1'
   null
@@ -104,7 +110,9 @@ KtWhenConditionWithExpression(196,199): 'TWO'
   null
 
 KtNameReferenceExpression(196,199): 'TWO'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: TWO>
 
 KtConstantExpression(203,204): '2'
   null
@@ -131,7 +139,10 @@ KtWhenExpression(229,270): 'when (s) {'
   null
 
 KtNameReferenceExpression(235,236): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: second.Second
+    ]
 
 KtWhenEntry(244,254): 'THREE -> 3'
   null
@@ -140,7 +151,10 @@ KtWhenConditionWithExpression(244,249): 'THREE'
   null
 
 KtNameReferenceExpression(244,249): 'THREE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val THREE: first.First
+    ]
 
 KtConstantExpression(253,254): '3'
   null
@@ -152,7 +166,9 @@ KtWhenConditionWithExpression(259,263): 'FOUR'
   null
 
 KtNameReferenceExpression(259,263): 'FOUR'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FOUR>
 
 KtConstantExpression(267,268): '4'
   null

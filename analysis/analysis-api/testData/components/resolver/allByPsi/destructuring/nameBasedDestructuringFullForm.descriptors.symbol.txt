@@ -86,7 +86,10 @@ KtDestructuringDeclarationEntry(143,153): 'var second'
   null
 
 KtNameReferenceExpression(158,159): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: Tuple
+    ]
 
 KtIfExpression(166,195): 'if (true) { (var first) = x }'
   null
@@ -110,7 +113,10 @@ KtDestructuringDeclarationEntry(179,188): 'var first'
   null
 
 KtNameReferenceExpression(192,193): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: Tuple
+    ]
 
 KtIfExpression(200,237): 'if (true) { (val first: String) = x }'
   null
@@ -143,7 +149,10 @@ KtNameReferenceExpression(224,230): 'String'
   null
 
 KtNameReferenceExpression(234,235): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: Tuple
+    ]
 
 KtIfExpression(242,276): 'if (true) { (val aa = first) = x }'
   null
@@ -170,7 +179,10 @@ KtNameReferenceExpression(264,269): 'first'
   null
 
 KtNameReferenceExpression(273,274): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: Tuple
+    ]
 
 KtIfExpression(281,323): 'if (true) { (val aa: String = first) = x }'
   null
@@ -206,7 +218,10 @@ KtNameReferenceExpression(311,316): 'first'
   null
 
 KtNameReferenceExpression(320,321): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: Tuple
+    ]
 
 KtIfExpression(328,361): 'if (true) { (val _ = first) = x }'
   null
@@ -233,7 +248,10 @@ KtNameReferenceExpression(349,354): 'first'
   null
 
 KtNameReferenceExpression(358,359): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: Tuple
+    ]
 
 KtIfExpression(366,407): 'if (true) { (val _: String = first) = x }'
   null
@@ -269,7 +287,10 @@ KtNameReferenceExpression(395,400): 'first'
   null
 
 KtNameReferenceExpression(404,405): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: Tuple
+    ]
 
 KtNamedFunction(411,704): 'fun loop(x: List<Tuple>) {'
   null
@@ -331,7 +352,10 @@ KtContainerNode(475,476): 'x'
   null
 
 KtNameReferenceExpression(475,476): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: kotlin.collections.List<Tuple>
+    ]
 
 KtContainerNodeForControlStructureBody(478,480): '{}'
   null
@@ -360,7 +384,10 @@ KtContainerNode(505,506): 'x'
   null
 
 KtNameReferenceExpression(505,506): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: kotlin.collections.List<Tuple>
+    ]
 
 KtContainerNodeForControlStructureBody(508,510): '{}'
   null
@@ -398,7 +425,10 @@ KtContainerNode(543,544): 'x'
   null
 
 KtNameReferenceExpression(543,544): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: kotlin.collections.List<Tuple>
+    ]
 
 KtContainerNodeForControlStructureBody(546,548): '{}'
   null
@@ -430,7 +460,10 @@ KtContainerNode(578,579): 'x'
   null
 
 KtNameReferenceExpression(578,579): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: kotlin.collections.List<Tuple>
+    ]
 
 KtContainerNodeForControlStructureBody(581,583): '{}'
   null
@@ -471,7 +504,10 @@ KtContainerNode(621,622): 'x'
   null
 
 KtNameReferenceExpression(621,622): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: kotlin.collections.List<Tuple>
+    ]
 
 KtContainerNodeForControlStructureBody(624,626): '{}'
   null
@@ -503,7 +539,10 @@ KtContainerNode(655,656): 'x'
   null
 
 KtNameReferenceExpression(655,656): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: kotlin.collections.List<Tuple>
+    ]
 
 KtContainerNodeForControlStructureBody(658,660): '{}'
   null
@@ -544,7 +583,10 @@ KtContainerNode(697,698): 'x'
   null
 
 KtNameReferenceExpression(697,698): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: kotlin.collections.List<Tuple>
+    ]
 
 KtContainerNodeForControlStructureBody(700,702): '{}'
   null
@@ -610,7 +652,10 @@ KtCallExpression(761,796): 'foo { (val first, val second,) -> }'
     ]
 
 KtNameReferenceExpression(761,764): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+    ]
 
 KtLambdaArgument(765,796): '{ (val first, val second,) -> }'
   null
@@ -646,7 +691,10 @@ KtCallExpression(801,823): 'foo { (val first) -> }'
     ]
 
 KtNameReferenceExpression(801,804): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+    ]
 
 KtLambdaArgument(805,823): '{ (val first) -> }'
   null
@@ -679,7 +727,10 @@ KtCallExpression(828,858): 'foo { (val first: String) -> }'
     ]
 
 KtNameReferenceExpression(828,831): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+    ]
 
 KtLambdaArgument(832,858): '{ (val first: String) -> }'
   null
@@ -721,7 +772,10 @@ KtCallExpression(863,890): 'foo { (val aa = first) -> }'
     ]
 
 KtNameReferenceExpression(863,866): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+    ]
 
 KtLambdaArgument(867,890): '{ (val aa = first) -> }'
   null
@@ -757,7 +811,10 @@ KtCallExpression(895,930): 'foo { (val aa: String = first) -> }'
     ]
 
 KtNameReferenceExpression(895,898): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+    ]
 
 KtLambdaArgument(899,930): '{ (val aa: String = first) -> }'
   null
@@ -802,7 +859,10 @@ KtCallExpression(935,961): 'foo { (val _ = first) -> }'
     ]
 
 KtNameReferenceExpression(935,938): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+    ]
 
 KtLambdaArgument(939,961): '{ (val _ = first) -> }'
   null
@@ -838,7 +898,10 @@ KtCallExpression(966,1000): 'foo { (val _: String = first) -> }'
     ]
 
 KtNameReferenceExpression(966,969): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+    ]
 
 KtLambdaArgument(970,1000): '{ (val _: String = first) -> }'
   null

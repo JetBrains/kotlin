@@ -134,7 +134,7 @@ KtCallExpression(156,162): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(156,160): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -265,7 +265,7 @@ KtCallExpression(228,234): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(228,232): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -406,7 +406,7 @@ KtIsExpression(307,319): 'x is A<*>.B1'
   null
 
 KtNameReferenceExpression(307,308): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -459,7 +459,7 @@ KtIsExpression(334,348): 'x is A<Int>.B2'
   null
 
 KtNameReferenceExpression(334,335): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -521,7 +521,7 @@ KtIsExpression(363,371): 'x is A.C'
   null
 
 KtNameReferenceExpression(363,364): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -571,7 +571,7 @@ KtIsExpression(404,411): 'x is B1'
   null
 
 KtNameReferenceExpression(404,405): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -597,7 +597,7 @@ KtUserType(409,411): 'B1'
   null
 
 KtNameReferenceExpression(409,411): 'B1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'B1'.>
 
@@ -614,7 +614,7 @@ KtIsExpression(426,433): 'x is B2'
   null
 
 KtNameReferenceExpression(426,427): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -640,7 +640,7 @@ KtUserType(431,433): 'B2'
   null
 
 KtNameReferenceExpression(431,433): 'B2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'B2'.>
 
@@ -657,7 +657,7 @@ KtIsExpression(448,454): 'x is C'
   null
 
 KtNameReferenceExpression(448,449): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

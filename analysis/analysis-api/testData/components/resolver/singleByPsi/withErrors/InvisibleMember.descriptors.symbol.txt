@@ -1,0 +1,6 @@
+KtNameReferenceExpression(63,64): 'i'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      val i: kotlin.Int
+    ]
+    diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'i': it is private in 'A'>

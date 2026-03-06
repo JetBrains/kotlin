@@ -286,7 +286,7 @@ KtCallExpression(434,440): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(434,438): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -335,7 +335,7 @@ KtCallExpression(490,506): 'InheritorClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(490,504): 'InheritorClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -490,7 +490,7 @@ KtCallExpression(677,686): 'lazy {""}'
       }
 
 KtNameReferenceExpression(677,681): 'lazy'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -572,7 +572,7 @@ KtCallExpression(717,723): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(717,721): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -670,7 +670,7 @@ KtCallExpression(831,862): 'receiveMyClass(InheritorObject)'
       }
 
 KtNameReferenceExpression(831,845): 'receiveMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -745,7 +745,7 @@ KtCallExpression(867,894): 'receiveMyClass(propMyClass)'
       }
 
 KtNameReferenceExpression(867,881): 'receiveMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -784,7 +784,7 @@ KtValueArgument(882,893): 'propMyClass'
   null
 
 KtNameReferenceExpression(882,893): 'propMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -837,7 +837,7 @@ KtCallExpression(899,933): 'receiveMyClass(propInheritorClass)'
       }
 
 KtNameReferenceExpression(899,913): 'receiveMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -876,7 +876,7 @@ KtValueArgument(914,932): 'propInheritorClass'
   null
 
 KtNameReferenceExpression(914,932): 'propInheritorClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -929,7 +929,7 @@ KtCallExpression(938,973): 'receiveMyClass(propInheritorObject)'
       }
 
 KtNameReferenceExpression(938,952): 'receiveMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -968,7 +968,7 @@ KtValueArgument(953,972): 'propInheritorObject'
   null
 
 KtNameReferenceExpression(953,972): 'propInheritorObject'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1024,7 +1024,7 @@ KtCallExpression(979,1007): 'receiveMyClass(NestedObject)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(979,993): 'receiveMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1105,7 +1105,7 @@ KtCallExpression(1012,1032): 'receiveMyClass(prop)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1012,1026): 'receiveMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1147,7 +1147,7 @@ KtValueArgument(1027,1031): 'prop'
   null
 
 KtNameReferenceExpression(1027,1031): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1203,7 +1203,7 @@ KtCallExpression(1037,1062): 'receiveMyClass(superProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1037,1051): 'receiveMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1245,7 +1245,7 @@ KtValueArgument(1052,1061): 'superProp'
   null
 
 KtNameReferenceExpression(1052,1061): 'superProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1301,7 +1301,7 @@ KtCallExpression(1067,1092): 'receiveMyClass(constProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1067,1081): 'receiveMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1343,7 +1343,7 @@ KtValueArgument(1082,1091): 'constProp'
   null
 
 KtNameReferenceExpression(1082,1091): 'constProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1399,7 +1399,7 @@ KtCallExpression(1097,1121): 'receiveMyClass(lazyProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1097,1111): 'receiveMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1441,7 +1441,7 @@ KtValueArgument(1112,1120): 'lazyProp'
   null
 
 KtNameReferenceExpression(1112,1120): 'lazyProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1497,7 +1497,7 @@ KtCallExpression(1126,1152): 'receiveMyClass(lambdaProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1126,1140): 'receiveMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1539,7 +1539,7 @@ KtValueArgument(1141,1151): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1141,1151): 'lambdaProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1595,7 +1595,7 @@ KtCallExpression(1157,1182): 'receiveMyClass(superProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1157,1171): 'receiveMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1637,7 +1637,7 @@ KtValueArgument(1172,1181): 'superProp'
   null
 
 KtNameReferenceExpression(1172,1181): 'superProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1690,7 +1690,7 @@ KtCallExpression(1188,1220): 'receiveMyClass(InheritorClass())'
       }
 
 KtNameReferenceExpression(1188,1202): 'receiveMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1734,7 +1734,7 @@ KtCallExpression(1203,1219): 'InheritorClass()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
 
 KtNameReferenceExpression(1203,1217): 'InheritorClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
 
@@ -1775,7 +1775,7 @@ KtCallExpression(1225,1247): 'receiveMyClass(func())'
       }
 
 KtNameReferenceExpression(1225,1239): 'receiveMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1819,7 +1819,7 @@ KtCallExpression(1240,1246): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1240,1244): 'func'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
@@ -1860,7 +1860,7 @@ KtCallExpression(1252,1279): 'receiveMyClass(superFunc())'
       }
 
 KtNameReferenceExpression(1252,1266): 'receiveMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1904,7 +1904,7 @@ KtCallExpression(1267,1278): 'superFunc()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1267,1276): 'superFunc'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 

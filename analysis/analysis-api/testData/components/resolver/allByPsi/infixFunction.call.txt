@@ -125,7 +125,7 @@ KtOperationReferenceExpression(42,43): '-'
       }
 
 KtNameReferenceExpression(44,45): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -202,7 +202,7 @@ KtBinaryExpression(98,117): 'parameter myMinus 5'
       }
 
 KtNameReferenceExpression(98,107): 'parameter'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -333,7 +333,7 @@ KtBinaryExpression(145,161): 'newParameter + 1'
       }
 
 KtNameReferenceExpression(145,157): 'newParameter'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -467,7 +467,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
       }
 
 KtNameReferenceExpression(195,207): 'newParameter'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -520,7 +520,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
       }
 
 KtNameReferenceExpression(208,212): 'plus'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -598,7 +598,7 @@ KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
       }
 
 KtNameReferenceExpression(213,222): 'parameter'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -651,7 +651,7 @@ KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
       }
 
 KtNameReferenceExpression(223,230): 'myMinus'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -693,7 +693,7 @@ KtValueArgument(231,247): 'oneMoreParameter'
   null
 
 KtNameReferenceExpression(231,247): 'oneMoreParameter'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

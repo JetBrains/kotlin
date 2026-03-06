@@ -212,7 +212,10 @@ KtCallExpression(430,435): 'foo()'
     ]
 
 KtNameReferenceExpression(430,433): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+    ]
 
 KtValueArgumentList(433,435): '()'
   null
@@ -227,7 +230,10 @@ KtCallExpression(458,463): 'foo()'
     ]
 
 KtNameReferenceExpression(458,461): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+    ]
 
 KtValueArgumentList(461,463): '()'
   null
@@ -245,13 +251,19 @@ KtNameReferenceExpression(487,501): 'TopLevelObject'
   null
 
 KtNameReferenceExpression(502,505): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val bar: kotlin.Int
+    ]
 
 KtProperty(510,531): 'val importedBar = bar'
   null
 
 KtNameReferenceExpression(528,531): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val bar: kotlin.Int
+    ]
 
 KtProperty(537,591): 'val explicitNestedObject = TopLevelObject.NestedObject'
   null
@@ -296,7 +308,10 @@ KtCallExpression(687,692): 'baz()'
     ]
 
 KtNameReferenceExpression(687,690): 'baz'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+    ]
 
 KtValueArgumentList(690,692): '()'
   null
@@ -320,7 +335,10 @@ KtCallExpression(734,739): 'baz()'
     ]
 
 KtNameReferenceExpression(734,737): 'baz'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+    ]
 
 KtValueArgumentList(737,739): '()'
   null
@@ -335,7 +353,10 @@ KtCallExpression(762,767): 'baz()'
     ]
 
 KtNameReferenceExpression(762,765): 'baz'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+    ]
 
 KtValueArgumentList(765,767): '()'
   null
@@ -359,7 +380,10 @@ KtNameReferenceExpression(806,818): 'NestedObject'
   null
 
 KtNameReferenceExpression(819,822): 'doo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var doo: kotlin.String
+    ]
 
 KtProperty(827,867): 'val explicitNestedDoo = NestedObject.doo'
   null
@@ -374,13 +398,19 @@ KtNameReferenceExpression(851,863): 'NestedObject'
   null
 
 KtNameReferenceExpression(864,867): 'doo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var doo: kotlin.String
+    ]
 
 KtProperty(872,893): 'val importedDoo = doo'
   null
 
 KtNameReferenceExpression(890,893): 'doo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var doo: kotlin.String
+    ]
 
 KtBinaryExpression(899,910): 'doo = "str"'
   KaSymbolResolutionSuccess:
@@ -389,7 +419,10 @@ KtBinaryExpression(899,910): 'doo = "str"'
     ]
 
 KtNameReferenceExpression(899,902): 'doo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var doo: kotlin.String
+    ]
 
 KtOperationReferenceExpression(903,904): '='
   null

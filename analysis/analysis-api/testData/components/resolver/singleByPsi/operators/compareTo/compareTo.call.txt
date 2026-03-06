@@ -1,5 +1,5 @@
 KtNameReferenceExpression(114,123): 'compareTo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

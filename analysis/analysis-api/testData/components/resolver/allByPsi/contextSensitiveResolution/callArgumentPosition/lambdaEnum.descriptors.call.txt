@@ -35,7 +35,7 @@ KtProperty(158,185): 'val EnumValue3 = EnumValue1'
   null
 
 KtNameReferenceExpression(175,185): 'EnumValue1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
 
@@ -49,7 +49,7 @@ KtUserType(204,210): 'String'
   null
 
 KtNameReferenceExpression(204,210): 'String'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
 
@@ -84,7 +84,7 @@ KtUserType(253,259): 'MyEnum'
   null
 
 KtNameReferenceExpression(253,259): 'MyEnum'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
 
@@ -95,7 +95,7 @@ KtUserType(264,268): 'Unit'
   null
 
 KtNameReferenceExpression(264,268): 'Unit'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
 
@@ -139,7 +139,7 @@ KtCallExpression(276,293): 'lEnum(EnumValue1)'
       }
 
 KtNameReferenceExpression(276,281): 'lEnum'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -162,7 +162,7 @@ KtValueArgument(282,292): 'EnumValue1'
   null
 
 KtNameReferenceExpression(282,292): 'EnumValue1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
@@ -203,7 +203,7 @@ KtCallExpression(298,315): 'lEnum(EnumValue2)'
       }
 
 KtNameReferenceExpression(298,303): 'lEnum'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -226,7 +226,7 @@ KtValueArgument(304,314): 'EnumValue2'
   null
 
 KtNameReferenceExpression(304,314): 'EnumValue2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue2>
 
@@ -261,7 +261,7 @@ KtUserType(349,350): 'T'
   null
 
 KtNameReferenceExpression(349,350): 'T'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
 
@@ -316,7 +316,7 @@ KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
 
 KtNameReferenceExpression(387,400): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -366,7 +366,7 @@ KtUserType(401,407): 'MyEnum'
   null
 
 KtNameReferenceExpression(401,407): 'MyEnum'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
 
@@ -383,7 +383,7 @@ KtBlockExpression(411,421): 'EnumValue1'
   null
 
 KtNameReferenceExpression(411,421): 'EnumValue1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
@@ -426,7 +426,7 @@ KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
 
 KtNameReferenceExpression(428,441): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -476,7 +476,7 @@ KtUserType(442,448): 'MyEnum'
   null
 
 KtNameReferenceExpression(442,448): 'MyEnum'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
 
@@ -493,7 +493,7 @@ KtBlockExpression(452,462): 'EnumValue3'
   null
 
 KtNameReferenceExpression(452,462): 'EnumValue3'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
 
@@ -536,7 +536,7 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
 
 KtNameReferenceExpression(469,482): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -586,7 +586,7 @@ KtUserType(483,489): 'MyEnum'
   null
 
 KtNameReferenceExpression(483,489): 'MyEnum'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>
 
@@ -603,6 +603,6 @@ KtBlockExpression(493,497): 'prop'
   null
 
 KtNameReferenceExpression(493,497): 'prop'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyEnum was expected>

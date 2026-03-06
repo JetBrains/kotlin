@@ -104,7 +104,7 @@ KtCallExpression(140,146): 'foo(X)'
       }
 
 KtNameReferenceExpression(140,143): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -143,7 +143,7 @@ KtValueArgument(144,145): 'X'
   null
 
 KtNameReferenceExpression(144,145): 'X'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleVariableAccessCall:
         contextArguments = []
@@ -174,7 +174,7 @@ KtNameReferenceExpression(144,145): 'X'
           callableId = a2/X
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public val X: MyEnum defined in a1 in file other1.kt
     public val X: MyEnum defined in a2 in file other2.kt>
 
@@ -212,7 +212,7 @@ KtCallExpression(151,157): 'foo(Y)'
       }
 
 KtNameReferenceExpression(151,154): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -251,7 +251,7 @@ KtValueArgument(155,156): 'Y'
   null
 
 KtNameReferenceExpression(155,156): 'Y'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleVariableAccessCall:
         contextArguments = []
@@ -282,7 +282,7 @@ KtNameReferenceExpression(155,156): 'Y'
           callableId = a2/Y
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
     public val Y: String defined in a1 in file other1.kt
     public val Y: String defined in a2 in file other2.kt>
 
@@ -320,7 +320,7 @@ KtCallExpression(162,168): 'foo(Z)'
       }
 
 KtNameReferenceExpression(162,165): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -359,6 +359,6 @@ KtValueArgument(166,167): 'Z'
   null
 
 KtNameReferenceExpression(166,167): 'Z'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Z>

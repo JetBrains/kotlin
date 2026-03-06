@@ -746,7 +746,7 @@ KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
       }
 
 KtNameReferenceExpression(496,506): 'intArrayOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1261,7 +1261,7 @@ KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArr
       }
 
 KtNameReferenceExpression(703,710): 'arrayOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1378,7 +1378,7 @@ KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
       }
 
 KtNameReferenceExpression(715,728): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1509,7 +1509,7 @@ KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
       }
 
 KtNameReferenceExpression(744,757): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1595,7 +1595,7 @@ KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
       }
 
 KtNameReferenceExpression(758,768): 'intArrayOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1780,7 +1780,7 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
       }
 
 KtNameReferenceExpression(800,814): 'stringConstant'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

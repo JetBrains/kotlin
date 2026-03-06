@@ -1911,7 +1911,7 @@ public class org/jetbrains/kotlin/psi/KtModifierListOwnerStub : org/jetbrains/ko
 	public fun removeModifier (Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;)V
 }
 
-public final class org/jetbrains/kotlin/psi/KtNameReferenceExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub, org/jetbrains/kotlin/psi/KtSimpleNameExpression {
+public final class org/jetbrains/kotlin/psi/KtNameReferenceExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub, org/jetbrains/kotlin/psi/KtSimpleNameExpression, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public static final field Companion Lorg/jetbrains/kotlin/psi/KtNameReferenceExpression$Companion;
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinNameReferenceExpressionStub;)V

@@ -95,7 +95,7 @@ KtUserType(150,166): 'SealedGeneric<T>'
   null
 
 KtNameReferenceExpression(150,163): 'SealedGeneric'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -203,7 +203,7 @@ KtUserType(209,225): 'SealedGeneric<T>'
   null
 
 KtNameReferenceExpression(209,222): 'SealedGeneric'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -314,7 +314,7 @@ KtIsExpression(337,367): 'instance1 is SGOption1<String>'
   null
 
 KtNameReferenceExpression(337,346): 'instance1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -340,7 +340,7 @@ KtUserType(350,367): 'SGOption1<String>'
   null
 
 KtNameReferenceExpression(350,359): 'SGOption1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption1>
 
@@ -374,7 +374,7 @@ KtDotQualifiedExpression(386,401): 'instance1.prop1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(386,395): 'instance1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -391,7 +391,7 @@ KtNameReferenceExpression(386,395): 'instance1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(396,401): 'prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -405,7 +405,7 @@ KtIsExpression(416,441): 'instance1 is SGOption1<*>'
   null
 
 KtNameReferenceExpression(416,425): 'instance1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -431,7 +431,7 @@ KtUserType(429,441): 'SGOption1<*>'
   null
 
 KtNameReferenceExpression(429,438): 'SGOption1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption1>
 
@@ -456,7 +456,7 @@ KtDotQualifiedExpression(460,475): 'instance1.prop1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(460,469): 'instance1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -473,7 +473,7 @@ KtNameReferenceExpression(460,469): 'instance1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(470,475): 'prop1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
@@ -487,7 +487,7 @@ KtIsExpression(490,526): 'instance2 is SGOption2<CharSequence>'
   null
 
 KtNameReferenceExpression(490,499): 'instance2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -513,7 +513,7 @@ KtUserType(503,526): 'SGOption2<CharSequence>'
   null
 
 KtNameReferenceExpression(503,512): 'SGOption2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption2>
 
@@ -547,7 +547,7 @@ KtDotQualifiedExpression(545,560): 'instance2.prop2'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(545,554): 'instance2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -564,7 +564,7 @@ KtNameReferenceExpression(545,554): 'instance2'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(555,560): 'prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
@@ -578,7 +578,7 @@ KtIsExpression(575,614): 'instance2 is SGOption2<in CharSequence>'
   null
 
 KtNameReferenceExpression(575,584): 'instance2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -604,7 +604,7 @@ KtUserType(588,614): 'SGOption2<in CharSequence>'
   null
 
 KtNameReferenceExpression(588,597): 'SGOption2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption2>
 
@@ -641,7 +641,7 @@ KtDotQualifiedExpression(633,648): 'instance2.prop2'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(633,642): 'instance2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -658,7 +658,7 @@ KtNameReferenceExpression(633,642): 'instance2'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(643,648): 'prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
@@ -672,7 +672,7 @@ KtIsExpression(663,703): 'instance2 is SGOption2<out CharSequence>'
   null
 
 KtNameReferenceExpression(663,672): 'instance2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -698,7 +698,7 @@ KtUserType(676,703): 'SGOption2<out CharSequence>'
   null
 
 KtNameReferenceExpression(676,685): 'SGOption2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption2>
 
@@ -735,7 +735,7 @@ KtDotQualifiedExpression(722,737): 'instance2.prop2'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(722,731): 'instance2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -752,7 +752,7 @@ KtNameReferenceExpression(722,731): 'instance2'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(732,737): 'prop2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
@@ -808,7 +808,7 @@ KtWhenExpression(810,885): 'when(a) {'
   null
 
 KtNameReferenceExpression(815,816): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -837,7 +837,7 @@ KtUserType(831,843): 'SGOption1<*>'
   null
 
 KtNameReferenceExpression(831,840): 'SGOption1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption1>
 
@@ -863,7 +863,7 @@ KtUserType(861,873): 'SGOption2<*>'
   null
 
 KtNameReferenceExpression(861,870): 'SGOption2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption2>
 
@@ -880,7 +880,7 @@ KtWhenExpression(891,966): 'when(a) {'
   null
 
 KtNameReferenceExpression(896,897): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -909,7 +909,7 @@ KtUserType(912,924): 'SGOption1<T>'
   null
 
 KtNameReferenceExpression(912,921): 'SGOption1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption1>
 
@@ -944,7 +944,7 @@ KtUserType(942,954): 'SGOption2<T>'
   null
 
 KtNameReferenceExpression(942,951): 'SGOption2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption2>
 
@@ -1033,7 +1033,7 @@ KtWhenExpression(1049,1118): 'when(a) {'
   null
 
 KtNameReferenceExpression(1054,1055): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1062,7 +1062,7 @@ KtUserType(1070,1079): 'SGOption1'
   null
 
 KtNameReferenceExpression(1070,1079): 'SGOption1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption1>
 
@@ -1082,7 +1082,7 @@ KtUserType(1097,1106): 'SGOption2'
   null
 
 KtNameReferenceExpression(1097,1106): 'SGOption2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption2>
 
@@ -1093,7 +1093,7 @@ KtBinaryExpressionWithTypeRHS(1124,1138): 'b as SGOption1'
   null
 
 KtNameReferenceExpression(1124,1125): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1119,7 +1119,7 @@ KtUserType(1129,1138): 'SGOption1'
   null
 
 KtNameReferenceExpression(1129,1138): 'SGOption1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption1>
 
@@ -1172,7 +1172,7 @@ KtBinaryExpressionWithTypeRHS(1210,1232): 'a as SGOption1<String>'
   null
 
 KtNameReferenceExpression(1210,1211): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1198,7 +1198,7 @@ KtUserType(1215,1232): 'SGOption1<String>'
   null
 
 KtNameReferenceExpression(1215,1224): 'SGOption1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption1>
 
@@ -1227,7 +1227,7 @@ KtIsExpression(1241,1263): 'b is SGOption1<String>'
   null
 
 KtNameReferenceExpression(1241,1242): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1253,7 +1253,7 @@ KtUserType(1246,1263): 'SGOption1<String>'
   null
 
 KtNameReferenceExpression(1246,1255): 'SGOption1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SGOption1>
 

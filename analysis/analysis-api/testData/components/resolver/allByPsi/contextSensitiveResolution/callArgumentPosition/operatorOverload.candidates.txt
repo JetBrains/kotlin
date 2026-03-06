@@ -206,7 +206,7 @@ KtBinaryExpression(339,353): 'i + EnumValue1'
     isInBestCandidates = true
 
 KtNameReferenceExpression(339,340): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -261,7 +261,7 @@ KtOperationReferenceExpression(341,342): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(343,353): 'EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -319,7 +319,7 @@ KtBinaryExpression(358,377): 'i + InheritorObject'
     isInBestCandidates = true
 
 KtNameReferenceExpression(358,359): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -414,7 +414,7 @@ KtBinaryExpression(382,401): 'i - InheritorObject'
     isInBestCandidates = true
 
 KtNameReferenceExpression(382,383): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -469,7 +469,7 @@ KtOperationReferenceExpression(384,385): '-'
     isInBestCandidates = true
 
 KtNameReferenceExpression(386,401): 'InheritorObject'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

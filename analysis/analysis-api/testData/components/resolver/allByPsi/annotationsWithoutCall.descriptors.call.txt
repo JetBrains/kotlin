@@ -63,7 +63,7 @@ KtUserType(37,41): 'Anno'
   null
 
 KtNameReferenceExpression(37,41): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

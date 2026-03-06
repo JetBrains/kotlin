@@ -71,7 +71,10 @@ KtCallExpression(122,128): 'foo(X)'
     ]
 
 KtNameReferenceExpression(122,125): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b/foo(a: b.MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(125,128): '(X)'
   null
@@ -80,7 +83,10 @@ KtValueArgument(126,127): 'X'
   null
 
 KtNameReferenceExpression(126,127): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b/MyEnum.X
+    ]
 
 KtCallExpression(133,139): 'foo(Y)'
   KaSymbolResolutionSuccess:
@@ -89,7 +95,10 @@ KtCallExpression(133,139): 'foo(Y)'
     ]
 
 KtNameReferenceExpression(133,136): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b/foo(a: b.MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(136,139): '(Y)'
   null
@@ -98,7 +107,10 @@ KtValueArgument(137,138): 'Y'
   null
 
 KtNameReferenceExpression(137,138): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b/MyEnum.Y
+    ]
 
 KtCallExpression(144,150): 'foo(Z)'
   KaSymbolResolutionSuccess:
@@ -107,7 +119,10 @@ KtCallExpression(144,150): 'foo(Z)'
     ]
 
 KtNameReferenceExpression(144,147): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b/foo(a: b.MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(147,150): '(Z)'
   null
@@ -116,4 +131,7 @@ KtValueArgument(148,149): 'Z'
   null
 
 KtNameReferenceExpression(148,149): 'Z'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b/MyEnum.Z
+    ]

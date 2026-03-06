@@ -1,2 +1,5 @@
 KtNameReferenceExpression(94,100): 'invoke'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.invoke(<dispatch receiver>: A): kotlin.Unit
+    ]

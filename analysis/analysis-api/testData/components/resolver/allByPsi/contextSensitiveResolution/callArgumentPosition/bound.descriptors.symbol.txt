@@ -53,7 +53,10 @@ KtNameReferenceExpression(150,151): 'T'
   null
 
 KtNameReferenceExpression(155,158): 'arg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      arg: T
+    ]
 
 KtNamedFunction(160,210): 'fun testFunBound() {'
   null
@@ -72,7 +75,11 @@ KtCallExpression(185,208): 'boundHolder(EnumValue1)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with boundHolder>
 
 KtNameReferenceExpression(185,196): 'boundHolder'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /boundHolder(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with boundHolder>
 
 KtValueArgumentList(196,208): '(EnumValue1)'
   null
@@ -81,7 +88,9 @@ KtValueArgument(197,207): 'EnumValue1'
   null
 
 KtNameReferenceExpression(197,207): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtNamedFunction(212,271): 'fun testFunBound2() {'
   null
@@ -100,7 +109,11 @@ KtCallExpression(238,269): 'boundHolder<MyEnum>(EnumValue1)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with boundHolder>
 
 KtNameReferenceExpression(238,249): 'boundHolder'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /boundHolder(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with boundHolder>
 
 KtTypeArgumentList(249,257): '<MyEnum>'
   null
@@ -124,7 +137,9 @@ KtValueArgument(258,268): 'EnumValue1'
   null
 
 KtNameReferenceExpression(258,268): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtNamedFunction(273,352): 'inline fun <T: MyEnum> testInlineFunBound(value: T) {'
   null
@@ -172,13 +187,18 @@ KtBinaryExpression(331,350): 'value == EnumValue1'
     ]
 
 KtNameReferenceExpression(331,336): 'value'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      value: T
+    ]
 
 KtOperationReferenceExpression(337,339): '=='
   null
 
 KtNameReferenceExpression(340,350): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtNamedFunction(354,420): 'fun <T: MyEnum> testFunBound(value: T) {'
   null
@@ -223,10 +243,15 @@ KtBinaryExpression(399,418): 'value == EnumValue1'
     ]
 
 KtNameReferenceExpression(399,404): 'value'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      value: T
+    ]
 
 KtOperationReferenceExpression(405,407): '=='
   null
 
 KtNameReferenceExpression(408,418): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>

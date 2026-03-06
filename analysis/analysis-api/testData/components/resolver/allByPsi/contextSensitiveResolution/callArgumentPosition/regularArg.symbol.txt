@@ -203,7 +203,10 @@ KtCallExpression(434,440): 'TODO()'
     ]
 
 KtNameReferenceExpression(434,438): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(438,440): '()'
   null
@@ -227,7 +230,10 @@ KtCallExpression(490,506): 'InheritorClass()'
     ]
 
 KtNameReferenceExpression(490,504): 'InheritorClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass.InheritorClass
+    ]
 
 KtValueArgumentList(504,506): '()'
   null
@@ -305,7 +311,10 @@ KtCallExpression(677,686): 'lazy {""}'
     ]
 
 KtNameReferenceExpression(677,681): 'lazy'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
+    ]
 
 KtLambdaArgument(682,686): '{""}'
   null
@@ -344,7 +353,10 @@ KtCallExpression(717,723): 'TODO()'
     ]
 
 KtNameReferenceExpression(717,721): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(721,723): '()'
   null
@@ -401,7 +413,10 @@ KtCallExpression(831,862): 'receiveMyClass(InheritorObject)'
     ]
 
 KtNameReferenceExpression(831,845): 'receiveMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(845,862): '(InheritorObject)'
   null
@@ -419,7 +434,10 @@ KtCallExpression(867,894): 'receiveMyClass(propMyClass)'
     ]
 
 KtNameReferenceExpression(867,881): 'receiveMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(881,894): '(propMyClass)'
   null
@@ -428,7 +446,10 @@ KtValueArgument(882,893): 'propMyClass'
   null
 
 KtNameReferenceExpression(882,893): 'propMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val propMyClass: MyClass
+    ]
 
 KtCallExpression(899,933): 'receiveMyClass(propInheritorClass)'
   KaSymbolResolutionSuccess:
@@ -437,7 +458,10 @@ KtCallExpression(899,933): 'receiveMyClass(propInheritorClass)'
     ]
 
 KtNameReferenceExpression(899,913): 'receiveMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(913,933): '(propInheritorClass)'
   null
@@ -446,7 +470,10 @@ KtValueArgument(914,932): 'propInheritorClass'
   null
 
 KtNameReferenceExpression(914,932): 'propInheritorClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val propInheritorClass: MyClass.InheritorClass
+    ]
 
 KtCallExpression(938,973): 'receiveMyClass(propInheritorObject)'
   KaSymbolResolutionSuccess:
@@ -455,7 +482,10 @@ KtCallExpression(938,973): 'receiveMyClass(propInheritorObject)'
     ]
 
 KtNameReferenceExpression(938,952): 'receiveMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(952,973): '(propInheritorObject)'
   null
@@ -464,7 +494,10 @@ KtValueArgument(953,972): 'propInheritorObject'
   null
 
 KtNameReferenceExpression(953,972): 'propInheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val propInheritorObject: MyClass.InheritorObject
+    ]
 
 KtCallExpression(979,1007): 'receiveMyClass(NestedObject)'
   KaSymbolResolutionError:
@@ -474,7 +507,11 @@ KtCallExpression(979,1007): 'receiveMyClass(NestedObject)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(979,993): 'receiveMyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
 
 KtValueArgumentList(993,1007): '(NestedObject)'
   null
@@ -493,7 +530,11 @@ KtCallExpression(1012,1032): 'receiveMyClass(prop)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1012,1026): 'receiveMyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtValueArgumentList(1026,1032): '(prop)'
   null
@@ -502,7 +543,10 @@ KtValueArgument(1027,1031): 'prop'
   null
 
 KtNameReferenceExpression(1027,1031): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtCallExpression(1037,1062): 'receiveMyClass(superProp)'
   KaSymbolResolutionError:
@@ -512,7 +556,11 @@ KtCallExpression(1037,1062): 'receiveMyClass(superProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1037,1051): 'receiveMyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtValueArgumentList(1051,1062): '(superProp)'
   null
@@ -521,7 +569,10 @@ KtValueArgument(1052,1061): 'superProp'
   null
 
 KtNameReferenceExpression(1052,1061): 'superProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val superProp: kotlin.String
+    ]
 
 KtCallExpression(1067,1092): 'receiveMyClass(constProp)'
   KaSymbolResolutionError:
@@ -531,7 +582,11 @@ KtCallExpression(1067,1092): 'receiveMyClass(constProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1067,1081): 'receiveMyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtValueArgumentList(1081,1092): '(constProp)'
   null
@@ -540,7 +595,10 @@ KtValueArgument(1082,1091): 'constProp'
   null
 
 KtNameReferenceExpression(1082,1091): 'constProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val constProp: kotlin.String
+    ]
 
 KtCallExpression(1097,1121): 'receiveMyClass(lazyProp)'
   KaSymbolResolutionError:
@@ -550,7 +608,11 @@ KtCallExpression(1097,1121): 'receiveMyClass(lazyProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1097,1111): 'receiveMyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtValueArgumentList(1111,1121): '(lazyProp)'
   null
@@ -559,7 +621,10 @@ KtValueArgument(1112,1120): 'lazyProp'
   null
 
 KtNameReferenceExpression(1112,1120): 'lazyProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val lazyProp: kotlin.String
+    ]
 
 KtCallExpression(1126,1152): 'receiveMyClass(lambdaProp)'
   KaSymbolResolutionError:
@@ -569,7 +634,11 @@ KtCallExpression(1126,1152): 'receiveMyClass(lambdaProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1126,1140): 'receiveMyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
 
 KtValueArgumentList(1140,1152): '(lambdaProp)'
   null
@@ -578,7 +647,10 @@ KtValueArgument(1141,1151): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1141,1151): 'lambdaProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val lambdaProp: () -> MyClass.InheritorObject
+    ]
 
 KtCallExpression(1157,1182): 'receiveMyClass(superProp)'
   KaSymbolResolutionError:
@@ -588,7 +660,11 @@ KtCallExpression(1157,1182): 'receiveMyClass(superProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1157,1171): 'receiveMyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtValueArgumentList(1171,1182): '(superProp)'
   null
@@ -597,7 +673,10 @@ KtValueArgument(1172,1181): 'superProp'
   null
 
 KtNameReferenceExpression(1172,1181): 'superProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val superProp: kotlin.String
+    ]
 
 KtCallExpression(1188,1220): 'receiveMyClass(InheritorClass())'
   KaSymbolResolutionSuccess:
@@ -606,7 +685,10 @@ KtCallExpression(1188,1220): 'receiveMyClass(InheritorClass())'
     ]
 
 KtNameReferenceExpression(1188,1202): 'receiveMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(1202,1220): '(InheritorClass())'
   null
@@ -620,7 +702,9 @@ KtCallExpression(1203,1219): 'InheritorClass()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
 
 KtNameReferenceExpression(1203,1217): 'InheritorClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
 
 KtValueArgumentList(1217,1219): '()'
   null
@@ -632,7 +716,10 @@ KtCallExpression(1225,1247): 'receiveMyClass(func())'
     ]
 
 KtNameReferenceExpression(1225,1239): 'receiveMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(1239,1247): '(func())'
   null
@@ -646,7 +733,9 @@ KtCallExpression(1240,1246): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1240,1244): 'func'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtValueArgumentList(1244,1246): '()'
   null
@@ -658,7 +747,10 @@ KtCallExpression(1252,1279): 'receiveMyClass(superFunc())'
     ]
 
 KtNameReferenceExpression(1252,1266): 'receiveMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(arg: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(1266,1279): '(superFunc())'
   null
@@ -672,7 +764,9 @@ KtCallExpression(1267,1278): 'superFunc()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1267,1276): 'superFunc'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtValueArgumentList(1276,1278): '()'
   null

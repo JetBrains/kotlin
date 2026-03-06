@@ -395,7 +395,10 @@ KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
     ]
 
 KtNameReferenceExpression(496,506): 'intArrayOf'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+    ]
 
 KtValueArgumentList(506,515): '(7, 8, 9)'
   null
@@ -578,7 +581,10 @@ KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArr
     ]
 
 KtNameReferenceExpression(703,710): 'arrayOf'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]
 
 KtValueArgumentList(710,782): '(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15)))'
   null
@@ -602,7 +608,10 @@ KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
     ]
 
 KtNameReferenceExpression(715,728): 'AnnoWithArray'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+    ]
 
 KtValueArgumentList(728,742): '([10, 11, 12])'
   null
@@ -635,7 +644,10 @@ KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
     ]
 
 KtNameReferenceExpression(744,757): 'AnnoWithArray'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
+    ]
 
 KtValueArgumentList(757,781): '(intArrayOf(13, 14, 15))'
   null
@@ -650,7 +662,10 @@ KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
     ]
 
 KtNameReferenceExpression(758,768): 'intArrayOf'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+    ]
 
 KtValueArgumentList(768,780): '(13, 14, 15)'
   null
@@ -707,7 +722,10 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
     ]
 
 KtNameReferenceExpression(800,814): 'stringConstant'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringConstant: kotlin.String
+    ]
 
 KtOperationReferenceExpression(815,816): '+'
   null

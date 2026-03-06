@@ -92,7 +92,7 @@ KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
       }
 
 KtNameReferenceExpression(79,84): 'other'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -145,7 +145,7 @@ KtCallExpression(86,98): 'equals(this)'
       }
 
 KtNameReferenceExpression(86,92): 'equals'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -247,7 +247,7 @@ KtBinaryExpression(168,175): 'm ?: m2'
   null
 
 KtNameReferenceExpression(168,169): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -267,7 +267,7 @@ KtOperationReferenceExpression(170,172): '?:'
   null
 
 KtNameReferenceExpression(173,175): 'm2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -293,7 +293,7 @@ KtBinaryExpression(188,195): 'f ?: m2'
   null
 
 KtNameReferenceExpression(188,189): 'f'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -313,7 +313,7 @@ KtOperationReferenceExpression(190,192): '?:'
   null
 
 KtNameReferenceExpression(193,195): 'm2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -333,7 +333,7 @@ KtBinaryExpression(200,207): 'm2 ?: m'
   null
 
 KtNameReferenceExpression(200,202): 'm2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -353,7 +353,7 @@ KtOperationReferenceExpression(203,205): '?:'
   null
 
 KtNameReferenceExpression(206,207): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

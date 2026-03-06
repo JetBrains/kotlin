@@ -65,7 +65,10 @@ KtCallExpression(102,113): 'Container()'
     ]
 
 KtNameReferenceExpression(102,111): 'Container'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Container
+    ]
 
 KtValueArgumentList(111,113): '()'
   null
@@ -83,7 +86,10 @@ KtOperationReferenceExpression(120,122): 'in'
   null
 
 KtNameReferenceExpression(123,124): 'c'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val c: Container
+    ]
 
 KtBinaryExpression(129,136): '2 !in c'
   KaSymbolResolutionSuccess:
@@ -98,4 +104,7 @@ KtOperationReferenceExpression(131,134): '!in'
   null
 
 KtNameReferenceExpression(135,136): 'c'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val c: Container
+    ]

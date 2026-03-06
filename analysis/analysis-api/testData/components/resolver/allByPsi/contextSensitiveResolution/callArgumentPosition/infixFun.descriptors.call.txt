@@ -77,7 +77,7 @@ KtUserType(166,173): 'MyClass'
   null
 
 KtNameReferenceExpression(166,173): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -254,7 +254,7 @@ KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
       }
 
 KtNameReferenceExpression(330,340): 'EnumValue1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
@@ -337,7 +337,7 @@ KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
       }
 
 KtNameReferenceExpression(374,389): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
@@ -420,6 +420,6 @@ KtOperationReferenceExpression(405,418): 'infixConsumer'
       }
 
 KtNameReferenceExpression(419,434): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>

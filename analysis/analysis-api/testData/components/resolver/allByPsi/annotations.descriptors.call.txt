@@ -75,7 +75,7 @@ KtUserType(60,70): 'Repeatable'
   null
 
 KtNameReferenceExpression(60,70): 'Repeatable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -156,7 +156,7 @@ KtUserType(123,133): 'Repeatable'
   null
 
 KtNameReferenceExpression(123,133): 'Repeatable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -243,7 +243,7 @@ KtUserType(186,196): 'Repeatable'
   null
 
 KtNameReferenceExpression(186,196): 'Repeatable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -452,7 +452,7 @@ KtUserType(424,437): 'AnnoWithArray'
   null
 
 KtNameReferenceExpression(424,437): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -619,7 +619,7 @@ KtUserType(450,463): 'AnnoWithArray'
   null
 
 KtNameReferenceExpression(450,463): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -792,7 +792,7 @@ KtUserType(482,495): 'AnnoWithArray'
   null
 
 KtNameReferenceExpression(482,495): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -878,7 +878,7 @@ KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
       }
 
 KtNameReferenceExpression(496,506): 'intArrayOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1018,7 +1018,7 @@ KtUserType(518,532): 'AnnoWithKClass'
   null
 
 KtNameReferenceExpression(518,532): 'AnnoWithKClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1138,7 +1138,7 @@ KtUserType(558,572): 'AnnoWithKClass'
   null
 
 KtNameReferenceExpression(558,572): 'AnnoWithKClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1261,7 +1261,7 @@ KtUserType(602,623): 'AnnoWithArrayOfKClass'
   null
 
 KtNameReferenceExpression(602,623): 'AnnoWithArrayOfKClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1432,7 +1432,7 @@ KtUserType(677,702): 'AnnoWithAnotherAnnotation'
   null
 
 KtNameReferenceExpression(677,702): 'AnnoWithAnotherAnnotation'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1513,7 +1513,7 @@ KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArr
       }
 
 KtNameReferenceExpression(703,710): 'arrayOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1630,7 +1630,7 @@ KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
       }
 
 KtNameReferenceExpression(715,728): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1761,7 +1761,7 @@ KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
       }
 
 KtNameReferenceExpression(744,757): 'AnnoWithArray'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1847,7 +1847,7 @@ KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
       }
 
 KtNameReferenceExpression(758,768): 'intArrayOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1987,7 +1987,7 @@ KtUserType(785,799): 'AnnoWithString'
   null
 
 KtNameReferenceExpression(785,799): 'AnnoWithString'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2062,7 +2062,7 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
       }
 
 KtNameReferenceExpression(800,814): 'stringConstant'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

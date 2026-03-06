@@ -166,7 +166,7 @@ KtCallExpression(246,258): 'MyDelegate()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(246,256): 'MyDelegate'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -414,7 +414,7 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(446,456): 'ResourceID'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

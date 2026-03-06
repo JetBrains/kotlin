@@ -240,7 +240,7 @@ KtCallExpression(430,435): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(430,433): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -285,7 +285,7 @@ KtCallExpression(458,463): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(458,461): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -333,7 +333,7 @@ KtNameReferenceExpression(487,501): 'TopLevelObject'
   null
 
 KtNameReferenceExpression(502,505): 'bar'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -356,7 +356,7 @@ KtProperty(510,531): 'val importedBar = bar'
   null
 
 KtNameReferenceExpression(528,531): 'bar'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -445,7 +445,7 @@ KtCallExpression(687,692): 'baz()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(687,690): 'baz'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -514,7 +514,7 @@ KtCallExpression(734,739): 'baz()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(734,737): 'baz'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -559,7 +559,7 @@ KtCallExpression(762,767): 'baz()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(762,765): 'baz'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -613,7 +613,7 @@ KtNameReferenceExpression(806,818): 'NestedObject'
   null
 
 KtNameReferenceExpression(819,822): 'doo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -659,7 +659,7 @@ KtNameReferenceExpression(851,863): 'NestedObject'
   null
 
 KtNameReferenceExpression(864,867): 'doo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -682,7 +682,7 @@ KtProperty(872,893): 'val importedDoo = doo'
   null
 
 KtNameReferenceExpression(890,893): 'doo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -721,7 +721,7 @@ KtBinaryExpression(899,910): 'doo = "str"'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(899,902): 'doo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:

@@ -68,7 +68,10 @@ KtUserType(161,172): 'SealedClass'
   null
 
 KtNameReferenceExpression(161,172): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtValueArgumentList(172,174): '()'
   null
@@ -98,7 +101,10 @@ KtUserType(210,225): 'SealedInheritor'
   null
 
 KtNameReferenceExpression(210,225): 'SealedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop: kotlin.String): SealedClass.SealedInheritor
+    ]
 
 KtValueArgumentList(225,227): '()'
   null
@@ -143,7 +149,10 @@ KtWhenExpression(308,436): 'when (instance) {'
   null
 
 KtNameReferenceExpression(314,322): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtWhenEntry(334,408): 'is SealedInheritor if instance is IndirectSealedInheritor -> instance.prop'
   null
@@ -158,7 +167,9 @@ KtUserType(337,352): 'SealedInheritor'
   null
 
 KtNameReferenceExpression(337,352): 'SealedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritor>
 
 KtWhenEntryGuard(353,391): 'if instance is IndirectSealedInheritor'
   null
@@ -187,10 +198,15 @@ KtDotQualifiedExpression(395,408): 'instance.prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtNameReferenceExpression(395,403): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(404,408): 'prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtWhenEntry(417,430): 'else -> "100"'
   null
@@ -262,7 +278,10 @@ KtUserType(530,539): 'OpenClass'
   null
 
 KtNameReferenceExpression(530,539): 'OpenClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OpenClass
+    ]
 
 KtValueArgumentList(539,541): '()'
   null
@@ -292,7 +311,10 @@ KtUserType(588,614): 'SealedInheritorOfOpenClass'
   null
 
 KtNameReferenceExpression(588,614): 'SealedInheritorOfOpenClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop: kotlin.String): OpenClass.SealedInheritorOfOpenClass
+    ]
 
 KtValueArgumentList(614,616): '()'
   null
@@ -337,7 +359,10 @@ KtWhenExpression(693,843): 'when (instance) {'
   null
 
 KtNameReferenceExpression(699,707): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: OpenClass
+    ]
 
 KtWhenEntry(719,815): 'is SealedInheritorOfOpenClass if instance is IndirectSealedInheritorOfOpenClass -> instance.prop'
   null
@@ -352,7 +377,9 @@ KtUserType(722,748): 'SealedInheritorOfOpenClass'
   null
 
 KtNameReferenceExpression(722,748): 'SealedInheritorOfOpenClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritorOfOpenClass>
 
 KtWhenEntryGuard(749,798): 'if instance is IndirectSealedInheritorOfOpenClass'
   null
@@ -381,10 +408,15 @@ KtDotQualifiedExpression(802,815): 'instance.prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtNameReferenceExpression(802,810): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: OpenClass
+    ]
 
 KtNameReferenceExpression(811,815): 'prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtWhenEntry(824,837): 'else -> "100"'
   null

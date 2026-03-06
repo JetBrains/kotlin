@@ -140,7 +140,7 @@ KtNameReferenceExpression(212,216): 'Left'
   null
 
 KtNameReferenceExpression(220,221): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -196,7 +196,7 @@ KtNameReferenceExpression(229,234): 'Right'
   null
 
 KtNameReferenceExpression(238,239): 'y'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -273,18 +273,18 @@ KtUserType(287,291): 'Left'
   null
 
 KtNameReferenceExpression(287,291): 'Left'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-    
+
     class Left : Any:
       Cannot access 'class Left : Any': it is private in file.
-    
+
     class Left : Any:
       Cannot access 'class Left : Any': it is private in file.>
 
 KtNameReferenceExpression(295,296): 'x'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
@@ -301,11 +301,11 @@ KtUserType(304,309): 'Right'
   null
 
 KtNameReferenceExpression(304,309): 'Right'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtNameReferenceExpression(313,314): 'y'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>

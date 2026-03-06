@@ -241,7 +241,7 @@ KtCallExpression(267,273): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(267,271): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -311,7 +311,7 @@ KtCallExpression(297,303): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(297,301): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -400,7 +400,7 @@ KtCallExpression(356,433): 'myRunWithMySealed {'
       }
 
 KtNameReferenceExpression(356,373): 'myRunWithMySealed'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -454,7 +454,7 @@ KtContainerNode(388,389): 'b'
   null
 
 KtNameReferenceExpression(388,389): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -525,7 +525,7 @@ KtCallExpression(439,524): 'myRunWithMySealed {'
       }
 
 KtNameReferenceExpression(439,456): 'myRunWithMySealed'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -579,7 +579,7 @@ KtContainerNode(471,472): 'b'
   null
 
 KtNameReferenceExpression(471,472): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -643,7 +643,7 @@ KtCallExpression(499,504): 'id(X)'
       }
 
 KtNameReferenceExpression(499,501): 'id'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -722,7 +722,7 @@ KtCallExpression(513,518): 'id(Y)'
       }
 
 KtNameReferenceExpression(513,515): 'id'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -804,7 +804,7 @@ KtCallExpression(530,593): 'myRun<MySealed> {'
       }
 
 KtNameReferenceExpression(530,535): 'myRun'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -875,7 +875,7 @@ KtContainerNode(560,561): 'b'
   null
 
 KtNameReferenceExpression(560,561): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -946,7 +946,7 @@ KtCallExpression(598,682): 'foo('
       }
 
 KtNameReferenceExpression(598,601): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1026,7 +1026,7 @@ KtCallExpression(611,676): 'myRun {'
       }
 
 KtNameReferenceExpression(611,616): 'myRun'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1082,7 +1082,7 @@ KtContainerNode(635,636): 'b'
   null
 
 KtNameReferenceExpression(635,636): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1167,7 +1167,7 @@ KtCallExpression(706,759): 'myRun {'
       }
 
 KtNameReferenceExpression(706,711): 'myRun'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1223,7 +1223,7 @@ KtContainerNode(726,727): 'b'
   null
 
 KtNameReferenceExpression(726,727): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1299,7 +1299,7 @@ KtCallExpression(765,818): 'myRun {'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /myRun>
 
 KtNameReferenceExpression(765,770): 'myRun'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1358,7 +1358,7 @@ KtContainerNode(785,786): 'b'
   null
 
 KtNameReferenceExpression(785,786): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1387,12 +1387,12 @@ KtLabelReferenceExpression(794,800): '@myRun'
   null
 
 KtNameReferenceExpression(801,802): 'X'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 
 KtNameReferenceExpression(811,812): 'Y'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Y'.>
 
@@ -1438,7 +1438,7 @@ KtCallExpression(823,885): 'myRun {'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MySealed.Y', but 'MySealed.X' was expected.>
 
 KtNameReferenceExpression(823,828): 'myRun'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1497,7 +1497,7 @@ KtContainerNode(843,844): 'b'
   null
 
 KtNameReferenceExpression(843,844): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

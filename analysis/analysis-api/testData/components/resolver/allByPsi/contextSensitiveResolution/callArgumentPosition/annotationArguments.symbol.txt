@@ -80,7 +80,10 @@ KtValueArgument(161,162): 'X'
   null
 
 KtNameReferenceExpression(161,162): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.X
+    ]
 
 KtParameterList(172,174): '()'
   null
@@ -149,13 +152,19 @@ KtValueArgument(237,238): 'X'
   null
 
 KtNameReferenceExpression(237,238): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.X
+    ]
 
 KtValueArgument(240,241): 'Y'
   null
 
 KtNameReferenceExpression(240,241): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Y
+    ]
 
 KtParameterList(252,254): '()'
   null
@@ -203,10 +212,16 @@ KtCollectionLiteralExpression(264,270): '[X, Y]'
     ]
 
 KtNameReferenceExpression(265,266): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.X
+    ]
 
 KtNameReferenceExpression(268,269): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Y
+    ]
 
 KtParameterList(281,283): '()'
   null
@@ -293,7 +308,10 @@ KtCollectionLiteralExpression(346,349): '[X]'
     ]
 
 KtNameReferenceExpression(347,348): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.X
+    ]
 
 KtParameterList(360,362): '()'
   null
@@ -341,7 +359,10 @@ KtCallExpression(371,381): 'arrayOf(X)'
     ]
 
 KtNameReferenceExpression(371,378): 'arrayOf'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]
 
 KtValueArgumentList(378,381): '(X)'
   null
@@ -350,7 +371,10 @@ KtValueArgument(379,380): 'X'
   null
 
 KtNameReferenceExpression(379,380): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.X
+    ]
 
 KtParameterList(392,394): '()'
   null
@@ -416,7 +440,10 @@ KtValueArgument(447,456): 'MAX_VALUE'
   null
 
 KtNameReferenceExpression(447,456): 'MAX_VALUE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val MAX_VALUE: kotlin.Int
+    ]
 
 KtParameterList(466,468): '()'
   null
@@ -458,7 +485,10 @@ KtValueArgument(484,491): 'RUNTIME'
   null
 
 KtNameReferenceExpression(484,491): 'RUNTIME'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationRetention.RUNTIME
+    ]
 
 KtAnnotationEntry(493,517): '@Target(CLASS, PROPERTY)'
   KaSymbolResolutionSuccess:
@@ -488,13 +518,19 @@ KtValueArgument(501,506): 'CLASS'
   null
 
 KtNameReferenceExpression(501,506): 'CLASS'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.CLASS
+    ]
 
 KtValueArgument(508,516): 'PROPERTY'
   null
 
 KtNameReferenceExpression(508,516): 'PROPERTY'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.PROPERTY
+    ]
 
 KtProperty(549,577): '@MyAnnotation'
   null

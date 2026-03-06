@@ -35,7 +35,10 @@ KtPostfixExpression(27,30): 'a!!'
   null
 
 KtNameReferenceExpression(27,28): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: kotlin.String?
+    ]
 
 KtOperationReferenceExpression(28,30): '!!'
   null

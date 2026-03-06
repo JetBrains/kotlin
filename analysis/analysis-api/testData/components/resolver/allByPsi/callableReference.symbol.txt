@@ -320,7 +320,10 @@ KtCallExpression(521,538): 'invoke(MyClass())'
     ]
 
 KtNameReferenceExpression(521,527): 'invoke'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
+    ]
 
 KtValueArgumentList(527,538): '(MyClass())'
   null
@@ -335,7 +338,10 @@ KtCallExpression(528,537): 'MyClass()'
     ]
 
 KtNameReferenceExpression(528,535): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): pack.MyClass
+    ]
 
 KtValueArgumentList(535,537): '()'
   null
@@ -359,7 +365,10 @@ KtNameReferenceExpression(552,566): 'memberProperty'
   null
 
 KtNameReferenceExpression(567,571): 'name'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
 
 KtDotQualifiedExpression(577,614): 'Child::memberFunction.invoke(Child())'
   KaSymbolResolutionSuccess:
@@ -386,7 +395,10 @@ KtCallExpression(599,614): 'invoke(Child())'
     ]
 
 KtNameReferenceExpression(599,605): 'invoke'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
+    ]
 
 KtValueArgumentList(605,614): '(Child())'
   null
@@ -401,7 +413,10 @@ KtCallExpression(606,613): 'Child()'
     ]
 
 KtNameReferenceExpression(606,611): 'Child'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): pack.Child
+    ]
 
 KtValueArgumentList(611,613): '()'
   null
@@ -425,7 +440,10 @@ KtNameReferenceExpression(626,640): 'memberProperty'
   null
 
 KtNameReferenceExpression(641,645): 'name'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
 
 KtProperty(651,690): 'val f = pack.MyClass::extensionFunction'
   null
@@ -518,7 +536,10 @@ KtNameReferenceExpression(832,848): 'functionWithType'
   null
 
 KtNameReferenceExpression(849,853): 'name'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
 
 KtDotQualifiedExpression(858,913): 'ChildWithType::propertyWithType.invoke(ChildWithType())'
   KaSymbolResolutionSuccess:
@@ -545,7 +566,10 @@ KtCallExpression(890,913): 'invoke(ChildWithType())'
     ]
 
 KtNameReferenceExpression(890,896): 'invoke'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KMutableProperty1.invoke(<dispatch receiver>: kotlin.reflect.KMutableProperty1<T, V>, p1: T): V
+    ]
 
 KtValueArgumentList(896,913): '(ChildWithType())'
   null
@@ -560,7 +584,10 @@ KtCallExpression(897,912): 'ChildWithType()'
     ]
 
 KtNameReferenceExpression(897,910): 'ChildWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): pack.ChildWithType
+    ]
 
 KtValueArgumentList(910,912): '()'
   null
@@ -598,7 +625,9 @@ KtNameReferenceExpression(968,979): 'lateinitVar'
   null
 
 KtNameReferenceExpression(980,993): 'isInitialized'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'isInitialized'.>
 
 KtNamedFunction(997,1223): 'fun <T : Number> typeClass(classWithType: ClassWithType<T>) {'
   null
@@ -658,7 +687,10 @@ KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
     ]
 
 KtNameReferenceExpression(1063,1076): 'classWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      classWithType: pack.ClassWithType<T>
+    ]
 
 KtNameReferenceExpression(1078,1094): 'functionWithType'
   null
@@ -670,7 +702,10 @@ KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
     ]
 
 KtNameReferenceExpression(1099,1112): 'classWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      classWithType: pack.ClassWithType<T>
+    ]
 
 KtNameReferenceExpression(1114,1130): 'propertyWithType'
   null
@@ -718,7 +753,10 @@ KtPostfixExpression(1174,1177): 't!!'
   null
 
 KtNameReferenceExpression(1174,1175): 't'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val t: pack.ClassWithType<kotlin.Int>?
+    ]
 
 KtOperationReferenceExpression(1175,1177): '!!'
   null
@@ -736,7 +774,10 @@ KtPostfixExpression(1200,1203): 't!!'
   null
 
 KtNameReferenceExpression(1200,1201): 't'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val t: pack.ClassWithType<kotlin.Int>?
+    ]
 
 KtOperationReferenceExpression(1201,1203): '!!'
   null

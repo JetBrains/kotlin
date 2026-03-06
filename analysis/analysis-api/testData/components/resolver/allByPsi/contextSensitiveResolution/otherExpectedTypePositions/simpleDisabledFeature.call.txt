@@ -79,7 +79,7 @@ KtNameReferenceExpression(159,165): 'MyEnum'
   null
 
 KtNameReferenceExpression(166,167): 'X'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -111,7 +111,7 @@ KtNameReferenceExpression(181,187): 'MyEnum'
   null
 
 KtNameReferenceExpression(190,191): 'X'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 
@@ -128,7 +128,7 @@ KtNameReferenceExpression(204,210): 'MyEnum'
   null
 
 KtNameReferenceExpression(213,214): 'L'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -157,6 +157,6 @@ KtNameReferenceExpression(227,233): 'MyEnum'
   null
 
 KtNameReferenceExpression(236,246): 'UNRESOLVED'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'UNRESOLVED'.>

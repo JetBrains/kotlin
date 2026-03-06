@@ -65,7 +65,7 @@ KtWhenExpression(162,236): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(168,169): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -198,7 +198,7 @@ KtBinaryExpression(302,312): 's == FIRST'
     isInBestCandidates = true
 
 KtNameReferenceExpression(302,303): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -302,7 +302,7 @@ KtBinaryExpression(326,337): 's == SECOND'
     isInBestCandidates = true
 
 KtNameReferenceExpression(326,327): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -406,7 +406,7 @@ KtBinaryExpression(351,361): 's == THIRD'
     isInBestCandidates = true
 
 KtNameReferenceExpression(351,352): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -551,7 +551,7 @@ KtWhenExpression(537,661): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(543,544): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -575,7 +575,7 @@ KtWhenConditionWithExpression(560,565): 'FIRST'
   NO_CANDIDATES
 
 KtNameReferenceExpression(560,565): 'FIRST'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -602,7 +602,7 @@ KtWhenConditionWithExpression(583,589): 'SECOND'
   NO_CANDIDATES
 
 KtNameReferenceExpression(583,589): 'SECOND'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:

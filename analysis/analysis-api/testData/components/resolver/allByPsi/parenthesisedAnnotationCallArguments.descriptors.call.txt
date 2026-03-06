@@ -179,7 +179,7 @@ KtUserType(168,174): 'MyAnno'
   null
 
 KtNameReferenceExpression(168,174): 'MyAnno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -314,7 +314,7 @@ KtUserType(200,206): 'MyAnno'
   null
 
 KtNameReferenceExpression(200,206): 'MyAnno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -455,7 +455,7 @@ KtUserType(240,246): 'MyAnno'
   null
 
 KtNameReferenceExpression(240,246): 'MyAnno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -639,7 +639,7 @@ KtUserType(286,298): 'MyAnnoVararg'
   null
 
 KtNameReferenceExpression(286,298): 'MyAnnoVararg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -771,7 +771,7 @@ KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
       }
 
 KtNameReferenceExpression(316,323): 'arrayOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -934,7 +934,7 @@ KtUserType(358,370): 'MyAnnoVararg'
   null
 
 KtNameReferenceExpression(358,370): 'MyAnnoVararg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1027,7 +1027,7 @@ KtCallExpression(381,400): 'arrayOf(("A"), "B")'
       }
 
 KtNameReferenceExpression(381,388): 'arrayOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1177,7 +1177,7 @@ KtUserType(420,432): 'MyAnnoKClass'
   null
 
 KtNameReferenceExpression(420,432): 'MyAnnoKClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

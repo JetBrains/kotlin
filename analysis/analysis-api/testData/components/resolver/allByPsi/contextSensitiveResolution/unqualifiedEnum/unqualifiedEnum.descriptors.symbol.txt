@@ -68,7 +68,10 @@ KtWhenExpression(162,236): 'when (s) {'
   null
 
 KtNameReferenceExpression(168,169): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: test.Sample
+    ]
 
 KtWhenEntry(181,191): 'FIRST -> 1'
   null
@@ -77,7 +80,9 @@ KtWhenConditionWithExpression(181,186): 'FIRST'
   null
 
 KtNameReferenceExpression(181,186): 'FIRST'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FIRST>
 
 KtConstantExpression(190,191): '1'
   null
@@ -89,7 +94,9 @@ KtWhenConditionWithExpression(200,206): 'SECOND'
   null
 
 KtNameReferenceExpression(200,206): 'SECOND'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SECOND>
 
 KtConstantExpression(210,211): '2'
   null
@@ -101,7 +108,9 @@ KtWhenConditionWithExpression(220,225): 'THIRD'
   null
 
 KtNameReferenceExpression(220,225): 'THIRD'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: THIRD>
 
 KtConstantExpression(229,230): '3'
   null
@@ -158,13 +167,18 @@ KtBinaryExpression(302,312): 's == FIRST'
     ]
 
 KtNameReferenceExpression(302,303): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: test.Sample
+    ]
 
 KtOperationReferenceExpression(304,306): '=='
   null
 
 KtNameReferenceExpression(307,312): 'FIRST'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FIRST>
 
 KtConstantExpression(316,317): '1'
   null
@@ -182,13 +196,18 @@ KtBinaryExpression(326,337): 's == SECOND'
     ]
 
 KtNameReferenceExpression(326,327): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: test.Sample
+    ]
 
 KtOperationReferenceExpression(328,330): '=='
   null
 
 KtNameReferenceExpression(331,337): 'SECOND'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SECOND>
 
 KtConstantExpression(341,342): '2'
   null
@@ -206,13 +225,18 @@ KtBinaryExpression(351,361): 's == THIRD'
     ]
 
 KtNameReferenceExpression(351,352): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: test.Sample
+    ]
 
 KtOperationReferenceExpression(353,355): '=='
   null
 
 KtNameReferenceExpression(356,361): 'THIRD'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: THIRD>
 
 KtConstantExpression(365,366): '3'
   null
@@ -305,7 +329,10 @@ KtWhenExpression(537,661): 'when (s) {'
   null
 
 KtNameReferenceExpression(543,544): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: test.Sample
+    ]
 
 KtWhenEntry(560,570): 'FIRST -> 3'
   null
@@ -314,7 +341,10 @@ KtWhenConditionWithExpression(560,565): 'FIRST'
   null
 
 KtNameReferenceExpression(560,565): 'FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val FIRST: test.Sample
+    ]
 
 KtConstantExpression(569,570): '3'
   null
@@ -326,7 +356,10 @@ KtWhenConditionWithExpression(583,589): 'SECOND'
   null
 
 KtNameReferenceExpression(583,589): 'SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val SECOND: test.Sample
+    ]
 
 KtConstantExpression(593,594): '2'
   null

@@ -47,7 +47,10 @@ KtNameReferenceExpression(174,180): 'MyEnum'
   null
 
 KtNameReferenceExpression(183,190): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(199,226): 'val stringProp: String = ""'
   null
@@ -71,7 +74,10 @@ KtParameterList(248,250): '()'
   null
 
 KtNameReferenceExpression(253,260): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtNamedFunction(270,293): 'fun <T>receive(e: T) {}'
   null
@@ -113,7 +119,10 @@ KtNameReferenceExpression(316,322): 'MyEnum'
   null
 
 KtNameReferenceExpression(323,330): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtNamedFunction(332,742): 'fun testElvis() {'
   null
@@ -140,13 +149,19 @@ KtBinaryExpression(372,390): 'Option1 ?: Option2'
   null
 
 KtNameReferenceExpression(372,379): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtOperationReferenceExpression(380,382): '?:'
   null
 
 KtNameReferenceExpression(383,390): 'Option2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option2
+    ]
 
 KtProperty(395,432): 'var i11: MyEnum? = Option1 ?: Option2'
   null
@@ -167,13 +182,19 @@ KtBinaryExpression(414,432): 'Option1 ?: Option2'
   null
 
 KtNameReferenceExpression(414,421): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtOperationReferenceExpression(422,424): '?:'
   null
 
 KtNameReferenceExpression(425,432): 'Option2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option2
+    ]
 
 KtProperty(437,474): 'var i20: MyEnum = enumProp ?: Option2'
   null
@@ -191,13 +212,19 @@ KtBinaryExpression(455,474): 'enumProp ?: Option2'
   null
 
 KtNameReferenceExpression(455,463): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtOperationReferenceExpression(464,466): '?:'
   null
 
 KtNameReferenceExpression(467,474): 'Option2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option2
+    ]
 
 KtProperty(479,519): 'var i30: MyEnum = enumProp ?: stringProp'
   null
@@ -215,13 +242,19 @@ KtBinaryExpression(497,519): 'enumProp ?: stringProp'
   null
 
 KtNameReferenceExpression(497,505): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtOperationReferenceExpression(506,508): '?:'
   null
 
 KtNameReferenceExpression(509,519): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtProperty(524,564): 'var i40: MyEnum = stringProp ?: enumProp'
   null
@@ -239,13 +272,19 @@ KtBinaryExpression(542,564): 'stringProp ?: enumProp'
   null
 
 KtNameReferenceExpression(542,552): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtOperationReferenceExpression(553,555): '?:'
   null
 
 KtNameReferenceExpression(556,564): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtProperty(569,610): 'var i50: MyEnum = getOption() ?: enumProp'
   null
@@ -268,7 +307,9 @@ KtCallExpression(587,598): 'getOption()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getOption'.>
 
 KtNameReferenceExpression(587,596): 'getOption'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getOption'.>
 
 KtValueArgumentList(596,598): '()'
   null
@@ -277,7 +318,10 @@ KtOperationReferenceExpression(599,601): '?:'
   null
 
 KtNameReferenceExpression(602,610): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
   KaSymbolResolutionSuccess:
@@ -286,7 +330,10 @@ KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
     ]
 
 KtNameReferenceExpression(616,623): 'receive'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receive(e: T): kotlin.Unit
+    ]
 
 KtTypeArgumentList(623,631): '<MyEnum>'
   null
@@ -313,13 +360,19 @@ KtBinaryExpression(632,650): 'Option1 ?: Option2'
   null
 
 KtNameReferenceExpression(632,639): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtOperationReferenceExpression(640,642): '?:'
   null
 
 KtNameReferenceExpression(643,650): 'Option2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option2
+    ]
 
 KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
   KaSymbolResolutionError:
@@ -329,7 +382,11 @@ KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
 
 KtNameReferenceExpression(656,663): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
 
 KtTypeArgumentList(663,671): '<MyEnum>'
   null
@@ -356,13 +413,19 @@ KtBinaryExpression(672,694): 'enumProp ?: stringProp'
   null
 
 KtNameReferenceExpression(672,680): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtOperationReferenceExpression(681,683): '?:'
   null
 
 KtNameReferenceExpression(684,694): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
   KaSymbolResolutionSuccess:
@@ -371,7 +434,10 @@ KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
     ]
 
 KtNameReferenceExpression(700,707): 'receive'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receive(e: T): kotlin.Unit
+    ]
 
 KtTypeArgumentList(707,715): '<MyEnum>'
   null
@@ -398,7 +464,10 @@ KtBinaryExpression(716,739): 'enumProp ?: getOption()'
   null
 
 KtNameReferenceExpression(716,724): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtOperationReferenceExpression(725,727): '?:'
   null
@@ -409,7 +478,9 @@ KtCallExpression(728,739): 'getOption()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getOption'.>
 
 KtNameReferenceExpression(728,737): 'getOption'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getOption'.>
 
 KtValueArgumentList(737,739): '()'
   null

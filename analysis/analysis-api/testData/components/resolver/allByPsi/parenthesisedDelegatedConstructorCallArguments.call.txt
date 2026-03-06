@@ -158,7 +158,7 @@ KtParenthesizedExpression(68,71): '(i)'
   null
 
 KtNameReferenceExpression(69,70): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -298,7 +298,7 @@ KtParenthesizedExpression(122,125): '(i)'
   null
 
 KtNameReferenceExpression(123,124): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -552,7 +552,7 @@ KtParenthesizedExpression(232,239): '(value)'
   null
 
 KtNameReferenceExpression(233,238): 'value'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

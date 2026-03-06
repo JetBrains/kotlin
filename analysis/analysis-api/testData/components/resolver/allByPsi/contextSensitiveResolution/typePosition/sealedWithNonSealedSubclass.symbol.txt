@@ -149,7 +149,10 @@ KtNameReferenceExpression(281,285): 'Left'
   null
 
 KtNameReferenceExpression(289,290): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val x: kotlin.String
+    ]
 
 KtWhenEntry(295,308): 'is Right -> y'
   null
@@ -167,7 +170,10 @@ KtNameReferenceExpression(298,303): 'Right'
   null
 
 KtNameReferenceExpression(307,308): 'y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]
 
 KtWhenEntry(313,338): 'is NonSealedSubclass -> z'
   null
@@ -182,7 +188,11 @@ KtUserType(316,333): 'NonSealedSubclass'
   null
 
 KtNameReferenceExpression(316,333): 'NonSealedSubclass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NonSealedSubclass'.>
 
 KtNameReferenceExpression(337,338): 'z'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'z'.>

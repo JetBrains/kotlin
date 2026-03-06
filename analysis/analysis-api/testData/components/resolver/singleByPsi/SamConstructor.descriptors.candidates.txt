@@ -1,5 +1,5 @@
 KtNameReferenceExpression(18,28): 'Comparator'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

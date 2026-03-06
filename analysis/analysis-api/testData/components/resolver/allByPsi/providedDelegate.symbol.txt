@@ -155,7 +155,10 @@ KtCallExpression(246,258): 'MyDelegate()'
     ]
 
 KtNameReferenceExpression(246,256): 'MyDelegate'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): myPack.MyDelegate<T>
+    ]
 
 KtValueArgumentList(256,258): '()'
   null
@@ -312,7 +315,10 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
     ]
 
 KtNameReferenceExpression(446,456): 'ResourceID'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): myPack.ResourceID<T>
+    ]
 
 KtTypeArgumentList(456,461): '<Int>'
   null

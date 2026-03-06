@@ -79,7 +79,7 @@ KtCallExpression(91,94): 'A()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(91,92): 'A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -119,7 +119,7 @@ KtCallExpression(107,110): 'A()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(107,108): 'A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -175,7 +175,7 @@ KtBinaryExpression(115,121): 'a == b'
       }
 
 KtNameReferenceExpression(115,116): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -228,7 +228,7 @@ KtOperationReferenceExpression(117,119): '=='
       }
 
 KtNameReferenceExpression(120,121): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -281,7 +281,7 @@ KtBinaryExpression(126,132): 'a != b'
       }
 
 KtNameReferenceExpression(126,127): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -334,7 +334,7 @@ KtOperationReferenceExpression(128,130): '!='
       }
 
 KtNameReferenceExpression(131,132): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -354,7 +354,7 @@ KtBinaryExpression(137,144): 'a === b'
   null
 
 KtNameReferenceExpression(137,138): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -374,7 +374,7 @@ KtOperationReferenceExpression(139,142): '==='
   null
 
 KtNameReferenceExpression(143,144): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -394,7 +394,7 @@ KtBinaryExpression(149,156): 'a !== b'
   null
 
 KtNameReferenceExpression(149,150): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -414,7 +414,7 @@ KtOperationReferenceExpression(151,154): '!=='
   null
 
 KtNameReferenceExpression(155,156): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

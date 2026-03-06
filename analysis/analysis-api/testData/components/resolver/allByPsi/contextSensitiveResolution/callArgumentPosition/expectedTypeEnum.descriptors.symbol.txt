@@ -53,7 +53,10 @@ KtNameReferenceExpression(135,136): 'X'
   null
 
 KtNameReferenceExpression(139,140): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: X
+    ]
 
 KtNamedFunction(141,167): 'fun <T> receive(arg: T) {}'
   null
@@ -111,7 +114,11 @@ KtCallExpression(215,229): 'id(EnumValue1)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(215,217): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(217,229): '(EnumValue1)'
   null
@@ -120,7 +127,9 @@ KtValueArgument(218,228): 'EnumValue1'
   null
 
 KtNameReferenceExpression(218,228): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtCallExpression(235,266): 'receive<MyEnum>(id(EnumValue1))'
   KaSymbolResolutionError:
@@ -130,7 +139,11 @@ KtCallExpression(235,266): 'receive<MyEnum>(id(EnumValue1))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(235,242): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(arg: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtTypeArgumentList(242,250): '<MyEnum>'
   null
@@ -161,7 +174,11 @@ KtCallExpression(251,265): 'id(EnumValue1)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(251,253): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(253,265): '(EnumValue1)'
   null
@@ -170,4 +187,6 @@ KtValueArgument(254,264): 'EnumValue1'
   null
 
 KtNameReferenceExpression(254,264): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>

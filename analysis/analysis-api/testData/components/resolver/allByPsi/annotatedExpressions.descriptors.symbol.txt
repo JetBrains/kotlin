@@ -41,7 +41,10 @@ KtUserType(39,45): 'Target'
   null
 
 KtNameReferenceExpression(39,45): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+    ]
 
 KtValueArgumentList(45,74): '(AnnotationTarget.EXPRESSION)'
   null
@@ -77,7 +80,10 @@ KtUserType(76,85): 'Retention'
   null
 
 KtNameReferenceExpression(76,85): 'Retention'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+    ]
 
 KtValueArgumentList(85,113): '(AnnotationRetention.SOURCE)'
   null
@@ -143,7 +149,10 @@ KtUserType(173,177): 'Anno'
   null
 
 KtNameReferenceExpression(173,177): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(number: kotlin.Int): Anno
+    ]
 
 KtValueArgumentList(177,190): '(0 + integer)'
   null
@@ -164,7 +173,10 @@ KtOperationReferenceExpression(180,181): '+'
   null
 
 KtNameReferenceExpression(182,189): 'integer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val integer: kotlin.Int
+    ]
 
 KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
   KaSymbolResolutionSuccess:
@@ -197,7 +209,10 @@ KtUserType(193,197): 'Anno'
   null
 
 KtNameReferenceExpression(193,197): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(number: kotlin.Int): Anno
+    ]
 
 KtValueArgumentList(197,206): '(integer)'
   null
@@ -206,7 +221,10 @@ KtValueArgument(198,205): 'integer'
   null
 
 KtNameReferenceExpression(198,205): 'integer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val integer: kotlin.Int
+    ]
 
 KtCallExpression(207,214): 'usage()'
   KaSymbolResolutionSuccess:
@@ -215,7 +233,10 @@ KtCallExpression(207,214): 'usage()'
     ]
 
 KtNameReferenceExpression(207,212): 'usage'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /usage(): kotlin.Unit
+    ]
 
 KtValueArgumentList(212,214): '()'
   null
@@ -227,7 +248,10 @@ KtCallExpression(216,226): 'toString()'
     ]
 
 KtNameReferenceExpression(216,224): 'toString'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
+    ]
 
 KtValueArgumentList(224,226): '()'
   null

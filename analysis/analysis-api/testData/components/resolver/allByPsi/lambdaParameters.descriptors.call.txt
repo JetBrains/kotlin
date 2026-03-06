@@ -112,7 +112,7 @@ KtDotQualifiedExpression(80,94): 'prop.action1()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(80,84): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -152,7 +152,7 @@ KtCallExpression(85,94): 'action1()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(85,92): 'action1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -208,7 +208,7 @@ KtCallExpression(99,112): 'action1(prop)'
       }
 
 KtNameReferenceExpression(99,106): 'action1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -231,7 +231,7 @@ KtValueArgument(107,111): 'prop'
   null
 
 KtNameReferenceExpression(107,111): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -251,7 +251,7 @@ KtDotQualifiedExpression(118,132): 'prop.action2()'
   null
 
 KtNameReferenceExpression(118,122): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -273,7 +273,7 @@ KtCallExpression(123,132): 'action2()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: action2>
 
 KtNameReferenceExpression(123,130): 'action2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: action2>
 
@@ -317,7 +317,7 @@ KtCallExpression(151,164): 'action2(prop)'
       }
 
 KtNameReferenceExpression(151,158): 'action2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -340,7 +340,7 @@ KtValueArgument(159,163): 'prop'
   null
 
 KtNameReferenceExpression(159,163): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

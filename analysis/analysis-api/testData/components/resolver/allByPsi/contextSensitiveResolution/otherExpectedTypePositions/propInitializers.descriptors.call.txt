@@ -110,7 +110,7 @@ KtNameReferenceExpression(359,365): 'MyEnum'
   null
 
 KtNameReferenceExpression(368,375): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -127,7 +127,7 @@ KtNameReferenceExpression(393,399): 'MyEnum'
   null
 
 KtNameReferenceExpression(402,413): 'OptionAlias'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -156,7 +156,7 @@ KtNameReferenceExpression(431,437): 'MyEnum'
   null
 
 KtNameReferenceExpression(440,448): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -173,7 +173,7 @@ KtNameReferenceExpression(468,474): 'MyEnum'
   null
 
 KtNameReferenceExpression(477,487): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
@@ -199,7 +199,7 @@ KtNameReferenceExpression(525,531): 'MyEnum'
   null
 
 KtNameReferenceExpression(534,541): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -222,7 +222,7 @@ KtBinaryExpression(546,557): 'm = Option1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(546,547): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -258,7 +258,7 @@ KtOperationReferenceExpression(548,549): '='
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(550,557): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -281,7 +281,7 @@ KtBinaryExpression(562,577): 'm = OptionAlias'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(562,563): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -317,7 +317,7 @@ KtOperationReferenceExpression(564,565): '='
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(566,577): 'OptionAlias'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -352,7 +352,7 @@ KtBinaryExpression(582,596): 'm = stringProp'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(582,583): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -388,7 +388,7 @@ KtOperationReferenceExpression(584,585): '='
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(586,596): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
@@ -411,7 +411,7 @@ KtNameReferenceExpression(634,640): 'MyEnum'
   null
 
 KtNameReferenceExpression(643,650): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -428,7 +428,7 @@ KtNameReferenceExpression(658,664): 'MyEnum'
   null
 
 KtNameReferenceExpression(667,675): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -454,7 +454,7 @@ KtNameReferenceExpression(711,717): 'MyEnum'
   null
 
 KtNameReferenceExpression(720,730): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
@@ -483,7 +483,7 @@ KtNameReferenceExpression(762,768): 'MyEnum'
   null
 
 KtNameReferenceExpression(771,778): 'Option2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option2>
 
@@ -503,7 +503,7 @@ KtNameReferenceExpression(797,803): 'MyEnum'
   null
 
 KtNameReferenceExpression(806,814): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -520,6 +520,6 @@ KtNameReferenceExpression(830,836): 'MyEnum'
   null
 
 KtNameReferenceExpression(839,849): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>

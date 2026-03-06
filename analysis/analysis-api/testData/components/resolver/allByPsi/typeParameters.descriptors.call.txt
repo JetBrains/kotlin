@@ -164,7 +164,7 @@ KtUserType(186,193): 'Base<C>'
   null
 
 KtNameReferenceExpression(186,190): 'Base'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -367,7 +367,7 @@ KtCallExpression(392,405): 'NestedClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(392,403): 'NestedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -410,7 +410,7 @@ KtDotQualifiedExpression(422,432): 'c1.Inner()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(422,424): 'c1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -447,7 +447,7 @@ KtCallExpression(425,432): 'Inner()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(425,430): 'Inner'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

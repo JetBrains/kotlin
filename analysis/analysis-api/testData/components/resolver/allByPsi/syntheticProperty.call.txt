@@ -71,7 +71,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       }
 
 KtNameReferenceExpression(78,83): 'print'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -130,7 +130,7 @@ KtDotQualifiedExpression(84,103): 'javaClass.something'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(84,93): 'javaClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -147,7 +147,7 @@ KtNameReferenceExpression(84,93): 'javaClass'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(94,103): 'something'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -209,7 +209,7 @@ KtDotQualifiedExpression(109,128): 'javaClass.something'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(109,118): 'javaClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -226,7 +226,7 @@ KtNameReferenceExpression(109,118): 'javaClass'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(119,128): 'something'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -348,7 +348,7 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(137,146): 'javaClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -365,7 +365,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(147,156): 'something'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -506,7 +506,7 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(166,175): 'javaClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -523,7 +523,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(176,185): 'something'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -686,7 +686,7 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(194,203): 'javaClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -703,7 +703,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(204,213): 'something'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -784,7 +784,7 @@ KtPostfixExpression(219,230): 'something++'
         typeArgumentsMapping = {}
 
 KtNameReferenceExpression(219,228): 'something'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -946,7 +946,7 @@ KtParenthesizedExpression(235,246): '(something)'
   null
 
 KtNameReferenceExpression(236,245): 'something'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -1088,7 +1088,7 @@ KtParenthesizedExpression(253,264): '(something)'
   null
 
 KtNameReferenceExpression(254,263): 'something'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -1216,7 +1216,7 @@ KtDotQualifiedExpression(274,293): 'javaClass.something'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(274,283): 'javaClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1233,7 +1233,7 @@ KtNameReferenceExpression(274,283): 'javaClass'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(284,293): 'something'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

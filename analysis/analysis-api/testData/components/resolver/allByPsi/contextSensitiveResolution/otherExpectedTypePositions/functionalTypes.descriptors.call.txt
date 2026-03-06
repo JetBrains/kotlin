@@ -140,7 +140,7 @@ KtContainerNode(399,402): 'arg'
   null
 
 KtNameReferenceExpression(399,402): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -160,7 +160,7 @@ KtContainerNodeForControlStructureBody(404,412): 'enumProp'
   null
 
 KtNameReferenceExpression(404,412): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -168,7 +168,7 @@ KtContainerNodeForControlStructureBody(418,425): 'Option1'
   null
 
 KtNameReferenceExpression(418,425): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -251,7 +251,7 @@ KtContainerNode(484,487): 'arg'
   null
 
 KtNameReferenceExpression(484,487): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -271,7 +271,7 @@ KtContainerNodeForControlStructureBody(489,497): 'enumProp'
   null
 
 KtNameReferenceExpression(489,497): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -279,7 +279,7 @@ KtContainerNodeForControlStructureBody(503,510): 'Option1'
   null
 
 KtNameReferenceExpression(503,510): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -341,7 +341,7 @@ KtBlockExpression(577,620): 'enumProp'
   null
 
 KtNameReferenceExpression(577,585): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -352,7 +352,7 @@ KtContainerNode(594,597): 'arg'
   null
 
 KtNameReferenceExpression(594,597): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -372,7 +372,7 @@ KtContainerNodeForControlStructureBody(599,607): 'enumProp'
   null
 
 KtNameReferenceExpression(599,607): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -380,7 +380,7 @@ KtContainerNodeForControlStructureBody(613,620): 'Option1'
   null
 
 KtNameReferenceExpression(613,620): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -439,7 +439,7 @@ KtBlockExpression(685,748): '{'
   null
 
 KtNameReferenceExpression(695,703): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -450,7 +450,7 @@ KtContainerNode(716,719): 'arg'
   null
 
 KtNameReferenceExpression(716,719): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -470,7 +470,7 @@ KtContainerNodeForControlStructureBody(721,729): 'enumProp'
   null
 
 KtNameReferenceExpression(721,729): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -478,7 +478,7 @@ KtContainerNodeForControlStructureBody(735,742): 'Option1'
   null
 
 KtNameReferenceExpression(735,742): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -504,7 +504,7 @@ KtBlockExpression(770,793): '{'
   null
 
 KtNameReferenceExpression(780,787): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -581,7 +581,7 @@ KtContainerNode(889,892): 'arg'
   null
 
 KtNameReferenceExpression(889,892): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -601,7 +601,7 @@ KtContainerNodeForControlStructureBody(894,902): 'enumProp'
   null
 
 KtNameReferenceExpression(894,902): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -609,7 +609,7 @@ KtContainerNodeForControlStructureBody(908,915): 'Option1'
   null
 
 KtNameReferenceExpression(908,915): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -722,7 +722,7 @@ KtCallExpression(975,994): 'contextOf<MyEnum>()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(975,984): 'contextOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -803,6 +803,6 @@ KtOperationReferenceExpression(995,997): '=='
       }
 
 KtNameReferenceExpression(998,1005): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>

@@ -65,7 +65,10 @@ KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
     ]
 
 KtNameReferenceExpression(79,84): 'other'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      other: kotlin.Any?
+    ]
 
 KtCallExpression(86,98): 'equals(this)'
   KaSymbolResolutionSuccess:
@@ -74,7 +77,10 @@ KtCallExpression(86,98): 'equals(this)'
     ]
 
 KtNameReferenceExpression(86,92): 'equals'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtValueArgumentList(92,98): '(this)'
   null
@@ -143,13 +149,19 @@ KtBinaryExpression(168,175): 'm ?: m2'
   null
 
 KtNameReferenceExpression(168,169): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      m: MyClass?
+    ]
 
 KtOperationReferenceExpression(170,172): '?:'
   null
 
 KtNameReferenceExpression(173,175): 'm2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      m2: MyClass?
+    ]
 
 KtOperationReferenceExpression(176,178): '?:'
   null
@@ -161,22 +173,34 @@ KtBinaryExpression(188,195): 'f ?: m2'
   null
 
 KtNameReferenceExpression(188,189): 'f'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val f: MyClass?
+    ]
 
 KtOperationReferenceExpression(190,192): '?:'
   null
 
 KtNameReferenceExpression(193,195): 'm2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      m2: MyClass?
+    ]
 
 KtBinaryExpression(200,207): 'm2 ?: m'
   null
 
 KtNameReferenceExpression(200,202): 'm2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      m2: MyClass?
+    ]
 
 KtOperationReferenceExpression(203,205): '?:'
   null
 
 KtNameReferenceExpression(206,207): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      m: MyClass?
+    ]

@@ -630,6 +630,29 @@ public interface KaResolver : KaSessionComponent {
     public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol?
 
     /**
+     * Resolves the declaration symbol referenced by the given [KtNameReferenceExpression].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun foo() {}
+     *
+     * val x = foo
+     * //      ^^^
+     * ```
+     *
+     * Calling `resolveSymbol()` on the [KtNameReferenceExpression] (`foo`) returns the [KaDeclarationSymbol] of `foo`
+     * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on name reference expressions
+     *
+     * @see tryResolveSymbols
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtNameReferenceExpression.resolveSymbol(): KaDeclarationSymbol?
+
+    /**
      * Attempts to resolve the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -1062,6 +1085,29 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstructorSymbol>?
+
+    /**
+     * Resolves the given [KtNameReferenceExpression] to a call representing the referenced declaration.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun foo() {}
+     *
+     * val x = foo
+     * //      ^^^
+     * ```
+     *
+     * Calling `resolveCall()` on the [KtNameReferenceExpression] (`foo`) returns the corresponding [KaSingleCall]
+     * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on name reference expressions
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtNameReferenceExpression.resolveCall(): KaSingleCall<*, *>?
 
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
@@ -1934,6 +1980,36 @@ public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? {
 }
 
 /**
+ * Resolves the declaration symbol referenced by the given [KtNameReferenceExpression].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun foo() {}
+ *
+ * val x = foo
+ * //      ^^^
+ * ```
+ *
+ * Calling `resolveSymbol()` on the [KtNameReferenceExpression] (`foo`) returns the [KaDeclarationSymbol] of `foo`
+ * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on name reference expressions
+ *
+ * @see tryResolveSymbols
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtNameReferenceExpression.resolveSymbol(): KaDeclarationSymbol? {
+    return with(session) {
+        resolveSymbol()
+    }
+}
+
+/**
  * Attempts to resolve the call for the given [KtResolvableCall].
  *
  * ### Usage Example:
@@ -2481,6 +2557,36 @@ public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? {
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstructorSymbol>? {
+    return with(session) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtNameReferenceExpression] to a call representing the referenced declaration.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun foo() {}
+ *
+ * val x = foo
+ * //      ^^^
+ * ```
+ *
+ * Calling `resolveCall()` on the [KtNameReferenceExpression] (`foo`) returns the corresponding [KaSingleCall]
+ * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on name reference expressions
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtNameReferenceExpression.resolveCall(): KaSingleCall<*, *>? {
     return with(session) {
         resolveCall()
     }

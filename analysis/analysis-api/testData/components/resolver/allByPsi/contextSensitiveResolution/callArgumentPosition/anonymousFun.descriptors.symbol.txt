@@ -86,7 +86,10 @@ KtUserType(257,264): 'MyClass'
   null
 
 KtNameReferenceExpression(257,264): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(264,266): '()'
   null
@@ -134,7 +137,10 @@ KtUserType(332,339): 'MyClass'
   null
 
 KtNameReferenceExpression(332,339): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(339,341): '()'
   null
@@ -188,7 +194,10 @@ KtUserType(428,433): 'Super'
   null
 
 KtNameReferenceExpression(428,433): 'Super'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Super
+    ]
 
 KtValueArgumentList(433,435): '()'
   null
@@ -215,7 +224,10 @@ KtCallExpression(473,479): 'TODO()'
     ]
 
 KtNameReferenceExpression(473,477): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(477,479): '()'
   null
@@ -239,7 +251,10 @@ KtCallExpression(529,545): 'InheritorClass()'
     ]
 
 KtNameReferenceExpression(529,543): 'InheritorClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass.InheritorClass
+    ]
 
 KtValueArgumentList(543,545): '()'
   null
@@ -317,7 +332,10 @@ KtCallExpression(716,725): 'lazy {""}'
     ]
 
 KtNameReferenceExpression(716,720): 'lazy'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+    ]
 
 KtLambdaArgument(721,725): '{""}'
   null
@@ -371,7 +389,10 @@ KtCallExpression(799,805): 'TODO()'
     ]
 
 KtNameReferenceExpression(799,803): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(803,805): '()'
   null
@@ -440,7 +461,10 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
     ]
 
 KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousEnumConsumer: kotlin.Function1<MyEnum, kotlin.Unit>
+    ]
 
 KtValueArgumentList(954,966): '(EnumValue1)'
   null
@@ -449,7 +473,9 @@ KtValueArgument(955,965): 'EnumValue1'
   null
 
 KtNameReferenceExpression(955,965): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
   KaSymbolResolutionSuccess:
@@ -458,7 +484,10 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
     ]
 
 KtNameReferenceExpression(972,989): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(989,1006): '(InheritorObject)'
   null
@@ -467,7 +496,9 @@ KtValueArgument(990,1005): 'InheritorObject'
   null
 
 KtNameReferenceExpression(990,1005): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
   KaSymbolResolutionSuccess:
@@ -476,7 +507,10 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
     ]
 
 KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1028,1041): '(propMyClass)'
   null
@@ -485,7 +519,9 @@ KtValueArgument(1029,1040): 'propMyClass'
   null
 
 KtNameReferenceExpression(1029,1040): 'propMyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propMyClass>
 
 KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
   KaSymbolResolutionSuccess:
@@ -494,7 +530,10 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
     ]
 
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1064,1070): '(prop)'
   null
@@ -503,7 +542,9 @@ KtValueArgument(1065,1069): 'prop'
   null
 
 KtNameReferenceExpression(1065,1069): 'prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
   KaSymbolResolutionSuccess:
@@ -512,7 +553,10 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
     ]
 
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1092,1103): '(constProp)'
   null
@@ -521,7 +565,9 @@ KtValueArgument(1093,1102): 'constProp'
   null
 
 KtNameReferenceExpression(1093,1102): 'constProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: constProp>
 
 KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
   KaSymbolResolutionSuccess:
@@ -530,7 +576,10 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
     ]
 
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1125,1135): '(lazyProp)'
   null
@@ -539,7 +588,9 @@ KtValueArgument(1126,1134): 'lazyProp'
   null
 
 KtNameReferenceExpression(1126,1134): 'lazyProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lazyProp>
 
 KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
   KaSymbolResolutionSuccess:
@@ -548,7 +599,10 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
     ]
 
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1157,1169): '(lambdaProp)'
   null
@@ -557,7 +611,9 @@ KtValueArgument(1158,1168): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1158,1168): 'lambdaProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lambdaProp>
 
 KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
   KaSymbolResolutionSuccess:
@@ -566,7 +622,10 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
     ]
 
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1191,1202): '(superProp)'
   null
@@ -575,7 +634,9 @@ KtValueArgument(1192,1201): 'superProp'
   null
 
 KtNameReferenceExpression(1192,1201): 'superProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superProp>
 
 KtCallExpression(1208,1233): 'anonymousConsumer(func())'
   KaSymbolResolutionSuccess:
@@ -584,7 +645,10 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
     ]
 
 KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1225,1233): '(func())'
   null
@@ -598,7 +662,9 @@ KtCallExpression(1226,1232): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
 
 KtNameReferenceExpression(1226,1230): 'func'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
 
 KtValueArgumentList(1230,1232): '()'
   null
@@ -610,7 +676,10 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
     ]
 
 KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1255,1268): '(superFunc())'
   null
@@ -624,7 +693,9 @@ KtCallExpression(1256,1267): 'superFunc()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superFunc>
 
 KtNameReferenceExpression(1256,1265): 'superFunc'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superFunc>
 
 KtValueArgumentList(1265,1267): '()'
   null
@@ -636,7 +707,10 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
     ]
 
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1290,1302): '(lambdaProp)'
   null
@@ -645,4 +719,6 @@ KtValueArgument(1291,1301): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1291,1301): 'lambdaProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lambdaProp>

@@ -152,7 +152,10 @@ KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
   null
 
 KtNameReferenceExpression(330,340): 'EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtProperty(345,389): 'val r2 = 1 infixEnumConsumer InheritorObject'
   null
@@ -170,7 +173,9 @@ KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
   null
 
 KtNameReferenceExpression(374,389): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
 KtProperty(394,434): 'val r3 = 1 infixConsumer InheritorObject'
   null

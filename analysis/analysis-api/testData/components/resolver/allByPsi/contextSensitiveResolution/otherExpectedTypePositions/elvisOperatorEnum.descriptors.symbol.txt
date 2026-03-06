@@ -137,13 +137,17 @@ KtBinaryExpression(372,390): 'Option1 ?: Option2'
   null
 
 KtNameReferenceExpression(372,379): 'Option1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
 KtOperationReferenceExpression(380,382): '?:'
   null
 
 KtNameReferenceExpression(383,390): 'Option2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option2>
 
 KtProperty(395,432): 'var i11: MyEnum? = Option1 ?: Option2'
   null
@@ -164,13 +168,17 @@ KtBinaryExpression(414,432): 'Option1 ?: Option2'
   null
 
 KtNameReferenceExpression(414,421): 'Option1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
 KtOperationReferenceExpression(422,424): '?:'
   null
 
 KtNameReferenceExpression(425,432): 'Option2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option2>
 
 KtProperty(437,474): 'var i20: MyEnum = enumProp ?: Option2'
   null
@@ -188,13 +196,17 @@ KtBinaryExpression(455,474): 'enumProp ?: Option2'
   null
 
 KtNameReferenceExpression(455,463): 'enumProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
 KtOperationReferenceExpression(464,466): '?:'
   null
 
 KtNameReferenceExpression(467,474): 'Option2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option2>
 
 KtProperty(479,519): 'var i30: MyEnum = enumProp ?: stringProp'
   null
@@ -212,13 +224,17 @@ KtBinaryExpression(497,519): 'enumProp ?: stringProp'
   null
 
 KtNameReferenceExpression(497,505): 'enumProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
 KtOperationReferenceExpression(506,508): '?:'
   null
 
 KtNameReferenceExpression(509,519): 'stringProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtProperty(524,564): 'var i40: MyEnum = stringProp ?: enumProp'
   null
@@ -236,13 +252,17 @@ KtBinaryExpression(542,564): 'stringProp ?: enumProp'
   null
 
 KtNameReferenceExpression(542,552): 'stringProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtOperationReferenceExpression(553,555): '?:'
   null
 
 KtNameReferenceExpression(556,564): 'enumProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
 KtProperty(569,610): 'var i50: MyEnum = getOption() ?: enumProp'
   null
@@ -265,7 +285,9 @@ KtCallExpression(587,598): 'getOption()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getOption>
 
 KtNameReferenceExpression(587,596): 'getOption'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getOption>
 
 KtValueArgumentList(596,598): '()'
   null
@@ -274,7 +296,9 @@ KtOperationReferenceExpression(599,601): '?:'
   null
 
 KtNameReferenceExpression(602,610): 'enumProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
 KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
   KaSymbolResolutionError:
@@ -284,7 +308,11 @@ KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(616,623): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtTypeArgumentList(623,631): '<MyEnum>'
   null
@@ -311,13 +339,17 @@ KtBinaryExpression(632,650): 'Option1 ?: Option2'
   null
 
 KtNameReferenceExpression(632,639): 'Option1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
 KtOperationReferenceExpression(640,642): '?:'
   null
 
 KtNameReferenceExpression(643,650): 'Option2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option2>
 
 KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
   KaSymbolResolutionError:
@@ -327,7 +359,11 @@ KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(656,663): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtTypeArgumentList(663,671): '<MyEnum>'
   null
@@ -354,13 +390,17 @@ KtBinaryExpression(672,694): 'enumProp ?: stringProp'
   null
 
 KtNameReferenceExpression(672,680): 'enumProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
 KtOperationReferenceExpression(681,683): '?:'
   null
 
 KtNameReferenceExpression(684,694): 'stringProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
   KaSymbolResolutionError:
@@ -370,7 +410,11 @@ KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(700,707): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtTypeArgumentList(707,715): '<MyEnum>'
   null
@@ -397,7 +441,9 @@ KtBinaryExpression(716,739): 'enumProp ?: getOption()'
   null
 
 KtNameReferenceExpression(716,724): 'enumProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
 KtOperationReferenceExpression(725,727): '?:'
   null
@@ -408,7 +454,9 @@ KtCallExpression(728,739): 'getOption()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getOption>
 
 KtNameReferenceExpression(728,737): 'getOption'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getOption>
 
 KtValueArgumentList(737,739): '()'
   null

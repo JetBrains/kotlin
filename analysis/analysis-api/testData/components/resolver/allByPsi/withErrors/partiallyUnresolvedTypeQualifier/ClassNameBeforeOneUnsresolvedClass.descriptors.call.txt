@@ -32,7 +32,7 @@ KtNameReferenceExpression(36,39): 'Foo'
   null
 
 KtNameReferenceExpression(40,43): 'Bar'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Bar>
 
@@ -61,7 +61,7 @@ KtNameReferenceExpression(82,85): 'Foo'
   null
 
 KtNameReferenceExpression(86,89): 'Bar'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Bar>
 
@@ -157,7 +157,7 @@ KtCallExpression(142,178): 'take {'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
 
 KtNameReferenceExpression(142,146): 'take'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -224,7 +224,7 @@ KtNameReferenceExpression(166,169): 'Foo'
   null
 
 KtNameReferenceExpression(170,173): 'Bar'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Bar>
 

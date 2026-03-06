@@ -443,7 +443,7 @@ KtCallExpression(521,538): 'invoke(MyClass())'
       }
 
 KtNameReferenceExpression(521,527): 'invoke'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -502,7 +502,7 @@ KtCallExpression(528,537): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(528,535): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -565,7 +565,7 @@ KtNameReferenceExpression(552,566): 'memberProperty'
   null
 
 KtNameReferenceExpression(567,571): 'name'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -680,7 +680,7 @@ KtCallExpression(599,614): 'invoke(Child())'
       }
 
 KtNameReferenceExpression(599,605): 'invoke'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -739,7 +739,7 @@ KtCallExpression(606,613): 'Child()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(606,611): 'Child'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -802,7 +802,7 @@ KtNameReferenceExpression(626,640): 'memberProperty'
   null
 
 KtNameReferenceExpression(641,645): 'name'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -981,7 +981,7 @@ KtNameReferenceExpression(832,848): 'functionWithType'
   null
 
 KtNameReferenceExpression(849,853): 'name'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1096,7 +1096,7 @@ KtCallExpression(890,913): 'invoke(ChildWithType())'
       }
 
 KtNameReferenceExpression(890,896): 'invoke'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1155,7 +1155,7 @@ KtCallExpression(897,912): 'ChildWithType()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(897,910): 'ChildWithType'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1248,7 +1248,7 @@ KtNameReferenceExpression(968,979): 'lateinitVar'
   null
 
 KtNameReferenceExpression(980,993): 'isInitialized'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'isInitialized' on receiver of type 'KMutableProperty0<MyClass>'.>
 
@@ -1324,7 +1324,7 @@ KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1063,1076): 'classWithType'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1364,7 +1364,7 @@ KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1099,1112): 'classWithType'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1440,7 +1440,7 @@ KtPostfixExpression(1174,1177): 't!!'
   null
 
 KtNameReferenceExpression(1174,1175): 't'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1486,7 +1486,7 @@ KtPostfixExpression(1200,1203): 't!!'
   null
 
 KtNameReferenceExpression(1200,1201): 't'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

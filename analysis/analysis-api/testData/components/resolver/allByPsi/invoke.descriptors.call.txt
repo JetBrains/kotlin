@@ -91,7 +91,7 @@ KtCallExpression(124,133): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(124,131): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -137,7 +137,7 @@ KtCallExpression(156,165): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(156,163): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -183,7 +183,7 @@ KtCallExpression(186,191): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(186,189): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -203,7 +203,7 @@ KtValueArgumentList(189,191): '()'
   null
 
 KtNameReferenceExpression(196,199): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -289,7 +289,7 @@ KtParenthesizedExpression(206,211): '(foo)'
   null
 
 KtNameReferenceExpression(207,210): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -332,7 +332,7 @@ KtCallExpression(218,226): 'invoke()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(218,224): 'invoke'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -375,7 +375,7 @@ KtDotQualifiedExpression(231,243): 'foo.invoke()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(231,234): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -412,7 +412,7 @@ KtCallExpression(235,243): 'invoke()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(235,241): 'invoke'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -455,7 +455,7 @@ KtCallExpression(248,258): 'property()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(248,256): 'property'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

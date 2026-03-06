@@ -155,7 +155,7 @@ KtValueArgument(91,92): 'x'
   NO_CANDIDATES
 
 KtNameReferenceExpression(91,92): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

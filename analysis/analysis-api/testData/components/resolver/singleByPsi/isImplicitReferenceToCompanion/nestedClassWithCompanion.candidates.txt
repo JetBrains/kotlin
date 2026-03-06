@@ -1,5 +1,5 @@
 KtNameReferenceExpression(84,90): 'Nested'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

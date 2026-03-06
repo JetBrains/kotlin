@@ -242,7 +242,10 @@ KtIsExpression(298,307): 's is Left'
   null
 
 KtNameReferenceExpression(298,299): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: Either<kotlin.String, kotlin.Int>
+    ]
 
 KtOperationReferenceExpression(300,302): 'is'
   null
@@ -254,7 +257,9 @@ KtUserType(303,307): 'Left'
   null
 
 KtNameReferenceExpression(303,307): 'Left'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Left>
 
 KtDotQualifiedExpression(311,325): 's.error.length'
   null
@@ -265,10 +270,15 @@ KtDotQualifiedExpression(311,318): 's.error'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: error>
 
 KtNameReferenceExpression(311,312): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: Either<kotlin.String, kotlin.Int>
+    ]
 
 KtNameReferenceExpression(313,318): 'error'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: error>
 
 KtNameReferenceExpression(319,325): 'length'
   null
@@ -283,7 +293,10 @@ KtIsExpression(334,344): 's is Right'
   null
 
 KtNameReferenceExpression(334,335): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: Either<kotlin.String, kotlin.Int>
+    ]
 
 KtOperationReferenceExpression(336,338): 'is'
   null
@@ -295,7 +308,9 @@ KtUserType(339,344): 'Right'
   null
 
 KtNameReferenceExpression(339,344): 'Right'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Right>
 
 KtBinaryExpression(348,359): 's.value * 1'
   null
@@ -306,10 +321,15 @@ KtDotQualifiedExpression(348,355): 's.value'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: value>
 
 KtNameReferenceExpression(348,349): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: Either<kotlin.String, kotlin.Int>
+    ]
 
 KtNameReferenceExpression(350,355): 'value'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: value>
 
 KtOperationReferenceExpression(356,357): '*'
   null
@@ -327,7 +347,10 @@ KtIsExpression(375,385): 's !is Left'
   null
 
 KtNameReferenceExpression(375,376): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: Either<kotlin.String, kotlin.Int>
+    ]
 
 KtOperationReferenceExpression(377,380): '!is'
   null
@@ -339,7 +362,9 @@ KtUserType(381,385): 'Left'
   null
 
 KtNameReferenceExpression(381,385): 'Left'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Left>
 
 KtContainerNodeForControlStructureBody(387,415): '{'
   null
@@ -354,7 +379,10 @@ KtDotQualifiedExpression(397,409): 's.hashCode()'
     ]
 
 KtNameReferenceExpression(397,398): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: Either<kotlin.String, kotlin.Int>
+    ]
 
 KtCallExpression(399,409): 'hashCode()'
   KaSymbolResolutionSuccess:
@@ -363,7 +391,10 @@ KtCallExpression(399,409): 'hashCode()'
     ]
 
 KtNameReferenceExpression(399,407): 'hashCode'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtValueArgumentList(407,409): '()'
   null
@@ -402,7 +433,10 @@ KtCallExpression(433,443): 'hashCode()'
     ]
 
 KtNameReferenceExpression(433,441): 'hashCode'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtValueArgumentList(441,443): '()'
   null
@@ -417,7 +451,10 @@ KtBinaryExpressionWithTypeRHS(455,464): 's as Left'
   null
 
 KtNameReferenceExpression(455,456): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: Either<kotlin.String, kotlin.Int>
+    ]
 
 KtOperationReferenceExpression(457,459): 'as'
   null
@@ -429,7 +466,9 @@ KtUserType(460,464): 'Left'
   null
 
 KtNameReferenceExpression(460,464): 'Left'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Left>
 
 KtDotQualifiedExpression(473,487): 's.error.length'
   null
@@ -440,10 +479,15 @@ KtDotQualifiedExpression(473,480): 's.error'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: error>
 
 KtNameReferenceExpression(473,474): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: Either<kotlin.String, kotlin.Int>
+    ]
 
 KtNameReferenceExpression(475,480): 'error'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: error>
 
 KtNameReferenceExpression(481,487): 'length'
   null
@@ -461,7 +505,10 @@ KtBinaryExpressionWithTypeRHS(500,511): 's as? Right'
   null
 
 KtNameReferenceExpression(500,501): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: Either<kotlin.String, kotlin.Int>
+    ]
 
 KtOperationReferenceExpression(502,505): 'as?'
   null
@@ -473,7 +520,9 @@ KtUserType(506,511): 'Right'
   null
 
 KtNameReferenceExpression(506,511): 'Right'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Right>
 
 KtNameReferenceExpression(514,519): 'value'
   null

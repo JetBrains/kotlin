@@ -95,7 +95,10 @@ KtCallExpression(156,162): 'TODO()'
     ]
 
 KtNameReferenceExpression(156,160): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(160,162): '()'
   null
@@ -173,7 +176,10 @@ KtCallExpression(228,234): 'TODO()'
     ]
 
 KtNameReferenceExpression(228,232): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(232,234): '()'
   null
@@ -272,7 +278,10 @@ KtIsExpression(307,319): 'x is A<*>.B1'
   null
 
 KtNameReferenceExpression(307,308): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: A<kotlin.Int>
+    ]
 
 KtOperationReferenceExpression(309,311): 'is'
   null
@@ -311,7 +320,10 @@ KtIsExpression(334,348): 'x is A<Int>.B2'
   null
 
 KtNameReferenceExpression(334,335): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: A<kotlin.Int>
+    ]
 
 KtOperationReferenceExpression(336,338): 'is'
   null
@@ -359,7 +371,10 @@ KtIsExpression(363,371): 'x is A.C'
   null
 
 KtNameReferenceExpression(363,364): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: A<kotlin.Int>
+    ]
 
 KtOperationReferenceExpression(365,367): 'is'
   null
@@ -395,7 +410,10 @@ KtIsExpression(404,411): 'x is B1'
   null
 
 KtNameReferenceExpression(404,405): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: A<kotlin.Int>
+    ]
 
 KtOperationReferenceExpression(406,408): 'is'
   null
@@ -407,7 +425,9 @@ KtUserType(409,411): 'B1'
   null
 
 KtNameReferenceExpression(409,411): 'B1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'B1'.>
 
 KtBlockExpression(415,417): '{}'
   null
@@ -422,7 +442,10 @@ KtIsExpression(426,433): 'x is B2'
   null
 
 KtNameReferenceExpression(426,427): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: A<kotlin.Int>
+    ]
 
 KtOperationReferenceExpression(428,430): 'is'
   null
@@ -434,7 +457,9 @@ KtUserType(431,433): 'B2'
   null
 
 KtNameReferenceExpression(431,433): 'B2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'B2'.>
 
 KtBlockExpression(437,439): '{}'
   null
@@ -449,7 +474,10 @@ KtIsExpression(448,454): 'x is C'
   null
 
 KtNameReferenceExpression(448,449): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: A<kotlin.Int>
+    ]
 
 KtOperationReferenceExpression(450,452): 'is'
   null

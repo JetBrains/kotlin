@@ -167,7 +167,7 @@ KtNameReferenceExpression(300,301): 'X'
   null
 
 KtNameReferenceExpression(304,305): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -270,7 +270,7 @@ KtCallExpression(386,392): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(386,390): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -376,7 +376,7 @@ KtCallExpression(503,509): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(503,507): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -443,7 +443,7 @@ KtCallExpression(558,564): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(558,562): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -540,7 +540,7 @@ KtCallExpression(646,652): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(646,650): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -649,7 +649,7 @@ KtCallExpression(768,774): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(768,772): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -758,7 +758,7 @@ KtCallExpression(897,903): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(897,901): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -861,7 +861,7 @@ KtCallExpression(998,1004): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(998,1002): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -937,7 +937,7 @@ KtCallExpression(1052,1066): 'id(EnumValue1)'
       }
 
 KtNameReferenceExpression(1052,1054): 'id'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -978,7 +978,7 @@ KtValueArgument(1055,1065): 'EnumValue1'
   null
 
 KtNameReferenceExpression(1055,1065): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1045,7 +1045,7 @@ KtCallExpression(1089,1108): 'id(InheritorObject)'
       }
 
 KtNameReferenceExpression(1089,1091): 'id'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1124,7 +1124,7 @@ KtCallExpression(1114,1145): 'receive<MyEnum>(id(EnumValue1))'
       }
 
 KtNameReferenceExpression(1114,1121): 'receive'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1215,7 +1215,7 @@ KtCallExpression(1130,1144): 'id(EnumValue1)'
       }
 
 KtNameReferenceExpression(1130,1132): 'id'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1256,7 +1256,7 @@ KtValueArgument(1133,1143): 'EnumValue1'
   null
 
 KtNameReferenceExpression(1133,1143): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1311,7 +1311,7 @@ KtCallExpression(1150,1187): 'receive<MyClass>(id(InheritorObject))'
       }
 
 KtNameReferenceExpression(1150,1157): 'receive'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1402,7 +1402,7 @@ KtCallExpression(1167,1186): 'id(InheritorObject)'
       }
 
 KtNameReferenceExpression(1167,1169): 'id'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1479,7 +1479,7 @@ KtCallExpression(1193,1222): 'testNullable(InheritorObject)'
       }
 
 KtNameReferenceExpression(1193,1205): 'testNullable'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1556,7 +1556,7 @@ KtCallExpression(1227,1266): 'testTypeParam<MyClass>(InheritorObject)'
       }
 
 KtNameReferenceExpression(1227,1240): 'testTypeParam'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1653,7 +1653,7 @@ KtCallExpression(1272,1302): 'testTypeParam(InheritorObject)'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParam>
 
 KtNameReferenceExpression(1272,1285): 'testTypeParam'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1697,7 +1697,7 @@ KtValueArgument(1286,1301): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1286,1301): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
@@ -1740,7 +1740,7 @@ KtCallExpression(1307,1354): 'testTypeParamWithMultipleBound(InheritorObject)'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParamWithMultipleBound>
 
 KtNameReferenceExpression(1307,1337): 'testTypeParamWithMultipleBound'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1784,7 +1784,7 @@ KtValueArgument(1338,1353): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1338,1353): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
@@ -1827,7 +1827,7 @@ KtCallExpression(1359,1409): 'testDefinitelyNotNullIntersection(InheritorObject)
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testDefinitelyNotNullIntersection>
 
 KtNameReferenceExpression(1359,1392): 'testDefinitelyNotNullIntersection'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1871,7 +1871,7 @@ KtValueArgument(1393,1408): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1393,1408): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
@@ -1914,7 +1914,7 @@ KtCallExpression(1414,1451): 'testFakeIntersection(InheritorObject)'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testFakeIntersection>
 
 KtNameReferenceExpression(1414,1434): 'testFakeIntersection'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1958,7 +1958,7 @@ KtValueArgument(1435,1450): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1435,1450): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
@@ -2001,7 +2001,7 @@ KtCallExpression(1456,1500): 'testReverseFakeIntersection(InheritorObject)'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testReverseFakeIntersection>
 
 KtNameReferenceExpression(1456,1483): 'testReverseFakeIntersection'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2045,7 +2045,7 @@ KtValueArgument(1484,1499): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1484,1499): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
@@ -2088,7 +2088,7 @@ KtCallExpression(1505,1545): 'testRegularIntersection(InheritorObject)'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testRegularIntersection>
 
 KtNameReferenceExpression(1505,1528): 'testRegularIntersection'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2132,6 +2132,6 @@ KtValueArgument(1529,1544): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1529,1544): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>

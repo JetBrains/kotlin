@@ -44,7 +44,7 @@ KtWhenExpression(120,162): 'when (a) {'
   null
 
 KtNameReferenceExpression(126,127): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -90,7 +90,7 @@ KtNameReferenceExpression(135,136): 'A'
   null
 
 KtNameReferenceExpression(137,138): 'A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -145,7 +145,7 @@ KtNameReferenceExpression(150,151): 'A'
   null
 
 KtNameReferenceExpression(152,153): 'B'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

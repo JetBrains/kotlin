@@ -1,2 +1,5 @@
 KtNameReferenceExpression(100,109): 'asDynamic'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/js/asDynamic(<extension receiver>: kotlin.Any?): dynamic
+    ]

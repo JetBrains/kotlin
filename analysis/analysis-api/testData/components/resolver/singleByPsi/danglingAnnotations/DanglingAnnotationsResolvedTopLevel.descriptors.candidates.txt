@@ -1,5 +1,5 @@
 KtNameReferenceExpression(45,49): 'Ann0'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

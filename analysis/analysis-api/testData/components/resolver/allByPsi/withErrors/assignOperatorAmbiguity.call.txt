@@ -475,7 +475,7 @@ KtCallExpression(494,500): 'Test()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(494,498): 'Test'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -502,7 +502,7 @@ KtBinaryExpression(505,513): 'foo += 1'
     fun Test.plusAssign(i: Int): Unit>
 
 KtNameReferenceExpression(505,508): 'foo'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.plus(i: Int): Test
@@ -526,7 +526,7 @@ KtBinaryExpression(518,526): 'foo -= 1'
     fun Test.minusAssign(i: Int): Unit>
 
 KtNameReferenceExpression(518,521): 'foo'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.minus(i: Int): Test
@@ -550,7 +550,7 @@ KtBinaryExpression(531,539): 'foo /= 1'
     fun Test.divAssign(i: Int): Unit>
 
 KtNameReferenceExpression(531,534): 'foo'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.div(i: Int): Test
@@ -574,7 +574,7 @@ KtBinaryExpression(544,552): 'foo *= 1'
     fun Test.timesAssign(i: Int): Unit>
 
 KtNameReferenceExpression(544,547): 'foo'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.times(i: Int): Test
@@ -598,7 +598,7 @@ KtBinaryExpression(557,565): 'foo %= 1'
     fun Test.remAssign(i: Int): Unit>
 
 KtNameReferenceExpression(557,560): 'foo'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.rem(i: Int): Test

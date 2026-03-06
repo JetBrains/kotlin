@@ -127,7 +127,7 @@ KtUserType(158,160): 'A1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(158,160): 'A1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -297,7 +297,7 @@ KtUserType(234,236): 'A2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(234,236): 'A2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -439,7 +439,7 @@ KtUserType(260,262): 'A2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(260,262): 'A2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -654,7 +654,7 @@ KtUserType(343,345): 'A3'
   NO_CANDIDATES
 
 KtNameReferenceExpression(343,345): 'A3'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -820,7 +820,7 @@ KtUserType(368,370): 'A3'
   NO_CANDIDATES
 
 KtNameReferenceExpression(368,370): 'A3'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -897,7 +897,7 @@ KtCallExpression(371,381): 'arrayOf(X)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(371,378): 'arrayOf'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1053,7 +1053,7 @@ KtUserType(444,446): 'A4'
   NO_CANDIDATES
 
 KtNameReferenceExpression(444,446): 'A4'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1182,7 +1182,7 @@ KtUserType(474,483): 'Retention'
   NO_CANDIDATES
 
 KtNameReferenceExpression(474,483): 'Retention'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1313,7 +1313,7 @@ KtUserType(494,500): 'Target'
   NO_CANDIDATES
 
 KtNameReferenceExpression(494,500): 'Target'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1417,7 +1417,7 @@ KtUserType(550,562): 'MyAnnotation'
   NO_CANDIDATES
 
 KtNameReferenceExpression(550,562): 'MyAnnotation'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1495,7 +1495,7 @@ KtUserType(580,592): 'MyAnnotation'
   NO_CANDIDATES
 
 KtNameReferenceExpression(580,592): 'MyAnnotation'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1561,7 +1561,7 @@ KtUserType(609,621): 'MyAnnotation'
   NO_CANDIDATES
 
 KtNameReferenceExpression(609,621): 'MyAnnotation'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

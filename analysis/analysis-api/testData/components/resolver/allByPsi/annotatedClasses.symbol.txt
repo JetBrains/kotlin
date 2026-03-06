@@ -50,7 +50,10 @@ KtNameReferenceExpression(23,39): 'AnnotationTarget'
   null
 
 KtNameReferenceExpression(40,44): 'TYPE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.TYPE
+    ]
 
 KtPrimaryConstructor(67,89): '(val position: String)'
   null
@@ -140,7 +143,10 @@ KtSimpleNameStringTemplateEntry(170,175): '$prop'
   null
 
 KtNameReferenceExpression(171,175): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(178,283): 'List<@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>>'
   null
@@ -197,7 +203,10 @@ KtSimpleNameStringTemplateEntry(212,217): '$prop'
   null
 
 KtNameReferenceExpression(213,217): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(220,282): 'Collection<@Anno("nested nested parameter type $prop") String>'
   null
@@ -254,7 +263,10 @@ KtSimpleNameStringTemplateEntry(267,272): '$prop'
   null
 
 KtNameReferenceExpression(268,272): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(275,281): 'String'
   null
@@ -305,7 +317,10 @@ KtSimpleNameStringTemplateEntry(306,311): '$prop'
   null
 
 KtNameReferenceExpression(307,311): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtParameterList(317,373): '(i: @Anno("anonymousFunction parameter type $prop") Int)'
   null
@@ -356,7 +371,10 @@ KtSimpleNameStringTemplateEntry(361,366): '$prop'
   null
 
 KtNameReferenceExpression(362,366): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(369,372): 'Int'
   null
@@ -407,7 +425,10 @@ KtSimpleNameStringTemplateEntry(412,417): '$prop'
   null
 
 KtNameReferenceExpression(413,417): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(420,423): 'Int'
   null
@@ -503,7 +524,10 @@ KtSimpleNameStringTemplateEntry(503,508): '$prop'
   null
 
 KtNameReferenceExpression(504,508): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(511,616): 'AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
   null
@@ -560,7 +584,10 @@ KtSimpleNameStringTemplateEntry(554,559): '$prop'
   null
 
 KtNameReferenceExpression(555,559): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(562,615): 'List<@Anno("nested nested super type ref $prop") Int>'
   null
@@ -617,7 +644,10 @@ KtSimpleNameStringTemplateEntry(603,608): '$prop'
   null
 
 KtNameReferenceExpression(604,608): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(611,614): 'Int'
   null
@@ -695,7 +725,10 @@ KtSimpleNameStringTemplateEntry(676,681): '$prop'
   null
 
 KtNameReferenceExpression(677,681): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(684,789): 'AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
   null
@@ -752,7 +785,10 @@ KtSimpleNameStringTemplateEntry(727,732): '$prop'
   null
 
 KtNameReferenceExpression(728,732): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(735,788): 'List<@Anno("nested nested super type ref $prop") Int>'
   null
@@ -809,7 +845,10 @@ KtSimpleNameStringTemplateEntry(776,781): '$prop'
   null
 
 KtNameReferenceExpression(777,781): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(784,787): 'Int'
   null
@@ -875,7 +914,10 @@ KtSimpleNameStringTemplateEntry(862,867): '$prop'
   null
 
 KtNameReferenceExpression(863,867): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(870,964): 'List<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>>'
   null
@@ -932,7 +974,10 @@ KtSimpleNameStringTemplateEntry(904,909): '$prop'
   null
 
 KtNameReferenceExpression(905,909): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(912,963): 'List<@Anno("nested nested super type ref $prop") I>'
   null
@@ -989,7 +1034,10 @@ KtSimpleNameStringTemplateEntry(953,958): '$prop'
   null
 
 KtNameReferenceExpression(954,958): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtUserType(961,962): 'I'
   null

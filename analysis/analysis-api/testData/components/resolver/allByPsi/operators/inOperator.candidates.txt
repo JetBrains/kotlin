@@ -77,7 +77,7 @@ KtCallExpression(102,113): 'Container()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(102,111): 'Container'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -175,7 +175,7 @@ KtOperationReferenceExpression(120,122): 'in'
     isInBestCandidates = true
 
 KtNameReferenceExpression(123,124): 'c'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -270,7 +270,7 @@ KtOperationReferenceExpression(131,134): '!in'
     isInBestCandidates = true
 
 KtNameReferenceExpression(135,136): 'c'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

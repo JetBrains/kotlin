@@ -125,10 +125,14 @@ KtUserType(238,242): 'Left'
   null
 
 KtNameReferenceExpression(238,242): 'Left'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
 
 KtNameReferenceExpression(246,247): 'x'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
 KtWhenEntry(252,265): 'is Right -> y'
   null
@@ -143,7 +147,11 @@ KtUserType(255,260): 'Right'
   null
 
 KtNameReferenceExpression(255,260): 'Right'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtNameReferenceExpression(264,265): 'y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>

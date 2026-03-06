@@ -100,7 +100,7 @@ KtUserType(217,224): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(217,224): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -190,7 +190,7 @@ KtUserType(292,299): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(292,299): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -286,7 +286,7 @@ KtUserType(388,393): 'Super'
   NO_CANDIDATES
 
 KtNameReferenceExpression(388,393): 'Super'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -367,7 +367,7 @@ KtCallExpression(433,439): 'TODO()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(433,437): 'TODO'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -384,7 +384,7 @@ KtNameReferenceExpression(433,437): 'TODO'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -444,7 +444,7 @@ KtCallExpression(489,505): 'InheritorClass()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(489,503): 'InheritorClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -686,7 +686,7 @@ KtCallExpression(679,688): 'lazy {""}'
     isInBestCandidates = true
 
 KtNameReferenceExpression(679,683): 'lazy'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -729,7 +729,7 @@ KtNameReferenceExpression(679,683): 'lazy'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -772,7 +772,7 @@ KtNameReferenceExpression(679,683): 'lazy'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'mode'>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -882,7 +882,7 @@ KtCallExpression(720,726): 'TODO()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(720,724): 'TODO'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -899,7 +899,7 @@ KtNameReferenceExpression(720,724): 'TODO'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1025,7 +1025,7 @@ KtCallExpression(847,889): 'receiveLambda<MyClass> { InheritorObject }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(847,860): 'receiveLambda'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1127,7 +1127,7 @@ KtCallExpression(894,932): 'receiveLambda<MyClass> { propMyClass }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(894,907): 'receiveLambda'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1229,7 +1229,7 @@ KtCallExpression(937,982): 'receiveLambda<MyClass> { propInheritorClass }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(937,950): 'receiveLambda'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1331,7 +1331,7 @@ KtCallExpression(987,1033): 'receiveLambda<MyClass> { propInheritorObject }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(987,1000): 'receiveLambda'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1433,7 +1433,7 @@ KtCallExpression(1039,1070): 'receiveLambda<MyClass> { prop }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1039,1052): 'receiveLambda'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1535,7 +1535,7 @@ KtCallExpression(1075,1111): 'receiveLambda<MyClass> { superProp }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1075,1088): 'receiveLambda'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1637,7 +1637,7 @@ KtCallExpression(1116,1152): 'receiveLambda<MyClass> { constProp }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1116,1129): 'receiveLambda'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1739,7 +1739,7 @@ KtCallExpression(1157,1194): 'receiveLambda<MyClass> { lambdaProp }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1157,1170): 'receiveLambda'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1841,7 +1841,7 @@ KtCallExpression(1199,1234): 'receiveLambda<MyClass> { lazyProp }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1199,1212): 'receiveLambda'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1943,7 +1943,7 @@ KtCallExpression(1239,1277): 'receiveLambda<MyClass> { NestedObject}'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1239,1252): 'receiveLambda'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2045,7 +2045,7 @@ KtCallExpression(1283,1316): 'receiveLambda<MyClass> { func() }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1283,1296): 'receiveLambda'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2153,7 +2153,7 @@ KtCallExpression(1321,1364): 'receiveLambda<MyClass> { InheritorClass() }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1321,1334): 'receiveLambda'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2261,7 +2261,7 @@ KtCallExpression(1369,1407): 'receiveLambda<MyClass> { superFunc() }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1369,1382): 'receiveLambda'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

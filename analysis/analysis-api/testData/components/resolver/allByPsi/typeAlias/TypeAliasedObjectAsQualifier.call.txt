@@ -105,7 +105,7 @@ KtCallExpression(141,151): 'function()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(141,149): 'function'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -151,7 +151,7 @@ KtNameReferenceExpression(156,163): 'MyAlias'
   null
 
 KtNameReferenceExpression(164,172): 'property'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

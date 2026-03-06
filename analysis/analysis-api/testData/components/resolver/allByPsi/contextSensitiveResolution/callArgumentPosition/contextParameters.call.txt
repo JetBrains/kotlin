@@ -201,7 +201,7 @@ KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
       }
 
 KtNameReferenceExpression(299,303): 'with'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -286,7 +286,7 @@ KtValueArgument(318,328): 'EnumValue1'
   null
 
 KtNameReferenceExpression(318,328): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -367,7 +367,7 @@ KtCallExpression(339,344): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(339,342): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -471,7 +471,7 @@ KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
       }
 
 KtNameReferenceExpression(356,360): 'with'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -620,7 +620,7 @@ KtCallExpression(403,408): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(403,406): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -781,7 +781,7 @@ KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
       }
 
 KtNameReferenceExpression(507,511): 'with'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -866,7 +866,7 @@ KtValueArgument(526,536): 'EnumValue1'
   null
 
 KtNameReferenceExpression(526,536): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -953,7 +953,7 @@ KtStringTemplateExpression(548,550): '""'
   null
 
 KtNameReferenceExpression(551,552): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = [
         KaImplicitReceiverValue:

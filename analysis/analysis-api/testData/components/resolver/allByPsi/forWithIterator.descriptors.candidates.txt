@@ -137,7 +137,7 @@ KtLabelReferenceExpression(151,160): '@iterator'
   NO_CANDIDATES
 
 KtNameReferenceExpression(161,166): 'start'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -204,7 +204,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
     isInBestCandidates = true
 
 KtNameReferenceExpression(196,203): 'current'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -294,7 +294,7 @@ KtLabelReferenceExpression(211,220): '@iterator'
   NO_CANDIDATES
 
 KtNameReferenceExpression(221,224): 'end'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -374,7 +374,7 @@ KtPostfixExpression(256,265): 'current++'
     isInBestCandidates = true
 
 KtNameReferenceExpression(256,263): 'current'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -603,7 +603,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
     isInBestCandidates = false
 
 KtNameReferenceExpression(297,311): 'IntProgression'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -650,7 +650,7 @@ KtNameReferenceExpression(297,311): 'IntProgression'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

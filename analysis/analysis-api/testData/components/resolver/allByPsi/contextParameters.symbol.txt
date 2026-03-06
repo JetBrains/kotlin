@@ -50,7 +50,10 @@ KtReturnExpression(51,59): 'return a'
     ]
 
 KtNameReferenceExpression(58,59): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: kotlin.String
+    ]
 
 KtClass(69,409): 'class Base {'
   null
@@ -104,7 +107,10 @@ KtCallExpression(135,140): 'bar()'
     ]
 
 KtNameReferenceExpression(135,138): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.bar(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtValueArgumentList(138,140): '()'
   null
@@ -116,7 +122,10 @@ KtDotQualifiedExpression(149,158): 'a.foo("")'
     ]
 
 KtNameReferenceExpression(149,150): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: A
+    ]
 
 KtCallExpression(151,158): 'foo("")'
   KaSymbolResolutionSuccess:
@@ -125,7 +134,10 @@ KtCallExpression(151,158): 'foo("")'
     ]
 
 KtNameReferenceExpression(151,154): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.foo(<dispatch receiver>: A, a: kotlin.String): kotlin.String
+    ]
 
 KtValueArgumentList(154,158): '("")'
   null
@@ -194,7 +206,10 @@ KtCallExpression(248,253): 'bar()'
     ]
 
 KtNameReferenceExpression(248,251): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.bar(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtValueArgumentList(251,253): '()'
   null
@@ -212,7 +227,10 @@ KtDotQualifiedExpression(273,282): 'a.foo("")'
     ]
 
 KtNameReferenceExpression(273,274): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: A
+    ]
 
 KtCallExpression(275,282): 'foo("")'
   KaSymbolResolutionSuccess:
@@ -221,7 +239,10 @@ KtCallExpression(275,282): 'foo("")'
     ]
 
 KtNameReferenceExpression(275,278): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.foo(<dispatch receiver>: A, a: kotlin.String): kotlin.String
+    ]
 
 KtValueArgumentList(278,282): '("")'
   null
@@ -266,13 +287,19 @@ KtCallExpression(349,360): 'funMember()'
     ]
 
 KtNameReferenceExpression(349,358): 'funMember'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtValueArgumentList(358,360): '()'
   null
 
 KtNameReferenceExpression(369,383): 'propertyMember'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val propertyMember: kotlin.String
+    ]
 
 KtNamedFunction(395,407): 'fun bar() {}'
   null
@@ -299,7 +326,10 @@ KtCallExpression(441,542): 'with(Base()) {'
     ]
 
 KtNameReferenceExpression(441,445): 'with'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/with(receiver: T, block: T.() -> R): R
+    ]
 
 KtValueArgumentList(445,453): '(Base())'
   null
@@ -314,7 +344,10 @@ KtCallExpression(446,452): 'Base()'
     ]
 
 KtNameReferenceExpression(446,450): 'Base'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Base
+    ]
 
 KtValueArgumentList(450,452): '()'
   null
@@ -338,7 +371,10 @@ KtCallExpression(464,536): 'with(A()) {'
     ]
 
 KtNameReferenceExpression(464,468): 'with'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/with(receiver: T, block: T.() -> R): R
+    ]
 
 KtValueArgumentList(468,473): '(A())'
   null
@@ -353,7 +389,10 @@ KtCallExpression(469,472): 'A()'
     ]
 
 KtNameReferenceExpression(469,470): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(470,472): '()'
   null
@@ -377,13 +416,19 @@ KtCallExpression(488,499): 'funMember()'
     ]
 
 KtNameReferenceExpression(488,497): 'funMember'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtValueArgumentList(497,499): '()'
   null
 
 KtNameReferenceExpression(512,526): 'propertyMember'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val propertyMember: kotlin.String
+    ]
 
 KtNamedFunction(546,637): 'fun usageExplicitContextArguments() {'
   null
@@ -401,7 +446,10 @@ KtCallExpression(588,635): 'with(Base()) {'
     ]
 
 KtNameReferenceExpression(588,592): 'with'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/with(receiver: T, block: T.() -> R): R
+    ]
 
 KtValueArgumentList(592,600): '(Base())'
   null
@@ -416,7 +464,10 @@ KtCallExpression(593,599): 'Base()'
     ]
 
 KtNameReferenceExpression(593,597): 'Base'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Base
+    ]
 
 KtValueArgumentList(597,599): '()'
   null
@@ -440,7 +491,10 @@ KtCallExpression(611,629): 'funMember(a = A())'
     ]
 
 KtNameReferenceExpression(611,620): 'funMember'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtValueArgumentList(620,629): '(a = A())'
   null
@@ -461,7 +515,10 @@ KtCallExpression(625,628): 'A()'
     ]
 
 KtNameReferenceExpression(625,626): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(626,628): '()'
   null

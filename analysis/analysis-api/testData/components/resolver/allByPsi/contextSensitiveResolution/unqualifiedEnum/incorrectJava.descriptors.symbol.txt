@@ -29,7 +29,10 @@ KtWhenExpression(62,114): 'when (javaEnum) {'
   null
 
 KtNameReferenceExpression(68,76): 'javaEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      javaEnum: JavaEnum
+    ]
 
 KtWhenEntry(84,96): 'first() -> 1'
   null
@@ -43,7 +46,9 @@ KtCallExpression(84,91): 'first()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: first>
 
 KtNameReferenceExpression(84,89): 'first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: first>
 
 KtValueArgumentList(89,91): '()'
   null
@@ -58,7 +63,9 @@ KtWhenConditionWithExpression(101,107): 'second'
   null
 
 KtNameReferenceExpression(101,107): 'second'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: second>
 
 KtConstantExpression(111,112): '2'
   null

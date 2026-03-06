@@ -89,7 +89,7 @@ KtUserType(197,204): 'MyClass'
   null
 
 KtNameReferenceExpression(197,204): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -161,7 +161,7 @@ KtUserType(237,244): 'MyClass'
   null
 
 KtNameReferenceExpression(237,244): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -239,7 +239,7 @@ KtUserType(298,305): 'MySuper'
   null
 
 KtNameReferenceExpression(298,305): 'MySuper'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -292,7 +292,7 @@ KtCallExpression(345,351): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(345,349): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -341,7 +341,7 @@ KtCallExpression(401,417): 'InheritorClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(401,415): 'InheritorClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -423,7 +423,7 @@ KtCallExpression(545,551): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(545,549): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -528,7 +528,7 @@ KtCallExpression(584,593): 'lazy {""}'
       }
 
 KtNameReferenceExpression(584,588): 'lazy'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -647,7 +647,7 @@ KtNameReferenceExpression(705,706): 'T'
   null
 
 KtNameReferenceExpression(709,712): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -709,7 +709,7 @@ KtCallExpression(738,775): 'consumeMyClass(test(InheritorObject))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
 
 KtNameReferenceExpression(738,752): 'consumeMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -789,7 +789,7 @@ KtCallExpression(753,774): 'test(InheritorObject)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
 
 KtNameReferenceExpression(753,757): 'test'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -833,7 +833,7 @@ KtValueArgument(758,773): 'InheritorObject'
   null
 
 KtNameReferenceExpression(758,773): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
@@ -874,7 +874,7 @@ KtCallExpression(781,814): 'consumeMyClass(test(propMyClass))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
 
 KtNameReferenceExpression(781,795): 'consumeMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -954,7 +954,7 @@ KtCallExpression(796,813): 'test(propMyClass)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
 
 KtNameReferenceExpression(796,800): 'test'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -998,7 +998,7 @@ KtValueArgument(801,812): 'propMyClass'
   null
 
 KtNameReferenceExpression(801,812): 'propMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propMyClass>
 
@@ -1039,7 +1039,7 @@ KtCallExpression(819,859): 'consumeMyClass(test(propInheritorClass))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
 
 KtNameReferenceExpression(819,833): 'consumeMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1119,7 +1119,7 @@ KtCallExpression(834,858): 'test(propInheritorClass)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
 
 KtNameReferenceExpression(834,838): 'test'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1163,7 +1163,7 @@ KtValueArgument(839,857): 'propInheritorClass'
   null
 
 KtNameReferenceExpression(839,857): 'propInheritorClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propInheritorClass>
 
@@ -1204,7 +1204,7 @@ KtCallExpression(864,905): 'consumeMyClass(test(propInheritorObject))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
 
 KtNameReferenceExpression(864,878): 'consumeMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1284,7 +1284,7 @@ KtCallExpression(879,904): 'test(propInheritorObject)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
 
 KtNameReferenceExpression(879,883): 'test'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1328,7 +1328,7 @@ KtValueArgument(884,903): 'propInheritorObject'
   null
 
 KtNameReferenceExpression(884,903): 'propInheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propInheritorObject>
 
@@ -1369,7 +1369,7 @@ KtCallExpression(911,945): 'consumeMyClass(test(NestedObject))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
 
 KtNameReferenceExpression(911,925): 'consumeMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1449,7 +1449,7 @@ KtCallExpression(926,944): 'test(NestedObject)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
 
 KtNameReferenceExpression(926,930): 'test'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1493,7 +1493,7 @@ KtValueArgument(931,943): 'NestedObject'
   null
 
 KtNameReferenceExpression(931,943): 'NestedObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedObject>
 
@@ -1534,7 +1534,7 @@ KtCallExpression(950,976): 'consumeMyClass(test(prop))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
 
 KtNameReferenceExpression(950,964): 'consumeMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1614,7 +1614,7 @@ KtCallExpression(965,975): 'test(prop)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
 
 KtNameReferenceExpression(965,969): 'test'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1658,7 +1658,7 @@ KtValueArgument(970,974): 'prop'
   null
 
 KtNameReferenceExpression(970,974): 'prop'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
@@ -1699,7 +1699,7 @@ KtCallExpression(981,1012): 'consumeMyClass(test(superProp))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
 
 KtNameReferenceExpression(981,995): 'consumeMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1779,7 +1779,7 @@ KtCallExpression(996,1011): 'test(superProp)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
 
 KtNameReferenceExpression(996,1000): 'test'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1823,7 +1823,7 @@ KtValueArgument(1001,1010): 'superProp'
   null
 
 KtNameReferenceExpression(1001,1010): 'superProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superProp>
 
@@ -1864,7 +1864,7 @@ KtCallExpression(1017,1047): 'consumeMyClass(test(lazyProp))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
 
 KtNameReferenceExpression(1017,1031): 'consumeMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1944,7 +1944,7 @@ KtCallExpression(1032,1046): 'test(lazyProp)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
 
 KtNameReferenceExpression(1032,1036): 'test'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1988,7 +1988,7 @@ KtValueArgument(1037,1045): 'lazyProp'
   null
 
 KtNameReferenceExpression(1037,1045): 'lazyProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lazyProp>
 
@@ -2029,7 +2029,7 @@ KtCallExpression(1052,1084): 'consumeMyClass(test(lambdaProp))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
 
 KtNameReferenceExpression(1052,1066): 'consumeMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2109,7 +2109,7 @@ KtCallExpression(1067,1083): 'test(lambdaProp)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
 
 KtNameReferenceExpression(1067,1071): 'test'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2153,7 +2153,7 @@ KtValueArgument(1072,1082): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1072,1082): 'lambdaProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lambdaProp>
 
@@ -2194,7 +2194,7 @@ KtCallExpression(1090,1128): 'consumeMyClass(test(InheritorClass()))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
 
 KtNameReferenceExpression(1090,1104): 'consumeMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2274,7 +2274,7 @@ KtCallExpression(1105,1127): 'test(InheritorClass())'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
 
 KtNameReferenceExpression(1105,1109): 'test'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2323,7 +2323,7 @@ KtCallExpression(1110,1126): 'InheritorClass()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorClass>
 
 KtNameReferenceExpression(1110,1124): 'InheritorClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorClass>
 
@@ -2367,7 +2367,7 @@ KtCallExpression(1133,1161): 'consumeMyClass(test(func()))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
 
 KtNameReferenceExpression(1133,1147): 'consumeMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2447,7 +2447,7 @@ KtCallExpression(1148,1160): 'test(func())'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
 
 KtNameReferenceExpression(1148,1152): 'test'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2496,7 +2496,7 @@ KtCallExpression(1153,1159): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
 
 KtNameReferenceExpression(1153,1157): 'func'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
 

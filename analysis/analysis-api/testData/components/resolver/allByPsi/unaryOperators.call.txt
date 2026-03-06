@@ -66,7 +66,7 @@ KtOperationReferenceExpression(49,50): '-'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(50,53): 'one'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -126,7 +126,7 @@ KtOperationReferenceExpression(73,74): '+'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(74,77): 'one'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -326,7 +326,7 @@ KtCallExpression(88,97): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(88,95): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -366,7 +366,7 @@ KtCallExpression(98,110): 'unaryMinus()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(98,108): 'unaryMinus'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -409,7 +409,7 @@ KtCallExpression(111,116): 'not()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(111,114): 'not'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

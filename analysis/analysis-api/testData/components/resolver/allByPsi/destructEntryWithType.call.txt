@@ -235,7 +235,7 @@ KtUserType(160,164): 'Anno'
   null
 
 KtNameReferenceExpression(160,164): 'Anno'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
@@ -321,7 +321,7 @@ KtOperationReferenceExpression(167,168): '+'
       }
 
 KtNameReferenceExpression(169,177): 'constant'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -434,7 +434,7 @@ KtUserType(185,189): 'Anno'
   null
 
 KtNameReferenceExpression(185,189): 'Anno'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
@@ -520,7 +520,7 @@ KtOperationReferenceExpression(192,193): '+'
       }
 
 KtNameReferenceExpression(194,202): 'constant'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -633,7 +633,7 @@ KtUserType(210,214): 'Anno'
   null
 
 KtNameReferenceExpression(210,214): 'Anno'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
@@ -719,7 +719,7 @@ KtOperationReferenceExpression(217,218): '+'
       }
 
 KtNameReferenceExpression(219,227): 'constant'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -762,7 +762,7 @@ KtDestructuringDeclarationEntry(236,241): 'right'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(245,249): 'pair'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

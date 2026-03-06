@@ -422,7 +422,10 @@ KtBinaryExpressionWithTypeRHS(862,890): 'instance as SealedInheritor1'
   null
 
 KtNameReferenceExpression(862,870): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(871,873): 'as'
   null
@@ -443,7 +446,10 @@ KtBinaryExpressionWithTypeRHS(918,946): 'instance as SealedInheritor2'
   null
 
 KtNameReferenceExpression(918,926): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(927,929): 'as'
   null
@@ -488,10 +494,15 @@ KtUserType(1007,1023): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(1007,1023): 'SealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
 
 KtNameReferenceExpression(1026,1029): 'arg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      arg: SealedClass
+    ]
 
 KtProperty(1034,1073): 'val i: SealedClass = SealedInheritor1()'
   null
@@ -511,7 +522,9 @@ KtCallExpression(1055,1073): 'SealedInheritor1()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
 
 KtNameReferenceExpression(1055,1071): 'SealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
 
 KtValueArgumentList(1071,1073): '()'
   null
@@ -539,7 +552,9 @@ KtUserType(1110,1126): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(1110,1126): 'SealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
 
 KtValueArgumentList(1126,1128): '()'
   null
@@ -560,7 +575,9 @@ KtUserType(1147,1163): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(1147,1163): 'SealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
 
 KtClass(1166,1183): 'class Generic2<T>'
   null
@@ -591,7 +608,11 @@ KtCallExpression(1217,1245): 'Generic2<SealedInheritor1>()'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /Generic2.Generic2>
 
 KtNameReferenceExpression(1217,1225): 'Generic2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(): Generic2<T>
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /Generic2.Generic2>
 
 KtTypeArgumentList(1225,1243): '<SealedInheritor1>'
   null
@@ -606,7 +627,9 @@ KtUserType(1226,1242): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(1226,1242): 'SealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
 
 KtValueArgumentList(1243,1245): '()'
   null
@@ -652,7 +675,11 @@ KtCallExpression(1318,1351): 'constraintFun<SealedInheritor1>()'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /constraintFun>
 
 KtNameReferenceExpression(1318,1331): 'constraintFun'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /constraintFun(): kotlin.Unit
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /constraintFun>
 
 KtTypeArgumentList(1331,1349): '<SealedInheritor1>'
   null
@@ -667,7 +694,9 @@ KtUserType(1332,1348): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(1332,1348): 'SealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
 
 KtValueArgumentList(1349,1351): '()'
   null
@@ -700,4 +729,6 @@ KtUserType(1390,1405): 'NestedInheritor'
   null
 
 KtNameReferenceExpression(1390,1405): 'NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>

@@ -317,13 +317,19 @@ KtBinaryExpression(479,497): 'oldItem == newItem'
     ]
 
 KtNameReferenceExpression(479,486): 'oldItem'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      oldItem: T
+    ]
 
 KtOperationReferenceExpression(487,489): '=='
   null
 
 KtNameReferenceExpression(490,497): 'newItem'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      newItem: T
+    ]
 
 KtNamedFunction(501,726): 'private fun <T> classAndInterface(): ItemCallback<T> where T : MessagePreview, T : InterfaceWithEquals = object : ItemCallback<T>() {'
   null
@@ -497,13 +503,19 @@ KtBinaryExpression(706,724): 'oldItem == newItem'
     ]
 
 KtNameReferenceExpression(706,713): 'oldItem'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      oldItem: T
+    ]
 
 KtOperationReferenceExpression(714,716): '=='
   null
 
 KtNameReferenceExpression(717,724): 'newItem'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      newItem: T
+    ]
 
 KtNamedFunction(728,895): 'private fun <T : MessagePreview> classOnly() = object : ItemCallback<T>() {'
   null
@@ -629,13 +641,19 @@ KtBinaryExpression(875,893): 'oldItem == newItem'
     ]
 
 KtNameReferenceExpression(875,882): 'oldItem'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      oldItem: T
+    ]
 
 KtOperationReferenceExpression(883,885): '=='
   null
 
 KtNameReferenceExpression(886,893): 'newItem'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      newItem: T
+    ]
 
 KtNamedFunction(897,1031): 'fun check(i: InterfaceWithEquals, m: MessagePreview) {'
   null
@@ -677,13 +695,19 @@ KtBinaryExpression(956,962): 'i == m'
     ]
 
 KtNameReferenceExpression(956,957): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: InterfaceWithEquals
+    ]
 
 KtOperationReferenceExpression(958,960): '=='
   null
 
 KtNameReferenceExpression(961,962): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      m: MessagePreview
+    ]
 
 KtBinaryExpression(967,973): 'i != m'
   KaSymbolResolutionSuccess:
@@ -692,13 +716,19 @@ KtBinaryExpression(967,973): 'i != m'
     ]
 
 KtNameReferenceExpression(967,968): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: InterfaceWithEquals
+    ]
 
 KtOperationReferenceExpression(969,971): '!='
   null
 
 KtNameReferenceExpression(972,973): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      m: MessagePreview
+    ]
 
 KtBinaryExpression(979,985): 'm == i'
   KaSymbolResolutionSuccess:
@@ -707,13 +737,19 @@ KtBinaryExpression(979,985): 'm == i'
     ]
 
 KtNameReferenceExpression(979,980): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      m: MessagePreview
+    ]
 
 KtOperationReferenceExpression(981,983): '=='
   null
 
 KtNameReferenceExpression(984,985): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: InterfaceWithEquals
+    ]
 
 KtBinaryExpression(990,996): 'm != i'
   KaSymbolResolutionSuccess:
@@ -722,13 +758,19 @@ KtBinaryExpression(990,996): 'm != i'
     ]
 
 KtNameReferenceExpression(990,991): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      m: MessagePreview
+    ]
 
 KtOperationReferenceExpression(992,994): '!='
   null
 
 KtNameReferenceExpression(995,996): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: InterfaceWithEquals
+    ]
 
 KtDotQualifiedExpression(1002,1013): 'i.equals(m)'
   KaSymbolResolutionSuccess:
@@ -737,7 +779,10 @@ KtDotQualifiedExpression(1002,1013): 'i.equals(m)'
     ]
 
 KtNameReferenceExpression(1002,1003): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: InterfaceWithEquals
+    ]
 
 KtCallExpression(1004,1013): 'equals(m)'
   KaSymbolResolutionSuccess:
@@ -746,7 +791,10 @@ KtCallExpression(1004,1013): 'equals(m)'
     ]
 
 KtNameReferenceExpression(1004,1010): 'equals'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtValueArgumentList(1010,1013): '(m)'
   null
@@ -755,7 +803,10 @@ KtValueArgument(1011,1012): 'm'
   null
 
 KtNameReferenceExpression(1011,1012): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      m: MessagePreview
+    ]
 
 KtDotQualifiedExpression(1018,1029): 'm.equals(i)'
   KaSymbolResolutionSuccess:
@@ -764,7 +815,10 @@ KtDotQualifiedExpression(1018,1029): 'm.equals(i)'
     ]
 
 KtNameReferenceExpression(1018,1019): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      m: MessagePreview
+    ]
 
 KtCallExpression(1020,1029): 'equals(i)'
   KaSymbolResolutionSuccess:
@@ -773,7 +827,10 @@ KtCallExpression(1020,1029): 'equals(i)'
     ]
 
 KtNameReferenceExpression(1020,1026): 'equals'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtValueArgumentList(1026,1029): '(i)'
   null
@@ -782,4 +839,7 @@ KtValueArgument(1027,1028): 'i'
   null
 
 KtNameReferenceExpression(1027,1028): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: InterfaceWithEquals
+    ]

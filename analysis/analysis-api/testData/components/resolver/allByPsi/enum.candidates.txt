@@ -299,7 +299,7 @@ KtBlockExpression(100,125): '{'
   NO_CANDIDATES
 
 KtNameReferenceExpression(114,115): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -394,7 +394,7 @@ KtCallExpression(239,244): 'baz()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(239,242): 'baz'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -460,7 +460,7 @@ KtDotQualifiedExpression(307,319): 'with.ordinal'
     isInBestCandidates = true
 
 KtNameReferenceExpression(307,311): 'with'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -478,7 +478,7 @@ KtNameReferenceExpression(307,311): 'with'
     isInBestCandidates = true
 
 KtNameReferenceExpression(312,319): 'ordinal'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -520,7 +520,7 @@ KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
     isInBestCandidates = true
 
 KtNameReferenceExpression(325,344): 'EnumWithConstructor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -547,7 +547,7 @@ KtNameReferenceExpression(325,344): 'EnumWithConstructor'
     isInBestCandidates = false
 
 KtNameReferenceExpression(345,350): 'Entry'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -610,7 +610,7 @@ KtDotQualifiedExpression(355,380): 'EnumWithConstructor.Entry'
     isInBestCandidates = true
 
 KtNameReferenceExpression(355,374): 'EnumWithConstructor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -637,7 +637,7 @@ KtNameReferenceExpression(355,374): 'EnumWithConstructor'
     isInBestCandidates = false
 
 KtNameReferenceExpression(375,380): 'Entry'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -658,7 +658,7 @@ KtNameReferenceExpression(375,380): 'Entry'
     isInBestCandidates = true
 
 KtNameReferenceExpression(381,385): 'name'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -700,7 +700,7 @@ KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
     isInBestCandidates = true
 
 KtNameReferenceExpression(390,409): 'EnumWithConstructor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -727,7 +727,7 @@ KtNameReferenceExpression(390,409): 'EnumWithConstructor'
     isInBestCandidates = false
 
 KtNameReferenceExpression(410,423): 'EntryWithBody'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -790,7 +790,7 @@ KtDotQualifiedExpression(428,461): 'EnumWithConstructor.EntryWithBody'
     isInBestCandidates = true
 
 KtNameReferenceExpression(428,447): 'EnumWithConstructor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -817,7 +817,7 @@ KtNameReferenceExpression(428,447): 'EnumWithConstructor'
     isInBestCandidates = false
 
 KtNameReferenceExpression(448,461): 'EntryWithBody'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -838,7 +838,7 @@ KtNameReferenceExpression(448,461): 'EntryWithBody'
     isInBestCandidates = true
 
 KtNameReferenceExpression(462,463): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -880,7 +880,7 @@ KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
     isInBestCandidates = true
 
 KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -899,7 +899,7 @@ KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
     isInBestCandidates = false
 
 KtNameReferenceExpression(492,499): 'entries'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -941,7 +941,7 @@ KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
     isInBestCandidates = true
 
 KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -960,7 +960,7 @@ KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
     isInBestCandidates = false
 
 KtNameReferenceExpression(527,532): 'Entry'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1002,7 +1002,7 @@ KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
     isInBestCandidates = true
 
 KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1021,7 +1021,7 @@ KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
     isInBestCandidates = false
 
 KtNameReferenceExpression(560,573): 'EntryWithBody'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

@@ -104,7 +104,10 @@ KtUserType(269,276): 'MyClass'
   null
 
 KtNameReferenceExpression(269,276): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(276,278): '()'
   null
@@ -143,7 +146,10 @@ KtNameReferenceExpression(300,301): 'X'
   null
 
 KtNameReferenceExpression(304,305): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: X
+    ]
 
 KtNamedFunction(306,332): 'fun <T> receive(arg: T) {}'
   null
@@ -221,7 +227,10 @@ KtCallExpression(386,392): 'TODO()'
     ]
 
 KtNameReferenceExpression(386,390): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(390,392): '()'
   null
@@ -302,7 +311,10 @@ KtCallExpression(503,509): 'TODO()'
     ]
 
 KtNameReferenceExpression(503,507): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(507,509): '()'
   null
@@ -344,7 +356,10 @@ KtCallExpression(558,564): 'TODO()'
     ]
 
 KtNameReferenceExpression(558,562): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(562,564): '()'
   null
@@ -416,7 +431,10 @@ KtCallExpression(646,652): 'TODO()'
     ]
 
 KtNameReferenceExpression(646,650): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(650,652): '()'
   null
@@ -500,7 +518,10 @@ KtCallExpression(768,774): 'TODO()'
     ]
 
 KtNameReferenceExpression(768,772): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(772,774): '()'
   null
@@ -584,7 +605,10 @@ KtCallExpression(897,903): 'TODO()'
     ]
 
 KtNameReferenceExpression(897,901): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(901,903): '()'
   null
@@ -662,7 +686,10 @@ KtCallExpression(998,1004): 'TODO()'
     ]
 
 KtNameReferenceExpression(998,1002): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(1002,1004): '()'
   null
@@ -696,7 +723,11 @@ KtCallExpression(1052,1066): 'id(EnumValue1)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(1052,1054): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(1054,1066): '(EnumValue1)'
   null
@@ -705,7 +736,9 @@ KtValueArgument(1055,1065): 'EnumValue1'
   null
 
 KtNameReferenceExpression(1055,1065): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtProperty(1071,1108): 'val r2: MyClass = id(InheritorObject)'
   null
@@ -727,7 +760,11 @@ KtCallExpression(1089,1108): 'id(InheritorObject)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(1089,1091): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(1091,1108): '(InheritorObject)'
   null
@@ -736,7 +773,9 @@ KtValueArgument(1092,1107): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1092,1107): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1114,1145): 'receive<MyEnum>(id(EnumValue1))'
   KaSymbolResolutionError:
@@ -746,7 +785,11 @@ KtCallExpression(1114,1145): 'receive<MyEnum>(id(EnumValue1))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(1114,1121): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(arg: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtTypeArgumentList(1121,1129): '<MyEnum>'
   null
@@ -777,7 +820,11 @@ KtCallExpression(1130,1144): 'id(EnumValue1)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(1130,1132): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(1132,1144): '(EnumValue1)'
   null
@@ -786,7 +833,9 @@ KtValueArgument(1133,1143): 'EnumValue1'
   null
 
 KtNameReferenceExpression(1133,1143): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtCallExpression(1150,1187): 'receive<MyClass>(id(InheritorObject))'
   KaSymbolResolutionError:
@@ -796,7 +845,11 @@ KtCallExpression(1150,1187): 'receive<MyClass>(id(InheritorObject))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(1150,1157): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(arg: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtTypeArgumentList(1157,1166): '<MyClass>'
   null
@@ -827,7 +880,11 @@ KtCallExpression(1167,1186): 'id(InheritorObject)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(1167,1169): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(1169,1186): '(InheritorObject)'
   null
@@ -836,7 +893,9 @@ KtValueArgument(1170,1185): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1170,1185): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1193,1222): 'testNullable(InheritorObject)'
   KaSymbolResolutionSuccess:
@@ -845,7 +904,10 @@ KtCallExpression(1193,1222): 'testNullable(InheritorObject)'
     ]
 
 KtNameReferenceExpression(1193,1205): 'testNullable'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testNullable(instance: MyClass?): kotlin.String
+    ]
 
 KtValueArgumentList(1205,1222): '(InheritorObject)'
   null
@@ -854,7 +916,9 @@ KtValueArgument(1206,1221): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1206,1221): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1227,1266): 'testTypeParam<MyClass>(InheritorObject)'
   KaSymbolResolutionError:
@@ -864,7 +928,11 @@ KtCallExpression(1227,1266): 'testTypeParam<MyClass>(InheritorObject)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testTypeParam>
 
 KtNameReferenceExpression(1227,1240): 'testTypeParam'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /testTypeParam(instance: T): kotlin.String
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testTypeParam>
 
 KtTypeArgumentList(1240,1249): '<MyClass>'
   null
@@ -888,7 +956,9 @@ KtValueArgument(1250,1265): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1250,1265): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1272,1302): 'testTypeParam(InheritorObject)'
   KaSymbolResolutionError:
@@ -898,7 +968,11 @@ KtCallExpression(1272,1302): 'testTypeParam(InheritorObject)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testTypeParam>
 
 KtNameReferenceExpression(1272,1285): 'testTypeParam'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /testTypeParam(instance: T): kotlin.String
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testTypeParam>
 
 KtValueArgumentList(1285,1302): '(InheritorObject)'
   null
@@ -907,7 +981,9 @@ KtValueArgument(1286,1301): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1286,1301): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1307,1354): 'testTypeParamWithMultipleBound(InheritorObject)'
   KaSymbolResolutionError:
@@ -917,7 +993,11 @@ KtCallExpression(1307,1354): 'testTypeParamWithMultipleBound(InheritorObject)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testTypeParamWithMultipleBound>
 
 KtNameReferenceExpression(1307,1337): 'testTypeParamWithMultipleBound'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /testTypeParamWithMultipleBound(instance: T): kotlin.String
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testTypeParamWithMultipleBound>
 
 KtValueArgumentList(1337,1354): '(InheritorObject)'
   null
@@ -926,7 +1006,9 @@ KtValueArgument(1338,1353): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1338,1353): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1359,1409): 'testDefinitelyNotNullIntersection(InheritorObject)'
   KaSymbolResolutionError:
@@ -936,7 +1018,11 @@ KtCallExpression(1359,1409): 'testDefinitelyNotNullIntersection(InheritorObject)
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testDefinitelyNotNullIntersection>
 
 KtNameReferenceExpression(1359,1392): 'testDefinitelyNotNullIntersection'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /testDefinitelyNotNullIntersection(instance: T & Any): kotlin.String
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testDefinitelyNotNullIntersection>
 
 KtValueArgumentList(1392,1409): '(InheritorObject)'
   null
@@ -945,7 +1031,9 @@ KtValueArgument(1393,1408): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1393,1408): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1414,1451): 'testFakeIntersection(InheritorObject)'
   KaSymbolResolutionError:
@@ -955,7 +1043,11 @@ KtCallExpression(1414,1451): 'testFakeIntersection(InheritorObject)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testFakeIntersection>
 
 KtNameReferenceExpression(1414,1434): 'testFakeIntersection'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /testFakeIntersection(instance: T): kotlin.String
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testFakeIntersection>
 
 KtValueArgumentList(1434,1451): '(InheritorObject)'
   null
@@ -964,7 +1056,9 @@ KtValueArgument(1435,1450): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1435,1450): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1456,1500): 'testReverseFakeIntersection(InheritorObject)'
   KaSymbolResolutionError:
@@ -974,7 +1068,11 @@ KtCallExpression(1456,1500): 'testReverseFakeIntersection(InheritorObject)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testReverseFakeIntersection>
 
 KtNameReferenceExpression(1456,1483): 'testReverseFakeIntersection'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /testReverseFakeIntersection(instance: T): kotlin.String
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testReverseFakeIntersection>
 
 KtValueArgumentList(1483,1500): '(InheritorObject)'
   null
@@ -983,7 +1081,9 @@ KtValueArgument(1484,1499): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1484,1499): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1505,1545): 'testRegularIntersection(InheritorObject)'
   KaSymbolResolutionError:
@@ -993,7 +1093,11 @@ KtCallExpression(1505,1545): 'testRegularIntersection(InheritorObject)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testRegularIntersection>
 
 KtNameReferenceExpression(1505,1528): 'testRegularIntersection'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /testRegularIntersection(instance: T): kotlin.String
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with testRegularIntersection>
 
 KtValueArgumentList(1528,1545): '(InheritorObject)'
   null
@@ -1002,4 +1106,6 @@ KtValueArgument(1529,1544): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1529,1544): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>

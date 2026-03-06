@@ -125,7 +125,7 @@ KtUserType(158,160): 'A1'
   null
 
 KtNameReferenceExpression(158,160): 'A1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -164,7 +164,7 @@ KtValueArgument(161,162): 'X'
   null
 
 KtNameReferenceExpression(161,162): 'X'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
@@ -294,7 +294,7 @@ KtUserType(234,236): 'A2'
   null
 
 KtNameReferenceExpression(234,236): 'A2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -340,7 +340,7 @@ KtValueArgument(237,238): 'X'
   null
 
 KtNameReferenceExpression(237,238): 'X'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
@@ -348,7 +348,7 @@ KtValueArgument(240,241): 'Y'
   null
 
 KtNameReferenceExpression(240,241): 'Y'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
@@ -437,7 +437,7 @@ KtUserType(260,262): 'A2'
   null
 
 KtNameReferenceExpression(260,262): 'A2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -521,12 +521,12 @@ KtCollectionLiteralExpression(264,270): '[X, Y]'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
 
 KtNameReferenceExpression(265,266): 'X'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtNameReferenceExpression(268,269): 'Y'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
@@ -654,7 +654,7 @@ KtUserType(343,345): 'A3'
   null
 
 KtNameReferenceExpression(343,345): 'A3'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -731,7 +731,7 @@ KtCollectionLiteralExpression(346,349): '[X]'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
 
 KtNameReferenceExpression(347,348): 'X'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
@@ -826,7 +826,7 @@ KtUserType(368,370): 'A3'
   null
 
 KtNameReferenceExpression(368,370): 'A3'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -906,7 +906,7 @@ KtCallExpression(371,381): 'arrayOf(X)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
 
 KtNameReferenceExpression(371,378): 'arrayOf'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -950,7 +950,7 @@ KtValueArgument(379,380): 'X'
   null
 
 KtNameReferenceExpression(379,380): 'X'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
@@ -1063,7 +1063,7 @@ KtUserType(444,446): 'A4'
   null
 
 KtNameReferenceExpression(444,446): 'A4'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1102,7 +1102,7 @@ KtValueArgument(447,456): 'MAX_VALUE'
   null
 
 KtNameReferenceExpression(447,456): 'MAX_VALUE'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: MAX_VALUE>
 
@@ -1191,7 +1191,7 @@ KtUserType(474,483): 'Retention'
   null
 
 KtNameReferenceExpression(474,483): 'Retention'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1230,7 +1230,7 @@ KtValueArgument(484,491): 'RUNTIME'
   null
 
 KtNameReferenceExpression(484,491): 'RUNTIME'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: RUNTIME>
 
@@ -1321,7 +1321,7 @@ KtUserType(494,500): 'Target'
   null
 
 KtNameReferenceExpression(494,500): 'Target'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1367,7 +1367,7 @@ KtValueArgument(501,506): 'CLASS'
   null
 
 KtNameReferenceExpression(501,506): 'CLASS'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: CLASS>
 
@@ -1375,7 +1375,7 @@ KtValueArgument(508,516): 'PROPERTY'
   null
 
 KtNameReferenceExpression(508,516): 'PROPERTY'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: PROPERTY>
 
@@ -1426,7 +1426,7 @@ KtUserType(550,562): 'MyAnnotation'
   null
 
 KtNameReferenceExpression(550,562): 'MyAnnotation'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1501,7 +1501,7 @@ KtUserType(580,592): 'MyAnnotation'
   null
 
 KtNameReferenceExpression(580,592): 'MyAnnotation'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1564,7 +1564,7 @@ KtUserType(609,621): 'MyAnnotation'
   null
 
 KtNameReferenceExpression(609,621): 'MyAnnotation'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

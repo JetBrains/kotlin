@@ -53,7 +53,7 @@ KtCallExpression(142,151): 'MyClass()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(142,149): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -309,7 +309,7 @@ KtBinaryExpression(498,503): 'm = Y'
     isInBestCandidates = true
 
 KtNameReferenceExpression(498,499): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -369,7 +369,7 @@ KtBinaryExpression(508,513): 'm = X'
     isInBestCandidates = true
 
 KtNameReferenceExpression(508,509): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -446,7 +446,7 @@ KtContainerNode(556,557): 'b'
   NO_CANDIDATES
 
 KtNameReferenceExpression(556,557): 'b'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

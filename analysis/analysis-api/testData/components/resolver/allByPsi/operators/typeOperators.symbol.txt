@@ -32,7 +32,10 @@ KtIsExpression(59,70): 'a is String'
   null
 
 KtNameReferenceExpression(59,60): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: kotlin.Any
+    ]
 
 KtOperationReferenceExpression(61,63): 'is'
   null
@@ -50,7 +53,10 @@ KtIsExpression(75,87): 'a !is String'
   null
 
 KtNameReferenceExpression(75,76): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: kotlin.Any
+    ]
 
 KtOperationReferenceExpression(77,80): '!is'
   null
@@ -68,7 +74,10 @@ KtBinaryExpressionWithTypeRHS(143,154): 'a as String'
   null
 
 KtNameReferenceExpression(143,144): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: kotlin.Any
+    ]
 
 KtOperationReferenceExpression(145,147): 'as'
   null
@@ -86,7 +95,10 @@ KtBinaryExpressionWithTypeRHS(159,171): 'a as? String'
   null
 
 KtNameReferenceExpression(159,160): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: kotlin.Any
+    ]
 
 KtOperationReferenceExpression(161,164): 'as?'
   null

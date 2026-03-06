@@ -206,7 +206,7 @@ KtCallExpression(30,42): 'compareTo(2)'
       }
 
 KtNameReferenceExpression(30,39): 'compareTo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -400,7 +400,7 @@ KtCallExpression(99,108): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(99,106): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -456,7 +456,7 @@ KtBinaryExpression(113,130): 'myClass >= number'
       }
 
 KtNameReferenceExpression(113,120): 'myClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -509,7 +509,7 @@ KtOperationReferenceExpression(121,123): '>='
       }
 
 KtNameReferenceExpression(124,130): 'number'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -562,7 +562,7 @@ KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
       }
 
 KtNameReferenceExpression(135,142): 'myClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -615,7 +615,7 @@ KtCallExpression(143,160): 'compareTo(number)'
       }
 
 KtNameReferenceExpression(143,152): 'compareTo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -657,7 +657,7 @@ KtValueArgument(153,159): 'number'
   null
 
 KtNameReferenceExpression(153,159): 'number'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -710,7 +710,7 @@ KtNameReferenceExpression(216,219): 'Int'
   null
 
 KtNameReferenceExpression(222,223): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

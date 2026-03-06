@@ -149,7 +149,10 @@ KtCallExpression(222,225): 'A()'
     ]
 
 KtNameReferenceExpression(222,223): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(223,225): '()'
   null
@@ -164,7 +167,10 @@ KtOperationReferenceExpression(230,231): '+'
   null
 
 KtNameReferenceExpression(231,232): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtPrefixExpression(237,239): '-a'
   KaSymbolResolutionSuccess:
@@ -176,7 +182,10 @@ KtOperationReferenceExpression(237,238): '-'
   null
 
 KtNameReferenceExpression(238,239): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtPrefixExpression(244,246): '!a'
   KaSymbolResolutionSuccess:
@@ -188,7 +197,10 @@ KtOperationReferenceExpression(244,245): '!'
   null
 
 KtNameReferenceExpression(245,246): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtPrefixExpression(251,254): '++a'
   KaSymbolResolutionSuccess:
@@ -201,7 +213,10 @@ KtOperationReferenceExpression(251,253): '++'
   null
 
 KtNameReferenceExpression(253,254): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtPrefixExpression(259,262): '--a'
   KaSymbolResolutionSuccess:
@@ -214,7 +229,10 @@ KtOperationReferenceExpression(259,261): '--'
   null
 
 KtNameReferenceExpression(261,262): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtPostfixExpression(267,270): 'a++'
   KaSymbolResolutionSuccess:
@@ -224,7 +242,10 @@ KtPostfixExpression(267,270): 'a++'
     ]
 
 KtNameReferenceExpression(267,268): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtOperationReferenceExpression(268,270): '++'
   null
@@ -237,7 +258,10 @@ KtPostfixExpression(275,278): 'a--'
     ]
 
 KtNameReferenceExpression(275,276): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtOperationReferenceExpression(276,278): '--'
   null

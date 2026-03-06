@@ -118,7 +118,7 @@ KtNameReferenceExpression(23,39): 'AnnotationTarget'
   null
 
 KtNameReferenceExpression(40,44): 'TYPE'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -279,7 +279,7 @@ KtSimpleNameStringTemplateEntry(170,175): '$prop'
   null
 
 KtNameReferenceExpression(171,175): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -404,7 +404,7 @@ KtSimpleNameStringTemplateEntry(212,217): '$prop'
   null
 
 KtNameReferenceExpression(213,217): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -529,7 +529,7 @@ KtSimpleNameStringTemplateEntry(267,272): '$prop'
   null
 
 KtNameReferenceExpression(268,272): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -648,7 +648,7 @@ KtSimpleNameStringTemplateEntry(306,311): '$prop'
   null
 
 KtNameReferenceExpression(307,311): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -767,7 +767,7 @@ KtSimpleNameStringTemplateEntry(361,366): '$prop'
   null
 
 KtNameReferenceExpression(362,366): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -886,7 +886,7 @@ KtSimpleNameStringTemplateEntry(412,417): '$prop'
   null
 
 KtNameReferenceExpression(413,417): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1102,7 +1102,7 @@ KtSimpleNameStringTemplateEntry(503,508): '$prop'
   null
 
 KtNameReferenceExpression(504,508): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1227,7 +1227,7 @@ KtSimpleNameStringTemplateEntry(554,559): '$prop'
   null
 
 KtNameReferenceExpression(555,559): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1352,7 +1352,7 @@ KtSimpleNameStringTemplateEntry(603,608): '$prop'
   null
 
 KtNameReferenceExpression(604,608): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1526,7 +1526,7 @@ KtSimpleNameStringTemplateEntry(676,681): '$prop'
   null
 
 KtNameReferenceExpression(677,681): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1651,7 +1651,7 @@ KtSimpleNameStringTemplateEntry(727,732): '$prop'
   null
 
 KtNameReferenceExpression(728,732): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1776,7 +1776,7 @@ KtSimpleNameStringTemplateEntry(776,781): '$prop'
   null
 
 KtNameReferenceExpression(777,781): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1910,7 +1910,7 @@ KtSimpleNameStringTemplateEntry(862,867): '$prop'
   null
 
 KtNameReferenceExpression(863,867): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2035,7 +2035,7 @@ KtSimpleNameStringTemplateEntry(904,909): '$prop'
   null
 
 KtNameReferenceExpression(905,909): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2160,7 +2160,7 @@ KtSimpleNameStringTemplateEntry(953,958): '$prop'
   null
 
 KtNameReferenceExpression(954,958): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

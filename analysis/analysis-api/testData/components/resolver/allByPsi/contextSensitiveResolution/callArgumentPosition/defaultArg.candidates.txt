@@ -153,7 +153,7 @@ KtCallExpression(230,236): 'TODO()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(230,234): 'TODO'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -170,7 +170,7 @@ KtNameReferenceExpression(230,234): 'TODO'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -218,7 +218,7 @@ KtNameReferenceExpression(282,288): 'MyEnum'
   NO_CANDIDATES
 
 KtNameReferenceExpression(291,301): 'EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -251,7 +251,7 @@ KtNameReferenceExpression(318,325): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(328,343): 'InheritorObject'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

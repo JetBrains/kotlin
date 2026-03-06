@@ -155,7 +155,9 @@ KtPostfixExpression(416,425): 'Option1!!'
   null
 
 KtNameReferenceExpression(416,423): 'Option1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
 KtOperationReferenceExpression(423,425): '!!'
   null
@@ -176,7 +178,9 @@ KtPostfixExpression(448,458): 'enumProp!!'
   null
 
 KtNameReferenceExpression(448,456): 'enumProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
 KtOperationReferenceExpression(456,458): '!!'
   null
@@ -197,7 +201,9 @@ KtPostfixExpression(481,493): 'stringProp!!'
   null
 
 KtNameReferenceExpression(481,491): 'stringProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtOperationReferenceExpression(491,493): '!!'
   null
@@ -210,7 +216,11 @@ KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(499,506): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtTypeArgumentList(506,514): '<MyEnum>'
   null
@@ -237,7 +247,9 @@ KtPostfixExpression(515,524): 'Option1!!'
   null
 
 KtNameReferenceExpression(515,522): 'Option1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
 KtOperationReferenceExpression(522,524): '!!'
   null
@@ -250,7 +262,11 @@ KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(530,537): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtTypeArgumentList(537,545): '<MyEnum>'
   null
@@ -277,7 +293,9 @@ KtPostfixExpression(546,556): 'enumProp!!'
   null
 
 KtNameReferenceExpression(546,554): 'enumProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
 KtOperationReferenceExpression(554,556): '!!'
   null
@@ -290,7 +308,11 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(562,569): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtTypeArgumentList(569,577): '<MyEnum>'
   null
@@ -317,7 +339,9 @@ KtPostfixExpression(578,590): 'stringProp!!'
   null
 
 KtNameReferenceExpression(578,588): 'stringProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtOperationReferenceExpression(588,590): '!!'
   null

@@ -230,7 +230,7 @@ KtCallExpression(131,140): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(131,138): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -305,7 +305,7 @@ KtCallExpression(145,154): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(145,152): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -363,7 +363,7 @@ KtCallExpression(155,166): 'contains(2)'
       }
 
 KtNameReferenceExpression(155,163): 'contains'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -506,7 +506,7 @@ KtCallExpression(177,186): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(177,184): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -628,7 +628,7 @@ KtCallExpression(214,223): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(214,221): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -756,7 +756,7 @@ KtCallExpression(274,283): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(274,281): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

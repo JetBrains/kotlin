@@ -79,7 +79,7 @@ KtUserType(166,173): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(166,173): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -77,7 +77,7 @@ KtDotQualifiedExpression(191,208): 'MyEnum.EnumValue1'
     isInBestCandidates = true
 
 KtNameReferenceExpression(191,197): 'MyEnum'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -96,7 +96,7 @@ KtNameReferenceExpression(191,197): 'MyEnum'
     isInBestCandidates = false
 
 KtNameReferenceExpression(198,208): 'EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -157,7 +157,7 @@ KtCallExpression(240,263): 'receiveEnum(EnumValue2)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(240,251): 'receiveEnum'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -197,7 +197,7 @@ KtValueArgument(252,262): 'EnumValue2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(252,262): 'EnumValue2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -252,7 +252,7 @@ KtCallExpression(268,285): 'receiveEnum(arg1)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(268,279): 'receiveEnum'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -292,7 +292,7 @@ KtValueArgument(280,284): 'arg1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(280,284): 'arg1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -344,7 +344,7 @@ KtCallExpression(290,307): 'receiveEnum(arg2)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(290,301): 'receiveEnum'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -384,7 +384,7 @@ KtValueArgument(302,306): 'arg2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(302,306): 'arg2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -436,7 +436,7 @@ KtCallExpression(312,329): 'receiveEnum(arg3)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(312,323): 'receiveEnum'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

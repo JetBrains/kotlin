@@ -1,6 +1,6 @@
 <caret_1>:
   KtNameReferenceExpression(107,116): 'something'
-    KaApplicableCallCandidateInfo:
+    KaApplicableCallCandidate:
       candidate = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -22,7 +22,7 @@
 
 <caret_2>:
   KtNameReferenceExpression(124,133): 'something'
-    KaApplicableCallCandidateInfo:
+    KaApplicableCallCandidate:
       candidate = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -45,7 +45,7 @@
 
 <caret_3>:
   KtNameReferenceExpression(144,153): 'something'
-    KaApplicableCallCandidateInfo:
+    KaApplicableCallCandidate:
       candidate = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -67,7 +67,7 @@
 
 <caret_4>:
   KtNameReferenceExpression(165,174): 'something'
-    KaApplicableCallCandidateInfo:
+    KaApplicableCallCandidate:
       candidate = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -89,7 +89,7 @@
 
 <caret_5>:
   KtNameReferenceExpression(185,194): 'something'
-    KaApplicableCallCandidateInfo:
+    KaApplicableCallCandidate:
       candidate = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -111,7 +111,7 @@
 
 <caret_6>:
   KtNameReferenceExpression(200,209): 'something'
-    KaApplicableCallCandidateInfo:
+    KaApplicableCallCandidate:
       candidate = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -152,7 +152,7 @@
 
 <caret_10>:
   KtNameReferenceExpression(220,229): 'something'
-    KaApplicableCallCandidateInfo:
+    KaApplicableCallCandidate:
       candidate = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

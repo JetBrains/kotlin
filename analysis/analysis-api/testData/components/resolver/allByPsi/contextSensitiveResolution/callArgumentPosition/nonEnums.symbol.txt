@@ -44,7 +44,10 @@ KtCallExpression(101,107): 'TODO()'
     ]
 
 KtNameReferenceExpression(101,105): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(105,107): '()'
   null
@@ -170,7 +173,10 @@ KtCallExpression(289,295): 'TODO()'
     ]
 
 KtNameReferenceExpression(289,293): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(293,295): '()'
   null
@@ -200,7 +206,10 @@ KtCallExpression(321,341): 'expectInt(MAX_VALUE)'
     ]
 
 KtNameReferenceExpression(321,330): 'expectInt'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /expectInt(x: kotlin.Int): kotlin.Unit
+    ]
 
 KtValueArgumentList(330,341): '(MAX_VALUE)'
   null
@@ -209,7 +218,10 @@ KtValueArgument(331,340): 'MAX_VALUE'
   null
 
 KtNameReferenceExpression(331,340): 'MAX_VALUE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val MAX_VALUE: kotlin.Int
+    ]
 
 KtCallExpression(347,365): 'expectMyClass(FOO)'
   KaSymbolResolutionSuccess:
@@ -218,7 +230,10 @@ KtCallExpression(347,365): 'expectMyClass(FOO)'
     ]
 
 KtNameReferenceExpression(347,360): 'expectMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /expectMyClass(x: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(360,365): '(FOO)'
   null
@@ -227,7 +242,10 @@ KtValueArgument(361,364): 'FOO'
   null
 
 KtNameReferenceExpression(361,364): 'FOO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val FOO: MyClass
+    ]
 
 KtCallExpression(370,392): 'expectMyClass(id(FOO))'
   KaSymbolResolutionSuccess:
@@ -236,7 +254,10 @@ KtCallExpression(370,392): 'expectMyClass(id(FOO))'
     ]
 
 KtNameReferenceExpression(370,383): 'expectMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /expectMyClass(x: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(383,392): '(id(FOO))'
   null
@@ -251,7 +272,10 @@ KtCallExpression(384,391): 'id(FOO)'
     ]
 
 KtNameReferenceExpression(384,386): 'id'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtValueArgumentList(386,391): '(FOO)'
   null
@@ -260,7 +284,10 @@ KtValueArgument(387,390): 'FOO'
   null
 
 KtNameReferenceExpression(387,390): 'FOO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val FOO: MyClass
+    ]
 
 KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
   KaSymbolResolutionError:
@@ -270,7 +297,11 @@ KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(398,411): 'expectMyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /expectMyClass(x: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtValueArgumentList(411,430): '(FOR_TYPE_MISMATCH)'
   null
@@ -279,7 +310,10 @@ KtValueArgument(412,429): 'FOR_TYPE_MISMATCH'
   null
 
 KtNameReferenceExpression(412,429): 'FOR_TYPE_MISMATCH'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val FOR_TYPE_MISMATCH: kotlin.String
+    ]
 
 KtCallExpression(435,471): 'expectMyClass(id(FOR_TYPE_MISMATCH))'
   KaSymbolResolutionError:
@@ -289,7 +323,11 @@ KtCallExpression(435,471): 'expectMyClass(id(FOR_TYPE_MISMATCH))'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(435,448): 'expectMyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /expectMyClass(x: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtValueArgumentList(448,471): '(id(FOR_TYPE_MISMATCH))'
   null
@@ -304,7 +342,10 @@ KtCallExpression(449,470): 'id(FOR_TYPE_MISMATCH)'
     ]
 
 KtNameReferenceExpression(449,451): 'id'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtValueArgumentList(451,470): '(FOR_TYPE_MISMATCH)'
   null
@@ -313,7 +354,10 @@ KtValueArgument(452,469): 'FOR_TYPE_MISMATCH'
   null
 
 KtNameReferenceExpression(452,469): 'FOR_TYPE_MISMATCH'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val FOR_TYPE_MISMATCH: kotlin.String
+    ]
 
 KtCallExpression(477,495): 'expectMyClass(Bar)'
   KaSymbolResolutionSuccess:
@@ -322,7 +366,10 @@ KtCallExpression(477,495): 'expectMyClass(Bar)'
     ]
 
 KtNameReferenceExpression(477,490): 'expectMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /expectMyClass(x: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(490,495): '(Bar)'
   null
@@ -340,7 +387,10 @@ KtCallExpression(500,522): 'expectMyClass(id(Bar))'
     ]
 
 KtNameReferenceExpression(500,513): 'expectMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /expectMyClass(x: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(513,522): '(id(Bar))'
   null
@@ -355,7 +405,10 @@ KtCallExpression(514,521): 'id(Bar)'
     ]
 
 KtNameReferenceExpression(514,516): 'id'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtValueArgumentList(516,521): '(Bar)'
   null
@@ -374,7 +427,11 @@ KtCallExpression(528,558): 'expectMyClass(ForTypeMismatch)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(528,541): 'expectMyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /expectMyClass(x: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
 
 KtValueArgumentList(541,558): '(ForTypeMismatch)'
   null
@@ -393,7 +450,11 @@ KtCallExpression(563,597): 'expectMyClass(id(ForTypeMismatch))'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(563,576): 'expectMyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /expectMyClass(x: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
 
 KtValueArgumentList(576,597): '(id(ForTypeMismatch))'
   null
@@ -408,7 +469,10 @@ KtCallExpression(577,596): 'id(ForTypeMismatch)'
     ]
 
 KtNameReferenceExpression(577,579): 'id'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtValueArgumentList(579,596): '(ForTypeMismatch)'
   null
@@ -435,7 +499,10 @@ KtCallExpression(613,638): 'expectJavaClass(INSTANCE)'
     ]
 
 KtNameReferenceExpression(613,628): 'expectJavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.expectJavaClass(j: JavaClass!): kotlin.Unit
+    ]
 
 KtValueArgumentList(628,638): '(INSTANCE)'
   null
@@ -444,4 +511,7 @@ KtValueArgument(629,637): 'INSTANCE'
   null
 
 KtNameReferenceExpression(629,637): 'INSTANCE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var INSTANCE: JavaClass!
+    ]

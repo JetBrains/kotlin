@@ -242,7 +242,7 @@ KtIsExpression(298,307): 's is Left'
   null
 
 KtNameReferenceExpression(298,299): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -268,7 +268,7 @@ KtUserType(303,307): 'Left'
   null
 
 KtNameReferenceExpression(303,307): 'Left'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Left>
 
@@ -281,7 +281,7 @@ KtDotQualifiedExpression(311,318): 's.error'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: error>
 
 KtNameReferenceExpression(311,312): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -298,7 +298,7 @@ KtNameReferenceExpression(311,312): 's'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(313,318): 'error'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: error>
 
@@ -315,7 +315,7 @@ KtIsExpression(334,344): 's is Right'
   null
 
 KtNameReferenceExpression(334,335): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -341,7 +341,7 @@ KtUserType(339,344): 'Right'
   null
 
 KtNameReferenceExpression(339,344): 'Right'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Right>
 
@@ -354,7 +354,7 @@ KtDotQualifiedExpression(348,355): 's.value'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: value>
 
 KtNameReferenceExpression(348,349): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -371,7 +371,7 @@ KtNameReferenceExpression(348,349): 's'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(350,355): 'value'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: value>
 
@@ -391,7 +391,7 @@ KtIsExpression(375,385): 's !is Left'
   null
 
 KtNameReferenceExpression(375,376): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -417,7 +417,7 @@ KtUserType(381,385): 'Left'
   null
 
 KtNameReferenceExpression(381,385): 'Left'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Left>
 
@@ -448,7 +448,7 @@ KtDotQualifiedExpression(397,409): 's.hashCode()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(397,398): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -485,7 +485,7 @@ KtCallExpression(399,409): 'hashCode()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(399,407): 'hashCode'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -632,7 +632,7 @@ KtCallExpression(433,443): 'hashCode()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(433,441): 'hashCode'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -664,7 +664,7 @@ KtBinaryExpressionWithTypeRHS(455,464): 's as Left'
   null
 
 KtNameReferenceExpression(455,456): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -690,7 +690,7 @@ KtUserType(460,464): 'Left'
   null
 
 KtNameReferenceExpression(460,464): 'Left'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Left>
 
@@ -703,7 +703,7 @@ KtDotQualifiedExpression(473,480): 's.error'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: error>
 
 KtNameReferenceExpression(473,474): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -720,7 +720,7 @@ KtNameReferenceExpression(473,474): 's'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(475,480): 'error'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: error>
 
@@ -740,7 +740,7 @@ KtBinaryExpressionWithTypeRHS(500,511): 's as? Right'
   null
 
 KtNameReferenceExpression(500,501): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -766,7 +766,7 @@ KtUserType(506,511): 'Right'
   null
 
 KtNameReferenceExpression(506,511): 'Right'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Right>
 

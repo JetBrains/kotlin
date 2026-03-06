@@ -1,5 +1,5 @@
 KtNameReferenceExpression(49,56): 'JvmName'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

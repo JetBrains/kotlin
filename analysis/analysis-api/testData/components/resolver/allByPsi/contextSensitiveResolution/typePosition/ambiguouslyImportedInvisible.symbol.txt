@@ -140,7 +140,10 @@ KtNameReferenceExpression(212,216): 'Left'
   null
 
 KtNameReferenceExpression(220,221): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val x: kotlin.String
+    ]
 
 KtWhenEntry(226,239): 'is Right -> y'
   null
@@ -158,7 +161,10 @@ KtNameReferenceExpression(229,234): 'Right'
   null
 
 KtNameReferenceExpression(238,239): 'y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]
 
 KtNamedFunction(243,316): 'fun Any.getOrElse2() = when (this) {'
   null
@@ -197,10 +203,20 @@ KtUserType(287,291): 'Left'
   null
 
 KtNameReferenceExpression(287,291): 'Left'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    class Left : Any:
+      Cannot access 'class Left : Any': it is private in file.
+
+    class Left : Any:
+      Cannot access 'class Left : Any': it is private in file.>
 
 KtNameReferenceExpression(295,296): 'x'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
 KtWhenEntry(301,314): 'is Right -> y'
   null
@@ -215,7 +231,11 @@ KtUserType(304,309): 'Right'
   null
 
 KtNameReferenceExpression(304,309): 'Right'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtNameReferenceExpression(313,314): 'y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>

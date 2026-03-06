@@ -47,7 +47,10 @@ KtNameReferenceExpression(174,180): 'MyEnum'
   null
 
 KtNameReferenceExpression(183,190): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(199,226): 'val stringProp: String = ""'
   null
@@ -71,7 +74,10 @@ KtParameterList(248,250): '()'
   null
 
 KtNameReferenceExpression(253,260): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(270,306): 'val EnumOptionAlias = MyEnum.Option1'
   null
@@ -86,7 +92,10 @@ KtNameReferenceExpression(292,298): 'MyEnum'
   null
 
 KtNameReferenceExpression(299,306): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtNamedFunction(308,336): 'fun fun1(): MyEnum = Option1'
   null
@@ -104,7 +113,10 @@ KtNameReferenceExpression(320,326): 'MyEnum'
   null
 
 KtNameReferenceExpression(329,336): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtNamedFunction(337,366): 'fun fun2(): MyEnum = enumProp'
   null
@@ -122,7 +134,10 @@ KtNameReferenceExpression(349,355): 'MyEnum'
   null
 
 KtNameReferenceExpression(358,366): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtNamedFunction(367,398): 'fun fun3(): MyEnum = stringProp'
   null
@@ -140,7 +155,10 @@ KtNameReferenceExpression(379,385): 'MyEnum'
   null
 
 KtNameReferenceExpression(388,398): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtProperty(400,450): 'val propWithGetterType'
   null
@@ -161,7 +179,10 @@ KtNameReferenceExpression(434,440): 'MyEnum'
   null
 
 KtNameReferenceExpression(443,450): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(452,510): 'val wrongPropWithGetterType'
   null
@@ -182,7 +203,10 @@ KtNameReferenceExpression(491,497): 'MyEnum'
   null
 
 KtNameReferenceExpression(500,510): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtNamedFunction(512,589): 'fun fun4(b: Boolean): MyEnum {'
   null
@@ -221,7 +245,10 @@ KtContainerNode(551,552): 'b'
   null
 
 KtNameReferenceExpression(551,552): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(554,568): 'return Option1'
   null
@@ -233,7 +260,10 @@ KtReturnExpression(554,568): 'return Option1'
     ]
 
 KtNameReferenceExpression(561,568): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtReturnExpression(573,587): 'return Option2'
   KaSymbolResolutionSuccess:
@@ -242,4 +272,7 @@ KtReturnExpression(573,587): 'return Option2'
     ]
 
 KtNameReferenceExpression(580,587): 'Option2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option2
+    ]

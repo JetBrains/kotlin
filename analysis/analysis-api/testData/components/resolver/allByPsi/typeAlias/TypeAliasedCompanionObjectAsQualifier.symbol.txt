@@ -86,7 +86,10 @@ KtCallExpression(175,185): 'function()'
     ]
 
 KtNameReferenceExpression(175,183): 'function'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyClass.Companion.function(<dispatch receiver>: test.MyClass.Companion): kotlin.Unit
+    ]
 
 KtValueArgumentList(183,185): '()'
   null
@@ -101,7 +104,10 @@ KtNameReferenceExpression(190,197): 'MyAlias'
   null
 
 KtNameReferenceExpression(198,206): 'property'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val property: kotlin.Int
+    ]
 
 KtCallableReferenceExpression(212,229): 'MyAlias::function'
   KaSymbolResolutionSuccess:

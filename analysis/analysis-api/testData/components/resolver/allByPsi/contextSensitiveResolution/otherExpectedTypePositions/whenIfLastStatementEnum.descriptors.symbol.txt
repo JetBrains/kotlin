@@ -122,7 +122,10 @@ KtCallExpression(204,210): 'TODO()'
     ]
 
 KtNameReferenceExpression(204,208): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(208,210): '()'
   null
@@ -167,7 +170,10 @@ KtCallExpression(234,240): 'TODO()'
     ]
 
 KtNameReferenceExpression(234,238): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(238,240): '()'
   null
@@ -233,7 +239,10 @@ KtWhenExpression(316,404): 'when (i) {'
   null
 
 KtNameReferenceExpression(322,323): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtWhenEntry(335,341): '0 -> X'
   null
@@ -245,7 +254,9 @@ KtConstantExpression(335,336): '0'
   null
 
 KtNameReferenceExpression(340,341): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtWhenEntry(350,380): '1 -> {'
   null
@@ -260,13 +271,18 @@ KtBlockExpression(355,380): '{'
   null
 
 KtNameReferenceExpression(369,370): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtWhenEntry(389,398): 'else -> L'
   null
 
 KtNameReferenceExpression(397,398): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtProperty(410,514): 'val m2: MyEnum ='
   null
@@ -293,7 +309,10 @@ KtBinaryExpression(439,445): 'i == 0'
     ]
 
 KtNameReferenceExpression(439,440): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(441,443): '=='
   null
@@ -305,7 +324,9 @@ KtContainerNodeForControlStructureBody(447,448): 'X'
   null
 
 KtNameReferenceExpression(447,448): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtContainerNodeForControlStructureBody(462,514): 'if (i == 1) {'
   null
@@ -323,7 +344,10 @@ KtBinaryExpression(466,472): 'i == 1'
     ]
 
 KtNameReferenceExpression(466,467): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(468,470): '=='
   null
@@ -338,13 +362,18 @@ KtBlockExpression(474,499): '{'
   null
 
 KtNameReferenceExpression(488,489): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtContainerNodeForControlStructureBody(513,514): 'L'
   null
 
 KtNameReferenceExpression(513,514): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtProperty(520,696): 'val m3: MyEnum = when (i) {'
   null
@@ -362,7 +391,10 @@ KtWhenExpression(537,696): 'when (i) {'
   null
 
 KtNameReferenceExpression(543,544): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtWhenEntry(556,633): '0 -> when (i.hashCode()) {'
   null
@@ -383,7 +415,10 @@ KtDotQualifiedExpression(567,579): 'i.hashCode()'
     ]
 
 KtNameReferenceExpression(567,568): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtCallExpression(569,579): 'hashCode()'
   KaSymbolResolutionSuccess:
@@ -392,7 +427,10 @@ KtCallExpression(569,579): 'hashCode()'
     ]
 
 KtNameReferenceExpression(569,577): 'hashCode'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtValueArgumentList(577,579): '()'
   null
@@ -407,13 +445,17 @@ KtConstantExpression(595,596): '1'
   null
 
 KtNameReferenceExpression(600,601): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtWhenEntry(614,623): 'else -> Y'
   null
 
 KtNameReferenceExpression(622,623): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtWhenEntry(642,672): '1 -> {'
   null
@@ -428,13 +470,18 @@ KtBlockExpression(647,672): '{'
   null
 
 KtNameReferenceExpression(661,662): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtWhenEntry(681,690): 'else -> L'
   null
 
 KtNameReferenceExpression(689,690): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtCallExpression(702,833): 'foo('
   KaSymbolResolutionSuccess:
@@ -443,7 +490,10 @@ KtCallExpression(702,833): 'foo('
     ]
 
 KtNameReferenceExpression(702,705): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(705,833): '('
   null
@@ -455,7 +505,10 @@ KtWhenExpression(715,827): 'when (i) {'
   null
 
 KtNameReferenceExpression(721,722): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtWhenEntry(738,744): '0 -> X'
   null
@@ -467,7 +520,9 @@ KtConstantExpression(738,739): '0'
   null
 
 KtNameReferenceExpression(743,744): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtWhenEntry(757,795): '1 -> {'
   null
@@ -482,13 +537,18 @@ KtBlockExpression(762,795): '{'
   null
 
 KtNameReferenceExpression(780,781): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtWhenEntry(808,817): 'else -> L'
   null
 
 KtNameReferenceExpression(816,817): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtCallExpression(839,937): 'foo('
   KaSymbolResolutionSuccess:
@@ -497,7 +557,10 @@ KtCallExpression(839,937): 'foo('
     ]
 
 KtNameReferenceExpression(839,842): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(842,937): '('
   null
@@ -518,7 +581,10 @@ KtBinaryExpression(856,862): 'i == 0'
     ]
 
 KtNameReferenceExpression(856,857): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(858,860): '=='
   null
@@ -530,7 +596,9 @@ KtContainerNodeForControlStructureBody(864,865): 'X'
   null
 
 KtNameReferenceExpression(864,865): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtContainerNodeForControlStructureBody(879,931): 'if (i == 1) {'
   null
@@ -548,7 +616,10 @@ KtBinaryExpression(883,889): 'i == 1'
     ]
 
 KtNameReferenceExpression(883,884): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(885,887): '=='
   null
@@ -563,13 +634,18 @@ KtBlockExpression(891,916): '{'
   null
 
 KtNameReferenceExpression(905,906): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtContainerNodeForControlStructureBody(930,931): 'L'
   null
 
 KtNameReferenceExpression(930,931): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtCallExpression(943,1087): 'myRunWithMyEnum {'
   KaSymbolResolutionSuccess:
@@ -578,7 +654,10 @@ KtCallExpression(943,1087): 'myRunWithMyEnum {'
     ]
 
 KtNameReferenceExpression(943,958): 'myRunWithMyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+    ]
 
 KtLambdaArgument(959,1087): '{'
   null
@@ -596,7 +675,10 @@ KtWhenExpression(969,1081): 'when (i) {'
   null
 
 KtNameReferenceExpression(975,976): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtWhenEntry(992,998): '0 -> X'
   null
@@ -608,7 +690,9 @@ KtConstantExpression(992,993): '0'
   null
 
 KtNameReferenceExpression(997,998): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtWhenEntry(1011,1049): '1 -> {'
   null
@@ -623,13 +707,18 @@ KtBlockExpression(1016,1049): '{'
   null
 
 KtNameReferenceExpression(1034,1035): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtWhenEntry(1062,1071): 'else -> L'
   null
 
 KtNameReferenceExpression(1070,1071): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtCallExpression(1093,1318): 'myRun<MyEnum> {'
   KaSymbolResolutionError:
@@ -639,7 +728,11 @@ KtCallExpression(1093,1318): 'myRun<MyEnum> {'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with myRun>
 
 KtNameReferenceExpression(1093,1098): 'myRun'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with myRun>
 
 KtTypeArgumentList(1098,1106): '<MyEnum>'
   null
@@ -672,7 +765,10 @@ KtWhenExpression(1117,1312): 'when (i) {'
   null
 
 KtNameReferenceExpression(1123,1124): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtWhenEntry(1140,1229): '0 -> when (i.hashCode()) {'
   null
@@ -693,7 +789,10 @@ KtDotQualifiedExpression(1151,1163): 'i.hashCode()'
     ]
 
 KtNameReferenceExpression(1151,1152): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtCallExpression(1153,1163): 'hashCode()'
   KaSymbolResolutionSuccess:
@@ -702,7 +801,10 @@ KtCallExpression(1153,1163): 'hashCode()'
     ]
 
 KtNameReferenceExpression(1153,1161): 'hashCode'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtValueArgumentList(1161,1163): '()'
   null
@@ -717,13 +819,17 @@ KtConstantExpression(1183,1184): '1'
   null
 
 KtNameReferenceExpression(1188,1189): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtWhenEntry(1206,1215): 'else -> Y'
   null
 
 KtNameReferenceExpression(1214,1215): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtWhenEntry(1242,1280): '1 -> {'
   null
@@ -738,13 +844,18 @@ KtBlockExpression(1247,1280): '{'
   null
 
 KtNameReferenceExpression(1265,1266): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtWhenEntry(1293,1302): 'else -> L'
   null
 
 KtNameReferenceExpression(1301,1302): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtCallExpression(1324,1466): 'myRun<MyEnum> {'
   KaSymbolResolutionSuccess:
@@ -753,7 +864,10 @@ KtCallExpression(1324,1466): 'myRun<MyEnum> {'
     ]
 
 KtNameReferenceExpression(1324,1329): 'myRun'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
 
 KtTypeArgumentList(1329,1337): '<MyEnum>'
   null
@@ -786,7 +900,10 @@ KtWhenExpression(1348,1460): 'when (i) {'
   null
 
 KtNameReferenceExpression(1354,1355): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtWhenEntry(1371,1377): '0 -> X'
   null
@@ -798,7 +915,9 @@ KtConstantExpression(1371,1372): '0'
   null
 
 KtNameReferenceExpression(1376,1377): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtWhenEntry(1390,1428): '1 -> {'
   null
@@ -813,13 +932,18 @@ KtBlockExpression(1395,1428): '{'
   null
 
 KtNameReferenceExpression(1413,1414): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtWhenEntry(1441,1450): 'else -> L'
   null
 
 KtNameReferenceExpression(1449,1450): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtCallExpression(1472,1581): 'myRun<MyEnum> {'
   KaSymbolResolutionSuccess:
@@ -828,7 +952,10 @@ KtCallExpression(1472,1581): 'myRun<MyEnum> {'
     ]
 
 KtNameReferenceExpression(1472,1477): 'myRun'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
 
 KtTypeArgumentList(1477,1485): '<MyEnum>'
   null
@@ -870,7 +997,10 @@ KtBinaryExpression(1500,1506): 'i == 0'
     ]
 
 KtNameReferenceExpression(1500,1501): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(1502,1504): '=='
   null
@@ -882,7 +1012,9 @@ KtContainerNodeForControlStructureBody(1508,1509): 'X'
   null
 
 KtNameReferenceExpression(1508,1509): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtContainerNodeForControlStructureBody(1523,1575): 'if (i == 1) {'
   null
@@ -900,7 +1032,10 @@ KtBinaryExpression(1527,1533): 'i == 1'
     ]
 
 KtNameReferenceExpression(1527,1528): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(1529,1531): '=='
   null
@@ -915,13 +1050,18 @@ KtBlockExpression(1535,1560): '{'
   null
 
 KtNameReferenceExpression(1549,1550): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtContainerNodeForControlStructureBody(1574,1575): 'L'
   null
 
 KtNameReferenceExpression(1574,1575): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtCallExpression(1587,1696): 'myRun<MyEnum> {'
   KaSymbolResolutionSuccess:
@@ -930,7 +1070,10 @@ KtCallExpression(1587,1696): 'myRun<MyEnum> {'
     ]
 
 KtNameReferenceExpression(1587,1592): 'myRun'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
 
 KtTypeArgumentList(1592,1600): '<MyEnum>'
   null
@@ -972,7 +1115,10 @@ KtBinaryExpression(1615,1621): 'i == 0'
     ]
 
 KtNameReferenceExpression(1615,1616): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(1617,1619): '=='
   null
@@ -984,7 +1130,9 @@ KtContainerNodeForControlStructureBody(1623,1624): 'X'
   null
 
 KtNameReferenceExpression(1623,1624): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtContainerNodeForControlStructureBody(1638,1690): 'if (i == 1) {'
   null
@@ -1002,7 +1150,10 @@ KtBinaryExpression(1642,1648): 'i == 1'
     ]
 
 KtNameReferenceExpression(1642,1643): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(1644,1646): '=='
   null
@@ -1017,10 +1168,15 @@ KtBlockExpression(1650,1675): '{'
   null
 
 KtNameReferenceExpression(1664,1665): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtContainerNodeForControlStructureBody(1689,1690): 'L'
   null
 
 KtNameReferenceExpression(1689,1690): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]

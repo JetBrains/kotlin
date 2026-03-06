@@ -125,7 +125,7 @@ KtDestructuringDeclarationEntry(147,153): 'second'
     isInBestCandidates = true
 
 KtNameReferenceExpression(158,159): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -182,7 +182,7 @@ KtDestructuringDeclarationEntry(183,188): 'first'
     isInBestCandidates = true
 
 KtNameReferenceExpression(192,193): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -248,7 +248,7 @@ KtNameReferenceExpression(224,230): 'String'
   NO_CANDIDATES
 
 KtNameReferenceExpression(234,235): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -409,7 +409,7 @@ KtContainerNode(296,297): 'x'
   NO_CANDIDATES
 
 KtNameReferenceExpression(296,297): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -519,7 +519,7 @@ KtContainerNode(322,323): 'x'
   NO_CANDIDATES
 
 KtNameReferenceExpression(322,323): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -638,7 +638,7 @@ KtContainerNode(356,357): 'x'
   NO_CANDIDATES
 
 KtNameReferenceExpression(356,357): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -747,7 +747,7 @@ KtCallExpression(420,447): 'foo { [first, second,] -> }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(420,423): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -878,7 +878,7 @@ KtCallExpression(452,470): 'foo { [first] -> }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(452,455): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -988,7 +988,7 @@ KtCallExpression(475,501): 'foo { [first: String] -> }'
     isInBestCandidates = true
 
 KtNameReferenceExpression(475,478): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

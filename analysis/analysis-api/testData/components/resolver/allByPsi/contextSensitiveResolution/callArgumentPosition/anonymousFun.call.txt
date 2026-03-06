@@ -298,7 +298,7 @@ KtCallExpression(473,479): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(473,477): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -347,7 +347,7 @@ KtCallExpression(529,545): 'InheritorClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(529,543): 'InheritorClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -502,7 +502,7 @@ KtCallExpression(716,725): 'lazy {""}'
       }
 
 KtNameReferenceExpression(716,720): 'lazy'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -599,7 +599,7 @@ KtCallExpression(799,805): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(799,803): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -712,7 +712,7 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
       }
 
 KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -735,7 +735,7 @@ KtValueArgument(955,965): 'EnumValue1'
   null
 
 KtNameReferenceExpression(955,965): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -791,7 +791,7 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
       }
 
 KtNameReferenceExpression(972,989): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -853,7 +853,7 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
       }
 
 KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -876,7 +876,7 @@ KtValueArgument(1029,1040): 'propMyClass'
   null
 
 KtNameReferenceExpression(1029,1040): 'propMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -935,7 +935,7 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -958,7 +958,7 @@ KtValueArgument(1065,1069): 'prop'
   null
 
 KtNameReferenceExpression(1065,1069): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1017,7 +1017,7 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1040,7 +1040,7 @@ KtValueArgument(1093,1102): 'constProp'
   null
 
 KtNameReferenceExpression(1093,1102): 'constProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1099,7 +1099,7 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1122,7 +1122,7 @@ KtValueArgument(1126,1134): 'lazyProp'
   null
 
 KtNameReferenceExpression(1126,1134): 'lazyProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1181,7 +1181,7 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1204,7 +1204,7 @@ KtValueArgument(1158,1168): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1158,1168): 'lambdaProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1263,7 +1263,7 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1286,7 +1286,7 @@ KtValueArgument(1192,1201): 'superProp'
   null
 
 KtNameReferenceExpression(1192,1201): 'superProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1342,7 +1342,7 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
       }
 
 KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1370,7 +1370,7 @@ KtCallExpression(1226,1232): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1226,1230): 'func'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
@@ -1414,7 +1414,7 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
       }
 
 KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1442,7 +1442,7 @@ KtCallExpression(1256,1267): 'superFunc()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1256,1265): 'superFunc'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
@@ -1489,7 +1489,7 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1512,7 +1512,7 @@ KtValueArgument(1291,1301): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1291,1301): 'lambdaProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

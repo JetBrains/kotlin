@@ -53,7 +53,10 @@ KtNameReferenceExpression(39,55): 'AnnotationTarget'
   null
 
 KtNameReferenceExpression(56,60): 'TYPE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.TYPE
+    ]
 
 KtPrimaryConstructor(83,95): '(val i: Int)'
   null
@@ -179,7 +182,10 @@ KtOperationReferenceExpression(233,234): '+'
   null
 
 KtNameReferenceExpression(235,240): 'outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val outer: kotlin.Int
+    ]
 
 KtUserType(242,291): 'Base<@Anno(1 + outer) Base<@Anno(2 + outer) Int>>'
   null
@@ -239,7 +245,10 @@ KtOperationReferenceExpression(255,256): '+'
   null
 
 KtNameReferenceExpression(257,262): 'outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val outer: kotlin.Int
+    ]
 
 KtUserType(264,290): 'Base<@Anno(2 + outer) Int>'
   null
@@ -299,7 +308,10 @@ KtOperationReferenceExpression(277,278): '+'
   null
 
 KtNameReferenceExpression(279,284): 'outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val outer: kotlin.Int
+    ]
 
 KtUserType(286,289): 'Int'
   null
@@ -359,7 +371,10 @@ KtOperationReferenceExpression(318,319): '+'
   null
 
 KtNameReferenceExpression(320,325): 'outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val outer: kotlin.Int
+    ]
 
 KtUserType(327,358): 'Second<@Anno(5 + outer) String>'
   null
@@ -419,7 +434,10 @@ KtOperationReferenceExpression(342,343): '+'
   null
 
 KtNameReferenceExpression(344,349): 'outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val outer: kotlin.Int
+    ]
 
 KtUserType(351,357): 'String'
   null
@@ -515,7 +533,10 @@ KtOperationReferenceExpression(408,409): '+'
   null
 
 KtNameReferenceExpression(410,415): 'inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val inner: kotlin.String
+    ]
 
 KtUserType(417,466): 'Base<@Anno(7 + inner) Base<@Anno(8 + inner) Int>>'
   null
@@ -599,7 +620,10 @@ KtOperationReferenceExpression(430,431): '+'
   null
 
 KtNameReferenceExpression(432,437): 'inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val inner: kotlin.String
+    ]
 
 KtUserType(439,465): 'Base<@Anno(8 + inner) Int>'
   null
@@ -683,7 +707,10 @@ KtOperationReferenceExpression(452,453): '+'
   null
 
 KtNameReferenceExpression(454,459): 'inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val inner: kotlin.String
+    ]
 
 KtUserType(461,464): 'Int'
   null
@@ -767,7 +794,10 @@ KtOperationReferenceExpression(567,568): '+'
   null
 
 KtNameReferenceExpression(569,574): 'inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val inner: kotlin.Int
+    ]
 
 KtUserType(576,608): 'Second<@Anno(10 + inner) String>'
   null
@@ -827,7 +857,10 @@ KtOperationReferenceExpression(592,593): '+'
   null
 
 KtNameReferenceExpression(594,599): 'inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val inner: kotlin.Int
+    ]
 
 KtUserType(601,607): 'String'
   null

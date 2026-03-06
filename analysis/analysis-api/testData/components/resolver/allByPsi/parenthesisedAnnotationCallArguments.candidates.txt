@@ -646,7 +646,7 @@ KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(316,323): 'arrayOf'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -876,7 +876,7 @@ KtCallExpression(381,400): 'arrayOf(("A"), "B")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(381,388): 'arrayOf'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1050,7 +1050,7 @@ KtClassLiteralExpression(436,449): 'String::class'
   NO_CANDIDATES
 
 KtNameReferenceExpression(436,442): 'String'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

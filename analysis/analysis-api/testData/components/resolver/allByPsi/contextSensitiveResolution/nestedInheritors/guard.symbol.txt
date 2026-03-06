@@ -143,7 +143,10 @@ KtWhenExpression(308,436): 'when (instance) {'
   null
 
 KtNameReferenceExpression(314,322): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtWhenEntry(334,408): 'is SealedInheritor if instance is IndirectSealedInheritor -> instance.prop'
   null
@@ -167,7 +170,10 @@ KtIsExpression(356,391): 'instance is IndirectSealedInheritor'
   null
 
 KtNameReferenceExpression(356,364): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(365,367): 'is'
   null
@@ -188,10 +194,16 @@ KtDotQualifiedExpression(395,408): 'instance.prop'
     ]
 
 KtNameReferenceExpression(395,403): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(404,408): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
 
 KtWhenEntry(417,430): 'else -> "100"'
   null
@@ -338,7 +350,10 @@ KtWhenExpression(693,843): 'when (instance) {'
   null
 
 KtNameReferenceExpression(699,707): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: OpenClass
+    ]
 
 KtWhenEntry(719,815): 'is SealedInheritorOfOpenClass if instance is IndirectSealedInheritorOfOpenClass -> instance.prop'
   null
@@ -353,7 +368,9 @@ KtUserType(722,748): 'SealedInheritorOfOpenClass'
   null
 
 KtNameReferenceExpression(722,748): 'SealedInheritorOfOpenClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritorOfOpenClass'.>
 
 KtWhenEntryGuard(749,798): 'if instance is IndirectSealedInheritorOfOpenClass'
   null
@@ -362,7 +379,10 @@ KtIsExpression(752,798): 'instance is IndirectSealedInheritorOfOpenClass'
   null
 
 KtNameReferenceExpression(752,760): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: OpenClass
+    ]
 
 KtOperationReferenceExpression(761,763): 'is'
   null
@@ -374,7 +394,9 @@ KtUserType(764,798): 'IndirectSealedInheritorOfOpenClass'
   null
 
 KtNameReferenceExpression(764,798): 'IndirectSealedInheritorOfOpenClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'IndirectSealedInheritorOfOpenClass'.>
 
 KtDotQualifiedExpression(802,815): 'instance.prop'
   KaSymbolResolutionError:
@@ -382,10 +404,15 @@ KtDotQualifiedExpression(802,815): 'instance.prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
 
 KtNameReferenceExpression(802,810): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: OpenClass
+    ]
 
 KtNameReferenceExpression(811,815): 'prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
 
 KtWhenEntry(824,837): 'else -> "100"'
   null

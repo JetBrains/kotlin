@@ -115,7 +115,7 @@ KtNameReferenceExpression(224,231): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(234,249): 'NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -171,7 +171,7 @@ KtDotQualifiedExpression(318,341): 'MyClass.NestedInheritor'
     isInBestCandidates = false
 
 KtNameReferenceExpression(318,325): 'MyClass'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -190,7 +190,7 @@ KtNameReferenceExpression(318,325): 'MyClass'
     isInBestCandidates = false
 
 KtNameReferenceExpression(326,341): 'NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -267,7 +267,7 @@ KtCallExpression(372,532): 'receiveMyClass('
     isInBestCandidates = true
 
 KtNameReferenceExpression(372,386): 'receiveMyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -353,7 +353,7 @@ KtBinaryExpression(400,406): 'i == 0'
     isInBestCandidates = true
 
 KtNameReferenceExpression(400,401): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -414,7 +414,7 @@ KtContainerNodeForControlStructureBody(408,423): 'NestedInheritor'
   NO_CANDIDATES
 
 KtNameReferenceExpression(408,423): 'NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -479,7 +479,7 @@ KtBinaryExpression(441,447): 'i == 1'
     isInBestCandidates = true
 
 KtNameReferenceExpression(441,442): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -540,7 +540,7 @@ KtContainerNodeForControlStructureBody(449,460): 'myClassProp'
   NO_CANDIDATES
 
 KtNameReferenceExpression(449,460): 'myClassProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -607,7 +607,7 @@ KtBinaryExpression(478,484): 'i == 2'
     isInBestCandidates = true
 
 KtNameReferenceExpression(478,479): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -668,7 +668,7 @@ KtContainerNodeForControlStructureBody(486,496): 'stringProp'
   NO_CANDIDATES
 
 KtNameReferenceExpression(486,496): 'stringProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -692,7 +692,7 @@ KtContainerNodeForControlStructureBody(510,526): 'ClassMemberAlias'
   NO_CANDIDATES
 
 KtNameReferenceExpression(510,526): 'ClassMemberAlias'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

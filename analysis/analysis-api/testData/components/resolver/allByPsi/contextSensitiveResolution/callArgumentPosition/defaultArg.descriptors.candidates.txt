@@ -79,7 +79,7 @@ KtUserType(166,173): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(166,173): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -169,7 +169,7 @@ KtCallExpression(230,236): 'TODO()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(230,234): 'TODO'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -186,7 +186,7 @@ KtNameReferenceExpression(230,234): 'TODO'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

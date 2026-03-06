@@ -404,7 +404,10 @@ KtWhenExpression(580,745): 'when (instance) {'
   null
 
 KtNameReferenceExpression(586,594): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T
+    ]
 
 KtWhenEntry(602,639): 'is SealedInheritor1 -> instance.prop1'
   null
@@ -428,10 +431,16 @@ KtDotQualifiedExpression(625,639): 'instance.prop1'
     ]
 
 KtNameReferenceExpression(625,633): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T
+    ]
 
 KtNameReferenceExpression(634,639): 'prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtWhenEntry(644,725): '!is SealedInheritor1 if instance is SealedInheritor2 -> instance.prop2.toString()'
   null
@@ -455,7 +464,10 @@ KtIsExpression(668,696): 'instance is SealedInheritor2'
   null
 
 KtNameReferenceExpression(668,676): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T
+    ]
 
 KtOperationReferenceExpression(677,679): 'is'
   null
@@ -482,10 +494,16 @@ KtDotQualifiedExpression(700,714): 'instance.prop2'
     ]
 
 KtNameReferenceExpression(700,708): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T
+    ]
 
 KtNameReferenceExpression(709,714): 'prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop2: kotlin.Int
+    ]
 
 KtCallExpression(715,725): 'toString()'
   KaSymbolResolutionSuccess:
@@ -494,7 +512,10 @@ KtCallExpression(715,725): 'toString()'
     ]
 
 KtNameReferenceExpression(715,723): 'toString'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
+    ]
 
 KtValueArgumentList(723,725): '()'
   null
@@ -581,7 +602,10 @@ KtWhenExpression(844,1009): 'when (instance) {'
   null
 
 KtNameReferenceExpression(850,858): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T
+    ]
 
 KtWhenEntry(866,903): 'is SealedInheritor1 -> instance.prop1'
   null
@@ -596,7 +620,9 @@ KtUserType(869,885): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(869,885): 'SealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
 
 KtDotQualifiedExpression(889,903): 'instance.prop1'
   KaSymbolResolutionError:
@@ -604,10 +630,15 @@ KtDotQualifiedExpression(889,903): 'instance.prop1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtNameReferenceExpression(889,897): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T
+    ]
 
 KtNameReferenceExpression(898,903): 'prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtWhenEntry(908,989): '!is SealedInheritor1 if instance is SealedInheritor2 -> instance.prop2.toString()'
   null
@@ -622,7 +653,9 @@ KtUserType(912,928): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(912,928): 'SealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
 
 KtWhenEntryGuard(929,960): 'if instance is SealedInheritor2'
   null
@@ -631,7 +664,10 @@ KtIsExpression(932,960): 'instance is SealedInheritor2'
   null
 
 KtNameReferenceExpression(932,940): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T
+    ]
 
 KtOperationReferenceExpression(941,943): 'is'
   null
@@ -643,7 +679,9 @@ KtUserType(944,960): 'SealedInheritor2'
   null
 
 KtNameReferenceExpression(944,960): 'SealedInheritor2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor2'.>
 
 KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
   KaSymbolResolutionSuccess:
@@ -657,10 +695,15 @@ KtDotQualifiedExpression(964,978): 'instance.prop2'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
 
 KtNameReferenceExpression(964,972): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T
+    ]
 
 KtNameReferenceExpression(973,978): 'prop2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
 
 KtCallExpression(979,989): 'toString()'
   KaSymbolResolutionSuccess:
@@ -669,7 +712,10 @@ KtCallExpression(979,989): 'toString()'
     ]
 
 KtNameReferenceExpression(979,987): 'toString'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
+    ]
 
 KtValueArgumentList(987,989): '()'
   null
@@ -717,7 +763,10 @@ KtWhenExpression(1062,1193): 'when(instance) {'
   null
 
 KtNameReferenceExpression(1067,1075): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass?
+    ]
 
 KtWhenEntry(1083,1120): 'is SealedInheritor1 -> instance.prop1'
   null
@@ -741,10 +790,16 @@ KtDotQualifiedExpression(1106,1120): 'instance.prop1'
     ]
 
 KtNameReferenceExpression(1106,1114): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass?
+    ]
 
 KtNameReferenceExpression(1115,1120): 'prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtWhenEntry(1125,1173): 'is SealedInheritor2 -> instance.prop2.toString()'
   null
@@ -774,10 +829,16 @@ KtDotQualifiedExpression(1148,1162): 'instance.prop2'
     ]
 
 KtNameReferenceExpression(1148,1156): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass?
+    ]
 
 KtNameReferenceExpression(1157,1162): 'prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop2: kotlin.Int
+    ]
 
 KtCallExpression(1163,1173): 'toString()'
   KaSymbolResolutionSuccess:
@@ -786,7 +847,10 @@ KtCallExpression(1163,1173): 'toString()'
     ]
 
 KtNameReferenceExpression(1163,1171): 'toString'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
+    ]
 
 KtValueArgumentList(1171,1173): '()'
   null
@@ -918,7 +982,10 @@ KtWhenExpression(1373,1465): 'when (arg) {'
   null
 
 KtNameReferenceExpression(1379,1382): 'arg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      arg: SealedClass
+    ]
 
 KtWhenEntry(1394,1422): 'is SealedInheritor1 -> "100"'
   null
@@ -1026,7 +1093,10 @@ KtWhenExpression(1553,1684): 'when(instance) {'
   null
 
 KtNameReferenceExpression(1558,1566): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T & Any
+    ]
 
 KtWhenEntry(1574,1611): 'is SealedInheritor1 -> instance.prop1'
   null
@@ -1050,10 +1120,16 @@ KtDotQualifiedExpression(1597,1611): 'instance.prop1'
     ]
 
 KtNameReferenceExpression(1597,1605): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T & Any
+    ]
 
 KtNameReferenceExpression(1606,1611): 'prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtWhenEntry(1616,1664): 'is SealedInheritor2 -> instance.prop2.toString()'
   null
@@ -1083,10 +1159,16 @@ KtDotQualifiedExpression(1639,1653): 'instance.prop2'
     ]
 
 KtNameReferenceExpression(1639,1647): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T & Any
+    ]
 
 KtNameReferenceExpression(1648,1653): 'prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop2: kotlin.Int
+    ]
 
 KtCallExpression(1654,1664): 'toString()'
   KaSymbolResolutionSuccess:
@@ -1095,7 +1177,10 @@ KtCallExpression(1654,1664): 'toString()'
     ]
 
 KtNameReferenceExpression(1654,1662): 'toString'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
+    ]
 
 KtValueArgumentList(1662,1664): '()'
   null
@@ -1152,7 +1237,10 @@ KtIsExpression(1745,1772): 'instance is SealedInterface'
   null
 
 KtNameReferenceExpression(1745,1753): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: kotlin.Any
+    ]
 
 KtOperationReferenceExpression(1754,1756): 'is'
   null
@@ -1173,7 +1261,10 @@ KtIsExpression(1776,1819): 'instance is SealedInterface.NestedInheritor'
   null
 
 KtNameReferenceExpression(1776,1784): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: kotlin.Any
+    ]
 
 KtOperationReferenceExpression(1785,1787): 'is'
   null
@@ -1209,7 +1300,10 @@ KtWhenExpression(1838,1998): 'when(instance) {'
   null
 
 KtNameReferenceExpression(1843,1851): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: kotlin.Any
+    ]
 
 KtWhenEntry(1867,1902): 'is NestedInheritor -> instance.prop'
   null
@@ -1232,10 +1326,15 @@ KtDotQualifiedExpression(1889,1902): 'instance.prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
 
 KtNameReferenceExpression(1889,1897): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: kotlin.Any
+    ]
 
 KtNameReferenceExpression(1898,1902): 'prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
 
 KtWhenEntry(1915,1962): 'is NestedNestedInheritor -> instance.propNested'
   null
@@ -1250,7 +1349,9 @@ KtUserType(1918,1939): 'NestedNestedInheritor'
   null
 
 KtNameReferenceExpression(1918,1939): 'NestedNestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedNestedInheritor'.>
 
 KtDotQualifiedExpression(1943,1962): 'instance.propNested'
   KaSymbolResolutionError:
@@ -1258,10 +1359,15 @@ KtDotQualifiedExpression(1943,1962): 'instance.propNested'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested'.>
 
 KtNameReferenceExpression(1943,1951): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: kotlin.Any
+    ]
 
 KtNameReferenceExpression(1952,1962): 'propNested'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested'.>
 
 KtWhenEntry(1975,1988): 'else -> "100"'
   null
@@ -1327,7 +1433,10 @@ KtIsExpression(2079,2106): 'instance is SealedInterface'
   null
 
 KtNameReferenceExpression(2079,2087): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: kotlin.Any
+    ]
 
 KtOperationReferenceExpression(2088,2090): 'is'
   null
@@ -1348,7 +1457,10 @@ KtIsExpression(2110,2125): 'instance is Any'
   null
 
 KtNameReferenceExpression(2110,2118): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: kotlin.Any
+    ]
 
 KtOperationReferenceExpression(2119,2121): 'is'
   null
@@ -1378,7 +1490,10 @@ KtWhenExpression(2144,2304): 'when(instance) {'
   null
 
 KtNameReferenceExpression(2149,2157): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: kotlin.Any
+    ]
 
 KtWhenEntry(2173,2208): 'is NestedInheritor -> instance.prop'
   null
@@ -1401,10 +1516,15 @@ KtDotQualifiedExpression(2195,2208): 'instance.prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
 
 KtNameReferenceExpression(2195,2203): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: kotlin.Any
+    ]
 
 KtNameReferenceExpression(2204,2208): 'prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
 
 KtWhenEntry(2221,2268): 'is NestedNestedInheritor -> instance.propNested'
   null
@@ -1419,7 +1539,9 @@ KtUserType(2224,2245): 'NestedNestedInheritor'
   null
 
 KtNameReferenceExpression(2224,2245): 'NestedNestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedNestedInheritor'.>
 
 KtDotQualifiedExpression(2249,2268): 'instance.propNested'
   KaSymbolResolutionError:
@@ -1427,10 +1549,15 @@ KtDotQualifiedExpression(2249,2268): 'instance.propNested'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested'.>
 
 KtNameReferenceExpression(2249,2257): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: kotlin.Any
+    ]
 
 KtNameReferenceExpression(2258,2268): 'propNested'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested'.>
 
 KtWhenEntry(2281,2294): 'else -> "100"'
   null
@@ -1523,7 +1650,10 @@ KtWhenExpression(2428,2546): 'when(instance) {'
   null
 
 KtNameReferenceExpression(2433,2441): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T
+    ]
 
 KtWhenEntry(2449,2484): 'is NestedInheritor -> instance.prop'
   null
@@ -1538,7 +1668,9 @@ KtUserType(2452,2467): 'NestedInheritor'
   null
 
 KtNameReferenceExpression(2452,2467): 'NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
 KtDotQualifiedExpression(2471,2484): 'instance.prop'
   KaSymbolResolutionError:
@@ -1546,10 +1678,15 @@ KtDotQualifiedExpression(2471,2484): 'instance.prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
 
 KtNameReferenceExpression(2471,2479): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T
+    ]
 
 KtNameReferenceExpression(2480,2484): 'prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
 
 KtWhenEntry(2489,2526): 'is SealedInheritor1 -> instance.prop1'
   null
@@ -1564,7 +1701,9 @@ KtUserType(2492,2508): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(2492,2508): 'SealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
 
 KtDotQualifiedExpression(2512,2526): 'instance.prop1'
   KaSymbolResolutionError:
@@ -1572,10 +1711,15 @@ KtDotQualifiedExpression(2512,2526): 'instance.prop1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtNameReferenceExpression(2512,2520): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: T
+    ]
 
 KtNameReferenceExpression(2521,2526): 'prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtWhenEntry(2531,2544): 'else -> "100"'
   null
@@ -1626,7 +1770,10 @@ KtNameReferenceExpression(2598,2604): 'JClass'
   null
 
 KtNameReferenceExpression(2605,2615): 'staticProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var staticProp: SealedJClass!
+    ]
 
 KtWhenEntry(2627,2650): 'is SCOption1 -> i.prop1'
   null
@@ -1650,10 +1797,16 @@ KtDotQualifiedExpression(2643,2650): 'i.prop1'
     ]
 
 KtNameReferenceExpression(2643,2644): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val i: SealedJClass!
+    ]
 
 KtNameReferenceExpression(2645,2650): 'prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop1: kotlin.Int
+    ]
 
 KtWhenEntry(2659,2682): 'is SCOption2 -> i.prop2'
   null
@@ -1677,10 +1830,16 @@ KtDotQualifiedExpression(2675,2682): 'i.prop2'
     ]
 
 KtNameReferenceExpression(2675,2676): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val i: SealedJClass!
+    ]
 
 KtNameReferenceExpression(2677,2682): 'prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop2: kotlin.Int
+    ]
 
 KtWhenEntry(2691,2702): 'else -> 101'
   null
@@ -1800,10 +1959,16 @@ KtDotQualifiedExpression(2842,2847): 'arg.a'
     ]
 
 KtNameReferenceExpression(2842,2845): 'arg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      arg: ITestContravariant2<in SealedClass>
+    ]
 
 KtNameReferenceExpression(2846,2847): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: @UnsafeVariance T
+    ]
 
 KtWhenEntry(2855,2883): 'is SealedInheritor1 -> "100"'
   null
@@ -1818,7 +1983,9 @@ KtUserType(2858,2874): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(2858,2874): 'SealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
 
 KtStringTemplateExpression(2878,2883): '"100"'
   null
@@ -1839,7 +2006,9 @@ KtUserType(2891,2907): 'SealedInheritor2'
   null
 
 KtNameReferenceExpression(2891,2907): 'SealedInheritor2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor2'.>
 
 KtStringTemplateExpression(2911,2916): '"201"'
   null

@@ -1,5 +1,5 @@
 KtNameReferenceExpression(156,164): 'FooAlias'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

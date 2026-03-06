@@ -97,7 +97,7 @@ KtCallExpression(157,166): 'foo(X, Y)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(157,160): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -144,7 +144,7 @@ KtValueArgument(161,162): 'X'
   NO_CANDIDATES
 
 KtNameReferenceExpression(161,162): 'X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -168,7 +168,7 @@ KtValueArgument(164,165): 'Y'
   NO_CANDIDATES
 
 KtNameReferenceExpression(164,165): 'Y'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

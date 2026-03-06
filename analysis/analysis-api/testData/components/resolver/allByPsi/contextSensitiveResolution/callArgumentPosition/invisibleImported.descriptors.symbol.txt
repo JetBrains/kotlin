@@ -71,7 +71,10 @@ KtCallExpression(122,128): 'foo(X)'
     ]
 
 KtNameReferenceExpression(122,125): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b/foo(a: b.MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(125,128): '(X)'
   null
@@ -80,7 +83,11 @@ KtValueArgument(126,127): 'X'
   null
 
 KtNameReferenceExpression(126,127): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      val X: b.MyEnum
+    ]
+    diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'X': it is private in file>
 
 KtCallExpression(133,139): 'foo(Y)'
   KaSymbolResolutionError:
@@ -90,7 +97,11 @@ KtCallExpression(133,139): 'foo(Y)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but MyEnum was expected>
 
 KtNameReferenceExpression(133,136): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      b/foo(a: b.MyEnum): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
 
 KtValueArgumentList(136,139): '(Y)'
   null
@@ -99,7 +110,11 @@ KtValueArgument(137,138): 'Y'
   null
 
 KtNameReferenceExpression(137,138): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      val Y: kotlin.String
+    ]
+    diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'Y': it is private in file>
 
 KtCallExpression(144,150): 'foo(Z)'
   KaSymbolResolutionSuccess:
@@ -108,7 +123,10 @@ KtCallExpression(144,150): 'foo(Z)'
     ]
 
 KtNameReferenceExpression(144,147): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b/foo(a: b.MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(147,150): '(Z)'
   null
@@ -117,4 +135,6 @@ KtValueArgument(148,149): 'Z'
   null
 
 KtNameReferenceExpression(148,149): 'Z'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Z>

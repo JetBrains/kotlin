@@ -65,7 +65,10 @@ KtNameReferenceExpression(207,213): 'MyEnum'
   null
 
 KtNameReferenceExpression(216,223): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(232,259): 'val stringProp: String = ""'
   null
@@ -89,7 +92,10 @@ KtParameterList(281,283): '()'
   null
 
 KtNameReferenceExpression(286,293): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtNamedFunction(303,326): 'fun <T>receive(e: T) {}'
   null
@@ -131,7 +137,10 @@ KtNameReferenceExpression(349,355): 'MyEnum'
   null
 
 KtNameReferenceExpression(356,363): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtNamedFunction(365,593): 'fun testNotNullAssertion() {'
   null
@@ -158,7 +167,10 @@ KtPostfixExpression(416,425): 'Option1!!'
   null
 
 KtNameReferenceExpression(416,423): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtOperationReferenceExpression(423,425): '!!'
   null
@@ -179,7 +191,10 @@ KtPostfixExpression(448,458): 'enumProp!!'
   null
 
 KtNameReferenceExpression(448,456): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtOperationReferenceExpression(456,458): '!!'
   null
@@ -200,7 +215,10 @@ KtPostfixExpression(481,493): 'stringProp!!'
   null
 
 KtNameReferenceExpression(481,491): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtOperationReferenceExpression(491,493): '!!'
   null
@@ -212,7 +230,10 @@ KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
     ]
 
 KtNameReferenceExpression(499,506): 'receive'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receive(e: T): kotlin.Unit
+    ]
 
 KtTypeArgumentList(506,514): '<MyEnum>'
   null
@@ -239,7 +260,10 @@ KtPostfixExpression(515,524): 'Option1!!'
   null
 
 KtNameReferenceExpression(515,522): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtOperationReferenceExpression(522,524): '!!'
   null
@@ -251,7 +275,10 @@ KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
     ]
 
 KtNameReferenceExpression(530,537): 'receive'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receive(e: T): kotlin.Unit
+    ]
 
 KtTypeArgumentList(537,545): '<MyEnum>'
   null
@@ -278,7 +305,10 @@ KtPostfixExpression(546,556): 'enumProp!!'
   null
 
 KtNameReferenceExpression(546,554): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtOperationReferenceExpression(554,556): '!!'
   null
@@ -291,7 +321,11 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum?' was expected.>
 
 KtNameReferenceExpression(562,569): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum?' was expected.>
 
 KtTypeArgumentList(569,577): '<MyEnum>'
   null
@@ -318,7 +352,10 @@ KtPostfixExpression(578,590): 'stringProp!!'
   null
 
 KtNameReferenceExpression(578,588): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtOperationReferenceExpression(588,590): '!!'
   null

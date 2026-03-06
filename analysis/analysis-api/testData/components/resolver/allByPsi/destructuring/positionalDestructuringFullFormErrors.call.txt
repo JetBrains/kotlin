@@ -177,7 +177,7 @@ KtNameReferenceExpression(253,259): 'String'
   null
 
 KtNameReferenceExpression(264,265): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -241,7 +241,7 @@ KtNameReferenceExpression(296,299): 'Int'
   null
 
 KtNameReferenceExpression(303,304): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -281,7 +281,7 @@ KtDestructuringDeclarationEntry(324,333): 'val first'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1' on receiver of type 'NonDataTuple'.>
 
 KtNameReferenceExpression(337,338): 'y'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -482,7 +482,7 @@ KtContainerNode(463,464): 'x'
   null
 
 KtNameReferenceExpression(463,464): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -598,7 +598,7 @@ KtContainerNode(498,499): 'x'
   null
 
 KtNameReferenceExpression(498,499): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -649,7 +649,7 @@ KtContainerNode(536,537): 'y'
   null
 
 KtNameReferenceExpression(536,537): 'y'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -798,7 +798,7 @@ KtCallExpression(642,685): 'foo { [val first, val second: String,] -> }'
       }
 
 KtNameReferenceExpression(642,645): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -934,7 +934,7 @@ KtCallExpression(690,717): 'foo { [val first: Int] -> }'
       }
 
 KtNameReferenceExpression(690,693): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1050,7 +1050,7 @@ KtCallExpression(722,744): 'bar { [val first] -> }'
       }
 
 KtNameReferenceExpression(722,725): 'bar'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

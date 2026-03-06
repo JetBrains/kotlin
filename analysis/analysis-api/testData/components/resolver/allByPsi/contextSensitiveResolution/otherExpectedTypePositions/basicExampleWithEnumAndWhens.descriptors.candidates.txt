@@ -59,7 +59,7 @@ KtWhenExpression(192,332): 'when (problem) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(198,205): 'problem'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -167,7 +167,7 @@ KtWhenExpression(372,501): 'when (x) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(378,379): 'x'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

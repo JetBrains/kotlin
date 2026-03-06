@@ -79,7 +79,7 @@ KtNameReferenceExpression(159,165): 'MyEnum'
   null
 
 KtNameReferenceExpression(166,167): 'X'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -132,7 +132,7 @@ KtCallExpression(173,179): 'foo(X)'
       }
 
 KtNameReferenceExpression(173,176): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -171,7 +171,7 @@ KtValueArgument(177,178): 'X'
   null
 
 KtNameReferenceExpression(177,178): 'X'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -224,7 +224,7 @@ KtCallExpression(184,190): 'foo(L)'
       }
 
 KtNameReferenceExpression(184,187): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -263,7 +263,7 @@ KtValueArgument(188,189): 'L'
   null
 
 KtNameReferenceExpression(188,189): 'L'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -313,7 +313,7 @@ KtCallExpression(195,210): 'foo(UNRESOLVED)'
       }
 
 KtNameReferenceExpression(195,198): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -352,6 +352,6 @@ KtValueArgument(199,209): 'UNRESOLVED'
   null
 
 KtNameReferenceExpression(199,209): 'UNRESOLVED'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'UNRESOLVED'.>

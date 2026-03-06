@@ -375,7 +375,7 @@ KtBinaryExpression(479,497): 'oldItem == newItem'
       }
 
 KtNameReferenceExpression(479,486): 'oldItem'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -428,7 +428,7 @@ KtOperationReferenceExpression(487,489): '=='
       }
 
 KtNameReferenceExpression(490,497): 'newItem'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -674,7 +674,7 @@ KtBinaryExpression(706,724): 'oldItem == newItem'
       }
 
 KtNameReferenceExpression(706,713): 'oldItem'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -727,7 +727,7 @@ KtOperationReferenceExpression(714,716): '=='
       }
 
 KtNameReferenceExpression(717,724): 'newItem'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -925,7 +925,7 @@ KtBinaryExpression(875,893): 'oldItem == newItem'
       }
 
 KtNameReferenceExpression(875,882): 'oldItem'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -978,7 +978,7 @@ KtOperationReferenceExpression(883,885): '=='
       }
 
 KtNameReferenceExpression(886,893): 'newItem'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1064,7 +1064,7 @@ KtBinaryExpression(956,962): 'i == m'
       }
 
 KtNameReferenceExpression(956,957): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1117,7 +1117,7 @@ KtOperationReferenceExpression(958,960): '=='
       }
 
 KtNameReferenceExpression(961,962): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1170,7 +1170,7 @@ KtBinaryExpression(967,973): 'i != m'
       }
 
 KtNameReferenceExpression(967,968): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1223,7 +1223,7 @@ KtOperationReferenceExpression(969,971): '!='
       }
 
 KtNameReferenceExpression(972,973): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1276,7 +1276,7 @@ KtBinaryExpression(979,985): 'm == i'
       }
 
 KtNameReferenceExpression(979,980): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1329,7 +1329,7 @@ KtOperationReferenceExpression(981,983): '=='
       }
 
 KtNameReferenceExpression(984,985): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1382,7 +1382,7 @@ KtBinaryExpression(990,996): 'm != i'
       }
 
 KtNameReferenceExpression(990,991): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1435,7 +1435,7 @@ KtOperationReferenceExpression(992,994): '!='
       }
 
 KtNameReferenceExpression(995,996): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1488,7 +1488,7 @@ KtDotQualifiedExpression(1002,1013): 'i.equals(m)'
       }
 
 KtNameReferenceExpression(1002,1003): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1541,7 +1541,7 @@ KtCallExpression(1004,1013): 'equals(m)'
       }
 
 KtNameReferenceExpression(1004,1010): 'equals'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1583,7 +1583,7 @@ KtValueArgument(1011,1012): 'm'
   null
 
 KtNameReferenceExpression(1011,1012): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1636,7 +1636,7 @@ KtDotQualifiedExpression(1018,1029): 'm.equals(i)'
       }
 
 KtNameReferenceExpression(1018,1019): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1689,7 +1689,7 @@ KtCallExpression(1020,1029): 'equals(i)'
       }
 
 KtNameReferenceExpression(1020,1026): 'equals'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1731,7 +1731,7 @@ KtValueArgument(1027,1028): 'i'
   null
 
 KtNameReferenceExpression(1027,1028): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

@@ -127,7 +127,7 @@ KtNameReferenceExpression(46,62): 'AnnotationTarget'
   null
 
 KtNameReferenceExpression(63,73): 'EXPRESSION'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -251,7 +251,7 @@ KtNameReferenceExpression(86,105): 'AnnotationRetention'
   null
 
 KtNameReferenceExpression(106,112): 'SOURCE'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -457,7 +457,7 @@ KtOperationReferenceExpression(180,181): '+'
       }
 
 KtNameReferenceExpression(182,189): 'integer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -581,7 +581,7 @@ KtValueArgument(198,205): 'integer'
   null
 
 KtNameReferenceExpression(198,205): 'integer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -615,7 +615,7 @@ KtCallExpression(207,214): 'usage()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(207,212): 'usage'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -655,7 +655,7 @@ KtCallExpression(216,226): 'toString()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(216,224): 'toString'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

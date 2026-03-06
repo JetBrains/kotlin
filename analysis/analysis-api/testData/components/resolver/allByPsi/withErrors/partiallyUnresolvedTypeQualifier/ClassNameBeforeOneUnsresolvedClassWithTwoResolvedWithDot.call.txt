@@ -47,7 +47,7 @@ KtNameReferenceExpression(57,60): 'Bar'
   null
 
 KtNameReferenceExpression(61,64): 'Baz'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
 
@@ -85,7 +85,7 @@ KtNameReferenceExpression(108,111): 'Bar'
   null
 
 KtNameReferenceExpression(112,115): 'Baz'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
 
@@ -181,7 +181,7 @@ KtCallExpression(169,210): 'take {'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Incomplete user type)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
 
 KtNameReferenceExpression(169,173): 'take'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -257,7 +257,7 @@ KtNameReferenceExpression(197,200): 'Bar'
   null
 
 KtNameReferenceExpression(201,204): 'Baz'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
 

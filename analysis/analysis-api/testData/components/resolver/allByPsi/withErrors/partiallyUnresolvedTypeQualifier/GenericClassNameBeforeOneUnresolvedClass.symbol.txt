@@ -38,7 +38,9 @@ KtNameReferenceExpression(39,42): 'Foo'
   null
 
 KtNameReferenceExpression(43,46): 'Bar'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
 
 KtNamedFunction(50,94): 'fun testFun() {'
   null
@@ -65,7 +67,9 @@ KtNameReferenceExpression(85,88): 'Foo'
   null
 
 KtNameReferenceExpression(89,92): 'Bar'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
 
 KtNamedFunction(96,132): 'fun <T> take(action: (T) -> Unit) {}'
   null
@@ -126,7 +130,11 @@ KtCallExpression(145,181): 'take {'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Unresolved qualified name: Foo.Bar)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
 
 KtNameReferenceExpression(145,149): 'take'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /take(action: (T) -> kotlin.Unit): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Unresolved qualified name: Foo.Bar)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
 
 KtLambdaArgument(150,181): '{'
   null
@@ -156,7 +164,9 @@ KtNameReferenceExpression(169,172): 'Foo'
   null
 
 KtNameReferenceExpression(173,176): 'Bar'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
 
 KtBlockExpression(180,180): ''
   null

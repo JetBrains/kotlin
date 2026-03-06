@@ -59,7 +59,7 @@ KtCallExpression(34,42): 'action()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(34,40): 'action'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -125,7 +125,7 @@ KtCallExpression(64,102): 'foo label@{'
     isInBestCandidates = true
 
 KtNameReferenceExpression(64,67): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

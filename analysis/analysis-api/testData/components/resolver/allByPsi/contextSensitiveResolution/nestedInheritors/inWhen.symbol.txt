@@ -107,7 +107,10 @@ KtCallExpression(226,333): 'receiveMyClass('
     ]
 
 KtNameReferenceExpression(226,240): 'receiveMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(m: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(240,333): '('
   null
@@ -125,10 +128,16 @@ KtWhenConditionWithExpression(269,270): 'b'
   null
 
 KtNameReferenceExpression(269,270): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(274,281): 'myClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myClass: MyClass
+    ]
 
 KtWhenEntry(294,317): 'else -> NestedInheritor'
   null
@@ -182,7 +191,10 @@ KtCallExpression(402,510): 'receiveMyClass('
     ]
 
 KtNameReferenceExpression(402,416): 'receiveMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(m: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(416,510): '('
   null
@@ -200,10 +212,16 @@ KtWhenConditionWithExpression(445,446): 'b'
   null
 
 KtNameReferenceExpression(445,446): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(450,458): 'subClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      subClass: MyClass.NestedInheritor
+    ]
 
 KtWhenEntry(471,494): 'else -> NestedInheritor'
   null
@@ -269,7 +287,10 @@ KtCallExpression(593,735): 'receiveMyClass('
     ]
 
 KtNameReferenceExpression(593,607): 'receiveMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(m: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(607,735): '('
   null
@@ -287,10 +308,16 @@ KtWhenConditionWithExpression(636,638): 'b1'
   null
 
 KtNameReferenceExpression(636,638): 'b1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b1: kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(642,650): 'subClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      subClass: MyClass.NestedInheritor
+    ]
 
 KtWhenEntry(663,684): 'b2 -> NestedInheritor'
   null
@@ -299,7 +326,10 @@ KtWhenConditionWithExpression(663,665): 'b2'
   null
 
 KtNameReferenceExpression(663,665): 'b2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b2: kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(669,684): 'NestedInheritor'
   null
@@ -308,7 +338,9 @@ KtWhenEntry(697,719): 'else -> OtherInheritor'
   null
 
 KtNameReferenceExpression(705,719): 'OtherInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'OtherInheritor'.>
 
 KtClass(739,877): 'sealed class OtherClass {'
   null
@@ -539,7 +571,10 @@ KtCallExpression(1012,1139): 'receiveOtherClass('
     ]
 
 KtNameReferenceExpression(1012,1029): 'receiveOtherClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveOtherClass(m: OtherClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(1029,1139): '('
   null
@@ -557,10 +592,16 @@ KtWhenConditionWithExpression(1058,1060): 'b1'
   null
 
 KtNameReferenceExpression(1058,1060): 'b1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b1: kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1064,1073): 'subClass1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      subClass1: OtherClass.A
+    ]
 
 KtWhenEntry(1086,1101): 'b2 -> subClass2'
   null
@@ -569,10 +610,16 @@ KtWhenConditionWithExpression(1086,1088): 'b2'
   null
 
 KtNameReferenceExpression(1086,1088): 'b2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b2: kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1092,1101): 'subClass2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      subClass2: OtherClass.B
+    ]
 
 KtWhenEntry(1114,1123): 'else -> C'
   null
@@ -680,7 +727,10 @@ KtCallExpression(1310,1432): 'receiveOpenClass('
     ]
 
 KtNameReferenceExpression(1310,1326): 'receiveOpenClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveOpenClass(m: OpenClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(1326,1432): '('
   null
@@ -698,10 +748,16 @@ KtWhenConditionWithExpression(1355,1356): 'b'
   null
 
 KtNameReferenceExpression(1355,1356): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1360,1369): 'openClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      openClass: OpenClass
+    ]
 
 KtWhenEntry(1382,1416): 'else -> NestedInheritorOfOpenClass'
   null
@@ -755,7 +811,10 @@ KtCallExpression(1512,1633): 'receiveOpenClass('
     ]
 
 KtNameReferenceExpression(1512,1528): 'receiveOpenClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveOpenClass(m: OpenClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(1528,1633): '('
   null
@@ -773,13 +832,21 @@ KtWhenConditionWithExpression(1557,1558): 'b'
   null
 
 KtNameReferenceExpression(1557,1558): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1562,1570): 'subClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      subClass: OpenClass.NestedInheritorOfOpenClass
+    ]
 
 KtWhenEntry(1583,1617): 'else -> NestedInheritorOfOpenClass'
   null
 
 KtNameReferenceExpression(1591,1617): 'NestedInheritorOfOpenClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritorOfOpenClass'.>

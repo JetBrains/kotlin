@@ -44,7 +44,7 @@ KtWhenExpression(121,173): 'when (s) {'
   null
 
 KtNameReferenceExpression(127,128): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -67,7 +67,7 @@ KtWhenConditionWithExpression(136,141): 'FIRST'
   null
 
 KtNameReferenceExpression(136,141): 'FIRST'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -87,7 +87,7 @@ KtNameReferenceExpression(136,141): 'FIRST'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(145,151): 'SECOND'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SECOND'.>
 
@@ -98,7 +98,7 @@ KtWhenConditionWithExpression(156,162): 'SECOND'
   null
 
 KtNameReferenceExpression(156,162): 'SECOND'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -118,6 +118,6 @@ KtNameReferenceExpression(156,162): 'SECOND'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(166,171): 'FIRST'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'FIRST'.>

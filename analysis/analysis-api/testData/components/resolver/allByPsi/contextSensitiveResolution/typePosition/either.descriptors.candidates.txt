@@ -269,7 +269,7 @@ KtNameReferenceExpression(314,318): 'Left'
   NO_CANDIDATES
 
 KtNameReferenceExpression(322,329): 'default'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

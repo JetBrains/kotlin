@@ -464,7 +464,10 @@ KtCallExpression(494,500): 'Test()'
     ]
 
 KtNameReferenceExpression(494,498): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Test
+    ]
 
 KtValueArgumentList(498,500): '()'
   null
@@ -477,7 +480,11 @@ KtBinaryExpression(505,513): 'foo += 1'
     fun Test.plusAssign(i: Int): Unit>
 
 KtNameReferenceExpression(505,508): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.plus(i: Int): Test
+    fun Test.plusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(509,511): '+='
   null
@@ -493,7 +500,11 @@ KtBinaryExpression(518,526): 'foo -= 1'
     fun Test.minusAssign(i: Int): Unit>
 
 KtNameReferenceExpression(518,521): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.minus(i: Int): Test
+    fun Test.minusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(522,524): '-='
   null
@@ -509,7 +520,11 @@ KtBinaryExpression(531,539): 'foo /= 1'
     fun Test.divAssign(i: Int): Unit>
 
 KtNameReferenceExpression(531,534): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.div(i: Int): Test
+    fun Test.divAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(535,537): '/='
   null
@@ -525,7 +540,11 @@ KtBinaryExpression(544,552): 'foo *= 1'
     fun Test.timesAssign(i: Int): Unit>
 
 KtNameReferenceExpression(544,547): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.times(i: Int): Test
+    fun Test.timesAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(548,550): '*='
   null
@@ -541,7 +560,11 @@ KtBinaryExpression(557,565): 'foo %= 1'
     fun Test.remAssign(i: Int): Unit>
 
 KtNameReferenceExpression(557,560): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.rem(i: Int): Test
+    fun Test.remAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(561,563): '%='
   null

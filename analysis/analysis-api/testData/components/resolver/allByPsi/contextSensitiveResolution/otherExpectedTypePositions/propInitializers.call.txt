@@ -47,7 +47,7 @@ KtNameReferenceExpression(174,180): 'MyEnum'
   null
 
 KtNameReferenceExpression(183,190): 'Option1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -85,7 +85,7 @@ KtParameterList(248,250): '()'
   null
 
 KtNameReferenceExpression(253,260): 'Option1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -128,7 +128,7 @@ KtNameReferenceExpression(292,298): 'MyEnum'
   null
 
 KtNameReferenceExpression(299,306): 'Option1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -174,7 +174,7 @@ KtNameReferenceExpression(326,332): 'MyEnum'
   null
 
 KtNameReferenceExpression(333,340): 'Option2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -206,7 +206,7 @@ KtNameReferenceExpression(359,365): 'MyEnum'
   null
 
 KtNameReferenceExpression(368,375): 'Option1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -238,7 +238,7 @@ KtNameReferenceExpression(393,399): 'MyEnum'
   null
 
 KtNameReferenceExpression(402,413): 'OptionAlias'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -267,7 +267,7 @@ KtNameReferenceExpression(431,437): 'MyEnum'
   null
 
 KtNameReferenceExpression(440,448): 'enumProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -299,7 +299,7 @@ KtNameReferenceExpression(468,474): 'MyEnum'
   null
 
 KtNameReferenceExpression(477,487): 'stringProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -340,7 +340,7 @@ KtNameReferenceExpression(525,531): 'MyEnum'
   null
 
 KtNameReferenceExpression(534,541): 'Option1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -378,7 +378,7 @@ KtBinaryExpression(546,557): 'm = Option1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(546,547): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -414,7 +414,7 @@ KtOperationReferenceExpression(548,549): '='
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(550,557): 'Option1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -452,7 +452,7 @@ KtBinaryExpression(562,577): 'm = OptionAlias'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(562,563): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -488,7 +488,7 @@ KtOperationReferenceExpression(564,565): '='
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(566,577): 'OptionAlias'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -523,7 +523,7 @@ KtBinaryExpression(582,596): 'm = stringProp'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(582,583): 'm'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -559,7 +559,7 @@ KtOperationReferenceExpression(584,585): '='
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(586,596): 'stringProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -597,7 +597,7 @@ KtNameReferenceExpression(634,640): 'MyEnum'
   null
 
 KtNameReferenceExpression(643,650): 'Option1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -629,7 +629,7 @@ KtNameReferenceExpression(658,664): 'MyEnum'
   null
 
 KtNameReferenceExpression(667,675): 'enumProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -670,7 +670,7 @@ KtNameReferenceExpression(711,717): 'MyEnum'
   null
 
 KtNameReferenceExpression(720,730): 'stringProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -714,7 +714,7 @@ KtNameReferenceExpression(762,768): 'MyEnum'
   null
 
 KtNameReferenceExpression(771,778): 'Option2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -749,7 +749,7 @@ KtNameReferenceExpression(797,803): 'MyEnum'
   null
 
 KtNameReferenceExpression(806,814): 'enumProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -781,7 +781,7 @@ KtNameReferenceExpression(830,836): 'MyEnum'
   null
 
 KtNameReferenceExpression(839,849): 'stringProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

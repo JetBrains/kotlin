@@ -26,7 +26,7 @@ KtUserType(130,136): 'String'
   null
 
 KtNameReferenceExpression(130,136): 'String'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -100,7 +100,7 @@ KtUserType(217,224): 'MyClass'
   null
 
 KtNameReferenceExpression(217,224): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -133,7 +133,7 @@ KtUserType(247,253): 'String'
   null
 
 KtNameReferenceExpression(247,253): 'String'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -189,7 +189,7 @@ KtUserType(292,299): 'MyClass'
   null
 
 KtNameReferenceExpression(292,299): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -222,7 +222,7 @@ KtUserType(322,328): 'String'
   null
 
 KtNameReferenceExpression(322,328): 'String'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -284,7 +284,7 @@ KtUserType(388,393): 'Super'
   null
 
 KtNameReferenceExpression(388,393): 'Super'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -317,7 +317,7 @@ KtUserType(423,430): 'MyClass'
   null
 
 KtNameReferenceExpression(423,430): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -339,7 +339,7 @@ KtCallExpression(433,439): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(433,437): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -368,7 +368,7 @@ KtUserType(472,486): 'InheritorClass'
   null
 
 KtNameReferenceExpression(472,486): 'InheritorClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -390,7 +390,7 @@ KtCallExpression(489,505): 'InheritorClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(489,503): 'InheritorClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -419,12 +419,12 @@ KtUserType(539,554): 'InheritorObject'
   null
 
 KtNameReferenceExpression(539,554): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(557,572): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -438,7 +438,7 @@ KtUserType(592,598): 'String'
   null
 
 KtNameReferenceExpression(592,598): 'String'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -458,7 +458,7 @@ KtUserType(634,640): 'String'
   null
 
 KtNameReferenceExpression(634,640): 'String'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -475,7 +475,7 @@ KtUserType(669,675): 'String'
   null
 
 KtNameReferenceExpression(669,675): 'String'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -553,7 +553,7 @@ KtCallExpression(679,688): 'lazy {""}'
       }
 
 KtNameReferenceExpression(679,683): 'lazy'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -615,7 +615,7 @@ KtUserType(710,717): 'MyClass'
   null
 
 KtNameReferenceExpression(710,717): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -637,7 +637,7 @@ KtCallExpression(720,726): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(720,724): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -669,7 +669,7 @@ KtBlockExpression(754,769): 'InheritorObject'
   null
 
 KtNameReferenceExpression(754,769): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -704,7 +704,7 @@ KtUserType(809,810): 'T'
   null
 
 KtNameReferenceExpression(809,810): 'T'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -759,7 +759,7 @@ KtCallExpression(847,889): 'receiveLambda<MyClass> { InheritorObject }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(847,860): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -809,7 +809,7 @@ KtUserType(861,868): 'MyClass'
   null
 
 KtNameReferenceExpression(861,868): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -826,7 +826,7 @@ KtBlockExpression(872,887): 'InheritorObject'
   null
 
 KtNameReferenceExpression(872,887): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
@@ -869,7 +869,7 @@ KtCallExpression(894,932): 'receiveLambda<MyClass> { propMyClass }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(894,907): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -919,7 +919,7 @@ KtUserType(908,915): 'MyClass'
   null
 
 KtNameReferenceExpression(908,915): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -936,7 +936,7 @@ KtBlockExpression(919,930): 'propMyClass'
   null
 
 KtNameReferenceExpression(919,930): 'propMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -979,7 +979,7 @@ KtCallExpression(937,982): 'receiveLambda<MyClass> { propInheritorClass }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(937,950): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1029,7 +1029,7 @@ KtUserType(951,958): 'MyClass'
   null
 
 KtNameReferenceExpression(951,958): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1046,7 +1046,7 @@ KtBlockExpression(962,980): 'propInheritorClass'
   null
 
 KtNameReferenceExpression(962,980): 'propInheritorClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1089,7 +1089,7 @@ KtCallExpression(987,1033): 'receiveLambda<MyClass> { propInheritorObject }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(987,1000): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1139,7 +1139,7 @@ KtUserType(1001,1008): 'MyClass'
   null
 
 KtNameReferenceExpression(1001,1008): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1156,7 +1156,7 @@ KtBlockExpression(1012,1031): 'propInheritorObject'
   null
 
 KtNameReferenceExpression(1012,1031): 'propInheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1199,7 +1199,7 @@ KtCallExpression(1039,1070): 'receiveLambda<MyClass> { prop }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1039,1052): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1249,7 +1249,7 @@ KtUserType(1053,1060): 'MyClass'
   null
 
 KtNameReferenceExpression(1053,1060): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1266,7 +1266,7 @@ KtBlockExpression(1064,1068): 'prop'
   null
 
 KtNameReferenceExpression(1064,1068): 'prop'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1309,7 +1309,7 @@ KtCallExpression(1075,1111): 'receiveLambda<MyClass> { superProp }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1075,1088): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1359,7 +1359,7 @@ KtUserType(1089,1096): 'MyClass'
   null
 
 KtNameReferenceExpression(1089,1096): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1376,7 +1376,7 @@ KtBlockExpression(1100,1109): 'superProp'
   null
 
 KtNameReferenceExpression(1100,1109): 'superProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1419,7 +1419,7 @@ KtCallExpression(1116,1152): 'receiveLambda<MyClass> { constProp }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1116,1129): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1469,7 +1469,7 @@ KtUserType(1130,1137): 'MyClass'
   null
 
 KtNameReferenceExpression(1130,1137): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1486,7 +1486,7 @@ KtBlockExpression(1141,1150): 'constProp'
   null
 
 KtNameReferenceExpression(1141,1150): 'constProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1529,7 +1529,7 @@ KtCallExpression(1157,1194): 'receiveLambda<MyClass> { lambdaProp }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1157,1170): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1579,7 +1579,7 @@ KtUserType(1171,1178): 'MyClass'
   null
 
 KtNameReferenceExpression(1171,1178): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1596,7 +1596,7 @@ KtBlockExpression(1182,1192): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1182,1192): 'lambdaProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1639,7 +1639,7 @@ KtCallExpression(1199,1234): 'receiveLambda<MyClass> { lazyProp }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1199,1212): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1689,7 +1689,7 @@ KtUserType(1213,1220): 'MyClass'
   null
 
 KtNameReferenceExpression(1213,1220): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1706,7 +1706,7 @@ KtBlockExpression(1224,1232): 'lazyProp'
   null
 
 KtNameReferenceExpression(1224,1232): 'lazyProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1749,7 +1749,7 @@ KtCallExpression(1239,1277): 'receiveLambda<MyClass> { NestedObject}'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1239,1252): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1799,7 +1799,7 @@ KtUserType(1253,1260): 'MyClass'
   null
 
 KtNameReferenceExpression(1253,1260): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1816,7 +1816,7 @@ KtBlockExpression(1264,1276): 'NestedObject'
   null
 
 KtNameReferenceExpression(1264,1276): 'NestedObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1859,7 +1859,7 @@ KtCallExpression(1283,1316): 'receiveLambda<MyClass> { func() }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1283,1296): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1909,7 +1909,7 @@ KtUserType(1297,1304): 'MyClass'
   null
 
 KtNameReferenceExpression(1297,1304): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1931,7 +1931,7 @@ KtCallExpression(1308,1314): 'func()'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1308,1312): 'func'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1977,7 +1977,7 @@ KtCallExpression(1321,1364): 'receiveLambda<MyClass> { InheritorClass() }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1321,1334): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2027,7 +2027,7 @@ KtUserType(1335,1342): 'MyClass'
   null
 
 KtNameReferenceExpression(1335,1342): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -2049,7 +2049,7 @@ KtCallExpression(1346,1362): 'InheritorClass()'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1346,1360): 'InheritorClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -2095,7 +2095,7 @@ KtCallExpression(1369,1407): 'receiveLambda<MyClass> { superFunc() }'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1369,1382): 'receiveLambda'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2145,7 +2145,7 @@ KtUserType(1383,1390): 'MyClass'
   null
 
 KtNameReferenceExpression(1383,1390): 'MyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -2167,7 +2167,7 @@ KtCallExpression(1394,1405): 'superFunc()'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtNameReferenceExpression(1394,1403): 'superFunc'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 

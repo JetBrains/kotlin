@@ -125,7 +125,7 @@ KtCallExpression(77,87): 'Delegate()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(77,85): 'Delegate'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

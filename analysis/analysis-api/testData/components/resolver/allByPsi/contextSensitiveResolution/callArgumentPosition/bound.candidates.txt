@@ -53,7 +53,7 @@ KtNameReferenceExpression(150,151): 'T'
   NO_CANDIDATES
 
 KtNameReferenceExpression(155,158): 'arg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -117,7 +117,7 @@ KtCallExpression(185,208): 'boundHolder(EnumValue1)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(185,196): 'boundHolder'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -208,7 +208,7 @@ KtCallExpression(238,269): 'boundHolder<MyEnum>(EnumValue1)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(238,249): 'boundHolder'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -265,7 +265,7 @@ KtValueArgument(258,268): 'EnumValue1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(258,268): 'EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -362,7 +362,7 @@ KtBinaryExpression(331,350): 'value == EnumValue1'
     isInBestCandidates = true
 
 KtNameReferenceExpression(331,336): 'value'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -417,7 +417,7 @@ KtOperationReferenceExpression(337,339): '=='
     isInBestCandidates = true
 
 KtNameReferenceExpression(340,350): 'EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -511,7 +511,7 @@ KtBinaryExpression(399,418): 'value == EnumValue1'
     isInBestCandidates = true
 
 KtNameReferenceExpression(399,404): 'value'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -566,7 +566,7 @@ KtOperationReferenceExpression(405,407): '=='
     isInBestCandidates = true
 
 KtNameReferenceExpression(408,418): 'EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

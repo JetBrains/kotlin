@@ -1,2 +1,4 @@
 KtNameReferenceExpression(151,154): 'bar'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'bar'.>

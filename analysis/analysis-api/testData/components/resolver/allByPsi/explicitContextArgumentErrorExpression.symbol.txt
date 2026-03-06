@@ -50,7 +50,10 @@ KtCallExpression(49,58): 'foo(s = )'
     ]
 
 KtNameReferenceExpression(49,52): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(): kotlin.Unit
+    ]
 
 KtValueArgumentList(52,58): '(s = )'
   null

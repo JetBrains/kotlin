@@ -146,7 +146,7 @@ KtUserType(86,90): 'Base'
   null
 
 KtNameReferenceExpression(86,90): 'Base'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -188,7 +188,7 @@ KtValueArgument(91,92): 'x'
   null
 
 KtNameReferenceExpression(91,92): 'x'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

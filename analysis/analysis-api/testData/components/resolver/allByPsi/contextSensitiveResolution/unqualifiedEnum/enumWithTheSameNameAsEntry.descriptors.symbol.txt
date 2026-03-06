@@ -44,7 +44,10 @@ KtWhenExpression(120,162): 'when (a) {'
   null
 
 KtNameReferenceExpression(126,127): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: A
+    ]
 
 KtWhenEntry(135,145): 'A.A -> "A"'
   null

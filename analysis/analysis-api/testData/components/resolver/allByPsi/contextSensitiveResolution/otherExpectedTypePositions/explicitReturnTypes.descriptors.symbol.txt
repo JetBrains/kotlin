@@ -101,7 +101,9 @@ KtNameReferenceExpression(320,326): 'MyEnum'
   null
 
 KtNameReferenceExpression(329,336): 'Option1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
 KtNamedFunction(337,366): 'fun fun2(): MyEnum = enumProp'
   null
@@ -119,7 +121,9 @@ KtNameReferenceExpression(349,355): 'MyEnum'
   null
 
 KtNameReferenceExpression(358,366): 'enumProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
 KtNamedFunction(367,398): 'fun fun3(): MyEnum = stringProp'
   null
@@ -137,7 +141,9 @@ KtNameReferenceExpression(379,385): 'MyEnum'
   null
 
 KtNameReferenceExpression(388,398): 'stringProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtProperty(400,450): 'val propWithGetterType'
   null
@@ -158,7 +164,9 @@ KtNameReferenceExpression(434,440): 'MyEnum'
   null
 
 KtNameReferenceExpression(443,450): 'Option1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
 KtProperty(452,510): 'val wrongPropWithGetterType'
   null
@@ -179,7 +187,9 @@ KtNameReferenceExpression(491,497): 'MyEnum'
   null
 
 KtNameReferenceExpression(500,510): 'stringProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtNamedFunction(512,589): 'fun fun4(b: Boolean): MyEnum {'
   null
@@ -218,7 +228,10 @@ KtContainerNode(551,552): 'b'
   null
 
 KtNameReferenceExpression(551,552): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(554,568): 'return Option1'
   null
@@ -230,7 +243,9 @@ KtReturnExpression(554,568): 'return Option1'
     ]
 
 KtNameReferenceExpression(561,568): 'Option1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
 KtReturnExpression(573,587): 'return Option2'
   KaSymbolResolutionSuccess:
@@ -239,4 +254,6 @@ KtReturnExpression(573,587): 'return Option2'
     ]
 
 KtNameReferenceExpression(580,587): 'Option2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option2>

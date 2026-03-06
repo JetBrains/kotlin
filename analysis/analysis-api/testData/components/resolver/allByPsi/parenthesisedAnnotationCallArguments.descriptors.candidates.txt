@@ -181,7 +181,7 @@ KtUserType(168,174): 'MyAnno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(168,174): 'MyAnno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -319,7 +319,7 @@ KtUserType(200,206): 'MyAnno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(200,206): 'MyAnno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -463,7 +463,7 @@ KtUserType(240,246): 'MyAnno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(240,246): 'MyAnno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -650,7 +650,7 @@ KtUserType(286,298): 'MyAnnoVararg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(286,298): 'MyAnnoVararg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -784,7 +784,7 @@ KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(316,323): 'arrayOf'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -950,7 +950,7 @@ KtUserType(358,370): 'MyAnnoVararg'
   NO_CANDIDATES
 
 KtNameReferenceExpression(358,370): 'MyAnnoVararg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1045,7 +1045,7 @@ KtCallExpression(381,400): 'arrayOf(("A"), "B")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(381,388): 'arrayOf'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1198,7 +1198,7 @@ KtUserType(420,432): 'MyAnnoKClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(420,432): 'MyAnnoKClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

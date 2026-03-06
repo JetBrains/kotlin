@@ -1136,7 +1136,7 @@ KtCallExpression(30,42): 'compareTo(2)'
     isInBestCandidates = false
 
 KtNameReferenceExpression(30,39): 'compareTo'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1173,7 +1173,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1210,7 +1210,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1247,7 +1247,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1283,7 +1283,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1320,7 +1320,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1705,7 +1705,7 @@ KtCallExpression(99,108): 'MyClass()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(99,106): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1763,7 +1763,7 @@ KtBinaryExpression(113,130): 'myClass >= number'
     isInBestCandidates = true
 
 KtNameReferenceExpression(113,120): 'myClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1818,7 +1818,7 @@ KtOperationReferenceExpression(121,123): '>='
     isInBestCandidates = true
 
 KtNameReferenceExpression(124,130): 'number'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1873,7 +1873,7 @@ KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(135,142): 'myClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1928,7 +1928,7 @@ KtCallExpression(143,160): 'compareTo(number)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(143,152): 'compareTo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1971,7 +1971,7 @@ KtValueArgument(153,159): 'number'
   NO_CANDIDATES
 
 KtNameReferenceExpression(153,159): 'number'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2025,7 +2025,7 @@ KtNameReferenceExpression(216,219): 'Int'
   NO_CANDIDATES
 
 KtNameReferenceExpression(222,223): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

@@ -41,7 +41,10 @@ KtUserType(128,135): 'MyClass'
   null
 
 KtNameReferenceExpression(128,135): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(135,137): '()'
   null
@@ -74,7 +77,10 @@ KtCallExpression(197,206): 'MyClass()'
     ]
 
 KtNameReferenceExpression(197,204): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(204,206): '()'
   null
@@ -167,13 +173,17 @@ KtBinaryExpression(417,447): 'NestedInheritor ?: myClassProp'
   null
 
 KtNameReferenceExpression(417,432): 'NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedInheritor>
 
 KtOperationReferenceExpression(433,435): '?:'
   null
 
 KtNameReferenceExpression(436,447): 'myClassProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: myClassProp>
 
 KtProperty(452,501): 'var i110: MyClass = NestedInheritor ?: stringProp'
   null
@@ -191,13 +201,17 @@ KtBinaryExpression(472,501): 'NestedInheritor ?: stringProp'
   null
 
 KtNameReferenceExpression(472,487): 'NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedInheritor>
 
 KtOperationReferenceExpression(488,490): '?:'
   null
 
 KtNameReferenceExpression(491,501): 'stringProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtProperty(506,565): 'var i120: MyClass = NestedInheritor ?: getNestedInheritor()'
   null
@@ -215,7 +229,9 @@ KtBinaryExpression(526,565): 'NestedInheritor ?: getNestedInheritor()'
   null
 
 KtNameReferenceExpression(526,541): 'NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedInheritor>
 
 KtOperationReferenceExpression(542,544): '?:'
   null
@@ -226,7 +242,9 @@ KtCallExpression(545,565): 'getNestedInheritor()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getNestedInheritor>
 
 KtNameReferenceExpression(545,563): 'getNestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getNestedInheritor>
 
 KtValueArgumentList(563,565): '()'
   null
@@ -239,7 +257,11 @@ KtCallExpression(571,619): 'receive<MyClass>(NestedInheritor ?: myClassProp)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(571,578): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtTypeArgumentList(578,587): '<MyClass>'
   null
@@ -266,13 +288,17 @@ KtBinaryExpression(588,618): 'NestedInheritor ?: myClassProp'
   null
 
 KtNameReferenceExpression(588,603): 'NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedInheritor>
 
 KtOperationReferenceExpression(604,606): '?:'
   null
 
 KtNameReferenceExpression(607,618): 'myClassProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: myClassProp>
 
 KtCallExpression(624,671): 'receive<MyClass>(NestedInheritor ?: stringProp)'
   KaSymbolResolutionError:
@@ -282,7 +308,11 @@ KtCallExpression(624,671): 'receive<MyClass>(NestedInheritor ?: stringProp)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(624,631): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtTypeArgumentList(631,640): '<MyClass>'
   null
@@ -309,13 +339,17 @@ KtBinaryExpression(641,670): 'NestedInheritor ?: stringProp'
   null
 
 KtNameReferenceExpression(641,656): 'NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedInheritor>
 
 KtOperationReferenceExpression(657,659): '?:'
   null
 
 KtNameReferenceExpression(660,670): 'stringProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtCallExpression(676,733): 'receive<MyClass>(NestedInheritor ?: getNestedInheritor())'
   KaSymbolResolutionError:
@@ -325,7 +359,11 @@ KtCallExpression(676,733): 'receive<MyClass>(NestedInheritor ?: getNestedInherit
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(676,683): 'receive'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtTypeArgumentList(683,692): '<MyClass>'
   null
@@ -352,7 +390,9 @@ KtBinaryExpression(693,732): 'NestedInheritor ?: getNestedInheritor()'
   null
 
 KtNameReferenceExpression(693,708): 'NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedInheritor>
 
 KtOperationReferenceExpression(709,711): '?:'
   null
@@ -363,7 +403,9 @@ KtCallExpression(712,732): 'getNestedInheritor()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getNestedInheritor>
 
 KtNameReferenceExpression(712,730): 'getNestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getNestedInheritor>
 
 KtValueArgumentList(730,732): '()'
   null

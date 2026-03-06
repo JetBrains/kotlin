@@ -83,7 +83,10 @@ KtCallExpression(155,161): 'TODO()'
     ]
 
 KtNameReferenceExpression(155,159): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(159,161): '()'
   null
@@ -117,7 +120,11 @@ KtCallExpression(203,213): 'foo(id(X))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
 
 KtNameReferenceExpression(203,206): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
 
 KtValueArgumentList(206,213): '(id(X))'
   null
@@ -133,7 +140,11 @@ KtCallExpression(207,212): 'id(X)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(207,209): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(209,212): '(X)'
   null
@@ -142,7 +153,9 @@ KtValueArgument(210,211): 'X'
   null
 
 KtNameReferenceExpression(210,211): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtCallExpression(218,228): 'foo(id(L))'
   KaSymbolResolutionSuccess:
@@ -151,7 +164,10 @@ KtCallExpression(218,228): 'foo(id(L))'
     ]
 
 KtNameReferenceExpression(218,221): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(221,228): '(id(L))'
   null
@@ -166,7 +182,10 @@ KtCallExpression(222,227): 'id(L)'
     ]
 
 KtNameReferenceExpression(222,224): 'id'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtValueArgumentList(224,227): '(L)'
   null
@@ -175,7 +194,10 @@ KtValueArgument(225,226): 'L'
   null
 
 KtNameReferenceExpression(225,226): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtCallExpression(233,252): 'foo(id(UNRESOLVED))'
   KaSymbolResolutionError:
@@ -185,7 +207,11 @@ KtCallExpression(233,252): 'foo(id(UNRESOLVED))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
 
 KtNameReferenceExpression(233,236): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
 
 KtValueArgumentList(236,252): '(id(UNRESOLVED))'
   null
@@ -201,7 +227,11 @@ KtCallExpression(237,251): 'id(UNRESOLVED)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(237,239): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(239,251): '(UNRESOLVED)'
   null
@@ -210,4 +240,6 @@ KtValueArgument(240,250): 'UNRESOLVED'
   null
 
 KtNameReferenceExpression(240,250): 'UNRESOLVED'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: UNRESOLVED>

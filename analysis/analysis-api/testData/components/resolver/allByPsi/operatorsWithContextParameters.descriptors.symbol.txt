@@ -647,7 +647,10 @@ KtCallExpression(805,808): 'A()'
     ]
 
 KtNameReferenceExpression(805,806): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(806,808): '()'
   null
@@ -662,7 +665,10 @@ KtCallExpression(821,838): 'SimpleOperators()'
     ]
 
 KtNameReferenceExpression(821,836): 'SimpleOperators'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SimpleOperators
+    ]
 
 KtValueArgumentList(836,838): '()'
   null
@@ -674,7 +680,10 @@ KtCallExpression(843,1229): 'with(A()){'
     ]
 
 KtNameReferenceExpression(843,847): 'with'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+    ]
 
 KtValueArgumentList(847,852): '(A())'
   null
@@ -689,7 +698,10 @@ KtCallExpression(848,851): 'A()'
     ]
 
 KtNameReferenceExpression(848,849): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(849,851): '()'
   null
@@ -725,7 +737,10 @@ KtOperationReferenceExpression(890,891): '+'
   null
 
 KtNameReferenceExpression(891,899): 'thisProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var thisProp: A
+    ]
 
 KtPrefixExpression(908,910): '+a'
   KaSymbolResolutionSuccess:
@@ -737,7 +752,10 @@ KtOperationReferenceExpression(908,909): '+'
   null
 
 KtNameReferenceExpression(909,910): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtBinaryExpression(919,931): 'thisProp + 1'
   KaSymbolResolutionSuccess:
@@ -746,7 +764,10 @@ KtBinaryExpression(919,931): 'thisProp + 1'
     ]
 
 KtNameReferenceExpression(919,927): 'thisProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var thisProp: A
+    ]
 
 KtOperationReferenceExpression(928,929): '+'
   null
@@ -761,7 +782,10 @@ KtBinaryExpression(940,945): 'a + 1'
     ]
 
 KtNameReferenceExpression(940,941): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtOperationReferenceExpression(942,943): '+'
   null
@@ -776,7 +800,10 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
     ]
 
 KtNameReferenceExpression(954,962): 'thisProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var thisProp: A
+    ]
 
 KtContainerNode(962,965): '[1]'
   null
@@ -791,7 +818,10 @@ KtArrayAccessExpression(974,978): 'a[1]'
     ]
 
 KtNameReferenceExpression(974,975): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtContainerNode(975,978): '[1]'
   null
@@ -809,7 +839,10 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
     ]
 
 KtNameReferenceExpression(987,995): 'thisProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var thisProp: A
+    ]
 
 KtContainerNode(995,998): '[1]'
   null
@@ -827,7 +860,10 @@ KtCallExpression(1001,1004): 'A()'
     ]
 
 KtNameReferenceExpression(1001,1002): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(1002,1004): '()'
   null
@@ -842,7 +878,10 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
     ]
 
 KtNameReferenceExpression(1013,1014): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtContainerNode(1014,1017): '[1]'
   null
@@ -860,7 +899,10 @@ KtCallExpression(1020,1023): 'A()'
     ]
 
 KtNameReferenceExpression(1020,1021): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(1021,1023): '()'
   null
@@ -872,7 +914,10 @@ KtCallExpression(1032,1042): 'thisProp()'
     ]
 
 KtNameReferenceExpression(1032,1040): 'thisProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var thisProp: A
+    ]
 
 KtValueArgumentList(1040,1042): '()'
   null
@@ -884,7 +929,10 @@ KtCallExpression(1051,1054): 'a()'
     ]
 
 KtNameReferenceExpression(1051,1052): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtValueArgumentList(1052,1054): '()'
   null
@@ -896,7 +944,10 @@ KtBinaryExpression(1063,1076): 'thisProp += 1'
     ]
 
 KtNameReferenceExpression(1063,1071): 'thisProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var thisProp: A
+    ]
 
 KtOperationReferenceExpression(1072,1074): '+='
   null
@@ -911,7 +962,10 @@ KtBinaryExpression(1085,1091): 'a += 1'
     ]
 
 KtNameReferenceExpression(1085,1086): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtOperationReferenceExpression(1087,1089): '+='
   null
@@ -927,7 +981,10 @@ KtPostfixExpression(1100,1110): 'thisProp++'
     ]
 
 KtNameReferenceExpression(1100,1108): 'thisProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var thisProp: A
+    ]
 
 KtOperationReferenceExpression(1108,1110): '++'
   null
@@ -939,7 +996,10 @@ KtBinaryExpression(1119,1126): 'a = a++'
     ]
 
 KtNameReferenceExpression(1119,1120): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtOperationReferenceExpression(1121,1122): '='
   null
@@ -952,7 +1012,10 @@ KtPostfixExpression(1123,1126): 'a++'
     ]
 
 KtNameReferenceExpression(1123,1124): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtOperationReferenceExpression(1124,1126): '++'
   null
@@ -964,7 +1027,10 @@ KtBinaryExpression(1136,1141): 'b + 1'
     ]
 
 KtNameReferenceExpression(1136,1137): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtOperationReferenceExpression(1138,1139): '+'
   null
@@ -982,7 +1048,10 @@ KtOperationReferenceExpression(1150,1151): '+'
   null
 
 KtNameReferenceExpression(1151,1152): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtArrayAccessExpression(1161,1165): 'b[1]'
   KaSymbolResolutionSuccess:
@@ -991,7 +1060,10 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
     ]
 
 KtNameReferenceExpression(1161,1162): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtContainerNode(1162,1165): '[1]'
   null
@@ -1009,7 +1081,10 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
     ]
 
 KtNameReferenceExpression(1174,1175): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtContainerNode(1175,1178): '[1]'
   null
@@ -1027,7 +1102,10 @@ KtCallExpression(1181,1184): 'A()'
     ]
 
 KtNameReferenceExpression(1181,1182): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(1182,1184): '()'
   null
@@ -1039,7 +1117,10 @@ KtCallExpression(1193,1196): 'b()'
     ]
 
 KtNameReferenceExpression(1193,1194): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtValueArgumentList(1194,1196): '()'
   null
@@ -1051,7 +1132,10 @@ KtBinaryExpression(1205,1211): 'b += 1'
     ]
 
 KtNameReferenceExpression(1205,1206): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtOperationReferenceExpression(1207,1209): '+='
   null
@@ -1067,7 +1151,10 @@ KtPostfixExpression(1220,1223): 'b++'
     ]
 
 KtNameReferenceExpression(1220,1221): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtOperationReferenceExpression(1221,1223): '++'
   null
@@ -1091,7 +1178,10 @@ KtCallExpression(1268,1271): 'A()'
     ]
 
 KtNameReferenceExpression(1268,1269): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(1269,1271): '()'
   null
@@ -1106,7 +1196,10 @@ KtCallExpression(1284,1301): 'SimpleOperators()'
     ]
 
 KtNameReferenceExpression(1284,1299): 'SimpleOperators'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SimpleOperators
+    ]
 
 KtValueArgumentList(1299,1301): '()'
   null
@@ -1121,7 +1214,10 @@ KtOperationReferenceExpression(1307,1308): '+'
   null
 
 KtNameReferenceExpression(1308,1309): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtBinaryExpression(1314,1319): 'a + 1'
   KaSymbolResolutionSuccess:
@@ -1130,7 +1226,10 @@ KtBinaryExpression(1314,1319): 'a + 1'
     ]
 
 KtNameReferenceExpression(1314,1315): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtOperationReferenceExpression(1316,1317): '+'
   null
@@ -1145,7 +1244,10 @@ KtArrayAccessExpression(1324,1328): 'a[1]'
     ]
 
 KtNameReferenceExpression(1324,1325): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtContainerNode(1325,1328): '[1]'
   null
@@ -1163,7 +1265,10 @@ KtArrayAccessExpression(1333,1337): 'a[1]'
     ]
 
 KtNameReferenceExpression(1333,1334): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtContainerNode(1334,1337): '[1]'
   null
@@ -1181,7 +1286,10 @@ KtCallExpression(1340,1343): 'A()'
     ]
 
 KtNameReferenceExpression(1340,1341): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(1341,1343): '()'
   null
@@ -1193,7 +1301,10 @@ KtCallExpression(1348,1351): 'a()'
     ]
 
 KtNameReferenceExpression(1348,1349): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtValueArgumentList(1349,1351): '()'
   null
@@ -1205,7 +1316,10 @@ KtBinaryExpression(1356,1362): 'a += 1'
     ]
 
 KtNameReferenceExpression(1356,1357): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtOperationReferenceExpression(1358,1360): '+='
   null
@@ -1221,7 +1335,10 @@ KtPostfixExpression(1367,1370): 'a++'
     ]
 
 KtNameReferenceExpression(1367,1368): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var a: A
+    ]
 
 KtOperationReferenceExpression(1368,1370): '++'
   null
@@ -1233,7 +1350,10 @@ KtBinaryExpression(1376,1381): 'b + 1'
     ]
 
 KtNameReferenceExpression(1376,1377): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtOperationReferenceExpression(1378,1379): '+'
   null
@@ -1251,7 +1371,10 @@ KtOperationReferenceExpression(1386,1387): '+'
   null
 
 KtNameReferenceExpression(1387,1388): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtArrayAccessExpression(1393,1397): 'b[1]'
   KaSymbolResolutionSuccess:
@@ -1260,7 +1383,10 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
     ]
 
 KtNameReferenceExpression(1393,1394): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtContainerNode(1394,1397): '[1]'
   null
@@ -1278,7 +1404,10 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
     ]
 
 KtNameReferenceExpression(1402,1403): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtContainerNode(1403,1406): '[1]'
   null
@@ -1296,7 +1425,10 @@ KtCallExpression(1409,1412): 'A()'
     ]
 
 KtNameReferenceExpression(1409,1410): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(1410,1412): '()'
   null
@@ -1308,7 +1440,10 @@ KtCallExpression(1417,1420): 'b()'
     ]
 
 KtNameReferenceExpression(1417,1418): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtValueArgumentList(1418,1420): '()'
   null
@@ -1320,7 +1455,10 @@ KtBinaryExpression(1425,1431): 'b += 1'
     ]
 
 KtNameReferenceExpression(1425,1426): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtOperationReferenceExpression(1427,1429): '+='
   null
@@ -1336,7 +1474,10 @@ KtPostfixExpression(1436,1439): 'b++'
     ]
 
 KtNameReferenceExpression(1436,1437): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var b: SimpleOperators
+    ]
 
 KtOperationReferenceExpression(1437,1439): '++'
   null

@@ -175,7 +175,7 @@ KtUserType(291,302): 'SealedClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(291,302): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -268,7 +268,7 @@ KtUserType(353,364): 'SealedClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(353,364): 'SealedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -379,7 +379,7 @@ KtUserType(442,458): 'SealedGeneric<T>'
   NO_CANDIDATES
 
 KtNameReferenceExpression(442,455): 'SealedGeneric'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -490,7 +490,7 @@ KtUserType(501,517): 'SealedGeneric<T>'
   NO_CANDIDATES
 
 KtNameReferenceExpression(501,514): 'SealedGeneric'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -572,7 +572,7 @@ KtWhenExpression(580,745): 'when (instance) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(586,594): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -608,7 +608,7 @@ KtDotQualifiedExpression(625,639): 'instance.prop1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(625,633): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -729,7 +729,7 @@ KtDotQualifiedExpression(700,714): 'instance.prop2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(700,708): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -811,7 +811,7 @@ KtCallExpression(715,725): 'toString()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(715,723): 'toString'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -831,7 +831,7 @@ KtNameReferenceExpression(715,723): 'toString'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -851,7 +851,7 @@ KtNameReferenceExpression(715,723): 'toString'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -956,7 +956,7 @@ KtWhenExpression(844,1009): 'when (instance) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(850,858): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -992,7 +992,7 @@ KtDotQualifiedExpression(889,903): 'instance.prop1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(889,897): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1113,7 +1113,7 @@ KtDotQualifiedExpression(964,978): 'instance.prop2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(964,972): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1195,7 +1195,7 @@ KtCallExpression(979,989): 'toString()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(979,987): 'toString'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1215,7 +1215,7 @@ KtNameReferenceExpression(979,987): 'toString'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1235,7 +1235,7 @@ KtNameReferenceExpression(979,987): 'toString'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1301,7 +1301,7 @@ KtWhenExpression(1062,1193): 'when(instance) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1067,1075): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1337,7 +1337,7 @@ KtDotQualifiedExpression(1106,1120): 'instance.prop1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1106,1114): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1437,7 +1437,7 @@ KtDotQualifiedExpression(1148,1162): 'instance.prop2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1148,1156): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1519,7 +1519,7 @@ KtCallExpression(1163,1173): 'toString()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1163,1171): 'toString'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1539,7 +1539,7 @@ KtNameReferenceExpression(1163,1171): 'toString'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1559,7 +1559,7 @@ KtNameReferenceExpression(1163,1171): 'toString'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1709,7 +1709,7 @@ KtWhenExpression(1373,1465): 'when (arg) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1379,1382): 'arg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1832,7 +1832,7 @@ KtWhenExpression(1553,1684): 'when(instance) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1558,1566): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1868,7 +1868,7 @@ KtDotQualifiedExpression(1597,1611): 'instance.prop1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1597,1605): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1968,7 +1968,7 @@ KtDotQualifiedExpression(1639,1653): 'instance.prop2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1639,1647): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2050,7 +2050,7 @@ KtCallExpression(1654,1664): 'toString()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1654,1662): 'toString'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2070,7 +2070,7 @@ KtNameReferenceExpression(1654,1662): 'toString'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2090,7 +2090,7 @@ KtNameReferenceExpression(1654,1662): 'toString'
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2165,7 +2165,7 @@ KtIsExpression(1745,1772): 'instance is SealedInterface'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1745,1753): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2201,7 +2201,7 @@ KtIsExpression(1776,1819): 'instance is SealedInterface.NestedInheritor'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1776,1784): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2249,7 +2249,7 @@ KtWhenExpression(1838,1998): 'when(instance) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1843,1851): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2285,7 +2285,7 @@ KtDotQualifiedExpression(1889,1902): 'instance.prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1889,1897): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2324,7 +2324,7 @@ KtDotQualifiedExpression(1943,1962): 'instance.propNested'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1943,1951): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2405,7 +2405,7 @@ KtIsExpression(2079,2106): 'instance is SealedInterface'
   NO_CANDIDATES
 
 KtNameReferenceExpression(2079,2087): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2441,7 +2441,7 @@ KtIsExpression(2110,2125): 'instance is Any'
   NO_CANDIDATES
 
 KtNameReferenceExpression(2110,2118): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2483,7 +2483,7 @@ KtWhenExpression(2144,2304): 'when(instance) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(2149,2157): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2519,7 +2519,7 @@ KtDotQualifiedExpression(2195,2208): 'instance.prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(2195,2203): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2558,7 +2558,7 @@ KtDotQualifiedExpression(2249,2268): 'instance.propNested'
   NO_CANDIDATES
 
 KtNameReferenceExpression(2249,2257): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2666,7 +2666,7 @@ KtWhenExpression(2428,2546): 'when(instance) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(2433,2441): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2702,7 +2702,7 @@ KtDotQualifiedExpression(2471,2484): 'instance.prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(2471,2479): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2741,7 +2741,7 @@ KtDotQualifiedExpression(2512,2526): 'instance.prop1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(2512,2520): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2819,7 +2819,7 @@ KtNameReferenceExpression(2598,2604): 'JClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(2605,2615): 'staticProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2893,7 +2893,7 @@ KtDotQualifiedExpression(2643,2650): 'i.prop1'
     isInBestCandidates = false
 
 KtNameReferenceExpression(2643,2644): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2911,7 +2911,7 @@ KtNameReferenceExpression(2643,2644): 'i'
     isInBestCandidates = true
 
 KtNameReferenceExpression(2645,2650): 'prop1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2931,7 +2931,7 @@ KtNameReferenceExpression(2645,2650): 'prop1'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -3008,7 +3008,7 @@ KtDotQualifiedExpression(2675,2682): 'i.prop2'
     isInBestCandidates = false
 
 KtNameReferenceExpression(2675,2676): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -3026,7 +3026,7 @@ KtNameReferenceExpression(2675,2676): 'i'
     isInBestCandidates = true
 
 KtNameReferenceExpression(2677,2682): 'prop2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3046,7 +3046,7 @@ KtNameReferenceExpression(2677,2682): 'prop2'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -3142,7 +3142,7 @@ KtUserType(2752,2766): 'UnsafeVariance'
   NO_CANDIDATES
 
 KtNameReferenceExpression(2752,2766): 'UnsafeVariance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3238,7 +3238,7 @@ KtDotQualifiedExpression(2842,2847): 'arg.a'
     isInBestCandidates = true
 
 KtNameReferenceExpression(2842,2845): 'arg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -3256,7 +3256,7 @@ KtNameReferenceExpression(2842,2845): 'arg'
     isInBestCandidates = true
 
 KtNameReferenceExpression(2846,2847): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

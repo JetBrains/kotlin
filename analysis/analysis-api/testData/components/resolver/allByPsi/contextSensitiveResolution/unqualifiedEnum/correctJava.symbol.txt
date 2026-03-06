@@ -29,7 +29,10 @@ KtWhenExpression(56,106): 'when (javaEnum) {'
   null
 
 KtNameReferenceExpression(62,70): 'javaEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      javaEnum: JavaEnum
+    ]
 
 KtWhenEntry(78,88): 'FIRST -> 1'
   null
@@ -38,7 +41,10 @@ KtWhenConditionWithExpression(78,83): 'FIRST'
   null
 
 KtNameReferenceExpression(78,83): 'FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaEnum.FIRST
+    ]
 
 KtConstantExpression(87,88): '1'
   null
@@ -50,7 +56,10 @@ KtWhenConditionWithExpression(93,99): 'SECOND'
   null
 
 KtNameReferenceExpression(93,99): 'SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaEnum.SECOND
+    ]
 
 KtConstantExpression(103,104): '2'
   null

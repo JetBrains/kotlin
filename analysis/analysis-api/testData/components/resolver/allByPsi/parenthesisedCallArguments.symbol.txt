@@ -161,7 +161,10 @@ KtCallExpression(202,208): 'foo(3)'
     ]
 
 KtNameReferenceExpression(202,205): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(x: kotlin.Int): kotlin.Unit
+    ]
 
 KtValueArgumentList(205,208): '(3)'
   null
@@ -179,7 +182,10 @@ KtCallExpression(213,223): 'foo(((5)))'
     ]
 
 KtNameReferenceExpression(213,216): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(x: kotlin.Int): kotlin.Unit
+    ]
 
 KtValueArgumentList(216,223): '(((5)))'
   null
@@ -203,7 +209,10 @@ KtCallExpression(228,242): 'foo(x = ((5)))'
     ]
 
 KtNameReferenceExpression(228,231): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(x: kotlin.Int): kotlin.Unit
+    ]
 
 KtValueArgumentList(231,242): '(x = ((5)))'
   null
@@ -233,7 +242,10 @@ KtCallExpression(247,266): 'foo((((5 as Int))))'
     ]
 
 KtNameReferenceExpression(247,250): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(x: kotlin.Int): kotlin.Unit
+    ]
 
 KtValueArgumentList(250,266): '((((5 as Int))))'
   null
@@ -275,7 +287,10 @@ KtCallExpression(271,294): 'foo(x = (((5 as Int))))'
     ]
 
 KtNameReferenceExpression(271,274): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(x: kotlin.Int): kotlin.Unit
+    ]
 
 KtValueArgumentList(274,294): '(x = (((5 as Int))))'
   null
@@ -323,7 +338,10 @@ KtCallExpression(300,368): 'foo((((when (((value))) {'
     ]
 
 KtNameReferenceExpression(300,303): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(x: kotlin.Int): kotlin.Unit
+    ]
 
 KtValueArgumentList(303,368): '((((when (((value))) {'
   null
@@ -350,7 +368,10 @@ KtParenthesizedExpression(314,321): '(value)'
   null
 
 KtNameReferenceExpression(315,320): 'value'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var value: kotlin.Int
+    ]
 
 KtWhenEntry(334,340): '1 -> 1'
   null
@@ -377,7 +398,10 @@ KtCallExpression(374,394): 'foo(((((++value)))))'
     ]
 
 KtNameReferenceExpression(374,377): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(x: kotlin.Int): kotlin.Unit
+    ]
 
 KtValueArgumentList(377,394): '(((((++value)))))'
   null
@@ -408,7 +432,10 @@ KtOperationReferenceExpression(382,384): '++'
   null
 
 KtNameReferenceExpression(384,389): 'value'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var value: kotlin.Int
+    ]
 
 KtCallExpression(400,426): 'fooVararg((5), (5 as Int))'
   KaSymbolResolutionSuccess:
@@ -417,7 +444,10 @@ KtCallExpression(400,426): 'fooVararg((5), (5 as Int))'
     ]
 
 KtNameReferenceExpression(400,409): 'fooVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /fooVararg(vararg x: kotlin.Int): kotlin.Unit
+    ]
 
 KtValueArgumentList(409,426): '((5), (5 as Int))'
   null
@@ -462,7 +492,10 @@ KtCallExpression(431,458): 'fooVararg(*(intArrayOf(5)))'
     ]
 
 KtNameReferenceExpression(431,440): 'fooVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /fooVararg(vararg x: kotlin.Int): kotlin.Unit
+    ]
 
 KtValueArgumentList(440,458): '(*(intArrayOf(5)))'
   null
@@ -480,7 +513,10 @@ KtCallExpression(443,456): 'intArrayOf(5)'
     ]
 
 KtNameReferenceExpression(443,453): 'intArrayOf'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+    ]
 
 KtValueArgumentList(453,456): '(5)'
   null
@@ -498,7 +534,10 @@ KtCallExpression(463,493): 'fooVararg(x = (intArrayOf(5)))'
     ]
 
 KtNameReferenceExpression(463,472): 'fooVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /fooVararg(vararg x: kotlin.Int): kotlin.Unit
+    ]
 
 KtValueArgumentList(472,493): '(x = (intArrayOf(5)))'
   null
@@ -522,7 +561,10 @@ KtCallExpression(478,491): 'intArrayOf(5)'
     ]
 
 KtNameReferenceExpression(478,488): 'intArrayOf'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+    ]
 
 KtValueArgumentList(488,491): '(5)'
   null
@@ -540,7 +582,10 @@ KtCallExpression(499,523): 'fooLambda((({ _ -> 5})))'
     ]
 
 KtNameReferenceExpression(499,508): 'fooLambda'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /fooLambda(lambda: (@R|kotlin.ParameterName|(name = String(x))  kotlin.Int) -> kotlin.Int): kotlin.Unit
+    ]
 
 KtValueArgumentList(508,523): '((({ _ -> 5})))'
   null
@@ -579,7 +624,10 @@ KtCallExpression(529,554): 'fooSam((((MySam { 5 }))))'
     ]
 
 KtNameReferenceExpression(529,535): 'fooSam'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /fooSam(sam: MySam): kotlin.Unit
+    ]
 
 KtValueArgumentList(535,554): '((((MySam { 5 }))))'
   null
@@ -603,7 +651,10 @@ KtCallExpression(539,550): 'MySam { 5 }'
     ]
 
 KtNameReferenceExpression(539,544): 'MySam'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySam(function: () -> kotlin.Int): MySam
+    ]
 
 KtLambdaArgument(545,550): '{ 5 }'
   null

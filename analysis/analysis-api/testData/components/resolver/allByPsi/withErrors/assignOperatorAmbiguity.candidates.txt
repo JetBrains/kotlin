@@ -476,7 +476,7 @@ KtCallExpression(494,500): 'Test()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(494,498): 'Test'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

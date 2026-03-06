@@ -136,7 +136,7 @@ KtValueArgument(161,162): 'X'
   NO_CANDIDATES
 
 KtNameReferenceExpression(161,162): 'X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -293,7 +293,7 @@ KtValueArgument(237,238): 'X'
   NO_CANDIDATES
 
 KtNameReferenceExpression(237,238): 'X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -317,7 +317,7 @@ KtValueArgument(240,241): 'Y'
   NO_CANDIDATES
 
 KtNameReferenceExpression(240,241): 'Y'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -476,7 +476,7 @@ KtCollectionLiteralExpression(264,270): '[X, Y]'
     isInBestCandidates = true
 
 KtNameReferenceExpression(265,266): 'X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -497,7 +497,7 @@ KtNameReferenceExpression(265,266): 'X'
     isInBestCandidates = true
 
 KtNameReferenceExpression(268,269): 'Y'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -688,7 +688,7 @@ KtCollectionLiteralExpression(346,349): '[X]'
     isInBestCandidates = true
 
 KtNameReferenceExpression(347,348): 'X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -840,7 +840,7 @@ KtCallExpression(371,381): 'arrayOf(X)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(371,378): 'arrayOf'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -882,7 +882,7 @@ KtValueArgument(379,380): 'X'
   NO_CANDIDATES
 
 KtNameReferenceExpression(379,380): 'X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1022,7 +1022,7 @@ KtValueArgument(447,456): 'MAX_VALUE'
   NO_CANDIDATES
 
 KtNameReferenceExpression(447,456): 'MAX_VALUE'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1138,7 +1138,7 @@ KtValueArgument(484,491): 'RUNTIME'
   NO_CANDIDATES
 
 KtNameReferenceExpression(484,491): 'RUNTIME'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1256,7 +1256,7 @@ KtValueArgument(501,506): 'CLASS'
   NO_CANDIDATES
 
 KtNameReferenceExpression(501,506): 'CLASS'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1280,7 +1280,7 @@ KtValueArgument(508,516): 'PROPERTY'
   NO_CANDIDATES
 
 KtNameReferenceExpression(508,516): 'PROPERTY'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

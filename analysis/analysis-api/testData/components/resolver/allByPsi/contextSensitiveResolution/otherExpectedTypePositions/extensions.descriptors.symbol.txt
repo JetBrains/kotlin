@@ -62,7 +62,10 @@ KtCallExpression(168,177): 'MyClass()'
     ]
 
 KtNameReferenceExpression(168,175): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(175,177): '()'
   null
@@ -104,7 +107,10 @@ KtCallExpression(228,244): 'foo(MyClass.bar)'
     ]
 
 KtNameReferenceExpression(228,231): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(231,244): '(MyClass.bar)'
   null
@@ -124,7 +130,12 @@ KtNameReferenceExpression(232,239): 'MyClass'
   null
 
 KtNameReferenceExpression(240,243): 'bar'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      val bar: MyClass2
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
+    public val MyClass2.Companion.bar: MyClass2 defined in root package in file extensions.kt>
 
 KtCallExpression(249,257): 'foo(bar)'
   KaSymbolResolutionSuccess:
@@ -133,7 +144,10 @@ KtCallExpression(249,257): 'foo(bar)'
     ]
 
 KtNameReferenceExpression(249,252): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(252,257): '(bar)'
   null
@@ -142,7 +156,9 @@ KtValueArgument(253,256): 'bar'
   null
 
 KtNameReferenceExpression(253,256): 'bar'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: bar>
 
 KtClass(261,300): 'class MyClass2 {'
   null
@@ -196,7 +212,10 @@ KtCallExpression(347,357): 'MyClass2()'
     ]
 
 KtNameReferenceExpression(347,355): 'MyClass2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass2
+    ]
 
 KtValueArgumentList(355,357): '()'
   null
@@ -238,7 +257,10 @@ KtCallExpression(403,421): 'foo2(MyClass2.bar)'
     ]
 
 KtNameReferenceExpression(403,407): 'foo2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo2(a: MyClass2): kotlin.Unit
+    ]
 
 KtValueArgumentList(407,421): '(MyClass2.bar)'
   null
@@ -256,7 +278,10 @@ KtNameReferenceExpression(408,416): 'MyClass2'
   null
 
 KtNameReferenceExpression(417,420): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val bar: MyClass2
+    ]
 
 KtCallExpression(426,435): 'foo2(bar)'
   KaSymbolResolutionSuccess:
@@ -265,7 +290,10 @@ KtCallExpression(426,435): 'foo2(bar)'
     ]
 
 KtNameReferenceExpression(426,430): 'foo2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo2(a: MyClass2): kotlin.Unit
+    ]
 
 KtValueArgumentList(430,435): '(bar)'
   null
@@ -274,4 +302,6 @@ KtValueArgument(431,434): 'bar'
   null
 
 KtNameReferenceExpression(431,434): 'bar'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: bar>

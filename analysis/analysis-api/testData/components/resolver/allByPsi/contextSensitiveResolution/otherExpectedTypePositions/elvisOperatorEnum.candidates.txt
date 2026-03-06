@@ -47,7 +47,7 @@ KtNameReferenceExpression(174,180): 'MyEnum'
   NO_CANDIDATES
 
 KtNameReferenceExpression(183,190): 'Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -86,7 +86,7 @@ KtParameterList(248,250): '()'
   NO_CANDIDATES
 
 KtNameReferenceExpression(253,260): 'Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -155,7 +155,7 @@ KtDotQualifiedExpression(316,330): 'MyEnum.Option1'
     isInBestCandidates = true
 
 KtNameReferenceExpression(316,322): 'MyEnum'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -174,7 +174,7 @@ KtNameReferenceExpression(316,322): 'MyEnum'
     isInBestCandidates = false
 
 KtNameReferenceExpression(323,330): 'Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -219,7 +219,7 @@ KtBinaryExpression(372,390): 'Option1 ?: Option2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(372,379): 'Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -243,7 +243,7 @@ KtOperationReferenceExpression(380,382): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(383,390): 'Option2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -282,7 +282,7 @@ KtBinaryExpression(414,432): 'Option1 ?: Option2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(414,421): 'Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -306,7 +306,7 @@ KtOperationReferenceExpression(422,424): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(425,432): 'Option2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -342,7 +342,7 @@ KtBinaryExpression(455,474): 'enumProp ?: Option2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(455,463): 'enumProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -366,7 +366,7 @@ KtOperationReferenceExpression(464,466): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(467,474): 'Option2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -402,7 +402,7 @@ KtBinaryExpression(497,519): 'enumProp ?: stringProp'
   NO_CANDIDATES
 
 KtNameReferenceExpression(497,505): 'enumProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -426,7 +426,7 @@ KtOperationReferenceExpression(506,508): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(509,519): 'stringProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -462,7 +462,7 @@ KtBinaryExpression(542,564): 'stringProp ?: enumProp'
   NO_CANDIDATES
 
 KtNameReferenceExpression(542,552): 'stringProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -486,7 +486,7 @@ KtOperationReferenceExpression(553,555): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(556,564): 'enumProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -534,7 +534,7 @@ KtOperationReferenceExpression(599,601): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(602,610): 'enumProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -591,7 +591,7 @@ KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(616,623): 'receive'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -651,7 +651,7 @@ KtBinaryExpression(632,650): 'Option1 ?: Option2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(632,639): 'Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -675,7 +675,7 @@ KtOperationReferenceExpression(640,642): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(643,650): 'Option2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -733,7 +733,7 @@ KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(656,663): 'receive'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -794,7 +794,7 @@ KtBinaryExpression(672,694): 'enumProp ?: stringProp'
   NO_CANDIDATES
 
 KtNameReferenceExpression(672,680): 'enumProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -818,7 +818,7 @@ KtOperationReferenceExpression(681,683): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(684,694): 'stringProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -875,7 +875,7 @@ KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
     isInBestCandidates = true
 
 KtNameReferenceExpression(700,707): 'receive'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -935,7 +935,7 @@ KtBinaryExpression(716,739): 'enumProp ?: getOption()'
   NO_CANDIDATES
 
 KtNameReferenceExpression(716,724): 'enumProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

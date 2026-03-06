@@ -64,7 +64,7 @@ KtCallExpression(49,58): 'foo(s = )'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
 
 KtNameReferenceExpression(49,52): 'foo'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

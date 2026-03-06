@@ -155,7 +155,10 @@ KtCallExpression(270,276): 'TODO()'
     ]
 
 KtNameReferenceExpression(270,274): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(274,276): '()'
   null
@@ -182,7 +185,9 @@ KtValueArgument(299,300): 'X'
   null
 
 KtNameReferenceExpression(299,300): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtCallExpression(306,316): 'foo(id(X))'
   KaSymbolResolutionError:
@@ -195,7 +200,14 @@ KtCallExpression(306,316): 'foo(id(X))'
     public fun foo(x: MyEnum2): Unit defined in root package in file multipleOverloads.kt>
 
 KtNameReferenceExpression(306,309): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(x: MyEnum1): kotlin.Unit,
+      /foo(x: MyEnum2): kotlin.Unit
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
+    public fun foo(x: MyEnum1): Unit defined in root package in file multipleOverloads.kt
+    public fun foo(x: MyEnum2): Unit defined in root package in file multipleOverloads.kt>
 
 KtValueArgumentList(309,316): '(id(X))'
   null
@@ -211,7 +223,11 @@ KtCallExpression(310,315): 'id(X)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(310,312): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(312,315): '(X)'
   null
@@ -220,7 +236,9 @@ KtValueArgument(313,314): 'X'
   null
 
 KtNameReferenceExpression(313,314): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtCallExpression(321,335): 'foo(MyEnum1.X)'
   KaSymbolResolutionSuccess:
@@ -229,7 +247,10 @@ KtCallExpression(321,335): 'foo(MyEnum1.X)'
     ]
 
 KtNameReferenceExpression(321,324): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(x: MyEnum1): kotlin.Unit
+    ]
 
 KtValueArgumentList(324,335): '(MyEnum1.X)'
   null
@@ -253,7 +274,10 @@ KtCallExpression(340,358): 'foo(id(MyEnum1.X))'
     ]
 
 KtNameReferenceExpression(340,343): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(x: MyEnum1): kotlin.Unit
+    ]
 
 KtValueArgumentList(343,358): '(id(MyEnum1.X))'
   null
@@ -268,7 +292,10 @@ KtCallExpression(344,357): 'id(MyEnum1.X)'
     ]
 
 KtNameReferenceExpression(344,346): 'id'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtValueArgumentList(346,357): '(MyEnum1.X)'
   null
@@ -292,7 +319,10 @@ KtCallExpression(364,370): 'bar(X)'
     ]
 
 KtNameReferenceExpression(364,367): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(x: MyEnum3): kotlin.Unit
+    ]
 
 KtValueArgumentList(367,370): '(X)'
   null
@@ -301,7 +331,9 @@ KtValueArgument(368,369): 'X'
   null
 
 KtNameReferenceExpression(368,369): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtCallExpression(375,385): 'bar(id(X))'
   KaSymbolResolutionError:
@@ -311,7 +343,11 @@ KtCallExpression(375,385): 'bar(id(X))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with bar>
 
 KtNameReferenceExpression(375,378): 'bar'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /bar(x: MyEnum3): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with bar>
 
 KtValueArgumentList(378,385): '(id(X))'
   null
@@ -327,7 +363,11 @@ KtCallExpression(379,384): 'id(X)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(379,381): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(381,384): '(X)'
   null
@@ -336,7 +376,9 @@ KtValueArgument(382,383): 'X'
   null
 
 KtNameReferenceExpression(382,383): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtNamedFunction(389,505): 'fun main2() {'
   null
@@ -402,7 +444,9 @@ KtValueArgument(466,467): 'X'
   null
 
 KtNameReferenceExpression(466,467): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtCallExpression(473,483): 'bar(id(X))'
   KaSymbolResolutionError:
@@ -415,7 +459,14 @@ KtCallExpression(473,483): 'bar(id(X))'
     local final fun bar(x: MyEnum2): Unit defined in main2>
 
 KtNameReferenceExpression(473,476): 'bar'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      bar(x: MyEnum1): kotlin.Unit,
+      bar(x: MyEnum2): kotlin.Unit
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
+    local final fun bar(x: MyEnum1): Unit defined in main2
+    local final fun bar(x: MyEnum2): Unit defined in main2>
 
 KtValueArgumentList(476,483): '(id(X))'
   null
@@ -431,7 +482,11 @@ KtCallExpression(477,482): 'id(X)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(477,479): 'id'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtValueArgumentList(479,482): '(X)'
   null
@@ -440,7 +495,9 @@ KtValueArgument(480,481): 'X'
   null
 
 KtNameReferenceExpression(480,481): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtCallExpression(489,503): 'bar(MyEnum3.X)'
   KaSymbolResolutionSuccess:
@@ -449,7 +506,10 @@ KtCallExpression(489,503): 'bar(MyEnum3.X)'
     ]
 
 KtNameReferenceExpression(489,492): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(x: MyEnum3): kotlin.Unit
+    ]
 
 KtValueArgumentList(492,503): '(MyEnum3.X)'
   null

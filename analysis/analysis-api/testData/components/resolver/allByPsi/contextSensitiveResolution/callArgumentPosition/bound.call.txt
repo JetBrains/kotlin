@@ -53,7 +53,7 @@ KtNameReferenceExpression(150,151): 'T'
   null
 
 KtNameReferenceExpression(155,158): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -117,7 +117,7 @@ KtCallExpression(185,208): 'boundHolder(EnumValue1)'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /boundHolder>
 
 KtNameReferenceExpression(185,196): 'boundHolder'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -161,7 +161,7 @@ KtValueArgument(197,207): 'EnumValue1'
   null
 
 KtNameReferenceExpression(197,207): 'EnumValue1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'EnumValue1'.>
 
@@ -210,7 +210,7 @@ KtCallExpression(238,269): 'boundHolder<MyEnum>(EnumValue1)'
       }
 
 KtNameReferenceExpression(238,249): 'boundHolder'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -266,7 +266,7 @@ KtValueArgument(258,268): 'EnumValue1'
   null
 
 KtNameReferenceExpression(258,268): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -361,7 +361,7 @@ KtBinaryExpression(331,350): 'value == EnumValue1'
       }
 
 KtNameReferenceExpression(331,336): 'value'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -414,7 +414,7 @@ KtOperationReferenceExpression(337,339): '=='
       }
 
 KtNameReferenceExpression(340,350): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -506,7 +506,7 @@ KtBinaryExpression(399,418): 'value == EnumValue1'
       }
 
 KtNameReferenceExpression(399,404): 'value'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -559,7 +559,7 @@ KtOperationReferenceExpression(405,407): '=='
       }
 
 KtNameReferenceExpression(408,418): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

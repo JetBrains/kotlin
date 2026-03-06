@@ -1,2 +1,5 @@
 KtNameReferenceExpression(83,94): 'setListener'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaTest.SomeJavaClass.setListener(<dispatch receiver>: JavaTest.SomeJavaClass, listener: JavaTest.SAMInterface!): kotlin.Unit
+    ]

@@ -74,7 +74,7 @@ KtDotQualifiedExpression(134,146): 'Second.THREE'
     isInBestCandidates = true
 
 KtNameReferenceExpression(134,140): 'Second'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -93,7 +93,7 @@ KtNameReferenceExpression(134,140): 'Second'
     isInBestCandidates = false
 
 KtNameReferenceExpression(141,146): 'THREE'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -135,7 +135,7 @@ KtWhenExpression(168,206): 'when (f) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(174,175): 'f'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -159,7 +159,7 @@ KtWhenConditionWithExpression(183,186): 'ONE'
   NO_CANDIDATES
 
 KtNameReferenceExpression(183,186): 'ONE'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -186,7 +186,7 @@ KtWhenConditionWithExpression(196,199): 'TWO'
   NO_CANDIDATES
 
 KtNameReferenceExpression(196,199): 'TWO'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -231,7 +231,7 @@ KtWhenExpression(229,270): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(235,236): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -255,7 +255,7 @@ KtWhenConditionWithExpression(244,249): 'THREE'
   NO_CANDIDATES
 
 KtNameReferenceExpression(244,249): 'THREE'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -282,7 +282,7 @@ KtWhenConditionWithExpression(259,263): 'FOUR'
   NO_CANDIDATES
 
 KtNameReferenceExpression(259,263): 'FOUR'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

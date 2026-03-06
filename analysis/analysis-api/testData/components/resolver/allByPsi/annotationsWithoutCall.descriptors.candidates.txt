@@ -65,7 +65,7 @@ KtUserType(37,41): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(37,41): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

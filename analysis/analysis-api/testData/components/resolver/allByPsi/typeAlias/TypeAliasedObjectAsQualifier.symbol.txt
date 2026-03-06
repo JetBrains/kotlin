@@ -77,7 +77,10 @@ KtCallExpression(141,151): 'function()'
     ]
 
 KtNameReferenceExpression(141,149): 'function'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyObject.function(<dispatch receiver>: test.MyObject): kotlin.Unit
+    ]
 
 KtValueArgumentList(149,151): '()'
   null
@@ -92,7 +95,10 @@ KtNameReferenceExpression(156,163): 'MyAlias'
   null
 
 KtNameReferenceExpression(164,172): 'property'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val property: kotlin.Int
+    ]
 
 KtCallableReferenceExpression(178,195): 'MyAlias::function'
   KaSymbolResolutionSuccess:

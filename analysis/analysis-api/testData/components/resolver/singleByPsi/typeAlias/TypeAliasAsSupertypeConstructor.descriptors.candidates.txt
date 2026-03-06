@@ -1,5 +1,5 @@
 KtNameReferenceExpression(56,58): 'CA'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

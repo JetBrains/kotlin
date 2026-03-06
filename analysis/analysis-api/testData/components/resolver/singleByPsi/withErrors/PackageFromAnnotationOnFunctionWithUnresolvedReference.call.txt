@@ -1,4 +1,4 @@
 KtNameReferenceExpression(36,39): 'jvm'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JvmName2'.>

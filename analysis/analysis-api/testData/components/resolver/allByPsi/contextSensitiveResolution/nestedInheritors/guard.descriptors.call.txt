@@ -92,7 +92,7 @@ KtUserType(161,172): 'SealedClass'
   null
 
 KtNameReferenceExpression(161,172): 'SealedClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -177,7 +177,7 @@ KtUserType(210,225): 'SealedInheritor'
   null
 
 KtNameReferenceExpression(210,225): 'SealedInheritor'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -242,7 +242,7 @@ KtWhenExpression(308,436): 'when (instance) {'
   null
 
 KtNameReferenceExpression(314,322): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -271,7 +271,7 @@ KtUserType(337,352): 'SealedInheritor'
   null
 
 KtNameReferenceExpression(337,352): 'SealedInheritor'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritor>
 
@@ -302,7 +302,7 @@ KtDotQualifiedExpression(395,408): 'instance.prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtNameReferenceExpression(395,403): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -319,7 +319,7 @@ KtNameReferenceExpression(395,403): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(404,408): 'prop'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
@@ -417,7 +417,7 @@ KtUserType(530,539): 'OpenClass'
   null
 
 KtNameReferenceExpression(530,539): 'OpenClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -502,7 +502,7 @@ KtUserType(588,614): 'SealedInheritorOfOpenClass'
   null
 
 KtNameReferenceExpression(588,614): 'SealedInheritorOfOpenClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -567,7 +567,7 @@ KtWhenExpression(693,843): 'when (instance) {'
   null
 
 KtNameReferenceExpression(699,707): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -596,7 +596,7 @@ KtUserType(722,748): 'SealedInheritorOfOpenClass'
   null
 
 KtNameReferenceExpression(722,748): 'SealedInheritorOfOpenClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritorOfOpenClass>
 
@@ -627,7 +627,7 @@ KtDotQualifiedExpression(802,815): 'instance.prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtNameReferenceExpression(802,810): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -644,7 +644,7 @@ KtNameReferenceExpression(802,810): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(811,815): 'prop'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 

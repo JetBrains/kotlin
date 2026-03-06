@@ -447,7 +447,7 @@ KtIsExpression(533,561): 'instance is SealedInheritor1'
   null
 
 KtNameReferenceExpression(533,541): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -498,7 +498,7 @@ KtDotQualifiedExpression(565,579): 'instance.prop1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(565,573): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -515,7 +515,7 @@ KtNameReferenceExpression(565,573): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(574,579): 'prop1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -546,7 +546,7 @@ KtIsExpression(588,605): 'instance is Inner'
   null
 
 KtNameReferenceExpression(588,596): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -597,7 +597,7 @@ KtDotQualifiedExpression(609,627): 'instance.innerProp'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(609,617): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -614,7 +614,7 @@ KtNameReferenceExpression(609,617): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(618,627): 'innerProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -645,7 +645,7 @@ KtIsExpression(636,671): 'instance is IndirectSealedInheritor'
   null
 
 KtNameReferenceExpression(636,644): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -696,7 +696,7 @@ KtDotQualifiedExpression(675,689): 'instance.prop1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(675,683): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -713,7 +713,7 @@ KtNameReferenceExpression(675,683): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(684,689): 'prop1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -744,7 +744,7 @@ KtIsExpression(698,727): 'instance !is SealedInheritor2'
   null
 
 KtNameReferenceExpression(698,706): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -788,7 +788,7 @@ KtIsExpression(745,780): 'instance !is SealedSealedInheritor1'
   null
 
 KtNameReferenceExpression(745,753): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -868,7 +868,7 @@ KtWhenExpression(893,1158): 'when (instance) {'
   null
 
 KtNameReferenceExpression(899,907): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -922,7 +922,7 @@ KtDotQualifiedExpression(942,956): 'instance.prop1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(942,950): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -939,7 +939,7 @@ KtNameReferenceExpression(942,950): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(951,956): 'prop1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -998,7 +998,7 @@ KtDotQualifiedExpression(977,995): 'instance.innerProp'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(977,985): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1015,7 +1015,7 @@ KtNameReferenceExpression(977,985): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(986,995): 'innerProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1074,7 +1074,7 @@ KtDotQualifiedExpression(1034,1048): 'instance.prop1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1034,1042): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1091,7 +1091,7 @@ KtNameReferenceExpression(1034,1042): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1043,1048): 'prop1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1200,7 +1200,7 @@ KtWhenExpression(1228,1621): 'when (instance) {'
   null
 
 KtNameReferenceExpression(1234,1242): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1238,7 +1238,7 @@ KtIsExpression(1277,1312): 'instance is IndirectSealedInheritor'
   null
 
 KtNameReferenceExpression(1277,1285): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1289,7 +1289,7 @@ KtDotQualifiedExpression(1316,1330): 'instance.prop1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1316,1324): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1306,7 +1306,7 @@ KtNameReferenceExpression(1316,1324): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1325,1330): 'prop1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1349,7 +1349,7 @@ KtIsExpression(1383,1411): 'instance is SealedInheritor2'
   null
 
 KtNameReferenceExpression(1383,1391): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1400,7 +1400,7 @@ KtDotQualifiedExpression(1415,1429): 'instance.prop2'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1415,1423): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1417,7 +1417,7 @@ KtNameReferenceExpression(1415,1423): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1424,1429): 'prop2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1460,7 +1460,7 @@ KtIsExpression(1462,1490): 'instance is SealedInheritor1'
   null
 
 KtNameReferenceExpression(1462,1470): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1511,7 +1511,7 @@ KtDotQualifiedExpression(1494,1508): 'instance.prop1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1494,1502): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1528,7 +1528,7 @@ KtNameReferenceExpression(1494,1502): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1503,1508): 'prop1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1571,7 +1571,7 @@ KtIsExpression(1541,1575): 'instance is SealedSealedInheritor1'
   null
 
 KtNameReferenceExpression(1541,1549): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1622,7 +1622,7 @@ KtDotQualifiedExpression(1579,1593): 'instance.prop3'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1579,1587): 'instance'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1639,7 +1639,7 @@ KtNameReferenceExpression(1579,1587): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1588,1593): 'prop3'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:

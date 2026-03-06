@@ -92,4 +92,7 @@ KtValueArgument(79,80): 'x'
   null
 
 KtNameReferenceExpression(79,80): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x: kotlin.Int
+    ]

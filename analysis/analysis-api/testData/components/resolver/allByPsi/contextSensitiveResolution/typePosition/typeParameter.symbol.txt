@@ -143,7 +143,10 @@ KtNameReferenceExpression(247,251): 'Left'
   null
 
 KtNameReferenceExpression(255,256): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val x: kotlin.String
+    ]
 
 KtWhenEntry(261,274): 'is Right -> y'
   null
@@ -161,7 +164,10 @@ KtNameReferenceExpression(264,269): 'Right'
   null
 
 KtNameReferenceExpression(273,274): 'y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]
 
 KtNamedFunction(278,390): 'fun <T> T.getOrElse2() where T : MySealed, T : CharSequence = when (this) {'
   null
@@ -239,10 +245,14 @@ KtUserType(361,365): 'Left'
   null
 
 KtNameReferenceExpression(361,365): 'Left'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Left'.>
 
 KtNameReferenceExpression(369,370): 'x'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
 KtWhenEntry(375,388): 'is Right -> y'
   null
@@ -257,7 +267,11 @@ KtUserType(378,383): 'Right'
   null
 
 KtNameReferenceExpression(378,383): 'Right'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtNameReferenceExpression(387,388): 'y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>

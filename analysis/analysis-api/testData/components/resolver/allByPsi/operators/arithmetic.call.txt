@@ -223,7 +223,7 @@ KtCallExpression(248,251): 'A()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(248,249): 'A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -263,7 +263,7 @@ KtCallExpression(264,267): 'A()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(264,265): 'A'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -319,7 +319,7 @@ KtBinaryExpression(272,277): 'a + b'
       }
 
 KtNameReferenceExpression(272,273): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -372,7 +372,7 @@ KtOperationReferenceExpression(274,275): '+'
       }
 
 KtNameReferenceExpression(276,277): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -425,7 +425,7 @@ KtBinaryExpression(282,287): 'a - b'
       }
 
 KtNameReferenceExpression(282,283): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -478,7 +478,7 @@ KtOperationReferenceExpression(284,285): '-'
       }
 
 KtNameReferenceExpression(286,287): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -531,7 +531,7 @@ KtBinaryExpression(292,297): 'a * b'
       }
 
 KtNameReferenceExpression(292,293): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -584,7 +584,7 @@ KtOperationReferenceExpression(294,295): '*'
       }
 
 KtNameReferenceExpression(296,297): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -637,7 +637,7 @@ KtBinaryExpression(302,307): 'a / b'
       }
 
 KtNameReferenceExpression(302,303): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -690,7 +690,7 @@ KtOperationReferenceExpression(304,305): '/'
       }
 
 KtNameReferenceExpression(306,307): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -743,7 +743,7 @@ KtBinaryExpression(312,317): 'a % b'
       }
 
 KtNameReferenceExpression(312,313): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -796,7 +796,7 @@ KtOperationReferenceExpression(314,315): '%'
       }
 
 KtNameReferenceExpression(316,317): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

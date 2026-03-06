@@ -152,7 +152,7 @@ KtNameReferenceExpression(279,283): 'Left'
   null
 
 KtNameReferenceExpression(287,288): 'z'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -205,12 +205,12 @@ KtUserType(296,301): 'Right'
   null
 
 KtNameReferenceExpression(296,301): 'Right'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Right>
 
 KtNameReferenceExpression(305,306): 'y'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: y>
 

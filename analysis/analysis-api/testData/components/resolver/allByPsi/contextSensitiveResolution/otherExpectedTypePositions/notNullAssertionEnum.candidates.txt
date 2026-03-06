@@ -65,7 +65,7 @@ KtNameReferenceExpression(207,213): 'MyEnum'
   NO_CANDIDATES
 
 KtNameReferenceExpression(216,223): 'Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -104,7 +104,7 @@ KtParameterList(281,283): '()'
   NO_CANDIDATES
 
 KtNameReferenceExpression(286,293): 'Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -173,7 +173,7 @@ KtDotQualifiedExpression(349,363): 'MyEnum.Option1'
     isInBestCandidates = true
 
 KtNameReferenceExpression(349,355): 'MyEnum'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -192,7 +192,7 @@ KtNameReferenceExpression(349,355): 'MyEnum'
     isInBestCandidates = false
 
 KtNameReferenceExpression(356,363): 'Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -237,7 +237,7 @@ KtPostfixExpression(416,425): 'Option1!!'
   NO_CANDIDATES
 
 KtNameReferenceExpression(416,423): 'Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -276,7 +276,7 @@ KtPostfixExpression(448,458): 'enumProp!!'
   NO_CANDIDATES
 
 KtNameReferenceExpression(448,456): 'enumProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -315,7 +315,7 @@ KtPostfixExpression(481,493): 'stringProp!!'
   NO_CANDIDATES
 
 KtNameReferenceExpression(481,491): 'stringProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -375,7 +375,7 @@ KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(499,506): 'receive'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -435,7 +435,7 @@ KtPostfixExpression(515,524): 'Option1!!'
   NO_CANDIDATES
 
 KtNameReferenceExpression(515,522): 'Option1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -495,7 +495,7 @@ KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(530,537): 'receive'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -555,7 +555,7 @@ KtPostfixExpression(546,556): 'enumProp!!'
   NO_CANDIDATES
 
 KtNameReferenceExpression(546,554): 'enumProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -616,7 +616,7 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(562,569): 'receive'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -677,7 +677,7 @@ KtPostfixExpression(578,590): 'stringProp!!'
   NO_CANDIDATES
 
 KtNameReferenceExpression(578,588): 'stringProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

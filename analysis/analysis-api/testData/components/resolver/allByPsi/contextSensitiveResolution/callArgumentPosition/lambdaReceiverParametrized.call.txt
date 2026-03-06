@@ -286,7 +286,7 @@ KtCallExpression(433,439): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(433,437): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -335,7 +335,7 @@ KtCallExpression(489,505): 'InheritorClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(489,503): 'InheritorClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -490,7 +490,7 @@ KtCallExpression(676,685): 'lazy {""}'
       }
 
 KtNameReferenceExpression(676,680): 'lazy'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -572,7 +572,7 @@ KtCallExpression(716,722): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(716,720): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -699,7 +699,7 @@ KtCallExpression(869,942): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i
       }
 
 KtNameReferenceExpression(869,894): 'receiveParametrizedLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -812,7 +812,7 @@ KtBinaryExpression(920,940): 'i == InheritorObject'
       }
 
 KtNameReferenceExpression(920,921): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -903,7 +903,7 @@ KtCallExpression(947,1016): 'receiveParametrizedLambda<MyClass> { i: MyClass -> 
       }
 
 KtNameReferenceExpression(947,972): 'receiveParametrizedLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1016,7 +1016,7 @@ KtBinaryExpression(998,1014): 'i == propMyClass'
       }
 
 KtNameReferenceExpression(998,999): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1069,7 +1069,7 @@ KtOperationReferenceExpression(1000,1002): '=='
       }
 
 KtNameReferenceExpression(1003,1014): 'propMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1124,7 +1124,7 @@ KtCallExpression(1021,1097): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       }
 
 KtNameReferenceExpression(1021,1046): 'receiveParametrizedLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1237,7 +1237,7 @@ KtBinaryExpression(1072,1095): 'i == propInheritorClass'
       }
 
 KtNameReferenceExpression(1072,1073): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1290,7 +1290,7 @@ KtOperationReferenceExpression(1074,1076): '=='
       }
 
 KtNameReferenceExpression(1077,1095): 'propInheritorClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1345,7 +1345,7 @@ KtCallExpression(1102,1179): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       }
 
 KtNameReferenceExpression(1102,1127): 'receiveParametrizedLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1458,7 +1458,7 @@ KtBinaryExpression(1153,1177): 'i == propInheritorObject'
       }
 
 KtNameReferenceExpression(1153,1154): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1511,7 +1511,7 @@ KtOperationReferenceExpression(1155,1157): '=='
       }
 
 KtNameReferenceExpression(1158,1177): 'propInheritorObject'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1566,7 +1566,7 @@ KtCallExpression(1185,1247): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       }
 
 KtNameReferenceExpression(1185,1210): 'receiveParametrizedLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1679,7 +1679,7 @@ KtBinaryExpression(1236,1245): 'i == prop'
       }
 
 KtNameReferenceExpression(1236,1237): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1732,7 +1732,7 @@ KtOperationReferenceExpression(1238,1240): '=='
       }
 
 KtNameReferenceExpression(1241,1245): 'prop'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1787,7 +1787,7 @@ KtCallExpression(1252,1319): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       }
 
 KtNameReferenceExpression(1252,1277): 'receiveParametrizedLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1900,7 +1900,7 @@ KtBinaryExpression(1303,1317): 'i == superProp'
       }
 
 KtNameReferenceExpression(1303,1304): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1953,7 +1953,7 @@ KtOperationReferenceExpression(1305,1307): '=='
       }
 
 KtNameReferenceExpression(1308,1317): 'superProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2008,7 +2008,7 @@ KtCallExpression(1324,1391): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       }
 
 KtNameReferenceExpression(1324,1349): 'receiveParametrizedLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2121,7 +2121,7 @@ KtBinaryExpression(1375,1389): 'i == constProp'
       }
 
 KtNameReferenceExpression(1375,1376): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2174,7 +2174,7 @@ KtOperationReferenceExpression(1377,1379): '=='
       }
 
 KtNameReferenceExpression(1380,1389): 'constProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2229,7 +2229,7 @@ KtCallExpression(1396,1462): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       }
 
 KtNameReferenceExpression(1396,1421): 'receiveParametrizedLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2342,7 +2342,7 @@ KtBinaryExpression(1447,1460): 'i == lazyProp'
       }
 
 KtNameReferenceExpression(1447,1448): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2395,7 +2395,7 @@ KtOperationReferenceExpression(1449,1451): '=='
       }
 
 KtNameReferenceExpression(1452,1460): 'lazyProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2450,7 +2450,7 @@ KtCallExpression(1468,1538): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       }
 
 KtNameReferenceExpression(1468,1493): 'receiveParametrizedLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2563,7 +2563,7 @@ KtBinaryExpression(1519,1536): 'i == NestedObject'
       }
 
 KtNameReferenceExpression(1519,1520): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2654,7 +2654,7 @@ KtCallExpression(1543,1611): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       }
 
 KtNameReferenceExpression(1543,1568): 'receiveParametrizedLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2767,7 +2767,7 @@ KtBinaryExpression(1594,1609): 'i == lambdaProp'
       }
 
 KtNameReferenceExpression(1594,1595): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2820,7 +2820,7 @@ KtOperationReferenceExpression(1596,1598): '=='
       }
 
 KtNameReferenceExpression(1599,1609): 'lambdaProp'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2875,7 +2875,7 @@ KtCallExpression(1617,1681): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       }
 
 KtNameReferenceExpression(1617,1642): 'receiveParametrizedLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2988,7 +2988,7 @@ KtBinaryExpression(1668,1679): 'i == func()'
       }
 
 KtNameReferenceExpression(1668,1669): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -3046,7 +3046,7 @@ KtCallExpression(1673,1679): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1673,1677): 'func'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
@@ -3089,7 +3089,7 @@ KtCallExpression(1686,1755): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       }
 
 KtNameReferenceExpression(1686,1711): 'receiveParametrizedLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3202,7 +3202,7 @@ KtBinaryExpression(1737,1753): 'i == superFunc()'
       }
 
 KtNameReferenceExpression(1737,1738): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -3260,7 +3260,7 @@ KtCallExpression(1742,1753): 'superFunc()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1742,1751): 'superFunc'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
@@ -3303,7 +3303,7 @@ KtCallExpression(1760,1834): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       }
 
 KtNameReferenceExpression(1760,1785): 'receiveParametrizedLambda'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3416,7 +3416,7 @@ KtBinaryExpression(1811,1832): 'i == InheritorClass()'
       }
 
 KtNameReferenceExpression(1811,1812): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -3474,7 +3474,7 @@ KtCallExpression(1816,1832): 'InheritorClass()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
 
 KtNameReferenceExpression(1816,1830): 'InheritorClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
 

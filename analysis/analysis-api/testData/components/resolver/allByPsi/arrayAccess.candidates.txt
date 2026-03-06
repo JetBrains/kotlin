@@ -200,7 +200,7 @@ KtBinaryExpression(40,49): 'list += 1'
     isInBestCandidates = false
 
 KtNameReferenceExpression(40,44): 'list'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -417,7 +417,7 @@ KtArrayAccessExpression(74,81): 'list[0]'
     isInBestCandidates = true
 
 KtNameReferenceExpression(74,78): 'list'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -481,7 +481,7 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(106,110): 'list'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -536,7 +536,7 @@ KtCallExpression(111,129): 'get(implicitIndex)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(111,114): 'get'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -579,7 +579,7 @@ KtValueArgument(115,128): 'implicitIndex'
   NO_CANDIDATES
 
 KtNameReferenceExpression(115,128): 'implicitIndex'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -846,7 +846,7 @@ KtArrayAccessExpression(159,166): 'list[1]'
     isInBestCandidates = true
 
 KtNameReferenceExpression(159,163): 'list'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1147,7 +1147,7 @@ KtArrayAccessExpression(178,185): 'list[2]'
     isInBestCandidates = true
 
 KtNameReferenceExpression(178,182): 'list'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1387,7 +1387,7 @@ KtCallExpression(241,261): 'foo(--list[i], list)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(241,244): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1680,7 +1680,7 @@ KtArrayAccessExpression(247,254): 'list[i]'
     isInBestCandidates = true
 
 KtNameReferenceExpression(247,251): 'list'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1701,7 +1701,7 @@ KtContainerNode(251,254): '[i]'
   NO_CANDIDATES
 
 KtNameReferenceExpression(252,253): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1722,7 +1722,7 @@ KtValueArgument(256,260): 'list'
   NO_CANDIDATES
 
 KtNameReferenceExpression(256,260): 'list'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1982,7 +1982,7 @@ KtArrayAccessExpression(269,276): 'list[2]'
     isInBestCandidates = true
 
 KtNameReferenceExpression(269,273): 'list'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

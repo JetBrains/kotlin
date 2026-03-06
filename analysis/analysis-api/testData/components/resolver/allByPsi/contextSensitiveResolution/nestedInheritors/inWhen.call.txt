@@ -161,7 +161,7 @@ KtCallExpression(226,333): 'receiveMyClass('
       }
 
 KtNameReferenceExpression(226,240): 'receiveMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -212,7 +212,7 @@ KtWhenConditionWithExpression(269,270): 'b'
   null
 
 KtNameReferenceExpression(269,270): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -229,7 +229,7 @@ KtNameReferenceExpression(269,270): 'b'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(274,281): 'myClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -327,7 +327,7 @@ KtCallExpression(402,510): 'receiveMyClass('
       }
 
 KtNameReferenceExpression(402,416): 'receiveMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -378,7 +378,7 @@ KtWhenConditionWithExpression(445,446): 'b'
   null
 
 KtNameReferenceExpression(445,446): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -395,7 +395,7 @@ KtNameReferenceExpression(445,446): 'b'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(450,458): 'subClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -506,7 +506,7 @@ KtCallExpression(593,735): 'receiveMyClass('
       }
 
 KtNameReferenceExpression(593,607): 'receiveMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -558,7 +558,7 @@ KtWhenConditionWithExpression(636,638): 'b1'
   null
 
 KtNameReferenceExpression(636,638): 'b1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -575,7 +575,7 @@ KtNameReferenceExpression(636,638): 'b1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(642,650): 'subClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -598,7 +598,7 @@ KtWhenConditionWithExpression(663,665): 'b2'
   null
 
 KtNameReferenceExpression(663,665): 'b2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -621,7 +621,7 @@ KtWhenEntry(697,719): 'else -> OtherInheritor'
   null
 
 KtNameReferenceExpression(705,719): 'OtherInheritor'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'OtherInheritor'.>
 
@@ -981,7 +981,7 @@ KtCallExpression(1012,1139): 'receiveOtherClass('
       }
 
 KtNameReferenceExpression(1012,1029): 'receiveOtherClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1033,7 +1033,7 @@ KtWhenConditionWithExpression(1058,1060): 'b1'
   null
 
 KtNameReferenceExpression(1058,1060): 'b1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1050,7 +1050,7 @@ KtNameReferenceExpression(1058,1060): 'b1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1064,1073): 'subClass1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1073,7 +1073,7 @@ KtWhenConditionWithExpression(1086,1088): 'b2'
   null
 
 KtNameReferenceExpression(1086,1088): 'b2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1090,7 +1090,7 @@ KtNameReferenceExpression(1086,1088): 'b2'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1092,1101): 'subClass2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1266,7 +1266,7 @@ KtCallExpression(1310,1432): 'receiveOpenClass('
       }
 
 KtNameReferenceExpression(1310,1326): 'receiveOpenClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1317,7 +1317,7 @@ KtWhenConditionWithExpression(1355,1356): 'b'
   null
 
 KtNameReferenceExpression(1355,1356): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1334,7 +1334,7 @@ KtNameReferenceExpression(1355,1356): 'b'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1360,1369): 'openClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1432,7 +1432,7 @@ KtCallExpression(1512,1633): 'receiveOpenClass('
       }
 
 KtNameReferenceExpression(1512,1528): 'receiveOpenClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1483,7 +1483,7 @@ KtWhenConditionWithExpression(1557,1558): 'b'
   null
 
 KtNameReferenceExpression(1557,1558): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1500,7 +1500,7 @@ KtNameReferenceExpression(1557,1558): 'b'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1562,1570): 'subClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1520,6 +1520,6 @@ KtWhenEntry(1583,1617): 'else -> NestedInheritorOfOpenClass'
   null
 
 KtNameReferenceExpression(1591,1617): 'NestedInheritorOfOpenClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritorOfOpenClass'.>

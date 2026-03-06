@@ -1,2 +1,5 @@
 KtNameReferenceExpression(46,56): 'emptyArray'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/emptyArray(): kotlin.Array<T>
+    ]

@@ -77,7 +77,10 @@ KtUserType(118,125): 'MyClass'
   null
 
 KtNameReferenceExpression(118,125): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): pack.MyClass
+    ]
 
 KtValueArgumentList(125,127): '()'
   null
@@ -161,7 +164,10 @@ KtUserType(258,280): 'ClassWithType<MyClass>'
   null
 
 KtNameReferenceExpression(258,271): 'ClassWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): pack.ClassWithType<T>
+    ]
 
 KtTypeArgumentList(271,280): '<MyClass>'
   null
@@ -311,7 +317,10 @@ KtNameReferenceExpression(497,504): 'MyClass'
   null
 
 KtNameReferenceExpression(506,520): 'memberFunction'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/MyClass.memberFunction(<dispatch receiver>: pack.MyClass): kotlin.Int
+    ]
 
 KtCallExpression(521,538): 'invoke(MyClass())'
   KaSymbolResolutionSuccess:
@@ -320,7 +329,10 @@ KtCallExpression(521,538): 'invoke(MyClass())'
     ]
 
 KtNameReferenceExpression(521,527): 'invoke'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+    ]
 
 KtValueArgumentList(527,538): '(MyClass())'
   null
@@ -335,7 +347,10 @@ KtCallExpression(528,537): 'MyClass()'
     ]
 
 KtNameReferenceExpression(528,535): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): pack.MyClass
+    ]
 
 KtValueArgumentList(535,537): '()'
   null
@@ -356,10 +371,16 @@ KtNameReferenceExpression(543,550): 'MyClass'
   null
 
 KtNameReferenceExpression(552,566): 'memberProperty'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val memberProperty: kotlin.Int
+    ]
 
 KtNameReferenceExpression(567,571): 'name'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
 
 KtDotQualifiedExpression(577,614): 'Child::memberFunction.invoke(Child())'
   KaSymbolResolutionSuccess:
@@ -377,7 +398,10 @@ KtNameReferenceExpression(577,582): 'Child'
   null
 
 KtNameReferenceExpression(584,598): 'memberFunction'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/MyClass.memberFunction(<dispatch receiver>: pack.MyClass): kotlin.Int
+    ]
 
 KtCallExpression(599,614): 'invoke(Child())'
   KaSymbolResolutionSuccess:
@@ -386,7 +410,10 @@ KtCallExpression(599,614): 'invoke(Child())'
     ]
 
 KtNameReferenceExpression(599,605): 'invoke'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+    ]
 
 KtValueArgumentList(605,614): '(Child())'
   null
@@ -401,7 +428,10 @@ KtCallExpression(606,613): 'Child()'
     ]
 
 KtNameReferenceExpression(606,611): 'Child'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): pack.Child
+    ]
 
 KtValueArgumentList(611,613): '()'
   null
@@ -422,10 +452,16 @@ KtNameReferenceExpression(619,624): 'Child'
   null
 
 KtNameReferenceExpression(626,640): 'memberProperty'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val memberProperty: kotlin.Int
+    ]
 
 KtNameReferenceExpression(641,645): 'name'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
 
 KtProperty(651,690): 'val f = pack.MyClass::extensionFunction'
   null
@@ -446,7 +482,10 @@ KtNameReferenceExpression(664,671): 'MyClass'
   null
 
 KtNameReferenceExpression(673,690): 'extensionFunction'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/extensionFunction(<extension receiver>: pack.MyClass): kotlin.String
+    ]
 
 KtProperty(695,729): 'val p = MyClass::extensionProperty'
   null
@@ -461,7 +500,10 @@ KtNameReferenceExpression(703,710): 'MyClass'
   null
 
 KtNameReferenceExpression(712,729): 'extensionProperty'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val extensionProperty: kotlin.String
+    ]
 
 KtProperty(735,768): 'val cF = Child::extensionFunction'
   null
@@ -476,7 +518,10 @@ KtNameReferenceExpression(744,749): 'Child'
   null
 
 KtNameReferenceExpression(751,768): 'extensionFunction'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/extensionFunction(<extension receiver>: pack.MyClass): kotlin.String
+    ]
 
 KtProperty(773,811): 'val cP = pack.Child::extensionProperty'
   null
@@ -497,7 +542,10 @@ KtNameReferenceExpression(787,792): 'Child'
   null
 
 KtNameReferenceExpression(794,811): 'extensionProperty'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val extensionProperty: kotlin.String
+    ]
 
 KtDotQualifiedExpression(817,853): 'ChildWithType::functionWithType.name'
   KaSymbolResolutionSuccess:
@@ -515,10 +563,16 @@ KtNameReferenceExpression(817,830): 'ChildWithType'
   null
 
 KtNameReferenceExpression(832,848): 'functionWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/ChildWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<pack.MyClass>): pack.MyClass?
+    ]
 
 KtNameReferenceExpression(849,853): 'name'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
 
 KtDotQualifiedExpression(858,913): 'ChildWithType::propertyWithType.invoke(ChildWithType())'
   KaSymbolResolutionSuccess:
@@ -536,7 +590,10 @@ KtNameReferenceExpression(858,871): 'ChildWithType'
   null
 
 KtNameReferenceExpression(873,889): 'propertyWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var propertyWithType: pack.MyClass?
+    ]
 
 KtCallExpression(890,913): 'invoke(ChildWithType())'
   KaSymbolResolutionSuccess:
@@ -545,7 +602,10 @@ KtCallExpression(890,913): 'invoke(ChildWithType())'
     ]
 
 KtNameReferenceExpression(890,896): 'invoke'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KMutableProperty1.invoke(<dispatch receiver>: kotlin.Function1<T, V>, p1: T): V
+    ]
 
 KtValueArgumentList(896,913): '(ChildWithType())'
   null
@@ -560,7 +620,10 @@ KtCallExpression(897,912): 'ChildWithType()'
     ]
 
 KtNameReferenceExpression(897,910): 'ChildWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): pack.ChildWithType
+    ]
 
 KtValueArgumentList(910,912): '()'
   null
@@ -572,7 +635,10 @@ KtCallableReferenceExpression(919,937): '::topLevelFunction'
     ]
 
 KtNameReferenceExpression(921,937): 'topLevelFunction'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/topLevelFunction(i: kotlin.Int): kotlin.Unit
+    ]
 
 KtCallableReferenceExpression(942,960): '::topLevelVariable'
   KaSymbolResolutionSuccess:
@@ -581,7 +647,10 @@ KtCallableReferenceExpression(942,960): '::topLevelVariable'
     ]
 
 KtNameReferenceExpression(944,960): 'topLevelVariable'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var topLevelVariable: kotlin.Int
+    ]
 
 KtDotQualifiedExpression(966,993): '::lateinitVar.isInitialized'
   KaSymbolResolutionError:
@@ -595,10 +664,15 @@ KtCallableReferenceExpression(966,979): '::lateinitVar'
     ]
 
 KtNameReferenceExpression(968,979): 'lateinitVar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var lateinitVar: pack.MyClass
+    ]
 
 KtNameReferenceExpression(980,993): 'isInitialized'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: isInitialized>
 
 KtNamedFunction(997,1223): 'fun <T : Number> typeClass(classWithType: ClassWithType<T>) {'
   null
@@ -658,10 +732,16 @@ KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
     ]
 
 KtNameReferenceExpression(1063,1076): 'classWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      classWithType: pack.ClassWithType<T>
+    ]
 
 KtNameReferenceExpression(1078,1094): 'functionWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
+    ]
 
 KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
   KaSymbolResolutionSuccess:
@@ -670,10 +750,16 @@ KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
     ]
 
 KtNameReferenceExpression(1099,1112): 'classWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      classWithType: pack.ClassWithType<T>
+    ]
 
 KtNameReferenceExpression(1114,1130): 'propertyWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var propertyWithType: T?
+    ]
 
 KtProperty(1136,1169): 'val t: ClassWithType<Int>? = null'
   null
@@ -718,13 +804,19 @@ KtPostfixExpression(1174,1177): 't!!'
   null
 
 KtNameReferenceExpression(1174,1175): 't'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val t: pack.ClassWithType<kotlin.Int>?
+    ]
 
 KtOperationReferenceExpression(1175,1177): '!!'
   null
 
 KtNameReferenceExpression(1179,1195): 'functionWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/ClassWithType.functionWithType(<dispatch receiver>: pack.ClassWithType<T>): T?
+    ]
 
 KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
   KaSymbolResolutionSuccess:
@@ -736,10 +828,16 @@ KtPostfixExpression(1200,1203): 't!!'
   null
 
 KtNameReferenceExpression(1200,1201): 't'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val t: pack.ClassWithType<kotlin.Int>?
+    ]
 
 KtOperationReferenceExpression(1201,1203): '!!'
   null
 
 KtNameReferenceExpression(1205,1221): 'propertyWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var propertyWithType: T?
+    ]

@@ -162,7 +162,7 @@ KtBinaryExpression(304,329): 'settings == BasicSettings'
     isInBestCandidates = true
 
 KtNameReferenceExpression(304,312): 'settings'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -217,7 +217,7 @@ KtOperationReferenceExpression(313,315): '=='
     isInBestCandidates = true
 
 KtNameReferenceExpression(316,329): 'BasicSettings'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -273,7 +273,7 @@ KtCallExpression(331,344): 'work("Basic")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(331,335): 'work'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -362,7 +362,7 @@ KtBinaryExpression(354,387): 'basicSettings == SpecificSettings'
     isInBestCandidates = true
 
 KtNameReferenceExpression(354,367): 'basicSettings'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -417,7 +417,7 @@ KtOperationReferenceExpression(368,370): '=='
     isInBestCandidates = true
 
 KtNameReferenceExpression(371,387): 'SpecificSettings'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -473,7 +473,7 @@ KtCallExpression(389,405): 'work("Specific")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(389,393): 'work'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -562,7 +562,7 @@ KtBinaryExpression(414,456): 'basicSettings == Settings.SpecificSettings'
     isInBestCandidates = true
 
 KtNameReferenceExpression(414,427): 'basicSettings'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -639,7 +639,7 @@ KtNameReferenceExpression(431,439): 'Settings'
   NO_CANDIDATES
 
 KtNameReferenceExpression(440,456): 'SpecificSettings'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -695,7 +695,7 @@ KtCallExpression(458,474): 'work("Specific")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(458,462): 'work'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -950,7 +950,7 @@ KtBinaryExpression(707,736): 'settings == OpenBasicSettings'
     isInBestCandidates = true
 
 KtNameReferenceExpression(707,715): 'settings'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1005,7 +1005,7 @@ KtOperationReferenceExpression(716,718): '=='
     isInBestCandidates = true
 
 KtNameReferenceExpression(719,736): 'OpenBasicSettings'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1061,7 +1061,7 @@ KtCallExpression(738,751): 'work("Basic")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(738,742): 'work'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1150,7 +1150,7 @@ KtBinaryExpression(761,798): 'basicSettings == OpenSpecificSettings'
     isInBestCandidates = true
 
 KtNameReferenceExpression(761,774): 'basicSettings'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1245,7 +1245,7 @@ KtCallExpression(800,816): 'work("Specific")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(800,804): 'work'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1334,7 +1334,7 @@ KtBinaryExpression(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings
     isInBestCandidates = true
 
 KtNameReferenceExpression(825,838): 'basicSettings'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1408,7 +1408,7 @@ KtDotQualifiedExpression(842,875): 'OpenSettings.OpenSpecificSettings'
     isInBestCandidates = false
 
 KtNameReferenceExpression(842,854): 'OpenSettings'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1427,7 +1427,7 @@ KtNameReferenceExpression(842,854): 'OpenSettings'
     isInBestCandidates = false
 
 KtNameReferenceExpression(855,875): 'OpenSpecificSettings'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1483,7 +1483,7 @@ KtCallExpression(877,893): 'work("Specific")'
     isInBestCandidates = true
 
 KtNameReferenceExpression(877,881): 'work'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

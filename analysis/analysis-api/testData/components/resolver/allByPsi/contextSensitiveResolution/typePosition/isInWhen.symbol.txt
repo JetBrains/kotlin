@@ -314,7 +314,10 @@ KtIsExpression(533,561): 'instance is SealedInheritor1'
   null
 
 KtNameReferenceExpression(533,541): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(542,544): 'is'
   null
@@ -335,10 +338,16 @@ KtDotQualifiedExpression(565,579): 'instance.prop1'
     ]
 
 KtNameReferenceExpression(565,573): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(574,579): 'prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtWhenEntry(588,627): 'instance is Inner -> instance.innerProp'
   null
@@ -350,7 +359,10 @@ KtIsExpression(588,605): 'instance is Inner'
   null
 
 KtNameReferenceExpression(588,596): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(597,599): 'is'
   null
@@ -371,10 +383,16 @@ KtDotQualifiedExpression(609,627): 'instance.innerProp'
     ]
 
 KtNameReferenceExpression(609,617): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(618,627): 'innerProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val innerProp: kotlin.String
+    ]
 
 KtWhenEntry(636,689): 'instance is IndirectSealedInheritor -> instance.prop1'
   null
@@ -386,7 +404,10 @@ KtIsExpression(636,671): 'instance is IndirectSealedInheritor'
   null
 
 KtNameReferenceExpression(636,644): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(645,647): 'is'
   null
@@ -407,10 +428,16 @@ KtDotQualifiedExpression(675,689): 'instance.prop1'
     ]
 
 KtNameReferenceExpression(675,683): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(684,689): 'prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtWhenEntry(698,736): 'instance !is SealedInheritor2 -> "100"'
   null
@@ -422,7 +449,10 @@ KtIsExpression(698,727): 'instance !is SealedInheritor2'
   null
 
 KtNameReferenceExpression(698,706): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(707,710): '!is'
   null
@@ -452,7 +482,10 @@ KtIsExpression(745,780): 'instance !is SealedSealedInheritor1'
   null
 
 KtNameReferenceExpression(745,753): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(754,757): '!is'
   null
@@ -521,7 +554,10 @@ KtWhenExpression(893,1158): 'when (instance) {'
   null
 
 KtNameReferenceExpression(899,907): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtWhenEntry(919,956): 'is SealedInheritor1 -> instance.prop1'
   null
@@ -545,10 +581,16 @@ KtDotQualifiedExpression(942,956): 'instance.prop1'
     ]
 
 KtNameReferenceExpression(942,950): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(951,956): 'prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtWhenEntry(965,995): 'is Inner -> instance.innerProp'
   null
@@ -572,10 +614,16 @@ KtDotQualifiedExpression(977,995): 'instance.innerProp'
     ]
 
 KtNameReferenceExpression(977,985): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(986,995): 'innerProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val innerProp: kotlin.String
+    ]
 
 KtWhenEntry(1004,1048): 'is IndirectSealedInheritor -> instance.prop1'
   null
@@ -599,10 +647,16 @@ KtDotQualifiedExpression(1034,1048): 'instance.prop1'
     ]
 
 KtNameReferenceExpression(1034,1042): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(1043,1048): 'prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtWhenEntry(1057,1086): '!is SealedInheritor2 -> "100"'
   null
@@ -695,7 +749,10 @@ KtWhenExpression(1228,1621): 'when (instance) {'
   null
 
 KtNameReferenceExpression(1234,1242): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtWhenEntry(1254,1330): 'is SealedInheritor1 if instance is IndirectSealedInheritor -> instance.prop1'
   null
@@ -719,7 +776,10 @@ KtIsExpression(1277,1312): 'instance is IndirectSealedInheritor'
   null
 
 KtNameReferenceExpression(1277,1285): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(1286,1288): 'is'
   null
@@ -740,10 +800,16 @@ KtDotQualifiedExpression(1316,1330): 'instance.prop1'
     ]
 
 KtNameReferenceExpression(1316,1324): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(1325,1330): 'prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtWhenEntry(1359,1429): '!is SealedInheritor1 if instance is SealedInheritor2 -> instance.prop2'
   null
@@ -767,7 +833,10 @@ KtIsExpression(1383,1411): 'instance is SealedInheritor2'
   null
 
 KtNameReferenceExpression(1383,1391): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(1392,1394): 'is'
   null
@@ -788,10 +857,16 @@ KtDotQualifiedExpression(1415,1429): 'instance.prop2'
     ]
 
 KtNameReferenceExpression(1415,1423): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(1424,1429): 'prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop2: kotlin.Int
+    ]
 
 KtWhenEntry(1438,1508): '!is SealedInheritor2 if instance is SealedInheritor1 -> instance.prop1'
   null
@@ -815,7 +890,10 @@ KtIsExpression(1462,1490): 'instance is SealedInheritor1'
   null
 
 KtNameReferenceExpression(1462,1470): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(1471,1473): 'is'
   null
@@ -836,10 +914,16 @@ KtDotQualifiedExpression(1494,1508): 'instance.prop1'
     ]
 
 KtNameReferenceExpression(1494,1502): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(1503,1508): 'prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop1: kotlin.String
+    ]
 
 KtWhenEntry(1517,1593): '!is SealedInheritor1 if instance is SealedSealedInheritor1 -> instance.prop3'
   null
@@ -863,7 +947,10 @@ KtIsExpression(1541,1575): 'instance is SealedSealedInheritor1'
   null
 
 KtNameReferenceExpression(1541,1549): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(1550,1552): 'is'
   null
@@ -884,10 +971,16 @@ KtDotQualifiedExpression(1579,1593): 'instance.prop3'
     ]
 
 KtNameReferenceExpression(1579,1587): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(1588,1593): 'prop3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop3: kotlin.Boolean
+    ]
 
 KtWhenEntry(1602,1615): 'else -> "100"'
   null

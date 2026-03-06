@@ -53,7 +53,10 @@ KtCallExpression(30,42): 'compareTo(2)'
     ]
 
 KtNameReferenceExpression(30,39): 'compareTo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtValueArgumentList(39,42): '(2)'
   null
@@ -107,7 +110,10 @@ KtCallExpression(99,108): 'MyClass()'
     ]
 
 KtNameReferenceExpression(99,106): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(106,108): '()'
   null
@@ -119,13 +125,19 @@ KtBinaryExpression(113,130): 'myClass >= number'
     ]
 
 KtNameReferenceExpression(113,120): 'myClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val myClass: MyClass
+    ]
 
 KtOperationReferenceExpression(121,123): '>='
   null
 
 KtNameReferenceExpression(124,130): 'number'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val number: kotlin.Int
+    ]
 
 KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
   KaSymbolResolutionSuccess:
@@ -134,7 +146,10 @@ KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
     ]
 
 KtNameReferenceExpression(135,142): 'myClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val myClass: MyClass
+    ]
 
 KtCallExpression(143,160): 'compareTo(number)'
   KaSymbolResolutionSuccess:
@@ -143,7 +158,10 @@ KtCallExpression(143,160): 'compareTo(number)'
     ]
 
 KtNameReferenceExpression(143,152): 'compareTo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+    ]
 
 KtValueArgumentList(152,160): '(number)'
   null
@@ -152,7 +170,10 @@ KtValueArgument(153,159): 'number'
   null
 
 KtNameReferenceExpression(153,159): 'number'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val number: kotlin.Int
+    ]
 
 KtClass(164,225): 'class MyClass {'
   null
@@ -191,4 +212,7 @@ KtNameReferenceExpression(216,219): 'Int'
   null
 
 KtNameReferenceExpression(222,223): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]

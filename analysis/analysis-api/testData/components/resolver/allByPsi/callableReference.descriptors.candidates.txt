@@ -103,7 +103,7 @@ KtUserType(118,125): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(118,125): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -229,7 +229,7 @@ KtUserType(258,280): 'ClassWithType<MyClass>'
   NO_CANDIDATES
 
 KtNameReferenceExpression(258,271): 'ClassWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -438,7 +438,7 @@ KtNameReferenceExpression(497,504): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(506,520): 'memberFunction'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -493,7 +493,7 @@ KtCallExpression(521,538): 'invoke(MyClass())'
     isInBestCandidates = true
 
 KtNameReferenceExpression(521,527): 'invoke'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -554,7 +554,7 @@ KtCallExpression(528,537): 'MyClass()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(528,535): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -617,7 +617,7 @@ KtNameReferenceExpression(543,550): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(552,566): 'memberProperty'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -635,7 +635,7 @@ KtNameReferenceExpression(552,566): 'memberProperty'
     isInBestCandidates = true
 
 KtNameReferenceExpression(567,571): 'name'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -714,7 +714,7 @@ KtNameReferenceExpression(577,582): 'Child'
   NO_CANDIDATES
 
 KtNameReferenceExpression(584,598): 'memberFunction'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -769,7 +769,7 @@ KtCallExpression(599,614): 'invoke(Child())'
     isInBestCandidates = true
 
 KtNameReferenceExpression(599,605): 'invoke'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -830,7 +830,7 @@ KtCallExpression(606,613): 'Child()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(606,611): 'Child'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -893,7 +893,7 @@ KtNameReferenceExpression(619,624): 'Child'
   NO_CANDIDATES
 
 KtNameReferenceExpression(626,640): 'memberProperty'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -911,7 +911,7 @@ KtNameReferenceExpression(626,640): 'memberProperty'
     isInBestCandidates = true
 
 KtNameReferenceExpression(641,645): 'name'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -962,7 +962,7 @@ KtNameReferenceExpression(664,671): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(673,690): 'extensionFunction'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1004,7 +1004,7 @@ KtNameReferenceExpression(703,710): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(712,729): 'extensionProperty'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1046,7 +1046,7 @@ KtNameReferenceExpression(744,749): 'Child'
   NO_CANDIDATES
 
 KtNameReferenceExpression(751,768): 'extensionFunction'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1094,7 +1094,7 @@ KtNameReferenceExpression(787,792): 'Child'
   NO_CANDIDATES
 
 KtNameReferenceExpression(794,811): 'extensionProperty'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1154,7 +1154,7 @@ KtNameReferenceExpression(817,830): 'ChildWithType'
   NO_CANDIDATES
 
 KtNameReferenceExpression(832,848): 'functionWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1172,7 +1172,7 @@ KtNameReferenceExpression(832,848): 'functionWithType'
     isInBestCandidates = true
 
 KtNameReferenceExpression(849,853): 'name'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1251,7 +1251,7 @@ KtNameReferenceExpression(858,871): 'ChildWithType'
   NO_CANDIDATES
 
 KtNameReferenceExpression(873,889): 'propertyWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1306,7 +1306,7 @@ KtCallExpression(890,913): 'invoke(ChildWithType())'
     isInBestCandidates = true
 
 KtNameReferenceExpression(890,896): 'invoke'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1367,7 +1367,7 @@ KtCallExpression(897,912): 'ChildWithType()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(897,910): 'ChildWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1414,7 +1414,7 @@ KtCallableReferenceExpression(919,937): '::topLevelFunction'
     isInBestCandidates = true
 
 KtNameReferenceExpression(921,937): 'topLevelFunction'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1458,7 +1458,7 @@ KtCallableReferenceExpression(942,960): '::topLevelVariable'
     isInBestCandidates = true
 
 KtNameReferenceExpression(944,960): 'topLevelVariable'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1497,7 +1497,7 @@ KtCallableReferenceExpression(966,979): '::lateinitVar'
     isInBestCandidates = true
 
 KtNameReferenceExpression(968,979): 'lateinitVar'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1590,7 +1590,7 @@ KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1063,1076): 'classWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1608,7 +1608,7 @@ KtNameReferenceExpression(1063,1076): 'classWithType'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1078,1094): 'functionWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1650,7 +1650,7 @@ KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1099,1112): 'classWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1668,7 +1668,7 @@ KtNameReferenceExpression(1099,1112): 'classWithType'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1114,1130): 'propertyWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1746,7 +1746,7 @@ KtPostfixExpression(1174,1177): 't!!'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1174,1175): 't'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1767,7 +1767,7 @@ KtOperationReferenceExpression(1175,1177): '!!'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1179,1195): 'functionWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1812,7 +1812,7 @@ KtPostfixExpression(1200,1203): 't!!'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1200,1201): 't'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1833,7 +1833,7 @@ KtOperationReferenceExpression(1201,1203): '!!'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1205,1221): 'propertyWithType'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

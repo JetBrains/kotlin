@@ -1,2 +1,5 @@
 KtNameReferenceExpression(30,31): 'f'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      f: () -> kotlin.Unit
+    ]

@@ -1,6 +1,6 @@
 module1 - main1.kt:
   KtNameReferenceExpression(121,124): 'foo'
-    KaSuccessCallInfo:
+    KaCallResolutionSuccess:
       call = KaSimpleFunctionCall:
         contextArgumentMapping = {}
         contextArguments = []
@@ -21,7 +21,7 @@ module1 - main1.kt:
 
 module2 - main2.kt:
   KtNameReferenceExpression(129,132): 'bar'
-    KaSuccessCallInfo:
+    KaCallResolutionSuccess:
       call = KaSimpleFunctionCall:
         contextArgumentMapping = {}
         contextArguments = []

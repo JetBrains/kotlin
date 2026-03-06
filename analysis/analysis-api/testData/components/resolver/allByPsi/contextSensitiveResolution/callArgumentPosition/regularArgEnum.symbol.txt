@@ -65,13 +65,18 @@ KtNameReferenceExpression(191,197): 'MyEnum'
   null
 
 KtNameReferenceExpression(198,208): 'EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtProperty(213,234): 'val arg2 = EnumValue2'
   null
 
 KtNameReferenceExpression(224,234): 'EnumValue2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'EnumValue2'.>
 
 KtCallExpression(240,263): 'receiveEnum(EnumValue2)'
   KaSymbolResolutionSuccess:
@@ -80,7 +85,10 @@ KtCallExpression(240,263): 'receiveEnum(EnumValue2)'
     ]
 
 KtNameReferenceExpression(240,251): 'receiveEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveEnum(arg: MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(251,263): '(EnumValue2)'
   null
@@ -89,7 +97,10 @@ KtValueArgument(252,262): 'EnumValue2'
   null
 
 KtNameReferenceExpression(252,262): 'EnumValue2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue2
+    ]
 
 KtCallExpression(268,285): 'receiveEnum(arg1)'
   KaSymbolResolutionSuccess:
@@ -98,7 +109,10 @@ KtCallExpression(268,285): 'receiveEnum(arg1)'
     ]
 
 KtNameReferenceExpression(268,279): 'receiveEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveEnum(arg: MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(279,285): '(arg1)'
   null
@@ -107,7 +121,10 @@ KtValueArgument(280,284): 'arg1'
   null
 
 KtNameReferenceExpression(280,284): 'arg1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val arg1: MyEnum
+    ]
 
 KtCallExpression(290,307): 'receiveEnum(arg2)'
   KaSymbolResolutionSuccess:
@@ -116,7 +133,10 @@ KtCallExpression(290,307): 'receiveEnum(arg2)'
     ]
 
 KtNameReferenceExpression(290,301): 'receiveEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveEnum(arg: MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(301,307): '(arg2)'
   null
@@ -125,7 +145,10 @@ KtValueArgument(302,306): 'arg2'
   null
 
 KtNameReferenceExpression(302,306): 'arg2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val arg2: ERROR CLASS: Unresolved name: EnumValue2
+    ]
 
 KtCallExpression(312,329): 'receiveEnum(arg3)'
   KaSymbolResolutionSuccess:
@@ -134,7 +157,10 @@ KtCallExpression(312,329): 'receiveEnum(arg3)'
     ]
 
 KtNameReferenceExpression(312,323): 'receiveEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveEnum(arg: MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(323,329): '(arg3)'
   null
@@ -143,4 +169,6 @@ KtValueArgument(324,328): 'arg3'
   null
 
 KtNameReferenceExpression(324,328): 'arg3'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'arg3'.>

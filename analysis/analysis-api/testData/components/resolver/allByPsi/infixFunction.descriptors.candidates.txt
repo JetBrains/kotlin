@@ -127,7 +127,7 @@ KtOperationReferenceExpression(42,43): '-'
     isInBestCandidates = true
 
 KtNameReferenceExpression(44,45): 'i'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -206,7 +206,7 @@ KtBinaryExpression(98,117): 'parameter myMinus 5'
     isInBestCandidates = true
 
 KtNameReferenceExpression(98,107): 'parameter'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -341,7 +341,7 @@ KtBinaryExpression(145,161): 'newParameter + 1'
     isInBestCandidates = true
 
 KtNameReferenceExpression(145,157): 'newParameter'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -701,7 +701,7 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
     isInBestCandidates = false
 
 KtNameReferenceExpression(195,207): 'newParameter'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -978,7 +978,7 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
     isInBestCandidates = false
 
 KtNameReferenceExpression(208,212): 'plus'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1015,7 +1015,7 @@ KtNameReferenceExpression(208,212): 'plus'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1052,7 +1052,7 @@ KtNameReferenceExpression(208,212): 'plus'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1089,7 +1089,7 @@ KtNameReferenceExpression(208,212): 'plus'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1125,7 +1125,7 @@ KtNameReferenceExpression(208,212): 'plus'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1162,7 +1162,7 @@ KtNameReferenceExpression(208,212): 'plus'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1199,7 +1199,7 @@ KtNameReferenceExpression(208,212): 'plus'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plus>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1280,7 +1280,7 @@ KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(213,222): 'parameter'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1335,7 +1335,7 @@ KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(223,230): 'myMinus'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1378,7 +1378,7 @@ KtValueArgument(231,247): 'oneMoreParameter'
   NO_CANDIDATES
 
 KtNameReferenceExpression(231,247): 'oneMoreParameter'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

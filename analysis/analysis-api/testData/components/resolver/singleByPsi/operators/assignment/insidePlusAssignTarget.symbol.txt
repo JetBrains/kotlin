@@ -1,2 +1,5 @@
 KtNameReferenceExpression(87,100): 'mutableListOf'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/mutableListOf(): kotlin.collections.MutableList<T>
+    ]

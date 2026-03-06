@@ -124,7 +124,7 @@ KtCallExpression(230,236): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(230,234): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -162,7 +162,7 @@ KtNameReferenceExpression(282,288): 'MyEnum'
   null
 
 KtNameReferenceExpression(291,301): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -214,7 +214,7 @@ KtCallExpression(371,377): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(371,375): 'func'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 

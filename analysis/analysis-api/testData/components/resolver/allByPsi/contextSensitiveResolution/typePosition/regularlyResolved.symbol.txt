@@ -146,7 +146,10 @@ KtNameReferenceExpression(276,280): 'Left'
   null
 
 KtNameReferenceExpression(284,285): 'z'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val z: kotlin.String
+    ]
 
 KtWhenEntry(290,303): 'is Right -> y'
   null
@@ -164,7 +167,10 @@ KtNameReferenceExpression(293,298): 'Right'
   null
 
 KtNameReferenceExpression(302,303): 'y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]
 
 KtWhenEntry(308,318): 'else -> ""'
   null

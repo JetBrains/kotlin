@@ -65,7 +65,7 @@ KtUserType(128,135): 'MyClass'
   null
 
 KtNameReferenceExpression(128,135): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -124,7 +124,7 @@ KtCallExpression(197,206): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(197,204): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -269,7 +269,7 @@ KtCallExpression(404,407): 'b()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(404,405): 'b'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -364,7 +364,7 @@ KtBinaryExpression(467,473): 'i == 0'
       }
 
 KtNameReferenceExpression(467,468): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -426,12 +426,12 @@ KtBlockExpression(475,542): '{'
   null
 
 KtNameReferenceExpression(489,504): 'NestedInheritor'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedInheritor>
 
 KtNameReferenceExpression(517,532): 'NestedInheritor'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedInheritor>
 
@@ -481,7 +481,7 @@ KtBinaryExpression(560,566): 'i == 1'
       }
 
 KtNameReferenceExpression(560,561): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -543,12 +543,12 @@ KtBlockExpression(568,627): '{'
   null
 
 KtNameReferenceExpression(582,593): 'myClassProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: myClassProp>
 
 KtNameReferenceExpression(606,617): 'myClassProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: myClassProp>
 
@@ -556,7 +556,7 @@ KtContainerNodeForControlStructureBody(641,657): 'ClassMemberAlias'
   null
 
 KtNameReferenceExpression(641,657): 'ClassMemberAlias'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -627,7 +627,7 @@ KtBinaryExpression(693,699): 'i == 2'
       }
 
 KtNameReferenceExpression(693,694): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -689,12 +689,12 @@ KtBlockExpression(701,758): '{'
   null
 
 KtNameReferenceExpression(715,725): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtNameReferenceExpression(738,748): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
@@ -702,7 +702,7 @@ KtContainerNodeForControlStructureBody(772,788): 'ClassMemberAlias'
   null
 
 KtNameReferenceExpression(772,788): 'ClassMemberAlias'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -773,7 +773,7 @@ KtCallExpression(794,1278): 'receive<MyClass>('
       }
 
 KtNameReferenceExpression(794,801): 'receive'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -890,7 +890,7 @@ KtBinaryExpression(824,830): 'i == 0'
       }
 
 KtNameReferenceExpression(824,825): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -952,12 +952,12 @@ KtBlockExpression(832,923): '{'
   null
 
 KtNameReferenceExpression(846,861): 'NestedInheritor'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedInheritor>
 
 KtNameReferenceExpression(874,889): 'NestedInheritor'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedInheritor>
 
@@ -1007,7 +1007,7 @@ KtBinaryExpression(941,947): 'i == 1'
       }
 
 KtNameReferenceExpression(941,942): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1069,12 +1069,12 @@ KtBlockExpression(949,1032): '{'
   null
 
 KtNameReferenceExpression(963,974): 'myClassProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: myClassProp>
 
 KtNameReferenceExpression(987,998): 'myClassProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: myClassProp>
 
@@ -1124,7 +1124,7 @@ KtBinaryExpression(1050,1056): 'i == 2'
       }
 
 KtNameReferenceExpression(1050,1051): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1191,7 +1191,7 @@ KtCallExpression(1072,1092): 'getNestedInheritor()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getNestedInheritor>
 
 KtNameReferenceExpression(1072,1090): 'getNestedInheritor'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getNestedInheritor>
 
@@ -1204,7 +1204,7 @@ KtCallExpression(1105,1125): 'getNestedInheritor()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getNestedInheritor>
 
 KtNameReferenceExpression(1105,1123): 'getNestedInheritor'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getNestedInheritor>
 
@@ -1257,7 +1257,7 @@ KtBinaryExpression(1153,1159): 'i == 3'
       }
 
 KtNameReferenceExpression(1153,1154): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1319,12 +1319,12 @@ KtBlockExpression(1161,1242): '{'
   null
 
 KtNameReferenceExpression(1175,1185): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtNameReferenceExpression(1198,1208): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
@@ -1332,7 +1332,7 @@ KtContainerNodeForControlStructureBody(1256,1272): 'ClassMemberAlias'
   null
 
 KtNameReferenceExpression(1256,1272): 'ClassMemberAlias'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1396,7 +1396,7 @@ KtCallExpression(1284,1555): 'run<MyClass> {'
       }
 
 KtNameReferenceExpression(1284,1287): 'run'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1512,7 +1512,7 @@ KtBinaryExpression(1311,1317): 'i == 0'
       }
 
 KtNameReferenceExpression(1311,1312): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1574,12 +1574,12 @@ KtBlockExpression(1319,1410): '{'
   null
 
 KtNameReferenceExpression(1333,1348): 'NestedInheritor'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedInheritor>
 
 KtNameReferenceExpression(1361,1376): 'NestedInheritor'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedInheritor>
 
@@ -1629,7 +1629,7 @@ KtBinaryExpression(1428,1434): 'i == 1'
       }
 
 KtNameReferenceExpression(1428,1429): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1691,12 +1691,12 @@ KtBlockExpression(1436,1519): '{'
   null
 
 KtNameReferenceExpression(1450,1461): 'myClassProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: myClassProp>
 
 KtNameReferenceExpression(1474,1485): 'myClassProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: myClassProp>
 
@@ -1704,7 +1704,7 @@ KtContainerNodeForControlStructureBody(1533,1549): 'ClassMemberAlias'
   null
 
 KtNameReferenceExpression(1533,1549): 'ClassMemberAlias'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

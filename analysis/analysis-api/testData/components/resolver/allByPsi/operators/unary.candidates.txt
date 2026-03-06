@@ -161,7 +161,7 @@ KtCallExpression(222,225): 'A()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(222,223): 'A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -224,7 +224,7 @@ KtOperationReferenceExpression(230,231): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(231,232): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -284,7 +284,7 @@ KtOperationReferenceExpression(237,238): '-'
     isInBestCandidates = true
 
 KtNameReferenceExpression(238,239): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -344,7 +344,7 @@ KtOperationReferenceExpression(244,245): '!'
     isInBestCandidates = true
 
 KtNameReferenceExpression(245,246): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -440,7 +440,7 @@ KtOperationReferenceExpression(251,253): '++'
     isInBestCandidates = true
 
 KtNameReferenceExpression(253,254): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -536,7 +536,7 @@ KtOperationReferenceExpression(259,261): '--'
     isInBestCandidates = true
 
 KtNameReferenceExpression(261,262): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -593,7 +593,7 @@ KtPostfixExpression(267,270): 'a++'
     isInBestCandidates = true
 
 KtNameReferenceExpression(267,268): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -689,7 +689,7 @@ KtPostfixExpression(275,278): 'a--'
     isInBestCandidates = true
 
 KtNameReferenceExpression(275,276): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

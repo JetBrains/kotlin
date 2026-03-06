@@ -35,7 +35,7 @@ KtPostfixExpression(27,30): 'a!!'
   NO_CANDIDATES
 
 KtNameReferenceExpression(27,28): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

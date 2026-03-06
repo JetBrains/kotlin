@@ -62,7 +62,7 @@ KtNameReferenceExpression(153,159): 'MyEnum'
   NO_CANDIDATES
 
 KtNameReferenceExpression(162,163): 'L'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -113,7 +113,7 @@ KtNameReferenceExpression(198,204): 'MyEnum'
   NO_CANDIDATES
 
 KtNameReferenceExpression(207,208): 'L'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -240,7 +240,7 @@ KtBinaryExpression(350,355): 'm = Y'
     isInBestCandidates = true
 
 KtNameReferenceExpression(350,351): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -300,7 +300,7 @@ KtBinaryExpression(360,365): 'm = L'
     isInBestCandidates = true
 
 KtNameReferenceExpression(360,361): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -338,7 +338,7 @@ KtOperationReferenceExpression(362,363): '='
     isInBestCandidates = true
 
 KtNameReferenceExpression(364,365): 'L'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -392,7 +392,7 @@ KtContainerNode(407,408): 'b'
   NO_CANDIDATES
 
 KtNameReferenceExpression(407,408): 'b'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -422,7 +422,7 @@ KtReturnExpression(423,431): 'return L'
   NO_CANDIDATES
 
 KtNameReferenceExpression(430,431): 'L'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

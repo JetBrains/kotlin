@@ -74,7 +74,10 @@ KtUserType(217,224): 'MyClass'
   null
 
 KtNameReferenceExpression(217,224): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(224,226): '()'
   null
@@ -122,7 +125,10 @@ KtUserType(292,299): 'MyClass'
   null
 
 KtNameReferenceExpression(292,299): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(299,301): '()'
   null
@@ -176,7 +182,10 @@ KtUserType(388,393): 'Super'
   null
 
 KtNameReferenceExpression(388,393): 'Super'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Super
+    ]
 
 KtValueArgumentList(393,395): '()'
   null
@@ -203,7 +212,10 @@ KtCallExpression(433,439): 'TODO()'
     ]
 
 KtNameReferenceExpression(433,437): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(437,439): '()'
   null
@@ -227,7 +239,10 @@ KtCallExpression(489,505): 'InheritorClass()'
     ]
 
 KtNameReferenceExpression(489,503): 'InheritorClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass.InheritorClass
+    ]
 
 KtValueArgumentList(503,505): '()'
   null
@@ -305,7 +320,10 @@ KtCallExpression(676,685): 'lazy {""}'
     ]
 
 KtNameReferenceExpression(676,680): 'lazy'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+    ]
 
 KtLambdaArgument(681,685): '{""}'
   null
@@ -359,7 +377,10 @@ KtCallExpression(759,765): 'TODO()'
     ]
 
 KtNameReferenceExpression(759,763): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(763,765): '()'
   null
@@ -413,7 +434,10 @@ KtCallExpression(830,855): 'lMyClass(InheritorObject)'
     ]
 
 KtNameReferenceExpression(830,838): 'lMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(838,855): '(InheritorObject)'
   null
@@ -422,7 +446,9 @@ KtValueArgument(839,854): 'InheritorObject'
   null
 
 KtNameReferenceExpression(839,854): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(860,881): 'lMyClass(propMyClass)'
   KaSymbolResolutionSuccess:
@@ -431,7 +457,10 @@ KtCallExpression(860,881): 'lMyClass(propMyClass)'
     ]
 
 KtNameReferenceExpression(860,868): 'lMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(868,881): '(propMyClass)'
   null
@@ -440,7 +469,9 @@ KtValueArgument(869,880): 'propMyClass'
   null
 
 KtNameReferenceExpression(869,880): 'propMyClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propMyClass>
 
 KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
   KaSymbolResolutionSuccess:
@@ -449,7 +480,10 @@ KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
     ]
 
 KtNameReferenceExpression(886,894): 'lMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(894,914): '(propInheritorClass)'
   null
@@ -458,7 +492,9 @@ KtValueArgument(895,913): 'propInheritorClass'
   null
 
 KtNameReferenceExpression(895,913): 'propInheritorClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propInheritorClass>
 
 KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
   KaSymbolResolutionSuccess:
@@ -467,7 +503,10 @@ KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
     ]
 
 KtNameReferenceExpression(919,927): 'lMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(927,948): '(propInheritorObject)'
   null
@@ -476,7 +515,9 @@ KtValueArgument(928,947): 'propInheritorObject'
   null
 
 KtNameReferenceExpression(928,947): 'propInheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propInheritorObject>
 
 KtCallExpression(954,976): 'lMyClass(NestedObject)'
   KaSymbolResolutionSuccess:
@@ -485,7 +526,10 @@ KtCallExpression(954,976): 'lMyClass(NestedObject)'
     ]
 
 KtNameReferenceExpression(954,962): 'lMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(962,976): '(NestedObject)'
   null
@@ -494,7 +538,9 @@ KtValueArgument(963,975): 'NestedObject'
   null
 
 KtNameReferenceExpression(963,975): 'NestedObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedObject>
 
 KtCallExpression(981,995): 'lMyClass(prop)'
   KaSymbolResolutionSuccess:
@@ -503,7 +549,10 @@ KtCallExpression(981,995): 'lMyClass(prop)'
     ]
 
 KtNameReferenceExpression(981,989): 'lMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(989,995): '(prop)'
   null
@@ -512,7 +561,9 @@ KtValueArgument(990,994): 'prop'
   null
 
 KtNameReferenceExpression(990,994): 'prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtCallExpression(1000,1019): 'lMyClass(superProp)'
   KaSymbolResolutionSuccess:
@@ -521,7 +572,10 @@ KtCallExpression(1000,1019): 'lMyClass(superProp)'
     ]
 
 KtNameReferenceExpression(1000,1008): 'lMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1008,1019): '(superProp)'
   null
@@ -530,7 +584,9 @@ KtValueArgument(1009,1018): 'superProp'
   null
 
 KtNameReferenceExpression(1009,1018): 'superProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superProp>
 
 KtCallExpression(1024,1043): 'lMyClass(constProp)'
   KaSymbolResolutionSuccess:
@@ -539,7 +595,10 @@ KtCallExpression(1024,1043): 'lMyClass(constProp)'
     ]
 
 KtNameReferenceExpression(1024,1032): 'lMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1032,1043): '(constProp)'
   null
@@ -548,7 +607,9 @@ KtValueArgument(1033,1042): 'constProp'
   null
 
 KtNameReferenceExpression(1033,1042): 'constProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: constProp>
 
 KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
   KaSymbolResolutionSuccess:
@@ -557,7 +618,10 @@ KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
     ]
 
 KtNameReferenceExpression(1048,1056): 'lMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1056,1066): '(lazyProp)'
   null
@@ -566,7 +630,9 @@ KtValueArgument(1057,1065): 'lazyProp'
   null
 
 KtNameReferenceExpression(1057,1065): 'lazyProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lazyProp>
 
 KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
   KaSymbolResolutionSuccess:
@@ -575,7 +641,10 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
     ]
 
 KtNameReferenceExpression(1071,1079): 'lMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1079,1091): '(lambdaProp)'
   null
@@ -584,7 +653,9 @@ KtValueArgument(1080,1090): 'lambdaProp'
   null
 
 KtNameReferenceExpression(1080,1090): 'lambdaProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lambdaProp>
 
 KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
   KaSymbolResolutionSuccess:
@@ -593,7 +664,10 @@ KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
     ]
 
 KtNameReferenceExpression(1097,1105): 'lMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1105,1123): '(InheritorClass())'
   null
@@ -607,7 +681,9 @@ KtCallExpression(1106,1122): 'InheritorClass()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorClass>
 
 KtNameReferenceExpression(1106,1120): 'InheritorClass'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorClass>
 
 KtValueArgumentList(1120,1122): '()'
   null
@@ -619,7 +695,10 @@ KtCallExpression(1128,1144): 'lMyClass(func())'
     ]
 
 KtNameReferenceExpression(1128,1136): 'lMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1136,1144): '(func())'
   null
@@ -633,7 +712,9 @@ KtCallExpression(1137,1143): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
 
 KtNameReferenceExpression(1137,1141): 'func'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
 
 KtValueArgumentList(1141,1143): '()'
   null
@@ -645,7 +726,10 @@ KtCallExpression(1149,1170): 'lMyClass(superFunc())'
     ]
 
 KtNameReferenceExpression(1149,1157): 'lMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+    ]
 
 KtValueArgumentList(1157,1170): '(superFunc())'
   null
@@ -659,7 +743,9 @@ KtCallExpression(1158,1169): 'superFunc()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superFunc>
 
 KtNameReferenceExpression(1158,1167): 'superFunc'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superFunc>
 
 KtValueArgumentList(1167,1169): '()'
   null

@@ -359,7 +359,7 @@ KtCallExpression(392,405): 'NestedClass()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(392,403): 'NestedClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -404,7 +404,7 @@ KtDotQualifiedExpression(422,432): 'c1.Inner()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(422,424): 'c1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -443,7 +443,7 @@ KtCallExpression(425,432): 'Inner()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(425,430): 'Inner'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

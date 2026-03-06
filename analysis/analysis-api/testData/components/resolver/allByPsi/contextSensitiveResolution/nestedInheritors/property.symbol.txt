@@ -146,7 +146,10 @@ KtCallExpression(372,532): 'receiveMyClass('
     ]
 
 KtNameReferenceExpression(372,386): 'receiveMyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(m: MyClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(386,532): '('
   null
@@ -167,7 +170,10 @@ KtBinaryExpression(400,406): 'i == 0'
     ]
 
 KtNameReferenceExpression(400,401): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(402,404): '=='
   null
@@ -197,7 +203,10 @@ KtBinaryExpression(441,447): 'i == 1'
     ]
 
 KtNameReferenceExpression(441,442): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(443,445): '=='
   null
@@ -209,7 +218,10 @@ KtContainerNodeForControlStructureBody(449,460): 'myClassProp'
   null
 
 KtNameReferenceExpression(449,460): 'myClassProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val myClassProp: MyClass
+    ]
 
 KtContainerNodeForControlStructureBody(474,526): 'if (i == 2) stringProp'
   null
@@ -227,7 +239,10 @@ KtBinaryExpression(478,484): 'i == 2'
     ]
 
 KtNameReferenceExpression(478,479): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(480,482): '=='
   null
@@ -239,10 +254,16 @@ KtContainerNodeForControlStructureBody(486,496): 'stringProp'
   null
 
 KtNameReferenceExpression(486,496): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtContainerNodeForControlStructureBody(510,526): 'ClassMemberAlias'
   null
 
 KtNameReferenceExpression(510,526): 'ClassMemberAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val ClassMemberAlias: MyClass.NestedInheritor
+    ]

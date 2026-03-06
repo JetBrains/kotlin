@@ -35,7 +35,10 @@ KtProperty(158,185): 'val EnumValue3 = EnumValue1'
   null
 
 KtNameReferenceExpression(175,185): 'EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtProperty(194,215): 'val prop: String = ""'
   null
@@ -101,7 +104,10 @@ KtCallExpression(276,293): 'lEnum(EnumValue1)'
     ]
 
 KtNameReferenceExpression(276,281): 'lEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lEnum: (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
+    ]
 
 KtValueArgumentList(281,293): '(EnumValue1)'
   null
@@ -110,7 +116,10 @@ KtValueArgument(282,292): 'EnumValue1'
   null
 
 KtNameReferenceExpression(282,292): 'EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtCallExpression(298,315): 'lEnum(EnumValue2)'
   KaSymbolResolutionSuccess:
@@ -119,7 +128,10 @@ KtCallExpression(298,315): 'lEnum(EnumValue2)'
     ]
 
 KtNameReferenceExpression(298,303): 'lEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      lEnum: (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
+    ]
 
 KtValueArgumentList(303,315): '(EnumValue2)'
   null
@@ -128,7 +140,10 @@ KtValueArgument(304,314): 'EnumValue2'
   null
 
 KtNameReferenceExpression(304,314): 'EnumValue2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue2
+    ]
 
 KtNamedFunction(319,354): 'fun <T>receiveLambda(l: () -> T) {}'
   null
@@ -182,7 +197,10 @@ KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
     ]
 
 KtNameReferenceExpression(387,400): 'receiveLambda'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveLambda(l: () -> T): kotlin.Unit
+    ]
 
 KtTypeArgumentList(400,408): '<MyEnum>'
   null
@@ -212,7 +230,10 @@ KtBlockExpression(411,421): 'EnumValue1'
   null
 
 KtNameReferenceExpression(411,421): 'EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
   KaSymbolResolutionSuccess:
@@ -221,7 +242,10 @@ KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
     ]
 
 KtNameReferenceExpression(428,441): 'receiveLambda'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveLambda(l: () -> T): kotlin.Unit
+    ]
 
 KtTypeArgumentList(441,449): '<MyEnum>'
   null
@@ -251,7 +275,10 @@ KtBlockExpression(452,462): 'EnumValue3'
   null
 
 KtNameReferenceExpression(452,462): 'EnumValue3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val EnumValue3: MyEnum
+    ]
 
 KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
   KaSymbolResolutionError:
@@ -261,7 +288,11 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
 
 KtNameReferenceExpression(469,482): 'receiveLambda'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: () -> T): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
 
 KtTypeArgumentList(482,490): '<MyEnum>'
   null
@@ -291,4 +322,7 @@ KtBlockExpression(493,497): 'prop'
   null
 
 KtNameReferenceExpression(493,497): 'prop'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]

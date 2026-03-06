@@ -152,7 +152,10 @@ KtCallExpression(243,246): 'A()'
     ]
 
 KtNameReferenceExpression(243,244): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(244,246): '()'
   null
@@ -167,7 +170,10 @@ KtCallExpression(259,262): 'A()'
     ]
 
 KtNameReferenceExpression(259,260): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(260,262): '()'
   null
@@ -179,13 +185,19 @@ KtBinaryExpression(267,273): 'a += b'
     ]
 
 KtNameReferenceExpression(267,268): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
 
 KtOperationReferenceExpression(269,271): '+='
   null
 
 KtNameReferenceExpression(272,273): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
 
 KtBinaryExpression(278,284): 'a -= b'
   KaSymbolResolutionSuccess:
@@ -194,13 +206,19 @@ KtBinaryExpression(278,284): 'a -= b'
     ]
 
 KtNameReferenceExpression(278,279): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
 
 KtOperationReferenceExpression(280,282): '-='
   null
 
 KtNameReferenceExpression(283,284): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
 
 KtBinaryExpression(289,295): 'a *= b'
   KaSymbolResolutionSuccess:
@@ -209,13 +227,19 @@ KtBinaryExpression(289,295): 'a *= b'
     ]
 
 KtNameReferenceExpression(289,290): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
 
 KtOperationReferenceExpression(291,293): '*='
   null
 
 KtNameReferenceExpression(294,295): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
 
 KtBinaryExpression(300,306): 'a /= b'
   KaSymbolResolutionSuccess:
@@ -224,13 +248,19 @@ KtBinaryExpression(300,306): 'a /= b'
     ]
 
 KtNameReferenceExpression(300,301): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
 
 KtOperationReferenceExpression(302,304): '/='
   null
 
 KtNameReferenceExpression(305,306): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
 
 KtBinaryExpression(311,317): 'a %= b'
   KaSymbolResolutionSuccess:
@@ -239,10 +269,16 @@ KtBinaryExpression(311,317): 'a %= b'
     ]
 
 KtNameReferenceExpression(311,312): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
 
 KtOperationReferenceExpression(313,315): '%='
   null
 
 KtNameReferenceExpression(316,317): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]

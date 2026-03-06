@@ -165,7 +165,7 @@ KtCallExpression(246,258): 'MyDelegate()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(246,256): 'MyDelegate'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -410,7 +410,7 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(446,456): 'ResourceID'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

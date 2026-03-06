@@ -44,7 +44,10 @@ KtWhenExpression(121,173): 'when (s) {'
   null
 
 KtNameReferenceExpression(127,128): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: Some
+    ]
 
 KtWhenEntry(136,151): 'FIRST -> SECOND'
   null
@@ -53,10 +56,15 @@ KtWhenConditionWithExpression(136,141): 'FIRST'
   null
 
 KtNameReferenceExpression(136,141): 'FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Some.FIRST
+    ]
 
 KtNameReferenceExpression(145,151): 'SECOND'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SECOND'.>
 
 KtWhenEntry(156,171): 'SECOND -> FIRST'
   null
@@ -65,7 +73,12 @@ KtWhenConditionWithExpression(156,162): 'SECOND'
   null
 
 KtNameReferenceExpression(156,162): 'SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Some.SECOND
+    ]
 
 KtNameReferenceExpression(166,171): 'FIRST'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'FIRST'.>

@@ -464,7 +464,10 @@ KtCallExpression(494,500): 'Test()'
     ]
 
 KtNameReferenceExpression(494,498): 'Test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Test
+    ]
 
 KtValueArgumentList(498,500): '()'
   null
@@ -473,7 +476,10 @@ KtBinaryExpression(505,513): 'foo += 1'
   null
 
 KtNameReferenceExpression(505,508): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var foo: Test
+    ]
 
 KtOperationReferenceExpression(509,511): '+='
   null
@@ -485,7 +491,10 @@ KtBinaryExpression(518,526): 'foo -= 1'
   null
 
 KtNameReferenceExpression(518,521): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var foo: Test
+    ]
 
 KtOperationReferenceExpression(522,524): '-='
   null
@@ -497,7 +506,10 @@ KtBinaryExpression(531,539): 'foo /= 1'
   null
 
 KtNameReferenceExpression(531,534): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var foo: Test
+    ]
 
 KtOperationReferenceExpression(535,537): '/='
   null
@@ -509,7 +521,10 @@ KtBinaryExpression(544,552): 'foo *= 1'
   null
 
 KtNameReferenceExpression(544,547): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var foo: Test
+    ]
 
 KtOperationReferenceExpression(548,550): '*='
   null
@@ -521,7 +536,10 @@ KtBinaryExpression(557,565): 'foo %= 1'
   null
 
 KtNameReferenceExpression(557,560): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var foo: Test
+    ]
 
 KtOperationReferenceExpression(561,563): '%='
   null

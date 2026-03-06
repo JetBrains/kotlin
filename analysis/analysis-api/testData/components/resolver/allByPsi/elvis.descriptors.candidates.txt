@@ -93,7 +93,7 @@ KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(79,84): 'other'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -148,7 +148,7 @@ KtCallExpression(86,98): 'equals(this)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(86,92): 'equals'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -251,7 +251,7 @@ KtBinaryExpression(168,175): 'm ?: m2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(168,169): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -272,7 +272,7 @@ KtOperationReferenceExpression(170,172): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(173,175): 'm2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -299,7 +299,7 @@ KtBinaryExpression(188,195): 'f ?: m2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(188,189): 'f'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -320,7 +320,7 @@ KtOperationReferenceExpression(190,192): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(193,195): 'm2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -341,7 +341,7 @@ KtBinaryExpression(200,207): 'm2 ?: m'
   NO_CANDIDATES
 
 KtNameReferenceExpression(200,202): 'm2'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -362,7 +362,7 @@ KtOperationReferenceExpression(203,205): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(206,207): 'm'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

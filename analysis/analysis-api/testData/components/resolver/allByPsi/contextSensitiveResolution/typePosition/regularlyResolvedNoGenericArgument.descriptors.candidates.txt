@@ -152,7 +152,7 @@ KtNameReferenceExpression(279,283): 'Left'
   NO_CANDIDATES
 
 KtNameReferenceExpression(287,288): 'z'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:

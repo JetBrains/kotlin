@@ -125,7 +125,10 @@ KtLabelReferenceExpression(151,160): '@iterator'
     ]
 
 KtNameReferenceExpression(161,166): 'start'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val start: kotlin.Int
+    ]
 
 KtNamedFunction(171,224): 'override fun hasNext() = current <= this@iterator.end'
   null
@@ -143,7 +146,10 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
     ]
 
 KtNameReferenceExpression(196,203): 'current'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var current: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(204,206): '<='
   null
@@ -170,7 +176,10 @@ KtLabelReferenceExpression(211,220): '@iterator'
     ]
 
 KtNameReferenceExpression(221,224): 'end'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val end: kotlin.Int
+    ]
 
 KtNamedFunction(229,265): 'override fun next(): Int = current++'
   null
@@ -198,7 +207,10 @@ KtPostfixExpression(256,265): 'current++'
     ]
 
 KtNameReferenceExpression(256,263): 'current'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var current: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(263,265): '++'
   null
@@ -233,7 +245,10 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
     ]
 
 KtNameReferenceExpression(297,311): 'IntProgression'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
+    ]
 
 KtValueArgumentList(311,318): '(1, 10)'
   null

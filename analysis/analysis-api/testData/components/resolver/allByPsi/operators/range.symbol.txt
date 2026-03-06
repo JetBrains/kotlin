@@ -128,7 +128,10 @@ KtCallExpression(125,131): 'TODO()'
     ]
 
 KtNameReferenceExpression(125,129): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(129,131): '()'
   null
@@ -185,7 +188,10 @@ KtCallExpression(189,195): 'TODO()'
     ]
 
 KtNameReferenceExpression(189,193): 'TODO'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtValueArgumentList(193,195): '()'
   null
@@ -209,7 +215,10 @@ KtCallExpression(224,227): 'A()'
     ]
 
 KtNameReferenceExpression(224,225): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(225,227): '()'
   null
@@ -224,7 +233,10 @@ KtCallExpression(240,243): 'A()'
     ]
 
 KtNameReferenceExpression(240,241): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtValueArgumentList(241,243): '()'
   null
@@ -236,13 +248,19 @@ KtBinaryExpression(248,252): 'a..b'
     ]
 
 KtNameReferenceExpression(248,249): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
 
 KtOperationReferenceExpression(249,251): '..'
   null
 
 KtNameReferenceExpression(251,252): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]
 
 KtBinaryExpression(257,262): 'a..<b'
   KaSymbolResolutionSuccess:
@@ -251,10 +269,16 @@ KtBinaryExpression(257,262): 'a..<b'
     ]
 
 KtNameReferenceExpression(257,258): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A
+    ]
 
 KtOperationReferenceExpression(258,261): '..<'
   null
 
 KtNameReferenceExpression(261,262): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: A
+    ]

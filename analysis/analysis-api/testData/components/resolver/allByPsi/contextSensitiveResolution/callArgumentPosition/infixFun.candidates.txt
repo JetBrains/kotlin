@@ -243,7 +243,7 @@ KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
     isInBestCandidates = true
 
 KtNameReferenceExpression(330,340): 'EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -427,7 +427,7 @@ KtOperationReferenceExpression(405,418): 'infixConsumer'
     isInBestCandidates = true
 
 KtNameReferenceExpression(419,434): 'InheritorObject'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

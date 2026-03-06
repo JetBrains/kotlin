@@ -158,7 +158,7 @@ KtCallExpression(251,263): 'InnerClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(251,261): 'InnerClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

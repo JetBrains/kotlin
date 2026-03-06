@@ -73,7 +73,7 @@ KtCallExpression(168,177): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(168,175): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -156,7 +156,7 @@ KtCallExpression(228,244): 'foo(MyClass.bar)'
       }
 
 KtNameReferenceExpression(228,231): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -222,7 +222,7 @@ KtNameReferenceExpression(232,239): 'MyClass'
   null
 
 KtNameReferenceExpression(240,243): 'bar'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleVariableAccessCall:
         contextArguments = []
@@ -279,7 +279,7 @@ KtCallExpression(249,257): 'foo(bar)'
       }
 
 KtNameReferenceExpression(249,252): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -318,7 +318,7 @@ KtValueArgument(253,256): 'bar'
   null
 
 KtNameReferenceExpression(253,256): 'bar'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: bar>
 
@@ -385,7 +385,7 @@ KtCallExpression(347,357): 'MyClass2()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(347,355): 'MyClass2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -468,7 +468,7 @@ KtCallExpression(403,421): 'foo2(MyClass2.bar)'
       }
 
 KtNameReferenceExpression(403,407): 'foo2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -530,7 +530,7 @@ KtNameReferenceExpression(408,416): 'MyClass2'
   null
 
 KtNameReferenceExpression(417,420): 'bar'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -583,7 +583,7 @@ KtCallExpression(426,435): 'foo2(bar)'
       }
 
 KtNameReferenceExpression(426,430): 'foo2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -622,6 +622,6 @@ KtValueArgument(431,434): 'bar'
   null
 
 KtNameReferenceExpression(431,434): 'bar'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: bar>

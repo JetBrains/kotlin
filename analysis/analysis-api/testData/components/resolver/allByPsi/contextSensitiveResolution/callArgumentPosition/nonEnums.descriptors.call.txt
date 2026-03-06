@@ -55,7 +55,7 @@ KtCallExpression(101,107): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(101,105): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -129,7 +129,7 @@ KtUserType(167,174): 'MyClass'
   null
 
 KtNameReferenceExpression(167,174): 'MyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -245,7 +245,7 @@ KtCallExpression(289,295): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(289,293): 'TODO'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -316,7 +316,7 @@ KtCallExpression(321,341): 'expectInt(MAX_VALUE)'
       }
 
 KtNameReferenceExpression(321,330): 'expectInt'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -355,7 +355,7 @@ KtValueArgument(331,340): 'MAX_VALUE'
   null
 
 KtNameReferenceExpression(331,340): 'MAX_VALUE'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: MAX_VALUE>
 
@@ -393,7 +393,7 @@ KtCallExpression(347,365): 'expectMyClass(FOO)'
       }
 
 KtNameReferenceExpression(347,360): 'expectMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -432,7 +432,7 @@ KtValueArgument(361,364): 'FOO'
   null
 
 KtNameReferenceExpression(361,364): 'FOO'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FOO>
 
@@ -473,7 +473,7 @@ KtCallExpression(370,392): 'expectMyClass(id(FOO))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with expectMyClass>
 
 KtNameReferenceExpression(370,383): 'expectMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -553,7 +553,7 @@ KtCallExpression(384,391): 'id(FOO)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(384,386): 'id'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -597,7 +597,7 @@ KtValueArgument(387,390): 'FOO'
   null
 
 KtNameReferenceExpression(387,390): 'FOO'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FOO>
 
@@ -635,7 +635,7 @@ KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
       }
 
 KtNameReferenceExpression(398,411): 'expectMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -674,7 +674,7 @@ KtValueArgument(412,429): 'FOR_TYPE_MISMATCH'
   null
 
 KtNameReferenceExpression(412,429): 'FOR_TYPE_MISMATCH'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FOR_TYPE_MISMATCH>
 
@@ -715,7 +715,7 @@ KtCallExpression(435,471): 'expectMyClass(id(FOR_TYPE_MISMATCH))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with expectMyClass>
 
 KtNameReferenceExpression(435,448): 'expectMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -795,7 +795,7 @@ KtCallExpression(449,470): 'id(FOR_TYPE_MISMATCH)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(449,451): 'id'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -839,7 +839,7 @@ KtValueArgument(452,469): 'FOR_TYPE_MISMATCH'
   null
 
 KtNameReferenceExpression(452,469): 'FOR_TYPE_MISMATCH'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FOR_TYPE_MISMATCH>
 
@@ -877,7 +877,7 @@ KtCallExpression(477,495): 'expectMyClass(Bar)'
       }
 
 KtNameReferenceExpression(477,490): 'expectMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -916,7 +916,7 @@ KtValueArgument(491,494): 'Bar'
   null
 
 KtNameReferenceExpression(491,494): 'Bar'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Bar>
 
@@ -957,7 +957,7 @@ KtCallExpression(500,522): 'expectMyClass(id(Bar))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with expectMyClass>
 
 KtNameReferenceExpression(500,513): 'expectMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1037,7 +1037,7 @@ KtCallExpression(514,521): 'id(Bar)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(514,516): 'id'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1081,7 +1081,7 @@ KtValueArgument(517,520): 'Bar'
   null
 
 KtNameReferenceExpression(517,520): 'Bar'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Bar>
 
@@ -1119,7 +1119,7 @@ KtCallExpression(528,558): 'expectMyClass(ForTypeMismatch)'
       }
 
 KtNameReferenceExpression(528,541): 'expectMyClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1158,7 +1158,7 @@ KtValueArgument(542,557): 'ForTypeMismatch'
   null
 
 KtNameReferenceExpression(542,557): 'ForTypeMismatch'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: ForTypeMismatch>
 
@@ -1199,7 +1199,7 @@ KtCallExpression(563,597): 'expectMyClass(id(ForTypeMismatch))'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with expectMyClass>
 
 KtNameReferenceExpression(563,576): 'expectMyClass'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1279,7 +1279,7 @@ KtCallExpression(577,596): 'id(ForTypeMismatch)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
 
 KtNameReferenceExpression(577,579): 'id'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1323,7 +1323,7 @@ KtValueArgument(580,595): 'ForTypeMismatch'
   null
 
 KtNameReferenceExpression(580,595): 'ForTypeMismatch'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: ForTypeMismatch>
 
@@ -1397,7 +1397,7 @@ KtCallExpression(613,638): 'expectJavaClass(INSTANCE)'
       }
 
 KtNameReferenceExpression(613,628): 'expectJavaClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1436,6 +1436,6 @@ KtValueArgument(629,637): 'INSTANCE'
   null
 
 KtNameReferenceExpression(629,637): 'INSTANCE'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: INSTANCE>

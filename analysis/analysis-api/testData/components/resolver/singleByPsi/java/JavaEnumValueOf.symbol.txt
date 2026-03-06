@@ -1,2 +1,5 @@
 KtNameReferenceExpression(74,81): 'valueOf'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      java/lang/annotation/RetentionPolicy.valueOf(value: kotlin.String): java.lang.annotation.RetentionPolicy
+    ]

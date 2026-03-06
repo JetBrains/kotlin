@@ -101,7 +101,7 @@ KtNameReferenceExpression(211,217): 'MyEnum'
   null
 
 KtNameReferenceExpression(223,226): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -136,7 +136,7 @@ KtNameReferenceExpression(245,252): 'MyClass'
   null
 
 KtNameReferenceExpression(256,259): 'arg'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -228,7 +228,7 @@ KtCallExpression(277,297): 'overload(EnumValue1)'
     diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
 
 KtNameReferenceExpression(277,285): 'overload'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -300,7 +300,7 @@ KtValueArgument(286,296): 'EnumValue1'
   null
 
 KtNameReferenceExpression(286,296): 'EnumValue1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'EnumValue1'.>
 
@@ -383,7 +383,7 @@ KtCallExpression(320,340): 'overload(EnumValue1)'
     diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
 
 KtNameReferenceExpression(320,328): 'overload'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -455,7 +455,7 @@ KtValueArgument(329,339): 'EnumValue1'
   null
 
 KtNameReferenceExpression(329,339): 'EnumValue1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'EnumValue1'.>
 
@@ -526,7 +526,7 @@ KtCallExpression(346,371): 'overload(InheritorObject)'
     diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
 
 KtNameReferenceExpression(346,354): 'overload'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -598,7 +598,7 @@ KtValueArgument(355,370): 'InheritorObject'
   null
 
 KtNameReferenceExpression(355,370): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
@@ -657,7 +657,7 @@ KtCallExpression(404,427): 'println("Enum version")'
       }
 
 KtNameReferenceExpression(404,411): 'println'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -744,7 +744,7 @@ KtCallExpression(448,484): 'println("Without arguments version")'
       }
 
 KtNameReferenceExpression(448,455): 'println'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -831,7 +831,7 @@ KtCallExpression(506,527): 'overload2(EnumValue1)'
       }
 
 KtNameReferenceExpression(506,515): 'overload2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -870,7 +870,7 @@ KtValueArgument(516,526): 'EnumValue1'
   null
 
 KtNameReferenceExpression(516,526): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -944,7 +944,7 @@ KtCallExpression(559,582): 'println("Enum version")'
       }
 
 KtNameReferenceExpression(559,566): 'println'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1058,7 +1058,7 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
       }
 
 KtNameReferenceExpression(630,637): 'println'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1145,7 +1145,7 @@ KtCallExpression(679,700): 'overload3(EnumValue1)'
       }
 
 KtNameReferenceExpression(679,688): 'overload3'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1184,7 +1184,7 @@ KtValueArgument(689,699): 'EnumValue1'
   null
 
 KtNameReferenceExpression(689,699): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

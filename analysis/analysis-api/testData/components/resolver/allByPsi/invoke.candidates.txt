@@ -92,7 +92,7 @@ KtCallExpression(124,133): 'MyClass()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(124,131): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -140,7 +140,7 @@ KtCallExpression(156,165): 'MyClass()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(156,163): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -208,7 +208,7 @@ KtCallExpression(186,191): 'foo()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(186,189): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -228,7 +228,7 @@ KtNameReferenceExpression(186,189): 'foo'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -249,7 +249,7 @@ KtValueArgumentList(189,191): '()'
   NO_CANDIDATES
 
 KtNameReferenceExpression(196,199): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -356,7 +356,7 @@ KtParenthesizedExpression(206,211): '(foo)'
   NO_CANDIDATES
 
 KtNameReferenceExpression(207,210): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -401,7 +401,7 @@ KtCallExpression(218,226): 'invoke()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(218,224): 'invoke'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -446,7 +446,7 @@ KtDotQualifiedExpression(231,243): 'foo.invoke()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(231,234): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -485,7 +485,7 @@ KtCallExpression(235,243): 'invoke()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(235,241): 'invoke'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -530,7 +530,7 @@ KtCallExpression(248,258): 'property()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(248,256): 'property'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

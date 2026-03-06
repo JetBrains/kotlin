@@ -97,7 +97,7 @@ KtUserType(39,45): 'Target'
   NO_CANDIDATES
 
 KtNameReferenceExpression(39,45): 'Target'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -250,7 +250,7 @@ KtUserType(76,85): 'Retention'
   NO_CANDIDATES
 
 KtNameReferenceExpression(76,85): 'Retention'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -433,7 +433,7 @@ KtUserType(173,177): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(173,177): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -550,7 +550,7 @@ KtOperationReferenceExpression(180,181): '+'
     isInBestCandidates = true
 
 KtNameReferenceExpression(182,189): 'integer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -950,7 +950,7 @@ KtUserType(193,197): 'Anno'
   NO_CANDIDATES
 
 KtNameReferenceExpression(193,197): 'Anno'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -990,7 +990,7 @@ KtValueArgument(198,205): 'integer'
   NO_CANDIDATES
 
 KtNameReferenceExpression(198,205): 'integer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1026,7 +1026,7 @@ KtCallExpression(207,214): 'usage()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(207,212): 'usage'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1349,7 +1349,7 @@ KtCallExpression(216,226): 'toString()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(216,224): 'toString'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1369,7 +1369,7 @@ KtNameReferenceExpression(216,224): 'toString'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1389,7 +1389,7 @@ KtNameReferenceExpression(216,224): 'toString'
       valueArgumentMapping = {}
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1418,7 +1418,7 @@ KtNameReferenceExpression(216,224): 'toString'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1447,7 +1447,7 @@ KtNameReferenceExpression(216,224): 'toString'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'charset'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1476,7 +1476,7 @@ KtNameReferenceExpression(216,224): 'toString'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1505,7 +1505,7 @@ KtNameReferenceExpression(216,224): 'toString'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1534,7 +1534,7 @@ KtNameReferenceExpression(216,224): 'toString'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1563,7 +1563,7 @@ KtNameReferenceExpression(216,224): 'toString'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1592,7 +1592,7 @@ KtNameReferenceExpression(216,224): 'toString'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1621,7 +1621,7 @@ KtNameReferenceExpression(216,224): 'toString'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

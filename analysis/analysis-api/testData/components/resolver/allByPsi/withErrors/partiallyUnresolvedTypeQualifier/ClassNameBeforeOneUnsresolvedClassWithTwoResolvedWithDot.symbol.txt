@@ -47,7 +47,9 @@ KtNameReferenceExpression(57,60): 'Bar'
   null
 
 KtNameReferenceExpression(61,64): 'Baz'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
 
 KtNamedFunction(69,118): 'fun testFun() {'
   null
@@ -83,7 +85,9 @@ KtNameReferenceExpression(108,111): 'Bar'
   null
 
 KtNameReferenceExpression(112,115): 'Baz'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
 
 KtNamedFunction(120,156): 'fun <T> take(action: (T) -> Unit) {}'
   null
@@ -144,7 +148,11 @@ KtCallExpression(169,210): 'take {'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Incomplete user type)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
 
 KtNameReferenceExpression(169,173): 'take'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /take(action: (T) -> kotlin.Unit): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Incomplete user type)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
 
 KtLambdaArgument(174,210): '{'
   null
@@ -183,7 +191,9 @@ KtNameReferenceExpression(197,200): 'Bar'
   null
 
 KtNameReferenceExpression(201,204): 'Baz'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
 
 KtBlockExpression(209,209): ''
   null

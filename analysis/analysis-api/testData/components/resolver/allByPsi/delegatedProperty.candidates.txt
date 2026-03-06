@@ -127,7 +127,7 @@ KtCallExpression(77,87): 'Delegate()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(77,85): 'Delegate'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

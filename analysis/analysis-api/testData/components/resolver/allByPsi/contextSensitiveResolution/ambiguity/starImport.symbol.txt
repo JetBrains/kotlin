@@ -74,7 +74,10 @@ KtWhenExpression(133,298): 'when (s) {'
   null
 
 KtNameReferenceExpression(139,140): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtWhenEntry(148,154): 'A -> 1'
   null
@@ -173,7 +176,10 @@ KtWhenConditionWithExpression(237,247): 'CompanionB'
   null
 
 KtNameReferenceExpression(237,247): 'CompanionB'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionB: kotlin.Int
+    ]
 
 KtConstantExpression(251,252): '7'
   null
@@ -251,7 +257,10 @@ KtWhenExpression(337,554): 'when (s) {'
   null
 
 KtNameReferenceExpression(343,344): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtWhenEntry(352,369): 'bar.Sealed.A -> 1'
   null
@@ -359,7 +368,10 @@ KtNameReferenceExpression(433,439): 'Sealed'
   null
 
 KtNameReferenceExpression(440,450): 'CompanionA'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionA: bar.Sealed
+    ]
 
 KtConstantExpression(454,455): '6'
   null
@@ -386,7 +398,10 @@ KtNameReferenceExpression(464,470): 'Sealed'
   null
 
 KtNameReferenceExpression(471,481): 'CompanionB'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionB: bar.Sealed
+    ]
 
 KtConstantExpression(485,486): '7'
   null
@@ -488,7 +503,10 @@ KtWhenExpression(595,764): 'when (s) {'
   null
 
 KtNameReferenceExpression(601,602): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtWhenEntry(610,620): 'foo.A -> 1'
   null
@@ -590,7 +608,10 @@ KtNameReferenceExpression(693,696): 'foo'
   null
 
 KtNameReferenceExpression(697,707): 'CompanionB'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionB: kotlin.Int
+    ]
 
 KtConstantExpression(711,712): '7'
   null
@@ -683,7 +704,10 @@ KtBinaryExpressionWithTypeRHS(803,809): 's as A'
   null
 
 KtNameReferenceExpression(803,804): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(805,807): 'as'
   null
@@ -740,7 +764,10 @@ KtBinaryExpressionWithTypeRHS(863,869): 's as B'
   null
 
 KtNameReferenceExpression(863,864): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(865,867): 'as'
   null
@@ -797,7 +824,10 @@ KtBinaryExpressionWithTypeRHS(924,937): 's as Sealed.A'
   null
 
 KtNameReferenceExpression(924,925): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(926,928): 'as'
   null
@@ -860,7 +890,10 @@ KtBinaryExpressionWithTypeRHS(992,1005): 's as Sealed.B'
   null
 
 KtNameReferenceExpression(992,993): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(994,996): 'as'
   null
@@ -923,7 +956,10 @@ KtBinaryExpressionWithTypeRHS(1062,1072): 's as foo.A'
   null
 
 KtNameReferenceExpression(1062,1063): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1064,1066): 'as'
   null
@@ -986,7 +1022,10 @@ KtBinaryExpressionWithTypeRHS(1129,1139): 's as foo.B'
   null
 
 KtNameReferenceExpression(1129,1130): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1131,1133): 'as'
   null
@@ -1049,7 +1088,10 @@ KtBinaryExpressionWithTypeRHS(1190,1196): 's as C'
   null
 
 KtNameReferenceExpression(1190,1191): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1192,1194): 'as'
   null
@@ -1106,7 +1148,10 @@ KtBinaryExpressionWithTypeRHS(1247,1253): 's as D'
   null
 
 KtNameReferenceExpression(1247,1248): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1249,1251): 'as'
   null
@@ -1163,7 +1208,10 @@ KtBinaryExpression(1311,1317): 's == A'
     ]
 
 KtNameReferenceExpression(1311,1312): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1313,1315): '=='
   null
@@ -1205,7 +1253,10 @@ KtBinaryExpression(1360,1373): 's == Sealed.A'
     ]
 
 KtNameReferenceExpression(1360,1361): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1362,1364): '=='
   null
@@ -1253,7 +1304,10 @@ KtBinaryExpression(1418,1428): 's == foo.A'
     ]
 
 KtNameReferenceExpression(1418,1419): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1420,1422): '=='
   null
@@ -1301,7 +1355,10 @@ KtBinaryExpression(1468,1481): 's == Sealed.C'
     ]
 
 KtNameReferenceExpression(1468,1469): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1470,1472): '=='
   null
@@ -1349,7 +1406,10 @@ KtBinaryExpression(1524,1539): 's == CompanionA'
     ]
 
 KtNameReferenceExpression(1524,1525): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1526,1528): '=='
   null
@@ -1391,7 +1451,10 @@ KtBinaryExpression(1582,1604): 's == Sealed.CompanionA'
     ]
 
 KtNameReferenceExpression(1582,1583): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1584,1586): '=='
   null
@@ -1406,7 +1469,10 @@ KtNameReferenceExpression(1587,1593): 'Sealed'
   null
 
 KtNameReferenceExpression(1594,1604): 'CompanionA'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val CompanionA: bar.Sealed
+    ]
 
 KtNamedFunction(1605,1668): 'fun equality3topLevel(s: Sealed): Boolean = s == foo.CompanionA'
   null
@@ -1442,7 +1508,10 @@ KtBinaryExpression(1649,1668): 's == foo.CompanionA'
     ]
 
 KtNameReferenceExpression(1649,1650): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1651,1653): '=='
   null
@@ -1490,7 +1559,10 @@ KtBinaryExpression(1708,1714): 's == F'
     ]
 
 KtNameReferenceExpression(1708,1709): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1710,1712): '=='
   null
@@ -1532,7 +1604,10 @@ KtBinaryExpression(1757,1770): 's == Sealed.F'
     ]
 
 KtNameReferenceExpression(1757,1758): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1759,1761): '=='
   null
@@ -1580,7 +1655,10 @@ KtBinaryExpression(1815,1825): 's == foo.F'
     ]
 
 KtNameReferenceExpression(1815,1816): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: bar.Sealed
+    ]
 
 KtOperationReferenceExpression(1817,1819): '=='
   null

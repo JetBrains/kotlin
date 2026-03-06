@@ -411,7 +411,7 @@ KtWhenExpression(337,432): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(343,344): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -435,7 +435,7 @@ KtWhenConditionWithExpression(352,353): 'A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(352,353): 'A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -481,7 +481,7 @@ KtWhenConditionWithExpression(377,378): 'C'
   NO_CANDIDATES
 
 KtNameReferenceExpression(377,378): 'C'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -575,7 +575,7 @@ KtWhenExpression(471,536): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(477,478): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -618,7 +618,7 @@ KtDotQualifiedExpression(486,494): 'Sealed.A'
     isInBestCandidates = false
 
 KtNameReferenceExpression(486,492): 'Sealed'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -637,7 +637,7 @@ KtNameReferenceExpression(486,492): 'Sealed'
     isInBestCandidates = false
 
 KtNameReferenceExpression(493,494): 'A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -719,7 +719,7 @@ KtWhenExpression(577,636): 'when (s) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(583,584): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -765,7 +765,7 @@ KtNameReferenceExpression(592,595): 'foo'
   NO_CANDIDATES
 
 KtNameReferenceExpression(596,597): 'A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -850,7 +850,7 @@ KtBinaryExpressionWithTypeRHS(675,681): 's as A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(675,676): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -919,7 +919,7 @@ KtBinaryExpressionWithTypeRHS(735,741): 's as B'
   NO_CANDIDATES
 
 KtNameReferenceExpression(735,736): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -988,7 +988,7 @@ KtBinaryExpressionWithTypeRHS(796,809): 's as Sealed.A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(796,797): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1063,7 +1063,7 @@ KtBinaryExpressionWithTypeRHS(864,877): 's as Sealed.B'
   NO_CANDIDATES
 
 KtNameReferenceExpression(864,865): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1138,7 +1138,7 @@ KtBinaryExpressionWithTypeRHS(934,944): 's as foo.A'
   NO_CANDIDATES
 
 KtNameReferenceExpression(934,935): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1213,7 +1213,7 @@ KtBinaryExpressionWithTypeRHS(1001,1011): 's as foo.B'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1001,1002): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1288,7 +1288,7 @@ KtBinaryExpressionWithTypeRHS(1062,1068): 's as C'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1062,1063): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1357,7 +1357,7 @@ KtBinaryExpressionWithTypeRHS(1119,1125): 's as D'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1119,1120): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1457,7 +1457,7 @@ KtBinaryExpression(1183,1189): 's == A'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1183,1184): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1512,7 +1512,7 @@ KtOperationReferenceExpression(1185,1187): '=='
     isInBestCandidates = true
 
 KtNameReferenceExpression(1188,1189): 'A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1595,7 +1595,7 @@ KtBinaryExpression(1232,1245): 's == Sealed.A'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1232,1233): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1669,7 +1669,7 @@ KtDotQualifiedExpression(1237,1245): 'Sealed.A'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1237,1243): 'Sealed'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1688,7 +1688,7 @@ KtNameReferenceExpression(1237,1243): 'Sealed'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1244,1245): 'A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1771,7 +1771,7 @@ KtBinaryExpression(1290,1300): 's == foo.A'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1290,1291): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1848,7 +1848,7 @@ KtNameReferenceExpression(1295,1298): 'foo'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1299,1300): 'A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1931,7 +1931,7 @@ KtBinaryExpression(1339,1352): 's == Sealed.C'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1339,1340): 's'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2005,7 +2005,7 @@ KtDotQualifiedExpression(1344,1352): 'Sealed.C'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1344,1350): 'Sealed'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2024,7 +2024,7 @@ KtNameReferenceExpression(1344,1350): 'Sealed'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1351,1352): 'C'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

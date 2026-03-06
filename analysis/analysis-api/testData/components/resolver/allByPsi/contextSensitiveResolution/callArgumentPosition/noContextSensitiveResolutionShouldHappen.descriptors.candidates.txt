@@ -102,7 +102,7 @@ KtCallExpression(184,190): 'foo(X)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(184,187): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -179,7 +179,7 @@ KtCallExpression(195,211): 'foo(WrongEnum.X)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(195,198): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -276,7 +276,7 @@ KtUserType(216,225): 'DslMarker'
   NO_CANDIDATES
 
 KtNameReferenceExpression(216,225): 'DslMarker'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -342,7 +342,7 @@ KtUserType(251,256): 'MyDsl'
   NO_CANDIDATES
 
 KtNameReferenceExpression(251,256): 'MyDsl'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -408,7 +408,7 @@ KtUserType(267,272): 'MyDsl'
   NO_CANDIDATES
 
 KtNameReferenceExpression(267,272): 'MyDsl'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -567,7 +567,7 @@ KtCallExpression(350,356): 'foo(X)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(350,353): 'foo'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -607,7 +607,7 @@ KtNameReferenceExpression(350,353): 'foo'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with foo>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -648,7 +648,7 @@ KtValueArgument(354,355): 'X'
   NO_CANDIDATES
 
 KtNameReferenceExpression(354,355): 'X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

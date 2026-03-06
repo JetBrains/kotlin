@@ -74,7 +74,7 @@ KtWhenExpression(187,325): 'when(s) {'
   null
 
 KtNameReferenceExpression(192,193): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -128,7 +128,7 @@ KtOperationReferenceExpression(231,232): '!'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
 
 KtNameReferenceExpression(232,248): 'USELESS_IS_CHECK'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'USELESS_IS_CHECK'.>
 
@@ -161,7 +161,7 @@ KtUserType(254,262): 'Right<!>'
   null
 
 KtNameReferenceExpression(254,259): 'Right'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
@@ -197,7 +197,7 @@ KtOperationReferenceExpression(285,286): '!'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'not' for operator '!'.>
 
 KtNameReferenceExpression(286,308): 'REDUNDANT_ELSE_IN_WHEN'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'REDUNDANT_ELSE_IN_WHEN'.>
 

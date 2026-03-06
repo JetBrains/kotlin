@@ -77,7 +77,9 @@ KtNameReferenceExpression(181,187): 'MyEnum'
   null
 
 KtNameReferenceExpression(190,191): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtProperty(196,214): 'val t2: MyEnum = L'
   null
@@ -92,7 +94,10 @@ KtNameReferenceExpression(204,210): 'MyEnum'
   null
 
 KtNameReferenceExpression(213,214): 'L'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val L: MyEnum
+    ]
 
 KtProperty(219,246): 'val t3: MyEnum = UNRESOLVED'
   null
@@ -107,4 +112,6 @@ KtNameReferenceExpression(227,233): 'MyEnum'
   null
 
 KtNameReferenceExpression(236,246): 'UNRESOLVED'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: UNRESOLVED>

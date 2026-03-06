@@ -1,6 +1,6 @@
 <caret_1>:
   KtNameReferenceExpression(309,312): 'foo'
-    KaSuccessCallInfo:
+    KaCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -21,7 +21,7 @@
 
 <caret_2>:
   KtNameReferenceExpression(330,333): 'foo'
-    KaSuccessCallInfo:
+    KaCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -43,7 +43,7 @@
 
 <caret_3>:
   KtNameReferenceExpression(442,445): 'foo'
-    KaSuccessCallInfo:
+    KaCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:

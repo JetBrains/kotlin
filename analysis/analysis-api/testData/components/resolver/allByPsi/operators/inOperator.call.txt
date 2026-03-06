@@ -76,7 +76,7 @@ KtCallExpression(102,113): 'Container()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(102,111): 'Container'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -171,7 +171,7 @@ KtOperationReferenceExpression(120,122): 'in'
       }
 
 KtNameReferenceExpression(123,124): 'c'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -263,7 +263,7 @@ KtOperationReferenceExpression(131,134): '!in'
       }
 
 KtNameReferenceExpression(135,136): 'c'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

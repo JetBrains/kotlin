@@ -29,7 +29,7 @@ KtWhenExpression(62,114): 'when (javaEnum) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(68,76): 'javaEnum'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

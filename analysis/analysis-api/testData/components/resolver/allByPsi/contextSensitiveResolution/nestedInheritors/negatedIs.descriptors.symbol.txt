@@ -74,7 +74,10 @@ KtWhenExpression(187,325): 'when(s) {'
   null
 
 KtNameReferenceExpression(192,193): 's'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: Simple
+    ]
 
 KtWhenEntry(201,225): '!is Left -> "not a left"'
   null
@@ -89,7 +92,9 @@ KtUserType(205,209): 'Left'
   null
 
 KtNameReferenceExpression(205,209): 'Left'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Left>
 
 KtStringTemplateExpression(213,225): '"not a left"'
   null
@@ -110,7 +115,9 @@ KtOperationReferenceExpression(231,232): '!'
   null
 
 KtNameReferenceExpression(232,248): 'USELESS_IS_CHECK'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: USELESS_IS_CHECK>
 
 KtWhenEntry(248,279): '!>!is Right<!> -> "not a right"'
   null
@@ -137,7 +144,9 @@ KtUserType(254,262): 'Right<!>'
   null
 
 KtNameReferenceExpression(254,259): 'Right'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Right>
 
 KtTypeArgumentList(259,262): '<!>'
   null
@@ -167,7 +176,9 @@ KtOperationReferenceExpression(285,286): '!'
   null
 
 KtNameReferenceExpression(286,308): 'REDUNDANT_ELSE_IN_WHEN'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: REDUNDANT_ELSE_IN_WHEN>
 
 KtWhenEntry(308,310): '!>'
   null

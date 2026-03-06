@@ -149,13 +149,19 @@ KtBinaryExpression(339,353): 'i + EnumValue1'
     ]
 
 KtNameReferenceExpression(339,340): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: OperatorHolder
+    ]
 
 KtOperationReferenceExpression(341,342): '+'
   null
 
 KtNameReferenceExpression(343,353): 'EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtBinaryExpression(358,377): 'i + InheritorObject'
   KaSymbolResolutionSuccess:
@@ -164,13 +170,18 @@ KtBinaryExpression(358,377): 'i + InheritorObject'
     ]
 
 KtNameReferenceExpression(358,359): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: OperatorHolder
+    ]
 
 KtOperationReferenceExpression(360,361): '+'
   null
 
 KtNameReferenceExpression(362,377): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
 KtBinaryExpression(382,401): 'i - InheritorObject'
   KaSymbolResolutionSuccess:
@@ -179,7 +190,10 @@ KtBinaryExpression(382,401): 'i - InheritorObject'
     ]
 
 KtNameReferenceExpression(382,383): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: OperatorHolder
+    ]
 
 KtOperationReferenceExpression(384,385): '-'
   null

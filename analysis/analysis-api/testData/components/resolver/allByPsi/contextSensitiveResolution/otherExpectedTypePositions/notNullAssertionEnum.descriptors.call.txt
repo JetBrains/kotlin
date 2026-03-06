@@ -155,7 +155,7 @@ KtPostfixExpression(416,425): 'Option1!!'
   null
 
 KtNameReferenceExpression(416,423): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -178,7 +178,7 @@ KtPostfixExpression(448,458): 'enumProp!!'
   null
 
 KtNameReferenceExpression(448,456): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -201,7 +201,7 @@ KtPostfixExpression(481,493): 'stringProp!!'
   null
 
 KtNameReferenceExpression(481,491): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
@@ -247,7 +247,7 @@ KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(499,506): 'receive'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -309,7 +309,7 @@ KtPostfixExpression(515,524): 'Option1!!'
   null
 
 KtNameReferenceExpression(515,522): 'Option1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
 
@@ -355,7 +355,7 @@ KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(530,537): 'receive'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -417,7 +417,7 @@ KtPostfixExpression(546,556): 'enumProp!!'
   null
 
 KtNameReferenceExpression(546,554): 'enumProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
@@ -463,7 +463,7 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
 
 KtNameReferenceExpression(562,569): 'receive'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -525,7 +525,7 @@ KtPostfixExpression(578,590): 'stringProp!!'
   null
 
 KtNameReferenceExpression(578,588): 'stringProp'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 

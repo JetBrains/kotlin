@@ -101,7 +101,7 @@ KtCallExpression(184,190): 'foo(X)'
       }
 
 KtNameReferenceExpression(184,187): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -140,7 +140,7 @@ KtValueArgument(188,189): 'X'
   null
 
 KtNameReferenceExpression(188,189): 'X'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
@@ -178,7 +178,7 @@ KtCallExpression(195,211): 'foo(WrongEnum.X)'
       }
 
 KtNameReferenceExpression(195,198): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -225,7 +225,7 @@ KtNameReferenceExpression(199,208): 'WrongEnum'
   null
 
 KtNameReferenceExpression(209,210): 'X'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
@@ -276,7 +276,7 @@ KtUserType(216,225): 'DslMarker'
   null
 
 KtNameReferenceExpression(216,225): 'DslMarker'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -339,7 +339,7 @@ KtUserType(251,256): 'MyDsl'
   null
 
 KtNameReferenceExpression(251,256): 'MyDsl'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -402,7 +402,7 @@ KtUserType(267,272): 'MyDsl'
   null
 
 KtNameReferenceExpression(267,272): 'MyDsl'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -521,7 +521,7 @@ KtCallExpression(350,356): 'foo(X)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but MyEnum was expected>
 
 KtNameReferenceExpression(350,353): 'foo'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -563,7 +563,7 @@ KtValueArgument(354,355): 'X'
   null
 
 KtNameReferenceExpression(354,355): 'X'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

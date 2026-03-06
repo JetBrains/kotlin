@@ -86,7 +86,7 @@ KtWhenExpression(186,307): 'when (o) {'
   null
 
 KtNameReferenceExpression(192,193): 'o'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -109,7 +109,7 @@ KtWhenConditionWithExpression(205,210): 'FIRST'
   null
 
 KtNameReferenceExpression(205,210): 'FIRST'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -138,7 +138,7 @@ KtWhenConditionWithExpression(224,230): 'SECOND'
   null
 
 KtNameReferenceExpression(224,230): 'SECOND'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -161,7 +161,7 @@ KtWhenExpression(234,301): 'when (i) {'
   null
 
 KtNameReferenceExpression(240,241): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -184,7 +184,7 @@ KtWhenConditionWithExpression(257,263): 'SECOND'
   null
 
 KtNameReferenceExpression(257,263): 'SECOND'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -213,7 +213,7 @@ KtWhenConditionWithExpression(281,286): 'THIRD'
   null
 
 KtNameReferenceExpression(281,286): 'THIRD'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -284,7 +284,7 @@ KtWhenExpression(357,598): 'when (o) {'
   null
 
 KtNameReferenceExpression(363,364): 'o'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -307,7 +307,7 @@ KtWhenConditionWithExpression(376,381): 'FIRST'
   null
 
 KtNameReferenceExpression(376,381): 'FIRST'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -336,7 +336,7 @@ KtWhenConditionWithExpression(395,401): 'SECOND'
   null
 
 KtNameReferenceExpression(395,401): 'SECOND'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -383,7 +383,7 @@ KtWhenExpression(459,550): 'when (i) {'
   null
 
 KtNameReferenceExpression(465,466): 'i'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -406,7 +406,7 @@ KtWhenConditionWithExpression(490,496): 'SECOND'
   null
 
 KtNameReferenceExpression(490,496): 'SECOND'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -435,7 +435,7 @@ KtWhenConditionWithExpression(522,527): 'THIRD'
   null
 
 KtNameReferenceExpression(522,527): 'THIRD'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -475,7 +475,7 @@ KtCallExpression(577,582): 'baz()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(577,580): 'baz'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

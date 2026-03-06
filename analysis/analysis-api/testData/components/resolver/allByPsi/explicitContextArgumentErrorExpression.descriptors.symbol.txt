@@ -51,7 +51,11 @@ KtCallExpression(49,58): 'foo(s = )'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
 
 KtNameReferenceExpression(49,52): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
 
 KtValueArgumentList(52,58): '(s = )'
   null

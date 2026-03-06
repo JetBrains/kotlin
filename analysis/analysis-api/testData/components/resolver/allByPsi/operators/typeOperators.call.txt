@@ -32,7 +32,7 @@ KtIsExpression(59,70): 'a is String'
   null
 
 KtNameReferenceExpression(59,60): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -64,7 +64,7 @@ KtIsExpression(75,87): 'a !is String'
   null
 
 KtNameReferenceExpression(75,76): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -96,7 +96,7 @@ KtBinaryExpressionWithTypeRHS(143,154): 'a as String'
   null
 
 KtNameReferenceExpression(143,144): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -128,7 +128,7 @@ KtBinaryExpressionWithTypeRHS(159,171): 'a as? String'
   null
 
 KtNameReferenceExpression(159,160): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

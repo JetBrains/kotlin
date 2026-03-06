@@ -112,7 +112,7 @@ KtCallExpression(197,206): 'MyClass()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(197,204): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -154,7 +154,7 @@ KtParameterList(273,275): '()'
   NO_CANDIDATES
 
 KtNameReferenceExpression(278,293): 'NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -222,7 +222,7 @@ KtDotQualifiedExpression(350,373): 'MyClass.NestedInheritor'
     isInBestCandidates = false
 
 KtNameReferenceExpression(350,357): 'MyClass'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -241,7 +241,7 @@ KtNameReferenceExpression(350,357): 'MyClass'
     isInBestCandidates = false
 
 KtNameReferenceExpression(358,373): 'NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -284,7 +284,7 @@ KtBinaryExpression(417,447): 'NestedInheritor ?: myClassProp'
   NO_CANDIDATES
 
 KtNameReferenceExpression(417,432): 'NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -306,7 +306,7 @@ KtOperationReferenceExpression(433,435): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(436,447): 'myClassProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -342,7 +342,7 @@ KtBinaryExpression(472,501): 'NestedInheritor ?: stringProp'
   NO_CANDIDATES
 
 KtNameReferenceExpression(472,487): 'NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -364,7 +364,7 @@ KtOperationReferenceExpression(488,490): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(491,501): 'stringProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -400,7 +400,7 @@ KtBinaryExpression(526,565): 'NestedInheritor ?: getNestedInheritor()'
   NO_CANDIDATES
 
 KtNameReferenceExpression(526,541): 'NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -467,7 +467,7 @@ KtCallExpression(571,619): 'receive<MyClass>(NestedInheritor ?: myClassProp)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(571,578): 'receive'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -527,7 +527,7 @@ KtBinaryExpression(588,618): 'NestedInheritor ?: myClassProp'
   NO_CANDIDATES
 
 KtNameReferenceExpression(588,603): 'NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -549,7 +549,7 @@ KtOperationReferenceExpression(604,606): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(607,618): 'myClassProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -607,7 +607,7 @@ KtCallExpression(624,671): 'receive<MyClass>(NestedInheritor ?: stringProp)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(624,631): 'receive'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -668,7 +668,7 @@ KtBinaryExpression(641,670): 'NestedInheritor ?: stringProp'
   NO_CANDIDATES
 
 KtNameReferenceExpression(641,656): 'NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -690,7 +690,7 @@ KtOperationReferenceExpression(657,659): '?:'
   NO_CANDIDATES
 
 KtNameReferenceExpression(660,670): 'stringProp'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -747,7 +747,7 @@ KtCallExpression(676,733): 'receive<MyClass>(NestedInheritor ?: getNestedInherit
     isInBestCandidates = true
 
 KtNameReferenceExpression(676,683): 'receive'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -807,7 +807,7 @@ KtBinaryExpression(693,732): 'NestedInheritor ?: getNestedInheritor()'
   NO_CANDIDATES
 
 KtNameReferenceExpression(693,708): 'NestedInheritor'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

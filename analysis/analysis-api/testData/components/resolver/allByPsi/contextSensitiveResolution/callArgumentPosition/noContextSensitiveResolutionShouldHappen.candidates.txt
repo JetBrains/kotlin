@@ -102,7 +102,7 @@ KtCallExpression(184,190): 'foo(X)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(184,187): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -142,7 +142,7 @@ KtValueArgument(188,189): 'X'
   NO_CANDIDATES
 
 KtNameReferenceExpression(188,189): 'X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -197,7 +197,7 @@ KtCallExpression(195,211): 'foo(WrongEnum.X)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(195,198): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -240,7 +240,7 @@ KtDotQualifiedExpression(199,210): 'WrongEnum.X'
   NO_CANDIDATES
 
 KtNameReferenceExpression(199,208): 'WrongEnum'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -557,7 +557,7 @@ KtCallExpression(350,356): 'foo(X)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(350,353): 'foo'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -598,7 +598,7 @@ KtNameReferenceExpression(350,353): 'foo'
     fun A.foo(): Unit>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -639,7 +639,7 @@ KtValueArgument(354,355): 'X'
   NO_CANDIDATES
 
 KtNameReferenceExpression(354,355): 'X'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

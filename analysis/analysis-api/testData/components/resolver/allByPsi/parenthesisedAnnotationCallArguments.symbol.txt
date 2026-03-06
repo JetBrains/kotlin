@@ -350,7 +350,10 @@ KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
     ]
 
 KtNameReferenceExpression(316,323): 'arrayOf'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]
 
 KtValueArgumentList(323,338): '("A", "B", "C")'
   null
@@ -440,7 +443,10 @@ KtCallExpression(381,400): 'arrayOf(("A"), "B")'
     ]
 
 KtNameReferenceExpression(381,388): 'arrayOf'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]
 
 KtValueArgumentList(388,400): '(("A"), "B")'
   null

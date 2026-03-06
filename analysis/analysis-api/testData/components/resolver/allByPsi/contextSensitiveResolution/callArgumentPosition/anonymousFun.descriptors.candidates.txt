@@ -112,7 +112,7 @@ KtUserType(257,264): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(257,264): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -202,7 +202,7 @@ KtUserType(332,339): 'MyClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(332,339): 'MyClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -298,7 +298,7 @@ KtUserType(428,433): 'Super'
   NO_CANDIDATES
 
 KtNameReferenceExpression(428,433): 'Super'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -379,7 +379,7 @@ KtCallExpression(473,479): 'TODO()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(473,477): 'TODO'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -396,7 +396,7 @@ KtNameReferenceExpression(473,477): 'TODO'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -456,7 +456,7 @@ KtCallExpression(529,545): 'InheritorClass()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(529,543): 'InheritorClass'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -698,7 +698,7 @@ KtCallExpression(716,725): 'lazy {""}'
     isInBestCandidates = true
 
 KtNameReferenceExpression(716,720): 'lazy'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -741,7 +741,7 @@ KtNameReferenceExpression(716,720): 'lazy'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'lock'>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -784,7 +784,7 @@ KtNameReferenceExpression(716,720): 'lazy'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'mode'>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -909,7 +909,7 @@ KtCallExpression(799,805): 'TODO()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(799,803): 'TODO'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -926,7 +926,7 @@ KtNameReferenceExpression(799,803): 'TODO'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1090,7 +1090,7 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
     isInBestCandidates = false
 
 KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1194,7 +1194,7 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
     isInBestCandidates = false
 
 KtNameReferenceExpression(972,989): 'anonymousConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1298,7 +1298,7 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1402,7 +1402,7 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1506,7 +1506,7 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1610,7 +1610,7 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1714,7 +1714,7 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1818,7 +1818,7 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1922,7 +1922,7 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2032,7 +2032,7 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2142,7 +2142,7 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

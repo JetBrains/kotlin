@@ -1,5 +1,5 @@
 KtNameReferenceExpression(54,64): 'plusAssign'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -37,7 +37,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -76,7 +76,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plusAssign>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -115,7 +115,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plusAssign>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -154,7 +154,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plusAssign>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -194,7 +194,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plusAssign>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -234,7 +234,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plusAssign>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -274,7 +274,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plusAssign>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -314,7 +314,7 @@ KtNameReferenceExpression(54,64): 'plusAssign'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plusAssign>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

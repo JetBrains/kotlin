@@ -71,7 +71,7 @@ KtUserType(114,120): 'Sealed'
   null
 
 KtNameReferenceExpression(114,120): 'Sealed'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -161,7 +161,7 @@ KtUserType(154,160): 'Sealed'
   null
 
 KtNameReferenceExpression(154,160): 'Sealed'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -233,7 +233,7 @@ KtUserType(183,189): 'Sealed'
   null
 
 KtNameReferenceExpression(183,189): 'Sealed'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -323,7 +323,7 @@ KtUserType(223,229): 'Sealed'
   null
 
 KtNameReferenceExpression(223,229): 'Sealed'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -419,7 +419,7 @@ KtUserType(278,284): 'Sealed'
   null
 
 KtNameReferenceExpression(278,284): 'Sealed'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -476,7 +476,7 @@ KtWhenExpression(337,432): 'when (s) {'
   null
 
 KtNameReferenceExpression(343,344): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -529,7 +529,7 @@ KtWhenConditionWithExpression(377,378): 'C'
   null
 
 KtNameReferenceExpression(377,378): 'C'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: C>
 
@@ -549,7 +549,7 @@ KtUserType(391,392): 'D'
   null
 
 KtNameReferenceExpression(391,392): 'D'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: D>
 
@@ -611,7 +611,7 @@ KtWhenExpression(471,536): 'when (s) {'
   null
 
 KtNameReferenceExpression(477,478): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -706,7 +706,7 @@ KtWhenExpression(577,636): 'when (s) {'
   null
 
 KtNameReferenceExpression(583,584): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -804,7 +804,7 @@ KtBinaryExpressionWithTypeRHS(675,681): 's as A'
   null
 
 KtNameReferenceExpression(675,676): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -872,7 +872,7 @@ KtBinaryExpressionWithTypeRHS(735,741): 's as B'
   null
 
 KtNameReferenceExpression(735,736): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -940,7 +940,7 @@ KtBinaryExpressionWithTypeRHS(796,809): 's as Sealed.A'
   null
 
 KtNameReferenceExpression(796,797): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1014,7 +1014,7 @@ KtBinaryExpressionWithTypeRHS(864,877): 's as Sealed.B'
   null
 
 KtNameReferenceExpression(864,865): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1088,7 +1088,7 @@ KtBinaryExpressionWithTypeRHS(934,944): 's as foo.A'
   null
 
 KtNameReferenceExpression(934,935): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1162,7 +1162,7 @@ KtBinaryExpressionWithTypeRHS(1001,1011): 's as foo.B'
   null
 
 KtNameReferenceExpression(1001,1002): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1236,7 +1236,7 @@ KtBinaryExpressionWithTypeRHS(1062,1068): 's as C'
   null
 
 KtNameReferenceExpression(1062,1063): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1262,7 +1262,7 @@ KtUserType(1067,1068): 'C'
   null
 
 KtNameReferenceExpression(1067,1068): 'C'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: C>
 
@@ -1306,7 +1306,7 @@ KtBinaryExpressionWithTypeRHS(1119,1125): 's as D'
   null
 
 KtNameReferenceExpression(1119,1120): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1332,7 +1332,7 @@ KtUserType(1124,1125): 'D'
   null
 
 KtNameReferenceExpression(1124,1125): 'D'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: D>
 
@@ -1406,7 +1406,7 @@ KtBinaryExpression(1183,1189): 's == A'
       }
 
 KtNameReferenceExpression(1183,1184): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1525,7 +1525,7 @@ KtBinaryExpression(1232,1245): 's == Sealed.A'
       }
 
 KtNameReferenceExpression(1232,1233): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1650,7 +1650,7 @@ KtBinaryExpression(1290,1300): 's == foo.A'
       }
 
 KtNameReferenceExpression(1290,1291): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1775,7 +1775,7 @@ KtBinaryExpression(1339,1352): 's == Sealed.C'
       }
 
 KtNameReferenceExpression(1339,1340): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

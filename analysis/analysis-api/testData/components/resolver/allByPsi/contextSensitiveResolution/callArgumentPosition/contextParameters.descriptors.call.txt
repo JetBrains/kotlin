@@ -77,7 +77,7 @@ KtUserType(189,197): 'MySealed'
   null
 
 KtNameReferenceExpression(189,197): 'MySealed'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -219,7 +219,7 @@ KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
 
 KtNameReferenceExpression(299,303): 'with'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -307,7 +307,7 @@ KtValueArgument(318,328): 'EnumValue1'
   null
 
 KtNameReferenceExpression(318,328): 'EnumValue1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
@@ -360,7 +360,7 @@ KtCallExpression(339,344): 'foo()'
     public fun foo(): Unit defined in root package in file contextParameters.kt>
 
 KtNameReferenceExpression(339,342): 'foo'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -454,7 +454,7 @@ KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
 
 KtNameReferenceExpression(356,360): 'with'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -542,7 +542,7 @@ KtValueArgument(377,392): 'InheritorObject'
   null
 
 KtNameReferenceExpression(377,392): 'InheritorObject'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
@@ -595,7 +595,7 @@ KtCallExpression(403,408): 'foo()'
     public fun foo(): Unit defined in root package in file contextParameters.kt>
 
 KtNameReferenceExpression(403,406): 'foo'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -746,7 +746,7 @@ KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
 
 KtNameReferenceExpression(507,511): 'with'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -834,7 +834,7 @@ KtValueArgument(526,536): 'EnumValue1'
   null
 
 KtNameReferenceExpression(526,536): 'EnumValue1'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
@@ -874,7 +874,7 @@ KtStringTemplateExpression(548,550): '""'
   null
 
 KtNameReferenceExpression(551,552): 'a'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

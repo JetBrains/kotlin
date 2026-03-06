@@ -761,7 +761,7 @@ KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(496,506): 'intArrayOf'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -916,7 +916,7 @@ KtClassLiteralExpression(533,554): 'AnnoWithKClass::class'
   NO_CANDIDATES
 
 KtNameReferenceExpression(533,547): 'AnnoWithKClass'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1059,7 +1059,7 @@ KtDotQualifiedExpression(573,591): 'one.AnnoWithKClass'
     isInBestCandidates = false
 
 KtNameReferenceExpression(573,576): 'one'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1086,7 +1086,7 @@ KtNameReferenceExpression(573,576): 'one'
     isInBestCandidates = false
 
 KtNameReferenceExpression(577,591): 'AnnoWithKClass'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1242,7 +1242,7 @@ KtClassLiteralExpression(625,646): 'AnnoWithKClass::class'
   NO_CANDIDATES
 
 KtNameReferenceExpression(625,639): 'AnnoWithKClass'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1299,7 +1299,7 @@ KtDotQualifiedExpression(648,666): 'one.AnnoWithKClass'
     isInBestCandidates = false
 
 KtNameReferenceExpression(648,651): 'one'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1326,7 +1326,7 @@ KtNameReferenceExpression(648,651): 'one'
     isInBestCandidates = false
 
 KtNameReferenceExpression(652,666): 'AnnoWithKClass'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1479,7 +1479,7 @@ KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArr
     isInBestCandidates = true
 
 KtNameReferenceExpression(703,710): 'arrayOf'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1599,7 +1599,7 @@ KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
     isInBestCandidates = true
 
 KtNameReferenceExpression(715,728): 'AnnoWithArray'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1733,7 +1733,7 @@ KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
     isInBestCandidates = true
 
 KtNameReferenceExpression(744,757): 'AnnoWithArray'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1821,7 +1821,7 @@ KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(758,768): 'intArrayOf'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2046,7 +2046,7 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
     isInBestCandidates = false
 
 KtNameReferenceExpression(800,814): 'stringConstant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

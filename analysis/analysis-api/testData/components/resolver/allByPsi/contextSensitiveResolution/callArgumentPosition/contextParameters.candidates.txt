@@ -204,7 +204,7 @@ KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
     isInBestCandidates = true
 
 KtNameReferenceExpression(299,303): 'with'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -290,7 +290,7 @@ KtValueArgument(318,328): 'EnumValue1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(318,328): 'EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -399,7 +399,7 @@ KtCallExpression(339,344): 'foo()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(339,342): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -448,7 +448,7 @@ KtNameReferenceExpression(339,342): 'foo'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -531,7 +531,7 @@ KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
     isInBestCandidates = true
 
 KtNameReferenceExpression(356,360): 'with'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -617,7 +617,7 @@ KtValueArgument(377,392): 'InheritorObject'
   NO_CANDIDATES
 
 KtNameReferenceExpression(377,392): 'InheritorObject'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -724,7 +724,7 @@ KtCallExpression(403,408): 'foo()'
     isInBestCandidates = false
 
 KtNameReferenceExpression(403,406): 'foo'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -773,7 +773,7 @@ KtNameReferenceExpression(403,406): 'foo'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -913,7 +913,7 @@ KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
     isInBestCandidates = true
 
 KtNameReferenceExpression(507,511): 'with'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -999,7 +999,7 @@ KtValueArgument(526,536): 'EnumValue1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(526,536): 'EnumValue1'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1088,7 +1088,7 @@ KtStringTemplateExpression(548,550): '""'
   NO_CANDIDATES
 
 KtNameReferenceExpression(551,552): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = [
         KaImplicitReceiverValue:

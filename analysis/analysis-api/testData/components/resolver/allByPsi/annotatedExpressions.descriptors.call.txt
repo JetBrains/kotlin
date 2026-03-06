@@ -95,7 +95,7 @@ KtUserType(39,45): 'Target'
   null
 
 KtNameReferenceExpression(39,45): 'Target'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -215,7 +215,7 @@ KtUserType(76,85): 'Retention'
   null
 
 KtNameReferenceExpression(76,85): 'Retention'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -365,7 +365,7 @@ KtUserType(173,177): 'Anno'
   null
 
 KtNameReferenceExpression(173,177): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -479,7 +479,7 @@ KtOperationReferenceExpression(180,181): '+'
       }
 
 KtNameReferenceExpression(182,189): 'integer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -594,7 +594,7 @@ KtUserType(193,197): 'Anno'
   null
 
 KtNameReferenceExpression(193,197): 'Anno'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -633,7 +633,7 @@ KtValueArgument(198,205): 'integer'
   null
 
 KtNameReferenceExpression(198,205): 'integer'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -667,7 +667,7 @@ KtCallExpression(207,214): 'usage()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(207,212): 'usage'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -707,7 +707,7 @@ KtCallExpression(216,226): 'toString()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(216,224): 'toString'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

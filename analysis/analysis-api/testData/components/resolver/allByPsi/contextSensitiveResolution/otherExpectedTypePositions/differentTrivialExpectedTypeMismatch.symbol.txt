@@ -41,7 +41,10 @@ KtCallExpression(142,151): 'MyClass()'
     ]
 
 KtNameReferenceExpression(142,149): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(149,151): '()'
   null
@@ -74,7 +77,10 @@ KtNameReferenceExpression(195,202): 'MyClass'
   null
 
 KtNameReferenceExpression(205,206): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val X: MyClass
+    ]
 
 KtProperty(207,225): 'val y: MyClass = Y'
   null
@@ -89,7 +95,10 @@ KtNameReferenceExpression(214,221): 'MyClass'
   null
 
 KtNameReferenceExpression(224,225): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val Y: kotlin.String
+    ]
 
 KtNamedFunction(227,249): 'fun myX(): MyClass = X'
   null
@@ -107,7 +116,10 @@ KtNameReferenceExpression(238,245): 'MyClass'
   null
 
 KtNameReferenceExpression(248,249): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val X: MyClass
+    ]
 
 KtNamedFunction(250,272): 'fun myY(): MyClass = Y'
   null
@@ -125,7 +137,10 @@ KtNameReferenceExpression(261,268): 'MyClass'
   null
 
 KtNameReferenceExpression(271,272): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val Y: kotlin.String
+    ]
 
 KtNamedFunction(274,300): 'fun foo(m: MyClass = X) {}'
   null
@@ -146,7 +161,10 @@ KtNameReferenceExpression(285,292): 'MyClass'
   null
 
 KtNameReferenceExpression(295,296): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val X: MyClass
+    ]
 
 KtBlockExpression(298,300): '{}'
   null
@@ -170,7 +188,10 @@ KtParameterList(332,334): '()'
   null
 
 KtNameReferenceExpression(337,338): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val X: MyClass
+    ]
 
 KtProperty(340,376): 'val property2'
   null
@@ -191,7 +212,10 @@ KtNameReferenceExpression(365,372): 'MyClass'
   null
 
 KtNameReferenceExpression(375,376): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val X: MyClass
+    ]
 
 KtProperty(378,414): 'val property3: MyClass'
   null
@@ -212,7 +236,10 @@ KtParameterList(408,410): '()'
   null
 
 KtNameReferenceExpression(413,414): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val Y: kotlin.String
+    ]
 
 KtProperty(416,452): 'val property4'
   null
@@ -233,7 +260,10 @@ KtNameReferenceExpression(441,448): 'MyClass'
   null
 
 KtNameReferenceExpression(451,452): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val Y: kotlin.String
+    ]
 
 KtNamedFunction(454,515): 'fun main() {'
   null
@@ -269,13 +299,19 @@ KtBinaryExpression(498,503): 'm = Y'
     ]
 
 KtNameReferenceExpression(498,499): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyClass?
+    ]
 
 KtOperationReferenceExpression(500,501): '='
   null
 
 KtNameReferenceExpression(502,503): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val Y: kotlin.String
+    ]
 
 KtBinaryExpression(508,513): 'm = X'
   KaSymbolResolutionSuccess:
@@ -284,13 +320,19 @@ KtBinaryExpression(508,513): 'm = X'
     ]
 
 KtNameReferenceExpression(508,509): 'm'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyClass?
+    ]
 
 KtOperationReferenceExpression(510,511): '='
   null
 
 KtNameReferenceExpression(512,513): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val X: MyClass
+    ]
 
 KtNamedFunction(517,582): 'fun bar(b: Boolean): MyClass {'
   null
@@ -329,7 +371,10 @@ KtContainerNode(556,557): 'b'
   null
 
 KtNameReferenceExpression(556,557): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(559,567): 'return X'
   null
@@ -341,7 +386,10 @@ KtReturnExpression(559,567): 'return X'
     ]
 
 KtNameReferenceExpression(566,567): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val X: MyClass
+    ]
 
 KtReturnExpression(572,580): 'return Y'
   KaSymbolResolutionSuccess:
@@ -350,4 +398,7 @@ KtReturnExpression(572,580): 'return Y'
     ]
 
 KtNameReferenceExpression(579,580): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val Y: kotlin.String
+    ]

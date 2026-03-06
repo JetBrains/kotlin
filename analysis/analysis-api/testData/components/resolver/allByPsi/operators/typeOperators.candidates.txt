@@ -32,7 +32,7 @@ KtIsExpression(59,70): 'a is String'
   NO_CANDIDATES
 
 KtNameReferenceExpression(59,60): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -65,7 +65,7 @@ KtIsExpression(75,87): 'a !is String'
   NO_CANDIDATES
 
 KtNameReferenceExpression(75,76): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -98,7 +98,7 @@ KtBinaryExpressionWithTypeRHS(143,154): 'a as String'
   NO_CANDIDATES
 
 KtNameReferenceExpression(143,144): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -131,7 +131,7 @@ KtBinaryExpressionWithTypeRHS(159,171): 'a as? String'
   NO_CANDIDATES
 
 KtNameReferenceExpression(159,160): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

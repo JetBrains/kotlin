@@ -1,2 +1,5 @@
 KtNameReferenceExpression(141,149): 'Conflict'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): <local>.Conflict
+    ]

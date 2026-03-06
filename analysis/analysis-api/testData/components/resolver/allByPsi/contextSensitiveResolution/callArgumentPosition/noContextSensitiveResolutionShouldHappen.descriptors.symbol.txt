@@ -74,7 +74,10 @@ KtCallExpression(184,190): 'foo(X)'
     ]
 
 KtNameReferenceExpression(184,187): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(187,190): '(X)'
   null
@@ -83,7 +86,9 @@ KtValueArgument(188,189): 'X'
   null
 
 KtNameReferenceExpression(188,189): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtCallExpression(195,211): 'foo(WrongEnum.X)'
   KaSymbolResolutionSuccess:
@@ -92,7 +97,10 @@ KtCallExpression(195,211): 'foo(WrongEnum.X)'
     ]
 
 KtNameReferenceExpression(195,198): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(198,211): '(WrongEnum.X)'
   null
@@ -109,7 +117,9 @@ KtNameReferenceExpression(199,208): 'WrongEnum'
   null
 
 KtNameReferenceExpression(209,210): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtClass(215,248): '@DslMarker'
   null
@@ -136,7 +146,10 @@ KtUserType(216,225): 'DslMarker'
   null
 
 KtNameReferenceExpression(216,225): 'DslMarker'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): kotlin.DslMarker
+    ]
 
 KtClass(250,264): '@MyDsl'
   null
@@ -163,7 +176,10 @@ KtUserType(251,256): 'MyDsl'
   null
 
 KtNameReferenceExpression(251,256): 'MyDsl'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyDsl
+    ]
 
 KtClass(266,280): '@MyDsl'
   null
@@ -190,7 +206,10 @@ KtUserType(267,272): 'MyDsl'
   null
 
 KtNameReferenceExpression(267,272): 'MyDsl'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyDsl
+    ]
 
 KtProperty(282,308): 'val A.X: String get() = ""'
   null
@@ -266,7 +285,11 @@ KtCallExpression(350,356): 'foo(X)'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but MyEnum was expected>
 
 KtNameReferenceExpression(350,353): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
 
 KtValueArgumentList(353,356): '(X)'
   null
@@ -275,4 +298,7 @@ KtValueArgument(354,355): 'X'
   null
 
 KtNameReferenceExpression(354,355): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val X: kotlin.String
+    ]

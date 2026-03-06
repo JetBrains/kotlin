@@ -636,7 +636,7 @@ KtBinaryExpressionWithTypeRHS(862,890): 'instance as SealedInheritor1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(862,870): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -672,7 +672,7 @@ KtBinaryExpressionWithTypeRHS(918,946): 'instance as SealedInheritor2'
   NO_CANDIDATES
 
 KtNameReferenceExpression(918,926): 'instance'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -735,7 +735,7 @@ KtNameReferenceExpression(1007,1023): 'SealedInheritor1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1026,1029): 'arg'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -858,7 +858,7 @@ KtCallExpression(1217,1245): 'Generic2<SealedInheritor1>()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1217,1225): 'Generic2'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -951,7 +951,7 @@ KtCallExpression(1318,1351): 'constraintFun<SealedInheritor1>()'
     isInBestCandidates = true
 
 KtNameReferenceExpression(1318,1331): 'constraintFun'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

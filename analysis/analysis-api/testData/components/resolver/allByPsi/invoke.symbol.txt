@@ -80,7 +80,10 @@ KtCallExpression(124,133): 'MyClass()'
     ]
 
 KtNameReferenceExpression(124,131): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): r.MyClass
+    ]
 
 KtValueArgumentList(131,133): '()'
   null
@@ -101,7 +104,10 @@ KtCallExpression(156,165): 'MyClass()'
     ]
 
 KtNameReferenceExpression(156,163): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): r.MyClass
+    ]
 
 KtValueArgumentList(163,165): '()'
   null
@@ -122,13 +128,19 @@ KtCallExpression(186,191): 'foo()'
     ]
 
 KtNameReferenceExpression(186,189): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/foo(): kotlin.Int
+    ]
 
 KtValueArgumentList(189,191): '()'
   null
 
 KtNameReferenceExpression(196,199): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: r.MyClass
+    ]
 
 KtDotQualifiedExpression(204,226): '(((foo)())()).invoke()'
   KaSymbolResolutionSuccess:
@@ -158,7 +170,10 @@ KtParenthesizedExpression(206,211): '(foo)'
   null
 
 KtNameReferenceExpression(207,210): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: r.MyClass
+    ]
 
 KtValueArgumentList(211,213): '()'
   null
@@ -173,7 +188,10 @@ KtCallExpression(218,226): 'invoke()'
     ]
 
 KtNameReferenceExpression(218,224): 'invoke'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
 
 KtValueArgumentList(224,226): '()'
   null
@@ -185,7 +203,10 @@ KtDotQualifiedExpression(231,243): 'foo.invoke()'
     ]
 
 KtNameReferenceExpression(231,234): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: r.MyClass
+    ]
 
 KtCallExpression(235,243): 'invoke()'
   KaSymbolResolutionSuccess:
@@ -194,7 +215,10 @@ KtCallExpression(235,243): 'invoke()'
     ]
 
 KtNameReferenceExpression(235,241): 'invoke'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
 
 KtValueArgumentList(241,243): '()'
   null
@@ -206,7 +230,10 @@ KtCallExpression(248,258): 'property()'
     ]
 
 KtNameReferenceExpression(248,256): 'property'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val property: r.MyClass
+    ]
 
 KtValueArgumentList(256,258): '()'
   null

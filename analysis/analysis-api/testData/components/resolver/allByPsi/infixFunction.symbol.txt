@@ -62,7 +62,10 @@ KtOperationReferenceExpression(42,43): '-'
   null
 
 KtNameReferenceExpression(44,45): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtNamedFunction(47,251): 'fun usage(parameter: Int) {'
   null
@@ -95,7 +98,10 @@ KtBinaryExpression(98,117): 'parameter myMinus 5'
     ]
 
 KtNameReferenceExpression(98,107): 'parameter'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      parameter: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(108,115): 'myMinus'
   null
@@ -119,7 +125,10 @@ KtBinaryExpression(145,161): 'newParameter + 1'
     ]
 
 KtNameReferenceExpression(145,157): 'newParameter'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val newParameter: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(158,159): '+'
   null
@@ -143,7 +152,10 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
     ]
 
 KtNameReferenceExpression(195,207): 'newParameter'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val newParameter: kotlin.Int
+    ]
 
 KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
   KaSymbolResolutionSuccess:
@@ -152,7 +164,10 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
     ]
 
 KtNameReferenceExpression(208,212): 'plus'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtValueArgumentList(212,249): '(parameter.myMinus(oneMoreParameter))'
   null
@@ -167,7 +182,10 @@ KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
     ]
 
 KtNameReferenceExpression(213,222): 'parameter'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      parameter: kotlin.Int
+    ]
 
 KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
   KaSymbolResolutionSuccess:
@@ -176,7 +194,10 @@ KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
     ]
 
 KtNameReferenceExpression(223,230): 'myMinus'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+    ]
 
 KtValueArgumentList(230,248): '(oneMoreParameter)'
   null
@@ -185,4 +206,7 @@ KtValueArgument(231,247): 'oneMoreParameter'
   null
 
 KtNameReferenceExpression(231,247): 'oneMoreParameter'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val oneMoreParameter: kotlin.Int
+    ]

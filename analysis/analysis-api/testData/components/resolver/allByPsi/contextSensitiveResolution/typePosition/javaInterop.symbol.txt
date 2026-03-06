@@ -38,7 +38,10 @@ KtWhenExpression(93,216): 'when (instance) {'
   null
 
 KtNameReferenceExpression(99,107): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: JClass
+    ]
 
 KtWhenEntry(115,145): 'is JCOption1 -> instance.prop1'
   null
@@ -53,7 +56,9 @@ KtUserType(118,127): 'JCOption1'
   null
 
 KtNameReferenceExpression(118,127): 'JCOption1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JCOption1'.>
 
 KtDotQualifiedExpression(131,145): 'instance.prop1'
   KaSymbolResolutionError:
@@ -61,10 +66,15 @@ KtDotQualifiedExpression(131,145): 'instance.prop1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtNameReferenceExpression(131,139): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: JClass
+    ]
 
 KtNameReferenceExpression(140,145): 'prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
 
 KtWhenEntry(151,181): 'is JCOption2 -> instance.prop2'
   null
@@ -79,7 +89,9 @@ KtUserType(154,163): 'JCOption2'
   null
 
 KtNameReferenceExpression(154,163): 'JCOption2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JCOption2'.>
 
 KtDotQualifiedExpression(167,181): 'instance.prop2'
   KaSymbolResolutionError:
@@ -87,10 +99,15 @@ KtDotQualifiedExpression(167,181): 'instance.prop2'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
 
 KtNameReferenceExpression(167,175): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: JClass
+    ]
 
 KtNameReferenceExpression(176,181): 'prop2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
 
 KtWhenEntry(187,213): 'is Nested -> instance.prop'
   null
@@ -105,7 +122,9 @@ KtUserType(190,196): 'Nested'
   null
 
 KtNameReferenceExpression(190,196): 'Nested'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Nested'.>
 
 KtDotQualifiedExpression(200,213): 'instance.prop'
   KaSymbolResolutionError:
@@ -113,10 +132,15 @@ KtDotQualifiedExpression(200,213): 'instance.prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
 
 KtNameReferenceExpression(200,208): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: JClass
+    ]
 
 KtNameReferenceExpression(209,213): 'prop'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
 
 KtNamedFunction(218,426): 'fun testSealedJClassInIf(instance: SealedJClass): Int {'
   null
@@ -158,7 +182,10 @@ KtIsExpression(282,303): 'instance is SCOption1'
   null
 
 KtNameReferenceExpression(282,290): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedJClass
+    ]
 
 KtOperationReferenceExpression(291,293): 'is'
   null
@@ -191,10 +218,16 @@ KtDotQualifiedExpression(322,336): 'instance.prop1'
     ]
 
 KtNameReferenceExpression(322,330): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedJClass
+    ]
 
 KtNameReferenceExpression(331,336): 'prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop1: kotlin.Int
+    ]
 
 KtIfExpression(347,411): 'if (instance is SCOption2) {'
   null
@@ -206,7 +239,10 @@ KtIsExpression(351,372): 'instance is SCOption2'
   null
 
 KtNameReferenceExpression(351,359): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedJClass
+    ]
 
 KtOperationReferenceExpression(360,362): 'is'
   null
@@ -239,10 +275,16 @@ KtDotQualifiedExpression(391,405): 'instance.prop2'
     ]
 
 KtNameReferenceExpression(391,399): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedJClass
+    ]
 
 KtNameReferenceExpression(400,405): 'prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop2: kotlin.Int
+    ]
 
 KtReturnExpression(416,424): 'return 0'
   KaSymbolResolutionSuccess:
@@ -284,7 +326,10 @@ KtWhenExpression(497,586): 'when (instance) {'
   null
 
 KtNameReferenceExpression(503,511): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedJClass
+    ]
 
 KtWhenEntry(519,549): 'is SCOption1 -> instance.prop1'
   null
@@ -308,10 +353,16 @@ KtDotQualifiedExpression(535,549): 'instance.prop1'
     ]
 
 KtNameReferenceExpression(535,543): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedJClass
+    ]
 
 KtNameReferenceExpression(544,549): 'prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop1: kotlin.Int
+    ]
 
 KtWhenEntry(554,584): 'is SCOption2 -> instance.prop2'
   null
@@ -335,10 +386,16 @@ KtDotQualifiedExpression(570,584): 'instance.prop2'
     ]
 
 KtNameReferenceExpression(570,578): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedJClass
+    ]
 
 KtNameReferenceExpression(579,584): 'prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop2: kotlin.Int
+    ]
 
 KtNamedFunction(588,756): 'fun testSealedJClassInWhen(instance: SealedJClass): Int = when {'
   null
@@ -380,7 +437,10 @@ KtIsExpression(657,678): 'instance is SCOption1'
   null
 
 KtNameReferenceExpression(657,665): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedJClass
+    ]
 
 KtOperationReferenceExpression(666,668): 'is'
   null
@@ -401,10 +461,16 @@ KtDotQualifiedExpression(682,696): 'instance.prop1'
     ]
 
 KtNameReferenceExpression(682,690): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedJClass
+    ]
 
 KtNameReferenceExpression(691,696): 'prop1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop1: kotlin.Int
+    ]
 
 KtWhenEntry(701,740): 'instance is SCOption2 -> instance.prop2'
   null
@@ -416,7 +482,10 @@ KtIsExpression(701,722): 'instance is SCOption2'
   null
 
 KtNameReferenceExpression(701,709): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedJClass
+    ]
 
 KtOperationReferenceExpression(710,712): 'is'
   null
@@ -437,10 +506,16 @@ KtDotQualifiedExpression(726,740): 'instance.prop2'
     ]
 
 KtNameReferenceExpression(726,734): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedJClass
+    ]
 
 KtNameReferenceExpression(735,740): 'prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var prop2: kotlin.Int
+    ]
 
 KtWhenEntry(745,754): 'else -> 0'
   null

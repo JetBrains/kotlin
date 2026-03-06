@@ -128,7 +128,10 @@ KtNameReferenceExpression(238,242): 'Left'
   null
 
 KtNameReferenceExpression(246,247): 'x'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val x: kotlin.String
+    ]
 
 KtWhenEntry(252,265): 'is Right -> y'
   null
@@ -146,4 +149,7 @@ KtNameReferenceExpression(255,260): 'Right'
   null
 
 KtNameReferenceExpression(264,265): 'y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]

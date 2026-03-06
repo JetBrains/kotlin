@@ -146,7 +146,10 @@ KtValueArgument(176,178): 'ci'
   null
 
 KtNameReferenceExpression(176,178): 'ci'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      ci: kotlin.Int
+    ]
 
 KtSecondaryConstructor(184,219): 'constructor(cs: String) : super(cs)'
   null
@@ -185,7 +188,10 @@ KtValueArgument(216,218): 'cs'
   null
 
 KtNameReferenceExpression(216,218): 'cs'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      cs: kotlin.String
+    ]
 
 KtNamedFunction(225,263): 'fun foo() {'
   null
@@ -215,7 +221,10 @@ KtCallExpression(251,257): 'call()'
     ]
 
 KtNameReferenceExpression(251,255): 'call'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
+    ]
 
 KtValueArgumentList(255,257): '()'
   null

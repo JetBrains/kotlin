@@ -71,7 +71,10 @@ KtUserType(158,160): 'A1'
   null
 
 KtNameReferenceExpression(158,160): 'A1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: MyEnum): A1
+    ]
 
 KtValueArgumentList(160,163): '(X)'
   null
@@ -80,7 +83,9 @@ KtValueArgument(161,162): 'X'
   null
 
 KtNameReferenceExpression(161,162): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtParameterList(172,174): '()'
   null
@@ -140,7 +145,10 @@ KtUserType(234,236): 'A2'
   null
 
 KtNameReferenceExpression(234,236): 'A2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg value: MyEnum): A2
+    ]
 
 KtValueArgumentList(236,242): '(X, Y)'
   null
@@ -149,13 +157,17 @@ KtValueArgument(237,238): 'X'
   null
 
 KtNameReferenceExpression(237,238): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtValueArgument(240,241): 'Y'
   null
 
 KtNameReferenceExpression(240,241): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtParameterList(252,254): '()'
   null
@@ -188,7 +200,10 @@ KtUserType(260,262): 'A2'
   null
 
 KtNameReferenceExpression(260,262): 'A2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg value: MyEnum): A2
+    ]
 
 KtValueArgumentList(262,271): '(*[X, Y])'
   null
@@ -204,10 +219,14 @@ KtCollectionLiteralExpression(264,270): '[X, Y]'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
 
 KtNameReferenceExpression(265,266): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtNameReferenceExpression(268,269): 'Y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
 
 KtParameterList(281,283): '()'
   null
@@ -279,7 +298,10 @@ KtUserType(343,345): 'A3'
   null
 
 KtNameReferenceExpression(343,345): 'A3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.Array<MyEnum>): A3
+    ]
 
 KtValueArgumentList(345,350): '([X])'
   null
@@ -295,7 +317,9 @@ KtCollectionLiteralExpression(346,349): '[X]'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
 
 KtNameReferenceExpression(347,348): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtParameterList(360,362): '()'
   null
@@ -330,7 +354,11 @@ KtUserType(368,370): 'A3'
   null
 
 KtNameReferenceExpression(368,370): 'A3'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(value: kotlin.Array<MyEnum>): A3
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
 
 KtValueArgumentList(370,382): '(arrayOf(X))'
   null
@@ -346,7 +374,11 @@ KtCallExpression(371,381): 'arrayOf(X)'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
 
 KtNameReferenceExpression(371,378): 'arrayOf'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
 
 KtValueArgumentList(378,381): '(X)'
   null
@@ -355,7 +387,9 @@ KtValueArgument(379,380): 'X'
   null
 
 KtNameReferenceExpression(379,380): 'X'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtParameterList(392,394): '()'
   null
@@ -412,7 +446,10 @@ KtUserType(444,446): 'A4'
   null
 
 KtNameReferenceExpression(444,446): 'A4'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.Int): A4
+    ]
 
 KtValueArgumentList(446,457): '(MAX_VALUE)'
   null
@@ -421,7 +458,9 @@ KtValueArgument(447,456): 'MAX_VALUE'
   null
 
 KtNameReferenceExpression(447,456): 'MAX_VALUE'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: MAX_VALUE>
 
 KtParameterList(466,468): '()'
   null
@@ -454,7 +493,10 @@ KtUserType(474,483): 'Retention'
   null
 
 KtNameReferenceExpression(474,483): 'Retention'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+    ]
 
 KtValueArgumentList(483,492): '(RUNTIME)'
   null
@@ -463,7 +505,9 @@ KtValueArgument(484,491): 'RUNTIME'
   null
 
 KtNameReferenceExpression(484,491): 'RUNTIME'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: RUNTIME>
 
 KtAnnotationEntry(493,517): '@Target(CLASS, PROPERTY)'
   KaSymbolResolutionSuccess:
@@ -484,7 +528,10 @@ KtUserType(494,500): 'Target'
   null
 
 KtNameReferenceExpression(494,500): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+    ]
 
 KtValueArgumentList(500,517): '(CLASS, PROPERTY)'
   null
@@ -493,13 +540,17 @@ KtValueArgument(501,506): 'CLASS'
   null
 
 KtNameReferenceExpression(501,506): 'CLASS'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: CLASS>
 
 KtValueArgument(508,516): 'PROPERTY'
   null
 
 KtNameReferenceExpression(508,516): 'PROPERTY'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: PROPERTY>
 
 KtProperty(549,577): '@MyAnnotation'
   null
@@ -526,7 +577,10 @@ KtUserType(550,562): 'MyAnnotation'
   null
 
 KtNameReferenceExpression(550,562): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyAnnotation
+    ]
 
 KtTypeReference(570,573): 'Int'
   null
@@ -565,7 +619,10 @@ KtUserType(580,592): 'MyAnnotation'
   null
 
 KtNameReferenceExpression(580,592): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyAnnotation
+    ]
 
 KtNamedFunction(608,641): '@MyAnnotation'
   null
@@ -592,7 +649,10 @@ KtUserType(609,621): 'MyAnnotation'
   null
 
 KtNameReferenceExpression(609,621): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyAnnotation
+    ]
 
 KtParameterList(636,638): '()'
   null

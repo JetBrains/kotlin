@@ -44,7 +44,7 @@ KtWhenExpression(120,162): 'when (a) {'
   NO_CANDIDATES
 
 KtNameReferenceExpression(126,127): 'a'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -89,7 +89,7 @@ KtDotQualifiedExpression(135,138): 'A.A'
     isInBestCandidates = true
 
 KtNameReferenceExpression(135,136): 'A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -108,7 +108,7 @@ KtNameReferenceExpression(135,136): 'A'
     isInBestCandidates = false
 
 KtNameReferenceExpression(137,138): 'A'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -162,7 +162,7 @@ KtDotQualifiedExpression(150,153): 'A.B'
     isInBestCandidates = true
 
 KtNameReferenceExpression(150,151): 'A'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -181,7 +181,7 @@ KtNameReferenceExpression(150,151): 'A'
     isInBestCandidates = false
 
 KtNameReferenceExpression(152,153): 'B'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

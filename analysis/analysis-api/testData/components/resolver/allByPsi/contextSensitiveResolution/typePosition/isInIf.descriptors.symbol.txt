@@ -68,7 +68,10 @@ KtUserType(163,174): 'SealedClass'
   null
 
 KtNameReferenceExpression(163,174): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtValueArgumentList(174,176): '()'
   null
@@ -119,7 +122,10 @@ KtUserType(225,236): 'SealedClass'
   null
 
 KtNameReferenceExpression(225,236): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtValueArgumentList(236,238): '()'
   null
@@ -173,7 +179,10 @@ KtUserType(308,319): 'SealedClass'
   null
 
 KtNameReferenceExpression(308,319): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtValueArgumentList(319,321): '()'
   null
@@ -203,7 +212,10 @@ KtUserType(358,374): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(358,374): 'SealedInheritor1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+    ]
 
 KtValueArgumentList(374,376): '()'
   null
@@ -260,7 +272,10 @@ KtUserType(439,450): 'SealedClass'
   null
 
 KtNameReferenceExpression(439,450): 'SealedClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtValueArgumentList(450,452): '()'
   null
@@ -308,7 +323,10 @@ KtIsExpression(531,559): 'instance is SealedInheritor1'
   null
 
 KtNameReferenceExpression(531,539): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(540,542): 'is'
   null
@@ -320,7 +338,9 @@ KtUserType(543,559): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(543,559): 'SealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritor1>
 
 KtContainerNodeForControlStructureBody(561,598): '{'
   null
@@ -340,10 +360,15 @@ KtDotQualifiedExpression(578,592): 'instance.prop1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(578,586): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(587,592): 'prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtIfExpression(604,682): 'if (instance is IndirectSealedInheritor) {'
   null
@@ -355,7 +380,10 @@ KtIsExpression(608,643): 'instance is IndirectSealedInheritor'
   null
 
 KtNameReferenceExpression(608,616): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(617,619): 'is'
   null
@@ -367,7 +395,9 @@ KtUserType(620,643): 'IndirectSealedInheritor'
   null
 
 KtNameReferenceExpression(620,643): 'IndirectSealedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: IndirectSealedInheritor>
 
 KtContainerNodeForControlStructureBody(645,682): '{'
   null
@@ -387,10 +417,15 @@ KtDotQualifiedExpression(662,676): 'instance.prop1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtNameReferenceExpression(662,670): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(671,676): 'prop1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop1>
 
 KtIfExpression(688,752): 'if (instance is Inner) {'
   null
@@ -402,7 +437,10 @@ KtIsExpression(692,709): 'instance is Inner'
   null
 
 KtNameReferenceExpression(692,700): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(701,703): 'is'
   null
@@ -414,7 +452,9 @@ KtUserType(704,709): 'Inner'
   null
 
 KtNameReferenceExpression(704,709): 'Inner'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Inner>
 
 KtContainerNodeForControlStructureBody(711,752): '{'
   null
@@ -434,10 +474,15 @@ KtDotQualifiedExpression(728,746): 'instance.innerProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: innerProp>
 
 KtNameReferenceExpression(728,736): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(737,746): 'innerProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: innerProp>
 
 KtIfExpression(758,927): 'if (instance !is SealedInheritor1 && instance !is SealedSealedInheritor1) {'
   null
@@ -452,7 +497,10 @@ KtIsExpression(762,791): 'instance !is SealedInheritor1'
   null
 
 KtNameReferenceExpression(762,770): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(771,774): '!is'
   null
@@ -464,7 +512,9 @@ KtUserType(775,791): 'SealedInheritor1'
   null
 
 KtNameReferenceExpression(775,791): 'SealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritor1>
 
 KtOperationReferenceExpression(792,794): '&&'
   null
@@ -473,7 +523,10 @@ KtIsExpression(795,830): 'instance !is SealedSealedInheritor1'
   null
 
 KtNameReferenceExpression(795,803): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(804,807): '!is'
   null
@@ -485,7 +538,9 @@ KtUserType(808,830): 'SealedSealedInheritor1'
   null
 
 KtNameReferenceExpression(808,830): 'SealedSealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedSealedInheritor1>
 
 KtContainerNodeForControlStructureBody(832,927): '{'
   null
@@ -503,7 +558,10 @@ KtIsExpression(846,874): 'instance is SealedInheritor2'
   null
 
 KtNameReferenceExpression(846,854): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(855,857): 'is'
   null
@@ -515,7 +573,9 @@ KtUserType(858,874): 'SealedInheritor2'
   null
 
 KtNameReferenceExpression(858,874): 'SealedInheritor2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritor2>
 
 KtContainerNodeForControlStructureBody(876,921): '{'
   null
@@ -535,10 +595,15 @@ KtDotQualifiedExpression(897,911): 'instance.prop2'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtNameReferenceExpression(897,905): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(906,911): 'prop2'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop2>
 
 KtIfExpression(933,1010): 'if (instance is SealedSealedInheritor1) {'
   null
@@ -550,7 +615,10 @@ KtIsExpression(937,971): 'instance is SealedSealedInheritor1'
   null
 
 KtNameReferenceExpression(937,945): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(946,948): 'is'
   null
@@ -562,7 +630,9 @@ KtUserType(949,971): 'SealedSealedInheritor1'
   null
 
 KtNameReferenceExpression(949,971): 'SealedSealedInheritor1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedSealedInheritor1>
 
 KtContainerNodeForControlStructureBody(973,1010): '{'
   null
@@ -582,10 +652,15 @@ KtDotQualifiedExpression(990,1004): 'instance.prop3'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop3>
 
 KtNameReferenceExpression(990,998): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtNameReferenceExpression(999,1004): 'prop3'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop3>
 
 KtIfExpression(1016,1073): 'if (instance is Nested1) {'
   null
@@ -597,7 +672,10 @@ KtIsExpression(1020,1039): 'instance is Nested1'
   null
 
 KtNameReferenceExpression(1020,1028): 'instance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      instance: SealedClass
+    ]
 
 KtOperationReferenceExpression(1029,1031): 'is'
   null
@@ -609,7 +687,9 @@ KtUserType(1032,1039): 'Nested1'
   null
 
 KtNameReferenceExpression(1032,1039): 'Nested1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Nested1>
 
 KtContainerNodeForControlStructureBody(1041,1073): '{'
   null

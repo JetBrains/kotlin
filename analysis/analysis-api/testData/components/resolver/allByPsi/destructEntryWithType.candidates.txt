@@ -690,7 +690,7 @@ KtOperationReferenceExpression(167,168): '+'
     isInBestCandidates = false
 
 KtNameReferenceExpression(169,177): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1258,7 +1258,7 @@ KtOperationReferenceExpression(192,193): '+'
     isInBestCandidates = false
 
 KtNameReferenceExpression(194,202): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1826,7 +1826,7 @@ KtOperationReferenceExpression(217,218): '+'
     isInBestCandidates = false
 
 KtNameReferenceExpression(219,227): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1871,7 +1871,7 @@ KtDestructuringDeclarationEntry(236,241): 'right'
     isInBestCandidates = true
 
 KtNameReferenceExpression(245,249): 'pair'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

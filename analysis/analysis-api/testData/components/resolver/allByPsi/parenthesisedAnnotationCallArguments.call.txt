@@ -637,7 +637,7 @@ KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
       }
 
 KtNameReferenceExpression(316,323): 'arrayOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -863,7 +863,7 @@ KtCallExpression(381,400): 'arrayOf(("A"), "B")'
       }
 
 KtNameReferenceExpression(381,388): 'arrayOf'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

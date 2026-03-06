@@ -41,7 +41,10 @@ KtUserType(143,150): 'MyClass'
   null
 
 KtNameReferenceExpression(143,150): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(150,152): '()'
   null
@@ -77,7 +80,10 @@ KtNameReferenceExpression(211,217): 'MyEnum'
   null
 
 KtNameReferenceExpression(223,226): 'arg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      arg: MyEnum
+    ]
 
 KtNamedFunction(227,259): 'fun overload(arg: MyClass) = arg'
   null
@@ -98,7 +104,10 @@ KtNameReferenceExpression(245,252): 'MyClass'
   null
 
 KtNameReferenceExpression(256,259): 'arg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      arg: MyClass
+    ]
 
 KtNamedFunction(260,374): 'fun test() {'
   null
@@ -122,7 +131,9 @@ KtValueArgument(286,296): 'EnumValue1'
   null
 
 KtNameReferenceExpression(286,296): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtProperty(303,340): 'var v1: MyEnum = overload(EnumValue1)'
   null
@@ -149,7 +160,9 @@ KtValueArgument(329,339): 'EnumValue1'
   null
 
 KtNameReferenceExpression(329,339): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtCallExpression(346,371): 'overload(InheritorObject)'
   null
@@ -164,7 +177,9 @@ KtValueArgument(355,370): 'InheritorObject'
   null
 
 KtNameReferenceExpression(355,370): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtNamedFunction(375,429): 'fun overload2(arg: MyEnum) { println("Enum version") }'
   null
@@ -194,7 +209,10 @@ KtCallExpression(404,427): 'println("Enum version")'
     ]
 
 KtNameReferenceExpression(404,411): 'println'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/io/println(message: kotlin.Any?): kotlin.Unit
+    ]
 
 KtValueArgumentList(411,427): '("Enum version")'
   null
@@ -224,7 +242,10 @@ KtCallExpression(448,484): 'println("Without arguments version")'
     ]
 
 KtNameReferenceExpression(448,455): 'println'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/io/println(message: kotlin.Any?): kotlin.Unit
+    ]
 
 KtValueArgumentList(455,484): '("Without arguments version")'
   null
@@ -254,7 +275,10 @@ KtCallExpression(506,527): 'overload2(EnumValue1)'
     ]
 
 KtNameReferenceExpression(506,515): 'overload2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /overload2(arg: MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(515,527): '(EnumValue1)'
   null
@@ -263,7 +287,9 @@ KtValueArgument(516,526): 'EnumValue1'
   null
 
 KtNameReferenceExpression(516,526): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtNamedFunction(530,584): 'fun overload3(arg: MyEnum) { println("Enum version") }'
   null
@@ -293,7 +319,10 @@ KtCallExpression(559,582): 'println("Enum version")'
     ]
 
 KtNameReferenceExpression(559,566): 'println'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/io/println(message: kotlin.Any?): kotlin.Unit
+    ]
 
 KtValueArgumentList(566,582): '("Enum version")'
   null
@@ -350,7 +379,10 @@ KtCallExpression(630,657): 'println("With 2 arguments")'
     ]
 
 KtNameReferenceExpression(630,637): 'println'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/io/println(message: kotlin.Any?): kotlin.Unit
+    ]
 
 KtValueArgumentList(637,657): '("With 2 arguments")'
   null
@@ -380,7 +412,10 @@ KtCallExpression(679,700): 'overload3(EnumValue1)'
     ]
 
 KtNameReferenceExpression(679,688): 'overload3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /overload3(arg: MyEnum): kotlin.Unit
+    ]
 
 KtValueArgumentList(688,700): '(EnumValue1)'
   null
@@ -389,4 +424,6 @@ KtValueArgument(689,699): 'EnumValue1'
   null
 
 KtNameReferenceExpression(689,699): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>

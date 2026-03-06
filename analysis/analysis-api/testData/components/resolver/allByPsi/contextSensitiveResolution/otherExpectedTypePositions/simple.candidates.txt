@@ -77,7 +77,7 @@ KtDotQualifiedExpression(159,167): 'MyEnum.X'
     isInBestCandidates = true
 
 KtNameReferenceExpression(159,165): 'MyEnum'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -96,7 +96,7 @@ KtNameReferenceExpression(159,165): 'MyEnum'
     isInBestCandidates = false
 
 KtNameReferenceExpression(166,167): 'X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -129,7 +129,7 @@ KtNameReferenceExpression(181,187): 'MyEnum'
   NO_CANDIDATES
 
 KtNameReferenceExpression(190,191): 'X'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -162,7 +162,7 @@ KtNameReferenceExpression(204,210): 'MyEnum'
   NO_CANDIDATES
 
 KtNameReferenceExpression(213,214): 'L'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

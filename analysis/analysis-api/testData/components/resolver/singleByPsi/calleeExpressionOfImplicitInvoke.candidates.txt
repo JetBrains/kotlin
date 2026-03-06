@@ -1,5 +1,5 @@
 KtNameReferenceExpression(30,31): 'f'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

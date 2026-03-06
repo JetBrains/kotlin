@@ -137,10 +137,16 @@ KtUserType(212,216): 'Left'
   null
 
 KtNameReferenceExpression(212,216): 'Left'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    class Left : Any
+    class Left : Any>
 
 KtNameReferenceExpression(220,221): 'x'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
 KtWhenEntry(226,239): 'is Right -> y'
   null
@@ -158,7 +164,10 @@ KtNameReferenceExpression(229,234): 'Right'
   null
 
 KtNameReferenceExpression(238,239): 'y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val y: kotlin.String
+    ]
 
 KtNamedFunction(243,316): 'fun Any.getOrElse2() = when (this) {'
   null
@@ -197,10 +206,16 @@ KtUserType(287,291): 'Left'
   null
 
 KtNameReferenceExpression(287,291): 'Left'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    class Left : Any
+    class Left : Any>
 
 KtNameReferenceExpression(295,296): 'x'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
 KtWhenEntry(301,314): 'is Right -> y'
   null
@@ -215,7 +230,11 @@ KtUserType(304,309): 'Right'
   null
 
 KtNameReferenceExpression(304,309): 'Right'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtNameReferenceExpression(313,314): 'y'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>

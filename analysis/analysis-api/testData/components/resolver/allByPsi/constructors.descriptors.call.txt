@@ -250,7 +250,7 @@ KtValueArgument(176,178): 'ci'
   null
 
 KtNameReferenceExpression(176,178): 'ci'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -359,7 +359,7 @@ KtValueArgument(216,218): 'cs'
   null
 
 KtNameReferenceExpression(216,218): 'cs'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -431,7 +431,7 @@ KtCallExpression(251,257): 'call()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(251,255): 'call'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -540,7 +540,7 @@ KtUserType(294,303): 'BaseClass'
   null
 
 KtNameReferenceExpression(294,303): 'BaseClass'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -79,7 +79,7 @@ KtNameReferenceExpression(191,197): 'MyEnum'
   null
 
 KtNameReferenceExpression(198,208): 'EnumValue1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -102,7 +102,7 @@ KtProperty(213,234): 'val arg2 = EnumValue2'
   null
 
 KtNameReferenceExpression(224,234): 'EnumValue2'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'EnumValue2'.>
 
@@ -140,7 +140,7 @@ KtCallExpression(240,263): 'receiveEnum(EnumValue2)'
       }
 
 KtNameReferenceExpression(240,251): 'receiveEnum'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -179,7 +179,7 @@ KtValueArgument(252,262): 'EnumValue2'
   null
 
 KtNameReferenceExpression(252,262): 'EnumValue2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -232,7 +232,7 @@ KtCallExpression(268,285): 'receiveEnum(arg1)'
       }
 
 KtNameReferenceExpression(268,279): 'receiveEnum'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -271,7 +271,7 @@ KtValueArgument(280,284): 'arg1'
   null
 
 KtNameReferenceExpression(280,284): 'arg1'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -321,7 +321,7 @@ KtCallExpression(290,307): 'receiveEnum(arg2)'
       }
 
 KtNameReferenceExpression(290,301): 'receiveEnum'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -360,7 +360,7 @@ KtValueArgument(302,306): 'arg2'
   null
 
 KtNameReferenceExpression(302,306): 'arg2'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -410,7 +410,7 @@ KtCallExpression(312,329): 'receiveEnum(arg3)'
       }
 
 KtNameReferenceExpression(312,323): 'receiveEnum'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -449,6 +449,6 @@ KtValueArgument(324,328): 'arg3'
   null
 
 KtNameReferenceExpression(324,328): 'arg3'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'arg3'.>

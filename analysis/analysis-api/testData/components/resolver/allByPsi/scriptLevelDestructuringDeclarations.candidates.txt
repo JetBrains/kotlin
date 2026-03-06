@@ -166,7 +166,7 @@ KtSimpleNameStringTemplateEntry(115,124): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(116,124): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -297,7 +297,7 @@ KtSimpleNameStringTemplateEntry(153,162): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(154,162): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -425,7 +425,7 @@ KtSimpleNameStringTemplateEntry(204,213): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(205,213): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -550,7 +550,7 @@ KtSimpleNameStringTemplateEntry(248,257): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(249,257): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -681,7 +681,7 @@ KtSimpleNameStringTemplateEntry(287,296): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(288,296): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -809,7 +809,7 @@ KtSimpleNameStringTemplateEntry(332,341): '$constant'
   NO_CANDIDATES
 
 KtNameReferenceExpression(333,341): 'constant'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -943,7 +943,7 @@ KtSimpleNameStringTemplateEntry(391,396): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(392,396): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1077,7 +1077,7 @@ KtSimpleNameStringTemplateEntry(413,418): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(414,418): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1211,7 +1211,7 @@ KtSimpleNameStringTemplateEntry(433,438): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(434,438): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1277,7 +1277,7 @@ KtCallExpression(446,462): 'Pair(null, null)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(446,450): 'Pair'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1438,7 +1438,7 @@ KtSimpleNameStringTemplateEntry(479,484): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(480,484): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1572,7 +1572,7 @@ KtSimpleNameStringTemplateEntry(501,506): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(502,506): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1706,7 +1706,7 @@ KtSimpleNameStringTemplateEntry(521,526): '$prop'
   NO_CANDIDATES
 
 KtNameReferenceExpression(522,526): 'prop'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1772,7 +1772,7 @@ KtCallExpression(534,550): 'Pair(null, null)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(534,538): 'Pair'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

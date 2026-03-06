@@ -163,7 +163,9 @@ KtUserType(160,164): 'Anno'
   null
 
 KtNameReferenceExpression(160,164): 'Anno'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtValueArgumentList(164,178): '(0 + constant)'
   null
@@ -184,7 +186,10 @@ KtOperationReferenceExpression(167,168): '+'
   null
 
 KtNameReferenceExpression(169,177): 'constant'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val constant: kotlin.Int
+    ]
 
 KtUserType(179,234): 'List<@Anno(1 + constant) List<@Anno(2 + constant) Int>>'
   null
@@ -225,7 +230,9 @@ KtUserType(185,189): 'Anno'
   null
 
 KtNameReferenceExpression(185,189): 'Anno'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtValueArgumentList(189,203): '(1 + constant)'
   null
@@ -246,7 +253,10 @@ KtOperationReferenceExpression(192,193): '+'
   null
 
 KtNameReferenceExpression(194,202): 'constant'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val constant: kotlin.Int
+    ]
 
 KtUserType(204,233): 'List<@Anno(2 + constant) Int>'
   null
@@ -287,7 +297,9 @@ KtUserType(210,214): 'Anno'
   null
 
 KtNameReferenceExpression(210,214): 'Anno'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtValueArgumentList(214,228): '(2 + constant)'
   null
@@ -308,7 +320,10 @@ KtOperationReferenceExpression(217,218): '+'
   null
 
 KtNameReferenceExpression(219,227): 'constant'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val constant: kotlin.Int
+    ]
 
 KtUserType(229,232): 'Int'
   null
@@ -323,4 +338,7 @@ KtDestructuringDeclarationEntry(236,241): 'right'
     ]
 
 KtNameReferenceExpression(245,249): 'pair'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val pair: util.MyPair
+    ]

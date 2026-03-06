@@ -1,11 +1,20 @@
 <caret_1>:
   KtNameReferenceExpression(192,195): 'foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var foo: @EnhancedNullability Foo<kotlin.String!>
+      ]
 
 <caret_2>:
   KtNameReferenceExpression(211,214): 'foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var foo: @EnhancedNullability Foo<kotlin.String!>
+      ]
 
 <caret_3>:
   KtNameReferenceExpression(329,332): 'foo'
-    null
+    KaSymbolResolutionSuccess:
+      symbols = [
+        var foo: @EnhancedNullability Foo<kotlin.String!>
+      ]

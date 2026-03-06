@@ -1,5 +1,5 @@
 KtNameReferenceExpression(56,58): 'CA'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

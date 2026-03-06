@@ -242,7 +242,7 @@ KtIsExpression(298,307): 's is Left'
   null
 
 KtNameReferenceExpression(298,299): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -313,7 +313,7 @@ KtDotQualifiedExpression(311,318): 's.error'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(311,312): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -330,7 +330,7 @@ KtNameReferenceExpression(311,312): 's'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(313,318): 'error'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -352,7 +352,7 @@ KtNameReferenceExpression(313,318): 'error'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(319,325): 'length'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -381,7 +381,7 @@ KtIsExpression(334,344): 's is Right'
   null
 
 KtNameReferenceExpression(334,335): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -468,7 +468,7 @@ KtDotQualifiedExpression(348,355): 's.value'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(348,349): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -485,7 +485,7 @@ KtNameReferenceExpression(348,349): 's'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(350,355): 'value'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -555,7 +555,7 @@ KtIsExpression(375,385): 's !is Left'
   null
 
 KtNameReferenceExpression(375,376): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -610,7 +610,7 @@ KtDotQualifiedExpression(397,409): 's.hashCode()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(397,398): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -647,7 +647,7 @@ KtCallExpression(399,409): 'hashCode()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(399,407): 'hashCode'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -794,7 +794,7 @@ KtCallExpression(433,443): 'hashCode()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(433,441): 'hashCode'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -826,7 +826,7 @@ KtBinaryExpressionWithTypeRHS(455,464): 's as Left'
   null
 
 KtNameReferenceExpression(455,456): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -897,7 +897,7 @@ KtDotQualifiedExpression(473,480): 's.error'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(473,474): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -914,7 +914,7 @@ KtNameReferenceExpression(473,474): 's'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(475,480): 'error'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -936,7 +936,7 @@ KtNameReferenceExpression(475,480): 'error'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(481,487): 'length'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1018,7 +1018,7 @@ KtBinaryExpressionWithTypeRHS(500,511): 's as? Right'
   null
 
 KtNameReferenceExpression(500,501): 's'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1047,7 +1047,7 @@ KtNameReferenceExpression(506,511): 'Right'
   null
 
 KtNameReferenceExpression(514,519): 'value'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1103,7 +1103,7 @@ KtCallExpression(521,527): 'div(1)'
       }
 
 KtNameReferenceExpression(521,524): 'div'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

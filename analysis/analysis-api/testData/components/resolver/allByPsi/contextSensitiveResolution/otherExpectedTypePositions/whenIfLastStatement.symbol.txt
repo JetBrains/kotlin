@@ -74,7 +74,10 @@ KtCallExpression(197,206): 'MyClass()'
     ]
 
 KtNameReferenceExpression(197,204): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtValueArgumentList(204,206): '()'
   null
@@ -191,7 +194,10 @@ KtCallExpression(404,407): 'b()'
     ]
 
 KtNameReferenceExpression(404,405): 'b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b: () -> T
+    ]
 
 KtValueArgumentList(405,407): '()'
   null
@@ -242,7 +248,10 @@ KtBinaryExpression(467,473): 'i == 0'
     ]
 
 KtNameReferenceExpression(467,468): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(469,471): '=='
   null
@@ -257,7 +266,9 @@ KtBlockExpression(475,542): '{'
   null
 
 KtNameReferenceExpression(489,504): 'NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
 KtNameReferenceExpression(517,532): 'NestedInheritor'
   null
@@ -278,7 +289,10 @@ KtBinaryExpression(560,566): 'i == 1'
     ]
 
 KtNameReferenceExpression(560,561): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(562,564): '=='
   null
@@ -293,16 +307,24 @@ KtBlockExpression(568,627): '{'
   null
 
 KtNameReferenceExpression(582,593): 'myClassProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
 
 KtNameReferenceExpression(606,617): 'myClassProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val myClassProp: MyClass
+    ]
 
 KtContainerNodeForControlStructureBody(641,657): 'ClassMemberAlias'
   null
 
 KtNameReferenceExpression(641,657): 'ClassMemberAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val ClassMemberAlias: MyClass.NestedInheritor
+    ]
 
 KtProperty(663,788): 'val s2: MyClass ='
   null
@@ -329,7 +351,10 @@ KtBinaryExpression(693,699): 'i == 2'
     ]
 
 KtNameReferenceExpression(693,694): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(695,697): '=='
   null
@@ -344,16 +369,24 @@ KtBlockExpression(701,758): '{'
   null
 
 KtNameReferenceExpression(715,725): 'stringProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'stringProp'.>
 
 KtNameReferenceExpression(738,748): 'stringProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtContainerNodeForControlStructureBody(772,788): 'ClassMemberAlias'
   null
 
 KtNameReferenceExpression(772,788): 'ClassMemberAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val ClassMemberAlias: MyClass.NestedInheritor
+    ]
 
 KtCallExpression(794,1278): 'receive<MyClass>('
   KaSymbolResolutionSuccess:
@@ -362,7 +395,10 @@ KtCallExpression(794,1278): 'receive<MyClass>('
     ]
 
 KtNameReferenceExpression(794,801): 'receive'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receive(e: T): kotlin.Unit
+    ]
 
 KtTypeArgumentList(801,810): '<MyClass>'
   null
@@ -398,7 +434,10 @@ KtBinaryExpression(824,830): 'i == 0'
     ]
 
 KtNameReferenceExpression(824,825): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(826,828): '=='
   null
@@ -413,10 +452,14 @@ KtBlockExpression(832,923): '{'
   null
 
 KtNameReferenceExpression(846,861): 'NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
 KtNameReferenceExpression(874,889): 'NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
 KtContainerNodeForControlStructureBody(937,1272): 'if (i == 1) {'
   null
@@ -434,7 +477,10 @@ KtBinaryExpression(941,947): 'i == 1'
     ]
 
 KtNameReferenceExpression(941,942): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(943,945): '=='
   null
@@ -449,10 +495,14 @@ KtBlockExpression(949,1032): '{'
   null
 
 KtNameReferenceExpression(963,974): 'myClassProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
 
 KtNameReferenceExpression(987,998): 'myClassProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
 
 KtContainerNodeForControlStructureBody(1046,1272): 'if (i == 2) {'
   null
@@ -470,7 +520,10 @@ KtBinaryExpression(1050,1056): 'i == 2'
     ]
 
 KtNameReferenceExpression(1050,1051): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(1052,1054): '=='
   null
@@ -490,7 +543,9 @@ KtCallExpression(1072,1092): 'getNestedInheritor()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(1072,1090): 'getNestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtValueArgumentList(1090,1092): '()'
   null
@@ -501,7 +556,9 @@ KtCallExpression(1105,1125): 'getNestedInheritor()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(1105,1123): 'getNestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtValueArgumentList(1123,1125): '()'
   null
@@ -522,7 +579,10 @@ KtBinaryExpression(1153,1159): 'i == 3'
     ]
 
 KtNameReferenceExpression(1153,1154): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(1155,1157): '=='
   null
@@ -537,16 +597,23 @@ KtBlockExpression(1161,1242): '{'
   null
 
 KtNameReferenceExpression(1175,1185): 'stringProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'stringProp'.>
 
 KtNameReferenceExpression(1198,1208): 'stringProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'stringProp'.>
 
 KtContainerNodeForControlStructureBody(1256,1272): 'ClassMemberAlias'
   null
 
 KtNameReferenceExpression(1256,1272): 'ClassMemberAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val ClassMemberAlias: MyClass.NestedInheritor
+    ]
 
 KtCallExpression(1284,1555): 'run<MyClass> {'
   KaSymbolResolutionSuccess:
@@ -555,7 +622,10 @@ KtCallExpression(1284,1555): 'run<MyClass> {'
     ]
 
 KtNameReferenceExpression(1284,1287): 'run'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /run(b: () -> T): T
+    ]
 
 KtTypeArgumentList(1287,1296): '<MyClass>'
   null
@@ -597,7 +667,10 @@ KtBinaryExpression(1311,1317): 'i == 0'
     ]
 
 KtNameReferenceExpression(1311,1312): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(1313,1315): '=='
   null
@@ -612,10 +685,14 @@ KtBlockExpression(1319,1410): '{'
   null
 
 KtNameReferenceExpression(1333,1348): 'NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
 KtNameReferenceExpression(1361,1376): 'NestedInheritor'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
 KtContainerNodeForControlStructureBody(1424,1549): 'if (i == 1) {'
   null
@@ -633,7 +710,10 @@ KtBinaryExpression(1428,1434): 'i == 1'
     ]
 
 KtNameReferenceExpression(1428,1429): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtOperationReferenceExpression(1430,1432): '=='
   null
@@ -648,13 +728,20 @@ KtBlockExpression(1436,1519): '{'
   null
 
 KtNameReferenceExpression(1450,1461): 'myClassProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
 
 KtNameReferenceExpression(1474,1485): 'myClassProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
 
 KtContainerNodeForControlStructureBody(1533,1549): 'ClassMemberAlias'
   null
 
 KtNameReferenceExpression(1533,1549): 'ClassMemberAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val ClassMemberAlias: MyClass.NestedInheritor
+    ]

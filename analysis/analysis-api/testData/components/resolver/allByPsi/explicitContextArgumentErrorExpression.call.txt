@@ -69,7 +69,7 @@ KtCallExpression(49,58): 'foo(s = )'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(49,52): 'foo'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

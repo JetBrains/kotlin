@@ -50,7 +50,10 @@ KtBinaryExpression(40,49): 'list += 1'
     ]
 
 KtNameReferenceExpression(40,44): 'list'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      list: kotlin.collections.MutableList<kotlin.Int>
+    ]
 
 KtOperationReferenceExpression(45,47): '+='
   null
@@ -68,7 +71,10 @@ KtArrayAccessExpression(74,81): 'list[0]'
     ]
 
 KtNameReferenceExpression(74,78): 'list'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      list: kotlin.collections.MutableList<kotlin.Int>
+    ]
 
 KtContainerNode(78,81): '[0]'
   null
@@ -86,7 +92,10 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
     ]
 
 KtNameReferenceExpression(106,110): 'list'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      list: kotlin.collections.MutableList<kotlin.Int>
+    ]
 
 KtCallExpression(111,129): 'get(implicitIndex)'
   KaSymbolResolutionSuccess:
@@ -95,7 +104,10 @@ KtCallExpression(111,129): 'get(implicitIndex)'
     ]
 
 KtNameReferenceExpression(111,114): 'get'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+    ]
 
 KtValueArgumentList(114,129): '(implicitIndex)'
   null
@@ -104,7 +116,10 @@ KtValueArgument(115,128): 'implicitIndex'
   null
 
 KtNameReferenceExpression(115,128): 'implicitIndex'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val implicitIndex: kotlin.Int
+    ]
 
 KtBinaryExpression(134,172): '(@Suppress("SOME_ERROR") list[1]) += 2'
   KaSymbolResolutionSuccess:
@@ -160,7 +175,10 @@ KtArrayAccessExpression(159,166): 'list[1]'
     ]
 
 KtNameReferenceExpression(159,163): 'list'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      list: kotlin.collections.MutableList<kotlin.Int>
+    ]
 
 KtContainerNode(163,166): '[1]'
   null
@@ -192,7 +210,10 @@ KtArrayAccessExpression(178,185): 'list[2]'
     ]
 
 KtNameReferenceExpression(178,182): 'list'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      list: kotlin.collections.MutableList<kotlin.Int>
+    ]
 
 KtContainerNode(182,185): '[2]'
   null
@@ -261,7 +282,10 @@ KtCallExpression(241,261): 'foo(--list[i], list)'
     ]
 
 KtNameReferenceExpression(241,244): 'foo'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
+    ]
 
 KtValueArgumentList(244,261): '(--list[i], list)'
   null
@@ -287,19 +311,28 @@ KtArrayAccessExpression(247,254): 'list[i]'
     ]
 
 KtNameReferenceExpression(247,251): 'list'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      list: kotlin.collections.MutableList<kotlin.Int>
+    ]
 
 KtContainerNode(251,254): '[i]'
   null
 
 KtNameReferenceExpression(252,253): 'i'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: kotlin.Int
+    ]
 
 KtValueArgument(256,260): 'list'
   null
 
 KtNameReferenceExpression(256,260): 'list'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      list: kotlin.collections.MutableList<kotlin.Int>
+    ]
 
 KtPrefixExpression(266,277): '++(list[2])'
   KaSymbolResolutionSuccess:
@@ -322,7 +355,10 @@ KtArrayAccessExpression(269,276): 'list[2]'
     ]
 
 KtNameReferenceExpression(269,273): 'list'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      list: kotlin.collections.MutableList<kotlin.Int>
+    ]
 
 KtContainerNode(273,276): '[2]'
   null

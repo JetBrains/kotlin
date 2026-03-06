@@ -53,7 +53,10 @@ KtUserType(189,197): 'MySealed'
   null
 
 KtNameReferenceExpression(189,197): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MySealed
+    ]
 
 KtValueArgumentList(197,199): '()'
   null
@@ -132,7 +135,11 @@ KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
 
 KtNameReferenceExpression(299,303): 'with'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
 
 KtTypeArgumentList(303,317): '<MyEnum, Unit>'
   null
@@ -168,7 +175,9 @@ KtValueArgument(318,328): 'EnumValue1'
   null
 
 KtNameReferenceExpression(318,328): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtLambdaArgument(329,350): '{'
   null
@@ -193,7 +202,14 @@ KtCallExpression(339,344): 'foo()'
     public fun foo(): Unit defined in root package in file contextParameters.kt>
 
 KtNameReferenceExpression(339,342): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(): kotlin.Unit,
+      /foo(): kotlin.Unit
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
+    public fun foo(): Unit defined in root package in file contextParameters.kt
+    public fun foo(): Unit defined in root package in file contextParameters.kt>
 
 KtValueArgumentList(342,344): '()'
   null
@@ -206,7 +222,11 @@ KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
 
 KtNameReferenceExpression(356,360): 'with'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
 
 KtTypeArgumentList(360,376): '<MySealed, Unit>'
   null
@@ -242,7 +262,9 @@ KtValueArgument(377,392): 'InheritorObject'
   null
 
 KtNameReferenceExpression(377,392): 'InheritorObject'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtLambdaArgument(393,414): '{'
   null
@@ -267,7 +289,14 @@ KtCallExpression(403,408): 'foo()'
     public fun foo(): Unit defined in root package in file contextParameters.kt>
 
 KtNameReferenceExpression(403,406): 'foo'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(): kotlin.Unit,
+      /foo(): kotlin.Unit
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity:
+    public fun foo(): Unit defined in root package in file contextParameters.kt
+    public fun foo(): Unit defined in root package in file contextParameters.kt>
 
 KtValueArgumentList(406,408): '()'
   null
@@ -337,7 +366,11 @@ KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
 
 KtNameReferenceExpression(507,511): 'with'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with with>
 
 KtTypeArgumentList(511,525): '<MyEnum, Unit>'
   null
@@ -373,7 +406,9 @@ KtValueArgument(526,536): 'EnumValue1'
   null
 
 KtNameReferenceExpression(526,536): 'EnumValue1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtLambdaArgument(538,558): '{'
   null
@@ -397,4 +432,7 @@ KtStringTemplateExpression(548,550): '""'
   null
 
 KtNameReferenceExpression(551,552): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.String
+    ]

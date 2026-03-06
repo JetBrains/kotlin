@@ -47,7 +47,9 @@ KtNameReferenceExpression(58,61): 'Bar'
   null
 
 KtNameReferenceExpression(62,65): 'Baz'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Baz>
 
 KtNameReferenceExpression(66,72): 'Bazzzz'
   null
@@ -86,7 +88,9 @@ KtNameReferenceExpression(115,118): 'Bar'
   null
 
 KtNameReferenceExpression(119,122): 'Baz'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Baz>
 
 KtNameReferenceExpression(123,129): 'Bazzzz'
   null
@@ -150,7 +154,11 @@ KtCallExpression(182,229): 'take {'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
 
 KtNameReferenceExpression(182,186): 'take'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
 
 KtLambdaArgument(187,229): '{'
   null
@@ -189,7 +197,9 @@ KtNameReferenceExpression(210,213): 'Bar'
   null
 
 KtNameReferenceExpression(214,217): 'Baz'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Baz>
 
 KtNameReferenceExpression(218,224): 'Bazzzz'
   null

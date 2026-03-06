@@ -47,7 +47,10 @@ KtNameReferenceExpression(209,215): 'MyEnum'
   null
 
 KtNameReferenceExpression(218,225): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(234,261): 'val stringProp: String = ""'
   null
@@ -71,7 +74,10 @@ KtParameterList(283,285): '()'
   null
 
 KtNameReferenceExpression(288,295): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(305,341): 'val EnumOptionAlias = MyEnum.Option1'
   null
@@ -86,7 +92,10 @@ KtNameReferenceExpression(327,333): 'MyEnum'
   null
 
 KtNameReferenceExpression(334,341): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(343,427): 'val enumLambda: (arg: Boolean) -> MyEnum = { arg -> if (arg) enumProp else Option1 }'
   null
@@ -143,19 +152,28 @@ KtContainerNode(399,402): 'arg'
   null
 
 KtNameReferenceExpression(399,402): 'arg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      arg: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(404,412): 'enumProp'
   null
 
 KtNameReferenceExpression(404,412): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtContainerNodeForControlStructureBody(418,425): 'Option1'
   null
 
 KtNameReferenceExpression(418,425): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(429,518): 'val implicitReturnType: MyEnum = { arg: Boolean -> if (arg) enumProp else Option1 }(true)'
   null
@@ -206,19 +224,26 @@ KtContainerNode(484,487): 'arg'
   null
 
 KtNameReferenceExpression(484,487): 'arg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      arg: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(489,497): 'enumProp'
   null
 
 KtNameReferenceExpression(489,497): 'enumProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'enumProp'.>
 
 KtContainerNodeForControlStructureBody(503,510): 'Option1'
   null
 
 KtNameReferenceExpression(503,510): 'Option1'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Option1'.>
 
 KtValueArgumentList(512,518): '(true)'
   null
@@ -278,7 +303,9 @@ KtBlockExpression(577,620): 'enumProp'
   null
 
 KtNameReferenceExpression(577,585): 'enumProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'enumProp'.>
 
 KtIfExpression(590,620): 'if (arg) enumProp else Option1'
   null
@@ -287,19 +314,28 @@ KtContainerNode(594,597): 'arg'
   null
 
 KtNameReferenceExpression(594,597): 'arg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      arg: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(599,607): 'enumProp'
   null
 
 KtNameReferenceExpression(599,607): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtContainerNodeForControlStructureBody(613,620): 'Option1'
   null
 
 KtNameReferenceExpression(613,620): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(624,795): 'val enumLambda3: (arg: Boolean) -> MyEnum = { arg ->'
   null
@@ -356,7 +392,9 @@ KtBlockExpression(685,748): '{'
   null
 
 KtNameReferenceExpression(695,703): 'enumProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'enumProp'.>
 
 KtIfExpression(712,742): 'if (arg) enumProp else Option1'
   null
@@ -365,19 +403,28 @@ KtContainerNode(716,719): 'arg'
   null
 
 KtNameReferenceExpression(716,719): 'arg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      arg: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(721,729): 'enumProp'
   null
 
 KtNameReferenceExpression(721,729): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtContainerNodeForControlStructureBody(735,742): 'Option1'
   null
 
 KtNameReferenceExpression(735,742): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtCatchClause(749,793): 'catch (e: Exception) {'
   null
@@ -401,7 +448,10 @@ KtBlockExpression(770,793): '{'
   null
 
 KtNameReferenceExpression(780,787): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(797,917): 'val enumAnonFuncProp: (arg: Boolean) -> MyEnum = fun(arg: Boolean): MyEnum {'
   null
@@ -479,19 +529,28 @@ KtContainerNode(889,892): 'arg'
   null
 
 KtNameReferenceExpression(889,892): 'arg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      arg: kotlin.Boolean
+    ]
 
 KtContainerNodeForControlStructureBody(894,902): 'enumProp'
   null
 
 KtNameReferenceExpression(894,902): 'enumProp'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val enumProp: MyEnum
+    ]
 
 KtContainerNodeForControlStructureBody(908,915): 'Option1'
   null
 
 KtNameReferenceExpression(908,915): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(919,1007): 'val withContextProp : context(MyEnum)() -> Unit = {'
   null
@@ -551,7 +610,10 @@ KtCallExpression(975,994): 'contextOf<MyEnum>()'
     ]
 
 KtNameReferenceExpression(975,984): 'contextOf'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/contextOf(): @NoInfer A
+    ]
 
 KtTypeArgumentList(984,992): '<MyEnum>'
   null
@@ -575,4 +637,7 @@ KtOperationReferenceExpression(995,997): '=='
   null
 
 KtNameReferenceExpression(998,1005): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]

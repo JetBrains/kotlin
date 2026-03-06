@@ -1,5 +1,5 @@
 KtNameReferenceExpression(55,59): 'TODO'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17,7 +17,7 @@ KtNameReferenceExpression(55,59): 'TODO'
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun TODO(): Nothing'.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
