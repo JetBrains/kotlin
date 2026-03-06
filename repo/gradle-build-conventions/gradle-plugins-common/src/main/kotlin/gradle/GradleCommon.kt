@@ -4,8 +4,8 @@
  */
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import gradle.commonSourceSetName
 import gradle.GradlePluginVariant
+import gradle.commonSourceSetName
 import gradle.publishGradlePluginsJavadoc
 import org.gradle.api.Action
 import org.gradle.api.GradleException
@@ -359,7 +359,7 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
     sourceSets.named(SourceSet.MAIN_SOURCE_SET_NAME) {
         plugins.withType<JavaGradlePluginPlugin>().configureEach {
             // Removing Gradle api default dependency added by 'java-gradle-plugin'
-            configurations[apiConfigurationName].dependencies.remove(dependencies.gradleApi())
+            configurations[compileOnlyApiConfigurationName].dependencies.remove(dependencies.gradleApi())
         }
 
         dependencies {
@@ -481,7 +481,7 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                     }
 
                     @Suppress("DEPRECATION")
-                    if(GradleVersion.current() < GradleVersion.version("9.0.0")) {
+                    if (GradleVersion.current() < GradleVersion.version("9.0.0")) {
                         originalConfiguration.isVisible = false
                     }
 
@@ -630,11 +630,10 @@ private fun Project.commonVariantAttributes(): Action<Configuration> = Action<Co
  */
 fun KotlinCompile.configureGradleCompatibility() {
     compilerOptions {
-        val variant = GradlePluginVariant.GRADLE_MIN
         // we should keep control of the language version for compatibility with bundled Kotlin compiler for Gradle Kotlin scripts.
-        languageVersion.set(KotlinVersion.fromVersion(variant.bundledKotlinVersion))
+        languageVersion.set(KotlinVersion.fromVersion(GradlePluginVariant.COMPILE_KOTLIN_VERSION))
         // we should not use stdlib symbols not available in the bundled Kotlin runtime
-        apiVersion.set(KotlinVersion.fromVersion(variant.bundledKotlinVersion))
+        apiVersion.set(KotlinVersion.fromVersion(GradlePluginVariant.COMPILE_KOTLIN_VERSION))
         freeCompilerArgs.addAll(
             listOf(
                 "-Xskip-prerelease-check",
@@ -657,6 +656,12 @@ fun Project.configureKotlinCompileTasksGradleCompatibility() {
     configureBuildToolsApiVersionForGradleCompatibility()
     tasks.named("compileKotlin", KotlinCompile::class.java) {
         configureGradleCompatibility()
+    }
+
+    tasks.withType<KotlinCompile>().configureEach {
+        compilerOptions.freeCompilerArgs.set(
+            compilerOptions.freeCompilerArgs.get().filter { !it.contains("REDUNDANT_CLI_ARG") }
+        )
     }
 }
 

@@ -19,6 +19,12 @@ repositories {
     gradlePluginPortal()
 }
 
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.set(
+        compilerOptions.freeCompilerArgs.get().filter { !it.contains("REDUNDANT_CLI_ARG") }
+    )
+}
+
 kotlin {
     compilerOptions {
         optIn.addAll(
@@ -408,9 +414,9 @@ tasks {
             /*
              * This excludes .kotlin_module files for compiler modules from the fat jars.
              * These files are required only at compilation time, but we include the modules only for runtime
-             * Hack for not limiting LV to 1.7 for those modules. To be removed after KT-70247
+             * Hack for not limiting LV to 1.8 for those modules. To be removed after KT-70247
              */
-            pivotVersion = KotlinMetadataPivotVersion(1, 8, 0)
+            pivotVersion = KotlinMetadataPivotVersion(1, 9, 0)
         }
         asmDeprecation {
             val exclusions = listOf(

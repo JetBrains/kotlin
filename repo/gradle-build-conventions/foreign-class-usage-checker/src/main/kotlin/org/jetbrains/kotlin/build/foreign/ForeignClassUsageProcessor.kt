@@ -288,7 +288,10 @@ internal class ForeignClassUsageProcessor(nonPublicMarkers: Set<String>, private
 
         doProcessJavaMethod(methodNode)
 
+        @Suppress("DEPRECATION_ERROR")
         kmFunction.receiverParameterType?.let(::processKotlinType)
+
+        @Suppress("DEPRECATION_ERROR")
         kmFunction.contextReceiverTypes.forEach(::processKotlinType)
         processKotlinType(kmFunction.returnType)
     }
@@ -313,6 +316,7 @@ internal class ForeignClassUsageProcessor(nonPublicMarkers: Set<String>, private
         kmProperty.getterSignature?.let { classNode.findMethod(it) }?.let(::doProcessJavaMethod)
         kmProperty.setterSignature?.let { classNode.findMethod(it) }?.let(::doProcessJavaMethod)
 
+        @Suppress("DEPRECATION_ERROR")
         kmProperty.contextReceiverTypes.forEach(::processKotlinType)
         kmProperty.receiverParameterType?.let(::processKotlinType)
         processKotlinType(kmProperty.returnType)

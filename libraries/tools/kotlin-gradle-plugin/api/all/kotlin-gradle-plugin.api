@@ -1942,6 +1942,7 @@ public final class org/jetbrains/kotlin/gradle/report/GradleLoggerAdapter : org/
 	public fun info (Ljava/lang/String;)V
 	public fun isDebugEnabled ()Z
 	public fun lifecycle (Ljava/lang/String;)V
+	public fun warn (Ljava/lang/String;)V
 	public fun warn (Ljava/lang/String;Ljava/lang/Throwable;)V
 }
 
@@ -2030,13 +2031,16 @@ public final class org/jetbrains/kotlin/gradle/report/data/GradleCompileStatisti
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JJLjava/util/Set;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/Set;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;Ljava/lang/String;Ljava/util/List;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JJLjava/util/Set;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/Set;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun getBuildTimesMetrics ()Ljava/util/Map;
+	public fun getBuildUuid ()Ljava/lang/String;
 	public fun getChanges ()Ljava/util/List;
+	public fun getCompiledSources ()Ljava/util/List;
 	public fun getCompilerArguments ()Ljava/util/List;
 	public fun getDurationMs ()J
 	public fun getFinishTime ()J
 	public fun getFromKotlinPlugin ()Ljava/lang/Boolean;
 	public fun getGcCountMetrics ()Ljava/util/Map;
 	public fun getGcTimeMetrics ()Ljava/util/Map;
+	public fun getHostName ()Ljava/lang/String;
 	public fun getIcLogLines ()Ljava/util/List;
 	public fun getKotlinLanguageVersion ()Ljava/lang/String;
 	public fun getKotlinVersion ()Ljava/lang/String;
@@ -2049,6 +2053,9 @@ public final class org/jetbrains/kotlin/gradle/report/data/GradleCompileStatisti
 	public fun getTags ()Ljava/util/Set;
 	public fun getTaskName ()Ljava/lang/String;
 	public fun getTaskResult ()Ljava/lang/String;
+	public fun getTimestamp ()Ljava/lang/String;
+	public fun getType ()Ljava/lang/String;
+	public fun getVersion ()I
 }
 
 public class org/jetbrains/kotlin/gradle/scripting/ScriptingExtension {

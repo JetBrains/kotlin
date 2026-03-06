@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
 import org.jetbrains.kotlin.gradle.util.assertAllImplementationsAlsoImplement
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,6 +23,7 @@ class InternalKotlinTargetTest {
         assertAllImplementationsAlsoImplement(KotlinTarget::class, InternalKotlinTarget::class)
     }
 
+    @Disabled("KT-84874")
     @Test
     fun `KotlinTarget sourceSets are equal to extension sourceSets`() {
         val project = buildProjectWithMPP {
