@@ -26,9 +26,8 @@ internal fun WasmCompilerResult.writeTo(outputDir: File, outputFilenameBase: Str
 }
 
 class WasmBoxRunner(
-    testServices: TestServices,
-    executeWithV8Only: Boolean = false,
-) : WasmBoxRunnerBase(testServices, executeWithV8Only) {
+    testServices: TestServices
+) : WasmBoxRunnerBase(testServices) {
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
@@ -37,7 +36,7 @@ class WasmBoxRunner(
     }
 
     private fun runWasmCode() {
-        val artifacts = modulesToArtifact.values.single() as BinaryArtifacts.Wasm.CompilationSets
+        val artifacts = modulesToArtifact.values.single()
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
@@ -48,7 +47,7 @@ class WasmBoxRunner(
             val outputDir = testServices.getWasmTestOutputDirectoryForMode(mode)
             outputDir.mkdirs()
 
-            result.compilerResult.writeTo(outputDir, WASM_BASE_FILE_NAME, debugMode, mode)
+            result.compilerResult.writeTo(outputDir, "index", debugMode, mode)
             result.compilationDependencies.forEach {
                 it.compilerResult.writeTo(outputDir, it.compilerResult.baseFileName, debugMode, mode)
             }

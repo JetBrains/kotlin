@@ -24,6 +24,6 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureJvmLang
     }
 
     if (arguments.valueClasses) {
-        put(LanguageFeature.JvmInlineMultiFieldValueClasses, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.ValueClasses, LanguageFeature.State.ENABLED)
     }
 }

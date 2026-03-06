@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.kapt.test
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.kapt.test.runners.AbstractIrKotlinKaptContextTest
+import org.jetbrains.kotlin.kapt.test.runners.AbstractKaptStubConverterTest
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
@@ -14,6 +16,9 @@ fun main(args: Array<String>) {
                 model("kotlinRunner")
             }
             testClass<AbstractKaptStubConverterTest> {
+                model("converter")
+            }
+            testClass<AbstractFirKaptStubConverterTest> {
                 model("converter")
             }
         }

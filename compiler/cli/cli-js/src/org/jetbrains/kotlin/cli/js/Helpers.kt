@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.cli.js
 
 import com.intellij.util.ExceptionUtil
-import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
-import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -77,7 +76,7 @@ private fun String.splitByPathSeparator(): List<String> {
 }
 
 internal fun calculateSourceMapSourceRoot(
-    configuration: CompilerConfiguration,
+    messageCollector: MessageCollector,
     arguments: K2JSCompilerArguments,
 ): String {
     var commonPath: File? = null
@@ -117,11 +116,20 @@ internal fun calculateSourceMapSourceRoot(
         }
     } catch (e: IOException) {
         val text = ExceptionUtil.getThrowableText(e)
-        configuration.report(CliDiagnostics.IO_ERROR, "IO error occurred calculating source root:\n$text")
+        messageCollector.report(ERROR, "IO error occurred calculating source root:\n$text", location = null)
         return "."
     }
 
     return commonPath?.path ?: "."
+}
+
+fun reportCollectedDiagnostics(
+    compilerConfiguration: CompilerConfiguration,
+    diagnosticsReporter: BaseDiagnosticsCollector,
+    messageCollector: MessageCollector
+) {
+    val renderName = compilerConfiguration.renderDiagnosticInternalName
+    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderName)
 }
 
 internal val CompilerConfiguration.platformChecker: KlibPlatformChecker

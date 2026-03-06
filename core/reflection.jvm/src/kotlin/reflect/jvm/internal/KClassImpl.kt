@@ -47,7 +47,6 @@ import java.io.Serializable
 import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.KotlinGenericDeclaration
 import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.metadata.*
@@ -197,28 +196,19 @@ internal class KClassImpl<T : Any>(
         @Suppress("UNCHECKED_CAST")
         val constructors: Collection<KFunction<T>> by ReflectProperties.lazySoft {
             if (classKind == ClassKind.INTERFACE || classKind == ClassKind.OBJECT || classKind == ClassKind.COMPANION_OBJECT ||
-                classKind == ClassKind.ENUM_ENTRY || jClass.isSynthetic
+                classKind == ClassKind.ENUM_ENTRY
             ) {
                 return@lazySoft emptyList()
             }
 
-            if (useK1Implementation) {
+            if (useK1Implementation || kmClass == null) {
                 constructorDescriptors.map { descriptor ->
                     DescriptorKFunction(this@KClassImpl, descriptor) as KFunction<T>
                 }
-            } else if (jClass.isAnnotationPresent(Metadata::class.java)) {
-                // In case of a Kotlin synthetic class, there's no KmClass, and there should not be any constructors.
+            } else {
                 constructorsMetadata.map { kmConstructor ->
                     createUnboundConstructor(kmConstructor, this@KClassImpl) as KFunction<T>
                 }
-            } else if (!jClass.isAnnotation) {
-                jClass.declaredConstructors.mapNotNull { javaConstructor ->
-                    JavaKConstructor(this@KClassImpl, javaConstructor, CallableReference.NO_RECEIVER) as KFunction<T>
-                }
-            } else {
-                // Annotation classes do not have a constructor, and Java classes have do not have Kotlin metadata, so we need to create
-                // constructors for Java annotation classes manually.
-                listOf(JavaAnnotationConstructor(this@KClassImpl) as KFunction<T>)
             }
         }
 
@@ -317,14 +307,10 @@ internal class KClassImpl<T : Any>(
                 }
             } else {
                 jClass.genericSuperclass?.takeUnless { it == Any::class.java }?.let {
-                    result += it.toKType(
-                        knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL, howThisTypeIsUsed = TypeUsage.SUPERTYPE,
-                    )
+                    result += it.toKType(knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL)
                 }
                 jClass.genericInterfaces.mapTo(result) {
-                    it.toKType(
-                        knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL, howThisTypeIsUsed = TypeUsage.SUPERTYPE,
-                    )
+                    it.toKType(knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL)
                 }
             }
 
@@ -407,32 +393,32 @@ internal class KClassImpl<T : Any>(
                     isSubclassOf(CharSequence::class) ||
                     isSubclassOf(Number::class)
 
-        val declaredNonStaticMembers: Collection<ReflectKCallable<*>>
+        val declaredNonStaticMembers: Collection<DescriptorKCallable<*>>
                 by ReflectProperties.lazySoft { getMembers(memberScope, DECLARED) }
-        private val declaredStaticMembers: Collection<ReflectKCallable<*>>
+        private val declaredStaticMembers: Collection<DescriptorKCallable<*>>
                 by ReflectProperties.lazySoft { getMembers(staticScope, DECLARED) }
-        private val inheritedNonStaticMembers_k1Impl: Collection<ReflectKCallable<*>>
+        private val inheritedNonStaticMembers_k1Impl: Collection<DescriptorKCallable<*>>
                 by ReflectProperties.lazySoft { getMembers(memberScope, INHERITED) }
-        private val inheritedStaticMembers_k1Impl: Collection<ReflectKCallable<*>>
+        private val inheritedStaticMembers_k1Impl: Collection<DescriptorKCallable<*>>
                 by ReflectProperties.lazySoft { getMembers(staticScope, INHERITED) }
 
-        val allNonStaticMembers: Collection<ReflectKCallable<*>>
+        val allNonStaticMembers: Collection<DescriptorKCallable<*>>
                 by ReflectProperties.lazySoft {
                     when (useK1ImplementationForFakeOverrides()) {
                         true -> declaredNonStaticMembers + inheritedNonStaticMembers_k1Impl
                         false -> allMembers.filter { !it.isStatic }
                     }
                 }
-        val allStaticMembers: Collection<ReflectKCallable<*>>
+        val allStaticMembers: Collection<DescriptorKCallable<*>>
                 by ReflectProperties.lazySoft {
                     when (useK1ImplementationForFakeOverrides()) {
                         true -> declaredStaticMembers + inheritedStaticMembers_k1Impl
                         false -> allMembers.filter { it.isStatic }
                     }
                 }
-        val declaredMembers: Collection<ReflectKCallable<*>>
+        val declaredMembers: Collection<DescriptorKCallable<*>>
                 by ReflectProperties.lazySoft { declaredNonStaticMembers + declaredStaticMembers }
-        val allMembers: Collection<ReflectKCallable<*>>
+        val allMembers: Collection<DescriptorKCallable<*>>
                 by ReflectProperties.lazySoft {
                     when (useK1ImplementationForFakeOverrides()) {
                         true -> allNonStaticMembers + allStaticMembers

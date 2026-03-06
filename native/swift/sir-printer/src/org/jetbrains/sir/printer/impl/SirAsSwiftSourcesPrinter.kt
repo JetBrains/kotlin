@@ -498,7 +498,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
     private fun SirCallable.collectParameters(): List<SirParameter> = when (this) {
         is SirGetter -> emptyList()
         is SirSetter -> emptyList()
-        is SirFunction -> listOfNotNull(contextParameter, extensionReceiverParameter) + parameters
+        is SirFunction -> listOfNotNull(extensionReceiverParameter) + parameters
         is SirInit -> parameters
     }
 
@@ -566,20 +566,8 @@ internal class SirAsSwiftSourcesPrinter private constructor(
                 is SirDictionaryType ->
                     "[${keyType.swiftRender(SirTypeVariance.INVARIANT)}: ${valueType.swiftRender(SirTypeVariance.INVARIANT)}]"
 
-                is SirFunctionalType -> {
-                    val parameters = parameterTypes.render()
-                    val async = " async".takeIf { isAsync } ?: ""
-                    val throws = when (errorType) {
-                        SirType.never -> ""
-                        SirType.any -> " throws"
-                        else -> " throws(${errorType.swiftRender(SirTypeVariance.COVARIANT)})"
-                    }
-                    val returnType = returnType.swiftRender(SirTypeVariance.COVARIANT)
-                    "($parameters)$async$throws -> $returnType"
-                }
-
-                is SirTupleType ->
-                    "(${types.joinToString { (name, type) -> "${name?.let { "$it: " } ?: ""}${type.swiftRender(position)}" }})"
+                is SirFunctionalType ->
+                    "(${parameterTypes.render()})${" async throws".takeIf { isAsync } ?: ""} -> ${returnType.swiftRender(SirTypeVariance.COVARIANT)}"
 
                 else -> swiftName
             }
@@ -640,6 +628,5 @@ private fun List<SirAttribute>.render(position: SirTypeVariance): String = mapNo
 private val SirType.isBivariantSelf: Boolean? get() = when (this) {
         is SirErrorType, is SirUnsupportedType -> null
         is SirExistentialType, is SirFunctionalType -> true
-        is SirTupleType -> false
         is SirNominalType -> parent == null && typeArguments.isEmpty() && typeDeclaration !is SirClass /* also not actors */
     }

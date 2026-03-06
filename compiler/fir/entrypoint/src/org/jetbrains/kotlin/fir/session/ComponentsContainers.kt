@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmPrimaryConstructorSu
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirInlineConstTrackerComponent
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
 import org.jetbrains.kotlin.fir.java.FirSyntheticPropertiesStorage
@@ -61,7 +60,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
@@ -100,7 +98,6 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirMustUseReturnValueStatusComponent::class, FirMustUseReturnValueStatusComponent.create(languageVersionSettings))
     register(FirInlineCheckerPlatformSpecificComponent::class, FirInlineCheckerPlatformSpecificComponent.NonJvmDefault)
     register(FirExpectActualMappingStorage::class, FirExpectActualMappingStorage(this))
-    register(FirInlineConstTrackerComponent::class, FirInlineConstTrackerComponent.Default)
 }
 
 @OptIn(SessionConfiguration::class)
@@ -151,7 +148,6 @@ fun FirSession.registerJavaComponents(
     javaModuleResolver: JavaModuleResolver,
     predefinedComponents: FirSharableJavaComponents? = null,
     registerJvmDeserializationExtension: Boolean = true,
-    inlineConstTracker: InlineConstTracker? = null,
 ) {
     register(FirJavaModuleResolverProvider::class, FirJavaModuleResolverProvider(javaModuleResolver))
     val jsr305State =
@@ -187,7 +183,6 @@ fun FirSession.registerJavaComponents(
     register(FirJavaNullabilityWarningUpperBoundsProvider(this))
     register(FirDefaultImportsProviderHolder.of(FirJvmDefaultImportsProvider))
     register(FirDeclarationNameInvalidCharsProvider::class, FirDeclarationNameInvalidCharsProvider.of(JvmConstants.INVALID_CHARS))
-    register(FirInlineConstTrackerComponent::class, FirInlineConstTrackerComponent(inlineConstTracker))
 }
 
 // -------------------------- Resolve components --------------------------

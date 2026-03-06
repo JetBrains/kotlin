@@ -85,7 +85,6 @@ KtNameReferenceExpression(531,539): 'instance'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -113,7 +112,6 @@ KtNameReferenceExpression(578,586): 'instance'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -127,7 +125,6 @@ KtNameReferenceExpression(587,592): 'prop1'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -141,7 +138,6 @@ KtNameReferenceExpression(608,616): 'instance'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -169,7 +165,6 @@ KtNameReferenceExpression(662,670): 'instance'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -183,7 +178,6 @@ KtNameReferenceExpression(671,676): 'prop1'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -197,7 +191,6 @@ KtNameReferenceExpression(692,700): 'instance'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -225,7 +218,6 @@ KtNameReferenceExpression(728,736): 'instance'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -239,7 +231,6 @@ KtNameReferenceExpression(737,746): 'innerProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -253,7 +244,6 @@ KtNameReferenceExpression(762,770): 'instance'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -288,7 +278,6 @@ KtNameReferenceExpression(795,803): 'instance'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -316,7 +305,6 @@ KtNameReferenceExpression(846,854): 'instance'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -344,7 +332,6 @@ KtNameReferenceExpression(897,905): 'instance'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -358,7 +345,6 @@ KtNameReferenceExpression(906,911): 'prop2'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -372,7 +358,6 @@ KtNameReferenceExpression(937,945): 'instance'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -400,7 +385,6 @@ KtNameReferenceExpression(990,998): 'instance'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -414,7 +398,6 @@ KtNameReferenceExpression(999,1004): 'prop3'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -428,7 +411,6 @@ KtNameReferenceExpression(1020,1028): 'instance'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

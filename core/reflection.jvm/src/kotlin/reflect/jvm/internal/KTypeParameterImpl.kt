@@ -31,6 +31,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.KVariance
 import kotlin.reflect.jvm.ReflectedLambdaFakeContainerSource
 import kotlin.reflect.jvm.internal.types.DescriptorKType
+import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 
 internal class KTypeParameterImpl private constructor(
     descriptor: TypeParameterDescriptor?,
@@ -49,6 +50,7 @@ internal class KTypeParameterImpl private constructor(
     constructor(
         container: KTypeParameterOwnerImpl,
         descriptor: TypeParameterDescriptor,
+        typeSubstitutor: KTypeSubstitutor = KTypeSubstitutor.EMPTY,
     ) : this(
         descriptor,
         container,
@@ -56,7 +58,10 @@ internal class KTypeParameterImpl private constructor(
         descriptor.variance.toKVariance(),
         descriptor.isReified,
     ) {
-        upperBounds = descriptor.upperBounds.map(::DescriptorKType)
+        upperBounds = descriptor.upperBounds.map {
+            val type = DescriptorKType(it)
+            typeSubstitutor.substitute(type).type ?: starProjectionInTopLevelTypeIsNotPossible(containerForDebug = container)
+        }
     }
 
     private val _descriptor: TypeParameterDescriptor? = descriptor

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnsupportedCollectionLiteralType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
@@ -406,6 +407,8 @@ class FirCallCompletionResultsWriterTransformer(
             return replacement.transform(this, data)
         }
 
+        collectionLiteral.transformChildren(this, null)
+        collectionLiteral.replaceConeTypeOrNull(ConeErrorType(ConeUnsupportedCollectionLiteralType))
         return collectionLiteral
     }
 
@@ -478,14 +481,13 @@ class FirCallCompletionResultsWriterTransformer(
      *
      * See K1 counterpart at [org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall.getSubstitutorWithoutFlexibleTypes].
      *
-     * TODO: consider dropping this function once [LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible] is removed.
-     * As a variant, we could consider applying similar transformation inside CreateFreshTypeVariableSubstitutorStage
-     * together with changing constructor's return type.
+     * TODO: Get rid of this function once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
      *
      * @return `null` for all other cases where [finalSubstitutor] should be used
      */
     private fun Candidate.prepareCustomReturnTypeSubstitutorForFunctionCall(): ConeSubstitutor? {
         if (typeArgumentMapping == TypeArgumentMapping.NoExplicitArguments) return null
+        if (session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)) return null
 
         val symbol = symbol
         // We're only interested in Java constructors (both real and SAM ones)
@@ -971,14 +973,14 @@ class FirCallCompletionResultsWriterTransformer(
 
     /**
      * @see ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
-     * TODO: Get rid of this function once [LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible] cannot be disabled
+     * TODO: Get rid of this function once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
      */
     private fun ConeKotlinType.storeNonFlexibleCounterpartInAttributeIfNecessary(
         argument: FirTypeProjection?,
     ): ConeKotlinType {
         if (this !is ConeFlexibleType) return this
         if (argument !is FirTypeProjectionWithVariance) return this
-        if (session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible)) return this
+        if (session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)) return this
 
         return withAttributes(
             attributes.add(
@@ -1320,9 +1322,8 @@ class FirCallCompletionResultsWriterTransformer(
             val diagnostic = resolvedCalleeReference.diagnostic
             if (diagnostic is ConeConstraintSystemHasContradiction) {
                 val candidate = diagnostic.candidate as Candidate
-                val newSyntheticCallType = session.typeContext.commonSuperTypeOrNull(candidate.argumentMapping.keys.unwrapAtoms().map {
-                    it.resolvedType
-                })
+                val newSyntheticCallType =
+                    session.typeContext.commonSuperTypeOrNull(candidate.argumentMapping.keys.map { it.expression.resolvedType })
                 if (newSyntheticCallType != null && !newSyntheticCallType.hasError()) {
                     syntheticCall.replaceConeTypeOrNull(newSyntheticCallType)
                 }
@@ -1512,7 +1513,7 @@ private fun <K, V : Any> LinkedHashMap<out K, out V?>.filterValuesNotNull(): Lin
 }
 
 fun <V> LinkedHashMap<ConeResolutionAtom, V>.unwrapAtoms(): LinkedHashMap<FirExpression, V> {
-    return mapKeysToLinkedMap { it.unwrapAtom() }
+    return mapKeysToLinkedMap { it.expression }
 }
 
 inline fun <K1, K2, V> LinkedHashMap<K1, V>.mapKeysToLinkedMap(transform: (K1) -> K2): LinkedHashMap<K2, V> {
@@ -1520,13 +1521,5 @@ inline fun <K1, K2, V> LinkedHashMap<K1, V>.mapKeysToLinkedMap(transform: (K1) -
 }
 
 private fun Collection<ConeResolutionAtom>.unwrapAtoms(): List<FirExpression> {
-    return map { it.unwrapAtom() }
-}
-
-private fun ConeResolutionAtom.unwrapAtom(): FirExpression {
-    return when (this) {
-        is ConeCollectionLiteralAtom -> subAtom?.unwrapAtom() ?: expression
-        is ConeResolutionAtomWithPostponedChild -> subAtom?.unwrapAtom() ?: expression
-        else -> expression
-    }
+    return map { it.expression }
 }

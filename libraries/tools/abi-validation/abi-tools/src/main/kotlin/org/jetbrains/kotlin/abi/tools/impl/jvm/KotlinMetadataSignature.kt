@@ -37,8 +37,7 @@ internal interface MemberBinarySignature {
 
     fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?) =
         access.isPublic && !(access.isProtected && classAccess.isFinal)
-                && (findMemberVisibility(classVisibility)?.isPublic(isPublishedApi, classVisibility?.classKind, classVisibility?.modality)
-            ?: true)
+                && (findMemberVisibility(classVisibility)?.isPublic(isPublishedApi) ?: true)
 
     fun findMemberVisibility(classVisibility: ClassVisibility?): MemberVisibility? {
         return classVisibility?.findMember(jvmMember)
@@ -62,7 +61,6 @@ internal data class MethodBinarySignature(
                 && !isAccessOrAnnotationsMethod()
                 && !isDummyDefaultConstructor()
                 && !isSuspendImplMethod()
-                && !isSyntheticConstructor(classVisibility?.primaryConstructorIsInternal)
 
     override fun findMemberVisibility(classVisibility: ClassVisibility?): MemberVisibility? {
         return super.findMemberVisibility(classVisibility)
@@ -74,16 +72,6 @@ internal data class MethodBinarySignature(
 
     private fun isDummyDefaultConstructor() =
         access.isSynthetic && name == "<init>" && desc == "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V"
-
-    /**
-     * A synthetic constructor that is not marked with the ACC_SYNTHETIC flag
-     * but is created artificially if all the parameters of the primary constructor are with the default value.
-     * This constructor used to support external tools using reflection, like serialization, ORM, etc.
-     *
-     * Refer to https://youtrack.jetbrains.com/issue/KT-78367 and https://kotlinlang.org/docs/classes.html#constructors-and-initializer-blocks
-     */
-    private fun isSyntheticConstructor(primaryConstructorIsInternal: Boolean?) =
-        primaryConstructorIsInternal == true && !isPublishedApi && name == "<init>" && desc == "()V"
 
     /**
      * Kotlin compiler emits special `<originalFunctionName>$suspendImpl` methods for open

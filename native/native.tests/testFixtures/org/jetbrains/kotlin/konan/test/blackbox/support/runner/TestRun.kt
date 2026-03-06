@@ -22,11 +22,8 @@ class TestExecutable(
     val testNames: Collection<TestName>
 ) {
     companion object {
-        fun fromCompilationResult(testCase: TestCase, compilationResult: Success<out Executable>): TestExecutable =
-            fromCompilationResult(testCase.kind, compilationResult)
-
-        fun fromCompilationResult(testKind: TestKind, compilationResult: Success<out Executable>): TestExecutable {
-            val testNames = when (testKind) {
+        fun fromCompilationResult(testCase: TestCase, compilationResult: Success<out Executable>): TestExecutable {
+            val testNames = when (testCase.kind) {
                 TestKind.REGULAR, TestKind.STANDALONE -> {
                     val testDumpFile = compilationResult.resultingArtifact.testDumpFile
                     val testDump = try {

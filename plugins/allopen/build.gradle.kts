@@ -4,7 +4,6 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
 }
 
 dependencies {
@@ -33,7 +32,13 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "testFixtures" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
+    "testFixtures" {
+        projectDefault()
+    }
 }
 
 publish()
@@ -44,15 +49,12 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
+    }
 
-    testGenerator("org.jetbrains.kotlin.allopen.TestGeneratorKt", generateTestsInBuildDirectory = true)
+    testGenerator("org.jetbrains.kotlin.allopen.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
-    withTestJar()
-    withMockJdkAnnotationsJar()
-    withMockJdkRuntime()
-
-    testData(project(":kotlin-allopen-compiler-plugin").isolated, "testData")
 }

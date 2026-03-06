@@ -36,7 +36,6 @@ KtNameReferenceExpression(216,223): 'Option1'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -57,7 +56,6 @@ KtNameReferenceExpression(286,293): 'Option1'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -78,7 +76,6 @@ KtNameReferenceExpression(349,355): 'MyEnum'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -92,7 +89,6 @@ KtNameReferenceExpression(356,363): 'Option1'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -113,7 +109,6 @@ KtNameReferenceExpression(416,423): 'Option1'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -141,7 +136,6 @@ KtNameReferenceExpression(448,456): 'enumProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -169,7 +163,6 @@ KtNameReferenceExpression(481,491): 'stringProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -184,7 +177,6 @@ KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -198,7 +190,6 @@ KtNameReferenceExpression(499,506): 'receive'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -219,7 +210,6 @@ KtNameReferenceExpression(515,522): 'Option1'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -234,7 +224,6 @@ KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -248,7 +237,6 @@ KtNameReferenceExpression(530,537): 'receive'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -269,7 +257,6 @@ KtNameReferenceExpression(546,554): 'enumProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -284,7 +271,6 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -298,7 +284,6 @@ KtNameReferenceExpression(562,569): 'receive'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -319,7 +304,6 @@ KtNameReferenceExpression(578,588): 'stringProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

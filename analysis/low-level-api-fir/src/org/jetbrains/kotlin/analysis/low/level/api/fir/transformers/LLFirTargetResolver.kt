@@ -76,8 +76,9 @@ internal sealed class LLFirTargetResolver(
     private val lockProvider: LLFirLockProvider get() = LLFirGlobalResolveComponents.getInstance(resolveTargetSession).lockProvider
     private val requiresJumpingLock: Boolean get() = resolverPhase.isItAllowedToCallLazyResolveToTheSamePhase
 
-    val containingDeclarations: List<FirDeclaration>
-        field = mutableListOf<FirDeclaration>()
+    private val _containingDeclarations = mutableListOf<FirDeclaration>()
+
+    val containingDeclarations: List<FirDeclaration> get() = _containingDeclarations
 
     /**
      * @param context used as a context in the case of exception
@@ -105,11 +106,11 @@ internal sealed class LLFirTargetResolver(
     }
 
     protected inline fun withContainingDeclaration(declaration: FirDeclaration, action: () -> Unit) {
-        containingDeclarations += declaration
+        _containingDeclarations += declaration
         try {
             action()
         } finally {
-            val removed = containingDeclarations.removeLast()
+            val removed = _containingDeclarations.removeLast()
             checkWithAttachment(removed === declaration, { "Unexpected state" }) {
                 withFirEntry("expected", declaration)
                 withFirEntry("actual", removed)

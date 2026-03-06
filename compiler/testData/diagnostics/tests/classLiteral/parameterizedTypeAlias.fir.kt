@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ForbidUselessTypeArgumentsIn25
 class Inv<T>
 class Some
 class MyPair<A, B>
@@ -71,7 +70,7 @@ fun test() {
 
     Some::class
     SomeAlias::class
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>SomeAlias<String>::class<!>
+    SomeAlias<String>::class
 
     MyPair::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>MyPair<Int, Int>::class<!>
@@ -95,14 +94,14 @@ fun test() {
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Array<*>::class<!>
 
     SimpleArrayAlias::class
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>SimpleArrayAlias<Int>::class<!>
+    SimpleArrayAlias<Int>::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>SimpleArrayAlias<*>::class<!>
 
     SpecificArrayAlias::class
 
     UnusedArrayAlias::class
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>UnusedArrayAlias<Int>::class<!>
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>UnusedArrayAlias<*>::class<!>
+    UnusedArrayAlias<Int>::class
+    UnusedArrayAlias<*>::class
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, in, nullableType, out,

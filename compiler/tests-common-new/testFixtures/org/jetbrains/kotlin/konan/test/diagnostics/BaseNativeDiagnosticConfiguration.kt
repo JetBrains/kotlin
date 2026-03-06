@@ -15,11 +15,16 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
-import org.jetbrains.kotlin.test.frontend.fir.handlers.*
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
@@ -39,7 +44,7 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.baseNativ
 
     useConfigurators(
         ::CommonEnvironmentConfigurator,
-        ::NativeFirstStageEnvironmentConfigurator,
+        ::NativeEnvironmentConfigurator,
     )
 
     useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)

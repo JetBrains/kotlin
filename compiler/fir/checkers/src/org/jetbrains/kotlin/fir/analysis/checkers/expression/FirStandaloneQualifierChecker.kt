@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isStandalone
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 
@@ -24,61 +26,34 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirResolvedQualifier) {
         if (!expression.isStandalone()) return
-        if (expression.reportPackageOrNoCompanion()) return
 
-        if (!expression.typeArguments.any { it.isExplicit }) return
-
-        expression.reportTypeArguments()
-    }
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun FirResolvedQualifier.reportPackageOrNoCompanion(): Boolean {
-        val symbol = symbol
-        if (symbol == null) {
-            reporter.reportOn(source, FirErrors.EXPRESSION_EXPECTED_PACKAGE_FOUND)
-            return true
-        }
-
-        if (isNotResolvedToObject && !isTypeAliasToClassWithCompanion) {
-            reporter.reportOn(source, FirErrors.NO_COMPANION_OBJECT, symbol)
-            return true
-        }
-
-        return false
-    }
-
-    context(context: CheckerContext)
-    private val FirResolvedQualifier.isNotResolvedToObject: Boolean
-        // TODO: it'd be nice to use `resolvedToCompanionObject` here, but see KT-84299
-        get() = resolvedType.isUnit && symbol?.fullyExpandedClass()?.classKind != ClassKind.OBJECT
-
-    context(context: CheckerContext)
-    private val FirResolvedQualifier.isTypeAliasToClassWithCompanion: Boolean
-        get() = symbol?.fullyExpandedClass()?.resolvedCompanionObjectSymbol != null
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun FirResolvedQualifier.reportTypeArguments() {
-        /**
-         * Implementation before [LanguageFeature.ForbidUselessTypeArgumentsIn25] which missed some cases
-         * (see KT-84280, KT-84281) of [FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS].
-         * TODO: KT-84254. Once [LanguageFeature.ForbidUselessTypeArgumentsIn25] becomes obsolete, remove this implementation fully.
-         *
-         * @return true if [FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS] was reported.
-         */
-        fun preForbidUselessTypeArgumentsIn25Implementation(): Boolean {
-            if (!resolvedType.isUnit || isTypeAliasToClassWithCompanion) {
-                reporter.reportOn(source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Object")
-                return true
+        // Note: if it's real Unit, it will be filtered by ClassKind.OBJECT check below in reportErrorOn
+        if (!expression.resolvedType.isUnit) {
+            if (expression.typeArguments.any { it.isExplicit }) {
+                reporter.reportOn(expression.source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Object")
             }
-            return false
+            return
         }
 
-        if (preForbidUselessTypeArgumentsIn25Implementation()) return
+        expression.symbol.reportErrorOn(expression.source)
+    }
 
-        val diagnostic = when {
-            LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled() -> FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS
-            else -> FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS_WARNING
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun FirBasedSymbol<*>?.reportErrorOn(
+        source: KtSourceElement?,
+    ) {
+        when (this) {
+            is FirRegularClassSymbol -> {
+                if (classKind == ClassKind.OBJECT) return
+                reporter.reportOn(source, FirErrors.NO_COMPANION_OBJECT, this)
+            }
+            is FirTypeAliasSymbol -> {
+                fullyExpandedClass()?.reportErrorOn(source)
+            }
+            null -> {
+                reporter.reportOn(source, FirErrors.EXPRESSION_EXPECTED_PACKAGE_FOUND)
+            }
+            else -> {}
         }
-        reporter.reportOn(source, diagnostic, "Object")
     }
 }

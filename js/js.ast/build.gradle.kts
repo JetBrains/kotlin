@@ -3,8 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:util.runtime"))
-
     api(kotlinStdlib())
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)

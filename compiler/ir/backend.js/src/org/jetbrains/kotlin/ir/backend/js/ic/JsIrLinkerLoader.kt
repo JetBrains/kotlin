@@ -129,7 +129,6 @@ internal class JsIrLinkerLoader(
     private val mainModuleFriends: Collection<KotlinLibrary>,
     private val irFactory: IrFactory,
     private val stubbedSignatures: Set<IdSignature>,
-    private val loadBodiesOnlyForMainModule: Boolean,
 ) {
     private val mainLibrary = orderedLibraries.lastOrNull() ?: notFoundIcError("main library")
 
@@ -194,6 +193,7 @@ internal class JsIrLinkerLoader(
                 compilerConfiguration.languageVersionSettings,
                 LockBasedStorageManager.NO_LOCKS,
                 runtimeModule?.builtIns,
+                packageAccessHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
                 lookupTracker = lookupTracker
             )
             if (isBuiltIns) runtimeModule = md
@@ -221,7 +221,6 @@ internal class JsIrLinkerLoader(
             val modifiedStrategy = when {
                 loadAllIr -> DeserializationStrategy.ALL
                 module == mainLibrary -> DeserializationStrategy.ALL
-                loadBodiesOnlyForMainModule -> DeserializationStrategy.WITH_INLINE_BODIES
                 else -> DeserializationStrategy.EXPLICITLY_EXPORTED
             }
             val modified = modifiedFiles[libraryFile]?.keys?.mapTo(hashSetOf()) { it.path } ?: emptySet()

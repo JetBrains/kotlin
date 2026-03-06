@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Kotlin.STABLE_RELEASE
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
-
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -105,7 +104,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
                 dependencies.listFiles()?.filter { it.name != "cache" }?.forEach {
                     val processRunResult =
                         runProcess(listOf("clang", "-Werror", "-c", file.path, "-isysroot", it.absolutePath), workingDir.toFile())
-                    processRunResult.assertProcessRunResult {
+                    assertProcessRunResult(processRunResult) {
                         assertTrue(isSuccessful)
                     }
                 }

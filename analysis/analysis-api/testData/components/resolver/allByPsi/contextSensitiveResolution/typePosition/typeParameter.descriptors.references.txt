@@ -64,7 +64,6 @@ KtNameReferenceExpression(255,256): 'x'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -85,7 +84,6 @@ KtNameReferenceExpression(273,274): 'y'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -106,7 +104,6 @@ KtNameReferenceExpression(307,308): 'T'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -127,7 +124,6 @@ KtNameReferenceExpression(321,322): 'T'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -162,7 +158,6 @@ KtNameReferenceExpression(369,370): 'x'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -183,6 +178,5 @@ KtNameReferenceExpression(387,388): 'y'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

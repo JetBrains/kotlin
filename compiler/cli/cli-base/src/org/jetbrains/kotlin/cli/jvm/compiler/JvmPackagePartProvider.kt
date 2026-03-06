@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.cli.CliDiagnostics.JAVA_MODULE_RESOLUTION_ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
-import org.jetbrains.kotlin.cli.report
-import org.jetbrains.kotlin.cli.reportLog
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartProviderBase
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
@@ -41,7 +40,7 @@ class JvmPackagePartProvider(
                 .also { allPackageNamesCache = it }
 
     // TODO: redesign to avoid cache-unfriendly usages, see KT-76516
-    fun addRoots(roots: List<JavaRoot>, configuration: CompilerConfiguration) {
+    fun addRoots(roots: List<JavaRoot>, messageCollector: MessageCollector) {
         for ((root, type) in roots) {
             if (type != JavaRoot.RootType.BINARY) continue
             if (root !in scope) continue
@@ -52,7 +51,7 @@ class JvmPackagePartProvider(
 
                 tryLoadModuleMapping(
                     { moduleFile.contentsToByteArray() }, moduleFile.toString(), moduleFile.path,
-                    deserializationConfiguration, configuration
+                    deserializationConfiguration, messageCollector
                 )?.let {
                     loadedModules.add(ModuleMappingInfo(root, it, moduleFile.nameWithoutExtension))
                     allPackageNamesCache = null
@@ -67,22 +66,22 @@ fun tryLoadModuleMapping(
     debugName: String,
     modulePath: String,
     deserializationConfiguration: JvmCompilerDeserializationConfiguration,
-    configuration: CompilerConfiguration
+    messageCollector: MessageCollector
 ): ModuleMapping? = try {
     ModuleMapping.loadModuleMapping(getModuleBytes(), debugName, deserializationConfiguration) { incompatibleVersion ->
-        configuration.report(
-            JAVA_MODULE_RESOLUTION_ERROR,
+        messageCollector.report(
+            ERROR,
             "Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is " +
                     "$incompatibleVersion, expected version is ${MetadataVersion.INSTANCE}.",
             CompilerMessageLocation.create(modulePath)
         )
     }
 } catch (e: EOFException) {
-    configuration.report(
-        JAVA_MODULE_RESOLUTION_ERROR,
-        "Error occurred when reading the module: ${e.message}", CompilerMessageLocation.create(modulePath)
+    messageCollector.report(
+        ERROR, "Error occurred when reading the module: ${e.message}", CompilerMessageLocation.create(modulePath)
     )
-    configuration.reportLog(
+    messageCollector.report(
+        LOGGING,
         String(ByteArrayOutputStream().also { e.printStackTrace(PrintStream(it)) }.toByteArray()),
         CompilerMessageLocation.create(modulePath)
     )

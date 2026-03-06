@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.sir
 
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
-import org.jetbrains.kotlin.sir.util.expandedType
 import org.jetbrains.kotlin.sir.util.swiftFqName
-import kotlin.collections.plus
 
 sealed interface SirType {
     val attributes: List<SirAttribute>
@@ -30,39 +28,13 @@ sealed interface SirWrappedType : SirType
 class SirFunctionalType(
     val parameterTypes: List<SirType>,
     val isAsync: Boolean = false,
-    val errorType: SirType = SirType.never,
     val returnType: SirType,
     override val attributes: List<SirAttribute> = emptyList(),
 ) : SirWrappedType {
     fun copyAppendingAttributes(vararg attributes: SirAttribute): SirFunctionalType {
         val attributesToAdd = attributes.filter { !this.attributes.contains(it) }
         return if (attributesToAdd.isEmpty()) this
-        else SirFunctionalType(parameterTypes, isAsync, errorType, returnType, this.attributes + attributesToAdd)
-    }
-}
-
-class SirTupleType(
-    val types: List<Pair<String?, SirType>>,
-    override val attributes: List<SirAttribute> = emptyList(),
-) : SirWrappedType {
-    init {
-        require(types.size > 1) { "Tuple requires at least two types" }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || other !is SirTupleType) return false
-
-        if (types != other.types) return false
-        if (attributes != other.attributes) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = types.hashCode()
-        result = 31 * result + attributes.hashCode()
-        return result
+        else SirFunctionalType(parameterTypes, isAsync, returnType, this.attributes + attributesToAdd)
     }
 }
 
@@ -104,17 +76,6 @@ open class SirOptionalType(type: SirType) : SirNominalType(
     val wrappedType: SirType get() = super.typeArguments.single()
 }
 
-class SirWrappedFlowType(
-    wrapperStruct: SirScopeDefiningDeclaration,
-    flowType: SirType,
-    typeArguments: List<SirType>,
-) : SirNominalType(
-    typeDeclaration = wrapperStruct,
-    typeArguments = typeArguments
-), SirWrappedType {
-    val wrappedType: SirType = flowType
-}
-
 class SirImplicitlyUnwrappedOptionalType(type: SirType) : SirOptionalType(type)
 
 class SirArrayType(type: SirType) : SirNominalType(
@@ -151,18 +112,6 @@ class SirExistentialType(
         return this::class.hashCode()
     }
 }
-
-val SirNominalType.escaping: SirNominalType get() = copyAppendingAttributes(SirAttribute.Escaping)
-
-val SirFunctionalType.escaping: SirFunctionalType get() = copyAppendingAttributes(SirAttribute.Escaping)
-
-val SirType.escaping: SirType get() = when (this) {
-        is SirNominalType if (this.typeDeclaration as? SirTypealias)?.expandedType?.let { it is SirFunctionalType } == true ->
-            escaping
-        is SirFunctionalType -> escaping
-        else ->
-            this
-    }
 
 /**
  * A synthetic type for unknown Kotlin types. For example,

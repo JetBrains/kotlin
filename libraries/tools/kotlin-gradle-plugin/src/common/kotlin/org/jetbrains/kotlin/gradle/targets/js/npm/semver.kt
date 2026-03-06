@@ -13,7 +13,7 @@ data class SemVer(
     val minor: BigInteger,
     val patch: BigInteger,
     val preRelease: String? = null,
-    val build: String? = null,
+    val build: String? = null
 ) : Comparable<SemVer> {
     override fun compareTo(other: SemVer): Int {
         val compareMajor = major.compareTo(other.major)
@@ -279,10 +279,8 @@ fun SemVer.toVersion(): Version =
         .buildIdentifiers(build?.split(".")?.map { Version.Identifier.fromString(it) } ?: emptyList())
         .build()
 
-@Deprecated("Use `minOf()` stdlib function instead. Scheduled for removal in Kotlin 2.6.", ReplaceWith("minOf(a, b)"))
 fun min(a: SemVer, b: SemVer): SemVer =
-    minOf(a, b)
+    if (a < b) a else b
 
-@Deprecated("Use `maxOf()` stdlib function instead. Scheduled for removal in Kotlin 2.6.", ReplaceWith("maxOf(a, b)"))
 fun max(a: SemVer, b: SemVer): SemVer =
-    maxOf(a, b)
+    if (a > b) a else b

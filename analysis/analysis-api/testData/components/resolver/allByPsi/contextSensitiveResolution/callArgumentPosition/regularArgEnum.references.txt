@@ -30,7 +30,6 @@ KtCallExpression(240,263): 'receiveEnum(EnumValue2)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -52,7 +51,6 @@ KtCallExpression(268,285): 'receiveEnum(arg1)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -74,7 +72,6 @@ KtCallExpression(290,307): 'receiveEnum(arg2)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -96,7 +93,6 @@ KtCallExpression(312,329): 'receiveEnum(arg3)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

@@ -1,2 +1,2 @@
-error: [COMPILER_ARGUMENTS_ERROR] -Xwarning-level is duplicated for warning UNCHECKED_CAST
+error: -Xwarning-level is duplicated for warning UNCHECKED_CAST
 COMPILATION_ERROR

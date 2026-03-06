@@ -1,2 +1,0 @@
-KtStringTemplateExpression(41,46): '"str"'
-  NO_CANDIDATES

@@ -1,6 +1,6 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-78783
-// LANGUAGE: -PreciseSimplificationToFlexibleLowerConstraint
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible -PreciseSimplificationToFlexibleLowerConstraint
 // JVM_TARGET: 1.8
 // FULL_JDK
 // FIR_DUMP

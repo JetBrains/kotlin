@@ -2,7 +2,6 @@ val extension = extensions.create("projectTests", ProjectTestsExtension::class)
 
 val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply {
     stdlibRuntimeForTests.from(extension.stdlibRuntimeForTests)
-    stdlibRuntimeSourcesForTests.from(extension.stdlibRuntimeSourcesForTests)
     stdlibMinimalRuntimeForTests.from(extension.stdlibMinimalRuntimeForTests)
     kotlinReflectJarForTests.from(extension.kotlinReflectJarForTests)
     stdlibCommonRuntimeForTests.from(extension.stdlibCommonRuntimeForTests)
@@ -10,9 +9,7 @@ val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply 
     kotlinTestJarForTests.from(extension.kotlinTestJarForTests)
     kotlinAnnotationsForTests.from(extension.kotlinAnnotationsForTests)
     scriptingPluginForTests.from(extension.scriptingPluginForTests)
-    testScriptDefinitionForTests.from(extension.testScriptDefinitionForTests)
     stdlibWebRuntimeForTests.from(extension.stdlibWebRuntimeForTests)
-    distForTests.from(extension.distForTests)
     stdlibJsRuntimeForTests.from(extension.stdlibJsRuntimeForTests)
     testJsRuntimeForTests.from(extension.testJsRuntimeForTests)
     stdlibJsMinimalRuntimeForTests.from(extension.stdlibJsMinimalRuntimeForTests)
@@ -20,10 +17,6 @@ val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply 
     stdlibWasmWasiRuntimeForTests.from(extension.stdlibWasmWasiRuntimeForTests)
     testWasmJsRuntimeForTests.from(extension.testWasmJsRuntimeForTests)
     testWasmWasiRuntimeForTests.from(extension.testWasmWasiRuntimeForTests)
-
-    pluginSandboxAnnotationsJar.from(extension.pluginSandboxAnnotationsJar)
-    pluginSandboxAnnotationsJsKlib.from(extension.pluginSandboxAnnotationsJsKlib)
-
     mockJdkRuntimeJar.value(extension.mockJdkRuntime)
     mockJdkRuntime.value(extension.mockJdkRuntime)
     mockJDKModifiedRuntime.value(extension.mockJDKModifiedRuntime)

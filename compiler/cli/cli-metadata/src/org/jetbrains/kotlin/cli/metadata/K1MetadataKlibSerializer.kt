@@ -124,21 +124,22 @@ private class KlibMetadataDependencyContainer(
             mutableDependenciesForAllModuleDescriptors.addAll(resultValues)
         }
 
-    override val moduleInfos: List<ModuleInfo>
-        field = mutableListOf<KlibModuleInfo>().apply {
-            addAll(
-                moduleDescriptorsForKotlinLibraries.map { (kotlinLibrary, moduleDescriptor) ->
-                    KlibModuleInfo(moduleDescriptor.name, kotlinLibrary, mutableDependenciesForAllModules)
-                }
-            )
-            mutableDependenciesForAllModules.addAll(this@apply)
-        }
+    private val moduleInfosImpl: List<KlibModuleInfo> = mutableListOf<KlibModuleInfo>().apply {
+        addAll(
+            moduleDescriptorsForKotlinLibraries.map { (kotlinLibrary, moduleDescriptor) ->
+                KlibModuleInfo(moduleDescriptor.name, kotlinLibrary, mutableDependenciesForAllModules)
+            }
+        )
+        mutableDependenciesForAllModules.addAll(this@apply)
+    }
 
-    override val friendModuleInfos: List<ModuleInfo> = moduleInfos.filter {
+    override val moduleInfos: List<ModuleInfo> get() = moduleInfosImpl
+
+    override val friendModuleInfos: List<ModuleInfo> = moduleInfosImpl.filter {
         it.kotlinLibrary.libraryFile.absolutePath in friendPaths
     }
 
-    override val refinesModuleInfos: List<ModuleInfo> = moduleInfos.filter {
+    override val refinesModuleInfos: List<ModuleInfo> = moduleInfosImpl.filter {
         it.kotlinLibrary.libraryFile.absolutePath in refinesPaths
     }
 
@@ -188,6 +189,7 @@ private class KlibMetadataDependencyContainer(
 
         return klibMetadataModuleDescriptorFactory.createPackageFragmentProvider(
             library = library,
+            packageAccessHandler = null,
             customMetadataProtoLoader = null,
             storageManager = LockBasedStorageManager("KlibMetadataPackageFragmentProvider"),
             moduleDescriptor = libraryModuleDescriptor,

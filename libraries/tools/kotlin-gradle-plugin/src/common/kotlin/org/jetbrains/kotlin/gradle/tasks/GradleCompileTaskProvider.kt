@@ -51,14 +51,6 @@ abstract class GradleCompileTaskProvider @Inject constructor(
 
     @get:Internal
     val projectName: Provider<String> = objectFactory
-        .property(project.name)
-
-    @get:Internal
-    val projectPath: Provider<String> = objectFactory
-        .property(project.path)
-
-    @get:Internal
-    val rootProjectName: Provider<String> = objectFactory
         .property(project.rootProject.name.normalizeForFlagFile())
 
     @get:Internal

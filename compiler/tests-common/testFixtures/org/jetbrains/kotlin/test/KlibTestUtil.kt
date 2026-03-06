@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
-import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeMetadata
@@ -69,7 +68,6 @@ object KlibTestUtil {
             FilteringMessageCollector(
                 PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false)
             ) /* decline = */ { !it.isError }
-        configuration.renderDiagnosticInternalName = true
         configuration.put(CommonConfigurationKeys.MODULE_NAME, libraryName)
         configuration.addKotlinSourceRoots(sourceFiles.map { it.absolutePath })
         val stdlibFile = ForTestCompileRuntime.stdlibCommonForTests()
@@ -87,7 +85,11 @@ object KlibTestUtil {
 
             val projectContext = ProjectContext(environment.project, "Compile common sources to KLIB metadata")
 
-            val analyzer = AnalyzerWithCompilerReport(configuration)
+            val analyzer = AnalyzerWithCompilerReport(
+                configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY),
+                configuration.languageVersionSettings,
+                renderDiagnosticName = true,
+            )
 
             analyzer.analyzeAndReport(environment.getSourceFiles()) {
                 CommonResolverForModuleFactory.analyzeFiles(
@@ -160,6 +162,7 @@ object KlibTestUtil {
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
             storageManager = LockBasedStorageManager.NO_LOCKS,
             builtIns = DefaultBuiltIns.Instance,
+            packageAccessHandler = null
         )
         module.setDependencies(listOf(DefaultBuiltIns.Instance.builtInsModule, module))
 
@@ -207,6 +210,7 @@ private fun createAndInitializeKlibBasedStdlibCommonDescriptor(
 
     val klibPackageFragmentProvider = metadataModuleDescriptorFactory.createPackageFragmentProvider(
         library = stdlibKlib,
+        packageAccessHandler = null,
         customMetadataProtoLoader = null,
         storageManager = projectContext.storageManager,
         moduleDescriptor = stdlibCommonDescriptor,

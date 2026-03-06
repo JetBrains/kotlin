@@ -35,19 +35,12 @@ class SimpleKey(
     override val name: String,
     val type: KType,
     val defaultValue: String?,
-    val lazyDefaultValue: String?,
     override val importsToAdd: List<String>,
     override val accessorName: String,
     override val comment: String?,
     val throwOnNull: Boolean,
     override val optIns: List<Annotation>,
 ) : Key() {
-    init {
-        require(lazyDefaultValue == null || defaultValue == null) {
-            "Either defaultValue or lazyDefaultValue should be specified, but not both"
-        }
-    }
-
     override val typeString: String
         get() = type.name
 
@@ -118,7 +111,6 @@ abstract class KeysContainer(val packageName: String, val className: String) {
     inline fun <reified T : Any> key(
         comment: String? = null,
         defaultValue: String? = null,
-        lazyDefaultValue: String? = null,
         importsToAdd: List<String> = emptyList(),
         accessorName: String? = null,
         throwOnNull: Boolean = true,
@@ -151,7 +143,6 @@ abstract class KeysContainer(val packageName: String, val className: String) {
                     name,
                     type,
                     defaultValue,
-                    lazyDefaultValue,
                     importsToAdd,
                     accessorName ?: name.toCamelCase(),
                     comment,

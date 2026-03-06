@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // IGNORE_BACKEND: ANDROID
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +ValueClasses
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class GCmp<T>(val xc: Comparable<T>)

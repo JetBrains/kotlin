@@ -3,7 +3,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun funWarning()
 
@@ -12,7 +11,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -21,7 +19,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun funError()
 
@@ -30,7 +27,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) class ClassWarning
 
@@ -39,7 +35,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -48,7 +43,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) class ClassError
 
@@ -57,7 +51,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) val propWarning: kotlin.Int
 
@@ -66,7 +59,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -75,6 +67,5 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) val propError: kotlin.Int

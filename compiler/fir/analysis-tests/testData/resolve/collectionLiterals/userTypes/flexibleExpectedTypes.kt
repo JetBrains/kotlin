@@ -27,16 +27,16 @@ fun <H> expectThroughTV(a: H, b: H) {}
 
 fun test() {
     Utils.expectFlexible([])
-    Utils.expectFlexible([<!ARGUMENT_TYPE_MISMATCH!>42<!>])
+    Utils.expectFlexible(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
     Utils.expectFlexible(["42"])
 
     Utils.<!CANNOT_INFER_PARAMETER_TYPE!>expectFlexibleGeneric<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     Utils.expectFlexibleGeneric([42, "42"])
     Utils.expectFlexibleGeneric<String>([])
 
-    expectThroughTV(Utils.flexible(), [42])
+    <!CANNOT_INFER_PARAMETER_TYPE!>expectThroughTV<!>(Utils.<!CANNOT_INFER_PARAMETER_TYPE!>flexible<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
     expectThroughTV(Utils.flexible<Int>(), [42])
-    expectThroughTV(Utils.flexible<String>(), [42])
+    expectThroughTV(Utils.flexible<String>(), <!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
     expectThroughTV(Utils.flexible<String>(), [])
 }
 

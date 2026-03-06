@@ -18,7 +18,6 @@ import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
-import kotlin.io.path.Path
 import org.jetbrains.kotlin.buildtools.`internal`.compat.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.CLASSPATH
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.D
@@ -103,7 +102,6 @@ import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
-import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
@@ -111,13 +109,8 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal class JvmCompilerArgumentsImpl(
-  private val adapter:
-      CompilerArgumentValueAdapter<JvmCompilerArguments.JvmCompilerArgument<*>>? = null,
-) : CommonCompilerArgumentsImpl(),
-    JvmCompilerArguments,
-    JvmCompilerArguments.Builder,
-    DeepCopyable<JvmCompilerArgumentsImpl> {
+internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCompilerArguments,
+    JvmCompilerArguments.Builder, DeepCopyable<JvmCompilerArgumentsImpl> {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
   init {
     applyCompilerArguments(K2JVMCompilerArguments())
@@ -126,7 +119,7 @@ internal class JvmCompilerArgumentsImpl(
   @Suppress("UNCHECKED_CAST")
   override operator fun <V> `get`(key: JvmCompilerArguments.JvmCompilerArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+    return optionsMap[key.id] as V
   }
 
   override operator fun <V> `set`(key: JvmCompilerArguments.JvmCompilerArgument<V>, `value`: V) {
@@ -134,7 +127,7 @@ internal class JvmCompilerArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(currentKotlinVersion.major, currentKotlinVersion.minor, currentKotlinVersion.patch)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+    optionsMap[key.id] = `value`
   }
 
   override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
@@ -148,7 +141,7 @@ internal class JvmCompilerArgumentsImpl(
 
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
-  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(adapter).also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }
+  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl().also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }
 
   override fun build(): JvmCompilerArguments = deepCopy()
 
@@ -204,11 +197,11 @@ internal class JvmCompilerArgumentsImpl(
     if (X_NO_UNIFIED_NULL_CHECKS in this) { arguments.noUnifiedNullChecks = get(X_NO_UNIFIED_NULL_CHECKS)}
     if (X_NULLABILITY_ANNOTATIONS in this) { arguments.nullabilityAnnotations = get(X_NULLABILITY_ANNOTATIONS)}
     try { if (X_OUTPUT_BUILTINS_METADATA in this) { arguments.outputBuiltinsMetadata = get(X_OUTPUT_BUILTINS_METADATA)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_OUTPUT_BUILTINS_METADATA. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
-    if (X_PROFILE in this) { arguments.profileCompilerCommand = get(X_PROFILE)?.toArgumentString()}
+    if (X_PROFILE in this) { arguments.profileCompilerCommand = get(X_PROFILE)}
     if (X_SAM_CONVERSIONS in this) { arguments.samConversions = get(X_SAM_CONVERSIONS)}
     if (X_SANITIZE_PARENTHESES in this) { arguments.sanitizeParentheses = get(X_SANITIZE_PARENTHESES)}
     if (X_SCRIPT_RESOLVER_ENVIRONMENT in this) { arguments.scriptResolverEnvironment = get(X_SCRIPT_RESOLVER_ENVIRONMENT)}
-    try { if (X_SERIALIZE_IR in this) { arguments.setUsingReflection("serializeIr", get(X_SERIALIZE_IR))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SERIALIZE_IR. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
+    if (X_SERIALIZE_IR in this) { arguments.serializeIr = get(X_SERIALIZE_IR)}
     if (X_STRING_CONCAT in this) { arguments.stringConcat = get(X_STRING_CONCAT)}
     if (X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS in this) { arguments.supportCompatqualCheckerFrameworkAnnotations = get(X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS)}
     if (X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING in this) { arguments.suppressDeprecatedJvmTargetWarning = get(X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING)}
@@ -229,7 +222,7 @@ internal class JvmCompilerArgumentsImpl(
     if (EXPRESSION in this) { arguments.expression = get(EXPRESSION)}
     if (INCLUDE_RUNTIME in this) { arguments.includeRuntime = get(INCLUDE_RUNTIME)}
     if (JAVA_PARAMETERS in this) { arguments.javaParameters = get(JAVA_PARAMETERS)}
-    if (JDK_HOME in this) { arguments.jdkHome = get(JDK_HOME)?.absolutePathStringOrThrow()}
+    if (JDK_HOME in this) { arguments.jdkHome = get(JDK_HOME)}
     try { if (JVM_DEFAULT in this) { arguments.jvmDefaultStable = get(JVM_DEFAULT)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: JVM_DEFAULT. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     if (JVM_TARGET in this) { arguments.jvmTarget = get(JVM_TARGET)?.stringValue}
     if (MODULE_NAME in this) { arguments.moduleName = get(MODULE_NAME)}
@@ -289,11 +282,11 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_NO_UNIFIED_NULL_CHECKS] = arguments.noUnifiedNullChecks } catch (_: NoSuchMethodError) {  }
     try { this[X_NULLABILITY_ANNOTATIONS] = arguments.nullabilityAnnotations } catch (_: NoSuchMethodError) {  }
     try { this[X_OUTPUT_BUILTINS_METADATA] = arguments.outputBuiltinsMetadata } catch (_: NoSuchMethodError) {  }
-    try { this[X_PROFILE] = arguments.profileCompilerCommand?.toXprofile() } catch (_: NoSuchMethodError) {  }
+    try { this[X_PROFILE] = arguments.profileCompilerCommand } catch (_: NoSuchMethodError) {  }
     try { this[X_SAM_CONVERSIONS] = arguments.samConversions } catch (_: NoSuchMethodError) {  }
     try { this[X_SANITIZE_PARENTHESES] = arguments.sanitizeParentheses } catch (_: NoSuchMethodError) {  }
     try { this[X_SCRIPT_RESOLVER_ENVIRONMENT] = arguments.scriptResolverEnvironment } catch (_: NoSuchMethodError) {  }
-    try { this[X_SERIALIZE_IR] = arguments.getUsingReflection("serializeIr") } catch (_: NoSuchMethodError) {  }
+    try { this[X_SERIALIZE_IR] = arguments.serializeIr } catch (_: NoSuchMethodError) {  }
     try { this[X_STRING_CONCAT] = arguments.stringConcat } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS] = arguments.supportCompatqualCheckerFrameworkAnnotations } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING] = arguments.suppressDeprecatedJvmTargetWarning } catch (_: NoSuchMethodError) {  }
@@ -314,7 +307,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[EXPRESSION] = arguments.expression } catch (_: NoSuchMethodError) {  }
     try { this[INCLUDE_RUNTIME] = arguments.includeRuntime } catch (_: NoSuchMethodError) {  }
     try { this[JAVA_PARAMETERS] = arguments.javaParameters } catch (_: NoSuchMethodError) {  }
-    try { this[JDK_HOME] = arguments.jdkHome?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
+    try { this[JDK_HOME] = arguments.jdkHome } catch (_: NoSuchMethodError) {  }
     try { this[JVM_DEFAULT] = arguments.jvmDefaultStable } catch (_: NoSuchMethodError) {  }
     try { this[JVM_TARGET] = arguments.jvmTarget?.let { JvmTarget.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -jvm-target value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
@@ -469,8 +462,7 @@ internal class JvmCompilerArgumentsImpl(
     public val X_OUTPUT_BUILTINS_METADATA: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_OUTPUT_BUILTINS_METADATA")
 
-    public val X_PROFILE: JvmCompilerArgument<ProfileCompilerCommand?> =
-        JvmCompilerArgument("X_PROFILE")
+    public val X_PROFILE: JvmCompilerArgument<String?> = JvmCompilerArgument("X_PROFILE")
 
     public val X_SAM_CONVERSIONS: JvmCompilerArgument<String?> =
         JvmCompilerArgument("X_SAM_CONVERSIONS")
@@ -538,8 +530,7 @@ internal class JvmCompilerArgumentsImpl(
     public val JAVA_PARAMETERS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("JAVA_PARAMETERS")
 
-    public val JDK_HOME: JvmCompilerArgument<java.nio.`file`.Path?> =
-        JvmCompilerArgument("JDK_HOME")
+    public val JDK_HOME: JvmCompilerArgument<String?> = JvmCompilerArgument("JDK_HOME")
 
     public val JVM_DEFAULT: JvmCompilerArgument<String?> = JvmCompilerArgument("JVM_DEFAULT")
 

@@ -10,5 +10,5 @@ fun Boolean.bar() {
     <expr>c()</expr>
 }
 
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 // IGNORE_FIR

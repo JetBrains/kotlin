@@ -1,2 +1,0 @@
-KtPropertyDelegate(419,455): 'by ProvideDelegateHolder("provided")'
-  NO_CANDIDATES

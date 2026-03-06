@@ -102,20 +102,20 @@ class KonanDriver(
             configuration.filesToCache = fileNames
         }
 
-        var config = NativeSecondStageCompilationConfig(project, configuration)
+        var konanConfig = KonanConfig(project, configuration)
 
         if (configuration.listTargets) {
-            config.targetManager.list()
+            konanConfig.targetManager.list()
         }
 
         val hasIncludedLibraries = configuration.konanIncludedLibraries.isNotEmpty()
-        val isProducingExecutableFromLibraries = config.produce == CompilerOutputKind.PROGRAM
+        val isProducingExecutableFromLibraries = konanConfig.produce == CompilerOutputKind.PROGRAM
                 && configuration.konanLibraries.isNotEmpty() && !hasIncludedLibraries
         val hasCompilerInput = configuration.kotlinSourceRoots.isNotEmpty()
                 || hasIncludedLibraries
                 || configuration.exportedLibraries.isNotEmpty()
-                || config.libraryToCache != null
-                || config.compileFromBitcode?.isNotEmpty() == true
+                || konanConfig.libraryToCache != null
+                || konanConfig.compileFromBitcode?.isNotEmpty() == true
                 || isProducingExecutableFromLibraries
 
         if (!hasCompilerInput) return
@@ -126,37 +126,37 @@ class KonanDriver(
         }
 
         // Avoid showing warning twice in 2-phase compilation.
-        if (config.produce != CompilerOutputKind.LIBRARY && config.target in softDeprecatedTargets) {
+        if (konanConfig.produce != CompilerOutputKind.LIBRARY && konanConfig.target in softDeprecatedTargets) {
             configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                    "target ${config.target} is deprecated and will be removed soon. See: $DEPRECATION_LINK")
+                    "target ${konanConfig.target} is deprecated and will be removed soon. See: $DEPRECATION_LINK")
         }
 
-        ensureModuleName(config)
+        ensureModuleName(konanConfig)
 
         val sourcesFiles = environment.getSourceFiles()
         performanceManager?.apply {
-            targetDescription = config.moduleId
-            this.outputKind = config.produce.name
+            targetDescription = konanConfig.moduleId
+            this.outputKind = konanConfig.produce.name
             addSourcesStats(sourcesFiles.size, environment.countLinesOfCode(sourcesFiles))
             // Finishing initialization phase before cache setup. Otherwise, cache building time will be counted as initialization phase.
             // Since cache builders use PerformanceManager to report precise phases, the only timing we lose is "calculating what to cache".
             notifyPhaseFinished(PhaseType.Initialization)
         }
 
-        val cacheBuilder = CacheBuilder(config, compilationSpawner)
+        val cacheBuilder = CacheBuilder(konanConfig, compilationSpawner)
         if (cacheBuilder.needToBuild()) {
             cacheBuilder.build()
-            config = NativeSecondStageCompilationConfig(project, configuration) // TODO: Just set freshly built caches.
+            konanConfig = KonanConfig(project, configuration) // TODO: Just set freshly built caches.
         }
 
-        if (!config.produce.isHeaderCache) {
-            config.cacheSupport.checkConsistency()
+        if (!konanConfig.produce.isHeaderCache) {
+            konanConfig.cacheSupport.checkConsistency()
         }
 
-        NativeCompilerDriver(performanceManager).run(config, environment)
+        NativeCompilerDriver(performanceManager).run(konanConfig, environment)
     }
 
-    private fun ensureModuleName(config: NativeSecondStageCompilationConfig) {
+    private fun ensureModuleName(config: KonanConfig) {
         if (environment.getSourceFiles().isEmpty()) {
             val libraries = config.resolvedLibraries.getFullList()
             val moduleName = config.moduleId

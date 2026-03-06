@@ -5,26 +5,15 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 
 open class CommonCompilerArgumentsConfigurator {
-    interface Reporter {
-        fun reportWarning(message: String)
-        fun reportError(message: String)
-        fun info(message: String)
-
-        object DoNothing : Reporter {
-            override fun reportWarning(message: String) {}
-            override fun reportError(message: String) {}
-            override fun info(message: String) {}
-        }
-
-        companion object
-    }
-
     open fun configureAnalysisFlags(
         arguments: CommonCompilerArguments,
-        reporter: Reporter,
+        collector: MessageCollector,
         languageVersion: LanguageVersion,
     ): MutableMap<AnalysisFlag<*>, Any> = with(arguments) {
         HashMap<AnalysisFlag<*>, Any>().apply {
@@ -35,11 +24,13 @@ open class CommonCompilerArgumentsConfigurator {
             putAnalysisFlag(AnalysisFlags.skipExpectedActualDeclarationChecker, metadataKlib)
             putAnalysisFlag(AnalysisFlags.explicitApiVersion, apiVersion != null)
             ExplicitApiMode.fromString(explicitApi)?.also { putAnalysisFlag(AnalysisFlags.explicitApiMode, it) }
-                ?: reporter.reportError(
+                ?: collector.report(
+                    CompilerMessageSeverity.ERROR,
                     "Unknown value for parameter -Xexplicit-api: '$explicitApi'. Value should be one of ${ExplicitApiMode.availableValues()}"
                 )
             ExplicitApiMode.fromString(explicitReturnTypes)?.also { putAnalysisFlag(AnalysisFlags.explicitReturnTypes, it) }
-                ?: reporter.reportError(
+                ?: collector.report(
+                    CompilerMessageSeverity.ERROR,
                     "Unknown value for parameter -XXexplicit-return-types: '$explicitReturnTypes'. Value should be one of ${ExplicitApiMode.availableValues()}"
                 )
             putAnalysisFlag(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
@@ -51,9 +42,10 @@ open class CommonCompilerArgumentsConfigurator {
             putAnalysisFlag(AnalysisFlags.headerMode, headerMode)
             putAnalysisFlag(AnalysisFlags.headerModeType, headerModeType)
             putAnalysisFlag(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme && multiPlatform)
-            fillWarningLevelMap(arguments, reporter)
+            fillWarningLevelMap(arguments, collector)
             ReturnValueCheckerMode.fromString(returnValueChecker)?.also { putAnalysisFlag(AnalysisFlags.returnValueCheckerMode, it) }
-                ?: reporter.reportError(
+                ?: collector.report(
+                    CompilerMessageSeverity.ERROR,
                     "Unknown value for parameter -Xreturn-value-checker: '$returnValueChecker'. Value should be one of ${ReturnValueCheckerMode.availableValues()}"
                 )
         }
@@ -69,7 +61,7 @@ open class CommonCompilerArgumentsConfigurator {
 
     open fun configureLanguageFeatures(
         arguments: CommonCompilerArguments,
-        reporter: Reporter,
+        collector: MessageCollector,
     ): MutableMap<LanguageFeature, LanguageFeature.State> = with(arguments) {
         HashMap<LanguageFeature, LanguageFeature.State>().apply {
             configureCommonLanguageFeatures(arguments)
@@ -90,23 +82,23 @@ open class CommonCompilerArgumentsConfigurator {
             // Internal arguments should go last, because it may be useful to override
             // some feature state via -XX (even if some -X flags were passed)
             if (internalArguments.isNotEmpty()) {
-                configureLanguageFeaturesFromInternalArgs(arguments, reporter)
+                configureLanguageFeaturesFromInternalArgs(arguments, collector)
             }
 
-            configureExtraLanguageFeatures(arguments, this, reporter)
+            configureExtraLanguageFeatures(arguments, this, collector)
         }
     }
 
     protected open fun configureExtraLanguageFeatures(
         arguments: CommonCompilerArguments,
         map: HashMap<LanguageFeature, LanguageFeature.State>,
-        reporter: Reporter
+        collector: MessageCollector,
     ) {
     }
 
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(
         arguments: CommonCompilerArguments,
-        reporter: Reporter
+        collector: MessageCollector,
     ) {
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
         val disabledFeaturesFromUnsupportedVersions = mutableListOf<LanguageFeature>()
@@ -151,48 +143,54 @@ open class CommonCompilerArgumentsConfigurator {
         val isCrossModuleInlinerEnabled = this[LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization] == LanguageFeature.State.ENABLED
         val isIntraModuleInlinerEnabled = this[LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization] == LanguageFeature.State.ENABLED
         if (isCrossModuleInlinerEnabled && !isIntraModuleInlinerEnabled) {
-            reporter.reportError(
+            collector.report(
+                CompilerMessageSeverity.ERROR,
                 "-XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization requires -XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization. " +
                         "Enable the intra-module inliner as well to avoid inconsistent configuration."
             )
         }
 
         if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {
-            reporter.reportWarning(
+            collector.report(
+                CompilerMessageSeverity.STRONG_WARNING,
                 "Following manually enabled features will force generation of pre-release binaries: ${featuresThatForcePreReleaseBinaries.joinToString()}"
             )
         }
 
         if (disabledFeaturesFromUnsupportedVersions.isNotEmpty()) {
-            reporter.reportError(
+            collector.report(
+                CompilerMessageSeverity.ERROR,
                 "The following features cannot be disabled manually, because the version they first appeared in is no longer " +
                         "supported:\n${disabledFeaturesFromUnsupportedVersions.joinToString()}"
             )
         }
     }
 
-    private fun HashMap<AnalysisFlag<*>, Any>.fillWarningLevelMap(arguments: CommonCompilerArguments, reporter: Reporter) {
+    private fun HashMap<AnalysisFlag<*>, Any>.fillWarningLevelMap(arguments: CommonCompilerArguments, collector: MessageCollector) {
         val result = buildMap {
             val suppressedDiagnostics = arguments.suppressedDiagnostics.orEmpty()
             suppressedDiagnostics.associateWithTo(this) { WarningLevel.Disabled }
             if (suppressedDiagnostics.isNotEmpty()) {
                 val replacement = "-Xwarning-level=${suppressedDiagnostics.first()}:disabled"
                 val suffix = if (suppressedDiagnostics.size > 1) " (and the same for other warnings)" else ""
-                reporter.reportWarning(
+                collector.report(
+                    CompilerMessageSeverity.STRONG_WARNING,
                     """Argument "-Xsuppress-warning" is deprecated. Use "$replacement" instead$suffix"""
                 )
             }
             for (rawArgument in arguments.warningLevels.orEmpty()) {
                 val split = rawArgument.split(":", limit = 2)
                 if (split.size < 2) {
-                    reporter.reportError(
+                    collector.report(
+                        CompilerMessageSeverity.ERROR,
                         "Invalid argument for -Xwarning-level=$rawArgument"
                     )
                     continue
                 }
                 val (name, rawLevel) = split
                 val level = WarningLevel.fromString(rawLevel) ?: run {
-                    reporter.reportError(
+                    collector.report(
+                        CompilerMessageSeverity.ERROR,
                         "Incorrect value for warning level: $rawLevel. Available values are: ${WarningLevel.entries.joinToString { it.cliOption }}"
                     )
                     continue
@@ -204,7 +202,7 @@ open class CommonCompilerArgumentsConfigurator {
                     } else {
                         "-Xwarning-level is duplicated for warning $name"
                     }
-                    reporter.reportError(message)
+                    collector.report(CompilerMessageSeverity.ERROR, message)
                 }
             }
         }
@@ -212,65 +210,61 @@ open class CommonCompilerArgumentsConfigurator {
     }
 }
 
-fun CommonCompilerArguments.toLanguageVersionSettings(reporter: CommonCompilerArgumentsConfigurator.Reporter): LanguageVersionSettings {
-    return toLanguageVersionSettings(reporter, emptyMap())
+fun CommonCompilerArguments.toLanguageVersionSettings(collector: MessageCollector): LanguageVersionSettings {
+    return toLanguageVersionSettings(collector, emptyMap())
 }
 
 fun CommonCompilerArguments.toLanguageVersionSettings(
-    reporter: CommonCompilerArgumentsConfigurator.Reporter,
-    additionalAnalysisFlags: Map<AnalysisFlag<*>, Any>,
+    collector: MessageCollector,
+    additionalAnalysisFlags: Map<AnalysisFlag<*>, Any>
 ): LanguageVersionSettings {
-    val languageVersion = parseOrConfigureLanguageVersion(reporter)
+    val languageVersion = parseOrConfigureLanguageVersion(collector)
     // If only "-language-version" is specified, API version is assumed to be equal to the language version
     // (API version cannot be greater than the language version)
-    val apiVersion = ApiVersion.createByLanguageVersion(parseVersion(reporter, apiVersion, "API") ?: languageVersion)
+    val apiVersion = ApiVersion.createByLanguageVersion(parseVersion(collector, apiVersion, "API") ?: languageVersion)
 
     val languageVersionSettings = LanguageVersionSettingsImpl(
         languageVersion,
         apiVersion,
-        configureAnalysisFlags(reporter, languageVersion) + additionalAnalysisFlags,
-        configureLanguageFeatures(reporter)
+        configureAnalysisFlags(collector, languageVersion) + additionalAnalysisFlags,
+        configureLanguageFeatures(collector)
     )
 
-    checkApiAndLanguageVersion(languageVersion, apiVersion, reporter)
+    checkApiAndLanguageVersion(languageVersion, apiVersion, collector)
 
-    checkExplicitApiAndExplicitReturnTypesAtTheSameTime(reporter)
+    checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector)
 
     return languageVersionSettings
 }
 
-fun CommonCompilerArguments.checkApiAndLanguageVersion(
-    language: LanguageVersion,
-    api: ApiVersion,
-    reporter: CommonCompilerArgumentsConfigurator.Reporter,
-) {
-    checkApiVersionIsNotGreaterThenLanguageVersion(language, api, reporter)
-    checkLanguageVersionIsStable(language, reporter)
-    checkOutdatedVersions(language, api, reporter)
-    checkProgressiveMode(language, reporter)
+fun CommonCompilerArguments.checkApiAndLanguageVersion(language: LanguageVersion, api: ApiVersion, collector: MessageCollector) {
+    checkApiVersionIsNotGreaterThenLanguageVersion(language, api, collector)
+    checkLanguageVersionIsStable(language, collector)
+    checkOutdatedVersions(language, api, collector)
+    checkProgressiveMode(language, collector)
 }
 
 private fun CommonCompilerArguments.checkApiVersionIsNotGreaterThenLanguageVersion(
     languageVersion: LanguageVersion,
     apiVersion: ApiVersion,
-    reporter: CommonCompilerArgumentsConfigurator.Reporter,
+    collector: MessageCollector
 ) {
     if (apiVersion > ApiVersion.createByLanguageVersion(languageVersion)) {
         if (!suppressApiVersionGreaterThanLanguageVersionError) {
-            reporter.reportError(
+            collector.report(
+                CompilerMessageSeverity.ERROR,
                 "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})."
             )
         }
     } else if (suppressApiVersionGreaterThanLanguageVersionError) {
-        reporter.reportWarning(
-            "-Xsuppress-api-version-greater-than-language-version-error was passed, but the API version (${apiVersion.versionString}) is not greater than the language version (${languageVersion.versionString})."
-        )
+        collector.report(WARNING, "Useless suppress -Xsuppress-api-version-greater-than-language-version-error.")
     }
 }
 
-private fun CommonCompilerArguments.checkLanguageVersionIsStable(languageVersion: LanguageVersion, reporter: CommonCompilerArgumentsConfigurator.Reporter) {
+private fun CommonCompilerArguments.checkLanguageVersionIsStable(languageVersion: LanguageVersion, collector: MessageCollector) {
     if (!languageVersion.isStable && !suppressVersionWarnings) {
-        reporter.reportWarning(
+        collector.report(
+            CompilerMessageSeverity.STRONG_WARNING,
             "Language version ${languageVersion.versionString} is experimental, there are no backwards compatibility guarantees for " +
                     "new language and library features. " +
                     "Use the stable version ${LanguageVersion.LATEST_STABLE} instead."
@@ -278,11 +272,7 @@ private fun CommonCompilerArguments.checkLanguageVersionIsStable(languageVersion
     }
 }
 
-private fun CommonCompilerArguments.checkOutdatedVersions(
-    language: LanguageVersion,
-    api: ApiVersion,
-    reporter: CommonCompilerArgumentsConfigurator.Reporter,
-) {
+private fun CommonCompilerArguments.checkOutdatedVersions(language: LanguageVersion, api: ApiVersion, collector: MessageCollector) {
     val (version, supportedVersion, versionKind) = findOutdatedVersion(language, api) ?: return
     val firstNonDeprecated by lazy {
         when (versionKind) {
@@ -293,12 +283,14 @@ private fun CommonCompilerArguments.checkOutdatedVersions(
     when {
         version.isUnsupported -> {
             if ((!language.isJvmOnly || this !is K2JVMCompilerArguments)) {
-                reporter.reportError(
+                collector.report(
+                    CompilerMessageSeverity.ERROR,
                     "${versionKind.text} version ${version.versionString} is no longer supported; " +
                             "use version ${supportedVersion!!.versionString} or greater instead."
                 )
             } else if (!suppressVersionWarnings) {
-                reporter.reportWarning(
+                collector.report(
+                    CompilerMessageSeverity.STRONG_WARNING,
                     "${versionKind.text} version ${version.versionString} is deprecated in JVM " +
                             "and its support will be removed in a future version of Kotlin. " +
                             "Update the version to $firstNonDeprecated."
@@ -306,7 +298,8 @@ private fun CommonCompilerArguments.checkOutdatedVersions(
             }
         }
         version.isDeprecated && !suppressVersionWarnings -> {
-            reporter.reportWarning(
+            collector.report(
+                CompilerMessageSeverity.STRONG_WARNING,
                 "${versionKind.text} version ${version.versionString} is deprecated " +
                         "and its support will be removed in a future version of Kotlin. " +
                         "Update the version to $firstNonDeprecated."
@@ -317,7 +310,7 @@ private fun CommonCompilerArguments.checkOutdatedVersions(
 
 private fun findOutdatedVersion(
     language: LanguageVersion,
-    api: ApiVersion,
+    api: ApiVersion
 ): Triple<LanguageOrApiVersion, LanguageOrApiVersion?, VersionKind>? {
     return when {
         language.isUnsupported -> Triple(language, LanguageVersion.FIRST_SUPPORTED, VersionKind.LANGUAGE)
@@ -328,9 +321,10 @@ private fun findOutdatedVersion(
     }
 }
 
-private fun CommonCompilerArguments.checkProgressiveMode(languageVersion: LanguageVersion, reporter: CommonCompilerArgumentsConfigurator.Reporter) {
+private fun CommonCompilerArguments.checkProgressiveMode(languageVersion: LanguageVersion, collector: MessageCollector) {
     if (progressiveMode && languageVersion < LanguageVersion.LATEST_STABLE && !suppressVersionWarnings) {
-        reporter.reportWarning(
+        collector.report(
+            CompilerMessageSeverity.STRONG_WARNING,
             "'-progressive' is meaningful only for the latest language version (${LanguageVersion.LATEST_STABLE}), " +
                     "while this build uses $languageVersion\n" +
                     "Compiler behavior in such mode is undefined; consider moving to the latest stable version " +
@@ -339,10 +333,11 @@ private fun CommonCompilerArguments.checkProgressiveMode(languageVersion: Langua
     }
 }
 
-private fun CommonCompilerArguments.checkExplicitApiAndExplicitReturnTypesAtTheSameTime(reporter: CommonCompilerArgumentsConfigurator.Reporter) {
+private fun CommonCompilerArguments.checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector: MessageCollector) {
     if (explicitApi == ExplicitApiMode.DISABLED.state || explicitReturnTypes == ExplicitApiMode.DISABLED.state) return
     if (explicitApi != explicitReturnTypes) {
-        reporter.reportError(
+        collector.report(
+            CompilerMessageSeverity.ERROR,
             """
                     '-Xexplicit-api' and '-XXexplicit-return-types' flags cannot have different values at the same time.
                     Consider use only one of those flags
@@ -358,19 +353,20 @@ private enum class VersionKind(val text: String) {
     LANGUAGE("Language"), API("API")
 }
 
-private fun CommonCompilerArguments.parseOrConfigureLanguageVersion(reporter: CommonCompilerArgumentsConfigurator.Reporter): LanguageVersion {
+private fun CommonCompilerArguments.parseOrConfigureLanguageVersion(collector: MessageCollector): LanguageVersion {
     if (useK2) {
-        reporter.reportError(
+        collector.report(
+            CompilerMessageSeverity.ERROR,
             "Compiler flag -Xuse-k2 is no more supported. " +
                     "Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier"
         )
     }
 
     // If only "-api-version" is specified, language version is assumed to be the latest stable
-    return parseVersion(reporter, languageVersion, "language") ?: LanguageVersion.LATEST_STABLE
+    return parseVersion(collector, languageVersion, "language") ?: LanguageVersion.LATEST_STABLE
 }
 
-private fun CommonCompilerArguments.parseVersion(reporter: CommonCompilerArgumentsConfigurator.Reporter, value: String?, versionOf: String): LanguageVersion? =
+private fun CommonCompilerArguments.parseVersion(collector: MessageCollector, value: String?, versionOf: String): LanguageVersion? =
     if (value == null) null
     else LanguageVersion.fromVersionString(value)
         ?: run {
@@ -382,17 +378,14 @@ private fun CommonCompilerArguments.parseVersion(reporter: CommonCompilerArgumen
                 entries.filterNot { it.isUnsupported && !it.isJvmOnly }.map(LanguageVersion::description)
             }
             val message = "Unknown $versionOf version: $value\nSupported $versionOf versions: ${versionStrings.joinToString(", ")}"
-            reporter.reportError(message)
+            collector.report(CompilerMessageSeverity.ERROR, message, null)
             null
         }
 
-fun CommonCompilerArguments.configureAnalysisFlags(
-    reporter: CommonCompilerArgumentsConfigurator.Reporter,
-    languageVersion: LanguageVersion,
-): MutableMap<AnalysisFlag<*>, Any> {
-    return configurator.configureAnalysisFlags(this, reporter, languageVersion)
+fun CommonCompilerArguments.configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
+    return configurator.configureAnalysisFlags(this, collector, languageVersion)
 }
 
-fun CommonCompilerArguments.configureLanguageFeatures(reporter: CommonCompilerArgumentsConfigurator.Reporter): MutableMap<LanguageFeature, LanguageFeature.State> {
-    return configurator.configureLanguageFeatures(this, reporter)
+fun CommonCompilerArguments.configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> {
+    return configurator.configureLanguageFeatures(this, collector)
 }

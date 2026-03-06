@@ -16,7 +16,6 @@ KtValueArgument(161,162): 'X'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       value: MyEnum
 
@@ -66,7 +65,6 @@ KtValueArgument(263,270): '*[X, Y]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       vararg value: MyEnum
 
@@ -74,7 +72,6 @@ KtCollectionLiteralExpression(264,270): '[X, Y]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
 
@@ -117,7 +114,6 @@ KtValueArgument(346,349): '[X]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       value: kotlin.Array<MyEnum>
 
@@ -125,7 +121,6 @@ KtCollectionLiteralExpression(346,349): '[X]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
 
@@ -147,7 +142,6 @@ KtValueArgument(371,381): 'arrayOf(X)'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       value: kotlin.Array<MyEnum>
 
@@ -155,7 +149,6 @@ KtCallExpression(371,381): 'arrayOf(X)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -170,7 +163,6 @@ KtValueArgument(379,380): 'X'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       value: kotlin.Array<MyEnum>
 
@@ -199,7 +191,6 @@ KtValueArgument(447,456): 'MAX_VALUE'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       value: kotlin.Int
 
@@ -221,7 +212,6 @@ KtValueArgument(484,491): 'RUNTIME'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       value: kotlin.annotation.AnnotationRetention
 

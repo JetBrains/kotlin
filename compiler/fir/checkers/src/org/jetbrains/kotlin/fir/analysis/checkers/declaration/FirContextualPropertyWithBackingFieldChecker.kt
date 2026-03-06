@@ -29,7 +29,7 @@ object FirContextualPropertyWithBackingFieldChecker : FirPropertyChecker(MppChec
 
         if (declaration.hasBackingField && !declaration.isLateInit && declaration.symbol is FirRegularPropertySymbol) {
             reporter.reportOn(
-                declaration.source,
+                declaration.initializer?.source ?: declaration.source,
                 FirErrors.CONTEXT_PARAMETERS_WITH_BACKING_FIELD
             )
         }

@@ -13,9 +13,7 @@ internal class ClassVisibility(
     val name: String,
     val visibility: Visibility?,
     val classKind: ClassKind?,
-    val modality: Modality?,
     val members: Map<JvmMemberSignature, MemberVisibility>,
-    val primaryConstructorIsInternal: Boolean,
     val facadeClassName: String? = null
 ) {
     val isCompanion: Boolean get() = classKind == ClassKind.COMPANION_OBJECT
@@ -47,16 +45,9 @@ private fun isPublic(visibility: Visibility?, isPublishedApi: Boolean) =
 internal fun ClassVisibility.isPublic(isPublishedApi: Boolean) =
     isPublic(visibility, isPublishedApi)
 
-internal fun MemberVisibility.isPublic(isPublishedApi: Boolean, classKind: ClassKind?, classModality: Modality?) =
+internal fun MemberVisibility.isPublic(isPublishedApi: Boolean) =
     // Assuming isReified implies inline
-    !isReified
-            && isPublic(visibility, isPublishedApi)
-            && !isEffectivelyInternal(classKind, classModality, visibility)
-
-internal fun isEffectivelyInternal(classKind: ClassKind?, modality: Modality?, memberVisibility: Visibility?): Boolean {
-    return (memberVisibility == Visibility.PROTECTED)
-            && (classKind == ClassKind.ENUM_CLASS || classKind == ClassKind.CLASS && modality == Modality.SEALED)
-}
+    !isReified && isPublic(visibility, isPublishedApi)
 
 internal fun MemberVisibility.isInternal(): Boolean = visibility == Visibility.INTERNAL
 
@@ -93,11 +84,9 @@ internal class PropertyAnnotationHolders(
 
 internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility {
     var visibility: Visibility? = null
-    var modality: Modality? = null
     var kind: ClassKind? = null
     var _facadeClassName: String? = null
     val members = mutableListOf<MemberVisibility>()
-    var primaryConstructorIsInternal = false
 
     fun addMember(
         signature: JvmMemberSignature?,
@@ -115,13 +104,9 @@ internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassV
             kmClass.also { klass ->
                 visibility = klass.visibility
                 kind = klass.kind
-                modality = klass.modality
 
                 for (constructor in klass.constructors) {
                     addMember(constructor.signature, constructor.visibility, isReified = false)
-                    if (!constructor.isSecondary) {
-                        primaryConstructorIsInternal = constructor.visibility == Visibility.INTERNAL
-                    }
                 }
             }
 
@@ -163,7 +148,7 @@ internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassV
         }
     }
 
-    return ClassVisibility(classNode.name, visibility, kind, modality, members.associateBy { it.member }, primaryConstructorIsInternal, _facadeClassName)
+    return ClassVisibility(classNode.name, visibility, kind, members.associateBy { it.member }, _facadeClassName)
 }
 
 internal fun ClassNode.toClassVisibility() = kotlinMetadata?.toClassVisibility(this)

@@ -97,9 +97,7 @@ where advanced options include:
                              Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
                              `profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.
                              If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.
-                             Individual parameter values are separated by the system path separator.
-                             Example (Unix/Linux): -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>
-                             Example (Windows): -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so;event=cpu,interval=1ms,threads,start;<SNAPSHOT_DIR_PATH>
+                             Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>
   -Xsam-conversions={class|indy} Select the code generation scheme for SAM conversions.
                              -Xsam-conversions=indy          Generate SAM conversions using 'invokedynamic' with 'LambdaMetafactory.metafactory'.
                              -Xsam-conversions=class         Generate SAM conversions as explicit classes.
@@ -109,6 +107,8 @@ where advanced options include:
                              problems with parentheses in identifiers on certain platforms.
   -Xscript-resolver-environment=<key=value[,]>
                              Set the script resolver environment in key-value pairs (the value can be quoted and escaped).
+  -Xserialize-ir={none|inline|all}
+                             Save the IR to metadata (Experimental).
   -Xstring-concat={indy-with-constants|indy|inline}
                              Select the code generation scheme for string concatenation:
                              -Xstring-concat=indy-with-constants  Concatenate strings using 'invokedynamic' and 'makeConcatWithConstants'. This requires '-jvm-target 9' or greater.
@@ -198,7 +198,6 @@ where advanced options include:
                              Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
                              Use the 'warning' level to issue warnings instead of errors.
   -Xexplicit-backing-fields  Enable experimental language support for explicit backing fields.
-  -Xexplicit-context-arguments Enable explicit passing of context arguments using named argument syntax.
   -Xfragment-dependency=<fragment name>:<path>
                              Declare common klib dependencies for the specific fragment.
                              This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.

@@ -11,23 +11,26 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.CollectionLiteralOuterCandidateContext
+import org.jetbrains.kotlin.fir.resolve.CollectionLiteralResolverForStdlibType
+import org.jetbrains.kotlin.fir.resolve.CollectionLiteralResolverThroughCompanion
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
+import org.jetbrains.kotlin.fir.resolve.getClassRepresentativeForCollectionLiteralResolution
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPositionWithCoercionToUnit
 import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
 import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
-import org.jetbrains.kotlin.fir.resolve.runCollectionLiteralResolution
 import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
+import org.jetbrains.kotlin.fir.resolve.runResolutionForDanglingCollectionLiteral
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
@@ -71,7 +74,6 @@ class PostponedArgumentsAnalyzer(
         argument: ConePostponedResolvedAtom,
         candidate: Candidate,
         withPCLASession: Boolean,
-        precalculatedBoundsForCL: CollectionLiteralBounds?,
     ) {
         when (argument) {
             is ConeResolvedLambdaAtom ->
@@ -88,7 +90,7 @@ class PostponedArgumentsAnalyzer(
             is ConeSimpleNameForContextSensitiveResolution ->
                 processSimpleNameForContextSensitiveResolution(argument, candidate)
             is ConeCollectionLiteralAtom ->
-                processCollectionLiteral(argument, candidate, precalculatedBoundsForCL)
+                processCollectionLiteral(argument, candidate)
         }
     }
 
@@ -210,15 +212,57 @@ class PostponedArgumentsAnalyzer(
     private fun processCollectionLiteral(
         atom: ConeCollectionLiteralAtom,
         topLevelCandidate: Candidate,
-        precalculatedBounds: CollectionLiteralBounds?,
     ) {
         atom.analyzed = true
 
-        val outerCallsContext = CollectionLiteralOuterCandidateContext(topLevelCandidate)
-
-        context(resolutionContext, outerCallsContext) {
-            runCollectionLiteralResolution(atom, precalculatedBounds)
+        val substitutor = topLevelCandidate.csBuilder.buildCurrentSubstitutor(emptyMap()).asCone()
+        val substitutedExpectedType = atom.expectedType?.let {
+            substitutor.safeSubstitute(topLevelCandidate.csBuilder, it).asCone()
         }
+
+        runCollectionLiteralResolution(atom, topLevelCandidate, substitutedExpectedType)
+    }
+
+    private fun runCollectionLiteralResolution(
+        atom: ConeCollectionLiteralAtom,
+        topLevelCandidate: Candidate,
+        substitutedExpectedType: ConeKotlinType?,
+    ) {
+        val originalExpression = atom.expression
+
+        val classForResolution = context(resolutionContext) {
+            substitutedExpectedType?.getClassRepresentativeForCollectionLiteralResolution()
+        }
+
+        val newExpression: FirFunctionCall? = sequenceOf(
+            ::CollectionLiteralResolverThroughCompanion,
+            ::CollectionLiteralResolverForStdlibType,
+        ).firstNotNullOfOrNull { resolver ->
+            resolver(resolutionContext).resolveCollectionLiteral(
+                atom,
+                topLevelCandidate,
+                classForResolution,
+            )
+        }
+
+        if (newExpression == null) {
+            // There may be callable references/lambdas inside collection literal. We need to resolve them somehow.
+            // When fallback is implemented, this part likely will become obsolete.
+            resolutionContext.runResolutionForDanglingCollectionLiteral(originalExpression)
+            return
+        }
+
+        atom.containingCallCandidate.setUpdatedCollectionLiteral(originalExpression, newExpression)
+
+        ArgumentCheckingProcessor.resolveArgumentExpression(
+            topLevelCandidate,
+            ConeResolutionAtom.createRawAtom(newExpression),
+            substitutedExpectedType,
+            CheckerSinkImpl(topLevelCandidate),
+            context = resolutionContext,
+            isReceiver = false,
+            isDispatch = false,
+        )
     }
 
     fun analyzeLambda(

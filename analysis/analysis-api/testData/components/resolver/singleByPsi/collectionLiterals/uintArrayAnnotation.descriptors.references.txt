@@ -1,0 +1,13 @@
+KtCollectionLiteralExpression(51,55): '[1u]'
+  KtCollectionLiteralReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) inline fun uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
+
+KtValueArgument(51,55): '[1u]'
+  KtDefaultAnnotationArgumentReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)

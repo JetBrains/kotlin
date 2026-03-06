@@ -37,12 +37,15 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 @ExperimentalAbiValidation
 interface AbiValidationExtension {
     /**
-     * @deprecated Property was removed to enable ABI validation call function `abiValidation()`, `abiValidation { ... }` or read `abiValidation` property.
+     * Enable ABI validation tasks.
+     *
+     * If value is `false`, then the tasks of generating, verifying, and updating the dump will do nothing.
+     *
+     * By default, all ABI validation tasks are disabled in order to perform ABI generation and verification
+     * in multi-project builds only on explicitly marked projects.
+     *
+     * `false` by default.
      */
-    /*@Deprecated(
-        "Property was removed to enable ABI validation call function abiValidation(), abiValidation { ... } or read abiValidation property.",
-        level = DeprecationLevel.ERROR
-    )*/
     val enabled: Property<Boolean>
 
     /**

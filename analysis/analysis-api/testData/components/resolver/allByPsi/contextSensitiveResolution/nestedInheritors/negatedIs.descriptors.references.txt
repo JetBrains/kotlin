@@ -29,7 +29,6 @@ KtNameReferenceExpression(192,193): 's'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -57,7 +56,6 @@ KtNameReferenceExpression(232,248): 'USELESS_IS_CHECK'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -99,7 +97,6 @@ KtNameReferenceExpression(286,308): 'REDUNDANT_ELSE_IN_WHEN'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

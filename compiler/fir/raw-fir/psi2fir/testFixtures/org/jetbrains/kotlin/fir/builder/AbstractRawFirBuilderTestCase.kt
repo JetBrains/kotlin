@@ -39,10 +39,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.markAsReplSnippet
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
@@ -76,7 +74,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     protected open fun doRawFirTest(filePath: String) {
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
-        val firFileDump = dumpFirFile(firFile)
+        val firFileDump = FirRenderer.withDeclarationAttributes().renderElementAsString(firFile)
         val expectedPath = expectedPath(filePath, ".txt")
         TestDataAssertions.assertEqualsToFile(File(expectedPath), firFileDump)
         checkAnnotationOwners(filePath, firFile)
@@ -124,18 +122,11 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         TestDataAssertions.assertEqualsToFile(expectedFile, actual)
     }
 
-    @OptIn(KtNonPublicApi::class)
     protected open fun createKtFile(filePath: String): KtFile {
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath))
         return (createFile(filePath, KtNodeTypes.KT_FILE) as KtFile).apply {
             myFile = this
-            if (filePath.endsWith(".repl.kts")) script?.markAsReplSnippet()
         }
-    }
-
-    protected fun dumpFirFile(firFile: FirFile): String {
-        val renderer = FirRenderer.withDeclarationAttributes()
-        return renderer.renderElementAsString(firFile)
     }
 
     protected fun KtFile.toFirFile(bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL): FirFile {

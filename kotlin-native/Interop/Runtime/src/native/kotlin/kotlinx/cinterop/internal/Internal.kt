@@ -10,7 +10,6 @@ import kotlin.native.internal.InternalForKotlinNative
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObject
-import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.IntrinsicType
 import kotlin.native.internal.NativePtr
 import kotlin.native.internal.TypedIntrinsic
@@ -42,5 +41,4 @@ public external inline fun <reified R : Function<*>> convertBlockPtrToKotlinFunc
  */
 @TypedIntrinsic(IntrinsicType.IDENTITY)
 @PublishedApi
-@UsedFromCompilerGeneratedCode
 internal external fun <T> interopCallMarker(arg: T): T

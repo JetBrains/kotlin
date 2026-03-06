@@ -459,6 +459,7 @@ enum class LanguageFeature(
     ForbidExposingLessVisibleTypesInInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-283"),
     ForbidCaptureInlinableLambdasInJsCode(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-69297"),
     ForbidInitializationBeforeDeclarationInAnonymous(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-290"),
+    ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-358"),
     ForbidPrivateToThisUnboundCallableReferences(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-383"),
     AllowReifiedTypeInCatchClause(KOTLIN_2_4, issue = "KT-54363"),
     ApproximateLocalTypesInPublicDeclarations(KOTLIN_2_4, issue = "KT-82454"),
@@ -479,7 +480,6 @@ enum class LanguageFeature(
     JsAllowExportingSuspendFunctions(sinceVersion = KOTLIN_2_4, "KT-56281"),
     ImprovedResolutionInSecondaryConstructors(sinceVersion = KOTLIN_2_4, "KT-77275"),
     CacheLocalVariableScopes(sinceVersion = KOTLIN_2_4, "KT-68606"),
-    ContextParameters(sinceVersion = KOTLIN_2_4, "KT-72222"),
     OverloadResolutionSpecificityForEnhancedJvmPrimitiveWrappers(sinceVersion = KOTLIN_2_4, "KT-9182"),
     ForbidTypeAliasToCompilerRequiredAnnotation(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-79369"),
     ForbidArrayLiteralsInNonAnnotationContexts(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-369"),
@@ -495,11 +495,7 @@ enum class LanguageFeature(
     ResolveEqualsRhsInDependentContextWithCompletion(KOTLIN_2_4, "KT-81763"),
     IrIntraModuleInlinerBeforeKlibSerialization(KOTLIN_2_4, sinceApiVersion = ApiVersion.KOTLIN_2_3, issue = "KT-79717"),
     ImprovedExhaustivenessCheckForSubjectVariable24(KOTLIN_2_4, issue = "KT-83903"),
-    DontMakeExplicitNullableJavaTypeArgumentsFlexible(KOTLIN_2_4, "KTLC-284"),
-    ProhibitFunctionCallsInDefaultParametersOfInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-83829"),
-    AllowNamedCompanionForJsExport(sinceVersion = KOTLIN_2_4, issue = "KT-82128"),
-    AllowInterfaceNestedClassesInJsExport(sinceVersion = KOTLIN_2_4, issue = "KT-84332"),
-    NativeTestProcessorBeforeSerialization(KOTLIN_2_4, "KT-83807"),
+    WrapContinuationForTailCallFunctions(KOTLIN_2_4, sinceApiVersion = ApiVersion.KOTLIN_2_4, "KT-74051"),
 
     // 2.5
 
@@ -508,9 +504,6 @@ enum class LanguageFeature(
     ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases(sinceVersion = KOTLIN_2_5, "KTLC-288"),
     ForbidExternalEnumEntriesAndPrimaryConstructorProperties(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-389"),
     ProperSupportOfInnerClassesInCallableReferenceLHS(sinceVersion = KOTLIN_2_5, "KTLC-388"),
-    ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-358"),
-    ForbidUselessTypeArgumentsIn25(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-390"),
-    WrapContinuationForTailCallFunctions(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, "KT-74051"),
 
     // End of 2.* language features --------------------------------------------------
 
@@ -555,7 +548,8 @@ enum class LanguageFeature(
     // NB: Currently, leads to regression KT-82132
     DisableSimplificationOfFlexibleUpperConstraintWithDnnLowerBound(sinceVersion = null, "KT-52283"),
 
-    PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621"), // TODO: consider dropping in 2.5 timeframe (KT-84664)
+    DontMakeExplicitJavaTypeArgumentsFlexible(sinceVersion = null, "KTLC-284"),
+    PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621"),
     DiscriminateSuspendInOverloadResolution(sinceVersion = null, "KT-23610"), // Postponed because of KT-82869
 
     // Experimental features
@@ -566,11 +560,12 @@ enum class LanguageFeature(
     MultiPlatformProjects(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ProhibitComparisonOfIncompatibleClasses(sinceVersion = null, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
     ProhibitAllMultipleDefaultsInheritedFromSupertypes(sinceVersion = null, enabledInProgressiveMode = false, NO_ISSUE_SPECIFIED),
-    ExplicitBackingFields(sinceVersion = null, issue = "KT-14663"),
+    ExplicitBackingFields(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-14663"),
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED),
-    ExplicitContextArguments(sinceVersion = null, issue = "KT-81684"),
-    JvmInlineMultiFieldValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
+    ContextParameters(sinceVersion = null, "KT-72222"),
+    ExplicitContextArguments(sinceVersion = null, issue = "KT-81684", testOnly = true),
+    ValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     PropertyParamAnnotationDefaultTargetMode(sinceVersion = null, "KT-73255"),
     AnnotationAllUseSiteTarget(sinceVersion = null, "KT-73256"),
@@ -585,8 +580,8 @@ enum class LanguageFeature(
     JsExposedNotExportedSuperInterfaceApiByExportedOne(sinceVersion = null, issue = "KT-83009"),
     JsExportInterfacesInImplementableWay(sinceVersion = null, issue = "KT-65802"),
 
-    // K1 support only; we keep it because we might want to eventually support it in K2 as well
-    UnitConversionsOnArbitraryExpressions(sinceVersion = null, "KT-84393"),
+    // K1 support only. We keep it, as we may want to support it also in K2
+    UnitConversionsOnArbitraryExpressions(sinceVersion = null, NO_ISSUE_SPECIFIED),
 
     JsAllowImplementingFunctionInterface(sinceVersion = null, NO_ISSUE_SPECIFIED),
     CustomEqualsInValueClasses(sinceVersion = null, "KT-24874"),
@@ -600,7 +595,7 @@ enum class LanguageFeature(
     DisableCheckingChangedProgressionsResolve(sinceVersion = null, "KT-49276"),
 
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, "KT-64358"),
-    CollectionLiterals(sinceVersion = null, issue = "KT-80489"),
+    CollectionLiterals(sinceVersion = null, testOnly = true, issue = "KT-80489"),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
     IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-79717"),
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742

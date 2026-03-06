@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 import kotlinx.cinterop.*
 
 fun foo(x: Int, vararg s: String): Int {
@@ -9,5 +9,5 @@ fun foo(x: Int, vararg s: String): Int {
 
 @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 fun bar() {
-    staticCFunction(<!VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED!>::foo<!>)
+    staticCFunction(::foo)
 }

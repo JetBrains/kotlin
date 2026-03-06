@@ -447,7 +447,7 @@ val distMaven = distTask<Sync>("distMaven") {
     from(distMavenContents)
 }
 
-val dist = distTask<Copy>("dist") {
+distTask<Copy>("dist") {
     destinationDir = File(distDir)
 
     dependsOn(distKotlinc)
@@ -470,9 +470,4 @@ inline fun <reified T : AbstractCopyTask> Project.distTask(
     rename(quote("-$version"), "")
     rename(quote("-$bootstrapKotlinVersion"), "")
     block()
-}
-
-artifacts {
-    val distElements = configurations.create("distElements")
-    add(distElements.name, dist)
 }

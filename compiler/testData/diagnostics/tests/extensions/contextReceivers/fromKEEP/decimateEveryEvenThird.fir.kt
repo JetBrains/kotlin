@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 // WITH_STDLIB
 
 fun List<Int>.decimateEveryEvenThird() = <!CANNOT_INFER_PARAMETER_TYPE!>sequence<!> {

@@ -241,11 +241,10 @@ enum class JunitTag {
     AndroidKGP,
     OtherKGP,
     SwiftExportKGP,
-    SwiftPMImportKGP
 }
 
 if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
-    val junitTags = JunitTag.values().filter { it !in setOf(JunitTag.SwiftExportKGP, JunitTag.SwiftPMImportKGP) }.map { it.name }
+    val junitTags = JunitTag.values().filter { it != JunitTag.SwiftExportKGP }.map { it.name }
     val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
 
     junitTags.forEach { junitTag ->
@@ -309,10 +308,6 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.SwiftExportKGP -> junitTag.taskConfiguration(
             "Run Swift Export Kotlin Gradle plugin tests",
             "kgpSwiftExportTests",
-        )
-        JunitTag.SwiftPMImportKGP -> junitTag.taskConfiguration(
-            "Run SwiftPM import Kotlin Gradle plugin tests",
-            "kgpSwiftPMImportTests",
         )
         JunitTag.JsKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JS part of Gradle plugin",

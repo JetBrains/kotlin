@@ -17,7 +17,6 @@ internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(crossinlin
 
 @TypedIntrinsic(IntrinsicType.GET_CONTINUATION)
 @PublishedApi
-@UsedFromCompilerGeneratedCode
 internal external fun <T> getContinuation(): Continuation<T>
 
 @kotlin.internal.InlineOnly
@@ -28,16 +27,13 @@ internal inline suspend fun getCoroutineContext(): CoroutineContext =
 
 @TypedIntrinsic(IntrinsicType.RETURN_IF_SUSPENDED)
 @PublishedApi
-@UsedFromCompilerGeneratedCode
 internal external suspend fun <T> returnIfSuspended(@Suppress("UNUSED_PARAMETER") argument: Any?): T
 
 @TypedIntrinsic(IntrinsicType.SAVE_COROUTINE_STATE)
 @PublishedApi
-@UsedFromCompilerGeneratedCode
 internal external fun saveCoroutineState()
 
 @TypedIntrinsic(IntrinsicType.RESTORE_COROUTINE_STATE)
 @PublishedApi
-@UsedFromCompilerGeneratedCode
 internal external fun restoreCoroutineState()
 

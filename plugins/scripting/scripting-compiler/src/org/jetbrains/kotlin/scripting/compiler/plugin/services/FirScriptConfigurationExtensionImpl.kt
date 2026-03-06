@@ -174,7 +174,7 @@ class FirScriptConfiguratorExtensionImpl(
         }
 
         configuration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
-            knownAnnotationsForSamWithReceiver.add(it.typeName)
+            _knownAnnotationsForSamWithReceiver.add(it.typeName)
         }
 
         configuration[ScriptCompilationConfiguration.resultField]?.takeIf { it.isNotBlank() }?.let { resultFieldName ->
@@ -251,8 +251,10 @@ class FirScriptConfiguratorExtensionImpl(
         }
     }
 
+    private val _knownAnnotationsForSamWithReceiver = hashSetOf<String>()
+
     internal val knownAnnotationsForSamWithReceiver: Set<String>
-        field = hashSetOf<String>()
+        get() = _knownAnnotationsForSamWithReceiver
 
     companion object {
         fun getFactory(): Factory {

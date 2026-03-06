@@ -122,7 +122,6 @@ class NonLinkingIrInlineFunctionDeserializer(
             }
         )
 
-        private val fileEntryDeserializer = FileEntryDeserializer(irInterner)
         private val declarationDeserializer = IrDeclarationDeserializer(
             builtIns = irBuiltIns,
             symbolTable = detachedSymbolTable,
@@ -138,7 +137,6 @@ class NonLinkingIrInlineFunctionDeserializer(
             needToDeserializeFakeOverrides = { false },
             specialProcessingForMismatchedSymbolKind = null,
             irInterner = irInterner,
-            fileEntryDeserializer = fileEntryDeserializer,
         )
 
         /**
@@ -159,7 +157,8 @@ class NonLinkingIrInlineFunctionDeserializer(
                 val functionProto = fileReader.declaration(idSigIndex)
                 val function = declarationDeserializer.deserializeDeclaration(functionProto) as IrSimpleFunction
 
-                val fileEntry = fileEntryDeserializer.fileEntry(fileReader, functionProto.irFunction.preparedInlineFunctionFileEntryId)
+                val fileEntryProto = fileReader.fileEntry(functionProto.irFunction.preparedInlineFunctionFileEntryId)!!
+                val fileEntry = fileReader.deserializeFileEntry(fileEntryProto, irInterner)
                 val file = IrFileImpl(
                     symbol = IrFileSymbolImpl(with(originalFunctionPackage.symbol) { runIf(hasDescriptor) { descriptor } }),
                     packageFqName = originalFunctionPackage.packageFqName,

@@ -1,7 +1,6 @@
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check")
 }
 
 dependencies {
@@ -54,8 +53,7 @@ projectTests {
             taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
             jUnitMode = JUnitMode.JUnit5,
             maxMetaspaceSizeMb = 1024,
-            skipInLocalBuild = false,
-            defineJDKEnvVariables = listOf(jdk, JdkMajorVersion.JDK_11_0)
+            skipInLocalBuild = false
         ) {
             val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
             filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")

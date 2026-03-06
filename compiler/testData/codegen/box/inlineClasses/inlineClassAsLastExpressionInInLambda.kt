@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +ValueClasses
 // NO_CHECK_LAMBDA_INLINING
 
 // FILE: lib.kt

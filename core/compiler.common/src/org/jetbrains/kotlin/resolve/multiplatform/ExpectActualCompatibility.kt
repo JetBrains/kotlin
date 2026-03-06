@@ -30,8 +30,6 @@ sealed class ExpectActualMatchingCompatibility {
     object ContextParameterTypes : Mismatch("context parameter types are different")
     object FunctionTypeParameterUpperBounds : Mismatch(TYPE_PARAMETER_UPPER_BOUNDS)
     object MatchedSuccessfully : ExpectActualMatchingCompatibility()
-
-    override fun toString(): String = this::class.simpleName.toString()
 }
 
 /**

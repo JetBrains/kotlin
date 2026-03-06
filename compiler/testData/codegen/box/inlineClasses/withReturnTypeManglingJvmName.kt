@@ -1,4 +1,4 @@
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +ValueClasses
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 // WORKS_WHEN_VALUE_CLASS

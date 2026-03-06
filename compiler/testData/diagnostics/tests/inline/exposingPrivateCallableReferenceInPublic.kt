@@ -11,15 +11,6 @@ private class PC {
     val p = 1
 }
 
-class A private constructor() {
-    public inline fun publicInlineFunction() = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>A<!>
-}
-
-private fun Int.privateExtensionFun() {}
-
-private val String.privateVal: String
-    get() = this
-
 inline fun test() {
     ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>f<!>
     ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>p<!>
@@ -36,9 +27,6 @@ inline fun test() {
             ::p
         }
     }
-
-    Int::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateExtensionFun<!>
-    String::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateVal<!>
 }
 
 class C {

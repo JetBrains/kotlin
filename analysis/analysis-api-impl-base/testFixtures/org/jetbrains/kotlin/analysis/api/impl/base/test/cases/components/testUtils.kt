@@ -261,18 +261,6 @@ internal fun KaCall.symbols(): List<KaSymbol> = when (this) {
         operationCall.symbol,
     )
 
-    is KaForLoopCall -> listOf(
-        iteratorCall.symbol,
-        hasNextCall.symbol,
-        nextCall.symbol,
-    )
-
-    is KaDelegatedPropertyCall -> listOfNotNull(
-        valueGetterCall.symbol,
-        valueSetterCall?.symbol,
-        provideDelegateCall?.symbol,
-    )
-
     is KaCallableMemberCall<*, *> -> listOf(symbol)
 }
 
@@ -384,7 +372,7 @@ internal fun assertStableResult(
     }
 
     val symbols = sortedSymbols(symbolResolutionAttempt!!.symbols)
-    val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.flatMap { it.calls }.map { (it as KaCallableMemberCall<*, *>).symbol })
+    val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.map { (it as KaCallableMemberCall<*, *>).symbol })
     assertions.assertEquals(expected = symbolsFromCall, actual = symbols)
 }
 

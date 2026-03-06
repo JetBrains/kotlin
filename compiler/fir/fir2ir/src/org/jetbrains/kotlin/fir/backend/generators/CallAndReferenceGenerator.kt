@@ -1035,7 +1035,6 @@ class CallAndReferenceGenerator(
                 name = symbol.classId.shortClassName
                 resolvedSymbol = constructorSymbol
             }
-            argumentMapping = this@toAnnotationCall.argumentMapping
 
             /**
              * This is not right, but it doesn't make sense as [FirAnnotationCall.containingDeclarationSymbol] uses only in FIR
@@ -1570,15 +1569,7 @@ class CallAndReferenceGenerator(
                     } else {
                         receiverInfo.contextArgumentOffset() + contextParameters.indexOf(parameter)
                     }
-                    val argToConvert = when {
-                        visitor.annotationMode && call is FirAnnotation -> call.argumentMapping.mapping[parameter.name]
-                        else -> argument
-                    }
-                    val irExpression = argToConvert?.let { convertArgument(it, parameter, substitutor) }
-                        ?: IrErrorExpressionImpl(
-                            startOffset, endOffset, type,
-                            "No evaluated argument found for parameter `${parameter.name}` in ${call.render()}"
-                        )
+                    val irExpression = convertArgument(argument, parameter, substitutor)
                     add(ArgumentInfo(parameter, irExpression, parameterIndex))
                 }
             }

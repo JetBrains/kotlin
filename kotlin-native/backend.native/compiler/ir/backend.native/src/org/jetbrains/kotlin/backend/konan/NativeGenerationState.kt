@@ -43,7 +43,7 @@ internal interface BitcodePostProcessingContext : NativeBackendPhaseContext, Llv
 }
 
 internal class BitcodePostProcessingContextImpl(
-        config: NativeSecondStageCompilationConfig,
+        config: KonanConfig,
         override val llvmModule: LLVMModuleRef,
         override val llvmContext: LLVMContextRef
 ) : BitcodePostProcessingContext, BasicNativeBackendPhaseContext(config) {
@@ -51,16 +51,16 @@ internal class BitcodePostProcessingContextImpl(
 }
 
 internal class NativeGenerationState(
-        config: NativeSecondStageCompilationConfig,
+    config: KonanConfig,
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
-        val context: Context,
-        val cacheDeserializationStrategy: CacheDeserializationStrategy?,
-        val dependenciesTracker: DependenciesTracker,
-        val llvmModuleSpecification: LlvmModuleSpecification,
-        val outputFiles: OutputFiles,
-        val llvmModuleName: String,
-        override val performanceManager: PerformanceManager?,
+    val context: Context,
+    val cacheDeserializationStrategy: CacheDeserializationStrategy?,
+    val dependenciesTracker: DependenciesTracker,
+    val llvmModuleSpecification: LlvmModuleSpecification,
+    val outputFiles: OutputFiles,
+    val llvmModuleName: String,
+    override val performanceManager: PerformanceManager?,
 ) : BasicNativeBackendPhaseContext(config), BackendContextHolder, LlvmIrHolder, BitcodePostProcessingContext {
     val outputFile = outputFiles.mainFileName
 

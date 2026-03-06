@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_REFLECT
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +ValueClasses
 // FILE: box.kt
 
 import kotlin.test.assertTrue

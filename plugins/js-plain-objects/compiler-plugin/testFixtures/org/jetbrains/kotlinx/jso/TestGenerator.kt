@@ -10,9 +10,11 @@ import org.jetbrains.kotlinx.jspo.runners.AbstractJsPlainObjectsBoxTest
 import org.jetbrains.kotlinx.jspo.runners.AbstractFirJsPlainObjectsPluginDiagnosticTest
 
 fun main(args: Array<String>) {
-    val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup(testsRoot, "plugins/js-plain-objects/compiler-plugin/testData") {
+        testGroup(
+            "plugins/js-plain-objects/compiler-plugin/tests-gen",
+            "plugins/js-plain-objects/compiler-plugin/testData"
+        ) {
             // ------------------------------- diagnostics -------------------------------
             testClass<AbstractFirJsPlainObjectsPluginDiagnosticTest>() {
                 model("diagnostics")

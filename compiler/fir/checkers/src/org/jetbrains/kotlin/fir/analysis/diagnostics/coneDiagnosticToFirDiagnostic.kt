@@ -167,7 +167,6 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
 
             // see EagerResolveOfCallableReferences
             is UnsuccessfulCallableReferenceArgument -> null
-            is UnsuccessfulCollectionLiteralArgument -> null
 
             is MultipleContextReceiversApplicableForExtensionReceivers ->
                 FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.createOn(qualifiedAccessSource ?: source, session)
@@ -579,6 +578,8 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConePlaceholderProjectionInQualifierResolution -> FirErrors.PLACEHOLDER_PROJECTION_IN_QUALIFIER.createOn(source, session)
     is ConeWrongNumberOfTypeArgumentsError ->
         FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(this.source, this.desiredCount, this.symbol, session)
+    is ConeTypeArgumentsNotAllowedOnPackageError ->
+        FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(this.source, "for packages", session)
     is ConeTypeArgumentsForOuterClassWhenNestedReferencedError ->
         FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED.createOn(this.source, session)
     is ConeNestedClassAccessedViaInstanceReference ->
@@ -656,7 +657,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeDynamicUnsupported -> FirErrors.UNSUPPORTED.createOn(source, FirDynamicUnsupportedChecker.MESSAGE, session)
     is ConeContextParameterWithDefaultValue -> FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT.createOn(source, session)
     is ConeCyclicTypeBound -> null // reported in FirCyclicTypeBoundsChecker
-    is ConeCollectionLiteralAmbiguity -> FirErrors.AMBIGUOUS_COLLECTION_LITERAL.createOn(source, candidatesWithOf, session)
+    is ConeUnsupportedCollectionLiteralType -> FirErrors.UNSUPPORTED_COLLECTION_LITERAL_TYPE.createOn(source, session)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 

@@ -9,17 +9,21 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import java.io.File
 
 class ExpectActualTrackerImpl : ExpectActualTracker {
+    private val expectToActual = hashMapOf<File, MutableSet<File>>()
+
     val expectToActualMap: Map<File, Set<File>>
-        field = hashMapOf<File, MutableSet<File>>()
+        get() = expectToActual
+
+    private val expectsOfLenientStubs = hashSetOf<File>()
 
     val expectsOfLenientStubsSet: Set<File>
-        field = hashSetOf<File>()
+        get() = expectsOfLenientStubs
 
     override fun report(expectedFile: File, actualFile: File) {
-        expectToActualMap.getOrPut(expectedFile) { hashSetOf() }.add(actualFile)
+        expectToActual.getOrPut(expectedFile) { hashSetOf() }.add(actualFile)
     }
 
     override fun reportExpectOfLenientStub(expectedFile: File) {
-        expectsOfLenientStubsSet.add(expectedFile)
+        expectsOfLenientStubs.add(expectedFile)
     }
 }

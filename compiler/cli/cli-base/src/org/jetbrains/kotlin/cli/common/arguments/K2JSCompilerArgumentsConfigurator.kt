@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.MODULE_ES
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -15,27 +17,28 @@ import org.jetbrains.kotlin.config.LanguageVersion
 class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfigurator() {
     override fun configureAnalysisFlags(
         arguments: CommonCompilerArguments,
-        reporter: Reporter,
+        collector: MessageCollector,
         languageVersion: LanguageVersion,
     ): MutableMap<AnalysisFlag<*>, Any> = with(arguments) {
         require(this is K2JSCompilerArguments)
         if (irPerFile && (moduleKind != MODULE_ES && target != ES_2015)) {
-            reporter.reportError(
+            collector.report(
+                CompilerMessageSeverity.ERROR,
                 "Per-file compilation can't be used with any `moduleKind` except `es` (ECMAScript Modules)"
             )
         }
 
-        super.configureAnalysisFlags(arguments, reporter, languageVersion).apply {
+        super.configureAnalysisFlags(arguments, collector, languageVersion).apply {
             putAnalysisFlag(allowFullyQualifiedNameInKClass, wasm && wasmKClassFqn) //Only enabled WASM BE supports this flag
         }
     }
 
     override fun configureLanguageFeatures(
         arguments: CommonCompilerArguments,
-        reporter: Reporter,
+        collector: MessageCollector,
     ): MutableMap<LanguageFeature, LanguageFeature.State> = with(arguments) {
         require(this is K2JSCompilerArguments)
-        val result = super.configureLanguageFeatures(arguments, reporter)
+        val result = super.configureLanguageFeatures(arguments, collector)
         result.configureJsLanguageFeatures(this)
         // TODO: Should be removed (see KT-80182)
         result[LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface] = LanguageFeature.State.ENABLED

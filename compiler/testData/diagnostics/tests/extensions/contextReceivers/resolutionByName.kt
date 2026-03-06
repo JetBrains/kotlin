@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 class Foo
 
 context(Foo, label@Int)

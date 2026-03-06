@@ -188,7 +188,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             return
         }
 
-        if (LanguageFeature.JvmInlineMultiFieldValueClasses.isEnabled()) {
+        if (LanguageFeature.ValueClasses.isEnabled()) {
             if (primaryConstructorParametersByName.isEmpty()) {
                 reporter.reportOn(primaryConstructor.source, FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR)
                 return

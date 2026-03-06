@@ -11,7 +11,6 @@ import org.opentest4j.AssertionFailedError
 import org.opentest4j.FileInfo
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.*
 
 /**
@@ -21,27 +20,6 @@ import kotlin.io.path.*
  * enforcing the golden-only auto-generation constraint.
  */
 object ManagedTestAssertions {
-
-    /**
-     * Thread-safe set of test data paths (absolute path strings) that were updated during the current run.
-     * Used by incremental mode to determine which variant tests to run.
-     */
-    private val updatedTestDataPaths: MutableSet<String> = ConcurrentHashMap.newKeySet()
-
-    /**
-     * When true, file writes in UPDATE mode will record the test data path in [updatedTestDataPaths].
-     */
-    @Volatile
-    internal var trackUpdatedPaths: Boolean = false
-
-    /**
-     * Returns the set of updated test data paths collected so far and clears the internal set.
-     */
-    internal fun drainUpdatedTestDataPaths(): Set<String> {
-        val snapshot = updatedTestDataPaths.toSet()
-        updatedTestDataPaths.clear()
-        return snapshot
-    }
 
     /**
      * Compares actual content with the expected test output file.
@@ -91,7 +69,6 @@ object ManagedTestAssertions {
                 normalizedActual = normalizedActual,
                 mode = mode,
                 variantChain = variantChain,
-                testDataPath = testDataPath,
             )
 
             return
@@ -113,7 +90,6 @@ object ManagedTestAssertions {
             normalizedActual = normalizedActual,
             expectedContent = expectedContent,
             mode = mode,
-            testDataPath = testDataPath,
         )
     }
 
@@ -123,7 +99,6 @@ object ManagedTestAssertions {
         normalizedActual: String,
         mode: TestDataManagerMode,
         variantChain: TestVariantChain,
-        testDataPath: Path,
     ) {
         val writeTargetFile = testDataFiles.writeTargetFile
 
@@ -132,7 +107,6 @@ object ManagedTestAssertions {
                 TestDataManagerMode.UPDATE -> {
                     writeTargetFile.createParentDirectories()
                     writeTargetFile.writeText(normalizedActual)
-                    if (trackUpdatedPaths) updatedTestDataPaths.add(testDataPath.toString())
                 }
 
                 TestDataManagerMode.CHECK -> {
@@ -205,7 +179,6 @@ object ManagedTestAssertions {
         normalizedActual: String,
         expectedContent: String,
         mode: TestDataManagerMode,
-        testDataPath: Path,
     ) {
         val writeTargetFile = testDataFiles.writeTargetFile
 
@@ -213,7 +186,6 @@ object ManagedTestAssertions {
             TestDataManagerMode.UPDATE -> {
                 writeTargetFile.createParentDirectories()
                 writeTargetFile.writeText(normalizedActual)
-                if (trackUpdatedPaths) updatedTestDataPaths.add(testDataPath.toString())
             }
             TestDataManagerMode.CHECK -> {
                 throw AssertionFailedError(

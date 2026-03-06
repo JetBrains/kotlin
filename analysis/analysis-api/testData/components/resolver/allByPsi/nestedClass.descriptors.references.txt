@@ -36,6 +36,5 @@ KtNameReferenceExpression(79,80): 'x'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

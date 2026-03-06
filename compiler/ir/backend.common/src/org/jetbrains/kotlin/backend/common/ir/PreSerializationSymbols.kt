@@ -8,27 +8,22 @@ package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
-
-context(holder: SymbolFinderHolder)
-fun findSharedVariableBoxClass(primitiveType: PrimitiveType?): PreSerializationKlibSymbols.SharedVariableBoxClassInfo {
-    val suffix = primitiveType?.typeName?.asString() ?: ""
-    val classId = ClassId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("SharedVariableBox$suffix"))
-    val boxClass = classId.classSymbol()
-    return PreSerializationKlibSymbols.SharedVariableBoxClassInfo(boxClass)
-}
 
 /**
  * This class is a container for symbols that the compiler uses on the backend.
@@ -73,6 +68,113 @@ fun findSharedVariableBoxClass(primitiveType: PrimitiveType?): PreSerializationK
  *  Avoid using calls like `functionSymbols().single()`. While this works, it is quite hard to understand that is the problem that something
  *  goes wrong.
  */
+abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
+    private val symbolFinder = irBuiltIns.symbolFinder
+
+    protected fun findSharedVariableBoxClass(primitiveType: PrimitiveType?): PreSerializationKlibSymbols.SharedVariableBoxClassInfo {
+        val suffix = primitiveType?.typeName?.asString() ?: ""
+        val classId = ClassId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("SharedVariableBox$suffix"))
+        val boxClass = classId.classSymbol()
+        return PreSerializationKlibSymbols.SharedVariableBoxClassInfo(boxClass)
+    }
+
+    protected fun ClassId.classSymbolOrNull(): IrClassSymbol? = symbolFinder.findClass(this)
+    protected fun ClassId.classSymbol(): IrClassSymbol = classSymbolOrNull() ?: error("Class $this is not found")
+    protected fun CallableId.propertySymbols(): List<IrPropertySymbol> = symbolFinder.findProperties(this).toList()
+    protected fun CallableId.functionSymbols(): List<IrSimpleFunctionSymbol> = symbolFinder.findFunctions(this).toList()
+    protected fun ClassId.primaryConstructorSymbol(): Lazy<IrConstructorSymbol> {
+        val clazz = classSymbol()
+        return lazy { (clazz.owner.primaryConstructor ?: error("Class ${this} has no primary constructor")).symbol }
+    }
+
+    protected fun ClassId.noParametersConstructorSymbol(): Lazy<IrConstructorSymbol> {
+        val clazz = classSymbol()
+        return lazy { (clazz.owner.constructors.singleOrNull { it.parameters.isEmpty() } ?: error("Class ${this} has no constructor without parameters")).symbol }
+    }
+
+    protected fun ClassId.defaultType(): Lazy<IrType> {
+        val clazz = classSymbol()
+        return lazy { clazz.defaultType }
+    }
+
+    protected fun CallableId.propertySymbol(): IrPropertySymbol {
+        val elements = propertySymbols()
+        require(elements.isNotEmpty()) { "No property $this found" }
+        require(elements.size == 1) {
+            "Several properties $this found:\n${elements.joinToString("\n")}"
+        }
+        return elements.single()
+    }
+
+    protected fun CallableId.functionSymbolOrNull(): IrSimpleFunctionSymbol? {
+        val elements = functionSymbols()
+        require(elements.size <= 1) {
+            "Several functions $this found:\n${elements.joinToString("\n")}\nTry using functionSymbol(condition) instead to filter" }
+        return elements.singleOrNull()
+    }
+
+    protected fun CallableId.functionSymbol(): IrSimpleFunctionSymbol {
+        val elements = functionSymbols()
+        require(elements.isNotEmpty()) { "No function $this found" }
+        require(elements.size == 1) {
+            "Several functions $this found:\n${elements.joinToString("\n")}\nTry using functionSymbol(condition) instead to filter" }
+        return elements.single()
+    }
+
+    protected inline fun CallableId.functionSymbol(crossinline condition: (IrSimpleFunction) -> Boolean): Lazy<IrSimpleFunctionSymbol> {
+        val unfilteredElements = functionSymbols()
+        return lazy {
+            val elements = unfilteredElements.filter { condition(it.owner) }
+            require(elements.isNotEmpty()) { "No function $this found corresponding given condition" }
+            require(elements.size == 1) { "Several functions $this found corresponding given condition:\n${elements.joinToString("\n")}" }
+            elements.single()
+        }
+    }
+
+    protected inline fun <K> CallableId.functionSymbolAssociatedBy(
+        crossinline condition: (IrSimpleFunction) -> Boolean = { true },
+        crossinline getKey: (IrSimpleFunction) -> K
+    ): Lazy<Map<K, IrSimpleFunctionSymbol>> {
+        val unfilteredElements = functionSymbols()
+        return lazy {
+            val elements = unfilteredElements.filter { condition(it.owner) }
+            elements.associateBy { getKey(it.owner) }
+        }
+    }
+
+    protected fun CallableId.getterSymbol(): Lazy<IrSimpleFunctionSymbol> {
+        val elements = propertySymbols()
+        require(elements.isNotEmpty()) { "No properties $this found" }
+        require(elements.size == 1) { "Several properties $this found:\n${elements.joinToString("\n")}" }
+        return lazy {
+            elements.single().owner.getter!!.symbol
+        }
+    }
+
+    protected fun CallableId.setterSymbol(): Lazy<IrSimpleFunctionSymbol> {
+        val elements = propertySymbols()
+        require(elements.isNotEmpty()) { "No properties $this found" }
+        require(elements.size == 1) { "Several properties $this found:\n${elements.joinToString("\n")}" }
+        return lazy {
+            elements.single().owner.setter!!.symbol
+        }
+    }
+
+    protected fun CallableId.getterSymbol(extensionReceiverClass: IrClassSymbol?): Lazy<IrSimpleFunctionSymbol> {
+        val unfilteredElements = propertySymbols()
+        require(unfilteredElements.isNotEmpty()) { "No properties $this found" }
+        return lazy {
+            val elements = unfilteredElements.filter { it.owner.getter?.extensionReceiverClass == extensionReceiverClass }
+            require(elements.isNotEmpty()) { "No properties $this found with ${extensionReceiverClass} receiver" }
+            require(elements.size == 1) { "Several properties $this found with ${extensionReceiverClass} receiver:\n${elements.joinToString("\n")}" }
+            elements.single().owner.getter!!.symbol
+        }
+    }
+
+    protected val IrFunction.extensionReceiverType: IrType? get() = parameters.singleOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type
+    protected val IrFunction.extensionReceiverClass: IrClassSymbol? get() = extensionReceiverType?.classOrNull
+}
+
 interface PreSerializationSymbols {
     val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
     val throwUnsupportedOperationException: IrSimpleFunctionSymbol
@@ -98,7 +200,7 @@ interface PreSerializationSymbols {
         }
     }
 
-    abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationSymbols, SymbolFinderHolder by irBuiltIns
+    abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationSymbols, BaseSymbolsImpl(irBuiltIns)
 }
 
 interface PreSerializationKlibSymbols : PreSerializationSymbols {
@@ -213,23 +315,12 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
     val asserts: Iterable<IrSimpleFunctionSymbol>
     val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol
 
-    val testInitializer: IrClassSymbol
-    val testsProcessed: IrClassSymbol
+    val testInitializer: IrClassSymbol? // KT-83807 Restore non-nullability of symbols not available in 2.3.0 stdlib
+    val testsProcessed: IrClassSymbol? // KT-83807 Restore non-nullability of symbols not available in 2.3.0 stdlib
 
     val topLevelSuite: IrClassSymbol
     val baseClassSuite: IrClassSymbol
     val testFunctionKind: IrClassSymbol
-
-    val signedIntegerClasses: Set<IrClassSymbol>
-    val unsignedIntegerClasses: Set<IrClassSymbol>
-    val allIntegerClasses: Set<IrClassSymbol>
-    val nativePointed: IrClassSymbol
-    val interopCValue: IrClassSymbol
-    val interopCPointer: IrClassSymbol
-    val interopCValuesRef: IrClassSymbol
-    val interopCEnumVar: IrClassSymbol
-    val immutableBlobOf: IrSimpleFunctionSymbol
-    val createCleaner: IrSimpleFunctionSymbol
 
     open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationNativeSymbols, PreSerializationKlibSymbols.Impl(irBuiltIns) {
         override val asserts: Iterable<IrSimpleFunctionSymbol> = CallableIds.asserts.functionSymbols()
@@ -237,30 +328,12 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
         override val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol =
             CallableIds.isAssertionArgumentEvaluationEnabled.functionSymbol()
 
-        override val testInitializer: IrClassSymbol by ClassIds.testInitializer.lazyClassSymbol(
-            LanguageFeature.NativeTestProcessorBeforeSerialization
-        )
-
-        override val testsProcessed: IrClassSymbol by ClassIds.testsProcessed.lazyClassSymbol(
-            LanguageFeature.NativeTestProcessorBeforeSerialization
-        )
+        override val testInitializer = ClassIds.testInitializer.classSymbolOrNull()
+        override val testsProcessed = ClassIds.testsProcessed.classSymbolOrNull()
 
         override val topLevelSuite = ClassIds.topLevelSuite.classSymbol()
         override val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
         override val testFunctionKind = ClassIds.testFunctionKind.classSymbol()
-
-        override val signedIntegerClasses = setOf(irBuiltIns.byteClass, irBuiltIns.shortClass, irBuiltIns.intClass, irBuiltIns.longClass)
-        override val unsignedIntegerClasses =
-            setOf(irBuiltIns.ubyteClass!!, irBuiltIns.ushortClass!!, irBuiltIns.uintClass!!, irBuiltIns.ulongClass!!)
-        override val allIntegerClasses = signedIntegerClasses + unsignedIntegerClasses
-
-        override val nativePointed = ClassIds.nativePointed.classSymbol()
-        override val interopCValue = ClassIds.interopCValue.classSymbol()
-        override val interopCPointer = ClassIds.interopCPointer.classSymbol()
-        override val interopCValuesRef = ClassIds.interopCValuesRef.classSymbol()
-        override val interopCEnumVar = ClassIds.interopCEnumVar.classSymbol()
-        override val immutableBlobOf = CallableIds.immutableBlobOf.functionSymbol()
-        override val createCleaner = CallableIds.createCleaner.functionSymbol()
 
         override val coroutineContextGetter: IrSimpleFunctionSymbol by CallableIds.coroutineContext.getterSymbol()
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol =
@@ -270,7 +343,6 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
         companion object {
             private const val COROUTINE_SUSPEND_OR_RETURN_NAME = "suspendCoroutineUninterceptedOrReturn"
             private val kotlinNativeInternalPackageName: FqName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
-            private val kotlinNativePackageName: FqName = FqName.fromSegments(listOf("kotlin", "native"))
 
             private object CallableIds {
                 // Internal functions
@@ -288,12 +360,6 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
                     get() = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(this))
                 val asserts: CallableId = "assert".builtInsCallableId
                 val isAssertionArgumentEvaluationEnabled: CallableId = "isAssertionArgumentEvaluationEnabled".builtInsCallableId
-
-                private val String.nativeCallableId get() = CallableId(kotlinNativePackageName, Name.identifier(this))
-
-                val immutableBlobOf = "immutableBlobOf".nativeCallableId
-
-                val createCleaner = CallableId(kotlinNativePackageName.child(Name.identifier("ref")), Name.identifier("createCleaner"))
             }
 
             private object ClassIds {
@@ -306,15 +372,6 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
                 val baseClassSuite = "BaseClassSuite".internalTestClassId
                 val topLevelSuite = "TopLevelSuite".internalTestClassId
                 val testFunctionKind = "TestFunctionKind".internalTestClassId
-
-                private val String.interopClassId
-                    get() = ClassId(NativeStandardInteropNames.cInteropPackage, Name.identifier(this))
-
-                val nativePointed = NativeStandardInteropNames.nativePointed.interopClassId
-                val interopCValue = NativeStandardInteropNames.cValue.interopClassId
-                val interopCValuesRef = NativeStandardInteropNames.cValuesRef.interopClassId
-                val interopCPointer = NativeStandardInteropNames.cPointer.interopClassId
-                val interopCEnumVar = NativeStandardInteropNames.cEnumVar.interopClassId
             }
         }
     }

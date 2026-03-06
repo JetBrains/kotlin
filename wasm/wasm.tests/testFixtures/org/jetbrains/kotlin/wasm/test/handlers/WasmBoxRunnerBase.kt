@@ -16,21 +16,8 @@ import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
 abstract class WasmBoxRunnerBase(
-    testServices: TestServices,
-    executeWithV8Only: Boolean = false,
+    testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
-    private val wasmEngines = if (executeWithV8Only) {
-        // JavaScriptCore may glitch on Linux CI: `libglib-2.0.so.0: file too short`
-        // however this engine can be avoided for some testrunners like klib compatibility tests,
-        // where it's enough to execute an image only on any one of engine, which is the reliable and simple to setup, like V8.
-        listOfNotNull(WasmVM.V8)
-    } else {
-        // KT-82392 [Wasm] Investigate and fix JSC test run on windows
-        val jscOfNotWindows = WasmVM.JavaScriptCore.takeIf {
-            !System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
-        }
-        listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey, jscOfNotWindows)
-    }
 
     protected fun saveAdditionalFilesAndRun(
         outputDir: File,
@@ -50,7 +37,7 @@ abstract class WasmBoxRunnerBase(
 
         val testJs = """
                     ${if (isNoJsTag) "import './tag.mjs'" else ""}
-                    import * as jsModule from './$WASM_BASE_FILE_NAME.mjs'
+                    import * as jsModule from './index.mjs'
                     if (globalThis.console == null) {
                         globalThis.console = {};
                     }
@@ -140,7 +127,12 @@ abstract class WasmBoxRunnerBase(
 
         val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
 
-        return wasmEngines
+        // KT-82392 [Wasm] Investigate and fix JSC test run on windows
+        val jscOfNotWindows = WasmVM.JavaScriptCore.takeIf {
+            !System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
+        }
+
+        return listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey, jscOfNotWindows)
             .mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
@@ -168,7 +160,7 @@ internal fun WasmVM.runWithCaughtExceptions(
         if (debugMode >= DebugMode.DEBUG) {
             println(" ------ Run in $vmName" + if (shortName in failsIn) " (expected to fail)" else "")
         }
-        val str = run(
+        run(
             "./${entryFile}",
             jsFilePaths,
             workingDirectory = workingDirectory,

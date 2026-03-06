@@ -8,6 +8,5 @@ KtNameReferenceExpression(71,73): 'TA'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

@@ -84,9 +84,9 @@ fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDebugTest(t
 
     useConfigurators(
         ::CommonEnvironmentConfigurator,
-        ::JvmForeignAnnotationsConfigurator,
         ::JvmEnvironmentConfigurator,
         ::ScriptingEnvironmentConfigurator,
+        ::JvmForeignAnnotationsConfigurator,
     )
 
     useAdditionalSourceProviders(
@@ -221,8 +221,6 @@ fun TestConfigurationBuilder.configureBlackBoxTestSettings() {
  * Setups additional services and directives used in JVM box tests
  */
 fun TestConfigurationBuilder.baseFirBlackBoxCodegenTestDirectivesConfiguration() {
-    commonCodegenConfiguration()
-
     forTestsMatching("*WithStdLib/*") {
         defaultDirectives {
             +WITH_STDLIB
@@ -270,6 +268,15 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
         defaultDirectives {
             +ENABLE_FOREIGN_ANNOTATIONS
             ForeignAnnotationsDirectives.ANNOTATIONS_PATH with JavaForeignAnnotationType.Annotations
+        }
+    }
+
+    forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
+        configureFirHandlersStep {
+            useHandlers(::FirInterpreterDumpHandler)
+        }
+        configureJvmArtifactsHandlersStep {
+            useHandlers(::JvmIrInterpreterDumpHandler)
         }
     }
 }

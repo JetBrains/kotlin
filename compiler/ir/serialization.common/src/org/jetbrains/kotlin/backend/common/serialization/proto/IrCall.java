@@ -59,14 +59,14 @@ public final class IrCall extends
             break;
           }
           case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.Builder subBuilder = null;
             if (((bitField0_ & 0x00000002) == 0x00000002)) {
-              subBuilder = memberAccessPre240_.toBuilder();
+              subBuilder = memberAccess_.toBuilder();
             }
-            memberAccessPre240_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0.PARSER, extensionRegistry);
+            memberAccess_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.PARSER, extensionRegistry);
             if (subBuilder != null) {
-              subBuilder.mergeFrom(memberAccessPre240_);
-              memberAccessPre240_ = subBuilder.buildPartial();
+              subBuilder.mergeFrom(memberAccess_);
+              memberAccess_ = subBuilder.buildPartial();
             }
             bitField0_ |= 0x00000002;
             break;
@@ -81,35 +81,6 @@ public final class IrCall extends
             originName_ = input.readInt32();
             break;
           }
-          case 42: {
-            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-              argument_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression>();
-              mutable_bitField0_ |= 0x00000004;
-            }
-            argument_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.PARSER, extensionRegistry));
-            break;
-          }
-          case 48: {
-            if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-              typeArgument_ = new java.util.ArrayList<java.lang.Integer>();
-              mutable_bitField0_ |= 0x00000008;
-            }
-            typeArgument_.add(input.readInt32());
-            break;
-          }
-          case 50: {
-            int length = input.readRawVarint32();
-            int limit = input.pushLimit(length);
-            if (!((mutable_bitField0_ & 0x00000008) == 0x00000008) && input.getBytesUntilLimit() > 0) {
-              typeArgument_ = new java.util.ArrayList<java.lang.Integer>();
-              mutable_bitField0_ |= 0x00000008;
-            }
-            while (input.getBytesUntilLimit() > 0) {
-              typeArgument_.add(input.readInt32());
-            }
-            input.popLimit(limit);
-            break;
-          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -118,12 +89,6 @@ public final class IrCall extends
       throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
           e.getMessage()).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-        argument_ = java.util.Collections.unmodifiableList(argument_);
-      }
-      if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-        typeArgument_ = java.util.Collections.unmodifiableList(typeArgument_);
-      }
       try {
         unknownFieldsCodedOutput.flush();
       } catch (java.io.IOException e) {
@@ -165,78 +130,20 @@ public final class IrCall extends
     return symbol_;
   }
 
-  public static final int MEMBER_ACCESS_PRE_2_4_0_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 memberAccessPre240_;
+  public static final int MEMBER_ACCESS_FIELD_NUMBER = 2;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon memberAccess_;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 2;</code>
    */
-  public boolean hasMemberAccessPre240() {
+  public boolean hasMemberAccess() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 getMemberAccessPre240() {
-    return memberAccessPre240_;
+  public org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon getMemberAccess() {
+    return memberAccess_;
   }
-
-  public static final int ARGUMENT_FIELD_NUMBER = 5;
-  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression> argument_;
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-   */
-  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression> getArgumentList() {
-    return argument_;
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-   */
-  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder> 
-      getArgumentOrBuilderList() {
-    return argument_;
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-   */
-  public int getArgumentCount() {
-    return argument_.size();
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getArgument(int index) {
-    return argument_.get(index);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getArgumentOrBuilder(
-      int index) {
-    return argument_.get(index);
-  }
-
-  public static final int TYPE_ARGUMENT_FIELD_NUMBER = 6;
-  private java.util.List<java.lang.Integer> typeArgument_;
-  /**
-   * <code>repeated int32 type_argument = 6 [packed = true];</code>
-   */
-  public java.util.List<java.lang.Integer>
-      getTypeArgumentList() {
-    return typeArgument_;
-  }
-  /**
-   * <code>repeated int32 type_argument = 6 [packed = true];</code>
-   */
-  public int getTypeArgumentCount() {
-    return typeArgument_.size();
-  }
-  /**
-   * <code>repeated int32 type_argument = 6 [packed = true];</code>
-   */
-  public int getTypeArgument(int index) {
-    return typeArgument_.get(index);
-  }
-  private int typeArgumentMemoizedSerializedSize = -1;
 
   public static final int SUPER_FIELD_NUMBER = 3;
   private long super_;
@@ -270,9 +177,7 @@ public final class IrCall extends
 
   private void initFields() {
     symbol_ = 0L;
-    memberAccessPre240_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0.getDefaultInstance();
-    argument_ = java.util.Collections.emptyList();
-    typeArgument_ = java.util.Collections.emptyList();
+    memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
     super_ = 0L;
     originName_ = 0;
   }
@@ -286,17 +191,13 @@ public final class IrCall extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (hasMemberAccessPre240()) {
-      if (!getMemberAccessPre240().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
+    if (!hasMemberAccess()) {
+      memoizedIsInitialized = 0;
+      return false;
     }
-    for (int i = 0; i < getArgumentCount(); i++) {
-      if (!getArgument(i).isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
+    if (!getMemberAccess().isInitialized()) {
+      memoizedIsInitialized = 0;
+      return false;
     }
     memoizedIsInitialized = 1;
     return true;
@@ -309,23 +210,13 @@ public final class IrCall extends
       output.writeInt64(1, symbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeMessage(2, memberAccessPre240_);
+      output.writeMessage(2, memberAccess_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeInt64(3, super_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       output.writeInt32(4, originName_);
-    }
-    for (int i = 0; i < argument_.size(); i++) {
-      output.writeMessage(5, argument_.get(i));
-    }
-    if (getTypeArgumentList().size() > 0) {
-      output.writeRawVarint32(50);
-      output.writeRawVarint32(typeArgumentMemoizedSerializedSize);
-    }
-    for (int i = 0; i < typeArgument_.size(); i++) {
-      output.writeInt32NoTag(typeArgument_.get(i));
     }
     output.writeRawBytes(unknownFields);
   }
@@ -342,7 +233,7 @@ public final class IrCall extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(2, memberAccessPre240_);
+        .computeMessageSize(2, memberAccess_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -351,24 +242,6 @@ public final class IrCall extends
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(4, originName_);
-    }
-    for (int i = 0; i < argument_.size(); i++) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(5, argument_.get(i));
-    }
-    {
-      int dataSize = 0;
-      for (int i = 0; i < typeArgument_.size(); i++) {
-        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32SizeNoTag(typeArgument_.get(i));
-      }
-      size += dataSize;
-      if (!getTypeArgumentList().isEmpty()) {
-        size += 1;
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(dataSize);
-      }
-      typeArgumentMemoizedSerializedSize = dataSize;
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -466,16 +339,12 @@ public final class IrCall extends
       super.clear();
       symbol_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000001);
-      memberAccessPre240_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0.getDefaultInstance();
+      memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
-      argument_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000004);
-      typeArgument_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000008);
       super_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000010);
+      bitField0_ = (bitField0_ & ~0x00000004);
       originName_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
 
@@ -506,22 +375,12 @@ public final class IrCall extends
       if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.memberAccessPre240_ = memberAccessPre240_;
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        argument_ = java.util.Collections.unmodifiableList(argument_);
-        bitField0_ = (bitField0_ & ~0x00000004);
-      }
-      result.argument_ = argument_;
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        typeArgument_ = java.util.Collections.unmodifiableList(typeArgument_);
-        bitField0_ = (bitField0_ & ~0x00000008);
-      }
-      result.typeArgument_ = typeArgument_;
-      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+      result.memberAccess_ = memberAccess_;
+      if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000004;
       }
       result.super_ = super_;
-      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
         to_bitField0_ |= 0x00000008;
       }
       result.originName_ = originName_;
@@ -534,28 +393,8 @@ public final class IrCall extends
       if (other.hasSymbol()) {
         setSymbol(other.getSymbol());
       }
-      if (other.hasMemberAccessPre240()) {
-        mergeMemberAccessPre240(other.getMemberAccessPre240());
-      }
-      if (!other.argument_.isEmpty()) {
-        if (argument_.isEmpty()) {
-          argument_ = other.argument_;
-          bitField0_ = (bitField0_ & ~0x00000004);
-        } else {
-          ensureArgumentIsMutable();
-          argument_.addAll(other.argument_);
-        }
-        
-      }
-      if (!other.typeArgument_.isEmpty()) {
-        if (typeArgument_.isEmpty()) {
-          typeArgument_ = other.typeArgument_;
-          bitField0_ = (bitField0_ & ~0x00000008);
-        } else {
-          ensureTypeArgumentIsMutable();
-          typeArgument_.addAll(other.typeArgument_);
-        }
-        
+      if (other.hasMemberAccess()) {
+        mergeMemberAccess(other.getMemberAccess());
       }
       if (other.hasSuper()) {
         setSuper(other.getSuper());
@@ -573,17 +412,13 @@ public final class IrCall extends
         
         return false;
       }
-      if (hasMemberAccessPre240()) {
-        if (!getMemberAccessPre240().isInitialized()) {
-          
-          return false;
-        }
+      if (!hasMemberAccess()) {
+        
+        return false;
       }
-      for (int i = 0; i < getArgumentCount(); i++) {
-        if (!getArgument(i).isInitialized()) {
-          
-          return false;
-        }
+      if (!getMemberAccess().isInitialized()) {
+        
+        return false;
       }
       return true;
     }
@@ -639,254 +474,63 @@ public final class IrCall extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 memberAccessPre240_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 2;</code>
      */
-    public boolean hasMemberAccessPre240() {
+    public boolean hasMemberAccess() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 getMemberAccessPre240() {
-      return memberAccessPre240_;
+    public org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon getMemberAccess() {
+      return memberAccess_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 2;</code>
      */
-    public Builder setMemberAccessPre240(org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 value) {
+    public Builder setMemberAccess(org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon value) {
       if (value == null) {
         throw new NullPointerException();
       }
-      memberAccessPre240_ = value;
+      memberAccess_ = value;
 
       bitField0_ |= 0x00000002;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 2;</code>
      */
-    public Builder setMemberAccessPre240(
-        org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0.Builder builderForValue) {
-      memberAccessPre240_ = builderForValue.build();
+    public Builder setMemberAccess(
+        org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.Builder builderForValue) {
+      memberAccess_ = builderForValue.build();
 
       bitField0_ |= 0x00000002;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 2;</code>
      */
-    public Builder mergeMemberAccessPre240(org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 value) {
+    public Builder mergeMemberAccess(org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon value) {
       if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          memberAccessPre240_ != org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0.getDefaultInstance()) {
-        memberAccessPre240_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0.newBuilder(memberAccessPre240_).mergeFrom(value).buildPartial();
+          memberAccess_ != org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance()) {
+        memberAccess_ =
+          org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.newBuilder(memberAccess_).mergeFrom(value).buildPartial();
       } else {
-        memberAccessPre240_ = value;
+        memberAccess_ = value;
       }
 
       bitField0_ |= 0x00000002;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 2;</code>
      */
-    public Builder clearMemberAccessPre240() {
-      memberAccessPre240_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0.getDefaultInstance();
+    public Builder clearMemberAccess() {
+      memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000002);
-      return this;
-    }
-
-    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression> argument_ =
-      java.util.Collections.emptyList();
-    private void ensureArgumentIsMutable() {
-      if (!((bitField0_ & 0x00000004) == 0x00000004)) {
-        argument_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression>(argument_);
-        bitField0_ |= 0x00000004;
-       }
-    }
-
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-     */
-    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression> getArgumentList() {
-      return java.util.Collections.unmodifiableList(argument_);
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-     */
-    public int getArgumentCount() {
-      return argument_.size();
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-     */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getArgument(int index) {
-      return argument_.get(index);
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-     */
-    public Builder setArgument(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      ensureArgumentIsMutable();
-      argument_.set(index, value);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-     */
-    public Builder setArgument(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder builderForValue) {
-      ensureArgumentIsMutable();
-      argument_.set(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-     */
-    public Builder addArgument(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      ensureArgumentIsMutable();
-      argument_.add(value);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-     */
-    public Builder addArgument(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      ensureArgumentIsMutable();
-      argument_.add(index, value);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-     */
-    public Builder addArgument(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder builderForValue) {
-      ensureArgumentIsMutable();
-      argument_.add(builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-     */
-    public Builder addArgument(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder builderForValue) {
-      ensureArgumentIsMutable();
-      argument_.add(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-     */
-    public Builder addAllArgument(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression> values) {
-      ensureArgumentIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-          values, argument_);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-     */
-    public Builder clearArgument() {
-      argument_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000004);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 5;</code>
-     */
-    public Builder removeArgument(int index) {
-      ensureArgumentIsMutable();
-      argument_.remove(index);
-
-      return this;
-    }
-
-    private java.util.List<java.lang.Integer> typeArgument_ = java.util.Collections.emptyList();
-    private void ensureTypeArgumentIsMutable() {
-      if (!((bitField0_ & 0x00000008) == 0x00000008)) {
-        typeArgument_ = new java.util.ArrayList<java.lang.Integer>(typeArgument_);
-        bitField0_ |= 0x00000008;
-       }
-    }
-    /**
-     * <code>repeated int32 type_argument = 6 [packed = true];</code>
-     */
-    public java.util.List<java.lang.Integer>
-        getTypeArgumentList() {
-      return java.util.Collections.unmodifiableList(typeArgument_);
-    }
-    /**
-     * <code>repeated int32 type_argument = 6 [packed = true];</code>
-     */
-    public int getTypeArgumentCount() {
-      return typeArgument_.size();
-    }
-    /**
-     * <code>repeated int32 type_argument = 6 [packed = true];</code>
-     */
-    public int getTypeArgument(int index) {
-      return typeArgument_.get(index);
-    }
-    /**
-     * <code>repeated int32 type_argument = 6 [packed = true];</code>
-     */
-    public Builder setTypeArgument(
-        int index, int value) {
-      ensureTypeArgumentIsMutable();
-      typeArgument_.set(index, value);
-      
-      return this;
-    }
-    /**
-     * <code>repeated int32 type_argument = 6 [packed = true];</code>
-     */
-    public Builder addTypeArgument(int value) {
-      ensureTypeArgumentIsMutable();
-      typeArgument_.add(value);
-      
-      return this;
-    }
-    /**
-     * <code>repeated int32 type_argument = 6 [packed = true];</code>
-     */
-    public Builder addAllTypeArgument(
-        java.lang.Iterable<? extends java.lang.Integer> values) {
-      ensureTypeArgumentIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-          values, typeArgument_);
-      
-      return this;
-    }
-    /**
-     * <code>repeated int32 type_argument = 6 [packed = true];</code>
-     */
-    public Builder clearTypeArgument() {
-      typeArgument_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000008);
-      
       return this;
     }
 
@@ -895,7 +539,7 @@ public final class IrCall extends
      * <code>optional int64 super = 3;</code>
      */
     public boolean hasSuper() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
+      return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
      * <code>optional int64 super = 3;</code>
@@ -907,7 +551,7 @@ public final class IrCall extends
      * <code>optional int64 super = 3;</code>
      */
     public Builder setSuper(long value) {
-      bitField0_ |= 0x00000010;
+      bitField0_ |= 0x00000004;
       super_ = value;
       
       return this;
@@ -916,7 +560,7 @@ public final class IrCall extends
      * <code>optional int64 super = 3;</code>
      */
     public Builder clearSuper() {
-      bitField0_ = (bitField0_ & ~0x00000010);
+      bitField0_ = (bitField0_ & ~0x00000004);
       super_ = 0L;
       
       return this;
@@ -927,7 +571,7 @@ public final class IrCall extends
      * <code>optional int32 origin_name = 4;</code>
      */
     public boolean hasOriginName() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
+      return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
      * <code>optional int32 origin_name = 4;</code>
@@ -939,7 +583,7 @@ public final class IrCall extends
      * <code>optional int32 origin_name = 4;</code>
      */
     public Builder setOriginName(int value) {
-      bitField0_ |= 0x00000020;
+      bitField0_ |= 0x00000008;
       originName_ = value;
       
       return this;
@@ -948,7 +592,7 @@ public final class IrCall extends
      * <code>optional int32 origin_name = 4;</code>
      */
     public Builder clearOriginName() {
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00000008);
       originName_ = 0;
       
       return this;

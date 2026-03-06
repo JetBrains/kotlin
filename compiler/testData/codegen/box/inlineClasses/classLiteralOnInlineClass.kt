@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +ValueClasses
 
 package root
 

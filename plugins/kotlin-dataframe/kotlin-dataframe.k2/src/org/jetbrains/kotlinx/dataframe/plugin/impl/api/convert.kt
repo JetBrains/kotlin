@@ -15,7 +15,9 @@ import org.jetbrains.kotlinx.dataframe.api.convert
 import org.jetbrains.kotlinx.dataframe.api.pathOf
 import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
+import org.jetbrains.kotlinx.dataframe.plugin.impl.convert
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 internal class Convert0 : AbstractInterpreter<ConvertApproximation>() {
@@ -57,8 +59,8 @@ internal class Convert6 : AbstractInterpreter<PluginDataFrameSchema>() {
             .filter { it !in topLevelNames }
             .map { simpleColumnOf(it, expression.coneType) }
         val df = PluginDataFrameSchema(receiver.columns() + assumedColumns)
-        return df.convertAsColumn(columnsResolver { columns.map { pathOf(it) }.toColumnSet() }) {
-            simpleColumnOf("", expression.coneType)
+        return df.convert(columnsResolver { columns.map { pathOf(it) }.toColumnSet() }) {
+            expression
         }
     }
 }
@@ -69,8 +71,8 @@ class With0 : AbstractSchemaModificationInterpreter() {
     val Arguments.type: ColumnType by type(name("rowConverter"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.schema.convertAsColumn(receiver.columns) {
-            simpleColumnOf("", type.coneType)
+        return receiver.schema.convert(receiver.columns) {
+            type
         }
     }
 }
@@ -96,8 +98,8 @@ class PerRowCol : AbstractSchemaModificationInterpreter() {
     val Arguments.type: ColumnType by type(name("expression"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.schema.convertAsColumn(receiver.columns) {
-            simpleColumnOf("", type.coneType)
+        return receiver.schema.convert(receiver.columns) {
+            type
         }
     }
 }
@@ -155,8 +157,8 @@ internal class To0 : AbstractInterpreter<PluginDataFrameSchema>() {
     override val Arguments.startingSchema get() = receiver.schema
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.schema.convertAsColumn(receiver.columns) {
-            simpleColumnOf("", typeArg0.coneType)
+        return receiver.schema.convert(receiver.columns) {
+            typeArg0
         }
     }
 }
@@ -185,8 +187,8 @@ internal abstract class AbstractToSpecificType : AbstractInterpreter<PluginDataF
         val nullable = converterAnnotation?.getBooleanArgument(Name.identifier("nullable"))
         return if (to != null && nullable != null) {
             val targetType = to.withNullability(nullable, session.typeContext)
-            receiver.schema.convertAsColumn(receiver.columns) {
-                simpleColumnOf("", targetType)
+            receiver.schema.convert(receiver.columns) {
+                targetType.wrap()
             }
         } else {
             PluginDataFrameSchema.EMPTY

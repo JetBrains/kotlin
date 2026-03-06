@@ -2,12 +2,11 @@ package org.jetbrains.kotlin.maven;
 
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil;
 import org.junit.Assert;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,9 +18,6 @@ class MavenExecutionResult {
     @NotNull
     private final File workingDir;
 
-    @NotNull
-    private final Path workingDirPath;
-
     private int exitCode;
 
     MavenExecutionResult(
@@ -32,11 +28,6 @@ class MavenExecutionResult {
         this.stdout = output;
         this.workingDir = workingDir;
         this.exitCode = exitCode;
-        try {
-            this.workingDirPath = workingDir.toPath().toRealPath().toAbsolutePath();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         assertArtifactsAreDownloadedFromCacheRedirector();
     }
 
@@ -117,20 +108,20 @@ class MavenExecutionResult {
                         if (StringsKt.isBlank(path)) continue;
 
                         File file = new File(path.trim());
-                        Path relativePath = workingDirPath.relativize(file.toPath());
-                        normalizedActualPaths.add(relativePath.normalize().toString());
+                        String relativePath = FileUtil.getRelativePath(workingDir, file);
+                        normalizedActualPaths.add(FileUtil.normalize(relativePath));
                     }
                 }
                 String[] actualPaths = normalizedActualPaths.toArray(new String[normalizedActualPaths.size()]);
                 Arrays.sort(actualPaths);
 
                 for (int i = 0; i < expectedPaths.length; i++) {
-                    expectedPaths[i] = Paths.get(expectedPaths[i]).normalize().toString();
+                    expectedPaths[i] = FileUtil.normalize(expectedPaths[i]);
                 }
                 Arrays.sort(expectedPaths);
 
-                String expected = String.join("\n", expectedPaths);
-                String actual = String.join("\n", actualPaths);
+                String expected = StringUtil.join(Arrays.asList(expectedPaths), "\n");
+                String actual = StringUtil.join(Arrays.asList(actualPaths), "\n");
                 Assert.assertEquals("Compiled files differ", expected, actual);
             }
         });

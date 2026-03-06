@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
-import org.jetbrains.kotlin.test.configuration.commonCodegenConfiguration
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentC
 import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.bind
 import java.lang.Boolean.getBoolean
 
@@ -104,7 +102,6 @@ abstract class AbstractJsBlackBoxCodegenTestBase(
     }
 
     protected fun TestConfigurationBuilder.commonConfigurationForJsBlackBoxCodegenTest() {
-        commonCodegenConfiguration()
         commonConfigurationForJsBackendFirstStageTest(
             customIgnoreDirective = customIgnoreDirective,
             additionalIgnoreDirectives = additionalIgnoreDirectives,
@@ -121,6 +118,18 @@ abstract class AbstractJsBlackBoxCodegenTestBase(
         ) {
             defaultDirectives {
                 DIAGNOSTICS with "-warnings"
+            }
+        }
+
+        forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
+            configureFirHandlersStep {
+                useHandlers(::FirInterpreterDumpHandler)
+            }
+            configureKlibArtifactsHandlersStep {
+                useHandlers(::JsKlibInterpreterDumpHandler)
+            }
+            configureJsArtifactsHandlersStep {
+                useHandlers(::JsIrInterpreterDumpHandler)
             }
         }
     }
@@ -185,16 +194,14 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
 /**
  * Configures handlers for JS box testing
  */
-fun TestConfigurationBuilder.configureJsBoxHandlers(verifyJsAst: Boolean = true) {
+fun TestConfigurationBuilder.configureJsBoxHandlers() {
     configureJsArtifactsHandlersStep {
         useHandlers(
             ::JsTypeScriptCompilationHandler,
             ::NodeJsGeneratorHandler,
             ::JsBoxRunner,
+            ::JsAstHandler
         )
-        runIf(verifyJsAst) {
-            useHandlers(::JsAstHandler)
-        }
     }
 }
 

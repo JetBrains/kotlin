@@ -5,7 +5,6 @@
 
 package kotlin.native.internal
 
-import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.reflect.*
 
 internal object KVarianceMapper {
@@ -37,7 +36,6 @@ internal object KVarianceMapper {
  *
  * When this issue is resolved, this class can be replaced with just ArrayList
  */
-@UsedFromCompilerGeneratedCode
 internal class KTypeProjectionList(val variance: IntArray, val type: Array<KType?>) : AbstractList<KTypeProjection>() {
     override val size
         get() = variance.size
@@ -51,7 +49,6 @@ internal class KTypeProjectionList(val variance: IntArray, val type: Array<KType
 
 }
 
-@UsedFromCompilerGeneratedCode
 internal class KTypeImplForTypeParametersWithRecursiveBounds : KType {
     override val classifier: KClassifier?
         get() = error("Type parameters with recursive bounds are not yet supported in reflection")

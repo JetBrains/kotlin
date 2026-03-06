@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible
 
 // FILE: J.java
 public interface J<T> {

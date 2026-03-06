@@ -73,9 +73,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
 
         return if (kmProperty.isVar)
-            KotlinKMutableProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty, KCallableOverriddenStorage.EMPTY)
+            KotlinKMutableProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty)
         else
-            KotlinKProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty, KCallableOverriddenStorage.EMPTY)
+            KotlinKProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty)
     }
 
     fun findPropertyMetadata(name: String, signature: String): KmProperty {
@@ -180,8 +180,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         return functions.single()
     }
 
-    fun findConstructorMetadata(signature: String): KmConstructor =
-        constructorsMetadata.singleOrNull { it.signature.toString() == signature } ?: run {
+    fun findConstructorMetadata(signature: String): KmConstructor {
+        val constructors = constructorsMetadata.filter { it.signature.toString() == signature }
+        if (constructors.size != 1) {
             val allMembers = constructorsMetadata.joinToString("\n") { constructor -> constructor.signature.toString() }
             throw KotlinReflectionInternalError(
                 "Constructor (JVM signature: $signature) not resolved in $this:" +
@@ -189,14 +190,8 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             )
         }
 
-    fun findJavaConstructor(signature: String): Constructor<*> =
-        jClass.declaredConstructors.singleOrNull { it.jvmSignature == signature } ?: run {
-            val allMembers = jClass.declaredConstructors.joinToString("\n") { constructor -> constructor.jvmSignature }
-            throw KotlinReflectionInternalError(
-                "Constructor (JVM signature: $signature) not resolved in $this:" +
-                        if (allMembers.isEmpty()) " no constructors found" else "\n$allMembers"
-            )
-        }
+        return constructors.single()
+    }
 
     private fun Class<*>.lookupMethod(
         name: String, parameterTypes: Array<Class<*>>, returnType: Class<*>, isStaticDefault: Boolean,

@@ -9,10 +9,7 @@ import kotlin.reflect.*
 import kotlin.test.*
 
 fun check(x: KClass<*>, expectedSupertypes: String = "[kotlin.Any]") {
-    // Mainly check that `members` doesn't crash for synthetic classes. The exact contents of `members` is not that important, except that
-    // it should probably contain equals, hashCode and toString.
-    val memberNames = x.members.mapTo(hashSetOf()) { it.name }
-    assertTrue(memberNames.containsAll(setOf("equals", "hashCode", "toString")), "Fail: $memberNames")
+    assertEquals(setOf("equals", "hashCode", "toString"), x.members.mapTo(hashSetOf()) { it.name })
 
     assertEquals(emptyList(), x.annotations)
     assertEquals(emptyList(), x.constructors)
@@ -73,7 +70,7 @@ fun checkKotlinLambda() {
     check(
         klass,
         expectedSupertypes =
-            if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true)
+            if (System.getProperty("kotlin.reflect.jvm.useK1Implementation")?.toBoolean() == true)
                 // Legacy implementation uses a predefined class with the single supertype `Any`, see `KClassImpl.createSyntheticClass`.
                 "[kotlin.Any]"
             else
@@ -93,7 +90,7 @@ fun checkJavaLambda() {
     check(
         klass,
         expectedSupertypes =
-            if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true)
+            if (System.getProperty("kotlin.reflect.jvm.useK1Implementation")?.toBoolean() == true)
                 // Legacy implementation uses a predefined class with the single supertype `Any`, see `KClassImpl.createSyntheticClass`.
                 "[kotlin.Any]"
             else

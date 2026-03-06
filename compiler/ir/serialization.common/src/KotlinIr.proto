@@ -40,8 +40,7 @@ message IrFile {
 message CommonIdSignature {
   repeated int32 package_fq_name = 1 [packed=true];
   repeated int32 declaration_fq_name = 2 [packed = true];
-  optional int64 member_uniq_id_pre_2_4_0 = 3;
-  optional fixed64 member_uniq_id = 6;
+  optional int64 member_uniq_id = 3;
   optional int64 flags = 4 [default = 0];
   optional int32 debug_info = 5;
 }
@@ -170,9 +169,9 @@ message IrInlinedFunctionBlock {
   optional int32 inlined_function_file_entry_id = 6;  // Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
 }
 
-message MemberAccessCommonPre_2_4_0 {
-  // Value argument serialization scheme before 2.4.0
-  repeated NullableIrExpression argument_pre_2_4_0 = 6;
+message MemberAccessCommon {
+  // Value argument serialization scheme after 2.2.0
+  repeated NullableIrExpression argument = 6;
 
   // Value argument serialization scheme before 2.2.0
   optional IrExpression dispatch_receiver = 1;
@@ -187,9 +186,7 @@ message MemberAccessCommonPre_2_4_0 {
 
 message IrCall {
   required int64 symbol = 1;
-  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;
-  repeated IrExpression argument = 5;
-  repeated int32 type_argument = 6 [packed=true];
+  required MemberAccessCommon member_access = 2;
   optional int64 super = 3;
   optional int32 origin_name = 4;
 }
@@ -197,18 +194,14 @@ message IrCall {
 message IrConstructorCall {
   required int64 symbol = 1;
   required int32 constructor_type_arguments_count = 2;
-  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 3;
-  repeated IrExpression argument = 5;
-  repeated int32 type_argument = 6 [packed=true];
+  required MemberAccessCommon member_access = 3;
   optional int32 origin_name = 4;
 }
 
 message IrFunctionReference {
   required int64 symbol = 1;
   optional int32 origin_name = 2;
-  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 3;
-  repeated IrExpression argument = 5;
-  repeated int32 type_argument = 6 [packed=true];
+  required MemberAccessCommon member_access = 3;
   optional int64 reflection_target_symbol = 4;
 }
 
@@ -225,9 +218,7 @@ message IrPropertyReference {
   optional int64 getter = 2;
   optional int64 setter = 3;
   optional int32 origin_name = 4;
-  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 5;
-  repeated IrExpression argument = 7;
-  repeated int32 type_argument = 8 [packed=true];
+  required MemberAccessCommon member_access = 5;
   required int64 symbol = 6;
 }
 
@@ -280,9 +271,7 @@ message IrContinue {
 
 message IrDelegatingConstructorCall {
   required int64 symbol = 1;
-  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;
-  repeated IrExpression argument = 3;
-  repeated int32 type_argument = 4 [packed=true];
+  required MemberAccessCommon member_access = 2;
 }
 
 message IrDoWhile {
@@ -291,9 +280,7 @@ message IrDoWhile {
 
 message IrEnumConstructorCall {
   required int64 symbol = 1;
-  optional MemberAccessCommonPre_2_4_0 member_access_pre_2_4_0 = 2;
-  repeated IrExpression argument = 3;
-  repeated int32 type_argument = 4 [packed=true];
+  required MemberAccessCommon member_access = 2;
 }
 
 message IrGetClass {
@@ -462,7 +449,9 @@ message IrDynamicOperatorExpression {
   repeated IrExpression argument = 3;
 }
 
-message IrOperationPre_2_4_0 {
+// TODO: we need an extension mechanism to accomodate new
+// IR operators in upcoming releases.
+message IrOperation {
   oneof operation {
     IrBlock block = 1;
     IrBreak break = 2;
@@ -522,53 +511,9 @@ enum IrTypeOperator {
   REINTERPRET_CAST = 11;
 }
 
-message IrExpression {
-  oneof operation {
-    IrConst op_const = 5;
-    IrGetValue op_get_value = 6;
-    IrSetValue op_set_value = 7;
-    IrCall op_call = 8;
-    IrConstructorCall op_constructor_call = 9;
-    IrBlock op_block = 10;
-    IrReturnableBlock op_returnable_block = 11;
-    IrReturn op_return = 12;
-    IrWhen op_when = 13;
-    IrTypeOp op_type_op = 14;
-    IrGetField op_get_field = 15;
-    IrSetField op_set_field = 16;
-    IrGetObject op_get_object = 17;
-    IrGetClass op_get_class = 18;
-    IrClassReference op_class_reference = 19;
-    IrGetEnumValue op_get_enum_value = 20;
-    IrComposite op_composite = 21;
-    IrBreak op_break = 22;
-    IrContinue op_continue = 23;
-    IrWhile op_while = 24;
-    IrDoWhile op_do_while = 25;
-    IrDelegatingConstructorCall op_delegating_constructor_call = 26;
-    IrEnumConstructorCall op_enum_constructor_call = 27;
-    IrInstanceInitializerCall op_instance_initializer_call = 28;
-    IrStringConcat op_string_concat = 29;
-    IrThrow op_throw = 30;
-    IrTry op_try = 31;
-    IrVararg op_vararg = 32;
-    IrDynamicMemberExpression op_dynamic_member = 33;
-    IrDynamicOperatorExpression op_dynamic_operator = 34;
-    IrLocalDelegatedPropertyReference op_local_delegated_property_reference = 35;
-    IrFunctionExpression op_function_expression = 36;
-    // Error code
-    IrErrorExpression op_error_expression = 37;
-    IrErrorCallExpression op_error_call_expression = 38;
-    // Operations again
-    IrFunctionReference op_function_reference = 39;
-    IrPropertyReference op_property_reference = 40;
-    IrRichFunctionReference op_rich_function_reference = 41;
-    IrRichPropertyReference op_rich_property_reference = 42;
-    IrInlinedFunctionBlock op_inlined_function_block = 43;
-    IrMissingExpression op_missing_expression = 44;
-  }
 
-  optional IrOperationPre_2_4_0 operation_pre_2_4_0 = 1; // Was required before 2.4.0
+message IrExpression {
+  required IrOperation operation = 1;
   required int32 type = 2;
   required int64 coordinates = 3;
 }
@@ -576,8 +521,6 @@ message IrExpression {
 message NullableIrExpression {
   optional IrExpression expression = 1;
 }
-
-message IrMissingExpression {}
 
 /* ------ Declarations --------------------------------------------- */
 

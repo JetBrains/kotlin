@@ -5,74 +5,49 @@
 
 package kotlin.native.internal
 
-import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.escapeAnalysis.Escapes
 
 @GCUnsafeCall("getCachedBooleanBox")
 @Escapes(0b10) // The return value is stored in a global.
-@PublishedApi
-@UsedFromCompilerGeneratedCode
-internal external fun getCachedBooleanBox(value: Boolean): Boolean?
+@PublishedApi internal external fun getCachedBooleanBox(value: Boolean): Boolean?
 
 @GCUnsafeCall("inBooleanBoxCache")
-@PublishedApi
-@UsedFromCompilerGeneratedCode
-internal external fun inBooleanBoxCache(value: Boolean): Boolean
+@PublishedApi internal external fun inBooleanBoxCache(value: Boolean): Boolean
 
 @GCUnsafeCall("getCachedByteBox")
 @Escapes(0b10) // The return value is stored in a global.
-@PublishedApi
-@UsedFromCompilerGeneratedCode
-internal external fun getCachedByteBox(value: Byte): Byte?
+@PublishedApi internal external fun getCachedByteBox(value: Byte): Byte?
 
 @GCUnsafeCall("inByteBoxCache")
-@PublishedApi
-@UsedFromCompilerGeneratedCode
-internal external fun inByteBoxCache(value: Byte): Boolean
+@PublishedApi internal external fun inByteBoxCache(value: Byte): Boolean
 
 @GCUnsafeCall("getCachedCharBox")
 @Escapes(0b10) // The return value is stored in a global.
-@PublishedApi
-@UsedFromCompilerGeneratedCode
-internal external fun getCachedCharBox(value: Char): Char?
+@PublishedApi internal external fun getCachedCharBox(value: Char): Char?
 
 @GCUnsafeCall("inCharBoxCache")
-@PublishedApi
-@UsedFromCompilerGeneratedCode
-internal external fun inCharBoxCache(value: Char): Boolean
+@PublishedApi internal external fun inCharBoxCache(value: Char): Boolean
 
 @GCUnsafeCall("getCachedShortBox")
 @Escapes(0b10) // The return value is stored in a global.
-@PublishedApi
-@UsedFromCompilerGeneratedCode
-internal external fun getCachedShortBox(value: Short): Short?
+@PublishedApi internal external fun getCachedShortBox(value: Short): Short?
 
 @GCUnsafeCall("inShortBoxCache")
-@PublishedApi
-@UsedFromCompilerGeneratedCode
-internal external fun inShortBoxCache(value: Short): Boolean
+@PublishedApi internal external fun inShortBoxCache(value: Short): Boolean
 
 @GCUnsafeCall("getCachedIntBox")
 @Escapes(0b10) // The return value is stored in a global.
-@PublishedApi
-@UsedFromCompilerGeneratedCode
-internal external fun getCachedIntBox(idx: Int): Int?
+@PublishedApi internal external fun getCachedIntBox(idx: Int): Int?
 
 @GCUnsafeCall("inIntBoxCache")
-@PublishedApi
-@UsedFromCompilerGeneratedCode
-internal external fun inIntBoxCache(value: Int): Boolean
+@PublishedApi internal external fun inIntBoxCache(value: Int): Boolean
 
 @GCUnsafeCall("getCachedLongBox")
 @Escapes(0b10) // The return value is stored in a global.
-@PublishedApi
-@UsedFromCompilerGeneratedCode
-internal external fun getCachedLongBox(value: Long): Long?
+@PublishedApi internal external fun getCachedLongBox(value: Long): Long?
 
 @GCUnsafeCall("inLongBoxCache")
-@PublishedApi
-@UsedFromCompilerGeneratedCode
-internal external fun inLongBoxCache(value: Long): Boolean
+@PublishedApi internal external fun inLongBoxCache(value: Long): Boolean
 
 // TODO: functions below are used for ObjCExport and CAdapterGenerator, move and rename them correspondingly.
 

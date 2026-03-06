@@ -1,3 +1,3 @@
-val foo: Int <expr>by Bar()</expr>
+val foo: Int <caret>by Bar()
 
 class Bar

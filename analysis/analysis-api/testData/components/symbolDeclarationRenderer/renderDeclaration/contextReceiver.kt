@@ -1,4 +1,4 @@
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 
 interface Context1
 

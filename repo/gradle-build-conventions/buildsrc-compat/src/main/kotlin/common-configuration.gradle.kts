@@ -111,13 +111,6 @@ fun Project.configureKotlinCompilationOptions() {
             "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false },
             "-Xdont-warn-on-error-suppression",
             "-Xcontext-parameters", // KT-72222
-            "-Xexplicit-backing-fields", // KT-14663
-            // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
-            // But this produces a warning
-            // "The argument ... is redundant for the current language version ..."
-            // in the bootstrap test and fails because of -Werror.
-            // To work around it, we suppress the warning.
-            "-Xwarning-level=REDUNDANT_CLI_ARG:disabled",
         )
 
         val kotlinLanguageVersion: String by rootProject.extra
@@ -302,12 +295,20 @@ fun Project.configureTests() {
 
     tasks.withType<Test>().configureEach {
         val notCacheableTestProjects: List<String> = listOf(
+            ":analysis:analysis-api",
+            ":analysis:analysis-api-fe10",
+            ":analysis:analysis-api-fir",
+            ":analysis:analysis-api-standalone",
             ":analysis:analysis-api-standalone:analysis-api-standalone-native",
-            ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
+            ":analysis:low-level-api-fir",
+            ":analysis:low-level-api-fir:low-level-api-fir-native",
+            ":analysis:stubs",
+            ":analysis:symbol-light-classes",
             ":compiler",
             ":compiler:android-tests",
             ":compiler:arguments",
             ":compiler:build-tools:kotlin-build-tools-api",
+            ":compiler:build-tools:kotlin-build-tools-api-tests",
             ":compiler:build-tools:kotlin-build-tools-compat",
             ":compiler:build-tools:kotlin-build-tools-options-generator",
             ":compiler:fir:modularized-tests",
@@ -316,15 +317,19 @@ fun Project.configureTests() {
             ":compiler:incremental-compilation-impl",
             ":compiler:ir.backend.common",
             ":compiler:multiplatform-parsing",
+            ":compiler:psi:psi-api",
             ":compiler:test-infrastructure-utils",
+            ":compiler:tests-different-jdk",
             ":compiler:tests-integration",
             ":compose-compiler-gradle-plugin",
             ":examples:scripting-jvm-embeddable-host",
             ":examples:scripting-jvm-maven-deps-host",
             ":examples:scripting-jvm-simple-script-host",
             ":generators",
+            ":generators:analysis-api-generator:generator-kotlin-native",
             ":jps:jps-common",
             ":jps:jps-plugin",
+            ":kotlin-allopen-compiler-plugin",
             ":kotlin-annotation-processing",
             ":kotlin-annotation-processing-base",
             ":kotlin-annotation-processing-cli",
@@ -341,6 +346,7 @@ fun Project.configureTests() {
             ":kotlin-gradle-plugin-idea-proto",
             ":kotlin-gradle-plugin-integration-tests",
             ":kotlin-gradle-statistics",
+            ":kotlin-lombok-compiler-plugin",
             ":kotlin-main-kts",
             ":kotlin-main-kts-test",
             ":kotlin-metadata-jvm",
@@ -352,6 +358,7 @@ fun Project.configureTests() {
             ":kotlin-native:libclangInterop",
             ":kotlin-native:llvmInterop",
             ":kotlin-native:tools:kdumputil",
+            ":kotlin-sam-with-receiver-compiler-plugin",
             ":kotlin-scripting-common",
             ":kotlin-scripting-compiler",
             ":kotlin-scripting-dependencies",
@@ -393,9 +400,11 @@ fun Project.configureTests() {
             ":native:swift:swift-export-standalone-integration-tests:simple",
             ":plugins:compose-compiler-plugin:compiler-hosted",
             ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
+            ":plugins:js-plain-objects:compiler-plugin",
             ":plugins:jvm-abi-gen",
             ":plugins:parcelize:parcelize-compiler",
             ":plugins:plugins-interactions-testing",
+            ":plugins:plugin-sandbox",
             ":plugins:plugin-sandbox:plugin-sandbox-ic-test",
             ":plugins:scripting:scripting-tests",
             ":repo:artifacts-tests",
@@ -431,18 +440,6 @@ fun Project.configureTests() {
         }
     }
 
-    tasks.withType<AbstractTestTask>().configureEach {
-        val disableVerificationTasks: Provider<Boolean> = providers.gradleProperty("kotlin.build.disable.verification.tasks")
-            .map { it.toBoolean() }
-            .orElse(false)
-        inputs.property("kotlin.build.disable.verification.tasks", disableVerificationTasks)
-        doFirst {
-            if (disableVerificationTasks.get()) {
-                logger.warn("Task $path is disabled because `kotlin.build.disable.verification.tasks` is true")
-                throw StopExecutionException("Verification tasks are disabled.")
-            }
-        }
-    }
     // Aggregate task for build related checks
     tasks.register("checkBuild")
     val mppProjects: List<String> by rootProject.extra

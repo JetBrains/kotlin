@@ -44,7 +44,6 @@ KtValueArgument(175,182): '(("A"))'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       value: kotlin.String
 
@@ -73,7 +72,6 @@ KtValueArgument(247,268): '(((("A")) as String))'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       value: kotlin.String
 
@@ -102,7 +100,6 @@ KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -131,7 +128,6 @@ KtCallExpression(381,400): 'arrayOf(("A"), "B")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -146,7 +142,6 @@ KtValueArgument(389,394): '("A")'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       vararg value: kotlin.String
 
@@ -154,7 +149,6 @@ KtValueArgument(396,399): '"B"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       vararg value: kotlin.String
 
@@ -169,7 +163,6 @@ KtValueArgument(433,452): '(((String::class)))'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       value: kotlin.reflect.KClass<*>
 

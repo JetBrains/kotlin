@@ -29,15 +29,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.config.*
 import java.net.URLEncoder
 
-fun encodeModuleName(moduleName: String): String = moduleName
-    .replace("<", "_")
-    .replace(">", "_")
-    .replace(":", "_")
-    .replace(" ", "_")
-    .let { URLEncoder.encode(it, "UTF-8") }
-
 private val IrModuleFragment.outputFileName
-    get() = kotlinLibrary?.jsOutputName ?: encodeModuleName(name.asString())
+    get() = kotlinLibrary?.jsOutputName ?: (name.asString()
+        .replace("<", "_")
+        .replace(">", "_")
+        .replace(":", "_")
+        .replace(" ", "_")
+        .let { URLEncoder.encode(it, "UTF-8") })
 
 abstract class WasmCompilerBase(val configuration: CompilerConfiguration) {
     abstract val irFactory: IrFactoryImplForWasmIC
@@ -157,14 +155,7 @@ private fun compileWholeProgramModeToWasmIr(
         skipCommentInstructions = !configuration.wasmGenerateWat,
         skipLocations = !configuration.wasmGenerateDwarf && !configuration.sourceMap,
     )
-    val wasmCompiledFileFragments = allModules.map { irModuleFragment ->
-        codeGenerator.generateAsSingleFileFragment(
-            irModuleFragment = irModuleFragment,
-            trackedTypes = null,
-            trackedReferences = null,
-            enableMultimoduleExports = false,
-        )
-    }
+    val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
 
     return WasmIrModuleConfiguration(
         wasmCompiledFileFragments = wasmCompiledFileFragments,
@@ -200,24 +191,22 @@ private fun compileSingleModuleToWasmIr(
         skipLocations = !configuration.wasmGenerateDwarf && !configuration.sourceMap,
     )
 
+    val wasmCompiledFileFragments = mutableListOf<WasmCompiledFileFragment>()
     val dependencyImports = mutableSetOf<WasmModuleDependencyImport>()
+
     val referencedDeclarations = ModuleReferencedDeclarations()
-    val referencedTypes = typeTracking.ifTrue { ModuleReferencedTypes() }
+    val referencedTypes = typeTracking.ifTrue { ModuleReferencedTypes(signatureRetriever) }
     fun referenceFunction(functionSymbol: IrFunctionSymbol) {
         val signature = signatureRetriever.declarationSignature(functionSymbol.owner)!!
-        referencedDeclarations.functions.add(signature)
-        referencedTypes?.addFunctionTypeToReferenced(functionSymbol, signatureRetriever)
+        referencedDeclarations.referencedFunction.add(signature)
+        referencedTypes?.addFunctionTypeToReferenced(functionSymbol)
     }
 
-    val compiledModuleFragments = mutableListOf<WasmCompiledFileFragment>()
-
-    val mainModuleFileFragment = codeGenerator.generateAsSingleFileFragment(
+    val mainModuleFileFragment = codeGenerator.generateModuleAsSingleFileFragmentWithModuleExport(
         irModuleFragment = mainModuleFragment,
-        trackedReferences = referencedDeclarations,
-        trackedTypes = referencedTypes,
-        enableMultimoduleExports = true,
+        referencedDeclarations = referencedDeclarations,
+        referencedTypes = referencedTypes,
     )
-    compiledModuleFragments.add(mainModuleFileFragment)
 
     // This signature needed to dynamically load module services
     if (!stdlibIsMainModule) {
@@ -234,19 +223,13 @@ private fun compileSingleModuleToWasmIr(
 
     val dependencyResolutionMap = parseDependencyResolutionMap(configuration)
     val dependencyModules = loweredIr.loweredIr.filterNot { it == mainModuleFragment }
-    dependencyModules.mapTo(compiledModuleFragments) { irFragment ->
-        val dependencyFragment =
-            codeGenerator.generateDependencyAsSingleFileFragment(irFragment)
+    dependencyModules.mapTo(wasmCompiledFileFragments) { irFragment ->
+        val dependencyName = irFragment.name.asString()
 
-        val projectedTypes = referencedTypes?.let {
-            dependencyFragment.definedTypes.makeProjection(referencedTypes)
-        } ?: dependencyFragment.definedTypes
+        val (wasmFragment, isImported) =
+            codeGenerator.generateModuleAsSingleFileFragmentWithModuleImport(irFragment, dependencyName, referencedDeclarations, referencedTypes)
 
-        val projectedDeclarations = dependencyFragment.definedDeclarations
-            .makeProjection(referencedDeclarations)
-
-        if (projectedDeclarations.hasDeclarations) {
-            val dependencyName = irFragment.name.asString()
+        if (isImported) {
             dependencyImports.add(
                 WasmModuleDependencyImport(
                     dependencyName,
@@ -256,11 +239,9 @@ private fun compileSingleModuleToWasmIr(
             )
         }
 
-        WasmCompiledDependencyFileFragment(
-            definedTypes = projectedTypes,
-            definedDeclarations = projectedDeclarations,
-        )
+        wasmFragment
     }
+    wasmCompiledFileFragments.add(mainModuleFileFragment)
 
     val stdlibModuleNameForImport =
         loweredIr.loweredIr.first().name.asString().takeIf { !stdlibIsMainModule }
@@ -274,7 +255,7 @@ private fun compileSingleModuleToWasmIr(
     )
 
     return WasmIrModuleConfiguration(
-        wasmCompiledFileFragments = compiledModuleFragments,
+        wasmCompiledFileFragments = wasmCompiledFileFragments,
         moduleName = moduleName,
         configuration = configuration,
         typeScriptFragment = loweredIr.typeScriptFragment,
@@ -283,7 +264,7 @@ private fun compileSingleModuleToWasmIr(
     )
 }
 
-internal fun parseDependencyResolutionMap(configuration: CompilerConfiguration)
+private fun parseDependencyResolutionMap(configuration: CompilerConfiguration)
         : Map<String, String> {
 
     val rawResolutionMap = configuration[WasmConfigurationKeys.WASM_DEPENDENCY_RESOLUTION_MAP] ?: return emptyMap()

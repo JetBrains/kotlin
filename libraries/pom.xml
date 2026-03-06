@@ -10,13 +10,13 @@
     <packaging>pom</packaging>
 
     <name>Kotlin</name>
-    <description>Kotlin is a modern language that's concise, multiplatform, and interoperable with Java and other languages.</description>
+    <description>Kotlin is a statically typed programming language that compiles to JVM byte codes and JavaScript</description>
     <url>https://kotlinlang.org/</url>
 
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
             <comments>A business-friendly OSS license</comments>
         </license>

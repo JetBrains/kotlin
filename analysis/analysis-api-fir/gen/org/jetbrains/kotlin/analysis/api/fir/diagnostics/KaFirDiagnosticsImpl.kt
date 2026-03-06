@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtContextReceiver
@@ -579,11 +578,10 @@ internal class SelfCallInNestedObjectConstructorErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SelfCallInNestedObjectConstructorError
 
-internal class AmbiguousCollectionLiteralImpl(
-    override val candidatesWithOf: List<KaClassLikeSymbol>,
+internal class UnsupportedCollectionLiteralTypeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtCollectionLiteralExpression>(firDiagnostic, token), KaFirDiagnostic.AmbiguousCollectionLiteral
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnsupportedCollectionLiteralType
 
 internal class ImplicitPropertyTypeMakesBehaviorOrderDependantImpl(
     override val property: KaVariableSymbol,
@@ -2429,12 +2427,6 @@ internal class TypeArgumentsNotAllowedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypeArgumentsNotAllowed
 
-internal class TypeArgumentsNotAllowedWarningImpl(
-    override val place: String,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypeArgumentsNotAllowedWarning
-
 internal class TypeArgumentsForOuterClassWhenNestedReferencedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -2461,13 +2453,6 @@ internal class WrongNumberOfTypeArgumentsInLocalClassInLhsWarningImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongNumberOfTypeArgumentsInLocalClassInLhsWarning
-
-internal class WrongNumberOfTypeArgumentsInGetClassWarningImpl(
-    override val expectedCount: Int,
-    override val owner: KaSymbol,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongNumberOfTypeArgumentsInGetClassWarning
 
 internal class NoTypeArgumentsOnRhsImpl(
     override val expectedCount: Int,
@@ -2939,11 +2924,6 @@ internal class ClassLiteralLhsNotAClassImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ClassLiteralLhsNotAClass
-
-internal class ClassLiteralLhsNotAClassWarningImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ClassLiteralLhsNotAClassWarning
 
 internal class NullableTypeInClassLiteralLhsImpl(
     firDiagnostic: KtPsiDiagnostic,
@@ -3721,11 +3701,6 @@ internal class ConstValWithoutInitializerImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtProperty>(firDiagnostic, token), KaFirDiagnostic.ConstValWithoutInitializer
 
-internal class ConstValWithEbfImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtProperty>(firDiagnostic, token), KaFirDiagnostic.ConstValWithEbf
-
 internal class ConstValWithNonConstInitializerImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -3780,6 +3755,16 @@ internal class PropertyFieldDeclarationMissingInitializerImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtBackingField>(firDiagnostic, token), KaFirDiagnostic.PropertyFieldDeclarationMissingInitializer
+
+internal class LateinitPropertyFieldDeclarationWithInitializerImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtBackingField>(firDiagnostic, token), KaFirDiagnostic.LateinitPropertyFieldDeclarationWithInitializer
+
+internal class LateinitFieldInValPropertyImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtBackingField>(firDiagnostic, token), KaFirDiagnostic.LateinitFieldInValProperty
 
 internal class LateinitNullableBackingFieldImpl(
     firDiagnostic: KtPsiDiagnostic,
@@ -3861,12 +3846,6 @@ internal class ExplicitTypeArgumentsInPropertyAccessImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ExplicitTypeArgumentsInPropertyAccess
-
-internal class ExplicitTypeArgumentsInPropertyAccessWarningImpl(
-    override val kind: String,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ExplicitTypeArgumentsInPropertyAccessWarning
 
 internal class SafeCallableReferenceCallImpl(
     firDiagnostic: KtPsiDiagnostic,
@@ -6325,11 +6304,6 @@ internal class MultipleJsExportDefaultInOneFileImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.MultipleJsExportDefaultInOneFile
 
-internal class WrongJsExportTargetVisibilityImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongJsExportTargetVisibility
-
 internal class DelegationByDynamicImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -6365,47 +6339,6 @@ internal class JsStaticOnConstImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JsStaticOnConst
-
-internal class JsNoRuntimeWrongTargetImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsNoRuntimeWrongTarget
-
-internal class JsNoRuntimeForbiddenIsCheckImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsNoRuntimeForbiddenIsCheck
-
-internal class JsNoRuntimeForbiddenAsCastImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsNoRuntimeForbiddenAsCast
-
-internal class JsNoRuntimeForbiddenClassReferenceImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsNoRuntimeForbiddenClassReference
-
-internal class JsNoRuntimeUselessOnExternalInterfaceImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsNoRuntimeUselessOnExternalInterface
-
-internal class JsNoRuntimeInterfaceAsReifiedTypeArgumentImpl(
-    override val typeArgument: KaType,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsNoRuntimeInterfaceAsReifiedTypeArgument
-
-internal class JsActualExternalInterfaceWhileExpectWithoutJsNoRuntimeImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.JsActualExternalInterfaceWhileExpectWithoutJsNoRuntime
-
-internal class JsNoRuntimeActualAnnotationsNotMatchExpectImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.JsNoRuntimeActualAnnotationsNotMatchExpect
 
 internal class SyntaxImpl(
     override val message: String,

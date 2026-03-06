@@ -3,12 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("INVISIBLE_REFERENCE")
 package kotlinx.cinterop
 
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @ExperimentalForeignApi
 public interface NativePlacement {
@@ -118,7 +116,6 @@ public inline fun <reified T : CVariable> NativePlacement.alloc(): T =
 @PublishedApi
 @Suppress("DEPRECATION")
 @ExperimentalForeignApi
-@UsedFromCompilerGeneratedCode
 internal fun NativePlacement.alloc(type: CVariable.Type): NativePointed =
         alloc(type.size, type.align)
 
@@ -315,7 +312,6 @@ public fun <T : CVariable> CPointed.readValue(size: Long, align: Int): CValue<T>
 @Suppress("DEPRECATION")
 @PublishedApi
 @ExperimentalForeignApi
-@UsedFromCompilerGeneratedCode
 internal fun <T : CVariable> CPointed.readValue(type: CVariable.Type): CValue<T> =
         readValue(type.size, type.align)
 

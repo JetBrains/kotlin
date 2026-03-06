@@ -84,6 +84,7 @@ class ClassicJsKlibSerializerFacade(
             configuration.languageVersionSettings,
             LockBasedStorageManager("ModulesStructure"),
             testServices.moduleDescriptorProvider.getModuleDescriptor(module).builtIns,
+            packageAccessHandler = null,
             lookupTracker = LookupTracker.DO_NOTHING
         )
 

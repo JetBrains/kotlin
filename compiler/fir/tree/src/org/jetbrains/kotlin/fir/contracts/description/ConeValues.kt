@@ -23,7 +23,6 @@ typealias ConeCallsEffectDeclaration = KtCallsEffectDeclaration<ConeKotlinType, 
 typealias ConeConditionalEffectDeclaration = KtConditionalEffectDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeConditionalReturnsDeclaration = KtConditionalReturnsDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeHoldsInEffectDeclaration = KtHoldsInEffectDeclaration<ConeKotlinType, ConeDiagnostic>
-typealias ConeReturnsResultOfDeclaration = KtReturnsResultOfDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeReturnsEffectDeclaration = KtReturnsEffectDeclaration<ConeKotlinType, ConeDiagnostic>
 typealias ConeConstantReference = KtConstantReference<ConeKotlinType, ConeDiagnostic>
 typealias ConeIsNullPredicate = KtIsNullPredicate<ConeKotlinType, ConeDiagnostic>

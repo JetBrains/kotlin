@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.pipeline.web
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
-import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
@@ -35,10 +34,10 @@ object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, Js
     postActions = setOf(PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector),
 ) {
     override fun executePhase(input: JsFir2IrPipelineArtifact): JsFir2IrPipelineArtifact {
-        val (fir2IrResult, firOutput, configuration, moduleStructure) = input
+        val (fir2IrResult, firOutput, configuration, diagnosticCollector, moduleStructure) = input
         processIncrementalCompilationRoundIfNeeded(configuration, moduleStructure, firOutput, fir2IrResult)
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-            configuration.diagnosticsCollector,
+            diagnosticCollector,
             configuration.languageVersionSettings
         )
 

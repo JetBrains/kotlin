@@ -1,6 +1,9 @@
 // WITH_STDLIB
 // WITH_REFLECT
 
+// KT-47030
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty

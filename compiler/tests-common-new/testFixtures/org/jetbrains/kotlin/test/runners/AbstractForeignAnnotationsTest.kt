@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.PROVIDE_JAVA_AS_BINARIES
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_THIRD_PARTY_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
@@ -47,6 +48,7 @@ abstract class AbstractForeignAnnotationsTestBase(private val kind: ForeignAnnot
         }
 
         defaultDirectives {
+            +WITH_FOREIGN_ANNOTATIONS
             if (kind.compiledJava) {
                 +PROVIDE_JAVA_AS_BINARIES
                 +SKIP_TXT

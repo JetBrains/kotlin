@@ -1,1 +1,0 @@
-internal fun internalFun() = "internalFun"

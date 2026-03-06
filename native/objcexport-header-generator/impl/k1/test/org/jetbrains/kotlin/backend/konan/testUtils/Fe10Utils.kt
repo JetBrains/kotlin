@@ -62,6 +62,7 @@ fun createModuleDescriptor(
         library = loadKlib(kotlinNativeStdlibPath),
         languageVersionSettings = createLanguageVersionSettings(),
         storageManager = LockBasedStorageManager.NO_LOCKS,
+        packageAccessHandler = null
     ).also { it.setDependencies(it) }
 
     val dependencyKlibDescriptors = dependencyKlibs.map { dependencyKlib ->
@@ -69,6 +70,7 @@ fun createModuleDescriptor(
             library = loadKlib(dependencyKlib),
             languageVersionSettings = createLanguageVersionSettings(),
             storageManager = LockBasedStorageManager.NO_LOCKS,
+            packageAccessHandler = null,
         )
     }
 

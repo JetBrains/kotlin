@@ -119,7 +119,7 @@ internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommo
 }
 
 private suspend fun Project.isCommonizeCInteropTaskRegistrationEnabled(): Boolean {
-    if (!HostManager.hostIsSupported) {
+    if (HostManager.hostOrNull == null) {
         logger.debug("[${project.path}] $commonizeCInteropTaskName task registration disabled. Host is not supported.")
         return false
     }

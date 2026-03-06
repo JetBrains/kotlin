@@ -51,7 +51,6 @@ KtCallExpression(433,439): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -73,7 +72,6 @@ KtCallExpression(489,505): 'InheritorClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -123,7 +121,6 @@ KtPropertyDelegate(673,685): 'by lazy {""}'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline operator fun <T> kotlin.Lazy<T>.getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
 
@@ -131,7 +128,6 @@ KtCallExpression(676,685): 'lazy {""}'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -153,7 +149,6 @@ KtCallExpression(716,722): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -189,7 +184,6 @@ KtCallExpression(869,942): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -239,7 +233,6 @@ KtCallExpression(947,1016): 'receiveParametrizedLambda<MyClass> { i: MyClass -> 
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -289,7 +282,6 @@ KtCallExpression(1021,1097): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -339,7 +331,6 @@ KtCallExpression(1102,1179): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -389,7 +380,6 @@ KtCallExpression(1185,1247): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -439,7 +429,6 @@ KtCallExpression(1252,1319): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -489,7 +478,6 @@ KtCallExpression(1324,1391): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -539,7 +527,6 @@ KtCallExpression(1396,1462): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -589,7 +576,6 @@ KtCallExpression(1468,1538): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -639,7 +625,6 @@ KtCallExpression(1543,1611): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -689,7 +674,6 @@ KtCallExpression(1617,1681): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -732,7 +716,6 @@ KtCallExpression(1673,1679): 'func()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -747,7 +730,6 @@ KtCallExpression(1686,1755): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -790,7 +772,6 @@ KtCallExpression(1742,1753): 'superFunc()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -805,7 +786,6 @@ KtCallExpression(1760,1834): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -848,7 +828,6 @@ KtCallExpression(1816,1832): 'InheritorClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

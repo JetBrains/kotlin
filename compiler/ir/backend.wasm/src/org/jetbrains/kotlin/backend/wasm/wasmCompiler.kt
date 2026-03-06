@@ -8,9 +8,13 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
-import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.ExceptionTagType
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.JsCodeSnippet
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmServiceImportExportKind
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.backend.wasm.utils.DwarfGenerator
@@ -18,6 +22,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
@@ -33,13 +38,14 @@ import org.jetbrains.kotlin.js.config.sourceMap
 import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmDebug
 import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
 import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
-import org.jetbrains.kotlin.wasm.config.wasmNoJsTag
 import org.jetbrains.kotlin.wasm.ir.ByteWriterWithOffsetWrite
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.writeTo
@@ -131,8 +137,6 @@ fun compileToLoweredIr(
         context.irFactory.stageController as WholeWorldStageController,
     )
 
-    overrideBuiltInsSignatures(context)
-
     return LoweredIrWithExtraArtifacts(allModules, context, typeScriptFragment)
 }
 
@@ -199,10 +203,7 @@ fun linkWasmIr(moduleConfiguration: WasmIrModuleConfiguration): WasmModule {
 
     val multimoduleParameters = moduleConfiguration.multimoduleOptions
 
-    val wasmCompiledModuleFragment = WasmCompiledModuleFragment(
-        wasmCompiledFileFragments = wasmCompiledFileFragments,
-        isWasmJsTarget = isWasmJsTarget
-    )
+    val wasmCompiledModuleFragment = WasmCompiledModuleFragment(wasmCompiledFileFragments, isWasmJsTarget)
 
     val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
 
@@ -265,21 +266,24 @@ fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linked
         val jsModuleImports = mutableSetOf<String>()
         val jsFuns = mutableSetOf<JsCodeSnippet>()
         val jsModuleAndQualifierReferences = mutableSetOf<JsModuleAndQualifierReference>()
-        val jsPolyfills = mutableListOf<String>()
         wasmCompiledFileFragments.forEach { fragment ->
-            (fragment as? WasmCompiledCodeFileFragment)?.linkerData?.let { linkerData ->
-                jsModuleImports.addAll(linkerData.jsModuleImports.values.distinct())
-                jsFuns.addAll(linkerData.jsFuns.values)
-                jsModuleAndQualifierReferences.addAll(linkerData.jsModuleAndQualifierReferences)
-                jsPolyfills.addAll(linkerData.jsBuiltinsPolyfills.values)
-            }
+            jsModuleImports.addAll(fragment.jsModuleImports.values.distinct())
+            jsFuns.addAll(fragment.jsFuns.values)
+            jsModuleAndQualifierReferences.addAll(fragment.jsModuleAndQualifierReferences)
         }
 
-        if (jsPolyfills.isNotEmpty()) {
+        val useJsTag = !configuration.getBoolean(WasmConfigurationKeys.WASM_NO_JS_TAG)
+
+        val jsBuiltinsComposed =
+            wasmCompiledFileFragments.flatMap { fragment ->
+                fragment.jsBuiltinsPolyfills.values.toList()
+            }.joinToString("\n")
+
+        if (jsBuiltinsComposed.isNotEmpty()) {
             dynamicJsModules.add(
                 DynamicJsModule(
                     name = "js-builtins",
-                    content = jsPolyfills.joinToString("\n")
+                    content = jsBuiltinsComposed
                 )
             )
         }
@@ -306,7 +310,7 @@ fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linked
             jsFuns = jsFuns,
             stdlibModule = stdlibModule,
             isStdlibModule = isStdlibModule,
-            useJsTag = !configuration.wasmNoJsTag,
+            useJsTag = useJsTag,
             wholeProgramMode = wholeProgramMode
         )
 

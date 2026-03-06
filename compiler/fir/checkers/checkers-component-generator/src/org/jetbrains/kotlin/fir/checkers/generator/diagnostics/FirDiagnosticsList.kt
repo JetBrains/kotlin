@@ -246,9 +246,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<List<String?>>("altererNames")
         }
         val SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR by error<PsiElement>()
-        val AMBIGUOUS_COLLECTION_LITERAL by error<KtCollectionLiteralExpression> {
-            parameter<List<FirRegularClassSymbol>>("candidatesWithOf")
-        }
+        val UNSUPPORTED_COLLECTION_LITERAL_TYPE by error<PsiElement>()
         val IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT by warning<KtExpression>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FirPropertySymbol>("property")
         }
@@ -917,7 +915,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val MULTIPLE_CONTEXT_LISTS by error<KtElement>()
         val CONTEXT_PARAMETER_WITHOUT_NAME by error<KtContextReceiver>()
-        val CONTEXT_PARAMETERS_WITH_BACKING_FIELD by error<KtElement>(PositioningStrategy.CONTEXT_KEYWORD)
+        val CONTEXT_PARAMETERS_WITH_BACKING_FIELD by error<KtElement>(PositioningStrategy.DEFAULT)
         val CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION by error<KtElement> {
             parameter<FirCallableSymbol<*>>("symbol")
         }
@@ -964,9 +962,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val TYPE_ARGUMENTS_NOT_ALLOWED by error<PsiElement> {
             parameter<String>("place")
         }
-        val TYPE_ARGUMENTS_NOT_ALLOWED_WARNING by warning<PsiElement> {
-            parameter<String>("place")
-        }
         val TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED by error<PsiElement>()
         val WRONG_NUMBER_OF_TYPE_ARGUMENTS by error<PsiElement>(PositioningStrategy.TYPE_ARGUMENT_LIST_OR_SELF) {
             parameter<Int>("expectedCount")
@@ -978,10 +973,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("type")
         }
         val WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_LOCAL_CLASS_IN_LHS_WARNING by warning<PsiElement>(PositioningStrategy.TYPE_ARGUMENT_LIST_OR_SELF) {
-            parameter<Int>("expectedCount")
-            parameter<FirBasedSymbol<*>>("owner")
-        }
-        val WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_GET_CLASS_WARNING by warning<PsiElement>(PositioningStrategy.TYPE_ARGUMENT_LIST_OR_SELF) {
             parameter<Int>("expectedCount")
             parameter<FirBasedSymbol<*>>("owner")
         }
@@ -1214,7 +1205,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE by error<KtExpression>()
 
         val CLASS_LITERAL_LHS_NOT_A_CLASS by error<KtExpression>()
-        val CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING by warning<KtExpression>()
         val NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error<KtExpression>()
         val EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error<PsiElement> {
             parameter<ConeKotlinType>("lhsType")
@@ -1585,7 +1575,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("constValType")
         }
         val CONST_VAL_WITHOUT_INITIALIZER by error<KtProperty>(PositioningStrategy.CONST_MODIFIER)
-        val CONST_VAL_WITH_EBF by error<KtProperty>(PositioningStrategy.CONST_MODIFIER)
         val CONST_VAL_WITH_NON_CONST_INITIALIZER by error<KtExpression>()
         val DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER_ERROR by error<KtProperty>(PositioningStrategy.PROPERTY_DELEGATE) {
             parameter<FirTypeParameterSymbol>("usedTypeParameter")
@@ -1604,6 +1593,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ACCESSOR_FOR_DELEGATED_PROPERTY by error<KtPropertyAccessor>()
         val PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION by error<KtExpression>()
         val PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER by error<KtBackingField>()
+        val LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER by error<KtBackingField>(PositioningStrategy.LATEINIT_MODIFIER)
+        val LATEINIT_FIELD_IN_VAL_PROPERTY by error<KtBackingField>(PositioningStrategy.LATEINIT_MODIFIER)
         val LATEINIT_NULLABLE_BACKING_FIELD by error<KtBackingField>(PositioningStrategy.LATEINIT_MODIFIER)
         val BACKING_FIELD_FOR_DELEGATED_PROPERTY by error<KtBackingField>(PositioningStrategy.FIELD_KEYWORD)
         val VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD by error<PsiElement>(PositioningStrategy.VAL_OR_VAR_NODE)
@@ -1619,10 +1610,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS by error<KtModifierListOwner>(PositioningStrategy.ABSTRACT_MODIFIER)
         val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING by warning<KtProperty>(PositioningStrategy.TYPE_PARAMETERS_LIST)
         val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS by error<KtProperty>(PositioningStrategy.TYPE_PARAMETERS_LIST)
-        val EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS by error<KtExpression>(PositioningStrategy.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER) {
-            parameter<String>("kind")
-        }
-        val EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS_WARNING by warning<KtExpression>(PositioningStrategy.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER) {
+        val EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS by error<KtExpression>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<String>("kind")
         }
         val SAFE_CALLABLE_REFERENCE_CALL by error<KtExpression>()

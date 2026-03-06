@@ -67,7 +67,7 @@ private suspend fun Project.shouldDisablePublishingDueToIncompatibleHost(): Bool
     if (project.kotlinPropertiesProvider.allowMultiplatformPublicationsOnUnsupportedHost) return false
 
     // 2. Check if the current host is supported
-    if (HostManager.hostIsSupported) return false
+    if (HostManager.hostOrNull != null) return false
 
     // 3. Host is unsupported. Check if the project actually uses any Native targets.
     // If the project is pure JVM/JS/Wasm, we shouldn't block publishing just because the OS is exotic (e.g., FreeBSD).
@@ -102,7 +102,7 @@ private fun createRootPublication(project: Project, publishing: PublishingExtens
 }
 
 private fun MavenPublication.addKotlinToolingMetadataArtifactIfNeeded(project: Project) {
-    val buildKotlinToolingMetadataTask = project.buildKotlinToolingMetadataTask
+    val buildKotlinToolingMetadataTask = project.buildKotlinToolingMetadataTask ?: return
 
     artifact(buildKotlinToolingMetadataTask.map { it.outputFile }) { artifact ->
         artifact.classifier = "kotlin-tooling-metadata"

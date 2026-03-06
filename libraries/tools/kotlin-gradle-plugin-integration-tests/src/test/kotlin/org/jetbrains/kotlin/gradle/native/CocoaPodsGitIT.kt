@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SETUP_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SPEC_TASK_NAME
 import org.jetbrains.kotlin.gradle.testbase.*
-
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -344,7 +343,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
                     workingDir = projectPath.toFile(),
                     environmentVariables = environmentVariables.environmentalVariables
                 )
-                processRunResult.assertProcessRunResult {
+                assertProcessRunResult(processRunResult) {
                     assertTrue(isSuccessful)
                     assertTrue(output.contains("dynamically linked shared library"))
                 }
@@ -366,7 +365,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
                     workingDir = projectPath.toFile(),
                     environmentVariables = environmentVariables.environmentalVariables
                 )
-                processRunResult.assertProcessRunResult {
+                assertProcessRunResult(processRunResult) {
                     assertTrue(isSuccessful)
                     assertTrue(output.contains("current ar archive"))
                 }

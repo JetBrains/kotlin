@@ -15,8 +15,7 @@ private fun invokeKlibTool(
     klibFile: File,
     command: String,
     printSignatures: Boolean,
-    signatureVersion: KotlinIrSignatureVersion?,
-    absolutePathPrefixes: List<String> = emptyList(),
+    signatureVersion: KotlinIrSignatureVersion?
 ): String {
     val entryPoint = Class.forName("org.jetbrains.kotlin.cli.klib.Main", true, kotlinNativeClassLoader)
         .declaredMethods
@@ -36,10 +35,6 @@ private fun invokeKlibTool(
         signatureVersion?.let {
             this += "-signature-version"
             this += signatureVersion.number.toString()
-        }
-        absolutePathPrefixes.forEach {
-            this += "-absolute-path-prefix"
-            this += it
         }
     }.toTypedArray()
 
@@ -90,14 +85,12 @@ fun TestCompilationArtifact.KLIB.dumpIr(
 
 fun File.dumpIr(
     kotlinNativeClassLoader: ClassLoader,
-    absolutePathPrefixes: List<String> = emptyList(),
 ): String = invokeKlibTool(
     kotlinNativeClassLoader,
     klibFile = this,
     command = "dump-ir",
     printSignatures = false,
-    signatureVersion = null,
-    absolutePathPrefixes,
+    signatureVersion = null
 )
 
 fun TestCompilationArtifact.KLIB.dumpMetadataSignatures(

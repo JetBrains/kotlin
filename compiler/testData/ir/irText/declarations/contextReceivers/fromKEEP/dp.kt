@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // IGNORE_BACKEND_K2: ANY
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 // WITH_STDLIB
 class View {
     val coefficient = 42

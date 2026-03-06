@@ -10,7 +10,7 @@ import org.gradle.api.Project
 
 internal fun Project.includeKotlinToolingMetadataInApk() {
     plugins.withId("com.android.application") {
-        val buildKotlinToolingMetadataTask = buildKotlinToolingMetadataTask
+        val buildKotlinToolingMetadataTask = buildKotlinToolingMetadataTask ?: return@withId
         val android = project.extensions.getByName("android") as AppExtension
         android.applicationVariants.configureEach { variant ->
             if (!variant.buildType.isDebuggable) {

@@ -19,23 +19,19 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
     override fun createDeserializedPackageFragments(
         library: KotlinLibrary,
         moduleDescriptor: ModuleDescriptor,
+        packageAccessedHandler: PackageAccessHandler?,
         customMetadataProtoLoader: CustomMetadataProtoLoader?,
         storageManager: StorageManager,
         configuration: DeserializationConfiguration
     ): List<KlibMetadataDeserializedPackageFragment> {
         val metadata = library.metadata
-        val header = customMetadataProtoLoader?.loadModuleHeader(library)
+        val libraryHeader = customMetadataProtoLoader?.loadModuleHeader(library)
             ?: parseModuleHeader(metadata.moduleHeaderData)
 
-        val nonEmptyPackageFqNames = buildSet {
-            addAll(header.packageFragmentNameList)
-            removeAll(header.emptyPackageList)
-        }
-
-        return nonEmptyPackageFqNames.flatMap {
+        return libraryHeader.packageFragmentNameList.flatMap {
             val packageFqName = FqName(it)
             val containerSource = KlibDeserializedContainerSource(
-                library, header, configuration, packageFqName, incompatibility = library.getIncompatibility(configuration.metadataVersion)
+                library, libraryHeader, configuration, packageFqName, incompatibility = library.getIncompatibility(configuration.metadataVersion)
             )
             val parts = metadata.getPackageFragmentNames(packageFqName.asString())
             val isBuiltInModule = moduleDescriptor.builtIns.builtInsModule === moduleDescriptor
@@ -45,6 +41,7 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
                         fqName = packageFqName,
                         library = library,
                         metadata = metadata,
+                        packageAccessHandler = packageAccessedHandler,
                         customMetadataProtoLoader = customMetadataProtoLoader,
                         storageManager = storageManager,
                         module = moduleDescriptor,
@@ -56,6 +53,7 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
                         fqName = packageFqName,
                         library = library,
                         metadata = metadata,
+                        packageAccessHandler = packageAccessedHandler,
                         customMetadataProtoLoader = customMetadataProtoLoader,
                         storageManager = storageManager,
                         module = moduleDescriptor,

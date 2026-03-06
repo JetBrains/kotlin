@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -148,7 +147,7 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
 
                 val stdlibModule = addModule(
                     buildKtLibraryModule {
-                        addBinaryRoot(ForTestCompileRuntime.runtimeJarForTests().toPath())
+                        addBinaryRoot(StandardLibrariesPathProviderForKotlinProject.runtimeJarForTests().toPath())
                         platform = sharedPlatform
                         libraryName = "stdlib"
                     }
@@ -193,7 +192,7 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
             buildKtModuleProvider {
                 val stdlibModule = addModule(
                     buildKtLibraryModule {
-                        addBinaryRoot(ForTestCompileRuntime.stdlibJsForTests().toPath())
+                        addBinaryRoot(StandardLibrariesPathProviderForKotlinProject.defaultJsStdlib().toPath())
                         platform = sharedPlatform
                         libraryName = "stdlib"
                     }

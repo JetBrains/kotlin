@@ -9,9 +9,8 @@ KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      vararg allowedTargets: kotlin.annotation.AnnotationTarget
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(46,62): 'AnnotationTarget'
   KtSimpleNameReference:
@@ -23,7 +22,6 @@ KtNameReferenceExpression(46,62): 'AnnotationTarget'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -37,7 +35,6 @@ KtNameReferenceExpression(63,73): 'EXPRESSION'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -52,9 +49,8 @@ KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      value: kotlin.annotation.AnnotationRetention
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(86,105): 'AnnotationRetention'
   KtSimpleNameReference:
@@ -66,7 +62,6 @@ KtNameReferenceExpression(86,105): 'AnnotationRetention'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -80,7 +75,6 @@ KtNameReferenceExpression(106,112): 'SOURCE'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -102,9 +96,8 @@ KtValueArgument(178,189): '0 + integer'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      number: kotlin.Int
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(180,181): '+'
   KtSimpleNameReference:
@@ -123,7 +116,6 @@ KtNameReferenceExpression(182,189): 'integer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -138,9 +130,8 @@ KtValueArgument(198,205): 'integer'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      number: kotlin.Int
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(198,205): 'integer'
   KtSimpleNameReference:
@@ -152,7 +143,6 @@ KtNameReferenceExpression(198,205): 'integer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -160,7 +150,6 @@ KtCallExpression(207,214): 'usage()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -174,7 +163,6 @@ KtNameReferenceExpression(207,212): 'usage'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -182,7 +170,6 @@ KtCallExpression(216,226): 'toString()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -196,6 +183,5 @@ KtNameReferenceExpression(216,224): 'toString'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

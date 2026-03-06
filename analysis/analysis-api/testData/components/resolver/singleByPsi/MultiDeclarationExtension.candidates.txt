@@ -1,20 +1,2 @@
 KtDestructuringDeclarationEntry(135,136): 'b'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = b
-        isSafeNavigation = false
-        type = a.A
-      signature = KaFunctionSignature:
-        receiverType = a.A
-        returnType = kotlin.Int
-        symbol = a/component2(<extension receiver>: a.A): kotlin.Int
-        valueParameters = []
-        contextParameters = []
-        callableId = a/component2
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES

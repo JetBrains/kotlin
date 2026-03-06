@@ -27,8 +27,7 @@ object JsExpressionCheckers : ExpressionCheckers() {
     override val functionCallCheckers: Set<FirFunctionCallChecker>
         get() = setOf(
             FirJsCodeConstantArgumentChecker,
-            FirJsReifiedExternalChecker,
-            FirJsReifiedJsNoRuntimeChecker,
+            FirJsReifiedExternalChecker
         )
 
     override val callCheckers: Set<FirCallChecker>
@@ -38,18 +37,12 @@ object JsExpressionCheckers : ExpressionCheckers() {
 
     override val getClassCallCheckers: Set<FirGetClassCallChecker>
         get() = setOf(
-            FirJsModuleGetClassCallChecker,
-            FirJsNoRuntimeClassReferenceChecker,
+            FirJsModuleGetClassCallChecker
         )
 
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker>
         get() = setOf(
             FirJsModuleQualifiedAccessChecker,
             FirJsDynamicCallChecker
-        )
-
-    override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker>
-        get() = setOf(
-            FirJsNoRuntimeTypeOperatorChecker,
         )
 }

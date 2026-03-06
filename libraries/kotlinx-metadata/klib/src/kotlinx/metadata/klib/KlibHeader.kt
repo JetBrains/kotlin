@@ -7,6 +7,7 @@ package kotlinx.metadata.klib
 
 class KlibHeader(
     val moduleName: String,
+    val file: List<KlibSourceFile>,
     val packageFragmentName: List<String>,
     val emptyPackage: List<String>,
 )

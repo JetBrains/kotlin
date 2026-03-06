@@ -404,13 +404,6 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun testBlockParamNames() {
-        val testName = "blockParamNames"
-        val testCase = generateObjCFramework(testName)
-        compileAndRunSwift(testName, testCase)
-    }
-
-    @Test
     fun objCExportTest() {
         objCExportTestImpl("", emptyList(), emptyList(), false)
     }

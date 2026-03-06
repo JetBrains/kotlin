@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible
 
 // FILE: GenericTypeAnnotationNotNull.java
 import org.jetbrains.annotations.NotNull;

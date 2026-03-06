@@ -3,7 +3,6 @@
     KtArrayAccessReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 
@@ -12,7 +11,6 @@
     KtArrayAccessReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 
@@ -21,6 +19,5 @@
     KtArrayAccessReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E

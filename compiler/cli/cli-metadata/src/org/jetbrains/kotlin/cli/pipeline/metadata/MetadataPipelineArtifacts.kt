@@ -10,17 +10,18 @@ import org.jetbrains.kotlin.cli.metadata.AbstractMetadataSerializer.OutputInfo
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.library.SerializedMetadata
 
 data class MetadataFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
+    override val diagnosticCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
 ) : FrontendPipelineArtifact() {
-    @CliPipelineInternals(OPT_IN_MESSAGE)
-    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): MetadataFrontendPipelineArtifact {
-        return copy(configuration = newConfiguration)
+    override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): MetadataFrontendPipelineArtifact {
+        return copy(diagnosticCollector = newDiagnosticsCollector)
     }
 
     override fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact {
@@ -30,21 +31,11 @@ data class MetadataFrontendPipelineArtifact(
 
 data class MetadataInMemorySerializationArtifact(
     val metadata: SerializedMetadata,
-    override val configuration: CompilerConfiguration,
-) : PipelineArtifact() {
-    @CliPipelineInternals(OPT_IN_MESSAGE)
-    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): MetadataInMemorySerializationArtifact {
-        return copy(configuration = newConfiguration)
-    }
-}
+    val configuration: CompilerConfiguration,
+) : PipelineArtifact()
 
 data class MetadataSerializationArtifact(
     val outputInfo: OutputInfo?,
-    override val configuration: CompilerConfiguration,
+    val configuration: CompilerConfiguration,
     val destination: String,
-) : PipelineArtifact() {
-    @CliPipelineInternals(OPT_IN_MESSAGE)
-    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): MetadataSerializationArtifact {
-        return copy(configuration = newConfiguration)
-    }
-}
+) : PipelineArtifact()

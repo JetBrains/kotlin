@@ -499,10 +499,8 @@ Modes:
         valueDescription = "<profilerPath:command:outputDir>",
         description = """Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
 `profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.
-If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath. 
-Individual parameter values are separated by the system path separator.
-Example (Unix/Linux): -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>
-Example (Windows): -Xprofile=<PATH_TO_ASYNC_PROFILER>\async-profiler\build\libasyncProfiler.so;event=cpu,interval=1ms,threads,start;<SNAPSHOT_DIR_PATH>""",
+If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.
+Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>""",
     )
     var profileCompilerCommand: String? = null
         set(value) {
@@ -542,6 +540,17 @@ problems with parentheses in identifiers on certain platforms.""",
         description = "Set the script resolver environment in key-value pairs (the value can be quoted and escaped).",
     )
     var scriptResolverEnvironment: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xserialize-ir",
+        valueDescription = "{none|inline|all}",
+        description = "Save the IR to metadata (Experimental).",
+    )
+    var serializeIr: String = "none"
         set(value) {
             checkFrozen()
             field = value
@@ -673,7 +682,7 @@ This can be used in the event of problems with the new implementation.""",
         value = "-Xvalue-classes",
         description = "Enable experimental value classes.",
     )
-    @Enables(LanguageFeature.JvmInlineMultiFieldValueClasses)
+    @Enables(LanguageFeature.ValueClasses)
     var valueClasses: Boolean = false
         set(value) {
             checkFrozen()

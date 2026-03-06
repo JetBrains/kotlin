@@ -6,7 +6,7 @@
 package kotlin.internal
 
 @PublishedApi
-@SinceKotlin("2.4")
+@SinceKotlin("2.3")
 @ExperimentalStdlibApi
 @JvmField
 internal val MISSING_VALUE: Any = Any()

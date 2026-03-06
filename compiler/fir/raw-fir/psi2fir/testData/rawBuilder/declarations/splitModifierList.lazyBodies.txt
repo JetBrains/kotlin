@@ -1,12 +1,12 @@
 FILE: splitModifierList.kt
     @Target(LAZY_EXPRESSION, LAZY_EXPRESSION) public final? annotation class A : R|kotlin/Annotation| {
-        public? [ContainingClassKey=A] constructor(): R|A| {
+        public? constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Target(LAZY_EXPRESSION, LAZY_EXPRESSION) public final? annotation class B : R|kotlin/Annotation| {
-        public? [ContainingClassKey=B] constructor(): R|B| {
+        public? constructor(): R|B| {
             LAZY_super<R|kotlin/Any|>
         }
 

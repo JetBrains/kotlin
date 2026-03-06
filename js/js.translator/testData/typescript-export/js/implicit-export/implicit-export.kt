@@ -4,10 +4,6 @@
 // KJS_WITH_FULL_RUNTIME
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
-
-// DIAGNOSTICS: -WRONG_ANNOTATION_TARGET
-// ^ TODO(KT-49795): Remove this when we support export for type aliases
-
 // FILE: qualified.kt
 @file:JsQualifier("WebAssembly")
 package qualified
@@ -16,6 +12,7 @@ package qualified
 external interface CompileError
 // FILE: notQualified.kt
 
+@JsExport.Ignore
 package notQualified
 
 @JsExport.Ignore

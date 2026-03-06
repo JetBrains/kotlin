@@ -21,21 +21,9 @@ object FirDiagnosticToKaDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
     }
 
     private fun SmartPrinter.printDiagnosticConverter(diagnosticList: HLDiagnosticList) {
-        // Render diagnostics in chunks to help tooling to analyze the file faster
-        val diagnosticGroups = diagnosticList.diagnostics.chunked(10)
-        val functionNameTemplate = "addConversions"
-        printBlock("internal val KT_DIAGNOSTIC_CONVERTER: KaDiagnosticConverter = KaDiagnosticConverterBuilder.buildConverter") {
-            for (index in diagnosticGroups.indices) {
-                println("$functionNameTemplate$index()")
-            }
-        }
-
-        for ((index, diagnostics) in diagnosticGroups.withIndex()) {
-            println()
-            printBlock("private fun KaDiagnosticConverterBuilder.$functionNameTemplate$index()") {
-                for (diagnostic in diagnostics) {
-                    printConverter(diagnostic)
-                }
+        printBlock("internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConverter") {
+            for (diagnostic in diagnosticList.diagnostics) {
+                printConverter(diagnostic)
             }
         }
     }

@@ -1,6 +1,6 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-78783
-// LANGUAGE: -PreciseSimplificationToFlexibleLowerConstraint
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible -PreciseSimplificationToFlexibleLowerConstraint
 // JVM_TARGET: 1.8
 // FULL_JDK
 // FIR_DUMP
@@ -33,7 +33,7 @@ class Handler<H>(val reader: (s: InputStream) -> H) {
         }
 
         return Subscribers.mapping(subscriber) {
-            reader(<!ARGUMENT_TYPE_MISMATCH!>it<!>)
+            reader(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA!>it<!>)
         }
     }
 }

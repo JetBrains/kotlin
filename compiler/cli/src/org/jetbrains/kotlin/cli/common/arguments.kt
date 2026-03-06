@@ -7,14 +7,9 @@ package org.jetbrains.kotlin.cli.common
 
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.cli.CliDiagnostics
-import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
-import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.report
-import org.jetbrains.kotlin.cli.reportInfo
-import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -29,7 +24,8 @@ fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
     createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
 ) {
-    treatWarningsAsErrors = arguments.allWarningsAsErrors
+    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
     put(CommonConfigurationKeys.USE_FIR_EXTRA_CHECKERS, arguments.extraWarnings)
     put(CommonConfigurationKeys.METADATA_KLIB, arguments.metadataKlib)
@@ -49,7 +45,7 @@ fun CompilerConfiguration.setupCommonArguments(
     val irVerificationMode = arguments.verifyIr?.let { verifyIrString ->
         IrVerificationMode.resolveMode(verifyIrString).also {
             if (it == null) {
-                this.report(COMPILER_ARGUMENTS_ERROR, "Unsupported IR verification mode $verifyIrString")
+                messageCollector.report(CompilerMessageSeverity.ERROR, "Unsupported IR verification mode $verifyIrString")
             }
         }
     } ?: IrVerificationMode.NONE
@@ -58,8 +54,8 @@ fun CompilerConfiguration.setupCommonArguments(
     if (arguments.verifyIrVisibility) {
         put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
         if (irVerificationMode == IrVerificationMode.NONE) {
-            this.report(
-                COMPILER_ARGUMENTS_WARNING,
+            messageCollector.report(
+                CompilerMessageSeverity.WARNING,
                 "'-Xverify-ir-visibility' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
             )
         }
@@ -68,8 +64,8 @@ fun CompilerConfiguration.setupCommonArguments(
     if (arguments.verifyIrNestedOffsets) {
         put(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS, true)
         if (irVerificationMode == IrVerificationMode.NONE) {
-            this.report(
-                COMPILER_ARGUMENTS_WARNING,
+            messageCollector.report(
+                CompilerMessageSeverity.WARNING,
                 "'-Xverify-ir-nested-offsets' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
             )
         }
@@ -78,8 +74,8 @@ fun CompilerConfiguration.setupCommonArguments(
     @Suppress("DEPRECATION")
     if (arguments.useFirExperimentalCheckers) {
         put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, true)
-        this.report(
-            COMPILER_ARGUMENTS_WARNING,
+        messageCollector.report(
+            CompilerMessageSeverity.WARNING,
             "'-Xuse-fir-experimental-checkers' is deprecated and will be removed in a future release"
         )
     }
@@ -112,33 +108,17 @@ fun CompilerConfiguration.setupMetadataVersion(
     if (metadataVersionString != null) {
         val versionArray = BinaryVersion.parseVersionArray(metadataVersionString)
         when {
-            versionArray == null -> this.report(
-                COMPILER_ARGUMENTS_ERROR, "Invalid metadata version: $metadataVersionString", null
+            versionArray == null -> messageCollector.report(
+                CompilerMessageSeverity.ERROR, "Invalid metadata version: $metadataVersionString", null
             )
             createMetadataVersion == null -> throw IllegalStateException("Unable to create metadata version: missing argument")
             else -> put(CommonConfigurationKeys.METADATA_VERSION, createMetadataVersion(versionArray))
         }
     }
 }
-fun CommonCompilerArgumentsConfigurator.Reporter.Companion.fromConfiguration(configuration: CompilerConfiguration): CommonCompilerArgumentsConfigurator.Reporter {
-    return object : CommonCompilerArgumentsConfigurator.Reporter {
-        override fun reportWarning(message: String) {
-            configuration.report(COMPILER_ARGUMENTS_WARNING, message)
-        }
-
-        override fun reportError(message: String) {
-            configuration.report(COMPILER_ARGUMENTS_ERROR, message)
-        }
-
-        override fun info(message: String) {
-            configuration.reportInfo(message)
-        }
-    }
-}
 
 fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompilerArguments) {
-    val reporter = CommonCompilerArgumentsConfigurator.Reporter.fromConfiguration(this)
-    languageVersionSettings = arguments.toLanguageVersionSettings(reporter)
+    languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
 }
 
 private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompilerArguments) {
@@ -146,38 +126,41 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
 
     propertiesLoop@ for ((explicitArgument, values) in arguments.explicitArguments) {
         if (!explicitArgument.changesLanguageFeatures) continue@propertiesLoop
-        val effectivePropertyValue = values.lastOrNull() ?: continue@propertiesLoop
 
-        fun checkNecessity(feature: LanguageFeature, ifValueIs: String, state: LanguageFeature.State): Boolean {
-            // At first, check if the annotation is relevant. Only Boolean and String types are allowed
-            when {
-                // Language features can't be disabled, so it's expected if the value is changed, it's always `true`
-                ifValueIs.isEmpty() -> require(effectivePropertyValue as Boolean)
-                else -> if (effectivePropertyValue as String != ifValueIs) return false
+        for (actualPropertyValue in values) {
+            fun checkNecessity(feature: LanguageFeature, ifValueIs: String, state: LanguageFeature.State): Boolean {
+                // At first, check if the annotation is relevant. Only Boolean and String types are allowed
+                when {
+                    // Language features can't be disabled, so it's expected if the value is changed, it's always `true`
+                    ifValueIs.isEmpty() -> require(actualPropertyValue as Boolean)
+                    else -> if (actualPropertyValue as String != ifValueIs) return false
+                }
+
+                // At second check the necessity
+                return (state == LanguageFeature.State.ENABLED) != languageVersionSettings.isEnabledByDefault(feature)
             }
 
-            // At second check the necessity
-            return (state == LanguageFeature.State.ENABLED) != languageVersionSettings.isEnabledByDefault(feature)
-        }
+            explicitArgument.enablesAnnotations.forEach {
+                if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.ENABLED)) continue@propertiesLoop
+            }
+            explicitArgument.disablesAnnotations.forEach {
+                if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) continue@propertiesLoop
+            }
 
-        explicitArgument.enablesAnnotations.forEach {
-            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.ENABLED)) continue@propertiesLoop
-        }
-        explicitArgument.disablesAnnotations.forEach {
-            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) continue@propertiesLoop
-        }
+            val argValue = if (actualPropertyValue is String) "=$actualPropertyValue" else ""
+            reportDiagnostic(
+                CliDiagnostics.REDUNDANT_CLI_ARG,
+                "The argument '${explicitArgument.argument.value}${argValue}' is redundant for the current language version $languageVersion.",
+            )
 
-        val argValue = if (effectivePropertyValue is String) "=$effectivePropertyValue" else ""
-        this.report(
-            CliDiagnostics.REDUNDANT_CLI_ARG,
-            "The argument '${explicitArgument.argument.value}${argValue}' is redundant for the current language version $languageVersion.",
-        )
+            continue@propertiesLoop
+        }
     }
 }
 
 const val KOTLIN_HOME_PROPERTY = "kotlin.home"
 
-fun computeKotlinPaths(configuration: CompilerConfiguration, arguments: CommonCompilerArguments): KotlinPaths? {
+fun computeKotlinPaths(messageCollector: MessageCollector, arguments: CommonCompilerArguments): KotlinPaths? {
     val kotlinHomeProperty = System.getProperty(KOTLIN_HOME_PROPERTY)
     val kotlinHome = when {
         arguments.kotlinHome != null -> File(arguments.kotlinHome!!)
@@ -189,22 +172,22 @@ fun computeKotlinPaths(configuration: CompilerConfiguration, arguments: CommonCo
         kotlinHome == null -> PathUtil.kotlinPathsForCompiler
         kotlinHome.isDirectory -> KotlinPathsFromHomeDir(kotlinHome)
         else -> {
-            configuration.report(COMPILER_ARGUMENTS_ERROR, "Kotlin home does not exist or is not a directory: $kotlinHome")
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Kotlin home does not exist or is not a directory: $kotlinHome", null)
             null
         }
     }?.also {
-        configuration.reportLog("Using Kotlin home directory " + it.homePath, null)
+        messageCollector.report(CompilerMessageSeverity.LOGGING, "Using Kotlin home directory " + it.homePath, null)
     }
 }
 
 fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments) {
     for ((key, values) in arguments.explicitArguments) {
-        if (values.size <= 1 || values.distinct().size == 1) continue
-
-        val argName = key.argument.value
-        val valuesString = values.joinToString("', '")
-        val message = "Argument '$argName' is passed multiple times: '$valuesString'. The last value will be used."
-        report(CompilerMessageSeverity.STRONG_WARNING, message)
+        if (values.size > 1) {
+            val argName = key.argument.value
+            val valuesString = values.joinToString("', '")
+            val message = "Argument '$argName' is passed multiple times: '$valuesString'. The last value will be used."
+            report(CompilerMessageSeverity.STRONG_WARNING, message)
+        }
     }
 
     val errors = arguments.errors ?: return
@@ -265,12 +248,14 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     val rawFragmentSources = arguments.fragmentSources
     val rawFragmentRefines = arguments.fragmentRefines
 
+    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
     fun reportError(message: String) {
-        this.report(COMPILER_ARGUMENTS_ERROR, message)
+        messageCollector.report(CompilerMessageSeverity.ERROR, message)
     }
 
     fun reportWarning(message: String) {
-        this.report(COMPILER_ARGUMENTS_WARNING, message)
+        messageCollector.report(CompilerMessageSeverity.WARNING, message)
     }
 
     if (rawFragments == null) {

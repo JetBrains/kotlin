@@ -15,7 +15,17 @@ import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addProperty
 import org.jetbrains.kotlin.ir.builders.irNull
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
@@ -23,10 +33,15 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.typeWithArguments
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameterWithClassParent
+import org.jetbrains.kotlin.ir.util.invokeFun
+import org.jetbrains.kotlin.ir.util.isKFunction
+import org.jetbrains.kotlin.ir.util.isKSuspendFunction
+import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
+import kotlin.collections.plus
 
 abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
     AbstractFunctionReferenceLowering<JsCommonBackendContext>(context) {
@@ -47,9 +62,9 @@ abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
                 val referenceType = type as IrSimpleType
                 val arity = referenceType.arguments.size - 1
                 if (invokeFunction.isSuspend)
-                    context.irBuiltIns.suspendFunctionN(arity)
+                    context.symbols.suspendFunctionN(arity).owner
                 else
-                    context.irBuiltIns.functionN(arity)
+                    context.symbols.functionN(arity).owner
             } else null
 
     private fun StringBuilder.collectNamesForLambda(d: IrDeclarationWithName) {

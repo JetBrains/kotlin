@@ -1,2 +1,0 @@
-KtPropertyDelegate(429,465): 'by ProvideDelegateHolder("provided")'
-  null

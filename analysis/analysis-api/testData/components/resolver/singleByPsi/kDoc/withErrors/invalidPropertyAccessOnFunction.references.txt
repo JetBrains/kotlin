@@ -2,6 +2,5 @@ KDocName(51,59): 'A.toName'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) fun toName(): kotlin.String

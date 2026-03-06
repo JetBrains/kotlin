@@ -2,7 +2,7 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
-// LANGUAGE: +CustomEqualsInValueClasses +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +CustomEqualsInValueClasses +ValueClasses
 
 @JvmInline
 value class MFVC1(val x: Int, val y: Int) {

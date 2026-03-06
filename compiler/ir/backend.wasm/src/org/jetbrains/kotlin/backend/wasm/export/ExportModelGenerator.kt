@@ -29,11 +29,10 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.parentOrNull
-import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedFilter
-import org.jetbrains.kotlin.utils.memoryOptimizedFlatMap
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
 private const val NOT_EXPORTED_NAMESPACE = "not.exported"
 
@@ -155,53 +154,23 @@ class ExportModelGenerator(val context: WasmBackendContext) {
     private fun exportProperty(
         property: IrProperty,
         specializeType: ExportedType? = null
-    ): List<ExportedDeclaration> {
+    ): ExportedDeclaration {
         val parentClass = property.parent as? IrClass
         val isOptional = parentClass != null &&
                 property.getter?.returnType?.isNullable() == true
 
-        val name = ExportedMemberName.Identifier(property.getExportedIdentifier())
-        val propertyType = specializeType ?: exportType(property.getter!!.returnType)
-        val isStatic = (property.getter ?: property.setter)?.isStaticMethodOfClass == true
-        val isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT
-        val isProtected = property.visibility == DescriptorVisibilities.PROTECTED
-        if (parentClass?.isInterface == true) {
-            return listOf(
-                ExportedField(
-                    name = name,
-                    type = propertyType,
-                    mutable = property.isVar,
-                    isMember = true,
-                    isAbstract = isAbstract,
-                    isProtected = isProtected,
-                    isObjectGetter = property.getter?.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION,
-                    isOptional = isOptional,
-                    isStatic = isStatic,
-                )
-            )
-        } else {
-            val accessors: MutableList<ExportedDeclaration> = SmartList(
-                ExportedPropertyGetter(
-                    name = name,
-                    type = propertyType,
-                    isStatic = isStatic,
-                    isAbstract = isAbstract,
-                    isProtected = isProtected,
-                )
-            )
-            if (property.isVar) {
-                accessors.add(
-                    ExportedPropertySetter(
-                        name = name,
-                        type = propertyType,
-                        isStatic = isStatic,
-                        isAbstract = isAbstract,
-                        isProtected = isProtected,
-                    )
-                )
-            }
-            return accessors
-        }
+        return ExportedProperty(
+            name = ExportedMemberName.Identifier(property.getExportedIdentifier()),
+            type = specializeType ?: exportType(property.getter!!.returnType),
+            mutable = property.isVar,
+            isMember = parentClass != null,
+            isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT,
+            isProtected = property.visibility == DescriptorVisibilities.PROTECTED,
+            isField = parentClass?.isInterface == true,
+            isObjectGetter = property.getter?.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION,
+            isOptional = isOptional,
+            isStatic = (property.getter ?: property.setter)?.isStaticMethodOfClass == true,
+        )
     }
 
     private fun exportParameter(parameter: IrValueParameter): ExportedParameter =
@@ -246,12 +215,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             )
             nonNullType.isNothing() -> ExportedType.Primitive.Nothing
 
-            classifier is IrTypeParameterSymbol -> ExportedType.TypeParameterRef(
-                ExportedTypeParameter(
-                    classifier.owner.name.identifier,
-                    classifier.owner.variance.exportedVariance
-                )
-            )
+            classifier is IrTypeParameterSymbol -> ExportedType.TypeParameterRef(ExportedTypeParameter(classifier.owner.name.identifier))
 
             classifier is IrClassSymbol -> {
                 val klass = classifier.owner
@@ -305,7 +269,6 @@ class ExportModelGenerator(val context: WasmBackendContext) {
 
         return ExportedTypeParameter(
             typeParameter.name.identifier,
-            typeParameter.variance.exportedVariance,
             constraint.run {
                 when (size) {
                     0 -> null
@@ -316,14 +279,14 @@ class ExportModelGenerator(val context: WasmBackendContext) {
         )
     }
 
-    private fun exportMemberDeclaration(declaration: IrDeclaration): List<ExportedDeclaration> {
-        if (declaration !is IrDeclarationWithVisibility || declaration.visibility == DescriptorVisibilities.PRIVATE) return emptyList()
+    private fun exportMemberDeclaration(declaration: IrDeclaration): ExportedDeclaration? {
+        if (declaration !is IrDeclarationWithVisibility || declaration.visibility == DescriptorVisibilities.PRIVATE) return null
         return when (declaration) {
-            is IrSimpleFunction -> listOfNotNull(exportFunction(declaration))
-            is IrConstructor -> listOf(exportConstructor(declaration))
+            is IrSimpleFunction -> exportFunction(declaration)
+            is IrConstructor -> exportConstructor(declaration)
             is IrProperty -> exportProperty(declaration)
-            else -> emptyList()
-        }.map { it.withAttributesFor(declaration) }
+            else -> null
+        }?.withAttributesFor(declaration)
     }
 
     private fun exportClass(declaration: IrClass): ExportedDeclaration {
@@ -340,7 +303,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             .memoryOptimizedFilter { it !is ExportedType.ErrorType }
 
         val name = declaration.getExportedIdentifier()
-        val members = declaration.declarations.memoryOptimizedFlatMap(::exportMemberDeclaration)
+        val members = declaration.declarations.memoryOptimizedMapNotNull(::exportMemberDeclaration)
 
         val exportedDeclaration = if (declaration.kind == ClassKind.OBJECT) {
             ExportedObject(

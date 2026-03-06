@@ -23,7 +23,10 @@ import java.lang.ref.SoftReference
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.jvm.internal.Reflection
-import kotlin.reflect.*
+import kotlin.reflect.KCallable
+import kotlin.reflect.KClass
+import kotlin.reflect.KDeclarationContainer
+import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMembers
 import kotlin.reflect.full.staticFunctions
 import kotlin.reflect.full.staticProperties
@@ -110,7 +113,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
         if (kotlinReflectDumpMismatch) {
             assertions.assertFalse(skipAsserts) {
                 "Cannot use both directives: " +
-                        "${::SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK.name} and ${::KOTLIN_REFLECT_DUMP_MISMATCH.name}. " +
+                        "SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK and KOTLIN_REFLECT_DUMP_MISMATCH. " +
                         "Pick one"
             }
             val a = runCatching { assertions.assertEqualsToFile(k1ReflectFile, k1ReflectDump) }
@@ -119,7 +122,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
             b.getOrThrow()
 
             assertions.assertTrue(k1ReflectDump != newReflectDump) {
-                "K1 and new kotlin-reflect dumps are the same. Please drop ${::KOTLIN_REFLECT_DUMP_MISMATCH.name} directive"
+                "K1 and new kotlin-reflect dumps are the same. Please drop KOTLIN_REFLECT_DUMP_MISMATCH directive"
             }
         } else {
             k1ReflectFile.delete()
@@ -127,8 +130,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
             if (skipAsserts) return
             if (k1ReflectDump != newReflectDump) {
                 val tip =
-                    "// Tip: you can use ${::KOTLIN_REFLECT_DUMP_MISMATCH.name} or ${::SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK.name} " +
-                            "directive to suppress the test\n"
+                    "// Tip: you can use KOTLIN_REFLECT_DUMP_MISMATCH / SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK directives to suppress the test\n"
                 val k1ReflectHeader = "$tip// K1 kotlin-reflect dump\n"
                 val newReflectHeader = "$tip// New kotlin-reflect dump\n"
                 assertions.assertEquals(k1ReflectHeader + k1ReflectDump, newReflectHeader + newReflectDump)
@@ -247,29 +249,10 @@ class RunInAlienClassLoader {
                     if (kCallable.isInline) append("inline ")
                     if (kCallable.isExternal) append("external ")
                 }
-                val typeParameters = kCallable.typeParameters
-                if (typeParameters.isNotEmpty()) {
-                    append(typeParameters.joinToString(prefix = "<", postfix = "> ") { typeParameter ->
-                        buildString {
-                            if (typeParameter.isReified) append("reified ")
-                            append(typeParameter)
-                        }
-                    })
-                }
 
                 append(str)
-
-                val bounds = typeParameters.flatMap { typeParameter ->
-                    typeParameter.upperBounds
-                        .filter { it != typeOf<Any?>() }
-                        .map { bound -> "${typeParameter.name} : $bound" }
-                }
-                if (bounds.isNotEmpty()) {
-                    append(" where " + bounds.joinToString())
-                }
             }
-        }.sortedWith(compareBy(/* Sorting by it.first helps with readability when dumps mismatch */ { it.first }, { it.second }))
-            .forEach { dump(it.second) }
+        }.sortedWith(compareBy({ it.first }, { it.second })).forEach { dump(it.second) }
     }
 
     private class IndentedStringBuilder {

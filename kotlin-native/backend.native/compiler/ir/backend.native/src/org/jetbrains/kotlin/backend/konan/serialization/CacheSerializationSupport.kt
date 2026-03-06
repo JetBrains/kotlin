@@ -397,11 +397,10 @@ internal object ClassFieldsSerializer {
         }
 
         val idSignatureSerializer = IdSignatureSerializer(
-            ::serializeString,
-            ::serializeString,
-            protoIdSignatureMap,
-            protoIdSignatureArray,
-            serializeForKlibAbi_2_3 = false,
+                ::serializeString,
+                ::serializeString,
+                protoIdSignatureMap,
+                protoIdSignatureArray
         )
 
         classFields.forEach {

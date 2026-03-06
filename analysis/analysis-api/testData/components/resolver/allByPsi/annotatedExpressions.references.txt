@@ -9,7 +9,6 @@ KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       vararg allowedTargets: kotlin.annotation.AnnotationTarget
 
@@ -38,7 +37,6 @@ KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       value: kotlin.annotation.AnnotationRetention
 
@@ -74,7 +72,6 @@ KtValueArgument(178,189): '0 + integer'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       number: kotlin.Int
 
@@ -103,7 +100,6 @@ KtValueArgument(198,205): 'integer'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       number: kotlin.Int
 
@@ -118,7 +114,6 @@ KtCallExpression(207,214): 'usage()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -133,7 +128,6 @@ KtCallExpression(216,226): 'toString()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

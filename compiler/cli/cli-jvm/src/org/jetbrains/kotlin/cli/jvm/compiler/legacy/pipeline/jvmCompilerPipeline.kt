@@ -16,13 +16,15 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.configureProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -32,7 +34,6 @@ import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
-import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
@@ -64,7 +65,7 @@ fun convertAnalyzedFirToIr(
     frontendOutput: AllModulesFrontendOutput,
     environment: ModuleCompilerEnvironment
 ): ModuleCompilerIrBackendInput {
-    val extensions = JvmFir2IrExtensions(configuration)
+    val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
 
     val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
         frontendOutput.convertToIrAndActualizeForJvm(
@@ -179,7 +180,7 @@ private class ProjectEnvironmentWithCoreEnvironmentEmulation(
     override fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider {
         return super.getPackagePartProvider(fileSearchScope).also {
             (it as? JvmPackagePartProvider)?.run {
-                addRoots(initialRoots, configuration)
+                addRoots(initialRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
                 packagePartProviders += this
             }
         }
@@ -189,7 +190,8 @@ private class ProjectEnvironmentWithCoreEnvironmentEmulation(
 fun createProjectEnvironment(
     configuration: CompilerConfiguration,
     parentDisposable: Disposable,
-    configFiles: EnvironmentConfigFiles
+    configFiles: EnvironmentConfigFiles,
+    messageCollector: MessageCollector
 ): VfsBasedProjectEnvironment {
     setupIdeaStandaloneExecution()
     val appEnv = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(parentDisposable, configuration)
@@ -205,13 +207,8 @@ fun createProjectEnvironment(
 
     val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE)
 
-    val javaModuleFinder = CliJavaModuleFinder(
-        configuration.jdkHome,
-        configuration,
-        javaFileManager,
-        project,
-        releaseTarget
-    )
+    val javaModuleFinder =
+        CliJavaModuleFinder(configuration.get(JVMConfigurationKeys.JDK_HOME), messageCollector, javaFileManager, project, releaseTarget)
 
     val outputDirectory =
         configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
@@ -221,9 +218,9 @@ fun createProjectEnvironment(
 
     val classpathRootsResolver = ClasspathRootsResolver(
         PsiManager.getInstance(project),
-        configuration,
+        messageCollector,
         configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
-        { contentRootToVirtualFile(it, localFileSystem, projectEnvironment.jarFileSystem, configuration) },
+        { contentRootToVirtualFile(it, localFileSystem, projectEnvironment.jarFileSystem, messageCollector) },
         javaModuleFinder,
         !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
         outputDirectory?.let { localFileSystem.findFileByPath(it) },
@@ -280,18 +277,18 @@ private fun contentRootToVirtualFile(
     root: JvmContentRootBase,
     localFileSystem: VirtualFileSystem,
     jarFileSystem: VirtualFileSystem,
-    configuration: CompilerConfiguration,
+    messageCollector: MessageCollector,
 ): VirtualFile? =
     when (root) {
         // TODO: find out why non-existent location is not reported for JARs, add comment or fix
         is JvmClasspathRoot ->
             if (root.file.isFile) jarFileSystem.findJarRoot(root.file)
-            else localFileSystem.findExistingRoot(root, "Classpath entry", configuration)
+            else localFileSystem.findExistingRoot(root, "Classpath entry", messageCollector)
         is JvmModulePathRoot ->
             if (root.file.isFile) jarFileSystem.findJarRoot(root.file)
-            else localFileSystem.findExistingRoot(root, "Java module root", configuration)
+            else localFileSystem.findExistingRoot(root, "Java module root", messageCollector)
         is JavaSourceRoot ->
-            localFileSystem.findExistingRoot(root, "Java source root", configuration)
+            localFileSystem.findExistingRoot(root, "Java source root", messageCollector)
         is VirtualJvmClasspathRoot ->
             root.file
         else ->
@@ -302,12 +299,12 @@ private fun VirtualFileSystem.findJarRoot(file: File): VirtualFile? =
     findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
 
 private fun VirtualFileSystem.findExistingRoot(
-    root: JvmContentRoot, rootDescription: String, configuration: CompilerConfiguration,
+    root: JvmContentRoot, rootDescription: String, messageCollector: MessageCollector,
 ): VirtualFile? {
     return findFileByPath(root.file.absolutePath).also {
         if (it == null) {
-            configuration.report(
-                ROOTS_RESOLUTION_WARNING,
+            messageCollector.report(
+                CompilerMessageSeverity.STRONG_WARNING,
                 "$rootDescription points to a non-existent location: ${root.file}"
             )
         }

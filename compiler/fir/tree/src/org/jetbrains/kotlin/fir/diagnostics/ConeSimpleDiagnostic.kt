@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.diagnostics
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -121,8 +120,8 @@ object ConeContextParameterWithDefaultValue : ConeDiagnostic {
     override val reason: String get() = "Context parameters cannot have default values"
 }
 
-class ConeCollectionLiteralAmbiguity(val candidatesWithOf: List<FirRegularClassSymbol>) : ConeDiagnostic {
-    override val reason: String get() = "Ambiguous collection literal"
+object ConeUnsupportedCollectionLiteralType : ConeDiagnostic {
+    override val reason: String get() = "Unsupported collection literal type"
 }
 
 enum class DiagnosticKind {

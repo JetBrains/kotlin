@@ -31,7 +31,6 @@ object CommonTypeCheckers : TypeCheckers() {
         PlatformClassMappedToKotlinTypeRefChecker,
         FirMissingDependencyClassInTypeAliasTypeChecker,
         FirRootIdePackageDeprecatedInCliTypeChecker,
-        TypeArgumentsInPackagesTypeRefChecker,
     )
 
     override val intersectionTypeRefCheckers: Set<FirIntersectionTypeRefChecker> = setOf(

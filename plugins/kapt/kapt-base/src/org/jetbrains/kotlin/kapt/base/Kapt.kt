@@ -18,7 +18,7 @@ object Kapt {
     @JvmStatic
     @Suppress("unused")
     fun kaptFlags(rawFlags: Set<String>): KaptFlags {
-        return KaptFlags.fromSet(KaptFlag.entries.filterTo(mutableSetOf()) { it.name in rawFlags })
+        return KaptFlags.fromSet(KaptFlag.values().filterTo(mutableSetOf()) { it.name in rawFlags })
     }
 
     @JvmStatic
@@ -27,7 +27,7 @@ object Kapt {
         doOpenInternalPackagesIfRequired()
         val logger = WriterBackedKaptLogger(options[KaptFlag.VERBOSE])
 
-        if (!checkJavacComponentsAccess(logger)) {
+        if (!Kapt.checkJavacComponentsAccess(logger)) {
             return false
         }
 
@@ -59,7 +59,7 @@ object Kapt {
         try {
             Class.forName(JAVAC_CONTEXT_CLASS)
             return true
-        } catch (_: ClassNotFoundException) {
+        } catch (e: ClassNotFoundException) {
             logger.error("'$JAVAC_CONTEXT_CLASS' class can't be found ('tools.jar' is absent in the plugin classpath). Kapt won't work.")
             return false
         }

@@ -16,9 +16,8 @@ KtValueArgument(39,60): 'AnnotationTarget.TYPE'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      vararg allowedTargets: kotlin.annotation.AnnotationTarget
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(39,55): 'AnnotationTarget'
   KtSimpleNameReference:
@@ -30,7 +29,6 @@ KtNameReferenceExpression(39,55): 'AnnotationTarget'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -44,7 +42,6 @@ KtNameReferenceExpression(56,60): 'TYPE'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -66,9 +63,8 @@ KtValueArgument(231,240): '0 + outer'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      i: kotlin.Int
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(233,234): '+'
   KtSimpleNameReference:
@@ -87,7 +83,6 @@ KtNameReferenceExpression(235,240): 'outer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -109,9 +104,8 @@ KtValueArgument(253,262): '1 + outer'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      i: kotlin.Int
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(255,256): '+'
   KtSimpleNameReference:
@@ -145,9 +139,8 @@ KtValueArgument(275,284): '2 + outer'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      i: kotlin.Int
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(277,278): '+'
   KtSimpleNameReference:
@@ -180,7 +173,6 @@ KtNameReferenceExpression(295,304): 'Companion'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -195,9 +187,8 @@ KtValueArgument(316,325): '4 + outer'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      i: kotlin.Int
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(318,319): '+'
   KtSimpleNameReference:
@@ -216,7 +207,6 @@ KtNameReferenceExpression(320,325): 'outer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -238,9 +228,8 @@ KtValueArgument(340,349): '5 + outer'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      i: kotlin.Int
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(342,343): '+'
   KtSimpleNameReference:
@@ -273,7 +262,6 @@ KtNameReferenceExpression(362,374): 'NestedObject'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -288,9 +276,8 @@ KtValueArgument(406,415): '6 + inner'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      i: kotlin.Int
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(408,409): '+'
   KtSimpleNameReference:
@@ -314,7 +301,6 @@ KtNameReferenceExpression(410,415): 'inner'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -336,9 +322,8 @@ KtValueArgument(428,437): '7 + inner'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      i: kotlin.Int
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(430,431): '+'
   KtSimpleNameReference:
@@ -377,9 +362,8 @@ KtValueArgument(450,459): '8 + inner'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      i: kotlin.Int
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(452,453): '+'
   KtSimpleNameReference:
@@ -418,9 +402,8 @@ KtValueArgument(565,574): '9 + inner'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      i: kotlin.Int
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(567,568): '+'
   KtSimpleNameReference:
@@ -439,7 +422,6 @@ KtNameReferenceExpression(569,574): 'inner'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -461,9 +443,8 @@ KtValueArgument(589,599): '10 + inner'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      i: kotlin.Int
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(592,593): '+'
   KtSimpleNameReference:

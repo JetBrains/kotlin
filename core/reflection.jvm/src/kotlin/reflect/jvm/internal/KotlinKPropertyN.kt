@@ -11,28 +11,16 @@ import kotlin.reflect.KMutableProperty
 
 internal open class KotlinKPropertyN<out V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
-    overriddenStorage: KCallableOverriddenStorage,
-) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage) {
+) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty) {
     override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
-
-    override fun replaceContainerForFakeOverride(
-        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
-    ): ReflectKCallable<V> =
-        KotlinKPropertyN(container, signature, rawBoundReceiver, kmProperty, overriddenStorage)
 
     class Getter<out V>(override val property: KotlinKPropertyN<V>) : KotlinKProperty.Getter<V>()
 }
 
 internal class KotlinKMutablePropertyN<V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
-    overriddenStorage: KCallableOverriddenStorage,
-) : KotlinKPropertyN<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage), KMutableProperty<V> {
+) : KotlinKPropertyN<V>(container, signature, rawBoundReceiver, kmProperty), KMutableProperty<V> {
     override val setter: Setter<V> by lazy(PUBLICATION) { Setter(this) }
-
-    override fun replaceContainerForFakeOverride(
-        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
-    ): ReflectKCallable<V> =
-        KotlinKMutablePropertyN(container, signature, rawBoundReceiver, kmProperty, overriddenStorage)
 
     class Setter<V>(override val property: KotlinKMutablePropertyN<V>) : KotlinKProperty.Setter<V>()
 }

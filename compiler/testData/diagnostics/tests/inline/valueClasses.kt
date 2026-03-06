@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +ValueClasses
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 // SKIP_TXT

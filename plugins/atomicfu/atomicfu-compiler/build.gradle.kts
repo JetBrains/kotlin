@@ -189,7 +189,7 @@ projectTests {
             // Exclude all tests with the "atomicfu-native" tag. They should be launched by another test task.
             excludeTags("atomicfu-native")
         }
-        useJsIrBoxTests(buildDir = layout.buildDirectory)
+        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 
         workingDir = rootDir
 

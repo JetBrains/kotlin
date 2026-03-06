@@ -100,7 +100,6 @@ KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -123,7 +122,6 @@ KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -146,7 +144,6 @@ KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regul
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -169,7 +166,6 @@ KtCallExpression(529,539): 'Explicit()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -191,7 +187,6 @@ KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -214,7 +209,6 @@ KtCallExpression(596,606): 'Explicit()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -243,7 +237,6 @@ KtCallExpression(664,794): 'with(Explicit()) {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -258,7 +251,6 @@ KtCallExpression(669,679): 'Explicit()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -273,7 +265,6 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -296,7 +287,6 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -319,7 +309,6 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -342,7 +331,6 @@ KtCallExpression(835,845): 'Explicit()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -364,7 +352,6 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -387,7 +374,6 @@ KtCallExpression(902,912): 'Explicit()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

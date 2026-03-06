@@ -5,7 +5,7 @@
 // ALLOW_KOTLIN_PACKAGE
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +ValueClasses
 
 // FILE: result.kt
 package kotlin

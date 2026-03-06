@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
-class KaptMessageCollectorProvider(@Suppress("unused") testServices: TestServices) : TestService {
+class KaptMessageCollectorProvider(private val testServices: TestServices) : TestService {
     private class StreamAndCollector {
         val outputStream = ByteArrayOutputStream()
         val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, false)
@@ -35,3 +35,4 @@ class KaptMessageCollectorProvider(@Suppress("unused") testServices: TestService
 }
 
 val TestServices.messageCollectorProvider: KaptMessageCollectorProvider by TestServices.testServiceAccessor()
+

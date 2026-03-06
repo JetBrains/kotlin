@@ -83,46 +83,10 @@ KtDestructuringDeclaration(135,163): '[val first, var second,] = x'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(136,145): 'val first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(147,157): 'var second'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = var second
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component2
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(162,163): 'x'
   KaApplicableCallCandidateInfo:
@@ -161,25 +125,7 @@ KtDestructuringDeclaration(182,197): '[var first] = x'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(183,192): 'var first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = var first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(196,197): 'x'
   KaApplicableCallCandidateInfo:
@@ -218,25 +164,7 @@ KtDestructuringDeclaration(216,239): '[val first: String] = x'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(217,234): 'val first: String'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first: String
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtTypeReference(228,234): 'String'
   NO_CANDIDATES
@@ -302,60 +230,7 @@ KtBlockExpression(270,384): '{'
   NO_CANDIDATES
 
 KtForExpression(276,314): 'for ([val first, val second,] in x) {}'
-  KaApplicableCallCandidate:
-    candidate = KaForLoopCall:
-      hasNextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.hasNext
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      iteratorCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.List<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Iterator<Tuple>
-          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/List.iterator
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      nextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Tuple
-          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.next
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtParameter(281,305): '[val first, val second,]'
   NO_CANDIDATES
@@ -364,46 +239,10 @@ KtDestructuringDeclaration(281,305): '[val first, val second,]'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(282,291): 'val first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(293,303): 'val second'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val second
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component2
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtContainerNode(309,310): 'x'
   NO_CANDIDATES
@@ -433,60 +272,7 @@ KtBlockExpression(312,314): '{}'
   NO_CANDIDATES
 
 KtForExpression(319,344): 'for ([val first] in x) {}'
-  KaApplicableCallCandidate:
-    candidate = KaForLoopCall:
-      hasNextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.hasNext
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      iteratorCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.List<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Iterator<Tuple>
-          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/List.iterator
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      nextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Tuple
-          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.next
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtParameter(324,335): '[val first]'
   NO_CANDIDATES
@@ -495,25 +281,7 @@ KtDestructuringDeclaration(324,335): '[val first]'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(325,334): 'val first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtContainerNode(339,340): 'x'
   NO_CANDIDATES
@@ -543,60 +311,7 @@ KtBlockExpression(342,344): '{}'
   NO_CANDIDATES
 
 KtForExpression(349,382): 'for ([val first: String] in x) {}'
-  KaApplicableCallCandidate:
-    candidate = KaForLoopCall:
-      hasNextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.hasNext
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      iteratorCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.List<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Iterator<Tuple>
-          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/List.iterator
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      nextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Tuple
-          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.next
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtParameter(354,373): '[val first: String]'
   NO_CANDIDATES
@@ -605,25 +320,7 @@ KtDestructuringDeclaration(354,373): '[val first: String]'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(355,372): 'val first: String'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first: String
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtTypeReference(366,372): 'String'
   NO_CANDIDATES
@@ -799,46 +496,10 @@ KtDestructuringDeclaration(447,471): '[val first, val second,]'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(448,457): 'val first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(459,469): 'val second'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val second
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component2
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtBlockExpression(475,475): ''
   NO_CANDIDATES
@@ -930,25 +591,7 @@ KtDestructuringDeclaration(487,498): '[val first]'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(488,497): 'val first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtBlockExpression(502,502): ''
   NO_CANDIDATES
@@ -1040,25 +683,7 @@ KtDestructuringDeclaration(514,533): '[val first: String]'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(515,532): 'val first: String'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first: String
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtTypeReference(526,532): 'String'
   NO_CANDIDATES

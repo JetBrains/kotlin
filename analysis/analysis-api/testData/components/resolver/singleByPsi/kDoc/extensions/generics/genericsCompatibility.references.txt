@@ -3,7 +3,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in test) fun <T> T.anyExt()
 
@@ -12,7 +11,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in test) fun <T> T.anyExt()
 
@@ -21,7 +19,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in test) fun <T> T.anyExt()
 
@@ -30,7 +27,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -39,7 +35,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in test) fun <T : test.Base> T.baseExt()
 
@@ -48,7 +43,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in test) fun <T : test.Base> T.baseExt()
 
@@ -57,7 +51,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -66,7 +59,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -75,6 +67,5 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in test) fun <T : test.Child> T.childExt()

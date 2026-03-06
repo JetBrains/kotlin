@@ -51,7 +51,6 @@ KtCallExpression(473,479): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -73,7 +72,6 @@ KtCallExpression(529,545): 'InheritorClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -123,7 +121,6 @@ KtPropertyDelegate(713,725): 'by lazy {""}'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline operator fun <T> kotlin.Lazy<T>.getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
 
@@ -131,7 +128,6 @@ KtCallExpression(716,725): 'lazy {""}'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -160,7 +156,6 @@ KtCallExpression(799,805): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -189,10 +184,7 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
@@ -213,10 +205,7 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(972,989): 'anonymousConsumer'
@@ -237,10 +226,7 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
@@ -261,11 +247,7 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
-      (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
@@ -286,11 +268,7 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
-      (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
@@ -311,11 +289,7 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
-      (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
@@ -336,11 +310,7 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     symbols:
-      (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
@@ -361,11 +331,7 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
-      (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
@@ -386,10 +352,7 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
@@ -403,7 +366,6 @@ KtCallExpression(1226,1232): 'func()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -418,10 +380,7 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
@@ -435,7 +394,6 @@ KtCallExpression(1256,1267): 'superFunc()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -450,11 +408,7 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     symbols:
-      (in kotlin.Function1) operator fun invoke(p1: P1): R
-    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'

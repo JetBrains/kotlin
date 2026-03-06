@@ -638,7 +638,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl$Defa
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtensionConfig, org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetContainer {
-	public abstract fun abiValidation ()V
 	public abstract fun abiValidation (Lorg/gradle/api/Action;)V
 	public abstract fun getAbiValidation ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;
 	public abstract fun getCompilerVersion ()Lorg/gradle/api/provider/Property;
@@ -1046,11 +1045,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompile
 	public abstract fun applyToCompilation (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Lorg/gradle/api/provider/Provider;
 	public abstract fun getCompilerPluginId ()Ljava/lang/String;
 	public abstract fun getPluginArtifact ()Lorg/jetbrains/kotlin/gradle/plugin/SubpluginArtifact;
+	public abstract fun getPluginArtifactForNative ()Lorg/jetbrains/kotlin/gradle/plugin/SubpluginArtifact;
 	public abstract fun isApplicable (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Z
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilerPluginSupportPlugin$DefaultImpls {
 	public static fun apply (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilerPluginSupportPlugin;Lorg/gradle/api/Project;)V
+	public static fun getPluginArtifactForNative (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilerPluginSupportPlugin;)Lorg/jetbrains/kotlin/gradle/plugin/SubpluginArtifact;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler : org/jetbrains/kotlin/gradle/plugin/HasProject {
@@ -1652,6 +1653,7 @@ public final class org/jetbrains/kotlin/gradle/tasks/KotlinCompilerExecutionStra
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/tasks/KotlinCompilerExecutionStrategy$Companion;
 	public static final field DAEMON Lorg/jetbrains/kotlin/gradle/tasks/KotlinCompilerExecutionStrategy;
 	public static final field IN_PROCESS Lorg/jetbrains/kotlin/gradle/tasks/KotlinCompilerExecutionStrategy;
+	public static final field OUT_OF_PROCESS Lorg/jetbrains/kotlin/gradle/tasks/KotlinCompilerExecutionStrategy;
 	public final fun getPropertyValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/tasks/KotlinCompilerExecutionStrategy;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/tasks/KotlinCompilerExecutionStrategy;

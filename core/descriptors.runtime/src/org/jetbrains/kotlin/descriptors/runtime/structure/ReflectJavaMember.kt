@@ -69,12 +69,12 @@ abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOw
     override fun toString() = this::class.java.name + ": " + member
 }
 
-object Java8ParameterNamesLoader {
-    private class Cache(val getParameters: Method?, val getName: Method?)
+private object Java8ParameterNamesLoader {
+    class Cache(val getParameters: Method?, val getName: Method?)
 
-    private var cache: Cache? = null
+    var cache: Cache? = null
 
-    private fun buildCache(member: Member): Cache {
+    fun buildCache(member: Member): Cache {
         // This should be either j.l.reflect.Method or j.l.reflect.Constructor
         val methodOrConstructorClass = member::class.java
 

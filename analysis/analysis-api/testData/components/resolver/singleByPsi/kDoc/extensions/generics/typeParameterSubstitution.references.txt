@@ -3,7 +3,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<kotlin.Int>.containerIntExtension()
 
@@ -12,7 +11,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<kotlin.Int>.containerIntExtension()
 
@@ -21,7 +19,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<kotlin.Int>.containerIntExtension()
 
@@ -30,7 +27,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -39,7 +35,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<kotlin.Int>.containerIntExtension()
 
@@ -48,7 +43,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -57,7 +51,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<kotlin.Number>.containerFixedNumberExtension()
 
@@ -66,7 +59,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<kotlin.Number>.containerFixedNumberExtension()
 
@@ -75,7 +67,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<kotlin.Number>.containerFixedNumberExtension()
 
@@ -84,7 +75,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<kotlin.Number>.containerFixedNumberExtension()
 
@@ -93,7 +83,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -102,7 +91,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -111,7 +99,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<out kotlin.Number>.containerOutNumberExtension()
 
@@ -120,7 +107,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<out kotlin.Number>.containerOutNumberExtension()
 
@@ -129,7 +115,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<out kotlin.Number>.containerOutNumberExtension()
 
@@ -138,7 +123,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<out kotlin.Number>.containerOutNumberExtension()
 
@@ -147,7 +131,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<out kotlin.Number>.containerOutNumberExtension()
 
@@ -156,6 +139,5 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
         Nothing (Unresolved reference)

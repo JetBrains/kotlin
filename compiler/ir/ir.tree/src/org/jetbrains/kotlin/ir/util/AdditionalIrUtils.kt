@@ -345,14 +345,11 @@ fun IrClass.getAnnotationTargets(): Set<KotlinTarget>? {
     }.toSet()
 }
 
-val IrFunctionSymbol.isFunctionalTypeInvoke: Boolean
-    get() = owner.name == OperatorNameConventions.INVOKE && owner.parentClassOrNull?.symbol?.isFunctional() == true
-
 fun IrClass.selectSAMOverriddenFunctionOrNull(): IrSimpleFunction? {
     return when {
         // Function classes on jvm have some extra methods, which would be in fact implemented by super type,
         // e.g., callBy and other reflection related callables. So we need to filter them out.
-        symbol.isFunctional() ->
+        symbol.isKFunction() || symbol.isKSuspendFunction() || symbol.isFunction() || symbol.isSuspendFunction() ->
             functions.singleOrNull { it.name == OperatorNameConventions.INVOKE }
         symbol.defaultType.isKProperty() ->
             functions.singleOrNull { it.name == OperatorNameConventions.GET }

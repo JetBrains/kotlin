@@ -164,6 +164,7 @@ abstract class AbstractFir2IrResultsConverter(
                     languageVersionSettings,
                     storageManager,
                     builtIns,
+                    packageAccessHandler = null,
                     lookupTracker = LookupTracker.DO_NOTHING
                 )
                 dependencies += moduleDescriptor

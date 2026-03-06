@@ -13,5 +13,4 @@ internal class KlibToolArguments(
     val printSignatures: Boolean,
     val signatureVersion: KotlinIrSignatureVersion?,
     val testMode: Boolean,
-    val absolutePathPrefixes: List<String>,
 )

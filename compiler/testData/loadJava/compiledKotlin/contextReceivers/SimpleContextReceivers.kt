@@ -1,4 +1,4 @@
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 // IGNORE_FIR_DIAGNOSTICS
 
 package test

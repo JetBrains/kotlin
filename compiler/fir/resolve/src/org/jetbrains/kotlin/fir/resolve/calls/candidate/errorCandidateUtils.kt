@@ -48,7 +48,7 @@ fun ResolutionStageRunner.createErrorCandidate(
 }
 
 fun ResolutionStageRunner.fullyProcessCandidate(candidate: Candidate, resolutionContext: ResolutionContext) {
-    if (candidate.passedStages < candidate.callInfo.callKind.resolutionSequence.size) {
+    if (!candidate.fullyAnalyzed) {
         processCandidate(candidate, resolutionContext, stopOnFirstError = false)
     }
 }

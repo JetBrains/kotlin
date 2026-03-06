@@ -450,7 +450,6 @@ include ":compiler:fir",
         ":compiler:fir:checkers:checkers.wasm",
         ":compiler:fir:checkers:checkers.web.common",
         ":compiler:fir:checkers:checkers-component-generator",
-        ":compiler:fir:diagnostic-renderers",
         ":compiler:fir:entrypoint",
         ":compiler:fir:analysis-tests",
         ":compiler:fir:analysis-tests:legacy-fir-tests"
@@ -546,7 +545,6 @@ include ":compiler:build-tools:kotlin-build-tools-api",
         ":compiler:build-tools:kotlin-build-tools-impl",
         ":compiler:build-tools:kotlin-build-tools-compat",
         ":compiler:build-tools:kotlin-build-tools-api-tests",
-        ":compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests",
         ":compiler:build-tools:kotlin-build-tools-jdk-utils",
         ":compiler:build-tools:kotlin-build-tools-options-generator",
         ":compiler:build-tools:util-kotlinpoet",
@@ -736,11 +734,12 @@ include ":jps:jps-common",
         ":prepare:kotlin-jps-plugin",
         ":jps:jps-platform-api-signatures"
 
-include ":analysis",
+include ":generators:analysis-api-generator",
+        ":generators:analysis-api-generator:generator-kotlin-native",
+        ":analysis",
         ":analysis:low-level-api-fir",
         ":analysis:low-level-api-fir:tests-jdk11",
-        ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests",
-        ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
+        ":analysis:low-level-api-fir:low-level-api-fir-native",
         ":analysis:analysis-api-fir:analysis-api-fir-generator",
         ":analysis:analysis-api-fir",
         ":analysis:analysis-api",
@@ -904,10 +903,10 @@ project(':kotlin-noarg-compiler-plugin.k2').projectDir = "$rootDir/plugins/noarg
 project(':kotlin-noarg-compiler-plugin.backend').projectDir = "$rootDir/plugins/noarg/noarg.backend" as File
 project(':kotlin-noarg-compiler-plugin.cli').projectDir = "$rootDir/plugins/noarg/noarg.cli" as File
 
-project(':kotlin-power-assert-compiler-plugin').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler" as File
-project(':kotlin-power-assert-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler/power-assert.embeddable" as File
-project(':kotlin-power-assert-compiler-plugin.backend').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler/power-assert.backend" as File
-project(':kotlin-power-assert-compiler-plugin.cli').projectDir = "$rootDir/plugins/power-assert/power-assert-compiler/power-assert.cli" as File
+project(':kotlin-power-assert-compiler-plugin').projectDir = "$rootDir/plugins/power-assert" as File
+project(':kotlin-power-assert-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/power-assert/power-assert.embeddable" as File
+project(':kotlin-power-assert-compiler-plugin.backend').projectDir = "$rootDir/plugins/power-assert/power-assert.backend" as File
+project(':kotlin-power-assert-compiler-plugin.cli').projectDir = "$rootDir/plugins/power-assert/power-assert.cli" as File
 
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver" as File
 project(':kotlin-sam-with-receiver-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver.embeddable" as File

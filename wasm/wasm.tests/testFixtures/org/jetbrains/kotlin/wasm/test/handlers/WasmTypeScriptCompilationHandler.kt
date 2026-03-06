@@ -9,11 +9,8 @@ import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.test.handlers.JsTypeScriptCompilationHandler.Companion.getMainTsFile
 import org.jetbrains.kotlin.js.test.handlers.TypeScriptCompilation
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
 import java.io.File
 
 /**
@@ -28,19 +25,14 @@ class WasmTypeScriptCompilationHandler(testServices: TestServices) : AbstractWas
 
         val mainTsFile = getMainTsFile(testServices, ".ts") ?: return
 
-        val includedModuleOnly = moduleStructure.modules.any {
-            testServices.compilerConfigurationProvider.getCompilerConfiguration(it).wasmIncludedModuleOnly
-        }
-        val defaultMode = if (!includedModuleOnly) "dev" else ""
+        val outputDir = testServices.getWasmTestOutputDirectoryForMode("dev")
 
-        val outputDir = testServices.getWasmTestOutputDirectoryForMode(defaultMode)
-        val outputJsFile = compiledTypeScriptOutput(testServices, defaultMode, JavaScript.DOT_EXTENSION)
+        val outputFile = compiledTypeScriptOutput(testServices, "dev")
 
         TypeScriptCompilation(
             testServices,
             modulesToArtifact,
             { artifact ->
-                require(artifact is BinaryArtifacts.Wasm.CompilationSets)
                 File(outputDir, artifact.compilation.compilerResult.baseFileName + ".d.mts").also { tsFile ->
                     artifact.compilation.compilerResult.dts?.let {
                         tsFile.parentFile.mkdirs()
@@ -49,26 +41,26 @@ class WasmTypeScriptCompilationHandler(testServices: TestServices) : AbstractWas
                 }
             },
             mainTsFile,
-            outputJsFile,
+            outputFile,
             File(allDirectives[WasmEnvironmentConfigurationDirectives.PATH_TO_NODE_DIR].first()),
         ).processAfterAllModules()
 
         // Copy the compiled TypeScript artifact into directories corresponding to each translation mode
-        outputJsFile.copyTo(compiledTypeScriptOutput(testServices, defaultMode), overwrite = true)
-        if (!includedModuleOnly) {
-            outputJsFile.copyTo(compiledTypeScriptOutput(testServices, "dce"), overwrite = true)
+        for (mode in listOf("dce", "dev")) {
+            if (mode == "dev") {
+                // The actual compiled artifact is in the directory for the FULL_DEV mode.
+                continue
+            }
+            outputFile.copyTo(compiledTypeScriptOutput(testServices, mode), overwrite = true)
         }
     }
 
     companion object {
-        private fun compiledTypeScriptOutput(testServices: TestServices, mode: String, fileDotExtension: String): File {
+        fun compiledTypeScriptOutput(testServices: TestServices, mode: String): File {
             val originalTestFile = testServices.moduleStructure.originalTestDataFiles.first()
 
             return testServices.getWasmTestOutputDirectoryForMode(mode)
-                .resolve(originalTestFile.nameWithoutExtension + "__main$fileDotExtension")
+                .resolve(originalTestFile.nameWithoutExtension + "__main${JavaScript.DOT_EXTENSION}")
         }
-
-        fun compiledTypeScriptOutput(testServices: TestServices, mode: String): File =
-            compiledTypeScriptOutput(testServices, mode, JavaScript.DOT_MODULE_EXTENSION)
     }
 }

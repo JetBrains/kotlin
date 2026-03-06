@@ -42,7 +42,6 @@ fun IrClassifierSymbol.isFunction(): Boolean = this.isClassWithNamePrefix("Funct
 fun IrClassifierSymbol.isKFunction(): Boolean = this.isClassWithNamePrefix("KFunction", kotlinReflectionPackageFqn)
 fun IrClassifierSymbol.isSuspendFunction(): Boolean = this.isClassWithNamePrefix("SuspendFunction", kotlinCoroutinesPackageFqn)
 fun IrClassifierSymbol.isKSuspendFunction(): Boolean = this.isClassWithNamePrefix("KSuspendFunction", kotlinReflectionPackageFqn)
-fun IrClassifierSymbol.isFunctional(): Boolean = isFunction() || isKFunction() || isSuspendFunction() || isKSuspendFunction()
 
 private fun IrClassifierSymbol.isClassWithName(name: String, packageFqName: FqName): Boolean =
     checkNameAndPackage({ it == name }, { it == packageFqName.asString() })

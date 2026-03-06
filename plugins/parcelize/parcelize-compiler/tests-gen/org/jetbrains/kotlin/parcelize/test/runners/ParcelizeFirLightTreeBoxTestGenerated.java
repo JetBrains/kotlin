@@ -18,20 +18,16 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/parcelize/parcelize-compiler/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirLightTreeBoxTest {
-  private void run(String fileName) {
-    runTest("plugins/parcelize/parcelize-compiler/testData/box/" + fileName);
-  }
-
   @Test
   @TestMetadata("additionalAnnotationTrigger.kt")
   public void testAdditionalAnnotationTrigger() {
-    run("additionalAnnotationTrigger.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/additionalAnnotationTrigger.kt");
   }
 
   @Test
   @TestMetadata("aliasTypeParceler.kt")
   public void testAliasTypeParceler() {
-    run("aliasTypeParceler.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/aliasTypeParceler.kt");
   }
 
   @Test
@@ -42,564 +38,564 @@ public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirL
   @Test
   @TestMetadata("allPrimitiveTypes.kt")
   public void testAllPrimitiveTypes() {
-    run("allPrimitiveTypes.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/allPrimitiveTypes.kt");
   }
 
   @Test
   @TestMetadata("allUnsignedTypes.kt")
   public void testAllUnsignedTypes() {
-    run("allUnsignedTypes.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/allUnsignedTypes.kt");
   }
 
   @Test
   @TestMetadata("arraySimple.kt")
   public void testArraySimple() {
-    run("arraySimple.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/arraySimple.kt");
   }
 
   @Test
   @TestMetadata("arrays.kt")
   public void testArrays() {
-    run("arrays.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/arrays.kt");
   }
 
   @Test
   @TestMetadata("binder.kt")
   public void testBinder() {
-    run("binder.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/binder.kt");
   }
 
   @Test
   @TestMetadata("boxedTypes.kt")
   public void testBoxedTypes() {
-    run("boxedTypes.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/boxedTypes.kt");
   }
 
   @Test
   @TestMetadata("bundle.kt")
   public void testBundle() {
-    run("bundle.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/bundle.kt");
   }
 
   @Test
   @TestMetadata("changingBaseClassProperty.kt")
   public void testChangingBaseClassProperty() {
-    run("changingBaseClassProperty.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/changingBaseClassProperty.kt");
   }
 
   @Test
   @TestMetadata("charSequence.kt")
   public void testCharSequence() {
-    run("charSequence.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/charSequence.kt");
   }
 
   @Test
   @TestMetadata("constructorParamAndPropertyWithSameName.kt")
   public void testConstructorParamAndPropertyWithSameName() {
-    run("constructorParamAndPropertyWithSameName.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/constructorParamAndPropertyWithSameName.kt");
   }
 
   @Test
   @TestMetadata("constructorWithoutValOrVar.kt")
   public void testConstructorWithoutValOrVar() {
-    run("constructorWithoutValOrVar.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/constructorWithoutValOrVar.kt");
   }
 
   @Test
   @TestMetadata("customNewArray.kt")
   public void testCustomNewArray() {
-    run("customNewArray.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/customNewArray.kt");
   }
 
   @Test
   @TestMetadata("customParcelable.kt")
   public void testCustomParcelable() {
-    run("customParcelable.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelable.kt");
   }
 
   @Test
   @TestMetadata("customParcelerChecks.kt")
   public void testCustomParcelerChecks() {
-    run("customParcelerChecks.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelerChecks.kt");
   }
 
   @Test
   @TestMetadata("customParcelerScoping.kt")
   public void testCustomParcelerScoping() {
-    run("customParcelerScoping.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelerScoping.kt");
   }
 
   @Test
   @TestMetadata("customSerializerBoxing.kt")
   public void testCustomSerializerBoxing() {
-    run("customSerializerBoxing.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerBoxing.kt");
   }
 
   @Test
   @TestMetadata("customSerializerSimple.kt")
   public void testCustomSerializerSimple() {
-    run("customSerializerSimple.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerSimple.kt");
   }
 
   @Test
   @TestMetadata("customSerializerWriteWith.kt")
   public void testCustomSerializerWriteWith() {
-    run("customSerializerWriteWith.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerWriteWith.kt");
   }
 
   @Test
   @TestMetadata("customSimple.kt")
   public void testCustomSimple() {
-    run("customSimple.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/customSimple.kt");
   }
 
   @Test
   @TestMetadata("dataClass.kt")
   public void testDataClass() {
-    run("dataClass.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/dataClass.kt");
   }
 
   @Test
   @TestMetadata("duration.kt")
   public void testDuration() {
-    run("duration.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/duration.kt");
   }
 
   @Test
   @TestMetadata("enumObject.kt")
   public void testEnumObject() {
-    run("enumObject.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/enumObject.kt");
   }
 
   @Test
   @TestMetadata("enums.kt")
   public void testEnums() {
-    run("enums.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/enums.kt");
   }
 
   @Test
   @TestMetadata("exceptions.kt")
   public void testExceptions() {
-    run("exceptions.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/exceptions.kt");
   }
 
   @Test
   @TestMetadata("expectClassWithJavaMethod.kt")
   public void testExpectClassWithJavaMethod() {
-    run("expectClassWithJavaMethod.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/expectClassWithJavaMethod.kt");
   }
 
   @Test
   @TestMetadata("functions.kt")
   public void testFunctions() {
-    run("functions.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/functions.kt");
   }
 
   @Test
   @TestMetadata("genericParcelable.kt")
   public void testGenericParcelable() {
-    run("genericParcelable.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/genericParcelable.kt");
   }
 
   @Test
   @TestMetadata("generics.kt")
   public void testGenerics() {
-    run("generics.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/generics.kt");
   }
 
   @Test
   @TestMetadata("ignoredOnParcel.kt")
   public void testIgnoredOnParcel() {
-    run("ignoredOnParcel.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/ignoredOnParcel.kt");
   }
 
   @Test
   @TestMetadata("intArray.kt")
   public void testIntArray() {
-    run("intArray.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/intArray.kt");
   }
 
   @Test
   @TestMetadata("javaInterop.kt")
   public void testJavaInterop() {
-    run("javaInterop.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/javaInterop.kt");
   }
 
   @Test
   @TestMetadata("kt19747.kt")
   public void testKt19747() {
-    run("kt19747.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt19747.kt");
   }
 
   @Test
   @TestMetadata("kt19747Deprecated.kt")
   public void testKt19747Deprecated() {
-    run("kt19747Deprecated.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt19747Deprecated.kt");
   }
 
   @Test
   @TestMetadata("kt19747_2.kt")
   public void testKt19747_2() {
-    run("kt19747_2.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt19747_2.kt");
   }
 
   @Test
   @TestMetadata("kt19749.kt")
   public void testKt19749() {
-    run("kt19749.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt19749.kt");
   }
 
   @Test
   @TestMetadata("kt19853.kt")
   public void testKt19853() {
-    run("kt19853.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt19853.kt");
   }
 
   @Test
   @TestMetadata("kt20002.kt")
   public void testKt20002() {
-    run("kt20002.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt20002.kt");
   }
 
   @Test
   @TestMetadata("kt20021.kt")
   public void testKt20021() {
-    run("kt20021.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt20021.kt");
   }
 
   @Test
   @TestMetadata("kt20717.kt")
   public void testKt20717() {
-    run("kt20717.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt20717.kt");
   }
 
   @Test
   @TestMetadata("kt25839.kt")
   public void testKt25839() {
-    run("kt25839.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt25839.kt");
   }
 
   @Test
   @TestMetadata("kt26221.kt")
   public void testKt26221() {
-    run("kt26221.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt26221.kt");
   }
 
   @Test
   @TestMetadata("kt36658.kt")
   public void testKt36658() {
-    run("kt36658.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt36658.kt");
   }
 
   @Test
   @TestMetadata("kt39981.kt")
   public void testKt39981() {
-    run("kt39981.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt39981.kt");
   }
 
   @Test
   @TestMetadata("kt41553.kt")
   public void testKt41553() {
-    run("kt41553.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt41553.kt");
   }
 
   @Test
   @TestMetadata("kt41553_2.kt")
   public void testKt41553_2() {
-    run("kt41553_2.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt41553_2.kt");
   }
 
   @Test
   @TestMetadata("kt46567.kt")
   public void testKt46567() {
-    run("kt46567.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/kt46567.kt");
   }
 
   @Test
   @TestMetadata("listKinds.kt")
   public void testListKinds() {
-    run("listKinds.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/listKinds.kt");
   }
 
   @Test
   @TestMetadata("listSimple.kt")
   public void testListSimple() {
-    run("listSimple.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/listSimple.kt");
   }
 
   @Test
   @TestMetadata("listSimplePersistent.kt")
   public void testListSimplePersistent() {
-    run("listSimplePersistent.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/listSimplePersistent.kt");
   }
 
   @Test
   @TestMetadata("lists.kt")
   public void testLists() {
-    run("lists.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/lists.kt");
   }
 
   @Test
   @TestMetadata("mapKinds.kt")
   public void testMapKinds() {
-    run("mapKinds.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/mapKinds.kt");
   }
 
   @Test
   @TestMetadata("mapSimple.kt")
   public void testMapSimple() {
-    run("mapSimple.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/mapSimple.kt");
   }
 
   @Test
   @TestMetadata("mapSimplePersistent.kt")
   public void testMapSimplePersistent() {
-    run("mapSimplePersistent.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/mapSimplePersistent.kt");
   }
 
   @Test
   @TestMetadata("maps.kt")
   public void testMaps() {
-    run("maps.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/maps.kt");
   }
 
   @Test
   @TestMetadata("mppAdditionalAnnotations_k1.kt")
   public void testMppAdditionalAnnotations_k1() {
-    run("mppAdditionalAnnotations_k1.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/mppAdditionalAnnotations_k1.kt");
   }
 
   @Test
   @TestMetadata("mppAdditionalAnnotations_k2.kt")
   public void testMppAdditionalAnnotations_k2() {
-    run("mppAdditionalAnnotations_k2.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/mppAdditionalAnnotations_k2.kt");
   }
 
   @Test
   @TestMetadata("mppWithExpectParcelable_k1.kt")
   public void testMppWithExpectParcelable_k1() {
-    run("mppWithExpectParcelable_k1.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/mppWithExpectParcelable_k1.kt");
   }
 
   @Test
   @TestMetadata("mppWithExpectParcelable_k2.kt")
   public void testMppWithExpectParcelable_k2() {
-    run("mppWithExpectParcelable_k2.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/mppWithExpectParcelable_k2.kt");
   }
 
   @Test
   @TestMetadata("nestedArrays.kt")
   public void testNestedArrays() {
-    run("nestedArrays.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/nestedArrays.kt");
   }
 
   @Test
   @TestMetadata("nestedLists.kt")
   public void testNestedLists() {
-    run("nestedLists.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/nestedLists.kt");
   }
 
   @Test
   @TestMetadata("nestedMaps.kt")
   public void testNestedMaps() {
-    run("nestedMaps.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/nestedMaps.kt");
   }
 
   @Test
   @TestMetadata("nestedParcelable.kt")
   public void testNestedParcelable() {
-    run("nestedParcelable.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/nestedParcelable.kt");
   }
 
   @Test
   @TestMetadata("nestedSparseArrays.kt")
   public void testNestedSparseArrays() {
-    run("nestedSparseArrays.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/nestedSparseArrays.kt");
   }
 
   @Test
   @TestMetadata("nestedSparseArrays2.kt")
   public void testNestedSparseArrays2() {
-    run("nestedSparseArrays2.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/nestedSparseArrays2.kt");
   }
 
   @Test
   @TestMetadata("newArray.kt")
   public void testNewArray() {
-    run("newArray.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/newArray.kt");
   }
 
   @Test
   @TestMetadata("newArrayParceler.kt")
   public void testNewArrayParceler() {
-    run("newArrayParceler.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/newArrayParceler.kt");
   }
 
   @Test
   @TestMetadata("nullableSparseArrays.kt")
   public void testNullableSparseArrays() {
-    run("nullableSparseArrays.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/nullableSparseArrays.kt");
   }
 
   @Test
   @TestMetadata("nullableTypes.kt")
   public void testNullableTypes() {
-    run("nullableTypes.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/nullableTypes.kt");
   }
 
   @Test
   @TestMetadata("nullableTypesSimple.kt")
   public void testNullableTypesSimple() {
-    run("nullableTypesSimple.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/nullableTypesSimple.kt");
   }
 
   @Test
   @TestMetadata("objectWriteParcelable.kt")
   public void testObjectWriteParcelable() {
-    run("objectWriteParcelable.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/objectWriteParcelable.kt");
   }
 
   @Test
   @TestMetadata("objects.kt")
   public void testObjects() {
-    run("objects.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/objects.kt");
   }
 
   @Test
   @TestMetadata("openParcelize.kt")
   public void testOpenParcelize() {
-    run("openParcelize.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/openParcelize.kt");
   }
 
   @Test
   @TestMetadata("overriddenDescribeContents.kt")
   public void testOverriddenDescribeContents() {
-    run("overriddenDescribeContents.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/overriddenDescribeContents.kt");
   }
 
   @Test
   @TestMetadata("overridingBaseValue.kt")
   public void testOverridingBaseValue() {
-    run("overridingBaseValue.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/overridingBaseValue.kt");
   }
 
   @Test
   @TestMetadata("parcelableValueClass.kt")
   public void testParcelableValueClass() {
-    run("parcelableValueClass.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/parcelableValueClass.kt");
   }
 
   @Test
   @TestMetadata("parcelizeCustomValueClass.kt")
   public void testParcelizeCustomValueClass() {
-    run("parcelizeCustomValueClass.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/parcelizeCustomValueClass.kt");
   }
 
   @Test
   @TestMetadata("persistableBundle.kt")
   public void testPersistableBundle() {
-    run("persistableBundle.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/persistableBundle.kt");
   }
 
   @Test
   @TestMetadata("primitiveTypes.kt")
   public void testPrimitiveTypes() {
-    run("primitiveTypes.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/primitiveTypes.kt");
   }
 
   @Test
   @TestMetadata("privateConstructor.kt")
   public void testPrivateConstructor() {
-    run("privateConstructor.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/privateConstructor.kt");
   }
 
   @Test
   @TestMetadata("ranges.kt")
   public void testRanges() {
-    run("ranges.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/ranges.kt");
   }
 
   @Test
   @TestMetadata("recursiveGenerics.kt")
   public void testRecursiveGenerics() {
-    run("recursiveGenerics.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/recursiveGenerics.kt");
   }
 
   @Test
   @TestMetadata("sealedClass.kt")
   public void testSealedClass() {
-    run("sealedClass.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/sealedClass.kt");
   }
 
   @Test
   @TestMetadata("sealedClass2.kt")
   public void testSealedClass2() {
-    run("sealedClass2.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/sealedClass2.kt");
   }
 
   @Test
   @TestMetadata("sealedInterface.kt")
   public void testSealedInterface() {
-    run("sealedInterface.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/sealedInterface.kt");
   }
 
   @Test
   @TestMetadata("shortArray.kt")
   public void testShortArray() {
-    run("shortArray.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/shortArray.kt");
   }
 
   @Test
   @TestMetadata("simple.kt")
   public void testSimple() {
-    run("simple.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/simple.kt");
   }
 
   @Test
   @TestMetadata("simpleDeprecated.kt")
   public void testSimpleDeprecated() {
-    run("simpleDeprecated.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/simpleDeprecated.kt");
   }
 
   @Test
   @TestMetadata("sparseArrays.kt")
   public void testSparseArrays() {
-    run("sparseArrays.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/sparseArrays.kt");
   }
 
   @Test
   @TestMetadata("sparseBooleanArray.kt")
   public void testSparseBooleanArray() {
-    run("sparseBooleanArray.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/sparseBooleanArray.kt");
   }
 
   @Test
   @TestMetadata("typeParameters.kt")
   public void testTypeParameters() {
-    run("typeParameters.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/typeParameters.kt");
   }
 
   @Test
   @TestMetadata("unsignedArrays.kt")
   public void testUnsignedArrays() {
-    run("unsignedArrays.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/unsignedArrays.kt");
   }
 
   @Test
   @TestMetadata("uuid.kt")
   public void testUuid() {
-    run("uuid.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/uuid.kt");
   }
 
   @Test
   @TestMetadata("valueClassWrapper.kt")
   public void testValueClassWrapper() {
-    run("valueClassWrapper.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/valueClassWrapper.kt");
   }
 
   @Test
   @TestMetadata("valueClasses.kt")
   public void testValueClasses() {
-    run("valueClasses.kt");
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/valueClasses.kt");
   }
 }

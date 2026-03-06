@@ -25,70 +25,70 @@ fun testMatrixInt() {
     ])
     takeMatrixInt([])
     takeMatrixInt([[], [], []])
-    takeMatrixInt([[<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>]])
+    takeMatrixInt(<!ARGUMENT_TYPE_MISMATCH!>[["1", "2", "3"]]<!>)
 
-    takeMatrixInt([
+    takeMatrixInt(<!ARGUMENT_TYPE_MISMATCH!>[
         [1, 2, 3],
-        [4, <!ARGUMENT_TYPE_MISMATCH!>'5'<!>, 6],
+        [4, '5', 6],
         [7, 8, 9],
-    ])
-    takeMatrixInt([
+    ]<!>)
+    takeMatrixInt(<!ARGUMENT_TYPE_MISMATCH!>[
         [1, 2, 3],
-        [4, <!NULL_FOR_NONNULL_TYPE!>null<!>, 6],
+        [4, null, 6],
         [7, 8, 9],
-    ])
-    takeMatrixInt([
+    ]<!>)
+    takeMatrixInt(<!ARGUMENT_TYPE_MISMATCH!>[
         [1, 2, 3],
-        [4, <!ARGUMENT_TYPE_MISMATCH!>5L<!>, 6],
+        [4, 5L, 6],
         [7, 8, 9],
-    ])
+    ]<!>)
     takeMatrixInt([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
-    takeMatrixInt([[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>]])
+    takeMatrixInt([[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>]])
 
-    takeMatrix<Int>([
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9],
-    ])
+    testMatrix<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>(<!TOO_MANY_ARGUMENTS, UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[
+        <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>,
+        <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[4, 5, 6]<!>,
+        <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[7, 8, 9]<!>,
+    ]<!>)
     takeMatrix<Int>([])
     takeMatrix<Int>([[], [], []])
 
-    takeMatrix<Int>([
+    takeMatrix<Int>(<!ARGUMENT_TYPE_MISMATCH!>[
         [1, 2, 3],
-        [4, <!ARGUMENT_TYPE_MISMATCH!>'5'<!>, 6],
+        [4, '5', 6],
         [7, 8, 9],
-    ])
-    takeMatrix<Int>([
+    ]<!>)
+    takeMatrix<Int>(<!ARGUMENT_TYPE_MISMATCH!>[
         [1, 2, 3],
-        [4, <!NULL_FOR_NONNULL_TYPE!>null<!>, 6],
+        [4, null, 6],
         [7, 8, 9],
-    ])
-    takeMatrix<Int>([
+    ]<!>)
+    takeMatrix<Int>(<!ARGUMENT_TYPE_MISMATCH!>[
         [1, 2, 3],
-        [4, <!ARGUMENT_TYPE_MISMATCH!>5L<!>, 6],
+        [4, 5L, 6],
         [7, 8, 9],
-    ])
+    ]<!>)
     takeMatrix<Int>([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
-    takeMatrix<Int>([[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>]])
+    takeMatrix<Int>([[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>]])
 
     var matrix: Matrix<Int> = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     matrix = []
     matrix = [[]]
-    matrix = [[<!UNRESOLVED_REFERENCE!>[]<!>]]
-    matrix = [[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>]]
+    matrix = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]]
+    matrix = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>]]
     matrix = [<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>]
-    matrix = [[1, <!NULL_FOR_NONNULL_TYPE!>null<!>, 3]]
-    matrix = [[1, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, 3]]
+    matrix <!ASSIGNMENT_TYPE_MISMATCH!>=<!> [[1, null, 3]]
+    matrix <!ASSIGNMENT_TYPE_MISMATCH!>=<!> [[1, "2", 3]]
     matrix = [[null!!]]
-    matrix = [[<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>]]
-    val matrixString: Matrix<String> = [[<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>]]
+    matrix <!ASSIGNMENT_TYPE_MISMATCH!>=<!> [["1", "2", "3"]]
+    val matrixString: Matrix<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> [[1, 2, 3]]
 }
 
 fun testMatrix() {
     <!CANNOT_INFER_PARAMETER_TYPE!>takeMatrix<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     <!CANNOT_INFER_PARAMETER_TYPE!>takeMatrix<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>]<!>)
     takeMatrix([[1]])
-    <!CANNOT_INFER_PARAMETER_TYPE!>takeMatrix<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNRESOLVED_REFERENCE!>[]<!>]<!>]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeMatrix<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]<!>]<!>)
     <!CANNOT_INFER_PARAMETER_TYPE!>takeMatrix<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!ARGUMENT_TYPE_MISMATCH!>1<!>]<!>)
     takeMatrix([
         [1, 2, 3],

@@ -1,5 +1,5 @@
 // IGNORE_BACKEND_K2: ANY
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 
 class O(val o: String)
 

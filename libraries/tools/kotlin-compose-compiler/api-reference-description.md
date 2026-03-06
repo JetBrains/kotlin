@@ -1,4 +1,4 @@
-# Module compose-compiler-gradle-plugin
+# Module The Compose compiler Gradle plugin
 
 The API reference for the Compose compiler Gradle plugin ("org.jetbrains.kotlin.plugin.compose").
 

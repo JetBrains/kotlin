@@ -5,17 +5,21 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.GT
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.GTEQ
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.LT
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.LTEQ
 import org.jetbrains.kotlin.gradle.utils.toSetOrEmpty
 
 /**
- * [startVersion] or [endVersion] equaling null means Infinite on appropriate edge.
- * In this case appropriate [startInclusive] or [endInclusive] does not matter.
+[startVersion] or [endVersion] equaling null means Infinite on appropriate edge,
+In this case appropriate [startInclusive] or [endInclusive] do no matter
  */
 data class NpmRange(
     val startVersion: SemVer? = null,
     val startInclusive: Boolean = false,
     val endVersion: SemVer? = null,
-    val endInclusive: Boolean = false,
+    val endInclusive: Boolean = false
 ) {
     override fun toString(): String {
         if (startVersion == endVersion && startInclusive && endInclusive) {
@@ -23,12 +27,12 @@ data class NpmRange(
         }
 
         val start = if (startVersion != null)
-            "${if (startInclusive) ">=" else ">"}$startVersion"
+            "${if (startInclusive) GTEQ else GT}$startVersion"
         else
             ""
 
         val end = if (endVersion != null)
-            "${if (endInclusive) "<=" else "<"}$endVersion"
+            "${if (endInclusive) LTEQ else LT}$endVersion"
         else
             ""
 
@@ -142,24 +146,24 @@ fun maxStart(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.startVersion == null -> b.startVersion
         b.startVersion == null -> a.startVersion
-        else -> maxOf(a.startVersion, b.startVersion)
+        else -> max(a.startVersion, b.startVersion)
     }
 
 fun minStart(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.startVersion == null || b.startVersion == null -> null
-        else -> minOf(a.startVersion, b.startVersion)
+        else -> min(a.startVersion, b.startVersion)
     }
 
 fun maxEnd(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.endVersion == null || b.endVersion == null -> null
-        else -> maxOf(a.endVersion, b.endVersion)
+        else -> max(a.endVersion, b.endVersion)
     }
 
 fun minEnd(a: NpmRange, b: NpmRange): SemVer? =
     when {
         a.endVersion == null -> b.endVersion
         b.endVersion == null -> a.endVersion
-        else -> minOf(a.endVersion, b.endVersion)
+        else -> min(a.endVersion, b.endVersion)
     }

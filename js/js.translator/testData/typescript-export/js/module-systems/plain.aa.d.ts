@@ -6,16 +6,6 @@ declare namespace JS_TESTS {
         const prop: number;
         function box(): string;
         function justSomeDefaultExport(): string;
-        class C {
-            constructor(x: number);
-            doubleX(): number;
-            get x(): number;
-        }
-        namespace C {
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace $metadata$ {
-                const constructor: abstract new () => C;
-            }
-        }
+        /* ErrorDeclaration: Class declarations are not implemented yet */
     }
 }

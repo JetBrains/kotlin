@@ -13,12 +13,6 @@ public class J {
     class Inner {
         public Inner(double innerParam, Object innerParam2) {}
     }
-
-    enum E {
-        ENTRY('a');
-
-        E(char enumParam) {}
-    }
 }
 
 // FILE: K.kt
@@ -30,8 +24,6 @@ fun box(): String {
     assertEquals(listOf(null, "arg0"), J::foo.parameters.map { it.name })
     assertEquals(listOf("arg0"), J::bar.parameters.map { it.name })
     assertEquals(listOf(null, "arg1", "arg2"), J::Inner.parameters.map { it.name })
-
-    assertEquals(listOf("arg2"), J.E::class.constructors.single().parameters.map { it.name })
 
     return "OK"
 }

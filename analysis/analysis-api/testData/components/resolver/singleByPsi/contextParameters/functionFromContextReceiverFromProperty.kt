@@ -10,5 +10,5 @@ val Receiver.f: Unit
     <expr>c()</expr>
 }
 
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 // IGNORE_FIR

@@ -1,0 +1,4 @@
+language = Objective-C
+skipNonImportableModules = true
+---
+void foo(void);

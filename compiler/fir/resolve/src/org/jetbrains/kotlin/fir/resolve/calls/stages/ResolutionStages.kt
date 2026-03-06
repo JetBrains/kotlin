@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
-import org.jetbrains.kotlin.fir.resolve.inference.CollectionLiteralBounds
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.isAnyOfDelegateOperators
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
@@ -51,7 +50,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DYNAMIC_EXTENSION_FQ_NAME
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -826,24 +824,6 @@ internal object EagerResolveOfCallableReferences : ResolutionStage() {
             }
         }
     }
-}
-
-internal object EagerResolveOfCollectionLiteral : ResolutionStage() {
-    context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate): Unit =
-        context(context.typeContext, CollectionLiteralOuterCandidateContext(candidate, sink)) {
-            if (candidate.postponedAtoms.isEmpty()) return
-            for (atom in candidate.postponedAtoms) {
-                if (atom !is ConeCollectionLiteralAtom || atom.analyzed) continue
-                val nonTvExpectedType =
-                    atom.expectedType?.takeUnless { it.typeConstructor() is TypeVariableTypeConstructorMarker } ?: continue
-                val clBounds =
-                    CollectionLiteralBounds.NonTvExpected(atom, nonTvExpectedType.getClassRepresentativeForCollectionLiteralResolution())
-
-                atom.analyzed = true
-                runCollectionLiteralResolution(atom, clBounds)
-            }
-        }
 }
 
 internal object DiscriminateSyntheticAndForbiddenProperties : ResolutionStage() {

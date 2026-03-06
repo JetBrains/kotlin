@@ -4,4 +4,4 @@ fun foo() {
     }
 }
 
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers

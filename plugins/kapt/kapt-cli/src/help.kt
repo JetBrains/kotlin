@@ -13,7 +13,7 @@ internal fun printHelp() {
         fun render(width: Int) = "  " + nameArgs + " ".repeat(width - nameArgs.length) + description
     }
 
-    val options = KaptCliOption.entries
+    val options = KaptCliOption.values()
         .filter { it.cliToolOption != null }
         .map { OptionToRender(it.nameArgs(), it.description) }
 

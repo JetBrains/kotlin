@@ -7,16 +7,15 @@ package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
-import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
-import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
-import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
-import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCoreTest
+import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
+import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
+import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
-import org.jetbrains.kotlin.konan.test.handlers.NativeBoxRunner
-import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
+import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
+import org.jetbrains.kotlin.konan.test.handlers.NativeRunner
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
@@ -24,27 +23,24 @@ import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.nativeArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_MULTIPLE_API_VERSIONS_SETTING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.API_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.TargetBackendTestSkipper
-import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Tag
 
 @Tag("custom-second-stage")
-open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest() {
+open class AbstractCustomNativeCompilerSecondStageTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        super.configure(builder)
         useMetaTestConfigurators(
             ::UnsupportedFeaturesTestConfigurator,
             ::TargetBackendTestSkipper,
@@ -60,17 +56,20 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
             }
         }
 
-        useConfigurators(::NativeFirstStageEnvironmentConfigurator, ::NativeSecondStageEnvironmentConfigurator)
+        val customNativeHome = customNativeCompilerSettings.nativeHome.absoluteFile.takeIf {
+            customNativeCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE
+        }
+        useConfigurators(::NativeEnvironmentConfigurator.bind(customNativeHome))
         useAdditionalSourceProviders(
             ::NativeLauncherAdditionalSourceProvider,
         )
         commonConfigurationForNativeFirstStageUpToSerialization(
             FrontendKinds.FIR,
-            ::FirCliNativeFacade,
-            ::Fir2IrCliNativeFacade,
-            ::NativePreSerializationLoweringCliFacade,
+            ::FirFrontendFacade,
+            ::Fir2IrNativeResultsConverter,
+            ::NativePreSerializationLoweringFacade,
         )
-        facadeStep(::KlibSerializerNativeCliFacade)
+        facadeStep(::NativeKlibSerializerFacade)
         klibArtifactsHandlersStep {
             useHandlers(::KlibAbiDumpHandler)
         }
@@ -82,7 +81,7 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
         facadeStep(::NativeCompilerSecondStageFacade.bind(customNativeCompilerSettings))
 
         nativeArtifactsHandlersStep {
-            useHandlers(::NativeBoxRunner)
+            useHandlers(::NativeRunner)
         }
 
         useAfterAnalysisCheckers(

@@ -17,10 +17,6 @@
 package org.jetbrains.kotlin.native.interop.indexer
 
 import clang.*
-import clang.CXIdxEntityKind.CXIdxEntity_ObjCClass
-import clang.CXIdxEntityKind.CXIdxEntity_ObjCProtocol
-import clang.CXIdxEntityKind.CXIdxEntity_Struct
-import clang.CXIdxEntityKind.CXIdxEntity_Union
 import kotlinx.cinterop.*
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -675,82 +671,6 @@ internal class ModulesMap(
     }
 }
 
-data class TypesDefinitions(
-        private val protocolDefinitionBySpelling: Map<String, CValue<CXCursor>>,
-        private val classDefinitionBySpelling: Map<String, CValue<CXCursor>>,
-        private val structDefinitionBySpelling: Map<String, CValue<CXCursor>>,
-) {
-    fun protocolDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, protocolDefinitionBySpelling)
-    fun classDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, classDefinitionBySpelling)
-    fun structDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, structDefinitionBySpelling)
-
-    private fun getIfNonEmpty(value: String, map: Map<String, CValue<CXCursor>>): CValue<CXCursor>? =
-            /**
-             * The spelling should not normally be empty, but it can be such as in the case of CXCursor_NoDeclFound. Return null instead to
-             * avoid conflating cursors if we are passed an empty string.
-             */
-            if (value.isNotEmpty()) map[value] else null
-}
-
-/**
- * The [TypesDefinitions] index exists to dereference forward declarations with -fmodules. Without -fmodules we rely on a couple of
- * different libclang APIs such as [clang_getCursorReferenced] and [clang_getCursorDefinition] to find the definition for a forward
- * declaration and these work since everything happens within 1 TU. With -fmodules, when the TU where the forward declaration happens
- * doesn't see the TU with the definition, we must do the lookup manually, or otherwise we generate only the forward declaration type if it
- * is encountered first.
- *
- * Here we pre-index all TUs, build up a map of the type spelling to the definition cursor, and then look up definition in this index
- * before defining a type during the main indexing pass in [org.jetbrains.kotlin.native.interop.indexer.indexDeclarations].
- *
- * We don't use USRs for this mapping on purpose as these get messed up by external_source_symbol
- *
- * See: KT-82402
- */
-fun indexTranslationUnitsForTypesDefinitions(
-        index: CXIndex,
-        translationUnits: Collection<CXTranslationUnit>,
-): TypesDefinitions {
-    val protocolDefinitionBySpelling = mutableMapOf<String, CValue<CXCursor>>()
-    val classDefinitionBySpelling = mutableMapOf<String, CValue<CXCursor>>()
-    val structDefinitionBySpelling = mutableMapOf<String, CValue<CXCursor>>()
-
-    translationUnits.forEach {
-        indexTranslationUnit(index, it, CXIndexOpt_IndexGeneratedDeclarations, object : Indexer {
-            override fun indexDeclaration(info: CXIdxDeclInfo) {
-                val cursor = info.cursor.readValue()
-                if (!isAvailable(cursor)) return
-
-                val entityInfo = info.entityInfo!!.pointed
-                val kind = entityInfo.kind
-                when (kind) {
-                    CXIdxEntity_Union, CXIdxEntity_Struct -> {
-                        if (!isStructDeclForward(cursor)) {
-                            structDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
-                        }
-                    }
-                    CXIdxEntity_ObjCClass -> {
-                        if (cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl && !isObjCInterfaceDeclForward(cursor)) {
-                            classDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
-                        }
-                    }
-                    CXIdxEntity_ObjCProtocol -> {
-                        if (cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl && !isObjCProtocolDeclForward(cursor)) {
-                            protocolDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
-                        }
-                    }
-                    else -> {}
-                }
-            }
-        })
-    }
-
-    return TypesDefinitions(
-            protocolDefinitionBySpelling = protocolDefinitionBySpelling,
-            classDefinitionBySpelling = classDefinitionBySpelling,
-            structDefinitionBySpelling = structDefinitionBySpelling,
-    )
-}
-
 internal fun getHeaderId(library: NativeLibrary, header: ClangFile?): HeaderId {
     if (header == null) {
         return HeaderId("builtins")
@@ -818,8 +738,6 @@ internal fun getHeadersAndUnits(
 
 class UnitsHolder(val index: CXIndex) : Disposable {
     private val unitByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
-
-    val loadedTranslationUnits get() = unitByBinaryFile.values.toSet()
 
     internal fun load(info: CXIdxImportedASTFileInfo): CXTranslationUnit {
         val canonicalPath: String = info.getFile()!!.canonicalPath
@@ -1063,34 +981,6 @@ internal val CXModule.name: String get() = clang_Module_getName(this).convertAnd
 // TODO: this map doesn't get cleaned up but adds quite significant performance improvement.
 private val canonicalPaths = ConcurrentHashMap<String, String>()
 internal val ClangFile.canonicalPath: String get() = canonicalPaths.getOrPut(this.path) { File(this.path).canonicalPath }
-
-
-// TODO: unavailable declarations should be imported as deprecated.
-fun isAvailable(cursor: CValue<CXCursor>): Boolean = when (clang_getCursorAvailability(cursor)) {
-    CXAvailabilityKind.CXAvailability_Available,
-    CXAvailabilityKind.CXAvailability_Deprecated -> true
-
-    CXAvailabilityKind.CXAvailability_NotAvailable,
-    CXAvailabilityKind.CXAvailability_NotAccessible -> false
-}
-
-fun isObjCInterfaceDeclForward(cursor: CValue<CXCursor>): Boolean {
-    assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
-
-    // It is forward declaration <=> the first child is reference to it:
-    var result = false
-    visitChildren(cursor) { child, _ ->
-        result = (child.kind == CXCursorKind.CXCursor_ObjCClassRef && clang_getCursorReferenced(child) == cursor)
-        CXChildVisitResult.CXChildVisit_Break
-    }
-    return result
-}
-
-private fun isDeclForward(cursor: CValue<CXCursor>): Boolean = clang_isCursorDefinition(cursor) == 0
-fun isObjCProtocolDeclForward(cursor: CValue<CXCursor>): Boolean = isDeclForward(cursor)
-fun isStructDeclForward(cursor: CValue<CXCursor>): Boolean = isDeclForward(cursor)
-
-fun getUsr(cursor: CValue<CXCursor>): String = clang_getCursorUSR(cursor).convertAndDispose()
 
 private fun createVfsOverlayFileContents(virtualPathToReal: Map<Path, Path>): ByteArray {
     val overlay = clang_VirtualFileOverlay_create(0)

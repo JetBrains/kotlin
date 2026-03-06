@@ -9,10 +9,7 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun getFoo(): Foo<kotlin.Any>
 
 <caret_2>:
@@ -26,10 +23,7 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun setFoo(foo: Foo<kotlin.Any>)
 
 <caret_3>:
@@ -43,8 +37,5 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun getFoo(): Foo<kotlin.Any>

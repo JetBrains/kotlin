@@ -1,6 +1,3 @@
-// ISSUE: KT-83308, fixed in 2.4.0-Beta1
-// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.3
-
 interface Node
 
 internal class NodeImpl : Node

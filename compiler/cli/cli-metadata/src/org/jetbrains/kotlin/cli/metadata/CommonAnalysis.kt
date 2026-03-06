@@ -66,10 +66,15 @@ private fun runCommonAnalysisIteration(
     dependencyContainer: CommonDependenciesContainer?
 ): AnalysisResultWithHasErrors {
     val configuration = environment.configuration
+    val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val files = environment.getSourceFiles()
     val moduleName = Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>")
 
-    val analyzer = AnalyzerWithCompilerReport(configuration)
+    val analyzer = AnalyzerWithCompilerReport(
+        messageCollector,
+        configuration.languageVersionSettings,
+        configuration.renderDiagnosticInternalName,
+    )
 
     analyzer.analyzeAndReport(files) {
         CommonResolverForModuleFactory.analyzeFiles(

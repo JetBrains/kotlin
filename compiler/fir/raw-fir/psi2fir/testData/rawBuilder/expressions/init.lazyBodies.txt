@@ -1,11 +1,11 @@
 FILE: init.kt
     public final? class WithInit : R|kotlin/Any| {
-        public? [ContainingClassKey=WithInit] constructor(x: Int): R|WithInit| {
+        public? constructor(x: Int): R|WithInit| {
             LAZY_super<R|kotlin/Any|>
         }
 
         public? final? val x: Int
-            public? [ContainingClassKey=WithInit] get(): Int
+            public? get(): Int
 
         init { LAZY_BLOCK }
 

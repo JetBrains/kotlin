@@ -44,7 +44,6 @@ KtCallExpression(202,208): 'foo(3)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -59,7 +58,6 @@ KtCallExpression(213,223): 'foo(((5)))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -74,7 +72,6 @@ KtCallExpression(228,242): 'foo(x = ((5)))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -96,7 +93,6 @@ KtCallExpression(247,266): 'foo((((5 as Int))))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -125,7 +121,6 @@ KtCallExpression(271,294): 'foo(x = (((5 as Int))))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -161,7 +156,6 @@ KtCallExpression(300,368): 'foo((((when (((value))) {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -183,7 +177,6 @@ KtCallExpression(374,394): 'foo(((((++value)))))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -224,7 +217,6 @@ KtCallExpression(400,426): 'fooVararg((5), (5 as Int))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -253,7 +245,6 @@ KtCallExpression(431,458): 'fooVararg(*(intArrayOf(5)))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -268,7 +259,6 @@ KtCallExpression(443,456): 'intArrayOf(5)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -283,7 +273,6 @@ KtCallExpression(463,493): 'fooVararg(x = (intArrayOf(5)))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -305,7 +294,6 @@ KtCallExpression(478,491): 'intArrayOf(5)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -320,7 +308,6 @@ KtCallExpression(499,523): 'fooLambda((({ _ -> 5})))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -335,7 +322,6 @@ KtCallExpression(529,554): 'fooSam((((MySam { 5 }))))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -350,7 +336,6 @@ KtCallExpression(539,550): 'MySam { 5 }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

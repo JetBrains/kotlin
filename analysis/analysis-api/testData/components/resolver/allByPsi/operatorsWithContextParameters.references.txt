@@ -254,7 +254,6 @@ KtCallExpression(805,808): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -269,7 +268,6 @@ KtCallExpression(821,838): 'SimpleOperators()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -284,7 +282,6 @@ KtCallExpression(843,1229): 'with(A()){'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -299,7 +296,6 @@ KtCallExpression(848,851): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -381,7 +377,6 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) context(a@A)
       operator fun A.get(b: kotlin.Int)
@@ -397,7 +392,6 @@ KtArrayAccessExpression(974,978): 'a[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) context(a@A)
       operator fun A.get(b: kotlin.Int)
@@ -413,7 +407,6 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) context(a@A)
       operator fun A.set(b: kotlin.Int, x: A)
@@ -437,7 +430,6 @@ KtCallExpression(1001,1004): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -452,7 +444,6 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) context(a@A)
       operator fun A.set(b: kotlin.Int, x: A)
@@ -476,7 +467,6 @@ KtCallExpression(1020,1023): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -491,7 +481,6 @@ KtCallExpression(1032,1042): 'thisProp()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) context(a@A)
       operator fun A.invoke()
@@ -507,7 +496,6 @@ KtCallExpression(1051,1054): 'a()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) context(a@A)
       operator fun A.invoke()
@@ -653,7 +641,6 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun get(b: kotlin.Int)
@@ -669,7 +656,6 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun set(b: kotlin.Int, x: A)
@@ -693,7 +679,6 @@ KtCallExpression(1181,1184): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -708,7 +693,6 @@ KtCallExpression(1193,1196): 'b()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun invoke()
@@ -767,7 +751,6 @@ KtCallExpression(1268,1271): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -782,7 +765,6 @@ KtCallExpression(1284,1301): 'SimpleOperators()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -827,8 +809,6 @@ KtArrayAccessExpression(1324,1328): 'a[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     symbols:
       (in ROOT) context(a@A)
       operator fun A.get(b: kotlin.Int)
@@ -844,8 +824,6 @@ KtArrayAccessExpression(1333,1337): 'a[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     symbols:
       (in ROOT) context(a@A)
       operator fun A.set(b: kotlin.Int, x: A)
@@ -869,7 +847,6 @@ KtCallExpression(1340,1343): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -884,8 +861,6 @@ KtCallExpression(1348,1351): 'a()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     symbols:
       (in ROOT) context(a@A)
       operator fun A.invoke()
@@ -974,8 +949,6 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun get(b: kotlin.Int)
@@ -991,8 +964,6 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun set(b: kotlin.Int, x: A)
@@ -1016,7 +987,6 @@ KtCallExpression(1409,1412): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -1031,8 +1001,6 @@ KtCallExpression(1417,1420): 'b()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun invoke()

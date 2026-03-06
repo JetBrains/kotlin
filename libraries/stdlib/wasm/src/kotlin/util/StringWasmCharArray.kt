@@ -5,10 +5,8 @@
 
 package kotlin
 
-import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.*
 
-@UsedFromCompilerGeneratedCode
 internal expect fun WasmCharArray.createString(): String
 
 /**

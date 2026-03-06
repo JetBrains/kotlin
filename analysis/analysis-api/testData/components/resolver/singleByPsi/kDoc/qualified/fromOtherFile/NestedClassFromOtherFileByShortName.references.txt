@@ -2,6 +2,5 @@ KDocName(35,39): 'B.XX'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in b.B) class XX

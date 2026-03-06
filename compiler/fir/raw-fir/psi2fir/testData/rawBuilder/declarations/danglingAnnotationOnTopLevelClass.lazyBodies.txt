@@ -1,6 +1,6 @@
 FILE: danglingAnnotationOnTopLevelClass.kt
     public final? annotation class Ann : R|kotlin/Annotation| {
-        public? [ContainingClassKey=Ann] constructor(): R|Ann| {
+        public? constructor(): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }
 

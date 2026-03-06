@@ -4,10 +4,8 @@
  */
 package kotlin.wasm.internal
 
-import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.reflect.KClass
 
-@UsedFromCompilerGeneratedCode
 internal class KClassInterfaceImpl<T : Any> @WasmPrimitiveConstructor constructor(internal val typeData: TypeInfoData) : KClass<T> {
     override val simpleName: String get() = typeData.typeName
     override val qualifiedName: String

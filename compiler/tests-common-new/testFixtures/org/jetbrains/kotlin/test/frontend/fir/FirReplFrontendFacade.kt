@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.psi.KtNonPublicApi
-import org.jetbrains.kotlin.psi.markAsReplSnippet
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -133,7 +131,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         }
     }
 
-    @OptIn(KtNonPublicApi::class)
     private fun analyzeImpl(module: TestModule, moduleData: FirModuleData): FirOutputPartForDependsOnModule {
         val firParser = module.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER)
 
@@ -146,9 +143,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         PsiElementFinder.EP.getPoint(project).unregisterFinders<JavaElementFinder>()
 
         val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
-        for (ktFile in ktFiles.values) {
-            ktFile.script?.markAsReplSnippet()
-        }
 
         val moduleBasedSession = FirJvmSessionFactory.createSourceSession(
             moduleData = moduleData,

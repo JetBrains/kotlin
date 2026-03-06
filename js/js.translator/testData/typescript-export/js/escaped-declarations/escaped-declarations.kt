@@ -33,10 +33,6 @@ class A1(val `first value`: Int, var `second.value`: Int)
 @JsExport
 class A2 {
     var `invalid:name`: Int = 42
-
-    val `"contains " symbol"` = "OK"
-
-    fun `'contains both " and ' symbols"`() = "OK"
 }
 @JsExport
 class A3 {

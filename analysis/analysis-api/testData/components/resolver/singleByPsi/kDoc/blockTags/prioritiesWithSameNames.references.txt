@@ -3,7 +3,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in ROOT) class Abc(Abc: kotlin.String)
         1: (in Abc) var Abc: kotlin.String
@@ -13,7 +12,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in ROOT) class Abc(Abc: kotlin.String)
         1: (in Abc) var Abc: kotlin.String
@@ -23,7 +21,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         Abc: kotlin.String
 
@@ -32,7 +29,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in ROOT) class Abc(Abc: kotlin.String)
         1: (in Abc) var Abc: kotlin.String
@@ -42,7 +38,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in Abc) var Abc: kotlin.String
 
@@ -51,7 +46,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in ROOT) class Abc(Abc: kotlin.String)
         1: (in Abc) var Abc: kotlin.String

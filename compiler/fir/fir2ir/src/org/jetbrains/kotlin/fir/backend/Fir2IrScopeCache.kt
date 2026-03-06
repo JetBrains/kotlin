@@ -14,86 +14,94 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.ir.symbols.*
 
 class Fir2IrScopeCache() {
+    private val parameterCache = mutableMapOf<FirValueParameter, IrValueParameterSymbol>()
+
     val parameters: Map<FirValueParameter, IrValueParameterSymbol>
-        field = mutableMapOf<FirValueParameter, IrValueParameterSymbol>()
+        get() = parameterCache
+
+    private val variableCache = mutableMapOf<FirVariable, IrVariableSymbol>()
 
     val variables: Map<FirVariable, IrVariableSymbol>
-        field = mutableMapOf<FirVariable, IrVariableSymbol>()
+        get() = variableCache
+
+    private val localFunctionCache = mutableMapOf<FirFunction, IrSimpleFunctionSymbol>()
 
     val localFunctions: Map<FirFunction, IrSimpleFunctionSymbol>
-        field = mutableMapOf<FirFunction, IrSimpleFunctionSymbol>()
+        get() = localFunctionCache
+
+    private val delegatedPropertyCache = mutableMapOf<FirProperty, IrLocalDelegatedPropertySymbol>()
 
     val delegatedProperties: Map<FirProperty, IrLocalDelegatedPropertySymbol>
-        field = mutableMapOf<FirProperty, IrLocalDelegatedPropertySymbol>()
+        get() = delegatedPropertyCache
 
     constructor(
-        initParameters: Map<FirValueParameter, IrValueParameterSymbol>,
-        initVariables: Map<FirVariable, IrVariableSymbol>,
-        initLocalFunctions: Map<FirFunction, IrSimpleFunctionSymbol>,
-        initDelegatedProperties: Map<FirProperty, IrLocalDelegatedPropertySymbol>,
+        parameters: Map<FirValueParameter, IrValueParameterSymbol>,
+        variables: Map<FirVariable, IrVariableSymbol>,
+        localFunctions: Map<FirFunction, IrSimpleFunctionSymbol>,
+        delegatedProperties: Map<FirProperty, IrLocalDelegatedPropertySymbol>,
     ) : this() {
-        parameters.putAll(initParameters)
-        variables.putAll(initVariables)
-        localFunctions.putAll(initLocalFunctions)
-        delegatedProperties.putAll(initDelegatedProperties)
+        parameterCache.putAll(parameters)
+        variableCache.putAll(variables)
+        localFunctionCache.putAll(localFunctions)
+        delegatedPropertyCache.putAll(delegatedProperties)
     }
 
     fun getParameter(parameter: FirValueParameter): IrValueParameterSymbol? {
-        return parameters[parameter]
+        return parameterCache[parameter]
     }
 
     fun putParameter(firParameter: FirValueParameter, irParameterSymbol: IrValueParameterSymbol) {
-        parameters[firParameter] = irParameterSymbol
+        parameterCache[firParameter] = irParameterSymbol
     }
 
     fun getVariable(variable: FirVariable): IrVariableSymbol? {
-        return variables[variable]
+        return variableCache[variable]
     }
 
     fun putVariable(firVariable: FirVariable, irVariableSymbol: IrVariableSymbol) {
-        variables[firVariable] = irVariableSymbol
+        variableCache[firVariable] = irVariableSymbol
     }
 
     fun getLocalFunction(localFunction: FirFunction): IrSimpleFunctionSymbol? {
-        return localFunctions[localFunction]
+        return localFunctionCache[localFunction]
     }
 
     fun putLocalFunction(localFunction: FirFunction, irFunctionSymbol: IrSimpleFunctionSymbol) {
         require(localFunction !is FirNamedFunction || localFunction.visibility == Visibilities.Local) {
             "Function is not local: ${localFunction.render()}"
         }
-        localFunctions[localFunction] = irFunctionSymbol
+        localFunctionCache[localFunction] = irFunctionSymbol
     }
 
     fun getDelegatedProperty(property: FirProperty): IrLocalDelegatedPropertySymbol? {
-        return delegatedProperties[property]
+        return delegatedPropertyCache[property]
     }
 
     fun putDelegatedProperty(firProperty: FirProperty, irPropertySymbol: IrLocalDelegatedPropertySymbol) {
-        delegatedProperties[firProperty] = irPropertySymbol
+        delegatedPropertyCache[firProperty] = irPropertySymbol
     }
 
     fun isEmpty(): Boolean {
-        return parameters.isEmpty()
-                && variables.isEmpty()
-                && localFunctions.isEmpty()
-                && delegatedProperties.isEmpty()
+        return parameterCache.isEmpty()
+                && variableCache.isEmpty()
+                && localFunctionCache.isEmpty()
+                && delegatedPropertyCache.isEmpty()
     }
 
     // Should be updated respectively when adding new properties
     fun cloneFilteringSymbols(filterOutSymbols: Set<FirBasedSymbol<*>>): Fir2IrScopeCache {
         return Fir2IrScopeCache(
             filterOutSymbolsFromCache(parameters, filterOutSymbols),
-            filterOutSymbolsFromCache(variables, filterOutSymbols),
-            filterOutSymbolsFromCache(localFunctions, filterOutSymbols),
-            filterOutSymbolsFromCache(delegatedProperties, filterOutSymbols)
+            filterOutSymbolsFromCache(variableCache, filterOutSymbols),
+            filterOutSymbolsFromCache(localFunctionCache, filterOutSymbols),
+            filterOutSymbolsFromCache(delegatedPropertyCache, filterOutSymbols)
         )
     }
 
     fun clear() {
-        parameters.clear()
-        variables.clear()
-        localFunctions.clear()
-        delegatedProperties.clear()
+        parameterCache.clear()
+        variableCache.clear()
+        localFunctionCache.clear()
+        delegatedPropertyCache.clear()
     }
 }

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.test.services.TestService
 import kotlin.reflect.KClass
 
 abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) {
@@ -54,7 +53,7 @@ abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) 
  */
 class TestProcessSettings(vararg settings: Any) : Settings(parent = null, settings.asIterable())
 class TestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
-class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any>) : Settings(parent, settings), TestService
+class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
 
 /**
  * The hierarchy of settings containers for simple Native tests (e.g. KLIB tests):

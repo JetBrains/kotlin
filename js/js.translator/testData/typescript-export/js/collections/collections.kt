@@ -3,7 +3,6 @@
 // WITH_STDLIB
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
-// TSC_LIB: esnext
 
 // TODO fix statics export in DCE-driven mode
 // SKIP_DCE_DRIVEN

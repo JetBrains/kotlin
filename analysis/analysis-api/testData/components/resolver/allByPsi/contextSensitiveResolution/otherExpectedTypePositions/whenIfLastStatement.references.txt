@@ -16,7 +16,6 @@ KtCallExpression(197,206): 'MyClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -80,10 +79,7 @@ KtCallExpression(404,407): 'b()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in kotlin.Function0) operator fun invoke(): R
-    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(404,405): 'b'
@@ -216,7 +212,6 @@ KtCallExpression(794,1278): 'receive<MyClass>('
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -308,7 +303,6 @@ KtCallExpression(1072,1092): 'getNestedInheritor()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -323,7 +317,6 @@ KtCallExpression(1105,1125): 'getNestedInheritor()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -373,7 +366,6 @@ KtCallExpression(1284,1555): 'run<MyClass> {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

@@ -1,59 +1,59 @@
 FILE: classWithWrongSuperCall.kt
     public open class A : R|kotlin/Any| {
-        public? [ContainingClassKey=A] constructor(init: ( A.() -> Unit )): R|A| {
+        public? constructor(init: ( A.() -> Unit )): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
         public? final? val prop: String = LAZY_EXPRESSION
-            public? [ContainingClassKey=A] get(): String
+            public? get(): String
 
     }
     public final? object B : A {
-        private [ContainingClassKey=B] constructor(): R|B| {
+        private constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
     public final? object C : A {
-        private [ContainingClassKey=C] constructor(): R|C| {
+        private constructor(): R|C| {
             LAZY_super<A>
         }
 
     }
     public final? class D : A {
-        public? [ContainingClassKey=D] constructor(): R|D| {
+        public? constructor(): R|D| {
             LAZY_super<A>
         }
 
     }
     public final? class E : A {
-        public? [ContainingClassKey=E] constructor(): R|E| {
+        public? constructor(): R|E| {
             LAZY_super<A>
         }
 
     }
     public final? class F : A {
-        public? [ContainingClassKey=F] error_constructor(): R|F| {
+        public? error_constructor(): R|F| {
             LAZY_super<A>
         }
 
-        public? [ContainingClassKey=F] constructor(): R|F| {
+        public? constructor(): R|F| {
             LAZY_super<A>
         }
 
     }
     public final? class G : A {
-        public? [ContainingClassKey=G] error_constructor(): R|G| {
+        public? error_constructor(): R|G| {
             LAZY_super<A>
         }
 
-        public? [ContainingClassKey=G] constructor(): R|G| {
+        public? constructor(): R|G| {
             LAZY_super<A>
         }
 
     }
     public final? class H : A {
-        public? [ContainingClassKey=H] constructor(): R|H| {
+        public? constructor(): R|H| {
             LAZY_super<<implicit>>
         }
 

@@ -38,37 +38,28 @@ private object Constants {
 
 // region ================ Double Math ========================================
 
-/**
- * Computes the sine of the angle [x] given in radians.
+/** Computes the sine of the angle [x] given in radians.
  *
- * Special cases:
- *  - `sin(NaN|+Inf|-Inf)` is `NaN`
- *
- * @sample samples.math.MathSamples.Doubles.sin
+ *  Special cases:
+ *   - `sin(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun sin(x: Double): Double = nativeMath.sin(x)
 
-/**
- * Computes the cosine of the angle [x] given in radians.
+/** Computes the cosine of the angle [x] given in radians.
  *
- * Special cases:
- *  - `cos(NaN|+Inf|-Inf)` is `NaN`
- *
- * @sample samples.math.MathSamples.Doubles.cos
+ *  Special cases:
+ *   - `cos(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun cos(x: Double): Double = nativeMath.cos(x)
 
-/**
- * Computes the tangent of the angle [x] given in radians.
+/** Computes the tangent of the angle [x] given in radians.
  *
- * Special cases:
- *  - `tan(NaN|+Inf|-Inf)` is `NaN`
- *
- * @sample samples.math.MathSamples.Doubles.tan
+ *  Special cases:
+ *   - `tan(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -80,8 +71,6 @@ public actual inline fun tan(x: Double): Double = nativeMath.tan(x)
  *
  * Special cases:
  *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
- *
- * @sample samples.math.MathSamples.Doubles.asin
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -93,8 +82,6 @@ public actual inline fun asin(x: Double): Double = nativeMath.asin(x)
  *
  * Special cases:
  *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
- *
- * @sample samples.math.MathSamples.Doubles.acos
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -106,8 +93,6 @@ public actual inline fun acos(x: Double): Double = nativeMath.acos(x)
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
- *
- * @sample samples.math.MathSamples.Doubles.atan
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -118,11 +103,6 @@ public actual inline fun atan(x: Double): Double = nativeMath.atan(x)
  * to the rectangular coordinates `(x, y)` by computing the arc tangent of the value [y] / [x];
  * the returned value is an angle in the range from `-PI` to `PI` radians.
  *
- * In other words, this function returns an angle in radians between the positive x-axis and
- * a ray from the origin (`(0, 0)`) to the point `(x, y)` confined to the interval `(-π, π]`.
- *
- * The `r` component (the distance) of the polar coordinates `(r, theta)` could be calculated as `hypot(x, y)`.
- *
  * Special cases:
  *   - `atan2(0.0, 0.0)` is `0.0`
  *   - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
@@ -130,12 +110,9 @@ public actual inline fun atan(x: Double): Double = nativeMath.atan(x)
  *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for `-Inf < y < 0`
  *   - `atan2(y, -Inf)` is `PI` for `0 < y < +Inf` and `-PI` for `-Inf < y < 0`
  *   - `atan2(y, 0.0)` is `PI/2` for `y > 0` and `-PI/2` for `y < 0`
- *   - `atan2(+Inf, x)` is `PI/2` for finite `x`
+ *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
  *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
- *
- * @see hypot function.
- * @sample samples.math.MathSamples.Doubles.atan2
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -310,8 +287,6 @@ public actual inline fun sqrt(x: Double): Double = nativeMath.sqrt(x)
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
- *
- * @sample samples.math.MathSamples.Doubles.exp
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -328,8 +303,6 @@ public actual inline fun exp(x: Double): Double = nativeMath.exp(x)
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
- * @see [ln1p] function.
- * @sample samples.math.MathSamples.Doubles.expm1
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -507,8 +480,6 @@ public actual inline fun sign(x: Double): Double = nativeMath.signum(x)
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
- *
- * @sample samples.math.MathSamples.Doubles.min
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -518,8 +489,6 @@ public actual inline fun min(a: Double, b: Double): Double = nativeMath.min(a, b
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
- *
- * @sample samples.math.MathSamples.Doubles.max
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -556,8 +525,6 @@ public actual inline fun cbrt(x: Double): Double = nativeMath.cbrt(x)
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
- *
- * @sample samples.math.MathSamples.Doubles.powDouble
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -567,8 +534,6 @@ public actual inline fun Double.pow(x: Double): Double = nativeMath.pow(this, x)
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
- *
- * @sample samples.math.MathSamples.Doubles.powInt
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -647,43 +612,20 @@ public actual inline fun Double.withSign(sign: Int): Double = nativeMath.copySig
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
  *   - `0.0.ulp` is `Double.MIN_VALUE`
- *
  */
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline val Double.ulp: Double get() = nativeMath.ulp(this)
 
 /**
- * Returns the [Double] value nearest to this value in a direction of positive infinity.
- *
- * Special cases:
- *   - `NaN.nextUp() is `NaN`
- *   - `Double.POSITIVE_INFINITY.nextUp() is `+Infinity`
- *   - `0.0.nextUp()` is `Double.MIN_VALUE`
- *
- * @see nextTowards
- * @see nextDown
- * @see ulp
- * @sample samples.math.MathSamples.Doubles.nextUp
- * @sample samples.math.MathSamples.Doubles.discreteValues
+ * Returns the [Double] value nearest to this value in direction of positive infinity.
  */
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun Double.nextUp(): Double = nativeMath.nextUp(this)
 
 /**
- * Returns the [Double] value nearest to this value in a direction of negative infinity.
- *
- * Special cases:
- *   - `NaN.nextDown() is `NaN`
- *   - `Double.NEGATIVE_INFINITY.nextDown() is `-Infinity`
- *   - `0.0.nextDown()` is `-Double.MIN_VALUE`
- *
- * @see nextUp
- * @see nextTowards
- * @see ulp
- * @sample samples.math.MathSamples.Doubles.nextDown
- * @sample samples.math.MathSamples.Doubles.discreteValues
+ * Returns the [Double] value nearest to this value in direction of negative infinity.
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -696,11 +638,6 @@ public actual inline fun Double.nextDown(): Double = nativeMath.nextAfter(this, 
  *   - `x.nextTowards(y)` is `NaN` if either `x` or `y` are `NaN`
  *   - `x.nextTowards(x) == x`
  *
- * @see nextUp
- * @see nextDown
- * @see ulp
- * @sample samples.math.MathSamples.Doubles.nextTowards
- * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -746,37 +683,28 @@ public actual fun Double.roundToLong(): Long =
 
 // region ================ Float Math ========================================
 
-/**
- * Computes the sine of the angle [x] given in radians.
+/** Computes the sine of the angle [x] given in radians.
  *
- * Special cases:
- *  - `sin(NaN|+Inf|-Inf)` is `NaN`
- *
- * @sample samples.math.MathSamples.Floats.sin
+ *  Special cases:
+ *   - `sin(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun sin(x: Float): Float = nativeMath.sin(x.toDouble()).toFloat()
 
-/**
- * Computes the cosine of the angle [x] given in radians.
+/** Computes the cosine of the angle [x] given in radians.
  *
- * Special cases:
- *  - `cos(NaN|+Inf|-Inf)` is `NaN`
- *
- * @sample samples.math.MathSamples.Floats.cos
+ *  Special cases:
+ *   - `cos(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun cos(x: Float): Float = nativeMath.cos(x.toDouble()).toFloat()
 
-/**
- * Computes the tangent of the angle [x] given in radians.
+/** Computes the tangent of the angle [x] given in radians.
  *
- * Special cases:
- *  - `tan(NaN|+Inf|-Inf)` is `NaN`
- *
- * @sample samples.math.MathSamples.Floats.tan
+ *  Special cases:
+ *   - `tan(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -788,8 +716,6 @@ public actual inline fun tan(x: Float): Float = nativeMath.tan(x.toDouble()).toF
  *
  * Special cases:
  *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
- *
- * @sample samples.math.MathSamples.Floats.asin
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -801,8 +727,6 @@ public actual inline fun asin(x: Float): Float = nativeMath.asin(x.toDouble()).t
  *
  * Special cases:
  *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
- *
- * @sample samples.math.MathSamples.Floats.acos
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -814,8 +738,6 @@ public actual inline fun acos(x: Float): Float = nativeMath.acos(x.toDouble()).t
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
- *
- * @sample samples.math.MathSamples.Floats.atan
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -826,11 +748,6 @@ public actual inline fun atan(x: Float): Float = nativeMath.atan(x.toDouble()).t
  * to the rectangular coordinates `(x, y)` by computing the arc tangent of the value [y] / [x];
  * the returned value is an angle in the range from `-PI` to `PI` radians.
  *
- * In other words, this function returns an angle in radians between the positive x-axis and
- * a ray from the origin (`(0, 0)`) to the point `(x, y)` confined to the interval `(-π, π]`.
- *
- * The `r` component (the distance) of the polar coordinates `(r, theta)` could be calculated as `hypot(x, y)`.
- *
  * Special cases:
  *   - `atan2(0.0, 0.0)` is `0.0`
  *   - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
@@ -838,12 +755,9 @@ public actual inline fun atan(x: Float): Float = nativeMath.atan(x.toDouble()).t
  *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for `-Inf < y < 0`
  *   - `atan2(y, -Inf)` is `PI` for `0 < y < +Inf` and `-PI` for `-Inf < y < 0`
  *   - `atan2(y, 0.0)` is `PI/2` for `y > 0` and `-PI/2` for `y < 0`
- *   - `atan2(+Inf, x)` is `PI/2` for finite `x`
+ *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
  *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
- *
- * @see hypot function.
- * @sample samples.math.MathSamples.Floats.atan2
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -961,8 +875,6 @@ public actual inline fun sqrt(x: Float): Float = nativeMath.sqrt(x.toDouble()).t
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
- *
- * @sample samples.math.MathSamples.Floats.exp
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -979,8 +891,6 @@ public actual inline fun exp(x: Float): Float = nativeMath.exp(x.toDouble()).toF
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
- * @see [ln1p] function.
- * @sample samples.math.MathSamples.Floats.expm1
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1158,8 +1068,6 @@ public actual inline fun sign(x: Float): Float = nativeMath.signum(x)
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
- *
- * @sample samples.math.MathSamples.Floats.min
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1169,8 +1077,6 @@ public actual inline fun min(a: Float, b: Float): Float = nativeMath.min(a, b)
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
- *
- * @sample samples.math.MathSamples.Floats.max
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1206,8 +1112,6 @@ public actual inline fun cbrt(x: Float): Float = nativeMath.cbrt(x.toDouble()).t
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
- *
- * @sample samples.math.MathSamples.Floats.powFloat
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1217,8 +1121,6 @@ public actual inline fun Float.pow(x: Float): Float = nativeMath.pow(this.toDoub
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
- *
- * @sample samples.math.MathSamples.Floats.powInt
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1293,52 +1195,24 @@ public actual inline fun Float.withSign(sign: Int): Float = nativeMath.copySign(
  *
  * An ulp is a positive distance between this value and the next nearest [Float] value larger in magnitude.
  *
- * Special cases:
+ * Special Cases:
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
  *   - `0.0.ulp` is `Float.MIN_VALUE`
- *
- * @see nextUp
- * @see nextDown
- * @see nextTowards
- * @sample samples.math.MathSamples.Floats.ulp
- * @sample samples.math.MathSamples.Floats.discreteValues
  */
 @SinceKotlin("1.2")
 @InlineOnly
 public inline val Float.ulp: Float get() = nativeMath.ulp(this)
 
 /**
- * Returns the [Float] value nearest to this value in a direction of positive infinity.
- *
- * Special cases:
- *   - `NaN.nextUp() is `NaN`
- *   - `Float.POSITIVE_INFINITY.nextUp() is `+Infinity`
- *   - `0.0f.nextUp()` is `Float.MIN_VALUE`
- *
- * @see nextTowards
- * @see nextDown
- * @see ulp
- * @sample samples.math.MathSamples.Floats.nextUp
- * @sample samples.math.MathSamples.Floats.discreteValues
+ * Returns the [Float] value nearest to this value in direction of positive infinity.
  */
 @SinceKotlin("1.2")
 @InlineOnly
 public inline fun Float.nextUp(): Float = nativeMath.nextUp(this)
 
 /**
- * Returns the [Float] value nearest to this value in a direction of negative infinity.
- *
- * Special cases:
- *   - `NaN.nextDown() is `NaN`
- *   - `Float.NEGATIVE_INFINITY.nextDown() is `-Infinity`
- *   - `0.0.nextDown()` is `-Float.MIN_VALUE`
- *
- * @see nextUp
- * @see nextTowards
- * @see ulp
- * @sample samples.math.MathSamples.Floats.nextDown
- * @sample samples.math.MathSamples.Floats.discreteValues
+ * Returns the [Float] value nearest to this value in direction of negative infinity.
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1351,11 +1225,6 @@ public inline fun Float.nextDown(): Float = nativeMath.nextAfter(this, Double.NE
  *   - `x.nextTowards(y)` is `NaN` if either `x` or `y` are `NaN`
  *   - `x.nextTowards(x) == x`
  *
- * @see nextUp
- * @see nextDown
- * @see ulp
- * @sample samples.math.MathSamples.Floats.nextTowards
- * @sample samples.math.MathSamples.Floats.discreteValues
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1412,8 +1281,6 @@ public actual inline fun abs(n: Int): Int = nativeMath.abs(n)
 
 /**
  * Returns the smaller of two values.
- *
- * @sample samples.math.MathSamples.Ints.min
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1421,8 +1288,6 @@ public actual inline fun min(a: Int, b: Int): Int = nativeMath.min(a, b)
 
 /**
  * Returns the greater of two values.
- *
- * @sample samples.math.MathSamples.Ints.max
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1469,8 +1334,6 @@ public actual inline fun abs(n: Long): Long = nativeMath.abs(n)
 
 /**
  * Returns the smaller of two values.
- *
- * @sample samples.math.MathSamples.Longs.min
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1478,8 +1341,6 @@ public actual inline fun min(a: Long, b: Long): Long = nativeMath.min(a, b)
 
 /**
  * Returns the greater of two values.
- *
- * @sample samples.math.MathSamples.Longs.max
  */
 @SinceKotlin("1.2")
 @InlineOnly

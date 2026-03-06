@@ -1,5 +1,2 @@
 KtDestructuringDeclarationEntry(135,136): 'b'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      a/component2(<extension receiver>: a.A): kotlin.Int
-    ]
+  null

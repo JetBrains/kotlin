@@ -1,12 +1,12 @@
 FILE: annotationOnField.kt
     public final? annotation class Ann : R|kotlin/Annotation| {
-        public? [ContainingClassKey=Ann] constructor(): R|Ann| {
+        public? constructor(): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     public final? class CustomDelegate : R|kotlin/Any| {
-        public? [ContainingClassKey=CustomDelegate] constructor(): R|CustomDelegate| {
+        public? constructor(): R|CustomDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -14,31 +14,31 @@ FILE: annotationOnField.kt
 
     }
     @FIELD:Ann() public final? class SomeClass : R|kotlin/Any| {
-        @FIELD:Ann() public? [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
+        @FIELD:Ann() public? constructor(): R|SomeClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
         field:@FIELD:Ann() protected final? val simpleProperty: String = LAZY_EXPRESSION
-            protected [ContainingClassKey=SomeClass] get(): String
+            protected get(): String
 
         field:@FIELD:Ann() protected final? val simplePropertyWithAnnotationList: String = LAZY_EXPRESSION
-            protected [ContainingClassKey=SomeClass] get(): String
+            protected get(): String
 
         field:@FIELD:Ann() protected final? val delegatedProperty: Stringby LAZY_EXPRESSION
-            protected [ContainingClassKey=SomeClass] get(): <implicit> { LAZY_BLOCK }
+            protected get(): <implicit> { LAZY_BLOCK }
 
         field:@FIELD:Ann() public? final? val propertyWithCustomGetter: Int
-            public? [ContainingClassKey=SomeClass] get(): Int { LAZY_BLOCK }
+            public? get(): Int { LAZY_BLOCK }
 
         @FIELD:Ann() public? final? fun anotherFun(@FIELD:Ann() s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     public final? class WithPrimaryConstructor : R|kotlin/Any| {
-        public? [ContainingClassKey=WithPrimaryConstructor] constructor([CorrespondingProperty=/WithPrimaryConstructor.a] a: String): R|WithPrimaryConstructor| {
+        public? constructor(a: String): R|WithPrimaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        field:@FIELD:Ann() public? final? [IsFromPrimaryConstructor=true] val a: String = R|<local>/a|
-            public? [ContainingClassKey=WithPrimaryConstructor] get(): String
+        field:@FIELD:Ann() public? final? val a: String = R|<local>/a|
+            public? get(): String
 
     }

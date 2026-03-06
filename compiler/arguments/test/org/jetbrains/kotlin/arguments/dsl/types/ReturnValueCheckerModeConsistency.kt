@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import org.jetbrains.kotlin.arguments.description.actualCommonCompilerArguments
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode as CompilerReturnValueCheckerMode
 
@@ -19,5 +21,16 @@ class ReturnValueCheckerModeConsistency {
                 message = "Missing entry $entry in DSL types"
             )
         }
+    }
+
+    @Test
+    fun explicitApiArgumentDescription() {
+        val returnValueCheckerArg = actualCommonCompilerArguments.arguments.single { it.name == "Xreturn-value-checker" }
+
+        assertEquals(
+            expected = 10644755,
+            actual = returnValueCheckerArg.argumentDescription.hashCode(),
+            message = "Value description in '${returnValueCheckerArg.name}' should be updated by moving current value to 'oldValues'."
+        )
     }
 }

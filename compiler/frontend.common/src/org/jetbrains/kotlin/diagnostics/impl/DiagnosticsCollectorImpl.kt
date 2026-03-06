@@ -7,28 +7,28 @@ package org.jetbrains.kotlin.diagnostics.impl
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.Severity
 
 /**
  * Standard implementation of [BaseDiagnosticsCollector]
  */
 class DiagnosticsCollectorImpl : BaseDiagnosticsCollector() {
+    private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>
-        get() = diagnosticsByFilePath.flatMap { it.value }
+        get() = _diagnosticsByFilePath.flatMap { it.value }
     override val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
-        field = mutableMapOf<String?, MutableList<KtDiagnostic>>()
+        get() = _diagnosticsByFilePath
 
     override var hasErrors = false
         private set
 
-    override var hasWarningsForWError = false
-        private set
-
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic != null && !context.isDiagnosticSuppressed(diagnostic)) {
-            diagnosticsByFilePath.getOrPut(context.containingFilePath) { mutableListOf() }.run {
+            _diagnosticsByFilePath.getOrPut(context.containingFilePath) { mutableListOf() }.run {
                 add(diagnostic)
-                hasErrors = hasErrors || diagnostic.severity.isError
-                hasWarningsForWError = hasWarningsForWError || diagnostic.severity.isErrorWhenWError
+                if (!hasErrors && diagnostic.severity == Severity.ERROR) {
+                    hasErrors = true
+                }
             }
         }
     }

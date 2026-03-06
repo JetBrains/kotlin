@@ -36,7 +36,6 @@ KtNameReferenceExpression(80,84): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -44,7 +43,6 @@ KtCallExpression(85,94): 'action1()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun P1.invoke(): R
 
@@ -58,7 +56,6 @@ KtNameReferenceExpression(85,92): 'action1'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -66,7 +63,6 @@ KtCallExpression(99,112): 'action1(prop)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -80,7 +76,6 @@ KtNameReferenceExpression(99,106): 'action1'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -94,7 +89,6 @@ KtNameReferenceExpression(107,111): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -108,7 +102,6 @@ KtNameReferenceExpression(118,122): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -116,7 +109,6 @@ KtCallExpression(123,132): 'action2()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -130,7 +122,6 @@ KtNameReferenceExpression(123,130): 'action2'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -138,7 +129,6 @@ KtCallExpression(151,164): 'action2(prop)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -152,7 +142,6 @@ KtNameReferenceExpression(151,158): 'action2'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -166,6 +155,5 @@ KtNameReferenceExpression(159,163): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

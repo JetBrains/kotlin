@@ -16,6 +16,5 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r.A.B) constructor(x: kotlin.Int)

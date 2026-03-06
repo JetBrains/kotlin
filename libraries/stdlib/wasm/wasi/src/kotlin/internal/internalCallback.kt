@@ -5,8 +5,6 @@
 
 package kotlin.wasm.internal
 
-import kotlin.internal.UsedFromCompilerGeneratedCode
-
 @RequiresOptIn
 private annotation class InternalWasmApi
 
@@ -16,7 +14,6 @@ This is internal API which is not intended to use on user-side.
 @InternalWasmApi
 public var onExportedFunctionExit: (() -> Unit)? = null
 
-@UsedFromCompilerGeneratedCode
 internal fun invokeOnExportedFunctionExit() {
     @OptIn(InternalWasmApi::class)
     onExportedFunctionExit?.invoke()

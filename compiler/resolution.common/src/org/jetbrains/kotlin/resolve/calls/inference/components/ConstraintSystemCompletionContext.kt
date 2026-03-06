@@ -71,6 +71,23 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
         return analyzeArgumentWithFixedParameterTypes(postponedArguments, analyze)
     }
 
+    fun <A : CollectionLiteralAtomMarker> analyzeCollectionLiteralArgument(
+        postponedArguments: List<A>,
+        predicate: (KotlinTypeMarker) -> Boolean,
+        analyze: (A) -> Unit
+    ): Boolean {
+        val argumentToAnalyze = postponedArguments.firstOrNull { atom ->
+            !atom.analyzed && atom.expectedType?.let { predicate(it) } == true
+        }
+
+        if (argumentToAnalyze != null) {
+            analyze(argumentToAnalyze)
+            return true
+        }
+
+        return false
+    }
+
     fun <A : PostponedResolvedAtomMarker> analyzeRemainingNotAnalyzedPostponedArgument(
         postponedArguments: List<A>,
         analyze: (A) -> Unit
@@ -105,7 +122,7 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
         }.map { it.type }
 
     /**
-     * @see [org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context.typeVariablesThatAreCountedAsProperTypes]
+     * @see [org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context.typeVariablesThatAreNotCountedAsProperTypes]
      * @see [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
      */
     @K2Only

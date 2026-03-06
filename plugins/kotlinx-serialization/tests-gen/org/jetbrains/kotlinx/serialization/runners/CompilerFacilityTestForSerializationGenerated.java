@@ -18,10 +18,6 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kotlinx-serialization/testData/compilerFacility")
 @TestDataPath("$PROJECT_ROOT")
 public class CompilerFacilityTestForSerializationGenerated extends AbstractCompilerFacilityTestForSerialization {
-  private void run(String fileName) {
-    runTest("plugins/kotlinx-serialization/testData/compilerFacility/" + fileName);
-  }
-
   @Test
   public void testAllFilesPresentInCompilerFacility() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/compilerFacility"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -30,6 +26,6 @@ public class CompilerFacilityTestForSerializationGenerated extends AbstractCompi
   @Test
   @TestMetadata("serializationPlugin.kt")
   public void testSerializationPlugin() {
-    run("serializationPlugin.kt");
+    runTest("plugins/kotlinx-serialization/testData/compilerFacility/serializationPlugin.kt");
   }
 }

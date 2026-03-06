@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.computeImportingScopes
@@ -154,23 +152,27 @@ class BodyResolveContext(
         }
     }
 
-    var publicApiInlineFunction: FirFunction? = null
+    var inlineFunction: FirFunction? = null
 
-    inline fun <T> withPublicApiInlineFunction(function: FirFunction?, block: () -> T): T {
-        val oldValue = publicApiInlineFunction
+    inline fun <T> withInlineFunction(function: FirFunction?, block: () -> T): T {
+        val oldValue = inlineFunction
         return try {
-            publicApiInlineFunction = function
+            inlineFunction = function
             block()
         } finally {
-            publicApiInlineFunction = oldValue
+            inlineFunction = oldValue
         }
     }
 
-    inline fun <T> withPublicApiInlineFunctionIfApplicable(function: FirFunction, block: () -> T): T =
-        withPublicApiInlineFunction(function.takeIf { it.isPublicInline } ?: publicApiInlineFunction, block)
+    inline fun <T> withInlineFunctionIfApplicable(function: FirFunction, block: () -> T): T = when {
+        function.isInline -> withInlineFunction(function, block)
+        else -> block()
+    }
 
-    val FirFunction.isPublicInline: Boolean
-        get() = isInline && (publishedApiEffectiveVisibility ?: effectiveVisibility).publicApi
+    inline fun <T> withSuppressedInlineFunctionIfNeeded(element: FirElement?, block: () -> T): T = when {
+        shouldSuppressInlineContextAt(element, containers.lastOrNull()?.symbol) -> withInlineFunction(null, block)
+        else -> block()
+    }
 
     @PrivateForInline
     inline fun <T> withContainer(declaration: FirDeclaration, f: () -> T): T {
@@ -813,7 +815,7 @@ class BodyResolveContext(
         }
 
         return withTypeParametersOf(namedFunction) {
-            withPublicApiInlineFunctionIfApplicable(namedFunction) {
+            withInlineFunctionIfApplicable(namedFunction) {
                 withContainer(namedFunction, f)
             }
         }
@@ -968,7 +970,7 @@ class BodyResolveContext(
     ): T {
         storeValueParameterIfNeeded(valueParameter, session)
         return withContainer(valueParameter) {
-            f()
+            withSuppressedInlineFunctionIfNeeded(valueParameter.defaultValue, f)
         }
     }
 
@@ -1036,7 +1038,7 @@ class BodyResolveContext(
             withContainer(accessor) {
                 val type = receiverTypeRef?.coneType
 
-                withPublicApiInlineFunctionIfApplicable(accessor) {
+                withInlineFunctionIfApplicable(accessor) {
                     withLabelAndReceiverType(property.name, property, type, holder, f)
                 }
             }

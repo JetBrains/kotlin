@@ -19,8 +19,8 @@ class MessageCollectorForCompilerTests(
     private val printingCollector = PrintingMessageCollector(errStream, messageRenderer, /*verbose=*/ false)
     private var hasErrors = false
 
-    val nonSourceMessages: List<String>
-        field = mutableListOf<String>()
+    private val _nonSourceMessages = mutableListOf<String>()
+    val nonSourceMessages: List<String> get() = _nonSourceMessages
 
     override fun report(
         severity: CompilerMessageSeverity,
@@ -29,7 +29,7 @@ class MessageCollectorForCompilerTests(
     ) {
         hasErrors = hasErrors || severity.isError
         if (location == null && severity <= CompilerMessageSeverity.WARNING) {
-            nonSourceMessages.add(messageRenderer.render(severity, message, location))
+            _nonSourceMessages.add(messageRenderer.render(severity, message, location))
         }
         printingCollector.report(severity, message, location)
     }
@@ -37,7 +37,7 @@ class MessageCollectorForCompilerTests(
     override fun hasErrors(): Boolean = hasErrors
 
     override fun clear() {
-        nonSourceMessages.clear()
+        _nonSourceMessages.clear()
         printingCollector.clear()
     }
 }

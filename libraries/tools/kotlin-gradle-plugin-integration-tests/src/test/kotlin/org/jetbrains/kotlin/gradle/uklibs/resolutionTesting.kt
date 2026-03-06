@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.internal.project.ProjectStateRegistry
 import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
-import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
 import org.jetbrains.kotlin.gradle.testbase.providerBuildScriptReturn
@@ -26,7 +25,6 @@ fun <T : Any> Project.ignoreAccessViolations(code: () -> (T)) = (project.gradle 
 
 fun TestProject.metadataTransformationOutputClasspath(
     sourceSetName: String,
-    buildOptions: BuildOptions = this.buildOptions,
 ): List<File> {
     val dumpTaskName = "dump_${sourceSetName}_${generateIdentifier()}"
     val outputClasspath = providerBuildScriptReturn {
@@ -41,7 +39,7 @@ fun TestProject.metadataTransformationOutputClasspath(
         gmtTask.flatMap {
             it.allTransformedLibraries()
         }
-    }.buildAndReturn(dumpTaskName, deriveBuildOptions = { buildOptions })
+    }.buildAndReturn(dumpTaskName)
     return outputClasspath
 }
 

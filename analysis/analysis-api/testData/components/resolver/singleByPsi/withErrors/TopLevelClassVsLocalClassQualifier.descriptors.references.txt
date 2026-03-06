@@ -8,6 +8,5 @@ KtNameReferenceExpression(70,78): 'Conflict'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

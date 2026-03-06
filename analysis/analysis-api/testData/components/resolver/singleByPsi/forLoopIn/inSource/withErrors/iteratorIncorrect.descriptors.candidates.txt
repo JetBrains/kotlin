@@ -1,2 +1,0 @@
-KtForExpression(23,37): 'for(i in f) {}'
-  NO_CANDIDATES

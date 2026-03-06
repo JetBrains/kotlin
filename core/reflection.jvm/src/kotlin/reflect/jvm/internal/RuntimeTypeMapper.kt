@@ -74,11 +74,12 @@ internal sealed class JvmFunctionSignature {
     }
 
     class JavaMethod(val method: Method) : JvmFunctionSignature() {
-        override fun asString(): String = method.jvmSignature
+        override fun asString(): String = method.signature
     }
 
     class JavaConstructor(val constructor: Constructor<*>) : JvmFunctionSignature() {
-        override fun asString(): String = constructor.jvmSignature
+        override fun asString(): String =
+            constructor.parameterTypes.joinToString(separator = "", prefix = "<init>(", postfix = ")V") { it.desc }
     }
 
     class FakeJavaAnnotationConstructor(val jClass: Class<*>) : JvmFunctionSignature() {
@@ -135,7 +136,7 @@ internal sealed class JvmPropertySignature {
     }
 
     class JavaMethodProperty(val getterMethod: Method, val setterMethod: Method?) : JvmPropertySignature() {
-        override fun asString(): String = getterMethod.jvmSignature
+        override fun asString(): String = getterMethod.signature
     }
 
     class JavaField(val field: Field) : JvmPropertySignature() {
@@ -151,10 +152,7 @@ internal sealed class JvmPropertySignature {
     }
 }
 
-internal val Constructor<*>.jvmSignature: String
-    get() = parameterTypes.joinToString(separator = "", prefix = "<init>(", postfix = ")V") { it.desc }
-
-internal val Method.jvmSignature: String
+private val Method.signature: String
     get() = name +
             parameterTypes.joinToString(separator = "", prefix = "(", postfix = ")") { it.desc } +
             returnType.desc

@@ -198,20 +198,14 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             TypeResolutionResult.Unresolved -> null to null
         }
 
-        val allTypeArguments = buildList {
-            val qualifier = typeRef.qualifier
-            val isPossibleBareType = areBareTypesAllowed && qualifier.all { it.typeArgumentList.typeArguments.isEmpty() }
+        val qualifier = typeRef.qualifier
+        val allTypeArguments =
+            qualifier.reversed().flatMap { it.typeArgumentList.typeArguments }.mapTo(mutableListOf()) { it.toConeTypeProjection() }
 
-            if (symbol is FirClassLikeSymbol<*> && !isPossibleBareType) {
-                initExplicitTypeArguments(symbol, qualifier)?.let { return ConeErrorType(it) }
-                addImplicitTypeArguments(symbol, topContainer, substitutor)
-                    ?.let { return ConeErrorType(it) }
-            } else {
-                // In this case, type arguments are not allowed, but we would like to store them in the error type
-                qualifier.asReversed().forEach { part ->
-                    addAll(part.typeArgumentList.typeArguments.map { it.toConeTypeProjection() })
-                }
-            }
+        if (symbol is FirClassLikeSymbol<*> && !isPossibleBareType(areBareTypesAllowed, allTypeArguments)) {
+            matchQualifierPartsAndClasses(symbol, qualifier)?.let { return ConeErrorType(it) }
+            allTypeArguments.addImplicitTypeArguments(symbol, topContainer, substitutor)
+                ?.let { return ConeErrorType(it) }
         }
 
         val resultingArguments = allTypeArguments.toTypedArray()
@@ -272,10 +266,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         }
     }
 
-    private fun MutableList<ConeTypeProjection>.initExplicitTypeArguments(
-        symbol: FirClassLikeSymbol<*>,
-        qualifier: List<FirQualifierPart>,
-    ): ConeDiagnostic? {
+    private fun isPossibleBareType(areBareTypesAllowed: Boolean, allTypeArguments: List<ConeTypeProjection>): Boolean =
+        areBareTypesAllowed && allTypeArguments.isEmpty()
+
+    private fun matchQualifierPartsAndClasses(symbol: FirClassLikeSymbol<*>, qualifier: List<FirQualifierPart>): ConeDiagnostic? {
         var currentDeclaration: FirClassLikeDeclaration? = symbol.fir
         var areTypeArgumentsAllowed = true
 
@@ -284,7 +278,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             val qualifierPartArgsCount = typeArgumentList.typeArguments.size
 
             if (currentDeclaration == null) {
-                // it's a package name; type arguments in packages are reported in checker separately
+                // It's a package name
+                if (qualifierPartArgsCount > 0) {
+                    return ConeTypeArgumentsNotAllowedOnPackageError(typeArgumentList.source!!)
+                }
                 break
             }
 
@@ -297,8 +294,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             } else if (qualifierPartArgsCount > 0) {
                 return ConeTypeArgumentsForOuterClassWhenNestedReferencedError(typeArgumentList.source!!)
             }
-
-            addAll(typeArgumentList.typeArguments.map { it.toConeTypeProjection() })
 
             // Inner class can't contain non-inner class
             // No more arguments are allowed after first static/non-inner class
@@ -397,6 +392,9 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             diagnostic
         )
     }
+
+    private val FirResolvedQualifier.ownTypeArguments: List<FirTypeProjection>
+        get() = typeArguments.subList(0, typeArguments.size - (explicitParent?.typeArguments?.size ?: 0))
 
     private fun FirTypeProjection.toConeTypeProjectionInLHS(): ConeTypeProjection = when (this) {
         is FirTypeProjectionWithVariance -> typeRef.coneType.toTypeProjection(variance)

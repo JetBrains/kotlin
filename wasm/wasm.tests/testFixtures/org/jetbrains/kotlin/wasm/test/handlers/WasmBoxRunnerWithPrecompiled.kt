@@ -20,8 +20,7 @@ class WasmBoxRunnerWithPrecompiled(
         outputDir.mkdirs()
 
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
-        val compilation = (info as BinaryArtifacts.Wasm.CompilationSets).compilation
-        compilation.compilerResult.writeTo(outputDir, compilation.compilerResult.baseFileName, debugMode)
+        info.compilation.compilerResult.writeTo(outputDir, info.compilation.compilerResult.baseFileName, debugMode)
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
@@ -29,7 +28,7 @@ class WasmBoxRunnerWithPrecompiled(
             val outputDirBase = testServices.getWasmTestOutputDirectory()
             val exceptions = saveAdditionalFilesAndRun(
                 outputDir = outputDirBase,
-                mark = "",
+                mark = "single",
                 failsIn = emptyList(),
                 filesToIgnoreInSizeChecks = mutableSetOf()
             )

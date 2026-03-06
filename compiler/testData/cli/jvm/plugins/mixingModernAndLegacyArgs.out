@@ -5,5 +5,4 @@ Legacy arguments:
 Modern arguments:
   -Xcompiler-plugin=dist/kotlinc/lib/noarg-compiler-plugin.jar=annotation=foo.NoArg
 
-warning: argument -Xcompiler-plugin is experimental
 COMPILATION_ERROR

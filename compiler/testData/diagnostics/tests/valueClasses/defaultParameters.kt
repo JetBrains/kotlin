@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +ValueClasses
 // WITH_STDLIB
 // SKIP_TXT
 // WORKS_WHEN_VALUE_CLASS

@@ -13,7 +13,7 @@ import java.io.File
 /**
  * The directories with original sources (aka testData).
  */
-class TestRoots(val roots: Set<File>, val baseDir: File)
+internal class TestRoots(val roots: Set<File>, val baseDir: File)
 
 /**
  * [testSourcesDir] - The directory with generated (preprocessed) test sources.

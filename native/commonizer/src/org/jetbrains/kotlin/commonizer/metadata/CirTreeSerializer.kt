@@ -444,18 +444,19 @@ internal data class CirTreeSerializationContext(
 }
 
 internal class ClassConsumer {
-    val allClasses: Collection<KmClass>
-        field = mutableListOf<KmClass>()
-    val sealedClasses: Collection<KmClass>
-        field = mutableListOf<KmClass>()
+    private val _allClasses = mutableListOf<KmClass>()
+    private val _sealedClasses = mutableListOf<KmClass>()
+
+    val allClasses: Collection<KmClass> get() = _allClasses
+    val sealedClasses: Collection<KmClass> get() = _sealedClasses
 
     fun consume(clazz: KmClass) {
-        allClasses += clazz
-        if (clazz.modality == Modality.SEALED) sealedClasses += clazz
+        _allClasses += clazz
+        if (clazz.modality == Modality.SEALED) _sealedClasses += clazz
     }
 
     fun reset() {
-        allClasses.clear()
-        sealedClasses.clear()
+        _allClasses.clear()
+        _sealedClasses.clear()
     }
 }

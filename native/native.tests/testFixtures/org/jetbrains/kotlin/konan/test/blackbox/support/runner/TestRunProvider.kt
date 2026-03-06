@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.buildTree
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.startsWith
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.test.services.TestService
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.extension.ExtensionContext
 
@@ -35,7 +34,7 @@ import org.junit.jupiter.api.extension.ExtensionContext
  */
 class TestRunProvider(
     val testCaseGroupProvider: TestCaseGroupProvider
-) : BaseTestRunProvider(), ExtensionContext.Store.CloseableResource, TestService {
+) : BaseTestRunProvider(), ExtensionContext.Store.CloseableResource {
     private val compilationFactory = TestCompilationFactory()
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<Executable>>()
     private val cachedXCTestCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<TestCompilationArtifact.XCTestBundle>>()

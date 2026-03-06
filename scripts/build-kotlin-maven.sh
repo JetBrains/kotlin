@@ -27,11 +27,11 @@ echo "KOTLIN_NATIVE_VERSION=$KOTLIN_NATIVE_VERSION"
 
 cd libraries
 # Update versions in pom.xml
-JAVA_HOME="${MAVEN_JAVA_HOME:-$JAVA_HOME}" ./mvnw -DnewVersion=$DEPLOY_VERSION -DgenerateBackupPoms=false -DprocessAllModules=true versions:set
+./mvnw -DnewVersion=$DEPLOY_VERSION -DgenerateBackupPoms=false -DprocessAllModules=true versions:set
 cd ..
 
 # Build part of kotlin and publish it to the local maven repository and to build/repo directory
-JAVA_HOME="${GRADLE_JAVA_HOME:-$JAVA_HOME}" ./gradlew \
+./gradlew \
   -PdeployVersion=$DEPLOY_VERSION \
   -Pbuild.number=$BUILD_NUMBER \
   -Pversions.kotlin-native=$KOTLIN_NATIVE_VERSION \
@@ -43,7 +43,7 @@ JAVA_HOME="${GRADLE_JAVA_HOME:-$JAVA_HOME}" ./gradlew \
 BASE_DIR=$(pwd)
 cd libraries
 # Build maven part and publish it to the same build/repo
-JAVA_HOME="${MAVEN_JAVA_HOME:-$JAVA_HOME}" ./mvnw \
+./mvnw \
   clean deploy \
   -Ddeploy-url=file://$BASE_DIR/build/repo \
   -DskipTests

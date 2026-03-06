@@ -170,7 +170,6 @@ KtCallExpression(1055,1073): 'SealedInheritor1()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -199,7 +198,6 @@ KtCallExpression(1217,1245): 'Generic2<SealedInheritor1>()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -228,7 +226,6 @@ KtCallExpression(1318,1351): 'constraintFun<SealedInheritor1>()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

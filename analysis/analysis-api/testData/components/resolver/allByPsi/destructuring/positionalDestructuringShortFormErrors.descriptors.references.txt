@@ -44,10 +44,7 @@ KtDestructuringDeclarationEntry(234,239): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       0: (in <local>: declaration) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -55,10 +52,7 @@ KtDestructuringDeclarationEntry(241,255): 'second: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       0: (in <local>: declaration) val second: kotlin.Int
       1: (in Tuple) operator fun component2(): kotlin.Int
 
@@ -79,7 +73,6 @@ KtNameReferenceExpression(260,261): 'x'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -87,10 +80,7 @@ KtDestructuringDeclarationEntry(285,295): 'first: Int'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       0: (in <local>: declaration) var first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -111,7 +101,6 @@ KtNameReferenceExpression(299,300): 'x'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -119,10 +108,7 @@ KtDestructuringDeclarationEntry(324,329): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: declaration) val first: ERROR(component1() return type)
 
 KtNameReferenceExpression(333,334): 'y'
@@ -135,7 +121,6 @@ KtNameReferenceExpression(333,334): 'y'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -143,10 +128,7 @@ KtDestructuringDeclarationEntry(358,363): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: declaration) val first: ERROR(component1() return type)
 
 KtNameReferenceExpression(382,386): 'List'
@@ -174,7 +156,6 @@ KtForExpression(418,456): 'for ([first, second: String,] in x) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
       1: (in kotlin.collections.Iterator) operator fun next(): T
@@ -184,10 +165,7 @@ KtDestructuringDeclarationEntry(424,429): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       0: (in <local>: loop) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -195,10 +173,7 @@ KtDestructuringDeclarationEntry(431,445): 'second: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       0: (in <local>: loop) val second: kotlin.Int
       1: (in Tuple) operator fun component2(): kotlin.Int
 
@@ -219,7 +194,6 @@ KtNameReferenceExpression(451,452): 'x'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -227,7 +201,6 @@ KtForExpression(461,487): 'for ([first: Int] in x) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
       1: (in kotlin.collections.Iterator) operator fun next(): T
@@ -237,10 +210,7 @@ KtDestructuringDeclarationEntry(467,477): 'first: Int'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       0: (in <local>: loop) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -261,7 +231,6 @@ KtNameReferenceExpression(482,483): 'x'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -269,7 +238,6 @@ KtForExpression(492,521): 'for ([first: String] in y) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -278,10 +246,7 @@ KtDestructuringDeclarationEntry(498,511): 'first: String'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: '<Error function>' !in [first, component1]
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       0: (in <Error class: unknown class>) open fun `<Error function>`(): ERROR(Return type for function cannot be resolved)
       1: (in <local>: loop) val first: ERROR(Return type for function cannot be resolved)
 
@@ -302,7 +267,6 @@ KtNameReferenceExpression(516,517): 'y'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -338,7 +302,6 @@ KtCallExpression(622,657): 'foo { [first, second: String,] -> }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -352,7 +315,6 @@ KtNameReferenceExpression(622,625): 'foo'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -360,10 +322,7 @@ KtDestructuringDeclarationEntry(629,634): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -371,10 +330,7 @@ KtDestructuringDeclarationEntry(636,650): 'second: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>) val second: kotlin.Int
       1: (in Tuple) operator fun component2(): kotlin.Int
 
@@ -389,7 +345,6 @@ KtCallExpression(662,685): 'foo { [first: Int] -> }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -403,7 +358,6 @@ KtNameReferenceExpression(662,665): 'foo'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -411,10 +365,7 @@ KtDestructuringDeclarationEntry(669,679): 'first: Int'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>) val first: kotlin.String
       1: (in Tuple) operator fun component1(): kotlin.String
 
@@ -429,7 +380,6 @@ KtCallExpression(690,708): 'bar { [first] -> }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -443,7 +393,6 @@ KtNameReferenceExpression(690,693): 'bar'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -451,8 +400,5 @@ KtDestructuringDeclarationEntry(697,702): 'first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
       (in <local>: lambda.<no name>) val first: ERROR(component1() return type)

@@ -114,7 +114,7 @@ fun box(): String {
     )
 
     assertEquals(
-        "[test.BImpl, test.B<(raw) kotlin.Number!, (raw) kotlin.Any!>, test.A<(raw) kotlin.Any!, (raw) kotlin.Any!>, kotlin.Any]",
+        "[test.BImpl, test.B<(raw) kotlin.Number!, (raw) kotlin.Any!>, test.A<kotlin.Any!, kotlin.Number!>, kotlin.Any]",
         TestB::class.allSupertypes.toString(),
     )
 
@@ -138,7 +138,7 @@ fun box(): String {
         TestF.TestInner::class.allSupertypes.toString(),
     )
 
-    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
+    if (System.getProperty("kotlin.reflect.jvm.useK1Implementation")?.toBoolean() == true) {
         assertEquals("[test.GImpl.InnerImpl, test.G<kotlin.Any!>.Inner, kotlin.Any]", TestG.TestInner::class.allSupertypes.toString())
     } else {
         // The new implementation seems more correct here, but in reality it's unlikely to affect anything.

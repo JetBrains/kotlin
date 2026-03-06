@@ -23,8 +23,8 @@ class IrExpectActualMap() {
      * This map contains only expect-actual mapping for declarations in sources.
      */
     @MappingForCheckers
-    val expectToActual: Map<IrSymbol, IrSymbol>
-        field = mutableMapOf()
+    val expectToActual: Map<IrSymbol, IrSymbol> get() = _expectToActual
+    private val _expectToActual: MutableMap<IrSymbol, IrSymbol> = mutableMapOf()
 
     /**
      * This map contains expect-actual and common-platform mapping for declarations from dependencies
@@ -43,8 +43,8 @@ class IrExpectActualMap() {
      * For every actual, it's possible to have multiple expects (because of `actual typealias`).
      * But only a single "direct" expect is possible.
      */
-    val actualToDirectExpect: Map<IrSymbol, IrSymbol>
-        field = mutableMapOf()
+    val actualToDirectExpect: Map<IrSymbol, IrSymbol> get() = _actualToDirectExpect
+    private val _actualToDirectExpect: MutableMap<IrSymbol, IrSymbol> = mutableMapOf()
 
     val propertyAccessorsActualizedByFields: MutableMap<IrSimpleFunctionSymbol, IrPropertySymbol> = mutableMapOf()
 
@@ -52,7 +52,7 @@ class IrExpectActualMap() {
 
     fun putRegular(expectSymbol: IrSymbol, actualSymbol: IrSymbol): IrSymbol? {
         val destination = when {
-            sourceDeclarationMappingMode -> expectToActual
+            sourceDeclarationMappingMode -> _expectToActual
             else -> symbolMapFromContributor
         }
         val registeredActual = destination.put(expectSymbol, actualSymbol)
@@ -62,7 +62,7 @@ class IrExpectActualMap() {
             expect is IrDeclaration && actual is IrDeclaration &&
             expect.parentsWithSelf.firstIsInstanceOrNull<IrClass>()?.classId ==
             actual.parentsWithSelf.firstIsInstanceOrNull<IrClass>()?.classId
-        ) actualToDirectExpect.put(actualSymbol, expectSymbol)
+        ) _actualToDirectExpect.put(actualSymbol, expectSymbol)
         return registeredActual
     }
 

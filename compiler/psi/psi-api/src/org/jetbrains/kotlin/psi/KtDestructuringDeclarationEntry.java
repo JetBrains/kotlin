@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 
-import org.jetbrains.kotlin.resolution.KtResolvableCall;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -34,7 +32,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.EQ;
  * }</pre>
  */
 @SuppressWarnings("deprecation")
-public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbed implements KtVariableDeclaration, KtResolvableCall {
+public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbed implements KtVariableDeclaration {
 
     public KtDestructuringDeclarationEntry(@NotNull ASTNode node) {
         super(node);

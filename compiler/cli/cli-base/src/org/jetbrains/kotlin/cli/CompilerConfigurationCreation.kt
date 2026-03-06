@@ -5,32 +5,19 @@
 
 package org.jetbrains.kotlin.cli
 
-import org.jetbrains.kotlin.cli.common.diagnosticsCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 
 /**
  * Default way for creating `CompilerConfiguration`.
  * Creates a new configuration and registers default services.
- *
- * If [diagnosticsCollector] is not provided, a new [DiagnosticsCollectorImpl] is created.
  */
-@JvmOverloads
-fun CompilerConfiguration.Companion.create(
-    diagnosticsCollector: BaseDiagnosticsCollector? = null,
-    messageCollector: MessageCollector? = null,
-): CompilerConfiguration {
+fun CompilerConfiguration.Companion.create(): CompilerConfiguration {
     @OptIn(CompilerConfiguration.Internals::class)
     return CompilerConfiguration().apply {
         registerExtensionStorage()
         initializeDiagnosticFactoriesStorageForCli()
-        this.diagnosticsCollector = diagnosticsCollector ?: DiagnosticsCollectorImpl()
-        messageCollector?.let { this.messageCollector = it }
     }
 }
 

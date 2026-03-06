@@ -432,6 +432,3 @@ fun ConeKotlinType.toFirResolvedTypeRef(
         }
     }
 }
-
-val FirResolvedQualifier.ownTypeArguments: List<FirTypeProjection>
-    get() = typeArguments.subList(0, typeArguments.size - (explicitParent?.typeArguments?.size ?: 0))

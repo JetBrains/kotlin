@@ -6,9 +6,19 @@
 package kotlin.reflect.jvm.internal
 
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.metadata.*
+import kotlin.metadata.KmFunction
+import kotlin.metadata.KmType
+import kotlin.metadata.KmValueParameter
+import kotlin.metadata.Modality
+import kotlin.metadata.isExternal
+import kotlin.metadata.isInfix
+import kotlin.metadata.isInline
+import kotlin.metadata.isOperator
+import kotlin.metadata.isSuspend
 import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.jvm.signature
+import kotlin.metadata.modality
+import kotlin.metadata.visibility
 import kotlin.reflect.KType
 import kotlin.reflect.KVisibility
 
@@ -17,8 +27,7 @@ internal class KotlinKNamedFunction(
     signature: String,
     rawBoundReceiver: Any?,
     private val kmFunction: KmFunction,
-    overriddenStorage: KCallableOverriddenStorage,
-) : KotlinKFunction(container, signature, rawBoundReceiver, overriddenStorage) {
+) : KotlinKFunction(container, signature, rawBoundReceiver) {
     override val contextParameters: List<KmValueParameter> get() = kmFunction.contextParameters
     override val extensionReceiverType: KmType? get() = kmFunction.receiverParameterType
     override val valueParameters: List<KmValueParameter> get() = kmFunction.valueParameters
@@ -49,9 +58,4 @@ internal class KotlinKNamedFunction(
     override val isInfix: Boolean get() = kmFunction.isInfix
 
     override val isPrimaryConstructor: Boolean get() = false
-
-    override fun replaceContainerForFakeOverride(
-        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
-    ): ReflectKCallable<Any?> =
-        KotlinKNamedFunction(container, signature, rawBoundReceiver, kmFunction, overriddenStorage)
 }

@@ -106,13 +106,6 @@ class FirContractSerializer {
                     )
                 }
 
-                is ConeReturnsResultOfDeclaration -> {
-                    builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_RESULT_OF
-                    builder.addEffectConstructorArgument(
-                        contractExpressionProto(effectDeclaration.valueParameterReference, contractDescription)
-                    )
-                }
-
                 else -> {
                     throw IllegalStateException("Unsupported effect type: ${effectDeclaration::class.simpleName}")
                 }

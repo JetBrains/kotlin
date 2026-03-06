@@ -42,10 +42,10 @@ internal fun determineLinkerOutput(context: NativeBackendPhaseContext): LinkerOu
 
 // TODO: We have a Linker.kt file in the shared module.
 internal class Linker(
-    private val config: NativeSecondStageCompilationConfig,
-    private val linkerOutput: LinkerOutputKind,
-    private val outputFiles: OutputFiles,
-    private val tempFiles: TempFiles,
+        private val config: KonanConfig,
+        private val linkerOutput: LinkerOutputKind,
+        private val outputFiles: OutputFiles,
+        private val tempFiles: TempFiles,
 ) {
     private val platform = config.platform
     private val linker = platform.linker
@@ -175,11 +175,11 @@ internal fun runLinkerCommands(context: NativeBackendPhaseContext, commands: Lis
     else null
 
     val extraUserSetupInfo = run {
-        context.config.resolvedLibraries.getFullList()
-                .filter { it.isCInteropLibrary() }
+        context.config.resolvedLibraries.getFullResolvedList()
+                .filter { it.library.isCInteropLibrary() }
                 .mapNotNull { library ->
-                    library.manifestProperties["userSetupHint"]?.let {
-                        "From ${library.uniqueName}:\n$it".takeIf { it.isNotEmpty() }
+                    library.library.manifestProperties["userSetupHint"]?.let {
+                        "From ${library.library.uniqueName}:\n$it".takeIf { it.isNotEmpty() }
                     }
                 }
                 .mapIndexed { index, message -> "$index. $message" }

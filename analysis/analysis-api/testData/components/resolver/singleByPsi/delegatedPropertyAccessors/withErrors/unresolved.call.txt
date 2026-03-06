@@ -1,4 +1,2 @@
-KtPropertyDelegate(13,21): 'by Bar()'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+KtProperty(0,21): 'val foo: Int by Bar()'
+  null

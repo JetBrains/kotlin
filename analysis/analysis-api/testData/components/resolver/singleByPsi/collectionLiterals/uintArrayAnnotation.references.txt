@@ -2,7 +2,6 @@ KtCollectionLiteralExpression(51,55): '[1u]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
 
@@ -10,6 +9,5 @@ KtValueArgument(51,55): '[1u]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       value: kotlin.UIntArray

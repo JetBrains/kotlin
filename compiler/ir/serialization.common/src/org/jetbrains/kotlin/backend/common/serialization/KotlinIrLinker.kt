@@ -39,7 +39,6 @@ abstract class KotlinIrLinker(
     val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
     val irInterner = IrInterningService()
-    val fileEntryDeserializer = FileEntryDeserializer(irInterner)
 
     /**
      * This is the queue of modules containing top-level declarations to be deserialized. This is

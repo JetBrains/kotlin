@@ -18,14 +18,10 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kotlinx-serialization/testData/boxIr")
 @TestDataPath("$PROJECT_ROOT")
 public class SerializationJsBoxWithInlinedFunInKlibTestGenerated extends AbstractSerializationJsBoxWithInlinedFunInKlibTest {
-  private void run(String fileName) {
-    runTest("plugins/kotlinx-serialization/testData/boxIr/" + fileName);
-  }
-
   @Test
   @TestMetadata("allConstructorsAccessible.kt")
   public void testAllConstructorsAccessible() {
-    run("allConstructorsAccessible.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/allConstructorsAccessible.kt");
   }
 
   @Test
@@ -36,402 +32,402 @@ public class SerializationJsBoxWithInlinedFunInKlibTestGenerated extends Abstrac
   @Test
   @TestMetadata("annotationsOnFile.kt")
   public void testAnnotationsOnFile() {
-    run("annotationsOnFile.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/annotationsOnFile.kt");
   }
 
   @Test
   @TestMetadata("annotationsOnFileExplicitArray.kt")
   public void testAnnotationsOnFileExplicitArray() {
-    run("annotationsOnFileExplicitArray.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/annotationsOnFileExplicitArray.kt");
   }
 
   @Test
   @TestMetadata("caching.kt")
   public void testCaching() {
-    run("caching.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/caching.kt");
   }
 
   @Test
   @TestMetadata("clashBetweenSerializableAndNonSerializableProperty.kt")
   public void testClashBetweenSerializableAndNonSerializableProperty() {
-    run("clashBetweenSerializableAndNonSerializableProperty.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/clashBetweenSerializableAndNonSerializableProperty.kt");
   }
 
   @Test
   @TestMetadata("classSerializerAsObject.kt")
   public void testClassSerializerAsObject() {
-    run("classSerializerAsObject.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/classSerializerAsObject.kt");
   }
 
   @Test
   @TestMetadata("constValInSerialName.kt")
   public void testConstValInSerialName() {
-    run("constValInSerialName.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/constValInSerialName.kt");
   }
 
   @Test
   @TestMetadata("contextualByDefault.kt")
   public void testContextualByDefault() {
-    run("contextualByDefault.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/contextualByDefault.kt");
   }
 
   @Test
   @TestMetadata("contextualFallback.kt")
   public void testContextualFallback() {
-    run("contextualFallback.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/contextualFallback.kt");
   }
 
   @Test
   @TestMetadata("contextualWithTypeParameters.kt")
   public void testContextualWithTypeParameters() {
-    run("contextualWithTypeParameters.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/contextualWithTypeParameters.kt");
   }
 
   @Test
   @TestMetadata("customFixedNonSerializableArguments.kt")
   public void testCustomFixedNonSerializableArguments() {
-    run("customFixedNonSerializableArguments.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/customFixedNonSerializableArguments.kt");
   }
 
   @Test
   @TestMetadata("delegatedInterface.kt")
   public void testDelegatedInterface() {
-    run("delegatedInterface.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/delegatedInterface.kt");
   }
 
   @Test
   @TestMetadata("delegatedProperty.kt")
   public void testDelegatedProperty() {
-    run("delegatedProperty.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/delegatedProperty.kt");
   }
 
   @Test
   @TestMetadata("enumsAreCached.kt")
   public void testEnumsAreCached() {
-    run("enumsAreCached.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/enumsAreCached.kt");
   }
 
   @Test
   @TestMetadata("excludedFromExport.kt")
   public void testExcludedFromExport() {
-    run("excludedFromExport.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/excludedFromExport.kt");
   }
 
   @Test
   @TestMetadata("excludedFromFileExport.kt")
   public void testExcludedFromFileExport() {
-    run("excludedFromFileExport.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/excludedFromFileExport.kt");
   }
 
   @Test
   @TestMetadata("expectActual.kt")
   public void testExpectActual() {
-    run("expectActual.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/expectActual.kt");
   }
 
   @Test
   @TestMetadata("expectActualSealedClass.kt")
   public void testExpectActualSealedClass() {
-    run("expectActualSealedClass.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/expectActualSealedClass.kt");
   }
 
   @Test
   @TestMetadata("externalSerialierJava.kt")
   public void testExternalSerialierJava() {
-    run("externalSerialierJava.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/externalSerialierJava.kt");
   }
 
   @Test
   @TestMetadata("externalSerializerForClassWithNonSerializableType.kt")
   public void testExternalSerializerForClassWithNonSerializableType() {
-    run("externalSerializerForClassWithNonSerializableType.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/externalSerializerForClassWithNonSerializableType.kt");
   }
 
   @Test
   @TestMetadata("generatedClassifiersViaLibraryDependency.kt")
   public void testGeneratedClassifiersViaLibraryDependency() {
-    run("generatedClassifiersViaLibraryDependency.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/generatedClassifiersViaLibraryDependency.kt");
   }
 
   @Test
   @TestMetadata("genericBaseClassMultiple.kt")
   public void testGenericBaseClassMultiple() {
-    run("genericBaseClassMultiple.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/genericBaseClassMultiple.kt");
   }
 
   @Test
   @TestMetadata("genericBaseClassSimple.kt")
   public void testGenericBaseClassSimple() {
-    run("genericBaseClassSimple.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/genericBaseClassSimple.kt");
   }
 
   @Test
   @TestMetadata("generics.kt")
   public void testGenerics() {
-    run("generics.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/generics.kt");
   }
 
   @Test
   @TestMetadata("inlineClasses.kt")
   public void testInlineClasses() {
-    run("inlineClasses.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/inlineClasses.kt");
   }
 
   @Test
   @TestMetadata("instantSerializer.kt")
   public void testInstantSerializer() {
-    run("instantSerializer.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/instantSerializer.kt");
   }
 
   @Test
   @TestMetadata("interfaces.kt")
   public void testInterfaces() {
-    run("interfaces.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/interfaces.kt");
   }
 
   @Test
   @TestMetadata("intrinsicAnnotations.kt")
   public void testIntrinsicAnnotations() {
-    run("intrinsicAnnotations.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicAnnotations.kt");
   }
 
   @Test
   @TestMetadata("intrinsicsBox.kt")
   public void testIntrinsicsBox() {
-    run("intrinsicsBox.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsBox.kt");
   }
 
   @Test
   @TestMetadata("intrinsicsConsistency.kt")
   public void testIntrinsicsConsistency() {
-    run("intrinsicsConsistency.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsConsistency.kt");
   }
 
   @Test
   @TestMetadata("intrinsicsNonReified.kt")
   public void testIntrinsicsNonReified() {
-    run("intrinsicsNonReified.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsNonReified.kt");
   }
 
   @Test
   @TestMetadata("intrinsicsNullable.kt")
   public void testIntrinsicsNullable() {
-    run("intrinsicsNullable.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsNullable.kt");
   }
 
   @Test
   @TestMetadata("intrinsicsPolymorphicPriority.kt")
   public void testIntrinsicsPolymorphicPriority() {
-    run("intrinsicsPolymorphicPriority.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsPolymorphicPriority.kt");
   }
 
   @Test
   @TestMetadata("intrinsicsStarProjections.kt")
   public void testIntrinsicsStarProjections() {
-    run("intrinsicsStarProjections.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsStarProjections.kt");
   }
 
   @Test
   @TestMetadata("KeepGeneratedSerializer.kt")
   public void testKeepGeneratedSerializer() {
-    run("KeepGeneratedSerializer.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/KeepGeneratedSerializer.kt");
   }
 
   @Test
   @TestMetadata("localSerializable.kt")
   public void testLocalSerializable() {
-    run("localSerializable.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/localSerializable.kt");
   }
 
   @Test
   @TestMetadata("metaSerializable.kt")
   public void testMetaSerializable() {
-    run("metaSerializable.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/metaSerializable.kt");
   }
 
   @Test
   @TestMetadata("mpp.kt")
   public void testMpp() {
-    run("mpp.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/mpp.kt");
   }
 
   @Test
   @TestMetadata("mppInheritance.kt")
   public void testMppInheritance() {
-    run("mppInheritance.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/mppInheritance.kt");
   }
 
   @Test
   @TestMetadata("multiFieldValueClasses.kt")
   public void testMultiFieldValueClasses() {
-    run("multiFieldValueClasses.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multiFieldValueClasses.kt");
   }
 
   @Test
   @TestMetadata("multiFileInheritanceJs.kt")
   public void testMultiFileInheritanceJs() {
-    run("multiFileInheritanceJs.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multiFileInheritanceJs.kt");
   }
 
   @Test
   @TestMetadata("multimoduleInheritance.kt")
   public void testMultimoduleInheritance() {
-    run("multimoduleInheritance.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritance.kt");
   }
 
   @Test
   @TestMetadata("multimoduleInheritanceJs.kt")
   public void testMultimoduleInheritanceJs() {
-    run("multimoduleInheritanceJs.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritanceJs.kt");
   }
 
   @Test
   @TestMetadata("multimoduleInheritanceJsGeneric.kt")
   public void testMultimoduleInheritanceJsGeneric() {
-    run("multimoduleInheritanceJsGeneric.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multimoduleInheritanceJsGeneric.kt");
   }
 
   @Test
   @TestMetadata("multipleGenericsPolymorphic.kt")
   public void testMultipleGenericsPolymorphic() {
-    run("multipleGenericsPolymorphic.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/multipleGenericsPolymorphic.kt");
   }
 
   @Test
   @TestMetadata("namedCompanions.kt")
   public void testNamedCompanions() {
-    run("namedCompanions.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/namedCompanions.kt");
   }
 
   @Test
   @TestMetadata("polymorphic.kt")
   public void testPolymorphic() {
-    run("polymorphic.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/polymorphic.kt");
   }
 
   @Test
   @TestMetadata("polymorphicTypeParameter.kt")
   public void testPolymorphicTypeParameter() {
-    run("polymorphicTypeParameter.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/polymorphicTypeParameter.kt");
   }
 
   @Test
   @TestMetadata("privateCustomSerializer.kt")
   public void testPrivateCustomSerializer() {
-    run("privateCustomSerializer.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/privateCustomSerializer.kt");
   }
 
   @Test
   @TestMetadata("repeatableSerialInfo.kt")
   public void testRepeatableSerialInfo() {
-    run("repeatableSerialInfo.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/repeatableSerialInfo.kt");
   }
 
   @Test
   @TestMetadata("sealedClassMultifile.kt")
   public void testSealedClassMultifile() {
-    run("sealedClassMultifile.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/sealedClassMultifile.kt");
   }
 
   @Test
   @TestMetadata("sealedInterfaces.kt")
   public void testSealedInterfaces() {
-    run("sealedInterfaces.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/sealedInterfaces.kt");
   }
 
   @Test
   @TestMetadata("serialInfo.kt")
   public void testSerialInfo() {
-    run("serialInfo.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/serialInfo.kt");
   }
 
   @Test
   @TestMetadata("serializableCompanion.kt")
   public void testSerializableCompanion() {
-    run("serializableCompanion.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/serializableCompanion.kt");
   }
 
   @Test
   @TestMetadata("serializableFromAnotherModule.kt")
   public void testSerializableFromAnotherModule() {
-    run("serializableFromAnotherModule.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/serializableFromAnotherModule.kt");
   }
 
   @Test
   @TestMetadata("serializableFromAnotherModule_multipleFields.kt")
   public void testSerializableFromAnotherModule_multipleFields() {
-    run("serializableFromAnotherModule_multipleFields.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/serializableFromAnotherModule_multipleFields.kt");
   }
 
   @Test
   @TestMetadata("serializableOnPropertyType.kt")
   public void testSerializableOnPropertyType() {
-    run("serializableOnPropertyType.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/serializableOnPropertyType.kt");
   }
 
   @Test
   @TestMetadata("serializerFactory.kt")
   public void testSerializerFactory() {
-    run("serializerFactory.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/serializerFactory.kt");
   }
 
   @Test
   @TestMetadata("serializerFactoryInUserDefined.kt")
   public void testSerializerFactoryInUserDefined() {
-    run("serializerFactoryInUserDefined.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/serializerFactoryInUserDefined.kt");
   }
 
   @Test
   @TestMetadata("singleFileInheritanceJs.kt")
   public void testSingleFileInheritanceJs() {
-    run("singleFileInheritanceJs.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/singleFileInheritanceJs.kt");
   }
 
   @Test
   @TestMetadata("starProjections.kt")
   public void testStarProjections() {
-    run("starProjections.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/starProjections.kt");
   }
 
   @Test
   @TestMetadata("starProjectionsSealed.kt")
   public void testStarProjectionsSealed() {
-    run("starProjectionsSealed.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/starProjectionsSealed.kt");
   }
 
   @Test
   @TestMetadata("suspendLambdaInDefault.kt")
   public void testSuspendLambdaInDefault() {
-    run("suspendLambdaInDefault.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/suspendLambdaInDefault.kt");
   }
 
   @Test
   @TestMetadata("typealiasesInContextualTest.kt")
   public void testTypealiasesInContextualTest() {
-    run("typealiasesInContextualTest.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/typealiasesInContextualTest.kt");
   }
 
   @Test
   @TestMetadata("typealiasesTest.kt")
   public void testTypealiasesTest() {
-    run("typealiasesTest.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/typealiasesTest.kt");
   }
 
   @Test
   @TestMetadata("useSerializersChain.kt")
   public void testUseSerializersChain() {
-    run("useSerializersChain.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/useSerializersChain.kt");
   }
 
   @Test
   @TestMetadata("userDefinedSerializerInCompanion.kt")
   public void testUserDefinedSerializerInCompanion() {
-    run("userDefinedSerializerInCompanion.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/userDefinedSerializerInCompanion.kt");
   }
 
   @Test
   @TestMetadata("uuidSerializer.kt")
   public void testUuidSerializer() {
-    run("uuidSerializer.kt");
+    runTest("plugins/kotlinx-serialization/testData/boxIr/uuidSerializer.kt");
   }
 }

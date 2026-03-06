@@ -137,6 +137,10 @@ object JVMConfigurationKeys {
     @JvmField
     val NO_REFLECT = CompilerConfigurationKey.create<Boolean>("NO_REFLECT")
 
+    // Which functions to serialize as IR to class metadata.
+    @JvmField
+    val SERIALIZE_IR = CompilerConfigurationKey.create<JvmSerializeIrMode>("SERIALIZE_IR")
+
     @JvmField
     val VALIDATE_BYTECODE = CompilerConfigurationKey.create<Boolean>("VALIDATE_BYTECODE")
 
@@ -324,6 +328,10 @@ var CompilerConfiguration.enableJvmPreview: Boolean
 var CompilerConfiguration.noReflect: Boolean
     get() = getBoolean(JVMConfigurationKeys.NO_REFLECT)
     set(value) { put(JVMConfigurationKeys.NO_REFLECT, value) }
+
+var CompilerConfiguration.serializeIr: JvmSerializeIrMode?
+    get() = get(JVMConfigurationKeys.SERIALIZE_IR)
+    set(value) { put(JVMConfigurationKeys.SERIALIZE_IR, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.validateBytecode: Boolean
     get() = getBoolean(JVMConfigurationKeys.VALIDATE_BYTECODE)

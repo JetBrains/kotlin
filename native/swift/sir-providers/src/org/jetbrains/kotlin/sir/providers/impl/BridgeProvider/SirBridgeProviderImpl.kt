@@ -50,7 +50,6 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         returnType: SirType,
         kotlinFqName: FqName,
         selfParameter: SirParameter?,
-        contextParameters: List<SirParameter>,
         extensionReceiverParameter: SirParameter?,
         errorParameter: SirParameter?,
         isAsync: Boolean,
@@ -66,14 +65,12 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         if (contravariantTypes.any { it.isNever })
             return@withSessions null
 
-        val parameters = (explicitParameters + contextParameters).mapIndexed { index, value -> bridgeParameter(value, index) }
         BridgeFunctionDescriptor(
             baseBridgeName = baseBridgeName,
-            parameters = parameters,
+            parameters = explicitParameters.mapIndexed { index, value -> bridgeParameter(value, index) },
             returnType = bridgeReturnType(returnType),
             kotlinFqName = kotlinFqName,
             selfParameter = selfParameter?.let { bridgeParameter(it, 0) },
-            contextParameters = parameters.takeLast(contextParameters.size),
             extensionReceiverParameter = extensionReceiverParameter?.let { bridgeParameter(it, 0) },
             errorParameter = run {
                 isAsync.ifTrue {
@@ -124,7 +121,6 @@ public interface BridgeFunctionBuilder {
     public val parameters: List<Any>
     public val returnType: Any
     public val selfParameter: Any?
-    public val contextParameters: List<Any>
     public val extensionReceiverParameter: Any?
     public val errorParameter: Any?
     public val isAsync: Boolean
@@ -147,7 +143,6 @@ private class BridgeFunctionDescriptor(
     override val returnType: KotlinToSwiftBridge,
     override val kotlinFqName: FqName,
     override val selfParameter: BridgedParameter?,
-    override val contextParameters: List<BridgedParameter>,
     override val extensionReceiverParameter: BridgedParameter?,
     override val errorParameter: BridgedParameter.InOut?,
     override val isAsync: Boolean,
@@ -204,7 +199,7 @@ private class BridgeFunctionDescriptor(
         }
 
     override fun buildCall(args: String, selfCastType: String?): String {
-        var result = if (selfParameter == null) {
+        return if (selfParameter == null) {
             if (extensionReceiverParameter == null) {
                 "$name$args"
             } else {
@@ -223,10 +218,6 @@ private class BridgeFunctionDescriptor(
                 "$selfRef.run { __${extensionReceiverParameter.name}.$memberName$args }"
             }
         }
-        if (contextParameters.isNotEmpty()) {
-            result = "context(${contextParameters.joinToString { "__${it.name}".kotlinIdentifier }}) { $result }"
-        }
-        return result
     }
 
     context(sir: SirSession)
@@ -262,12 +253,8 @@ private class BridgeFunctionDescriptor(
 
     override fun createSwiftInvocation(resultTransformer: ((String) -> String)?): List<String> = buildList {
         val descriptor = this@BridgeFunctionDescriptor
-        val contextParameters = descriptor.contextParameters
         val errorParameter = descriptor.errorParameter
 
-        if (contextParameters.isNotEmpty()) {
-            add("let (${contextParameters.joinToString { it.name.swiftIdentifier }}) = context")
-        }
         if (isAsync) {
             add(descriptor.swiftAsyncCall(typeNamer))
         } else if (errorParameter != null) {

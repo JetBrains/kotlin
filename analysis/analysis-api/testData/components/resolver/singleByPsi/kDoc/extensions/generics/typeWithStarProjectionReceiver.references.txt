@@ -3,7 +3,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<*>.containerExtension()
 
@@ -12,7 +11,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<*>.containerExtension()
 
@@ -21,7 +19,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<*>.containerExtension()
 
@@ -30,7 +27,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<*>.containerExtension()
 
@@ -39,7 +35,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<*>.containerExtension()
 
@@ -48,6 +43,5 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun Container<*>.containerExtension()

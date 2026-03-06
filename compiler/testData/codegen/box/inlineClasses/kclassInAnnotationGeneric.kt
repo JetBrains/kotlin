@@ -1,7 +1,7 @@
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 package test
 
 import kotlin.reflect.KClass

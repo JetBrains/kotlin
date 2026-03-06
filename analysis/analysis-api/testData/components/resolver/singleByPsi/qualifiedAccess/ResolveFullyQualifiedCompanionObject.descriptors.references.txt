@@ -8,6 +8,5 @@ KtNameReferenceExpression(121,123): 'BB'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

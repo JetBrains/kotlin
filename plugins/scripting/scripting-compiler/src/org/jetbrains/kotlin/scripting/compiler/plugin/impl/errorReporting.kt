@@ -27,16 +27,17 @@ import kotlin.script.experimental.jvm.util.toSourceCodePosition
 
 class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: MessageCollector?) : MessageCollector {
 
-    val diagnostics: List<ScriptDiagnostic>
-        field = arrayListOf<ScriptDiagnostic>()
+    private val _diagnostics = arrayListOf<ScriptDiagnostic>()
+
+    val diagnostics: List<ScriptDiagnostic> get() = _diagnostics
 
     override fun clear() {
-        diagnostics.clear()
+        _diagnostics.clear()
         parentMessageCollector?.clear()
     }
 
     override fun hasErrors(): Boolean =
-        diagnostics.any { it.severity == ScriptDiagnostic.Severity.ERROR } || parentMessageCollector?.hasErrors() == true
+        _diagnostics.any { it.severity == ScriptDiagnostic.Severity.ERROR } || parentMessageCollector?.hasErrors() == true
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         val mappedSeverity = severity.toScriptingSeverity()
@@ -60,13 +61,13 @@ class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: Mess
                     )
                 )
             }
-            diagnostics.add(ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, message, mappedSeverity, location?.path, mappedLocation))
+            _diagnostics.add(ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, message, mappedSeverity, location?.path, mappedLocation))
         }
         parentMessageCollector?.report(severity, message, location)
     }
 
     fun report(diagnostic: ScriptDiagnostic) {
-        diagnostics.add(diagnostic)
+        _diagnostics.add(diagnostic)
 
         if (parentMessageCollector == null) return
         if (parentMessageCollector is ScriptDiagnosticsMessageCollector) {

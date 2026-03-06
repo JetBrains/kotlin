@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
-
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.removingTrailingNewline
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -525,7 +524,7 @@ class CocoaPodsIT : KGPBaseTest() {
             build("syncFramework", buildOptions = buildOptions) {
                 // Check that an output framework is a dynamic framework
                 val framework = projectPath.resolve("build/cocoapods/framework/$frameworkName.framework/$frameworkName")
-                runProcess(listOf("file", framework.absolutePathString()), projectPath.toFile()).assertProcessRunResult {
+                assertProcessRunResult(runProcess(listOf("file", framework.absolutePathString()), projectPath.toFile())) {
                     assertTrue(isSuccessful)
                     assertTrue(output.contains("universal binary with 2 architectures"))
                     assertTrue(output.contains("(for architecture x86_64)"))

@@ -5,52 +5,41 @@
 
 package org.jetbrains.kotlin.cli.pipeline
 
-import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
-import org.jetbrains.kotlin.cli.common.treatWarningsAsErrors
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
 import org.jetbrains.kotlin.util.PhaseType
 
 abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext> {
+    object CheckMessageCollector : CheckCompilationErrors() {
+        override fun invoke(
+            state: ActionState,
+            output: PipelineArtifact,
+            c: PipelineContext,
+        ) {
+            if (c.messageCollector.hasErrors()) {
+                throw PipelineStepException()
+            }
+        }
+    }
+
     object CheckDiagnosticCollector : CheckCompilationErrors() {
         override fun invoke(
             state: ActionState,
             output: PipelineArtifact,
             c: PipelineContext,
         ) {
-            val configuration = output.configuration
-            if (checkHasErrors(configuration)) {
+            if (c.kaptMode) return
+            if (c.diagnosticCollector.hasErrors || c.messageCollector.hasErrors()) {
                 throw PipelineStepException()
             }
         }
 
-        fun checkHasErrorsAndReportToMessageCollector(configuration: CompilerConfiguration): Boolean {
-            if (checkHasErrors(configuration)) {
-                reportToMessageCollector(configuration)
-                return true
-            }
-            return false
-        }
-
-        fun reportToMessageCollector(configuration: CompilerConfiguration) {
+        fun reportDiagnosticsToMessageCollector(c: PipelineContext) {
             FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-                configuration.diagnosticsCollector,
-                configuration.messageCollector,
-                configuration.renderDiagnosticInternalName
+                c.diagnosticCollector, c.messageCollector,
+                c.renderDiagnosticInternalName
             )
-        }
-
-        fun checkHasErrors(configuration: CompilerConfiguration): Boolean {
-            if (configuration.diagnosticsCollector.hasErrors || configuration.messageCollector.hasErrors()) return true
-            if (configuration.treatWarningsAsErrors) {
-                // In the message collector check for `-Werror` is included into `hasErrors()`
-                return configuration.diagnosticsCollector.hasWarningsForWError
-            }
-            return false
         }
     }
 }
@@ -58,7 +47,6 @@ abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext
 object PerformanceNotifications {
     object InitializationStarted : AbstractNotification(PhaseType.Initialization, start = true)
     object InitializationFinished : AbstractNotification(PhaseType.Initialization, start = false)
-
     // frontend
     object AnalysisStarted : AbstractNotification(PhaseType.Analysis, start = true)
     object AnalysisFinished : AbstractNotification(PhaseType.Analysis, start = false)

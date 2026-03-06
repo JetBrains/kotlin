@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.project
-import org.gradle.kotlin.dsl.testImplementation
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
@@ -7,7 +5,6 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
-    id("test-inputs-check")
 }
 
 dependencies {
@@ -25,7 +22,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
-    testImplementation(testFixtures(project(":compiler:psi:psi-api")))
 
     testFixturesApi(kotlinTest("junit"))
     testCompileOnly(toolsJarApi())
@@ -62,65 +58,20 @@ sourceSets {
         generatedTestDir()
     }
     "testFixtures" { projectDefault() }
-    "codebaseTest" {
-        java.srcDirs("codebaseTest")
-        compileClasspath += configurations["testCompileClasspath"]
-        runtimeClasspath += configurations["testRuntimeClasspath"]
-    }
 }
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
-        extensions.configure<TestInputsCheckExtension> {
-            allowFlightRecorder = true
-        }
+        dependsOn(":dist")
+        workingDir = rootDir
 
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             // Ensure golden tests run first
             mustRunAfter(":analysis:analysis-api-fir:test")
         }
-    }
-
-    testTask(taskName = "testCodebase", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
-        group = "verification"
-
-        classpath += sourceSets.getByName("codebaseTest").runtimeClasspath
-        testClassesDirs = sourceSets.getByName("codebaseTest").output.classesDirs
-    }
-
-    testGenerator("org.jetbrains.kotlin.analysis.api.standalone.fir.test.TestGeneratorKt")
+    }.also { confugureFirPluginAnnotationsDependency(it) }
 
     withJvmStdlibAndReflect()
-    withStdlibCommon()
-    withJsRuntime()
-    withTestJar()
-    withMockJdkRuntime()
-    withMockJdkAnnotationsJar()
-    withScriptRuntime()
-    withPluginSandboxAnnotations()
-
-    @OptIn(KotlinCompilerDistUsage::class)
-    withDist()
-
-    testData(project.isolated, "src")
-    testData(project.isolated, "api")
-    testData(project.isolated, "api-unstable")
-    testData(project.isolated, "testData")
-    testData(project(":analysis:analysis-api").isolated, "testData")
-    testData(project(":analysis:low-level-api-fir").isolated, "testData/resolveToFirSymbolPsiClass")
-}
-
-tasks.named("check") {
-    dependsOn("testCodebase")
 }
 
 testsJar()
-
-run /* Workaround for KT-84365 */ {
-    tasks.named("test").configure {
-        mustRunAfter("updateKotlinAbi")
-    }
-    tasks.named("testCodebase").configure {
-        mustRunAfter("updateKotlinAbi")
-    }
-}

@@ -257,7 +257,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
     }
 }
 
-fun lazyResolveRenderer(builder: StringBuilder): FirRenderer = FirRenderer(
+internal fun lazyResolveRenderer(builder: StringBuilder): FirRenderer = FirRenderer(
     builder = builder,
     declarationRenderer = FirDeclarationRendererWithFilteredAttributes(),
     resolvePhaseRenderer = FirResolvePhaseRenderer(),

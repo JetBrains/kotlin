@@ -17,8 +17,8 @@ fun test(
     f: Setter<*>,
 ) {
     d.set([])
-    e.set(<!UNRESOLVED_REFERENCE!>[]<!>)
-    f.set(<!UNRESOLVED_REFERENCE!>[]<!>)
+    e.set(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+    f.set(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
 
     val x = select(materializeIn<C>(), C.of()) // for reference
     val y = select(materializeIn<C>(), [])

@@ -120,19 +120,14 @@ apiValidation {
     nonPublicMarkers.add("kotlin.metadata.internal.IgnoreInApiDump")
 }
 
-dokka {
-    dokkaGeneratorIsolation = ProcessIsolation {
-        // enable support for kotlin package - required with K2 analysis
-        systemProperties.put("org.jetbrains.dokka.analysis.allowKotlinPackage", "true")
-    }
-
-    dokkaPublications.html {
-        outputDirectory.set(layout.buildDirectory.dir("dokka"))
-        failOnWarning.set(true)
-    }
-    pluginsConfiguration.html {
-        templatesDir.set(projectDir.resolve("dokka-templates"))
-    }
+tasks.dokkaHtml.configure {
+    outputDirectory.set(layout.buildDirectory.dir("dokka"))
+    pluginsMapConfiguration.set(
+        mapOf(
+            "org.jetbrains.dokka.base.DokkaBase"
+                    to """{ "templatesDir": "${projectDir.toString().replace('\\', '/')}/dokka-templates" }"""
+        )
+    )
 
     dokkaSourceSets.configureEach {
         includes.from(project.file("dokka/moduledoc.md").path)
@@ -141,6 +136,7 @@ dokka {
 
         skipDeprecated.set(true)
         reportUndocumented.set(true)
+        failOnWarning.set(true)
 
         perPackageOption {
             matchingRegex.set("kotlin\\.metadata\\.internal(\$|\\.).*")

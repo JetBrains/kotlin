@@ -1,2 +1,0 @@
-KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
-  null

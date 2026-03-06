@@ -15,8 +15,6 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.metadataFragmentAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.deserializeUklibFromDirectory
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isFromUklib
@@ -108,61 +106,23 @@ internal class GranularMetadataTransformation(
 ) {
     private val logger = Logging.getLogger("GranularMetadataTransformation[${params.sourceSetName}]")
 
-    /**
-     * If you add anything here, make sure it is properly reflected in [MetadataDependencyTransformationTaskInputs]
-     * FIXME: KT-84222 Merge [MetadataDependencyTransformationTaskInputs] with this class
-     */
     class Params private constructor(
-        @get:Internal
         val build: CurrentBuildIdentifier,
-
-        @get:Input
         val sourceSetName: String,
-
-        @get:Internal // FIXME: KT-84222
         val resolvedMetadataConfiguration: LazyResolvedConfigurationWithArtifacts,
-
-        @get:Internal // FIXME: KT-84222
         val dependingPlatformCompilations: List<PlatformCompilationData>,
-
-        @get:Internal
         val projectStructureMetadataExtractorFactory: IKotlinProjectStructureMetadataExtractorFactory,
-
-        @get:Internal // FIXME: KT-84222
         val projectData: Map<String, ProjectData>,
-
-        @get:Internal // FIXME: KT-84222
         val platformCompilationSourceSets: Set<String>,
-
-        @get:Internal // FIXME: KT-84222
         val projectStructureMetadataResolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
-
-        @get:Internal // FIXME: KT-84222
         val coordinatesOfProjectDependencies: KotlinProjectSharedDataProvider<KotlinProjectCoordinatesData>?,
-
-        @get:Internal
         val objects: ObjectFactory,
-
-        @get:Input
         val kotlinKmpProjectIsolationEnabled: Boolean,
-
-        @get:Internal // FIXME: KT-84222
         val sourceSetMetadataLocationsOfProjectDependencies: KotlinProjectSharedDataProvider<SourceSetMetadataLocations>,
-
-        @get:Input
         val transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean,
-
-        @get:Input
         val uklibFragmentAttributes: Set<String>,
-
-        @get:Input
         val computeTransformedLibraryChecksum: Boolean,
-
-        @get:Input
         val kmpResolutionStrategy: KmpResolutionStrategy,
-
-        @get:Input
-        val allowMatchingByRequestedCoordinates: Boolean,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true) : this(
             build = project.currentBuild,
@@ -188,7 +148,6 @@ internal class GranularMetadataTransformation(
             uklibFragmentAttributes = kotlinSourceSet.metadataFragmentAttributes.map { it.convertToStringForConsumption() }.toSet(),
             computeTransformedLibraryChecksum = project.kotlinPropertiesProvider.computeTransformedLibraryChecksum,
             kmpResolutionStrategy = project.kotlinPropertiesProvider.kmpResolutionStrategy,
-            allowMatchingByRequestedCoordinates = project.kotlinPropertiesProvider.allowMatchingByRequestedCoordinatesInGMDT.get()
         )
     }
 
@@ -407,8 +366,7 @@ internal class GranularMetadataTransformation(
             params.dependingPlatformCompilations,
             projectStructureMetadata,
             isResolvedToProject,
-            resolveWithLenientPSMResolutionScheme = params.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs,
-            allowMatchingByRequestedCoordinates = params.allowMatchingByRequestedCoordinates
+            resolveWithLenientPSMResolutionScheme = params.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs
         )
 
         val allVisibleSourceSets = sourceSetVisibility.visibleSourceSetNames

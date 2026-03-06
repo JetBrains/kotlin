@@ -45,8 +45,8 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
             propagateDeadness: Boolean,
             label: EdgeLabel = NormalPath
         ) {
-            from.followingNodes += to
-            to.previousNodes += from
+            from._followingNodes += to
+            to._previousNodes += from
             if (kind != EdgeKind.Forward || label != NormalPath) {
                 to.insertIncomingEdge(from, Edge.create(label, kind))
             }
@@ -69,27 +69,28 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
 
         @CfgInternals
         fun removeAllOutgoingEdges(from: CFGNode<*>) {
-            for (to in from.followingNodes) {
-                to.previousNodes.remove(from)
+            for (to in from._followingNodes) {
+                to._previousNodes.remove(from)
                 to._incomingEdges?.remove(from)
             }
-            from.followingNodes.clear()
+            from._followingNodes.clear()
         }
 
         @CfgInternals
         fun removeAllIncomingEdges(to: CFGNode<*>) {
-            for (from in to.previousNodes) {
-                from.followingNodes.remove(to)
+            for (from in to._previousNodes) {
+                from._followingNodes.remove(to)
             }
-            to.previousNodes.clear()
+            to._previousNodes.clear()
             to._incomingEdges?.clear()
         }
     }
 
-    val previousNodes: List<CFGNode<*>>
-        field = SmartList()
-    val followingNodes: List<CFGNode<*>>
-        field = SmartList()
+    private val _previousNodes: MutableList<CFGNode<*>> = SmartList()
+    private val _followingNodes: MutableList<CFGNode<*>> = SmartList()
+
+    val previousNodes: List<CFGNode<*>> get() = _previousNodes
+    val followingNodes: List<CFGNode<*>> get() = _followingNodes
 
     private var _incomingEdges: MutableMap<CFGNode<*>, Edge>? = null
 
@@ -164,8 +165,8 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
      */
     @CfgInternals
     open fun copyData(from: CFGNode<*>, mapper: ControlFlowNodeMapper) {
-        from.previousNodes.forEach { previousNodes += mapper[it] }
-        from.followingNodes.forEach { followingNodes += mapper[it] }
+        from.previousNodes.forEach { _previousNodes += mapper[it] }
+        from.followingNodes.forEach { _followingNodes += mapper[it] }
 
         val incomingEdges = from._incomingEdges
         if (incomingEdges != null) {

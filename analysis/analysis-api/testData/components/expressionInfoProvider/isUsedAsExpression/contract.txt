@@ -1,4 +1,0 @@
-expression: CALL_EXPRESSION
-text: callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

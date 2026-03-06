@@ -250,7 +250,6 @@ object StandardClassIds {
         val jsExportIgnore = jsExport.createNestedClassId(Name.identifier("Ignore"))
         val jsExportDefault = jsExport.createNestedClassId(Name.identifier("Default"))
         val jsNoDispatchReceiver = "JsNoDispatchReceiver".jsId()
-        val jsNoRuntime = "JsNoRuntime".jsId()
 
         val AssociatedObjectKey = "AssociatedObjectKey".reflectId()
         val ExperimentalAssociatedObjects = "ExperimentalAssociatedObjects".reflectId()

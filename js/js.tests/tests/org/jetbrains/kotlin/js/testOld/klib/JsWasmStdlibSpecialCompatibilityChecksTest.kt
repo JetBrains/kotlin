@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.js.testOld.klib
 
-import org.jetbrains.kotlin.test.klib.compatibility.StdlibSpecialCompatibilityChecksTest
-
 @Suppress("JUnitTestCaseWithNoTests")
-class JsStdlibSpecialCompatibilityChecksTest : StdlibSpecialCompatibilityChecksTest, WebLibrarySpecialCompatibilityChecksTest() {
+class JsStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
     override val isWasm: Boolean = false
 
     override val originalLibraryPath: String
@@ -19,7 +17,7 @@ class JsStdlibSpecialCompatibilityChecksTest : StdlibSpecialCompatibilityChecksT
 }
 
 @Suppress("JUnitTestCaseWithNoTests")
-class WasmStdlibSpecialCompatibilityChecksTest : StdlibSpecialCompatibilityChecksTest, WebLibrarySpecialCompatibilityChecksTest() {
+class WasmStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
     override val isWasm: Boolean = true
 
     override val originalLibraryPath: String

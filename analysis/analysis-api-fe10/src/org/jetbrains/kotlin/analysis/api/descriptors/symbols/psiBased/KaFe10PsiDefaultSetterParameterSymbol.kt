@@ -58,6 +58,9 @@ internal class KaFe10PsiDefaultSetterParameterSymbol(
     override val isCrossinline: Boolean
         get() = withValidityAssertion { false }
 
+    override val hasSynthesizedName: Boolean
+        get() = withValidityAssertion { false }
+
     override val isNoinline: Boolean
         get() = withValidityAssertion { false }
 

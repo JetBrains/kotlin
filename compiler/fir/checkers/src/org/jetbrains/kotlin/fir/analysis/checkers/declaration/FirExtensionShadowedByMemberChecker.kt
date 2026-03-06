@@ -88,7 +88,7 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
 
         val shadowingSymbols = findFirstNotNullSymbol(
             transform = { property ->
-                if (!property.isVisible() || property.isExtension || property.hasContextParameters) {
+                if (!property.isVisible()) {
                     return@findFirstNotNullSymbol null
                 }
 

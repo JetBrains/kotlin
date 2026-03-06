@@ -17,7 +17,6 @@ class WasmDtsHandler(testServices: TestServices) : WasmBinaryArtifactHandler(tes
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Wasm) {
-        require(info is BinaryArtifacts.Wasm.CompilationSets)
         val globalDirectives = testServices.moduleStructure.allDirectives
         if (WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS !in globalDirectives) return
 

@@ -11,7 +11,7 @@ class FlattenDefault : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver
-            .asDataFrame(/*operation has no selector*/)
+            .asDataFrame(impliedColumnsResolver = null)
             .flatten(keepParentNameForColumns, separator)
             .toPluginDataFrameSchema()
     }
@@ -26,7 +26,7 @@ class Flatten0 : AbstractSchemaModificationInterpreter() {
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = columns.resolve(receiver).map { it.path }
         return receiver
-            .asDataFrame(/*selected column group is immediately flattened/removed*/)
+            .asDataFrame(impliedColumnsResolver = null)
             .flatten(keepParentNameForColumns, separator) { columns.toColumnSet() }
             .toPluginDataFrameSchema()
     }

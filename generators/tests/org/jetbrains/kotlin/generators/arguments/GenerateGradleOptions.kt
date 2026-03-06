@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import kotlin.reflect.KClass
-import kotlin.reflect.full.allSupertypes
 import kotlin.reflect.full.withNullability
 
 private val freeCompilerArgument = KotlinCompilerArgument(
@@ -944,13 +943,12 @@ context(_: KotlinCompilerArgumentsLevel)
 private val KotlinCompilerArgument.gradleDefaultValue: String
     get() = gradleValues.defaultValue
 
-@OptIn(ExperimentalArgumentApi::class)
 context(_: KotlinCompilerArgumentsLevel)
 private val KotlinCompilerArgument.gradleReturnType: String
     get() {
         // Set nullability based on Gradle default value
         var type = when (argumentType::class
-            .allSupertypes.single { it.classifier == KotlinArgumentValueType::class }
+            .supertypes.single { it.classifier == KotlinArgumentValueType::class }
             .arguments.first().type!!.classifier as KClass<*>) {
             Boolean::class -> "kotlin.Boolean"
             Array<String>::class -> "kotlin.collections.List<kotlin.String>"

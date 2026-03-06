@@ -29,5 +29,6 @@ class SwiftExportWithCoroutinesTestSupport : BeforeTestExecutionCallback {
             kotlinxCoroutinesModule,
             atomicFuModule,
         )
+        (context.requiredTestInstance as AbstractSwiftExportTest).isCoroutineSupportEnabled = true
     }
 }

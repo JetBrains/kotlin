@@ -1,5 +1,5 @@
 // SKIP_WHEN_OUT_OF_CONTENT_ROOT
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +ValueClasses
 package pack
 
 typealias MyAlias<A> = List<A>

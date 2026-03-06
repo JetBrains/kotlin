@@ -21,7 +21,7 @@ internal class GradleNodeModuleBuilder(
     val moduleName: String,
     val moduleVersion: String,
     val srcFiles: Collection<File>,
-    val cacheDir: File,
+    val cacheDir: File
 ) {
     private var srcPackageJsonFile: File? = null
     private val files = mutableListOf<File>()
@@ -64,12 +64,10 @@ internal class GradleNodeModuleBuilder(
             version = version ?: moduleVersion
         } ?: PackageJson(moduleName, moduleVersion)
 
-        val metaJsExt = ".meta.js"
-
-        val metaFiles = files.filter { it.name.endsWith(metaJsExt) }
+        val metaFiles = files.filter { it.name.endsWith(".$META_JS") }
         if (metaFiles.size == 1) {
             val metaFile = metaFiles.single()
-            val name = metaFile.name.removeSuffix(metaJsExt)
+            val name = metaFile.name.removeSuffix(".$META_JS")
             packageJson.name = name
             packageJson.main = "${name}.js"
         }
@@ -97,9 +95,9 @@ internal val File.isCompatibleArchive
 private fun isKotlinJsRuntimeFile(file: File): Boolean {
     if (!file.isFile) return false
     val name = file.name
-    return name.endsWith(".js")
-            || name.endsWith(".mjs")
-            || name.endsWith(".wasm")
-            || name.endsWith(".js.map")
-            || name.endsWith(".html")
+    return name.endsWith(".$JS")
+            || name.endsWith(".$MJS")
+            || name.endsWith(".$WASM")
+            || name.endsWith(".$JS_MAP")
+            || name.endsWith(".$HTML")
 }

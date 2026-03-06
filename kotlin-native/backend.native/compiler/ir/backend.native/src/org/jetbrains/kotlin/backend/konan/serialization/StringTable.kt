@@ -5,51 +5,71 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import sun.misc.Unsafe
+
+private val unsafe = with(Unsafe::class.java.getDeclaredField("theUnsafe")) {
+    isAccessible = true
+    return@with this.get(null) as Unsafe
+}
+private val byteArrayBaseOffset = unsafe.arrayBaseOffset(ByteArray::class.java).toLong()
+private val charArrayBaseOffset = unsafe.arrayBaseOffset(CharArray::class.java).toLong()
+private val intArrayBaseOffset = unsafe.arrayBaseOffset(IntArray::class.java).toLong()
 
 internal class ByteArrayStream(val buf: ByteArray) {
-    /*
-    The buffer uses the native byte order for performance reasons: this gives the JIT compiler an
-    opportunity to optimize reading multibyte values by reading all bytes at once and not performing byte swapping.
-     */
-    private val buffer = ByteBuffer.wrap(buf).order(ByteOrder.nativeOrder())
+    private var offset = 0
 
-    fun hasData() = buffer.hasRemaining()
+    fun hasData() = offset < buf.size
 
     fun readInt(): Int {
-        return buffer.getInt()
+        checkSize(offset + Int.SIZE_BYTES) { "Can't read an int at $offset, size = ${buf.size}" }
+        return unsafe.getInt(buf, byteArrayBaseOffset + offset).also { offset += Int.SIZE_BYTES }
     }
 
     fun writeInt(value: Int) {
-        buffer.putInt(value)
+        checkSize(offset + Int.SIZE_BYTES) { "Can't write an int at $offset, size = ${buf.size}" }
+        unsafe.putInt(buf, byteArrayBaseOffset + offset, value).also { offset += Int.SIZE_BYTES }
     }
 
     fun readString(length: Int): String {
+        checkSize(offset + Char.SIZE_BYTES * length) {
+            "Can't read a string of length $length at $offset, size = ${buf.size}"
+        }
         val chars = CharArray(length)
-        buffer.asCharBuffer().get(chars)
-        buffer.position(buffer.position() + chars.size * Char.SIZE_BYTES)
+        unsafe.copyMemory(buf, byteArrayBaseOffset + offset, chars, charArrayBaseOffset, length * Char.SIZE_BYTES.toLong())
+        offset += length * Char.SIZE_BYTES
         return String(chars)
     }
 
     fun writeString(string: String) {
-        val chars = string.toCharArray()
-        buffer.asCharBuffer().put(chars)
-        buffer.position(buffer.position() + chars.size * Char.SIZE_BYTES)
+        checkSize(offset + Char.SIZE_BYTES * string.length) {
+            "Can't write a string of length ${string.length} at $offset, size = ${buf.size}"
+        }
+        unsafe.copyMemory(string.toCharArray(), charArrayBaseOffset, buf, byteArrayBaseOffset + offset, string.length * Char.SIZE_BYTES.toLong())
+        offset += string.length * Char.SIZE_BYTES
     }
 
     fun readIntArray(): IntArray {
         val size = readInt()
+        checkSize(offset + Int.SIZE_BYTES * size) {
+            "Can't read an int array of size $size at $offset, size = ${buf.size}"
+        }
         val array = IntArray(size)
-        buffer.asIntBuffer().get(array)
-        buffer.position(buffer.position() + array.size * Int.SIZE_BYTES)
+        unsafe.copyMemory(buf, byteArrayBaseOffset + offset, array, intArrayBaseOffset, size * Int.SIZE_BYTES.toLong())
+        offset += size * Int.SIZE_BYTES
         return array
     }
 
     fun writeIntArray(array: IntArray) {
-        buffer.putInt(array.size)
-        buffer.asIntBuffer().put(array)
-        buffer.position(buffer.position() + array.size * Int.SIZE_BYTES)
+        checkSize(offset + Int.SIZE_BYTES + Int.SIZE_BYTES * array.size) {
+            "Can't write an int array of size ${array.size} at $offset, size = ${buf.size}"
+        }
+        unsafe.putInt(buf, byteArrayBaseOffset + offset, array.size).also { offset += Int.SIZE_BYTES }
+        unsafe.copyMemory(array, intArrayBaseOffset, buf, byteArrayBaseOffset + offset, array.size * Int.SIZE_BYTES.toLong())
+        offset += array.size * Int.SIZE_BYTES
+    }
+
+    private fun checkSize(at: Int, messageBuilder: () -> String) {
+        if (at > buf.size) error(messageBuilder())
     }
 }
 

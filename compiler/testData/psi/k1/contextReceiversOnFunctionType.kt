@@ -1,4 +1,4 @@
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 
 @Target(AnnotationTarget.TYPE)
 annotation class MyAnnotation

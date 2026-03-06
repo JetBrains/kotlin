@@ -8,14 +8,11 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
-import org.gradle.kotlin.dsl.withType
 import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.MODULE_ES
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
 import org.jetbrains.kotlin.config.JvmDefaultMode
@@ -29,10 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
-import org.jetbrains.kotlin.gradle.targets.js.ir.Executable
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.Library
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.runMetricMethodSafely
@@ -111,42 +105,27 @@ internal object CompilerArgumentMetrics : FusMetrics {
                         "binary-compatibility-validator-.*jar"
                     ),
                 )
-
-                metricsConsumer.reportPluginsFromListIfUsed(args, pluginPatterns)
+                val pluginJars = args.pluginClasspaths?.map { it.replace("\\", "/").split("/").last() }
+                if (pluginJars != null) {
+                    for (pluginPattern in pluginPatterns) {
+                        if (pluginJars.any { it.matches(pluginPattern.second.toRegex()) }) {
+                            metricsConsumer.report(pluginPattern.first, true)
+                        }
+                    }
+                }
             }
             is K2JSCompilerArguments -> {
                 val args = K2JSCompilerArguments()
                 parseCommandLineArguments(argsArray.toList(), args)
 
-                val pluginPatterns = listOf(
-                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_JS_PLAIN_OBJECTS, "js-plain-objects-.*jar"),
-                )
-
-                metricsConsumer.reportPluginsFromListIfUsed(args, pluginPatterns)
-
                 if (args.irProduceJs) {
                     metricsConsumer.report(BooleanMetrics.JS_SOURCE_MAP, args.sourceMap)
                     metricsConsumer.report(StringMetrics.JS_PROPERTY_LAZY_INITIALIZATION, args.irPropertyLazyInitialization.toString())
-
-                    metricsConsumer.report(BooleanMetrics.JS_GENERATE_DTS, args.generateDts)
-                    metricsConsumer.report(StringMetrics.JS_ES_TARGET, args.target ?: "default")
-                    metricsConsumer.report(StringMetrics.JS_MODULE_SYSTEM, args.moduleKind ?: "default")
                 }
             }
         }
     }
 
-    private fun <Args : CommonCompilerArguments> StatisticsValuesConsumer.reportPluginsFromListIfUsed(args: Args, pluginPatterns: List<Pair<BooleanMetrics, String>>) {
-        val pluginJars = args.pluginClasspaths?.map { it.replace("\\", "/").split("/").last() }
-
-        if (pluginJars != null) {
-            for (pluginPattern in pluginPatterns) {
-                if (pluginJars.any { it.matches(pluginPattern.second.toRegex()) }) {
-                    report(pluginPattern.first, true)
-                }
-            }
-        }
-    }
 }
 
 internal object NativeArgumentMetrics : FusMetrics {
@@ -355,23 +334,6 @@ internal object UrlRepoConfigurationMetrics : FusMetrics {
     }
 }
 
-internal object KotlinJsBinaryTypeMetrics : FusMetrics {
-    internal fun collectMetrics(jsTarget: KotlinJsIrTarget, project: Project) {
-        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
-            val isLibraryConfigured = jsTarget.binaries.withType<Library>().isNotEmpty()
-            val isExecutableConfigured = jsTarget.binaries.withType<Executable>().isNotEmpty()
-            project.addConfigurationMetrics { metricContainer ->
-                when {
-                    isLibraryConfigured && isExecutableConfigured -> metricContainer.put(StringMetrics.JS_BINARY_TYPE, "both")
-                    isLibraryConfigured -> metricContainer.put(StringMetrics.JS_BINARY_TYPE, "library")
-                    isExecutableConfigured -> metricContainer.put(StringMetrics.JS_BINARY_TYPE, "executable")
-                    !isExecutableConfigured && !isLibraryConfigured -> metricContainer.put(StringMetrics.JS_BINARY_TYPE, "none")
-                }
-            }
-        }
-    }
-}
-
 internal object KotlinJsIrTargetMetrics : FusMetrics {
     internal fun collectMetrics(isBrowserConfigured: Boolean, isNodejsConfigured: Boolean, project: Project) {
         project.addConfigurationMetrics { metricContainer ->
@@ -382,12 +344,13 @@ internal object KotlinJsIrTargetMetrics : FusMetrics {
                 !isBrowserConfigured && !isNodejsConfigured -> metricContainer.put(StringMetrics.JS_TARGET_MODE, "none")
             }
         }
+
     }
 }
 
 internal object MultiplatformTargetMetrics : FusMetrics {
     internal fun collectMetrics(target: KotlinTarget, project: Project) {
-        /* Report the platform to the build stats service */
+        /* Report the platform to tbe build stats service */
         val targetName = if (target is KotlinNativeTarget) target.konanTarget.name
         else target.platformType.name
         project.addConfigurationMetrics {

@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.JsSerializedKlibPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
@@ -47,13 +45,15 @@ class FirKlibSerializerCliWebFacade(
         require(cliArtifact is JsFir2IrPipelineArtifact) {
             "FirKlibSerializerCliWebFacade expects JsFir2IrPipelineArtifact as input"
         }
-        val input = cliArtifact.withNewDiagnosticCollector(DiagnosticsCollectorImpl())
+        val diagnosticReporter = DiagnosticsCollectorImpl()
+        val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter)
 
         val output = if (firstTimeCompilation) {
             WebKlibSerializationPipelinePhase.executePhase(input)
         } else {
             JsSerializedKlibPipelineArtifact(
                 outputKlibPath = testServices.klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name).absolutePath,
+                diagnosticsCollector = diagnosticReporter,
                 configuration = cliArtifact.configuration,
             )
         }
@@ -62,6 +62,6 @@ class FirKlibSerializerCliWebFacade(
             testServices.jsIrIncrementalDataProvider.recordIncrementalData(module, output)
         }
 
-        return BinaryArtifacts.KLib(File(output.outputKlibPath), output.configuration.diagnosticsCollector)
+        return BinaryArtifacts.KLib(File(output.outputKlibPath), output.diagnosticsCollector)
     }
 }

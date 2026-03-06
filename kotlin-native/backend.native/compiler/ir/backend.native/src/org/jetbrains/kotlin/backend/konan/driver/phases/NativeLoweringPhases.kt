@@ -614,7 +614,7 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
         syntheticAccessorGenerationPhase,
 )
 
-internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
+internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
         typeOfProcessingLowering,
         specializeSharedVariableBoxes,
         interopPhase,

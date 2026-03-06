@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 
 interface IBase {
     fun testDefault1() = if (this is B<*>) this.foo() else "fail"

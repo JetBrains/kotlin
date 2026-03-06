@@ -12,4 +12,5 @@ fun test() {
     acceptList<String>(<expr>["1", "2", "3"]</expr>)
 }
 
+// COMPILATION_ERRORS
 // LANGUAGE: +CollectionLiterals

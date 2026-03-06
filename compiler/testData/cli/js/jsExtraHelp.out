@@ -59,11 +59,13 @@ where advanced options include:
                              Compile modules in multi-module closed-world mode using module passed in `-include` argument as main module
   -Xwasm-generate-dwarf      Generate DWARF debug information.
   -Xwasm-generate-wat        Generate a .wat file.
+  -Xwasm-ic-cache-readonly   Do not commit IC cache updates.
   -Xwasm-included-module-only Compile only a module passed using `-include` option.
   -Xwasm-internal-local-variable-prefix
                              Prefix to use for internally generated local variables.
   -Xwasm-kclass-fqn          Enable support for 'KClass.qualifiedName'.
   -Xwasm-no-jstag            Don't use WebAssembly.JSTag for throwing and catching exceptions
+  -Xwasm-preserve-ic-order   Preserve wasm file structure between IC runs.
   -Xwasm-source-map-include-mappings-from-unavailable-sources
                              Insert source mappings from libraries even if their sources are unavailable on the end-user machine.
   -Xwasm-target              Set up the Wasm target (wasm-js or wasm-wasi).
@@ -87,17 +89,13 @@ where advanced options include:
                              - `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
 
   -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
-  -Xklib-relative-path-base  Relativize all the paths stored in a klib using the given path prefixes.
-                             The supplied prefixes should be absolute paths to the directories containing the source code files.
-                             Note: The prefixes are applied in the same order as they are passed in this CLI argument.
+  -Xklib-relative-path-base  Provide a base path to compute the source's relative paths in klib (default is empty).
   -Xklib-zip-file-accessor-cache-limit
                              Maximum number of klibs that can be cached during compilation. Default is 64.
   -Xpartial-linkage={enable|disable}
                              Use partial linkage mode.
   -Xpartial-linkage-loglevel={info|warning|error}
                              Define the compile-time log level for partial linkage.
-  -Xskip-library-special-compatibility-checks
-                             Skip library compatibility checks for stdlib and kotlin.test library.
   -Xallow-any-scripts-in-source-roots
                              Allow compiling scripts along with regular Kotlin sources.
   -Xallow-condition-implies-returns-contracts
@@ -154,7 +152,6 @@ where advanced options include:
                              Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
                              Use the 'warning' level to issue warnings instead of errors.
   -Xexplicit-backing-fields  Enable experimental language support for explicit backing fields.
-  -Xexplicit-context-arguments Enable explicit passing of context arguments using named argument syntax.
   -Xfragment-dependency=<fragment name>:<path>
                              Declare common klib dependencies for the specific fragment.
                              This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.

@@ -41,7 +41,7 @@ class JvmCompilerWithKaptFacade(
         }
         val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project, findViaVfs = true).values.toList()
         val classBuilderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
-        val generationState = GenerationUtils.compileFiles(
+        val (generationState, bindingContext) = GenerationUtils.compileFiles(
             ktFiles,
             compilerConfiguration,
             classBuilderFactory,
@@ -61,6 +61,7 @@ class JvmCompilerWithKaptFacade(
             classBuilderFactory.compiledClasses,
             classBuilderFactory.origins,
             generationState,
+            bindingContext,
             firFiles,
         )
         return KaptContextBinaryArtifact(kaptContext)

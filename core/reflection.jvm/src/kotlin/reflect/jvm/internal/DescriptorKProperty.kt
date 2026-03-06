@@ -103,7 +103,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
 
     override val caller: Caller<*> get() = getter.caller
 
-    override val callerWithDefaults: Caller<*>? get() = getter.callerWithDefaults
+    override val defaultCaller: Caller<*>? get() = getter.defaultCaller
 
     override fun computeReturnType(): DescriptorKType =
         DescriptorKType(descriptor.returnType!!, if (isLocalDelegated) null else fun(): Type {
@@ -137,7 +137,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
 
         override val container: KDeclarationContainerImpl get() = property.container
 
-        override val callerWithDefaults: Caller<*>? get() = null
+        override val defaultCaller: Caller<*>? get() = null
 
         override val rawBoundReceiver: Any? get() = property.rawBoundReceiver
 
@@ -151,10 +151,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
     abstract class Getter<out V> : Accessor<V, V>(), KProperty.Getter<V> {
         override val name: String get() = "<get-${property.name}>"
 
-        final override fun replaceContainerForFakeOverride(
-            container: KDeclarationContainerImpl,
-            overriddenStorage: KCallableOverriddenStorage,
-        ): DescriptorKCallable<V> =
+        final override fun shallowCopy(overriddenStorage: KCallableOverriddenStorage): DescriptorKCallable<V> =
             error("Property accessors can only be copied by copying the corresponding property")
 
         override val descriptor: PropertyGetterDescriptor by ReflectProperties.lazySoft {
@@ -182,10 +179,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
     abstract class Setter<V> : Accessor<V, Unit>(), KMutableProperty.Setter<V> {
         override val name: String get() = "<set-${property.name}>"
 
-        final override fun replaceContainerForFakeOverride(
-            container: KDeclarationContainerImpl,
-            overriddenStorage: KCallableOverriddenStorage,
-        ): DescriptorKCallable<Unit> =
+        final override fun shallowCopy(overriddenStorage: KCallableOverriddenStorage): DescriptorKCallable<Unit> =
             error("Property accessors can only be copied by copying the corresponding property")
 
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {

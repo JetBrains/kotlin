@@ -1,7 +1,5 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.text
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
@@ -9,7 +7,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
 interface Interpreter<T> {
-    fun expectedArguments(): List<ExpectedArgument>
+    val expectedArguments: List<ExpectedArgument>
 
     data class ExpectedArgument(
         val name: String,
@@ -37,7 +35,6 @@ interface Interpreter<T> {
 
     fun interpret(arguments: Map<String, Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): InterpretationResult<T>
 
-    // TODO: remove
     sealed interface InterpretationResult<out T>
 
     class Success<out T>(val value: T) : InterpretationResult<T> {
@@ -53,13 +50,9 @@ interface Interpreter<T> {
         override fun hashCode(): Int {
             return value?.hashCode() ?: 0
         }
-
-        override fun toString(): String {
-            return if (value is String) "\"$value\"" else value.toString()
-        }
     }
 
-    data class Error(val message: String?) : InterpretationResult<Nothing>
+    class Error(val message: String?) : InterpretationResult<Nothing>
 }
 
 sealed interface DefaultValue<out T>
@@ -67,27 +60,19 @@ sealed interface DefaultValue<out T>
 class Present<T>(val value: T) : DefaultValue<T>
 data object Absent : DefaultValue<Nothing>
 
-open class Arguments(internal val arguments: Map<String, Interpreter.Success<Any?>>, private val kotlinTypeFacade: KotlinTypeFacade) :
+open class Arguments(private val arguments: Map<String, Interpreter.Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade) :
     KotlinTypeFacade by kotlinTypeFacade {
     operator fun get(s: String): Any? = (arguments[s] ?: error("")).value
     operator fun contains(key: String): Boolean {
         return arguments.contains(key)
     }
-
-    override fun toString(): String {
-        return (arguments["functionCall"]?.value as? FirFunctionCall)?.source?.text?.toString() ?: super.toString()
-    }
 }
 
 abstract class AbstractInterpreter<T> : Interpreter<T> {
     @PublishedApi
-    internal val expectedArguments: MutableList<Interpreter.ExpectedArgument> = mutableListOf()
+    internal val _expectedArguments: MutableList<Interpreter.ExpectedArgument> = mutableListOf()
 
-    override fun expectedArguments(): List<Interpreter.ExpectedArgument> = expectedArguments
-
-    override fun toString(): String {
-        return "@Interpretable(\"${javaClass.simpleName}\")"
-    }
+    override val expectedArguments: List<Interpreter.ExpectedArgument> = _expectedArguments
 
     protected open val Arguments.startingSchema: PluginDataFrameSchema? get() = null
 
@@ -105,7 +90,7 @@ abstract class AbstractInterpreter<T> : Interpreter<T> {
         crossinline converter: (CompileTimeValue) -> Value,
     ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Arguments, Value>> = PropertyDelegateProvider { thisRef: Any?, property ->
         val name = name?.value ?: property.name
-        expectedArguments.add(Interpreter.ExpectedArgument(name, typeOf<CompileTimeValue>(), lens, defaultValue))
+        _expectedArguments.add(Interpreter.ExpectedArgument(name, typeOf<CompileTimeValue>(), lens, defaultValue))
         ReadOnlyProperty { args, _ ->
             if (name !in args && defaultValue is Present) {
                 defaultValue.value
@@ -122,7 +107,7 @@ abstract class AbstractInterpreter<T> : Interpreter<T> {
         lens: Interpreter.Lens = Interpreter.Value,
     ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Arguments, Value>> = PropertyDelegateProvider { thisRef: Any?, property ->
         val name = name?.value ?: property.name
-        expectedArguments.add(
+        _expectedArguments.add(
             Interpreter.ExpectedArgument(
                 name,
                 expectedType ?: property.returnType,

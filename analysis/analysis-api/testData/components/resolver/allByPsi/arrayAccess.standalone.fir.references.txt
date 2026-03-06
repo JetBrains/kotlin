@@ -36,7 +36,6 @@ KtArrayAccessExpression(74,81): 'list[0]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections.MutableList) override operator fun get(index: kotlin.Int): E
 
@@ -58,7 +57,6 @@ KtCallExpression(111,129): 'get(implicitIndex)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -87,15 +85,13 @@ KtValueArgument(145,157): '"SOME_ERROR"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      vararg names: kotlin.String
+      Nothing (Unresolved reference)
 
 KtArrayAccessExpression(159,166): 'list[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -117,7 +113,6 @@ KtArrayAccessExpression(178,185): 'list[2]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -160,7 +155,6 @@ KtCallExpression(241,261): 'foo(--list[i], list)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -188,7 +182,6 @@ KtArrayAccessExpression(247,254): 'list[i]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections.MutableList) override operator fun get(index: kotlin.Int): E
 
@@ -230,7 +223,6 @@ KtArrayAccessExpression(269,276): 'list[2]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

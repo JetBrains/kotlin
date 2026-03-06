@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckContextArguments
-import org.jetbrains.kotlin.fir.resolve.calls.stages.MapArguments
 import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -189,14 +187,6 @@ class Candidate(
         _argumentMapping = argumentMapping
     }
 
-    /**
-     * The arguments of a contextual implicit `invoke` candidate contain stub expressions for the implicitly passed
-     * context arguments between the [MapArguments] and [CheckContextArguments] stages.
-     *
-     * These expressions are always the first in the [arguments] list.
-     *
-     * This function replaces these stub arguments with the given [newArgumentPrefix] and updates the [argumentMapping] accordingly.
-     */
     @UpdatingCandidateInvariants
     fun replaceArgumentPrefix(newArgumentPrefix: List<ConeResolutionAtom>) {
         val remainingArguments = arguments.subList(newArgumentPrefix.size, arguments.size)
@@ -207,7 +197,7 @@ class Candidate(
         }
 
         for (argument in remainingArguments) {
-            argumentMapping[argument]?.let { newArgumentMapping[argument] = it }
+            newArgumentMapping[argument] = argumentMapping.getValue(argument)
         }
 
         val newArguments = newArgumentPrefix + remainingArguments
@@ -224,11 +214,11 @@ class Candidate(
 
     // ---------------------------------------- Postponed atoms ----------------------------------------
 
-    val postponedAtoms: List<ConePostponedResolvedAtom>
-        field = mutableListOf()
+    private val _postponedAtoms: MutableList<ConePostponedResolvedAtom> = mutableListOf()
+    val postponedAtoms: List<ConePostponedResolvedAtom> get() = _postponedAtoms
 
     fun addPostponedAtom(atom: ConePostponedResolvedAtom) {
-        postponedAtoms += atom
+        _postponedAtoms += atom
     }
 
     // ------------------------ Context-sensitively resolved arguments ------------------------------------
@@ -275,11 +265,12 @@ class Candidate(
     override val applicability: CandidateApplicability
         get() = lowestApplicability
 
+    private val _diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
     override val diagnostics: List<ResolutionDiagnostic>
-        field = mutableListOf()
+        get() = _diagnostics
 
     fun addDiagnostic(diagnostic: ResolutionDiagnostic) {
-        diagnostics += diagnostic
+        _diagnostics += diagnostic
         if (diagnostic.applicability < lowestApplicability) {
             lowestApplicability = diagnostic.applicability
         }
@@ -413,3 +404,6 @@ class Candidate(
         return "$okOrFail($step): $symbol"
     }
 }
+
+val Candidate.fullyAnalyzed: Boolean
+    get() = passedStages == callInfo.callKind.resolutionSequence.size

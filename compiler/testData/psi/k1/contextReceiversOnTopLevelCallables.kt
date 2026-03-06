@@ -1,4 +1,4 @@
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 // LIBRARY_PLATFORMS: JVM, JS
 
 annotation class MyAnnotation

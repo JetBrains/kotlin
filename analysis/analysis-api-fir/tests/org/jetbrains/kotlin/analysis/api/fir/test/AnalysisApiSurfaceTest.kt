@@ -22,7 +22,7 @@ import kotlin.reflect.full.isSubclassOf
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
-class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surface") {
+class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("analysis/analysis-api-fir/testData/surface") {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 
     @Test

@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K2: ANY
 // FIR_IDENTICAL
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 
 interface A {
     fun a(): Int

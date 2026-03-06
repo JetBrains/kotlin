@@ -18,17 +18,10 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <llvm/ADT/StringRef.h>
-#include <clang/Basic/LLVM.h>
-#include "clang-c/ext.h"
-
-#if LIBCLANGEXT_ENABLE
-
 #include <clang/AST/Attr.h>
 #include <clang/AST/DeclObjC.h>
 #include <clang/Frontend/ASTUnit.h>
-
-#endif // LIBCLANGEXT_ENABLE
+#include "clang-c/ext.h"
 
 using namespace clang;
 
@@ -80,7 +73,7 @@ static CXTypeAttributes makeCXTypeAttributes() {
 
 #endif // LIBCLANGEXT_ENABLE
 
-static CString createCString(llvm::StringRef str) {
+static CString createCString(StringRef str) {
   return CString { strdup(str.str().c_str()) };
 }
 

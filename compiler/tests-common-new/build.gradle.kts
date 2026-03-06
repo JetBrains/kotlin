@@ -11,14 +11,12 @@ dependencies {
     testFixturesApi(project(":compiler:fir:fir-serialization"))
     testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testFixturesApi(project(":compiler:cli"))
-    testFixturesApi(project(":compiler:ir.backend.native"))
     testFixturesImplementation(project(":compiler:cli-jvm:javac-integration"))
     testFixturesImplementation(project(":compiler:ir.tree"))
     testFixturesImplementation(project(":compiler:ir.serialization.native"))
     testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
     testFixturesImplementation(project(":compiler:backend.jvm.lower"))
     testFixturesImplementation(project(":kotlin-util-klib-abi"))
-    testFixturesImplementation(project(":compiler:ir.backend.native"))
     testFixturesImplementation(intellijCore())
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
@@ -47,7 +45,7 @@ dependencies {
     testFixturesApi(jpsModelImpl()) { isTransitive = false }
     testFixturesApi(libs.junit4)
 
-    testFixturesCompileOnly(toolsJarApi())
+    testFixturesApi(toolsJarApi())
     testRuntimeOnly(toolsJar())
 
     thirdPartyAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))

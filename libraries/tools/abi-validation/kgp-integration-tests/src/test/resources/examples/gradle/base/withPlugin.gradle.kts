@@ -17,5 +17,8 @@ dependencies {
 
 kotlin {
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
-    abiValidation()
+    abiValidation {
+        // use set method to compatibility with previous Gradle versions
+        enabled.set(true)
+    }
 }

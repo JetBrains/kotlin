@@ -2,7 +2,7 @@
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 
 // FILE: javaDefaultMethod.kt
 interface K2 : J {

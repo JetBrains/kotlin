@@ -2,7 +2,7 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
-        interface I<T, out S, in U> {
+        interface I<T, S, U> {
             x?: T;
             readonly y?: S;
             z(u: U): void;

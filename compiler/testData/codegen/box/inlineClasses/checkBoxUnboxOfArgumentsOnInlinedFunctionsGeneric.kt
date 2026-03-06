@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 
 // FILE: lib.kt
 inline fun <T> inlinedId(x: T): T = x

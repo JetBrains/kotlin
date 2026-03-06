@@ -1486,11 +1486,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/explicitBackingFields.args");
     }
 
-    @TestMetadata("explicitContextArguments.args")
-    public void testExplicitContextArguments() {
-      runTest("compiler/testData/cli/jvm/explicitContextArguments.args");
-    }
-
     @TestMetadata("explicitReturnTypesEnabled.args")
     public void testExplicitReturnTypesEnabled() {
       runTest("compiler/testData/cli/jvm/explicitReturnTypesEnabled.args");
@@ -2202,11 +2197,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("syntaxError_psi.args")
     public void testSyntaxError_psi() {
       runTest("compiler/testData/cli/js/syntaxError_psi.args");
-    }
-
-    @TestMetadata("unknownFriendLibraries.args")
-    public void testUnknownFriendLibraries() {
-      runTest("compiler/testData/cli/js/unknownFriendLibraries.args");
     }
 
     @TestMetadata("warningsSuppressionDisablesErrors_Js.args")

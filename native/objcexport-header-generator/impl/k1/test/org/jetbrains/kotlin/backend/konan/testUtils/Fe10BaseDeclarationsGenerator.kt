@@ -32,7 +32,7 @@ private object Fe10BaseDeclarationsGenerator : ObjCExportBaseDeclarationsTest.Ba
             namer = createObjCExportNamer(configuration = createObjCExportNamerConfiguration(topLevelNamePrefix = topLevelPrefix)),
             problemCollector = ObjCExportProblemCollector.SILENT,
             objcGenerics = true,
-            objcExportBlockExplicitParameterNames = false,
+            objcExportBlockExplicitParameterNames = true,
         )
 
         return translator.generateBaseDeclarations()

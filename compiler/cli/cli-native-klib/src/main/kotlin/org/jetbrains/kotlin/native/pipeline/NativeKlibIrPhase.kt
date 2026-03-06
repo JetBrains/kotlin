@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.native.FirSerializerInput
@@ -23,19 +22,18 @@ import org.jetbrains.kotlin.native.writeKlib
  * Serializes IR to klib format and writes it to disk.
  * Also handles header klib generation if configured.
  */
-object NativeIrSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, NativeSerializationArtifact>(
+object NativeIrSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeSerializationArtifact>(
     name = "NativeIrSerializationPhase",
     preActions = setOf(PerformanceNotifications.IrSerializationStarted),
     postActions = setOf(PerformanceNotifications.IrSerializationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeFir2IrArtifact): NativeSerializationArtifact? {
-        val (fir2IrOutput, configuration, phaseContext) = input
+        val (fir2IrOutput, configuration, _, diagnosticCollector, phaseContext) = input
         val headerKlibPath = configuration.konanGeneratedHeaderKlibPath?.removeSuffix(".klib")
         val outputKlibPath = phaseContext.config.outputPath
         if (!headerKlibPath.isNullOrEmpty()) {
             val headerKlib = phaseContext.fir2IrSerializer(
-                configuration,
-                FirSerializerInput(fir2IrOutput, produceHeaderKlib = true),
+                FirSerializerInput(fir2IrOutput, produceHeaderKlib = true)
             )
             val headerKlibInput = KlibWriterInput(headerKlib, headerKlibPath, produceHeaderKlib = true)
             phaseContext.writeKlib(headerKlibInput)
@@ -47,33 +45,28 @@ object NativeIrSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, 
             }
         }
         val serializerOutput = phaseContext.fir2IrSerializer(
-            configuration,
             FirSerializerInput(fir2IrOutput, produceHeaderKlib = false)
         )
         return NativeSerializationArtifact(
             serializerOutput = serializerOutput,
             configuration = configuration,
+            diagnosticCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }
 
-    private fun NativeFirstStagePhaseContext.fir2IrSerializer(configuration: CompilerConfiguration, input: FirSerializerInput): SerializerOutput {
-        return firSerializerBase(
-            configuration,
-            input.firToIrOutput.frontendOutput,
-            input.firToIrOutput,
-            produceHeaderKlib = input.produceHeaderKlib,
-        )
+    private fun NativeFirstStagePhaseContext.fir2IrSerializer(input: FirSerializerInput): SerializerOutput {
+        return firSerializerBase(input.firToIrOutput.frontendOutput, input.firToIrOutput, produceHeaderKlib = input.produceHeaderKlib)
     }
 }
 
-object NativeKlibWritingPipelinePhase : PipelinePhase<NativeSerializationArtifact, NativeKlibSerializedArtifact>(
+object NativeKlibWritingPhase : PipelinePhase<NativeSerializationArtifact, NativeKlibSerializedArtifact>(
     name = "NativeKlibWritingPhase",
     preActions = setOf(PerformanceNotifications.KlibWritingStarted),
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeSerializationArtifact): NativeKlibSerializedArtifact {
-        val (serializerOutput, configuration, phaseContext) = input
+        val (serializerOutput, configuration, diagnosticCollector, phaseContext) = input
         val outputKlibPath = phaseContext.config.outputPath
         phaseContext.writeKlib(
             KlibWriterInput(serializerOutput, outputKlibPath, produceHeaderKlib = false)
@@ -81,6 +74,7 @@ object NativeKlibWritingPipelinePhase : PipelinePhase<NativeSerializationArtifac
         return NativeKlibSerializedArtifact(
             outputKlibPath = outputKlibPath,
             configuration = configuration,
+            diagnosticCollector = diagnosticCollector,
         )
     }
 }

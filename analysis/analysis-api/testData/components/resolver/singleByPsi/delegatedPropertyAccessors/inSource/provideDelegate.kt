@@ -6,5 +6,5 @@ class Bar
 
 operator fun Bar.provideDelegate(_this: Any?, p: Any?): Foo = Foo()
 
-val x: Int <expr>by Bar()</expr>
+val x: Int <caret>by Bar()
 

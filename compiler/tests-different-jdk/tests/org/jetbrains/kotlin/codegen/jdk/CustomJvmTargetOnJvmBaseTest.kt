@@ -24,9 +24,11 @@ import org.junit.platform.suite.api.Suite
 
     FirLightTreeBlackBoxCodegenTestGenerated::class,
     FirLightTreeBlackBoxInlineCodegenTestGenerated::class,
+    FirLightTreeSerializeCompileKotlinAgainstInlineKotlinTestGenerated::class,
 
     FirPsiBlackBoxCodegenTestGenerated::class,
     FirPsiBlackBoxInlineCodegenTestGenerated::class,
+    FirPsiSerializeCompileKotlinAgainstInlineKotlinTestGenerated::class,
 
     CoreJrtFsTest::class
 )

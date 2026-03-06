@@ -34,6 +34,8 @@ abstract class IrICModule {
 abstract class IrICProgramFragment
 
 abstract class IrICProgramFragments {
+    abstract val mainFragment: IrICProgramFragment
+    abstract val exportFragment: IrICProgramFragment?
     abstract fun serialize(stream: OutputStream)
 }
 
@@ -94,7 +96,7 @@ class CacheUpdater(
     private val compilerConfiguration: CompilerConfiguration,
     private val icContext: PlatformDependentICContext,
     checkForClassStructuralChanges: Boolean = false,
-    private val loadBodiesOnlyForMainModule: Boolean = false,
+    private val commitIncrementalCache: Boolean = true
 ) {
     private val stopwatch = StopwatchIC()
 
@@ -393,7 +395,7 @@ class CacheUpdater(
                 for ((dependencySrcFile, newSignatures) in dependencySrcFiles) {
                     val dependencySrcMetadata = dependencyCache.fetchSourceFileFullMetadata(dependencySrcFile)
                     val oldSignatures = dependencySrcMetadata.inverseDependencies[libFile, srcFile] ?: emptySet()
-                    if (oldSignatures == newSignatures.keys) {
+                    if (oldSignatures == newSignatures) {
                         continue
                     }
                     val newMetadata = addNewMetadata(dependencyLibFile, dependencySrcFile, dependencySrcMetadata)
@@ -607,9 +609,11 @@ class CacheUpdater(
         }
 
         fun buildAndCommitCacheArtifacts(loadedIr: LoadedJsIr): Map<KotlinLibraryFile, IncrementalCacheArtifact> {
-            removedIncrementalCaches.forEach {
-                if (!it.cacheDir.deleteRecursively()) {
-                    icError("can not delete cache directory ${it.cacheDir.absolutePath}")
+            if (commitIncrementalCache) {
+                removedIncrementalCaches.forEach {
+                    if (!it.cacheDir.deleteRecursively()) {
+                        icError("can not delete cache directory ${it.cacheDir.absolutePath}")
+                    }
                 }
             }
 
@@ -618,8 +622,12 @@ class CacheUpdater(
                 val incrementalCache = getLibIncrementalCache(libFile)
                 val providers = loadedIr.getSignatureProvidersForLib(libFile)
 
-                val signatureToIndexMapping = providers.associate { it.srcFile to it.getSignatureToIndexMapping() }
-                val cacheArtifact = incrementalCache.buildAndCommitCacheArtifact(signatureToIndexMapping, stubbedSignatures)
+                val cacheArtifact = if (commitIncrementalCache) {
+                    val signatureToIndexMapping = providers.associate { it.srcFile to it.getSignatureToIndexMapping() }
+                    incrementalCache.buildAndCommitCacheArtifact(signatureToIndexMapping, stubbedSignatures)
+                } else {
+                    incrementalCache.buildCacheArtifact()
+                }
 
                 val libFragment = loadedIr.orderedFragments[libFile] ?: notFoundIcError("loaded fragment", libFile)
                 val sourceNames = loadedIr.getIrFileNames(libFragment)
@@ -644,10 +652,12 @@ class CacheUpdater(
     ): List<ModuleArtifact> = stopwatch.measure("Incremental cache - committing artifacts") {
         incrementalCacheArtifacts.map { (libFile, incrementalCacheArtifact) ->
             val rebuildFileFragments = rebuiltFileFragments[libFile] ?: emptyMap()
-            incrementalCacheArtifact.commitCache(
-                rebuiltFileFragments = rebuildFileFragments,
-                icContext = icContext
-            )
+            if (commitIncrementalCache) {
+                incrementalCacheArtifact.commitCache(
+                    rebuiltFileFragments = rebuildFileFragments,
+                    icContext = icContext
+                )
+            }
             incrementalCacheArtifact.buildModuleArtifact(
                 moduleName = moduleNames[libFile] ?: notFoundIcError("module name", libFile),
                 rebuiltFileFragments = rebuildFileFragments,
@@ -706,8 +716,7 @@ class CacheUpdater(
             orderedLibraries = updater.orderedLibraries,
             mainModuleFriends = updater.mainModuleFriendLibraries,
             irFactory = icContext.createIrFactory(),
-            stubbedSignatures = stubbedSignatures,
-            loadBodiesOnlyForMainModule = loadBodiesOnlyForMainModule,
+            stubbedSignatures = stubbedSignatures
         )
         var loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports)
 
@@ -839,7 +848,7 @@ fun rebuildCacheForDirtyFiles(
 
     val modifiedFiles = mapOf(libFile to dirtySrcFiles.associateWith { emptyMetadata })
 
-    val jsIrLoader = JsIrLinkerLoader(configuration, orderedLibraries, emptyList(), irFactory, emptySet(), false)
+    val jsIrLoader = JsIrLinkerLoader(configuration, orderedLibraries, emptyList(), irFactory, emptySet())
     val loadedIr = jsIrLoader.loadIr(KotlinSourceFileMap<KotlinSourceFileExports>(modifiedFiles), true)
 
     val currentIrModule = loadedIr.orderedFragments[libFile] ?: notFoundIcError("loaded fragment", libFile)

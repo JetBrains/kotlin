@@ -307,8 +307,8 @@ class FirCallCompleter(
             listOf(ConeAtomWithCandidate(call, candidate)),
             initialType,
             transformer.resolutionContext
-        ) { atom, withPCLASession, precalculatedBoundsForCL ->
-            analyzer.analyze(candidate.system, atom, candidate, withPCLASession, precalculatedBoundsForCL)
+        ) { atom, withPCLASession ->
+            analyzer.analyze(candidate.system, atom, candidate, withPCLASession)
         }
     }
 

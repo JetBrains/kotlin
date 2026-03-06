@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.utils.canNarrowDownGetterType
+import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.references.FirPropertyWithExplicitBackingFieldResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -23,15 +27,24 @@ private fun FirPropertySymbol.isEffectivelyFinal(session: FirSession): Boolean {
 }
 
 fun FirPropertySymbol.tryAccessExplicitFieldSymbol(
-    closestPublicApiInlineFunction: FirFunction?,
+    closestInlineFunction: FirFunction?,
     session: FirSession,
     hasVisibleBackingField: Boolean,
-): FirBackingFieldSymbol? =
-    fir.backingField?.symbol?.takeIf {
-        closestPublicApiInlineFunction == null
-                && hasVisibleBackingField
-                && isEffectivelyFinal(session)
+): FirBackingFieldSymbol? {
+    if (closestInlineFunction?.effectiveVisibility?.publicApi == true) {
+        return null
     }
+
+    if (
+        isEffectivelyFinal(session) &&
+        hasVisibleBackingField &&
+        canNarrowDownGetterType
+    ) {
+        return fir.backingField?.symbol
+    }
+
+    return null
+}
 
 fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.tryAccessExplicitFieldSymbol(
     closestInlineFunction: FirFunction?,

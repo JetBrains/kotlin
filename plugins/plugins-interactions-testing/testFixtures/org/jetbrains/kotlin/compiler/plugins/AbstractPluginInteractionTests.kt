@@ -14,10 +14,6 @@ import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigur
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeMainClassProvider
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeRuntimeClasspathProvider
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeUtilSourcesProvider
-import org.jetbrains.kotlin.plugin.sandbox.ExtensionRegistrarConfigurator
-import org.jetbrains.kotlin.plugin.sandbox.PluginAnnotationsProvider
-import org.jetbrains.kotlin.plugin.sandbox.PluginRuntimeAnnotationsProvider
-import org.jetbrains.kotlin.powerassert.PowerAssertEnvironmentConfigurator
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
@@ -48,22 +44,18 @@ fun TestConfigurationBuilder.enablePlugins() {
         ::SerializationEnvironmentConfigurator.bind(/*noLibraries = */false),
         ::LombokEnvironmentConfigurator,
         ::NoArgEnvironmentConfigurator,
-        ::ParcelizeEnvironmentConfigurator,
-        ::PowerAssertEnvironmentConfigurator,
-        // Plugin sandbox configurators.
-        ::ExtensionRegistrarConfigurator, ::PluginAnnotationsProvider,
+        ::ParcelizeEnvironmentConfigurator
     )
 
     enableSerializationRuntimeProviders(defaultsProviderBuilder.targetBackend ?: TargetBackend.JVM_IR)
     useCustomRuntimeClasspathProviders(
         ::LombokRuntimeClassPathProvider,
-        ::ParcelizeRuntimeClasspathProvider,
-        ::PluginRuntimeAnnotationsProvider,
+        ::ParcelizeRuntimeClasspathProvider
     )
 
     useAdditionalSourceProviders(
         ::LombokAdditionalSourceFileProvider,
-        ::ParcelizeUtilSourcesProvider,
+        ::ParcelizeUtilSourcesProvider
     )
 
     useAdditionalServices(service<JvmBoxMainClassProvider>(::ParcelizeMainClassProvider))

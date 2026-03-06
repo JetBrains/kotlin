@@ -2,7 +2,7 @@
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED, -CONTEXT_CLASS_OR_CONSTRUCTOR
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNCHECKED_CAST
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 
 interface A
 interface B : A

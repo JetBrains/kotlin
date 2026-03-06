@@ -224,7 +224,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     }
 
                 is IrClass -> {
-                    if (candidate.isExternal) return@forEachExportedMember
                     val ec = exportClass(candidate)
                     if (ec is ExportedClass) {
                         nestedClasses.add(ec)

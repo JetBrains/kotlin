@@ -3,7 +3,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.map(transform: (T) -> R): kotlin.collections.List<R>
 
@@ -12,7 +11,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.flatMap(transform: (T) -> kotlin.collections.Iterable<R>): kotlin.collections.List<R>
         1: (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.flatMap(transform: (T) -> kotlin.sequences.Sequence<R>): kotlin.collections.List<R>
@@ -22,7 +20,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in kotlin.collections) fun <T> kotlin.collections.Iterable<kotlin.collections.Iterable<T>>.flatten(): kotlin.collections.List<T>
 
@@ -31,7 +28,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in kotlin.collections) fun kotlin.collections.Iterable<kotlin.Double>.min(): kotlin.Double
         1: (in kotlin.collections) fun kotlin.collections.Iterable<kotlin.Float>.min(): kotlin.Float
@@ -42,7 +38,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.map(transform: (T) -> R): kotlin.collections.List<R>
 
@@ -51,7 +46,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.flatMap(transform: (T) -> kotlin.collections.Iterable<R>): kotlin.collections.List<R>
         1: (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.flatMap(transform: (T) -> kotlin.sequences.Sequence<R>): kotlin.collections.List<R>
@@ -61,7 +55,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         (in kotlin.collections) fun <T> kotlin.collections.Iterable<kotlin.collections.Iterable<T>>.flatten(): kotlin.collections.List<T>
 
@@ -70,7 +63,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in kotlin.collections) fun kotlin.collections.Iterable<kotlin.Double>.min(): kotlin.Double
         1: (in kotlin.collections) fun kotlin.collections.Iterable<kotlin.Float>.min(): kotlin.Float

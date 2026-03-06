@@ -53,23 +53,17 @@ abstract class InteropTestsBase {
         NativeMemoryAllocator.dispose()
     }
 
-    protected fun buildNativeLibraryFrom(defFile: File, cinteropArguments: Array<String>, imports: Imports = ImportsMock()): NativeLibrary {
+    protected fun buildNativeLibraryFrom(defFile: File, headersDirectory: File, imports: Imports = ImportsMock()): NativeLibrary {
         val tool = prepareTool(HostManager.hostName, KotlinPlatform.NATIVE, runFromDaemon = true, propertyOverrides = propertyOverrides)
-        val arguments = CInteropArguments()
-        arguments.argParser.parse(cinteropArguments)
+        val cinteropArguments = CInteropArguments()
+        cinteropArguments.argParser.parse(arrayOf(
+                "-compiler-option", "-I${headersDirectory.absolutePath}"
+        ))
         return buildNativeLibrary(
                 tool,
                 DefFile(defFile, tool.target),
-                arguments,
+                cinteropArguments,
                 imports
-        )
-    }
-
-    protected fun buildNativeLibraryFrom(defFile: File, headersDirectory: File, imports: Imports = ImportsMock()): NativeLibrary {
-        return buildNativeLibraryFrom(
-                defFile = defFile,
-                cinteropArguments = arrayOf("-compiler-option", "-I${headersDirectory.absolutePath}"),
-                imports = imports,
         )
     }
 

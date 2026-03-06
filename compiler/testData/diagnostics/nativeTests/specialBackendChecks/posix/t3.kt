@@ -1,8 +1,7 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_PLATFORM_LIBS
 import platform.posix.*
 
 fun main() {
-    println()
-    println(<!CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED!>::printf<!>)
+    println(::printf)
 }

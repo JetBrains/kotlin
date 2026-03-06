@@ -8,6 +8,5 @@ KtNameReferenceExpression(146,163): 'NestedInCompanion'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

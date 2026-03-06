@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.independentSourceDirectoryPath
-import org.jetbrains.kotlin.test.services.independentSourceDirectoryPathsTransitive
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.transitiveDependsOnDependencies
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
@@ -223,7 +223,9 @@ private class IrFileEntryPathRelativizer(private val testServices: TestServices)
     private val relativizedPathsCache = mutableMapOf<String, String>()
 
     fun addModule(module: TestModule) {
-        absolutePathPrefixes.addAll(module.independentSourceDirectoryPathsTransitive(testServices))
+        module.transitiveDependsOnDependencies(includeSelf = true).forEach {
+            absolutePathPrefixes += it.independentSourceDirectoryPath(testServices)
+        }
     }
 
     fun getRelativePath(fullPath: String): String = relativizedPathsCache.getOrPut(fullPath) {

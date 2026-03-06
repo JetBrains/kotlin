@@ -37,7 +37,6 @@ KtCallExpression(345,351): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -59,7 +58,6 @@ KtCallExpression(401,417): 'InheritorClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -102,7 +100,6 @@ KtCallExpression(545,551): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -124,7 +121,6 @@ KtPropertyDelegate(581,593): 'by lazy {""}'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline operator fun <T> kotlin.Lazy<T>.getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
 
@@ -132,7 +128,6 @@ KtCallExpression(584,593): 'lazy {""}'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -182,7 +177,6 @@ KtCallExpression(738,775): 'consumeMyClass(test(InheritorObject))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -197,7 +191,6 @@ KtCallExpression(753,774): 'test(InheritorObject)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -219,7 +212,6 @@ KtCallExpression(781,814): 'consumeMyClass(test(propMyClass))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -234,7 +226,6 @@ KtCallExpression(796,813): 'test(propMyClass)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -256,7 +247,6 @@ KtCallExpression(819,859): 'consumeMyClass(test(propInheritorClass))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -271,7 +261,6 @@ KtCallExpression(834,858): 'test(propInheritorClass)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -293,7 +282,6 @@ KtCallExpression(864,905): 'consumeMyClass(test(propInheritorObject))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -308,7 +296,6 @@ KtCallExpression(879,904): 'test(propInheritorObject)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -330,7 +317,6 @@ KtCallExpression(911,945): 'consumeMyClass(test(NestedObject))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -345,7 +331,6 @@ KtCallExpression(926,944): 'test(NestedObject)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -367,7 +352,6 @@ KtCallExpression(950,976): 'consumeMyClass(test(prop))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -382,7 +366,6 @@ KtCallExpression(965,975): 'test(prop)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -404,7 +387,6 @@ KtCallExpression(981,1012): 'consumeMyClass(test(superProp))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -419,7 +401,6 @@ KtCallExpression(996,1011): 'test(superProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -441,7 +422,6 @@ KtCallExpression(1017,1047): 'consumeMyClass(test(lazyProp))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -456,7 +436,6 @@ KtCallExpression(1032,1046): 'test(lazyProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -478,7 +457,6 @@ KtCallExpression(1052,1084): 'consumeMyClass(test(lambdaProp))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -493,7 +471,6 @@ KtCallExpression(1067,1083): 'test(lambdaProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -515,7 +492,6 @@ KtCallExpression(1090,1128): 'consumeMyClass(test(InheritorClass()))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -530,7 +506,6 @@ KtCallExpression(1105,1127): 'test(InheritorClass())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -545,7 +520,6 @@ KtCallExpression(1110,1126): 'InheritorClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -560,7 +534,6 @@ KtCallExpression(1133,1161): 'consumeMyClass(test(func()))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -575,7 +548,6 @@ KtCallExpression(1148,1160): 'test(func())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -590,7 +562,6 @@ KtCallExpression(1153,1159): 'func()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

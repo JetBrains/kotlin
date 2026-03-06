@@ -8,6 +8,5 @@ KtNameReferenceExpression(129,135): 'Helper'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

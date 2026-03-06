@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.konan.config.verifyBitcode
  */
 interface ConfigChecks {
 
-    val config: NativeSecondStageCompilationConfig
+    val config: KonanConfig
 
     fun shouldExportKDoc() = config.configuration.konanExportKdoc
 

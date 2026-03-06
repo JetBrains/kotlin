@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: ANDROID
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +ValueClasses
 
 // FILE: 1.kt
 

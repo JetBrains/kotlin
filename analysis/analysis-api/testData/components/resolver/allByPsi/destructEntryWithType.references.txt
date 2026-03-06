@@ -51,10 +51,7 @@ KtDestructuringDeclarationEntry(153,234): 'left: @Anno(0 + constant) List<@Anno(
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in util.MyPair) operator fun component1(): kotlin.collections.List<kotlin.collections.List<kotlin.Int>>
-    resolveToSymbols:
       0: (in util) val left: @util.Anno(str = 0) kotlin.collections.List<@util.Anno(str = 1) kotlin.collections.List<@util.Anno(str = 2) kotlin.Int>>
       1: (in util.MyPair) operator fun component1(): kotlin.collections.List<kotlin.collections.List<kotlin.Int>>
 
@@ -69,9 +66,8 @@ KtValueArgument(165,177): '0 + constant'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
+      str: kotlin.String
 
 KtOperationReferenceExpression(167,168): '+'
   KtSimpleNameReference:
@@ -105,9 +101,8 @@ KtValueArgument(190,202): '1 + constant'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
+      str: kotlin.String
 
 KtOperationReferenceExpression(192,193): '+'
   KtSimpleNameReference:
@@ -141,9 +136,8 @@ KtValueArgument(215,227): '2 + constant'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
-      Nothing (Unresolved reference)
+      str: kotlin.String
 
 KtOperationReferenceExpression(217,218): '+'
   KtSimpleNameReference:
@@ -170,10 +164,7 @@ KtDestructuringDeclarationEntry(236,241): 'right'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in util.MyPair) operator fun component2(): kotlin.Int
-    resolveToSymbols:
       0: (in util) val right: kotlin.Int
       1: (in util.MyPair) operator fun component2(): kotlin.Int
 

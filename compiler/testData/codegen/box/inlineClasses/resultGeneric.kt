@@ -10,7 +10,7 @@
 // ALLOW_KOTLIN_PACKAGE
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 
 // FILE: result.kt
 package kotlin

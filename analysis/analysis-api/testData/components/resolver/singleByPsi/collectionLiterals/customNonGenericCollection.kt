@@ -11,3 +11,4 @@ fun test() {
 }
 
 // LANGUAGE: +CollectionLiterals
+// COMPILATION_ERRORS

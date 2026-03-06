@@ -14,12 +14,6 @@ public class J {
     class Inner {
         public Inner(double innerParam, Object innerParam2) {}
     }
-
-    enum E {
-        ENTRY('a');
-
-        E(char enumParam) {}
-    }
 }
 
 // FILE: K.kt
@@ -31,8 +25,6 @@ fun box(): String {
     assertEquals(listOf(null, "methodParam"), J::foo.parameters.map { it.name })
     assertEquals(listOf("staticMethodParam"), J::bar.parameters.map { it.name })
     assertEquals(listOf(null, "innerParam", "innerParam2"), J::Inner.parameters.map { it.name })
-
-    assertEquals(listOf("enumParam"), J.E::class.constructors.single().parameters.map { it.name })
 
     return "OK"
 }

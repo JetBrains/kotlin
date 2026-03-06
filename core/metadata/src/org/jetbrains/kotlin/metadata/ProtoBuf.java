@@ -30624,14 +30624,6 @@ public final class ProtoBuf {
        * </pre>
        */
       RETURNS_NOT_NULL(2, 2),
-      /**
-       * <code>RETURNS_RESULT_OF = 3;</code>
-       *
-       * <pre>
-       * ReturnsResultOf(callable: ParameterReference)
-       * </pre>
-       */
-      RETURNS_RESULT_OF(3, 3),
       ;
 
       /**
@@ -30659,14 +30651,6 @@ public final class ProtoBuf {
        * </pre>
        */
       public static final int RETURNS_NOT_NULL_VALUE = 2;
-      /**
-       * <code>RETURNS_RESULT_OF = 3;</code>
-       *
-       * <pre>
-       * ReturnsResultOf(callable: ParameterReference)
-       * </pre>
-       */
-      public static final int RETURNS_RESULT_OF_VALUE = 3;
 
 
       public final int getNumber() { return value; }
@@ -30676,7 +30660,6 @@ public final class ProtoBuf {
           case 0: return RETURNS_CONSTANT;
           case 1: return CALLS;
           case 2: return RETURNS_NOT_NULL;
-          case 3: return RETURNS_RESULT_OF;
           default: return null;
         }
       }

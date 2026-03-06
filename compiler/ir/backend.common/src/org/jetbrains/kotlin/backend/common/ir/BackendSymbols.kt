@@ -7,21 +7,26 @@ package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.hasShape
-import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import kotlin.getValue
 
 @OptIn(InternalSymbolFinderAPI::class)
 abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(irBuiltIns) {
@@ -77,6 +82,9 @@ abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.
             irBuiltIns.ubyteClass, irBuiltIns.ushortClass, irBuiltIns.uintClass, irBuiltIns.ulongClass
         ).map { it.defaultType }
     }
+
+    open fun functionN(n: Int): IrClassSymbol = irBuiltIns.functionN(n).symbol
+    open fun suspendFunctionN(n: Int): IrClassSymbol = irBuiltIns.suspendFunctionN(n).symbol
 
     val extensionToString: IrSimpleFunctionSymbol by CallableIds.extensionToString.functionSymbol {
         it.hasShape(extensionReceiver = true, parameterTypes = listOf(irBuiltIns.anyNType))

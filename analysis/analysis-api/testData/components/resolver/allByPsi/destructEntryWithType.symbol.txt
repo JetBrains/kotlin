@@ -131,10 +131,7 @@ KtDestructuringDeclaration(148,249): 'val (left: @Anno(0 + constant) List<@Anno(
   null
 
 KtDestructuringDeclarationEntry(153,234): 'left: @Anno(0 + constant) List<@Anno(1 + constant) List<@Anno(2 + constant) Int>>'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      util/MyPair.component1(<dispatch receiver>: util.MyPair): kotlin.collections.List<kotlin.collections.List<kotlin.Int>>
-    ]
+  null
 
 KtTypeReference(159,234): '@Anno(0 + constant) List<@Anno(1 + constant) List<@Anno(2 + constant) Int>>'
   null
@@ -296,10 +293,7 @@ KtNameReferenceExpression(229,232): 'Int'
   null
 
 KtDestructuringDeclarationEntry(236,241): 'right'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      util/MyPair.component2(<dispatch receiver>: util.MyPair): kotlin.Int
-    ]
+  null
 
 KtNameReferenceExpression(245,249): 'pair'
   null

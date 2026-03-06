@@ -1,1 +1,0 @@
-operator fun Int.invoke(): Int = this

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.diagnostics.*
 
 class DeduplicatingDiagnosticReporter(private val delegate: DiagnosticReporter) : DiagnosticReporter() {
     override val hasErrors: Boolean get() = delegate.hasErrors
-    override val hasWarningsForWError: Boolean get() = delegate.hasWarningsForWError
 
     private val reported = mutableSetOf<Triple<String?, AbstractKtSourceElement, KtDiagnosticFactoryN>>()
 

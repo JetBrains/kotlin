@@ -12,7 +12,11 @@ import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.createContextForIncrementalCompilation
+import org.jetbrains.kotlin.cli.jvm.compiler.createIncrementalCompilationScope
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
@@ -38,8 +42,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): MetadataFrontendPipelineArtifact {
-        val (configuration, rootDisposable) = input
-        val diagnosticsReporter = configuration.diagnosticsCollector
+        val (configuration, diagnosticsReporter, rootDisposable) = input
         val messageCollector = configuration.messageCollector
         val rootModuleName = Name.special("<${configuration.moduleName!!}>")
         val isLightTree = configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
@@ -75,7 +78,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         val outputs = if (isLightTree) {
             val projectEnvironment = environment.toVfsBasedProjectEnvironment()
             var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-            val groupedSources = collectSources(configuration, projectEnvironment)
+            val groupedSources = collectSources(configuration, projectEnvironment, messageCollector)
 
             val ltFiles = groupedSources.let { it.commonSources + it.platformSources }.toList().also {
                 sourceFiles = it
@@ -150,6 +153,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         return MetadataFrontendPipelineArtifact(
             AllModulesFrontendOutput(outputs),
             configuration,
+            diagnosticsReporter,
             sourceFiles
         )
     }

@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
-import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCoreTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
-import org.jetbrains.kotlin.konan.test.handlers.NativeBoxRunner
-import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
+import org.jetbrains.kotlin.konan.test.handlers.NativeRunner
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.nativeArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
@@ -17,19 +16,18 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.TargetBackendTestSkipper
-import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Tag
 
 @Tag("custom-first-stage")
-open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest() {
+open class AbstractCustomNativeCompilerFirstStageTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
-        super.configure(builder)
-        useMetaTestConfigurators(::TargetBackendTestSkipper, ::UnsupportedFeaturesTestConfigurator)
+        useMetaTestConfigurators(::TargetBackendTestSkipper)
         globalDefaults {
             frontend = if (customNativeCompilerSettings.defaultLanguageVersion.usesK2) FrontendKinds.FIR else FrontendKinds.ClassicFrontend
             targetPlatform = NativePlatforms.unspecifiedNativePlatform
@@ -41,7 +39,7 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest()
         }
 
         useConfigurators(
-            ::NativeFirstStageEnvironmentConfigurator,
+            ::NativeEnvironmentConfigurator,
         )
         useAdditionalSourceProviders(
             ::NativeLauncherAdditionalSourceProvider,
@@ -63,7 +61,7 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest()
         useDirectives(TestDirectives)
         facadeStep(::NativeCompilerSecondStageFacade.bind(currentCustomNativeCompilerSettings))
         nativeArtifactsHandlersStep {
-            useHandlers(::NativeBoxRunner)
+            useHandlers(::NativeRunner)
         }
     }
 }

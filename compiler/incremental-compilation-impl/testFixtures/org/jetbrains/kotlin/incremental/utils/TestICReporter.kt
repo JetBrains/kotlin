@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.build.report.ICReporterBase
 import java.io.File
 
 class TestICReporter : ICReporterBase() {
+    private val compiledSourcesMutable = arrayListOf<File>()
+
     val compiledSources: List<File>
-        field = arrayListOf<File>()
+        get() = compiledSourcesMutable
 
     var exitCode: ExitCode = ExitCode.OK
         private set
@@ -31,7 +33,7 @@ class TestICReporter : ICReporterBase() {
     override fun report(message: () -> String, severity: ReportSeverity) {}
 
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
-        compiledSources.addAll(sourceFiles)
+        compiledSourcesMutable.addAll(sourceFiles)
         this.exitCode = exitCode
     }
 

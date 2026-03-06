@@ -22,14 +22,12 @@ KtNameReferenceExpression(40,44): 'list'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -44,7 +42,6 @@ KtArrayAccessExpression(74,81): 'list[0]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections.MutableList) operator fun get(index: kotlin.Int): E
 
@@ -58,7 +55,6 @@ KtNameReferenceExpression(74,78): 'list'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -72,7 +68,6 @@ KtNameReferenceExpression(106,110): 'list'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -80,7 +75,6 @@ KtCallExpression(111,129): 'get(implicitIndex)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -94,7 +88,6 @@ KtNameReferenceExpression(111,114): 'get'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -108,7 +101,6 @@ KtNameReferenceExpression(115,128): 'implicitIndex'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -123,18 +115,14 @@ KtValueArgument(145,157): '"SOME_ERROR"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      vararg names: kotlin.String
+      Nothing (Unresolved reference)
 
 KtArrayAccessExpression(159,166): 'list[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in kotlin.collections.MutableList) operator fun get(index: kotlin.Int): E
-    resolveToSymbols:
       0: (in kotlin.collections.MutableList) operator fun get(index: kotlin.Int): E
       1: (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 
@@ -148,7 +136,6 @@ KtNameReferenceExpression(159,163): 'list'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -163,10 +150,7 @@ KtArrayAccessExpression(178,185): 'list[2]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in kotlin.collections.MutableList) operator fun get(index: kotlin.Int): E
-    resolveToSymbols:
       0: (in kotlin.collections.MutableList) operator fun get(index: kotlin.Int): E
       1: (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 
@@ -180,7 +164,6 @@ KtNameReferenceExpression(178,182): 'list'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -216,7 +199,6 @@ KtCallExpression(241,261): 'foo(--list[i], list)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -230,7 +212,6 @@ KtNameReferenceExpression(241,244): 'foo'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -245,10 +226,7 @@ KtArrayAccessExpression(247,254): 'list[i]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in kotlin.collections.MutableList) operator fun get(index: kotlin.Int): E
-    resolveToSymbols:
       0: (in kotlin.collections.MutableList) operator fun get(index: kotlin.Int): E
       1: (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 
@@ -262,7 +240,6 @@ KtNameReferenceExpression(247,251): 'list'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -276,7 +253,6 @@ KtNameReferenceExpression(252,253): 'i'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -290,7 +266,6 @@ KtNameReferenceExpression(256,260): 'list'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -305,10 +280,7 @@ KtArrayAccessExpression(269,276): 'list[2]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in kotlin.collections.MutableList) operator fun get(index: kotlin.Int): E
-    resolveToSymbols:
       0: (in kotlin.collections.MutableList) operator fun get(index: kotlin.Int): E
       1: (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 
@@ -322,6 +294,5 @@ KtNameReferenceExpression(269,273): 'list'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

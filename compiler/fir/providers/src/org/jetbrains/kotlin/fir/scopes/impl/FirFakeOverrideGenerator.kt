@@ -418,7 +418,6 @@ object FirFakeOverrideGenerator {
         newSetterVisibility: Visibility? = null,
         deferredReturnTypeCalculation: DeferredCallableCopyReturnType? = null,
         newSource: KtSourceElement? = derivedClassLookupTag?.toSymbol(session)?.source,
-        baseBackingField: FirBackingField? = null,
         explicitBackingFieldNewReturnType: ConeKotlinType? = null,
         explicitBackingFieldCopySubstitutionForTypeUpdater: DeferredCallableCopyReturnType? = null,
     ): FirProperty = buildProperty {
@@ -475,7 +474,7 @@ object FirFakeOverrideGenerator {
             )
         }
 
-        backingField = (baseBackingField ?: baseProperty.getExplicitBackingField())?.let { baseField ->
+        backingField = baseProperty.getExplicitBackingField()?.let { baseField ->
             buildBackingField {
                 source = baseField.source
                 propertySymbol = newSymbol

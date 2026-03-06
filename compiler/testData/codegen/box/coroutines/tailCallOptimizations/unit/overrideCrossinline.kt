@@ -41,10 +41,7 @@ fun box(): String {
 
     builder {
         res = inlineMe {
-            // Note that "tx { Dummy }" is actually "tx<Unit> { Dummy }", and the next unsafe cast + resume
-            // would make the test incorrect. For such incorrect tests there is no guarantee of the result -
-            // both "Unit" and "Dummy" are possible
-            tx<Dummy> { Dummy }
+            tx { Dummy }
         }.callMe(1)
     }
 

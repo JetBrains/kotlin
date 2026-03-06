@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.KlibIrInlinerMode
 import org.jetbrains.kotlin.config.LanguageFeature
 
@@ -12,7 +14,7 @@ open class CommonKlibBasedCompilerArgumentsConfigurator : CommonCompilerArgument
     override fun configureExtraLanguageFeatures(
         arguments: CommonCompilerArguments,
         map: HashMap<LanguageFeature, LanguageFeature.State>,
-        reporter: Reporter,
+        collector: MessageCollector,
     ) {
         require(arguments is CommonKlibBasedCompilerArguments)
 
@@ -29,7 +31,8 @@ open class CommonKlibBasedCompilerArgumentsConfigurator : CommonCompilerArgument
                 map[LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
                 map[LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
                 // TODO(KT-71896): Drop this reporting when the cross-inlining becomes enabled by default.
-                reporter.info(
+                collector.report(
+                    CompilerMessageSeverity.INFO,
                     "`-Xklib-ir-inliner=full` will trigger setting the `pre-release` flag for the compiled library."
                 )
             }
@@ -38,7 +41,8 @@ open class CommonKlibBasedCompilerArgumentsConfigurator : CommonCompilerArgument
                 map[LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.DISABLED
             }
             null -> {
-                reporter.reportError(
+                collector.report(
+                    CompilerMessageSeverity.ERROR,
                     "Unknown value for parameter -Xklib-ir-inliner: '${arguments.irInlinerBeforeKlibSerialization}'. Value should be one of ${KlibIrInlinerMode.availableValues()}"
                 )
             }

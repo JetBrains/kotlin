@@ -96,9 +96,6 @@ object JsStandardClassIds {
 
         @JvmField
         val JsNoLifting = "JsNoLifting".jsId()
-
-        @JvmField
-        val JsNoRuntime = "JsNoRuntime".jsId()
     }
 
     object Callables {

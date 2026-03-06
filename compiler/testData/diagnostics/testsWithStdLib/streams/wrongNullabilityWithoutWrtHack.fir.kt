@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 // JVM_TARGET: 1.8
+// LANGUAGE: +DontMakeExplicitJavaTypeArgumentsFlexible
 
 import java.util.function.IntPredicate
 import java.util.stream.Stream

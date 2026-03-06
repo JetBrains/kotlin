@@ -10,9 +10,6 @@ import org.jetbrains.kotlin.fir.analysis.cfa.FirCallsEffectAnalyzer
 import org.jetbrains.kotlin.fir.analysis.cfa.FirPropertyInitializationAnalyzer
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv.FirReturnValueAnnotationsChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv.FirReturnValueOverrideChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv.FirUnusedReturnValueChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.*
 
 object CommonDeclarationCheckers : DeclarationCheckers() {

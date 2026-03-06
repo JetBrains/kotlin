@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
-
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import java.nio.file.Path
@@ -153,7 +152,7 @@ private fun TestProject.xcodebuild(
         },
         workingDir = workingDir.toFile(),
     )
-    xcodebuildResult.assertProcessRunResult {
+    assertProcessRunResult(xcodebuildResult) {
         assertEquals(expectedExitCode, exitCode, "Exit code mismatch for `xcodebuild`.")
     }
 }

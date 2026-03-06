@@ -9,6 +9,7 @@ interface KlibMetadataDeserializedPackageFragmentsFactory {
     fun createDeserializedPackageFragments(
         library: KotlinLibrary,
         moduleDescriptor: ModuleDescriptor,
+        packageAccessedHandler: PackageAccessHandler?,
         customMetadataProtoLoader: CustomMetadataProtoLoader?,
         storageManager: StorageManager,
         configuration: DeserializationConfiguration

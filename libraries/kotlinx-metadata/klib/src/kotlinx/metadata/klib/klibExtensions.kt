@@ -9,16 +9,34 @@ import kotlinx.metadata.klib.impl.klibExtensions
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
 
+var KmFunction.uniqId: UniqId?
+    get() = klibExtensions.uniqId
+    set(value) {
+        klibExtensions.uniqId = value
+    }
+
 var KmFunction.file: KlibSourceFile?
     get() = klibExtensions.file
     set(value) {
         klibExtensions.file = value
     }
 
+var KmClass.uniqId: UniqId?
+    get() = klibExtensions.uniqId
+    set(value) {
+        klibExtensions.uniqId = value
+    }
+
 var KmClass.file: KlibSourceFile?
     get() = klibExtensions.file
     set(value) {
         klibExtensions.file = value
+    }
+
+var KmProperty.uniqId: UniqId?
+    get() = klibExtensions.uniqId
+    set(value) {
+        klibExtensions.uniqId = value
     }
 
 var KmProperty.file: KlibSourceFile?
@@ -36,6 +54,12 @@ var KmProperty.compileTimeValue: KmAnnotationArgument?
 val KmType.annotations: MutableList<KmAnnotation>
     get() = klibExtensions.annotations
 
+var KmConstructor.uniqId: UniqId?
+    get() = klibExtensions.uniqId
+    set(value) {
+        klibExtensions.uniqId = value
+    }
+
 var KmPackage.fqName: String?
     get() = klibExtensions.fqName
     set(value) {
@@ -51,11 +75,32 @@ var KmModuleFragment.fqName: String?
 val KmModuleFragment.className: MutableList<ClassName>
     get() = klibExtensions.className
 
+val KmModuleFragment.moduleFragmentFiles: MutableList<KlibSourceFile>
+    get() = klibExtensions.moduleFragmentFiles
+
 val KmTypeParameter.annotations: MutableList<KmAnnotation>
     get() = klibExtensions.annotations
+
+var KmTypeParameter.uniqId: UniqId?
+    get() = klibExtensions.uniqId
+    set(value) {
+        klibExtensions.uniqId = value
+    }
+
+var KmTypeAlias.uniqId: UniqId?
+    get() = klibExtensions.uniqId
+    set(value) {
+        klibExtensions.uniqId = value
+    }
 
 var KmEnumEntry.ordinal: Int?
     get() = klibExtensions.ordinal
     set(value) {
         klibExtensions.ordinal = value
+    }
+
+var KmEnumEntry.uniqId: UniqId?
+    get() = klibExtensions.uniqId
+    set(value) {
+        klibExtensions.uniqId = value
     }

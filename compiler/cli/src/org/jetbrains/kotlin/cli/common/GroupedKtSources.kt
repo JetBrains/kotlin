@@ -11,12 +11,13 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.isFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
-import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.allSourceFilesSequence
 import org.jetbrains.kotlin.cli.jvm.compiler.findFileByPath
 import org.jetbrains.kotlin.cli.jvm.compiler.getSourceRootsCheckingForDuplicates
-import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.jvm.compiler.report
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.dontSortSourceFiles
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.extensions.PreprocessedFileCreator
 import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
 import java.io.File
-import java.util.*
+import java.util.TreeSet
 
 data class GroupedKtSources(
     val platformSources: Collection<KtSourceFile>,
@@ -46,7 +47,8 @@ private val ktSourceFileComparator = Comparator<KtSourceFile> { o1, o2 ->
 
 fun collectSources(
     compilerConfiguration: CompilerConfiguration,
-    projectEnvironment: VfsBasedProjectEnvironment
+    projectEnvironment: VfsBasedProjectEnvironment,
+    messageCollector: MessageCollector
 ): GroupedKtSources {
     fun createSet(): MutableSet<KtSourceFile> = if (compilerConfiguration.dontSortSourceFiles) {
         mutableSetOf()
@@ -73,7 +75,7 @@ fun collectSources(
     fun findVirtualFile(file: File): VirtualFile? =
         projectEnvironment.knownFileSystems.findFileByPath(file.normalize().path, StandardFileSystems.FILE_PROTOCOL)
 
-    getSourceRootsCheckingForDuplicates(compilerConfiguration)
+    getSourceRootsCheckingForDuplicates(compilerConfiguration, messageCollector)
         .allSourceFilesSequence(
             compilerConfiguration,
             reportLocation = null,
@@ -86,12 +88,11 @@ fun collectSources(
                         if (virtualFile.isFile) {
                             ensurePluginsConfigured()
                             val isKotlin = virtualFile.fileType == KotlinFileType.INSTANCE
-                            if (isExplicit && !isKotlin) {
+                            if (isExplicit && !isKotlin)
                                 compilerConfiguration.report(
-                                    CliDiagnostics.ROOTS_RESOLUTION_ERROR,
+                                    CompilerMessageSeverity.ERROR,
                                     "Source entry is not a Kotlin file: ${virtualFile.path}"
                                 )
-                            }
                             isKotlin
                         } else false
                     }

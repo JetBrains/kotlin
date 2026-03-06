@@ -1,7 +1,4 @@
 {
   "include": [ "./*" ],
-  "extends": "../../common.tsconfig.json",
-  "compilerOptions": {
-    "lib": ["esnext", "dom"],
-  }
+  "extends": "../../common.tsconfig.json"
 }

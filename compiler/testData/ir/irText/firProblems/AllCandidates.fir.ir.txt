@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/AllCandidates.kt
         CALL 'public final fun apply <T> (<this>: T of kotlin.apply, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.apply, kotlin.Unit>): T of kotlin.apply declared in kotlin' type=@[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? origin=null
           TYPE_ARG T: @[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>?
           ARG <this>: CALL 'public open fun nameNotFound <R> (): @[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] R of <root>.OverloadResolutionResultsImpl.nameNotFound?>? declared in <root>.OverloadResolutionResultsImpl' type=@[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>? origin=null
-            TYPE_ARG R: A of <root>.allCandidatesResult
+            TYPE_ARG R: @[FlexibleNullability] A of <root>.allCandidatesResult?
           ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<@[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>?, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
               VALUE_PARAMETER kind:ExtensionReceiver name:$this$apply index:0 type:@[FlexibleNullability] <root>.OverloadResolutionResultsImpl<@[FlexibleNullability] A of <root>.allCandidatesResult?>?

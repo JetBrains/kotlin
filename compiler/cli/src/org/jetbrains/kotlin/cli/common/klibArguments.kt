@@ -7,19 +7,20 @@ package org.jetbrains.kotlin.cli.common
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
-import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS
+import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
-import java.util.*
+import java.util.EnumMap
+import kotlin.collections.plus
 import kotlin.reflect.KProperty1
 
 /**
@@ -40,7 +41,6 @@ fun CompilerConfiguration.setupCommonKlibArguments(
     // Diagnostics & checks.
     produceKlibSignaturesClashChecks = arguments.enableSignatureClashChecks
     renderDiagnosticInternalName = arguments.renderInternalDiagnosticNames
-    skipLibrarySpecialCompatibilityChecks = arguments.skipLibrarySpecialCompatibilityChecks
 
     duplicatedUniqueNameStrategy = DuplicatedUniqueNameStrategy.parseOrDefault(
         arguments.duplicatedUniqueNameStrategy,
@@ -48,7 +48,7 @@ fun CompilerConfiguration.setupCommonKlibArguments(
     )
 
     // Set up the custom ABI version (the one that has no effect on the KLIB serialization, though will be written to manifest).
-    customKlibAbiVersion = parseCustomKotlinAbiVersion(arguments.customKlibAbiVersion)
+    customKlibAbiVersion = parseCustomKotlinAbiVersion(arguments.customKlibAbiVersion, messageCollector)
 
     // Set up the ABI compatibility level (the one that actually affects the KLIB serialization).
     if (!isKlibMetadataCompilation) {
@@ -57,7 +57,7 @@ fun CompilerConfiguration.setupCommonKlibArguments(
 
     zipFileSystemAccessor = arguments.getZipFileSystemAccessor(
         zipFileAccessorCacheLimitArgument = CommonKlibBasedCompilerArguments::klibZipFileAccessorCacheLimit,
-        configuration = this,
+        collector = messageCollector,
         rootDisposable = rootDisposable
     )
 }
@@ -74,7 +74,6 @@ fun CompilerConfiguration.copyCommonKlibArgumentsFrom(source: CompilerConfigurat
     // Diagnostics & checks.
     produceKlibSignaturesClashChecks = source.produceKlibSignaturesClashChecks
     renderDiagnosticInternalName = source.renderDiagnosticInternalName
-    skipLibrarySpecialCompatibilityChecks = source.skipLibrarySpecialCompatibilityChecks
     source.duplicatedUniqueNameStrategy?.let { duplicatedUniqueNameStrategy = it }
 
     // Custom ABI version (the one that has no effect on the KLIB serialization, though will be written to manifest).
@@ -86,11 +85,11 @@ fun CompilerConfiguration.copyCommonKlibArgumentsFrom(source: CompilerConfigurat
     zipFileSystemAccessor = source.zipFileSystemAccessor
 }
 
-private fun CompilerConfiguration.parseCustomKotlinAbiVersion(customKlibAbiVersion: String?): KotlinAbiVersion? {
+private fun parseCustomKotlinAbiVersion(customKlibAbiVersion: String?, collector: MessageCollector): KotlinAbiVersion? {
     val versionParts = customKlibAbiVersion?.split('.') ?: return null
     if (versionParts.size != 3) {
-        report(
-            COMPILER_ARGUMENTS_ERROR,
+        collector.report(
+            CompilerMessageSeverity.ERROR,
             "Invalid ABI version format. Expected format: <major>.<minor>.<patch>"
         )
         return null
@@ -98,8 +97,8 @@ private fun CompilerConfiguration.parseCustomKotlinAbiVersion(customKlibAbiVersi
     val version = versionParts.mapNotNull { it.toIntOrNull() }
     val validNumberRegex = Regex("(0|[1-9]\\d{0,2})")
     if (versionParts.any { !it.matches(validNumberRegex) } || version.any { it !in 0..255 }) {
-        report(
-            COMPILER_ARGUMENTS_ERROR,
+        collector.report(
+            CompilerMessageSeverity.ERROR,
             "Invalid ABI version numbers. Each part must be in the range 0..255."
         )
         return null
@@ -109,15 +108,15 @@ private fun CompilerConfiguration.parseCustomKotlinAbiVersion(customKlibAbiVersi
 
 fun <A : CommonCompilerArguments> A.getZipFileSystemAccessor(
     zipFileAccessorCacheLimitArgument: KProperty1<A, String>,
-    configuration: CompilerConfiguration,
+    collector: MessageCollector,
     rootDisposable: Disposable,
 ): ZipFileSystemAccessor? {
     val cacheLimitRawValue: String = zipFileAccessorCacheLimitArgument.get(this)
     val cacheLimit: Int? = cacheLimitRawValue.toIntOrNull()
 
     if (cacheLimit == null || cacheLimit < 0) {
-        configuration.report(
-            COMPILER_ARGUMENTS_ERROR,
+        collector.report(
+            CompilerMessageSeverity.ERROR,
             buildString {
                 append("Cannot parse ${zipFileAccessorCacheLimitArgument.cliArgument} value: \"$cacheLimitRawValue\". ")
                 append("It must be an integer >= 0.")
@@ -133,7 +132,7 @@ fun <A : CommonCompilerArguments> A.getZipFileSystemAccessor(
 }
 
 private class DisposableZipFileSystemAccessor(
-    private val zipAccessor: ZipFileSystemCacheableAccessor,
+    private val zipAccessor: ZipFileSystemCacheableAccessor
 ) : Disposable, ZipFileSystemAccessor by zipAccessor {
     constructor(cacheLimit: Int) : this(ZipFileSystemCacheableAccessor(cacheLimit))
 
@@ -151,8 +150,8 @@ fun CompilerConfiguration.setupKlibAbiCompatibilityLevel() {
 
         val abiCompatibilityLevel = LANGUAGE_VERSION_TO_ABI_COMPATIBILITY_LEVEL[languageVersion]
         if (abiCompatibilityLevel == null) {
-            report(
-                COMPILER_ARGUMENTS_ERROR,
+            messageCollector.report(
+                CompilerMessageSeverity.ERROR,
                 buildString {
                     append("Exporting KLIBs in older ABI format is only supported for the following language versions: ")
                     // Show all LVs that are less than the current LV. Because otherwise it could lead to confusion.
@@ -193,22 +192,3 @@ private val LANGUAGE_VERSION_TO_ABI_COMPATIBILITY_LEVEL =
             }
         }
     }
-
-fun CompilerConfiguration.checkForUnexpectedKlibLibraries(
-    librariesToCheck: List<String>,
-    librariesToCheckArgument: String,
-    allLibraries: List<String>,
-    allLibrariesArgument: String,
-) {
-    if (librariesToCheck.isEmpty()) return
-
-    val unexpectedLibraries = librariesToCheck subtract allLibraries.toSet()
-    if (unexpectedLibraries.isNotEmpty()) {
-        report(
-            COMPILER_ARGUMENTS_WARNING,
-            "There are libraries in $librariesToCheckArgument CLI argument " +
-                    "that are not included in $allLibrariesArgument CLI argument: " +
-                    unexpectedLibraries.joinToString()
-        )
-    }
-}

@@ -19,6 +19,4 @@ class A {
 
     inline fun defaultFun1() = <!IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_ERROR!>::x<!>
     inline fun defaultFun2() = <!IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING_ERROR!>privateFun2()<!>
-
-    fun reflection() = publicFun1().name
 }

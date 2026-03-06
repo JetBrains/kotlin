@@ -55,29 +55,30 @@ fun runProcess(
  * Asserts the result of running a process by calling a set of assertions on the result object.
  * If any of the assertions fail, an [AssertionError] is thrown and the process output information is printed.
  *
- * @param assertions A lambda expression that performs a set of assertions on this result.
+ * @param result The result of running a process.
+ * @param assertions A lambda expression that performs a set of assertions on it.
  *
  * @throws AssertionError If any of the assertions fail.
  */
-fun ProcessRunResult.assertProcessRunResult(assertions: ProcessRunResult.() -> Unit) {
+fun assertProcessRunResult(result: ProcessRunResult, assertions: ProcessRunResult.() -> Unit) {
     try {
-        this.assertions()
+        result.assertions()
     } catch (e: AssertionError) {
         println(
             """
             |Process info:
             |#######################
-            |$this
+            |$result
             |#######################
             |
             |Process output:
             |#######################
-            |${this.output}
+            |${result.output}
             |#######################
             |
             |Process error output:
             |#######################
-            |${this.stdErr}
+            |${result.stdErr}
             |#######################
             |
             """.trimMargin()

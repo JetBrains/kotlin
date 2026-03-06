@@ -37,7 +37,6 @@ abstract class DiagnosticReporter {
     abstract fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext)
 
     abstract val hasErrors: Boolean
-    abstract val hasWarningsForWError: Boolean
 }
 
 /**

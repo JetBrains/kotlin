@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ForbidUselessTypeArgumentsIn25
 class Inv<T>
 class Some
 class MyPair<A, B>

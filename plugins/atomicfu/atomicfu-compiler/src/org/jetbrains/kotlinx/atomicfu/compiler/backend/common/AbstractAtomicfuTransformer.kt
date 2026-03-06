@@ -802,8 +802,9 @@ abstract class AbstractAtomicfuTransformer(
             parameters += atomicExtension.parameters.subList(0, extensionParameterIndex)
                 .map { it.deepCopyWithSymbols(this) }
             addAtomicHandlerValueParameters(atomicHandlerType, valueType)
-            parameters += atomicExtension.parameters.subList(extensionParameterIndex + 1, atomicExtension.parameters.size)
-                .map { it.deepCopyWithSymbols(this) }
+            atomicExtension.parameters.subList(extensionParameterIndex + 1, atomicExtension.parameters.size).forEach {
+                addValueParameter(it.name, it.type)
+            }
 
             returnType = atomicExtension.returnType
             this.parent = atomicExtension.parent

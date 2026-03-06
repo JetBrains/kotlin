@@ -128,44 +128,10 @@ KtDestructuringDeclaration(229,265): '[val first, var second: String,] = x'
   null
 
 KtDestructuringDeclarationEntry(230,239): 'val first'
-  KaCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
+  null
 
 KtDestructuringDeclarationEntry(241,259): 'var second: String'
-  KaCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = var second: String
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component2
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
+  null
 
 KtTypeReference(253,259): 'String'
   null
@@ -212,24 +178,7 @@ KtDestructuringDeclaration(284,304): '[var first: Int] = x'
   null
 
 KtDestructuringDeclarationEntry(285,299): 'var first: Int'
-  KaCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = var first: Int
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
+  null
 
 KtTypeReference(296,299): 'Int'
   null
@@ -276,9 +225,7 @@ KtDestructuringDeclaration(323,338): '[val first] = y'
   null
 
 KtDestructuringDeclarationEntry(324,333): 'val first'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
+  null
 
 KtNameReferenceExpression(337,338): 'y'
   KaSuccessCallInfo:
@@ -316,9 +263,7 @@ KtDestructuringDeclaration(357,368): '[val first]'
   null
 
 KtDestructuringDeclarationEntry(358,367): 'val first'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
+  null
 
 KtNamedFunction(374,543): 'fun loop(x: List<Tuple>, y: NonDataTuple) {'
   null
@@ -369,59 +314,7 @@ KtBlockExpression(416,543): '{'
   null
 
 KtForExpression(422,468): 'for ([val first, val second: String,] in x) {}'
-  KaCallResolutionSuccess:
-    call = KaForLoopCall:
-      hasNextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.hasNext
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      iteratorCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.List<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Iterator<Tuple>
-          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/List.iterator
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      nextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Tuple
-          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.next
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
+  null
 
 KtParameter(427,459): '[val first, val second: String,]'
   null
@@ -430,44 +323,10 @@ KtDestructuringDeclaration(427,459): '[val first, val second: String,]'
   null
 
 KtDestructuringDeclarationEntry(428,437): 'val first'
-  KaCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
+  null
 
 KtDestructuringDeclarationEntry(439,457): 'val second: String'
-  KaCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val second: String
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component2
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
+  null
 
 KtTypeReference(451,457): 'String'
   null
@@ -505,59 +364,7 @@ KtBlockExpression(466,468): '{}'
   null
 
 KtForExpression(473,503): 'for ([val first: Int] in x) {}'
-  KaCallResolutionSuccess:
-    call = KaForLoopCall:
-      hasNextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.hasNext
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      iteratorCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.List<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Iterator<Tuple>
-          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/List.iterator
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      nextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Tuple
-          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.next
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
+  null
 
 KtParameter(478,494): '[val first: Int]'
   null
@@ -566,24 +373,7 @@ KtDestructuringDeclaration(478,494): '[val first: Int]'
   null
 
 KtDestructuringDeclarationEntry(479,493): 'val first: Int'
-  KaCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first: Int
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
+  null
 
 KtTypeReference(490,493): 'Int'
   null
@@ -621,9 +411,7 @@ KtBlockExpression(501,503): '{}'
   null
 
 KtForExpression(508,541): 'for ([val first: String] in y) {}'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>
+  null
 
 KtParameter(513,532): '[val first: String]'
   null
@@ -632,9 +420,7 @@ KtDestructuringDeclaration(513,532): '[val first: String]'
   null
 
 KtDestructuringDeclarationEntry(514,531): 'val first: String'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
+  null
 
 KtTypeReference(525,531): 'String'
   null
@@ -849,44 +635,10 @@ KtDestructuringDeclaration(648,680): '[val first, val second: String,]'
   null
 
 KtDestructuringDeclarationEntry(649,658): 'val first'
-  KaCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
+  null
 
 KtDestructuringDeclarationEntry(660,678): 'val second: String'
-  KaCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val second: String
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component2
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
+  null
 
 KtTypeReference(672,678): 'String'
   null
@@ -985,24 +737,7 @@ KtDestructuringDeclaration(696,712): '[val first: Int]'
   null
 
 KtDestructuringDeclarationEntry(697,711): 'val first: Int'
-  KaCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first: Int
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /Tuple.component1
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
+  null
 
 KtTypeReference(708,711): 'Int'
   null
@@ -1101,9 +836,7 @@ KtDestructuringDeclaration(728,739): '[val first]'
   null
 
 KtDestructuringDeclarationEntry(729,738): 'val first'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
+  null
 
 KtBlockExpression(743,743): ''
   null

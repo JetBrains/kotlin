@@ -27,6 +27,7 @@ open class KlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     private val library: KotlinLibrary,
     private val metadata: KlibMetadataComponent,
+    private val packageAccessHandler: PackageAccessHandler?,
     private val customMetadataProtoLoader: CustomMetadataProtoLoader?,
     storageManager: StorageManager,
     module: ModuleDescriptor,
@@ -52,7 +53,7 @@ open class KlibMetadataDeserializedPackageFragment(
 
     override val proto: ProtoBuf.PackageFragment
         get() {
-            library.hasDeclarationsAccessedDuringFrontendResolve = true
+            packageAccessHandler?.markNeededForLink(fqName.asString())
             return protoForNames
         }
 }
@@ -61,6 +62,7 @@ class BuiltInKlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     library: KotlinLibrary,
     metadata: KlibMetadataComponent,
+    packageAccessHandler: PackageAccessHandler?,
     customMetadataProtoLoader: CustomMetadataProtoLoader?,
     storageManager: StorageManager,
     module: ModuleDescriptor,
@@ -70,6 +72,7 @@ class BuiltInKlibMetadataDeserializedPackageFragment(
     fqName = fqName,
     library = library,
     metadata = metadata,
+    packageAccessHandler = packageAccessHandler,
     customMetadataProtoLoader = customMetadataProtoLoader,
     storageManager = storageManager,
     module = module,

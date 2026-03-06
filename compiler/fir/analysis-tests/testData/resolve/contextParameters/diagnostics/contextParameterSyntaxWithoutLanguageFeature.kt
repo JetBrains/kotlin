@@ -1,4 +1,3 @@
-// LANGUAGE: -ContextParameters
 // RUN_PIPELINE_TILL: FRONTEND
 
 <!UNSUPPORTED_FEATURE!>context(s: String)<!>

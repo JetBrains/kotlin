@@ -175,15 +175,19 @@ fun serializeModuleToMetadata(
         .map { KotlinSourceRoot(it.path, isCommon, hmppModuleName = null) }
         .toList()
 
+    val diagnosticCollector = DiagnosticsCollectorImpl()
     val performanceManager = createPerformanceManagerFor(JvmPlatforms.unspecifiedJvmPlatform)
 
     val phaseConfig = PhaseConfig()
     val context = PipelineContext(
+        configuration.messageCollector,
+        diagnosticCollector,
         performanceManager,
+        renderDiagnosticInternalName = true,
         kaptMode = false,
     )
 
-    val configurationArtifact = ConfigurationPipelineArtifact(configuration, disposable)
+    val configurationArtifact = ConfigurationPipelineArtifact(configuration, diagnosticCollector, disposable)
     val serializationPipeline = MetadataFrontendPipelinePhase thenMaybe firTransformationPhase then MetadataKlibInMemorySerializerPhase
     return configuration to serializationPipeline.invokeToplevel(phaseConfig, context, configurationArtifact)
 }

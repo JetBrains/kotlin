@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationWasmSymbols
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.BackendWebSymbols
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -130,15 +132,17 @@ class BackendWasmSymbols(
         irBuiltIns.doubleType to CallableIds.wasm_f64_eq.functionSymbol()
     )
 
-    val comparisonBuiltInsToWasmIntrinsics = irBuiltIns.run {
-        fun wasmPrimitiveTypeName(classifier: IrClassifierSymbol): String = when (classifier) {
+    private fun wasmPrimitiveTypeName(classifier: IrClassifierSymbol): String = with(irBuiltIns) {
+        when (classifier) {
             booleanClass, byteClass, shortClass, charClass, intClass -> "i32"
             floatClass -> "f32"
             doubleClass -> "f64"
             longClass -> "i64"
             else -> error("Unknown primitive type")
         }
+    }
 
+    val comparisonBuiltInsToWasmIntrinsics = irBuiltIns.run {
         listOf(
             lessFunByOperandType to "lt",
             lessOrEqualFunByOperandType to "le",

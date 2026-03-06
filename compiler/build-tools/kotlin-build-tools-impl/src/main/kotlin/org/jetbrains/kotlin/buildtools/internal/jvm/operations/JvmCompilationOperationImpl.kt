@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -26,8 +25,6 @@ import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Compan
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
-import org.jetbrains.kotlin.buildtools.internal.arguments.CompilerArgumentValueAdapter
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
@@ -68,18 +65,14 @@ internal class JvmCompilationOperationImpl private constructor(
     override val options: Options = Options(JvmCompilationOperation::class),
     override val sources: List<Path>,
     override val destinationDirectory: Path,
-    override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(
-        CompilerArgumentValueAdapter.getOrNull(JvmCompilerArguments.JvmCompilerArgument::class)
-    ),
+    override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
 ) : CancellableBuildOperationImpl<CompilationResult>(), JvmCompilationOperation, JvmCompilationOperation.Builder,
     DeepCopyable<JvmCompilationOperationImpl> {
     constructor(
         sources: List<Path>,
         destinationDirectory: Path,
-        compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(
-            CompilerArgumentValueAdapter.getOrNull(JvmCompilerArguments.JvmCompilerArgument::class)
-        ),
+        compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
         buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     ) : this(
         options = Options(JvmCompilationOperation::class),
@@ -166,10 +159,8 @@ internal class JvmCompilationOperationImpl private constructor(
     }
 
     override fun executeCancellableImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
-        val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
-        val kotlinLogger = logger ?: DefaultKotlinLogger
-        val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
-
+        val loggerAdapter =
+            logger?.let { KotlinLoggerMessageCollectorAdapter(it) } ?: KotlinLoggerMessageCollectorAdapter(DefaultKotlinLogger)
         return when (executionPolicy) {
             InProcessExecutionPolicyImpl -> {
                 compileInProcess(loggerAdapter)
@@ -532,15 +523,12 @@ internal class JvmCompilationOperationImpl private constructor(
             Option("COMPILER_ARGUMENTS_LOG_LEVEL", default = CompilerArgumentsLogLevel.DEBUG)
 
         val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", false)
-
-        val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> =
-            Option("COMPILER_MESSAGE_RENDERER", default = DefaultCompilerMessageRenderer)
     }
 }
 
 private class BtaCompilerServicesWithResultsFacade(
     loggerAdapter: KotlinLoggerMessageCollectorAdapter,
-    val lookupTracker: CompilerLookupTracker? = null,
+    val lookupTracker: CompilerLookupTracker? = null
 ) :
     BasicCompilerServicesWithResultsFacadeServer(loggerAdapter) {
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {

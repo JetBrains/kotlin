@@ -22,7 +22,9 @@ class AbiValidationOldNamesIT : KGPBaseTest() {
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         androidProject(gradleVersion, agpVersion, jdkVersion) {
-            abiValidation()
+            abiValidation {
+                enabled.set(true)
+            }
 
             build("updateLegacyAbi") {
                 assertTasksExecuted(":updateKotlinAbi")

@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K2: ANY
 // FIR_IDENTICAL
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 
 class A<T>(val a: T)
 class B(val b: Any)

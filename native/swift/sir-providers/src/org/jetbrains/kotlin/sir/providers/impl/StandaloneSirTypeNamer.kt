@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.sir.SirExistentialType
 import org.jetbrains.kotlin.sir.SirFunctionalType
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirScopeDefiningDeclaration
-import org.jetbrains.kotlin.sir.SirTupleType
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirUnsupportedType
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
@@ -64,14 +63,14 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         is SirNominalType -> kotlinFqName(type)
         is SirExistentialType -> kotlinFqName(type)
         is SirFunctionalType -> "${"kotlin.coroutines.Suspend".takeIf { type.isAsync } ?: ""}Function${type.parameterTypes.count()}<${(type.parameterTypes + type.returnType).joinToString { kotlinFqName(it) }}>"
-        is SirErrorType, is SirUnsupportedType, is SirTupleType ->
+        is SirErrorType, is SirUnsupportedType ->
             error("Type $type can not be named")
     }
 
     private fun kotlinParametrizedName(type: SirType): String = when (type) {
         is SirNominalType -> type.typeDeclaration.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
         is SirExistentialType -> type.protocols.singleOrNull()?.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
-        is SirErrorType, is SirFunctionalType, is SirUnsupportedType, is SirTupleType -> null
+        is SirErrorType, is SirFunctionalType, is SirUnsupportedType -> null
     } ?: kotlinFqName(type)
 
     private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let {
@@ -87,7 +86,6 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
             KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
             KotlinRuntimeSupportModule.kotlinBridgeable -> "kotlin.Any"
             KotlinCoroutineSupportModule.swiftJob -> "SwiftJob"
-            KotlinCoroutineSupportModule.kotlinTypedFlowStruct -> "kotlinx.coroutines.flow.Flow<${type.typeArguments.firstOrNull()?.let { kotlinParametrizedName(it) } ?: "kotlin.Any?"}>"
             SirSwiftModule.anyHashable -> "kotlin.Any"
             SirSwiftModule.string -> "kotlin.String"
 

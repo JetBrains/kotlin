@@ -15,12 +15,13 @@ internal class ArtifactRequestBuilder(
     private val classifier: String?,
     private val extension: String?,
 ) : DependencyVisitor {
+    private val result: MutableList<ArtifactRequest> = ArrayList()
 
     override fun visitEnter(node: DependencyNode): Boolean {
         val dep = node.dependency
         if (dep != null) {
             val artifact = dep.artifact
-            requests.add(
+            result.add(
                 ArtifactRequest(
                     ArtifactWithAnotherKind(artifact, classifier, extension),
                     node.repositories,
@@ -36,7 +37,7 @@ internal class ArtifactRequestBuilder(
     }
 
     val requests: List<ArtifactRequest>
-        field = ArrayList()
+        get() = result
 }
 
 private class ArtifactWithAnotherKind(

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.wasm.test.klib.AbstractCustomWasmJsCompilerFirstStageTest
 import org.jetbrains.kotlin.test.HeavyTest
-import org.jetbrains.kotlin.wasm.test.klib.AbstractCustomWasmJsCompilerSecondStageTest
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -31,23 +30,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractCustomWasmJsCompilerFirstStageTest>(
                 suiteTestClassName = "CustomWasmJsAggregateFirstStageTestGenerated",
-                annotations = listOf(
-                    annotation(HeavyTest::class.java),
-                    aggregate(),
-                )
-            ) {
-                model("boxInline")
-            }
-
-            testClass<AbstractCustomWasmJsCompilerSecondStageTest>(
-                annotations = listOf(annotation(HeavyTest::class.java))
-            ) {
-                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-                model("boxInline")
-            }
-
-            testClass<AbstractCustomWasmJsCompilerSecondStageTest>(
-                suiteTestClassName = "CustomWasmJsAggregateSecondStageTestGenerated",
                 annotations = listOf(
                     annotation(HeavyTest::class.java),
                     aggregate(),

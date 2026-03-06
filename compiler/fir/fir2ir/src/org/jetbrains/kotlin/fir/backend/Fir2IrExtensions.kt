@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface Fir2IrExtensions {
+    val irNeedsDeserialization: Boolean
+
     /**
      * Determines if parameters of tailrec functions should be generated with isAssignable = true
      */
@@ -30,6 +32,7 @@ interface Fir2IrExtensions {
 
     val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>
 
+    fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean
     fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue?
     fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression?
 
@@ -55,10 +58,14 @@ interface Fir2IrExtensions {
     fun preserveLocalScope(symbol: IrSymbol, cache: Fir2IrScopeCache) {}
 
     object Default : Fir2IrExtensions {
+        override val irNeedsDeserialization: Boolean
+            get() = false
+
         override val parametersAreAssignable: Boolean
             get() = false
 
         override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList()
+        override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean = false
         override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): Nothing? = null
         override fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression? = null
         override fun hasBackingField(property: FirProperty, session: FirSession): Boolean = property.hasBackingField

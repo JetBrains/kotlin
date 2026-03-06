@@ -25,12 +25,9 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrFail
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
@@ -178,9 +175,9 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         //       about type parameters in `visitTypeOperator`.
         val wrappedFunctionClass =
             if (superMethod.isSuspend)
-                context.irBuiltIns.suspendFunctionN(superMethod.nonDispatchParameters.size)
+                context.symbols.suspendFunctionN(superMethod.nonDispatchParameters.size).owner
             else
-                context.irBuiltIns.functionN(superMethod.nonDispatchParameters.size)
+                context.symbols.functionN(superMethod.nonDispatchParameters.size).owner
         val wrappedFunctionType = getWrappedFunctionType(wrappedFunctionClass)
 
         val subclass = context.irFactory.buildClass {

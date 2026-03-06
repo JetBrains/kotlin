@@ -43,10 +43,6 @@ internal open class SirFunctionFromKtSymbol(
     override val name: String by lazyWithSessions {
         ktSymbol.sirDeclarationName()
     }
-    private val contextParameters: Pair<SirParameter, List<SirParameter>>? by lazy {
-        translateContextParameters()
-    }
-    override val contextParameter: SirParameter? get() = contextParameters?.first
     override val extensionReceiverParameter: SirParameter? by lazy {
         translateExtensionParameter()
     }
@@ -92,7 +88,6 @@ internal open class SirFunctionFromKtSymbol(
         val suffix = ""
         val baseName = fqName.baseBridgeName + suffix
 
-        val contextParameters = contextParameters?.second ?: emptyList()
         val extensionReceiverParameter = extensionReceiverParameter?.let {
             SirParameter("", "receiver", it.type)
         }
@@ -108,7 +103,6 @@ internal open class SirFunctionFromKtSymbol(
             selfParameter = (parent !is SirModule && isInstance).ifTrue {
                 SirParameter("", "self", effectiveSelfType ?: error("Only a member can have a self parameter"))
             },
-            contextParameters = contextParameters,
             extensionReceiverParameter = extensionReceiverParameter,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "_out_error", it)
@@ -119,7 +113,7 @@ internal open class SirFunctionFromKtSymbol(
 
     override val bridges: List<SirBridge> by lazyWithSessions {
         bridgeProxy?.createSirBridges {
-            val actualArgs = argNames.drop(if (extensionReceiverParameter != null) 1 else 0).dropLast(contextParameters.size)
+            val actualArgs = if (extensionReceiverParameter != null) argNames.drop(1) else argNames
             val argumentsString = actualArgs.joinToString()
             val castSuffix = (ktSymbol.returnType is KaTypeParameterType && ktSymbol.isTopLevel)
                 .takeIf { it }

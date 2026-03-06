@@ -5,11 +5,8 @@
 
 package kotlin.enums
 
-import kotlin.internal.UsedFromCompilerGeneratedCode
-
 @SinceKotlin("1.9")
 @PublishedApi
-@UsedFromCompilerGeneratedCode
 internal actual fun <T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T> {
     throw NotImplementedError() // implemented as intrinsic
 }

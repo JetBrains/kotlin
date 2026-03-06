@@ -53,10 +53,6 @@ fun main(args: Array<String>) {
                 model("codegen/box/reflection")
             }
 
-            testClass<AbstractNewReflectionFakeOverridesImplementationTest> {
-                model("codegen/box/reflection")
-            }
-
             testClass<AbstractFirPsiBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline")
             }
@@ -98,6 +94,14 @@ fun main(args: Array<String>) {
                 model("debug/localVariables")
             }
 
+            testClass<AbstractFirPsiWithInterpreterDiagnosticsTest> {
+                model("diagnostics/irInterpreter")
+            }
+
+            testClass<AbstractFirLightTreeWithInterpreterDiagnosticsTest> {
+                model("diagnostics/irInterpreter")
+            }
+
             testClass<AbstractFirPsiDiagnosticsTestWithConverter> {
                 model(
                     "diagnostics/testsWithConverter",
@@ -112,6 +116,16 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirLightTreeDiagnosticsTestWithJvmIrBackend> {
                 model("diagnostics/testsWithJvmBackend", excludedPattern = excludedCustomTestdataPattern)
+            }
+
+            testClass<AbstractFirLightTreeSerializeCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/box")
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirPsiSerializeCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/box")
+                model("codegen/boxInline")
             }
 
             testClass<AbstractFirPsiBytecodeListingTest> {

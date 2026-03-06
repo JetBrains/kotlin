@@ -16,14 +16,14 @@ package kotlin.reflect.jvm.internal
  *
  * See KT-75463 and related issues for more information.
  */
-internal var useK1Implementation = runCatching { // 'var' because the field is mutated by test infra via reflection
+internal val useK1Implementation = runCatching {
     System.getProperty("kotlin.reflect.jvm.useK1Implementation")
 }.getOrNull()?.toBoolean() == true
 
 /**
  * Fake overrides implementation for new kotlin-reflect is in progress. This feature flag turns it on
  */
-internal var newFakeOverridesImplementation = runCatching { // 'var' because the field is mutated by test infra via reflection
+internal val newFakeOverridesImplementation = runCatching {
     System.getProperty("kotlin.reflect.jvm.newFakeOverridesImplementation")
 }.getOrNull()?.toBoolean() == true
 

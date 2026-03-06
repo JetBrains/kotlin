@@ -2,7 +2,6 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNCHECKED_CAST
 // Issue: KT-37914
-// DUMP_INFERENCE_LOGS: FIXATION
 
 interface I
 
@@ -10,8 +9,7 @@ fun <R, U : R> castToSubtype(obj: R) = obj as U
 
 fun <T> select(vararg x: T) = x[0]
 
-fun <S1> materialize1(): S1 = null as S1
-fun <S2> materialize2(): S2 = null as S2
+fun <S> materialize(): S = null as S
 
 // Case 1 (using intermediate supertype)
 
@@ -33,15 +31,15 @@ fun <S2> materialize2(): S2 = null as S2
  `U` has begun to have lower priority so it can be fixed to more specific type (to `Foo<Any>` instead of `I`).
  */
 
-interface Foo<E> : I
+interface Foo<T> : I
 
-class Bar<W>(val x: Foo<W>) : Foo<W>
+class Bar<T>(val x: Foo<T>) : Foo<T>
 
 fun main2() {
     select(
-        materialize1<Foo<Any>>(),
+        materialize<Foo<Any>>(),
         Bar(
-            castToSubtype(materialize2<I>()) // NI: "required – Foo<Any>, found – I" afther the commit, OI – OK
+            castToSubtype(materialize<I>()) // NI: "required – Foo<Any>, found – I" afther the commit, OI – OK
         )
     )
 }
@@ -49,15 +47,15 @@ fun main2() {
 // Case 2 (using deep supertype)
 
 interface Foo1<Y> : I
-interface Foo2<Z> : Foo1<Z>
+interface Foo2<Y> : Foo1<Y>
 
 class Bar1<P>(val x: Foo2<P>) : Foo2<P>
 
 fun main1() {
     select(
-        materialize1<Foo2<Any>>(),
+        materialize<Foo2<Any>>(),
         Bar1(
-            castToSubtype(materialize2<I>()) // NI: "required – Foo<Any>, found – I" afther the commit, OI – OK
+            castToSubtype(materialize<I>()) // NI: "required – Foo<Any>, found – I" afther the commit, OI – OK
         )
     )
 }

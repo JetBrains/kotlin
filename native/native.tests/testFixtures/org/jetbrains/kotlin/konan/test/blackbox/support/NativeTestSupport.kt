@@ -627,7 +627,7 @@ object NativeTestSupport {
         )
     }
 
-    fun ExtensionContext.computeBlackBoxTestInstances(): NativeTestInstances<AbstractNativeBlackBoxTest> =
+    internal fun ExtensionContext.computeBlackBoxTestInstances(): NativeTestInstances<AbstractNativeBlackBoxTest> =
         NativeTestInstances(requiredTestInstances.allInstances)
 
     /*************** Test run settings (simplified) ***************/

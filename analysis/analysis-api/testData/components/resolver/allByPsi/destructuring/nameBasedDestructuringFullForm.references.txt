@@ -23,10 +23,7 @@ KtDestructuringDeclarationEntry(132,141): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: declaration) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -34,10 +31,7 @@ KtDestructuringDeclarationEntry(143,153): 'var second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val second: kotlin.Int
-    resolveToSymbols:
       0: (in <local>: declaration) var second: kotlin.Int
       1: (in Tuple) val second: kotlin.Int
 
@@ -52,10 +46,7 @@ KtDestructuringDeclarationEntry(179,188): 'var first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: declaration) var first: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -70,10 +61,7 @@ KtDestructuringDeclarationEntry(213,230): 'val first: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: declaration) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -95,10 +83,7 @@ KtDestructuringDeclarationEntry(255,269): 'val aa = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: declaration) val aa: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -120,10 +105,7 @@ KtDestructuringDeclarationEntry(294,316): 'val aa: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: declaration) val aa: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -152,10 +134,7 @@ KtDestructuringDeclarationEntry(341,354): 'val _ = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: declaration) val `<unused var>`: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -177,10 +156,7 @@ KtDestructuringDeclarationEntry(379,400): 'val _: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: declaration) val `<unused var>`: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -223,7 +199,6 @@ KtForExpression(442,480): 'for ((val first, val second,) in x) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
       1: (in kotlin.collections.Iterator) operator fun next(): T
@@ -233,10 +208,7 @@ KtDestructuringDeclarationEntry(448,457): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: loop.<destruct>) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -244,10 +216,7 @@ KtDestructuringDeclarationEntry(459,469): 'val second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val second: kotlin.Int
-    resolveToSymbols:
       0: (in <local>: loop.<destruct>) val second: kotlin.Int
       1: (in Tuple) val second: kotlin.Int
 
@@ -262,7 +231,6 @@ KtForExpression(485,510): 'for ((val first) in x) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
       1: (in kotlin.collections.Iterator) operator fun next(): T
@@ -272,10 +240,7 @@ KtDestructuringDeclarationEntry(491,500): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: loop.<destruct>) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -290,7 +255,6 @@ KtForExpression(515,548): 'for ((val first: String) in x) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
       1: (in kotlin.collections.Iterator) operator fun next(): T
@@ -300,10 +264,7 @@ KtDestructuringDeclarationEntry(521,538): 'val first: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: loop.<destruct>) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -325,7 +286,6 @@ KtForExpression(553,583): 'for ((val aa = first) in x) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
       1: (in kotlin.collections.Iterator) operator fun next(): T
@@ -335,10 +295,7 @@ KtDestructuringDeclarationEntry(559,573): 'val aa = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: loop.<destruct>) val aa: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -360,7 +317,6 @@ KtForExpression(588,626): 'for ((val aa: String = first) in x) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
       1: (in kotlin.collections.Iterator) operator fun next(): T
@@ -370,10 +326,7 @@ KtDestructuringDeclarationEntry(594,616): 'val aa: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: loop.<destruct>) val aa: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -402,7 +355,6 @@ KtForExpression(631,660): 'for ((val _ = first) in x) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
       1: (in kotlin.collections.Iterator) operator fun next(): T
@@ -412,10 +364,7 @@ KtDestructuringDeclarationEntry(637,650): 'val _ = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: loop.<destruct>) val `<unused var>`: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -437,7 +386,6 @@ KtForExpression(665,702): 'for ((val _: String = first) in x) {}'
   KtForLoopInReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
       1: (in kotlin.collections.Iterator) operator fun next(): T
@@ -447,10 +395,7 @@ KtDestructuringDeclarationEntry(671,692): 'val _: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: loop.<destruct>) val `<unused var>`: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -493,7 +438,6 @@ KtCallExpression(761,796): 'foo { (val first, val second,) -> }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -508,10 +452,7 @@ KtDestructuringDeclarationEntry(768,777): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>.<destruct>) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -519,10 +460,7 @@ KtDestructuringDeclarationEntry(779,789): 'val second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val second: kotlin.Int
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>.<destruct>) val second: kotlin.Int
       1: (in Tuple) val second: kotlin.Int
 
@@ -530,7 +468,6 @@ KtCallExpression(801,823): 'foo { (val first) -> }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -545,10 +482,7 @@ KtDestructuringDeclarationEntry(808,817): 'val first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>.<destruct>) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -556,7 +490,6 @@ KtCallExpression(828,858): 'foo { (val first: String) -> }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -571,10 +504,7 @@ KtDestructuringDeclarationEntry(835,852): 'val first: String'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>.<destruct>) val first: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -589,7 +519,6 @@ KtCallExpression(863,890): 'foo { (val aa = first) -> }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -604,10 +533,7 @@ KtDestructuringDeclarationEntry(870,884): 'val aa = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>.<destruct>) val aa: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -622,7 +548,6 @@ KtCallExpression(895,930): 'foo { (val aa: String = first) -> }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -637,10 +562,7 @@ KtDestructuringDeclarationEntry(902,924): 'val aa: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>.<destruct>) val aa: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -662,7 +584,6 @@ KtCallExpression(935,961): 'foo { (val _ = first) -> }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -677,10 +598,7 @@ KtDestructuringDeclarationEntry(942,955): 'val _ = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>.<destruct>) val `<unused var>`: kotlin.String
       1: (in Tuple) val first: kotlin.String
 
@@ -695,7 +613,6 @@ KtCallExpression(966,1000): 'foo { (val _: String = first) -> }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -710,10 +627,7 @@ KtDestructuringDeclarationEntry(973,994): 'val _: String = first'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in Tuple) val first: kotlin.String
-    resolveToSymbols:
       0: (in <local>: lambda.<no name>.<destruct>) val `<unused var>`: kotlin.String
       1: (in Tuple) val first: kotlin.String
 

@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.getUnboxFunction
-import org.jetbrains.kotlin.backend.konan.ir.isUnbox
 import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -34,9 +34,14 @@ internal class UnboxInlineLowering(
 }
 
 private class AccessorInliner(commonBackendContext: CommonBackendContext) : IrElementTransformerVoid() {
-    private val context = commonBackendContext as Context
 
-    private fun IrFunction.isEasyInlineableUnbox(): Boolean = !returnType.isNullable() && isUnbox()
+    private val context = commonBackendContext as Context
+    private val anyType = context.irBuiltIns.anyType
+
+    private fun IrFunction.isEasyInlineableUnbox(): Boolean =
+            origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION &&
+                    name.asString().endsWith("-unbox>") &&
+                    !returnType.isNullable()
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)

@@ -51,7 +51,6 @@ KtCallExpression(433,439): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -65,7 +64,6 @@ KtNameReferenceExpression(433,437): 'TODO'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -80,7 +78,6 @@ KtCallExpression(489,505): 'InheritorClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -94,7 +91,6 @@ KtNameReferenceExpression(489,503): 'InheritorClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -115,7 +111,6 @@ KtNameReferenceExpression(557,572): 'InheritorObject'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -144,7 +139,6 @@ KtPropertyDelegate(676,688): 'by lazy {""}'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline operator fun <T> kotlin.Lazy<T>.getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
 
@@ -152,7 +146,6 @@ KtCallExpression(679,688): 'lazy {""}'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -166,7 +159,6 @@ KtNameReferenceExpression(679,683): 'lazy'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -181,7 +173,6 @@ KtCallExpression(720,726): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -195,7 +186,6 @@ KtNameReferenceExpression(720,724): 'TODO'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -209,7 +199,6 @@ KtNameReferenceExpression(754,769): 'InheritorObject'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -224,7 +213,6 @@ KtCallExpression(847,889): 'receiveLambda<MyClass> { InheritorObject }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -238,7 +226,6 @@ KtNameReferenceExpression(847,860): 'receiveLambda'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -259,7 +246,6 @@ KtNameReferenceExpression(872,887): 'InheritorObject'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -267,7 +253,6 @@ KtCallExpression(894,932): 'receiveLambda<MyClass> { propMyClass }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -281,7 +266,6 @@ KtNameReferenceExpression(894,907): 'receiveLambda'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -302,7 +286,6 @@ KtNameReferenceExpression(919,930): 'propMyClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -310,7 +293,6 @@ KtCallExpression(937,982): 'receiveLambda<MyClass> { propInheritorClass }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -324,7 +306,6 @@ KtNameReferenceExpression(937,950): 'receiveLambda'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -345,7 +326,6 @@ KtNameReferenceExpression(962,980): 'propInheritorClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -353,7 +333,6 @@ KtCallExpression(987,1033): 'receiveLambda<MyClass> { propInheritorObject }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -367,7 +346,6 @@ KtNameReferenceExpression(987,1000): 'receiveLambda'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -388,7 +366,6 @@ KtNameReferenceExpression(1012,1031): 'propInheritorObject'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -396,7 +373,6 @@ KtCallExpression(1039,1070): 'receiveLambda<MyClass> { prop }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -410,7 +386,6 @@ KtNameReferenceExpression(1039,1052): 'receiveLambda'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -431,7 +406,6 @@ KtNameReferenceExpression(1064,1068): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -439,7 +413,6 @@ KtCallExpression(1075,1111): 'receiveLambda<MyClass> { superProp }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -453,7 +426,6 @@ KtNameReferenceExpression(1075,1088): 'receiveLambda'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -474,7 +446,6 @@ KtNameReferenceExpression(1100,1109): 'superProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -482,7 +453,6 @@ KtCallExpression(1116,1152): 'receiveLambda<MyClass> { constProp }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -496,7 +466,6 @@ KtNameReferenceExpression(1116,1129): 'receiveLambda'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -517,7 +486,6 @@ KtNameReferenceExpression(1141,1150): 'constProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -525,7 +493,6 @@ KtCallExpression(1157,1194): 'receiveLambda<MyClass> { lambdaProp }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -539,7 +506,6 @@ KtNameReferenceExpression(1157,1170): 'receiveLambda'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -560,7 +526,6 @@ KtNameReferenceExpression(1182,1192): 'lambdaProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -568,7 +533,6 @@ KtCallExpression(1199,1234): 'receiveLambda<MyClass> { lazyProp }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -582,7 +546,6 @@ KtNameReferenceExpression(1199,1212): 'receiveLambda'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -603,7 +566,6 @@ KtNameReferenceExpression(1224,1232): 'lazyProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -611,7 +573,6 @@ KtCallExpression(1239,1277): 'receiveLambda<MyClass> { NestedObject}'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -625,7 +586,6 @@ KtNameReferenceExpression(1239,1252): 'receiveLambda'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -646,7 +606,6 @@ KtNameReferenceExpression(1264,1276): 'NestedObject'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -654,7 +613,6 @@ KtCallExpression(1283,1316): 'receiveLambda<MyClass> { func() }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -668,7 +626,6 @@ KtNameReferenceExpression(1283,1296): 'receiveLambda'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -683,7 +640,6 @@ KtCallExpression(1308,1314): 'func()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -697,7 +653,6 @@ KtNameReferenceExpression(1308,1312): 'func'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -705,7 +660,6 @@ KtCallExpression(1321,1364): 'receiveLambda<MyClass> { InheritorClass() }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -719,7 +673,6 @@ KtNameReferenceExpression(1321,1334): 'receiveLambda'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -734,7 +687,6 @@ KtCallExpression(1346,1362): 'InheritorClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -748,7 +700,6 @@ KtNameReferenceExpression(1346,1360): 'InheritorClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -756,7 +707,6 @@ KtCallExpression(1369,1407): 'receiveLambda<MyClass> { superFunc() }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -770,7 +720,6 @@ KtNameReferenceExpression(1369,1382): 'receiveLambda'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -785,7 +734,6 @@ KtCallExpression(1394,1405): 'superFunc()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -799,6 +747,5 @@ KtNameReferenceExpression(1394,1403): 'superFunc'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

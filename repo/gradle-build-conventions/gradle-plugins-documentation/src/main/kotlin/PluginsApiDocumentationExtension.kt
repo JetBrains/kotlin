@@ -1,7 +1,9 @@
+import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import javax.inject.Inject
 
 /*
@@ -11,6 +13,7 @@ import javax.inject.Inject
 
 abstract class PluginsApiDocumentationExtension @Inject constructor(
     objectFactory: ObjectFactory,
+    private val childProjectConfiguration: (Project, PluginsApiDocumentationExtension) -> Unit
 ) {
     abstract val documentationOutput: DirectoryProperty
     abstract val documentationOldVersions: DirectoryProperty
@@ -18,4 +21,10 @@ abstract class PluginsApiDocumentationExtension @Inject constructor(
     abstract val moduleDescription: RegularFileProperty
     val templatesArchiveSubDirectoryPattern: Property<String> = objectFactory.property(String::class.java).convention("")
     val templatesArchivePrefixToRemove: Property<String> = objectFactory.property(String::class.java).convention("")
+    internal abstract val gradlePluginsProjects: SetProperty<Project>
+
+    fun addGradlePluginProject(project: Project) {
+        gradlePluginsProjects.add(project)
+        childProjectConfiguration(project, this)
+    }
 }

@@ -18,7 +18,6 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.superclasses
-import kotlin.reflect.jvm.kotlinProperty
 
 private val CLASSES_TO_PROCESS: List<KClass<*>> = listOf(
     JpsPluginSettings::class,
@@ -169,11 +168,10 @@ private fun generateConfigureLanguageFeaturesImpl(
 
 private fun Printer.enableFeaturesFromDeclaredFieldsOf(klass: Class<*>) {
     var isFirst = true
-    val deprecatedFields = mutableSetOf<String>()
 
     for (field in klass.declaredFields) {
         if (field.getAnnotation(Argument::class.java) == null) continue
-        if (field.kotlinProperty?.hasAnnotation<Deprecated>() == true) deprecatedFields.add(field.name)
+
         val featuresByValue = buildMap<String, Pair<MutableList<LanguageFeature>, MutableList<LanguageFeature>>> {
             for (enables in field.getAnnotationsByType(Enables::class.java)) {
                 val pair = getOrPut(enables.ifValueIs) { Pair(mutableListOf(), mutableListOf()) }
@@ -195,7 +193,6 @@ private fun Printer.enableFeaturesFromDeclaredFieldsOf(klass: Class<*>) {
             val (featuresToEnable, featuresToDisable) = pair
 
             val optionalComparison = if (value.isNotBlank()) " == \"$value\"" else ""
-            if (field.name in deprecatedFields) println("@Suppress(\"DEPRECATION\")")
             println("if (arguments.${field.name}$optionalComparison) {")
             withIndent {
                 for (feature in featuresToEnable) {

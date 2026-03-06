@@ -198,19 +198,23 @@ interface WasmBinary {
 internal fun TaskProvider<BinaryenExec>.configureOptimizeTask(binary: WasmBinary) {
     configure { task ->
         val linkTask = binary.linkTask
-        val wasmFiles = linkTask.flatMap { link ->
-            link.destinationDirectory.locationOnly.map { destDir: Directory ->
-                destDir.asFileTree.matching { it.include("**/*.wasm") }
+        val compiledWasmFile = linkTask.flatMap { link ->
+            link.destinationDirectory.locationOnly.zip(link.compilerOptions.moduleName) { destDir, moduleName ->
+                destDir.file("$moduleName.wasm")
             }
         }
 
         task.dependsOn(linkTask)
-        task.inputFiles.from(wasmFiles)
+        task.inputFileProperty.set(compiledWasmFile)
 
         val outputDirectory: Provider<Directory> = binary.outputDirBase
             .map { it.dir("optimized") }
 
         task.outputDirectory.set(outputDirectory)
+
+        task.outputFileName.set(
+            compiledWasmFile.map { it.asFile.name }
+        )
     }
 
     val target = binary.compilation.target
@@ -274,7 +278,7 @@ class ExecutableWasm(
             fs.copy {
                 it.from(compileWasmDestDir)
                 it.into(outputDirectory)
-                it.exclude(inputFiles.map { it.name })
+                it.exclude(outputFileName.get())
             }
         }
     }.also { binaryenExec ->
@@ -282,7 +286,7 @@ class ExecutableWasm(
 
         if (mode == KotlinJsBinaryMode.PRODUCTION) {
             _linkSyncTask?.configure {
-                it.from.from(binaryenExec.flatMap { it.outputDirectory })
+                it.from.from(binaryenExec.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
                 it.dependsOn(binaryenExec)
             }
         }
@@ -318,7 +322,7 @@ class LibraryWasm(
 ), WasmBinary {
     override fun syncInputConfigure(syncTask: DefaultIncrementalSyncTask) {
         if (mode == KotlinJsBinaryMode.PRODUCTION) {
-            syncTask.from.from(optimizeTask.flatMap { it.outputDirectory })
+            syncTask.from.from(optimizeTask.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
             syncTask.dependsOn(optimizeTask)
         } else {
             super.syncInputConfigure(syncTask)

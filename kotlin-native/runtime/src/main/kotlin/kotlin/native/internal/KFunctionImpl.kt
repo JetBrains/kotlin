@@ -5,12 +5,10 @@
 
 package kotlin.native.internal
 
-import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.internal.throwIrLinkageError
 import kotlin.reflect.KFunction
 import kotlin.reflect.KType
 
-@UsedFromCompilerGeneratedCode
 internal sealed class KFunctionDescription {
     abstract val name: String
 
@@ -28,7 +26,6 @@ internal sealed class KFunctionDescription {
     ) : KFunctionDescription()
 }
 
-@UsedFromCompilerGeneratedCode
 internal abstract class KFunctionImpl<out R>(val description: KFunctionDescription) : KFunction<R> {
     final override val name get() = description.name
     final override val returnType get() = description.checkCorrect().returnType

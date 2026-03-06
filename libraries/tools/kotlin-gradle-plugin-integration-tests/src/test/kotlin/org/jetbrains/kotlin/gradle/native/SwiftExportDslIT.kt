@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SWIFT_EXPORT_COROUTINES_SUPPORT_TURNED_ON
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
@@ -402,7 +403,11 @@ class SwiftExportDslIT : KGPBaseTest() {
                 with(project) {
                     applyMultiplatform {
                         iosArm64()
-                        with(swiftExport) { }
+                        with(swiftExport) {
+                            configure {
+                                settings.put(SWIFT_EXPORT_COROUTINES_SUPPORT_TURNED_ON, "true")
+                            }
+                        }
 
                         sourceSets.commonMain {
                             compileSource(

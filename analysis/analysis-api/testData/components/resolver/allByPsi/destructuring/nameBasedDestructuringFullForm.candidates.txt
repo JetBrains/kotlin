@@ -80,46 +80,10 @@ KtDestructuringDeclaration(131,159): '(val first, var second,) = x'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(132,141): 'val first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(143,153): 'var second'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = var second
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = second
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val second: kotlin.Int
-        contextParameters = []
-        callableId = /Tuple.second
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(158,159): 'x'
   KaApplicableCallCandidateInfo:
@@ -158,25 +122,7 @@ KtDestructuringDeclaration(178,193): '(var first) = x'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(179,188): 'var first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = var first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(192,193): 'x'
   KaApplicableCallCandidateInfo:
@@ -215,25 +161,7 @@ KtDestructuringDeclaration(212,235): '(val first: String) = x'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(213,230): 'val first: String'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first: String
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtTypeReference(224,230): 'String'
   NO_CANDIDATES
@@ -281,25 +209,7 @@ KtDestructuringDeclaration(254,274): '(val aa = first) = x'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(255,269): 'val aa = first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val aa = first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(264,269): 'first'
   NO_CANDIDATES
@@ -341,25 +251,7 @@ KtDestructuringDeclaration(293,321): '(val aa: String = first) = x'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(294,316): 'val aa: String = first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val aa: String = first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtTypeReference(302,308): 'String'
   NO_CANDIDATES
@@ -410,25 +302,7 @@ KtDestructuringDeclaration(340,359): '(val _ = first) = x'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(341,354): 'val _ = first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val _ = first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(349,354): 'first'
   NO_CANDIDATES
@@ -470,25 +344,7 @@ KtDestructuringDeclaration(378,405): '(val _: String = first) = x'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(379,400): 'val _: String = first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val _: String = first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtTypeReference(386,392): 'String'
   NO_CANDIDATES
@@ -557,60 +413,7 @@ KtBlockExpression(436,704): '{'
   NO_CANDIDATES
 
 KtForExpression(442,480): 'for ((val first, val second,) in x) {}'
-  KaApplicableCallCandidate:
-    candidate = KaForLoopCall:
-      hasNextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.hasNext
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      iteratorCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.List<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Iterator<Tuple>
-          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/List.iterator
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      nextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Tuple
-          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.next
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtParameter(447,471): '(val first, val second,)'
   NO_CANDIDATES
@@ -619,46 +422,10 @@ KtDestructuringDeclaration(447,471): '(val first, val second,)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(448,457): 'val first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(459,469): 'val second'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val second
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = second
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val second: kotlin.Int
-        contextParameters = []
-        callableId = /Tuple.second
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtContainerNode(475,476): 'x'
   NO_CANDIDATES
@@ -688,60 +455,7 @@ KtBlockExpression(478,480): '{}'
   NO_CANDIDATES
 
 KtForExpression(485,510): 'for ((val first) in x) {}'
-  KaApplicableCallCandidate:
-    candidate = KaForLoopCall:
-      hasNextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.hasNext
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      iteratorCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.List<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Iterator<Tuple>
-          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/List.iterator
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      nextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Tuple
-          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.next
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtParameter(490,501): '(val first)'
   NO_CANDIDATES
@@ -750,25 +464,7 @@ KtDestructuringDeclaration(490,501): '(val first)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(491,500): 'val first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtContainerNode(505,506): 'x'
   NO_CANDIDATES
@@ -798,60 +494,7 @@ KtBlockExpression(508,510): '{}'
   NO_CANDIDATES
 
 KtForExpression(515,548): 'for ((val first: String) in x) {}'
-  KaApplicableCallCandidate:
-    candidate = KaForLoopCall:
-      hasNextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.hasNext
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      iteratorCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.List<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Iterator<Tuple>
-          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/List.iterator
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      nextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Tuple
-          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.next
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtParameter(520,539): '(val first: String)'
   NO_CANDIDATES
@@ -860,25 +503,7 @@ KtDestructuringDeclaration(520,539): '(val first: String)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(521,538): 'val first: String'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first: String
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtTypeReference(532,538): 'String'
   NO_CANDIDATES
@@ -917,60 +542,7 @@ KtBlockExpression(546,548): '{}'
   NO_CANDIDATES
 
 KtForExpression(553,583): 'for ((val aa = first) in x) {}'
-  KaApplicableCallCandidate:
-    candidate = KaForLoopCall:
-      hasNextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.hasNext
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      iteratorCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.List<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Iterator<Tuple>
-          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/List.iterator
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      nextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Tuple
-          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.next
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtParameter(558,574): '(val aa = first)'
   NO_CANDIDATES
@@ -979,25 +551,7 @@ KtDestructuringDeclaration(558,574): '(val aa = first)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(559,573): 'val aa = first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val aa = first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(568,573): 'first'
   NO_CANDIDATES
@@ -1030,60 +584,7 @@ KtBlockExpression(581,583): '{}'
   NO_CANDIDATES
 
 KtForExpression(588,626): 'for ((val aa: String = first) in x) {}'
-  KaApplicableCallCandidate:
-    candidate = KaForLoopCall:
-      hasNextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.hasNext
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      iteratorCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.List<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Iterator<Tuple>
-          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/List.iterator
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      nextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Tuple
-          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.next
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtParameter(593,617): '(val aa: String = first)'
   NO_CANDIDATES
@@ -1092,25 +593,7 @@ KtDestructuringDeclaration(593,617): '(val aa: String = first)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(594,616): 'val aa: String = first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val aa: String = first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtTypeReference(602,608): 'String'
   NO_CANDIDATES
@@ -1152,60 +635,7 @@ KtBlockExpression(624,626): '{}'
   NO_CANDIDATES
 
 KtForExpression(631,660): 'for ((val _ = first) in x) {}'
-  KaApplicableCallCandidate:
-    candidate = KaForLoopCall:
-      hasNextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.hasNext
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      iteratorCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.List<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Iterator<Tuple>
-          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/List.iterator
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      nextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Tuple
-          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.next
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtParameter(636,651): '(val _ = first)'
   NO_CANDIDATES
@@ -1214,25 +644,7 @@ KtDestructuringDeclaration(636,651): '(val _ = first)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(637,650): 'val _ = first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val _ = first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(645,650): 'first'
   NO_CANDIDATES
@@ -1265,60 +677,7 @@ KtBlockExpression(658,660): '{}'
   NO_CANDIDATES
 
 KtForExpression(665,702): 'for ((val _: String = first) in x) {}'
-  KaApplicableCallCandidate:
-    candidate = KaForLoopCall:
-      hasNextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.hasNext
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      iteratorCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.List<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.collections.Iterator<Tuple>
-          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/List.iterator
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-      nextCall = KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.collections.Iterator<Tuple>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Tuple
-          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/collections/Iterator.next
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtParameter(670,693): '(val _: String = first)'
   NO_CANDIDATES
@@ -1327,25 +686,7 @@ KtDestructuringDeclaration(670,693): '(val _: String = first)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(671,692): 'val _: String = first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val _: String = first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtTypeReference(678,684): 'String'
   NO_CANDIDATES
@@ -1524,46 +865,10 @@ KtDestructuringDeclaration(767,791): '(val first, val second,)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(768,777): 'val first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(779,789): 'val second'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val second
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = second
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val second: kotlin.Int
-        contextParameters = []
-        callableId = /Tuple.second
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtBlockExpression(795,795): ''
   NO_CANDIDATES
@@ -1655,25 +960,7 @@ KtDestructuringDeclaration(807,818): '(val first)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(808,817): 'val first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtBlockExpression(822,822): ''
   NO_CANDIDATES
@@ -1765,25 +1052,7 @@ KtDestructuringDeclaration(834,853): '(val first: String)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(835,852): 'val first: String'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val first: String
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtTypeReference(846,852): 'String'
   NO_CANDIDATES
@@ -1884,25 +1153,7 @@ KtDestructuringDeclaration(869,885): '(val aa = first)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(870,884): 'val aa = first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val aa = first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(879,884): 'first'
   NO_CANDIDATES
@@ -1997,25 +1248,7 @@ KtDestructuringDeclaration(901,925): '(val aa: String = first)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(902,924): 'val aa: String = first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val aa: String = first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtTypeReference(910,916): 'String'
   NO_CANDIDATES
@@ -2119,25 +1352,7 @@ KtDestructuringDeclaration(941,956): '(val _ = first)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(942,955): 'val _ = first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val _ = first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtNameReferenceExpression(950,955): 'first'
   NO_CANDIDATES
@@ -2232,25 +1447,7 @@ KtDestructuringDeclaration(972,995): '(val _: String = first)'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(973,994): 'val _: String = first'
-  KaApplicableCallCandidate:
-    candidate = KaSimpleVariableAccessCall:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = val _: String = first
-        isSafeNavigation = false
-        type = Tuple
-      extensionReceiver = null
-      isContextSensitive = false
-      kind = Read
-      signature = KaVariableSignature:
-        name = first
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val first: kotlin.String
-        contextParameters = []
-        callableId = /Tuple.first
-      typeArgumentsMapping = {}
-    isInBestCandidates = true
+  NO_CANDIDATES
 
 KtTypeReference(980,986): 'String'
   NO_CANDIDATES

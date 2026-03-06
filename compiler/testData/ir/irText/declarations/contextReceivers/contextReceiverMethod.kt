@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K2: ANY
 // FIR_IDENTICAL
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 
 class Context {
     fun foo() = 1

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CollectionLiterals
 
 class C<T> {
@@ -16,9 +16,9 @@ fun <T> expectThroughTV(a: T, b: T & Any) {
 fun test() {
     expectThroughTV(C.regular<Int>(), [])
     expectThroughTV(C.nullable<Int>(), [])
-    expectThroughTV(C.regular(), [42])
-    expectThroughTV(C.nullable(), [42])
-    expectThroughTV(C.nullable<Int>(), [42L])
+    <!CANNOT_INFER_PARAMETER_TYPE!>expectThroughTV<!>(C.<!CANNOT_INFER_PARAMETER_TYPE!>regular<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>expectThroughTV<!>(C.<!CANNOT_INFER_PARAMETER_TYPE!>nullable<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
+    expectThroughTV(C.nullable<Int>(), <!ARGUMENT_TYPE_MISMATCH!>[42L]<!>)
     expectThroughTV(C.nullable<Long>(), [42])
 }
 

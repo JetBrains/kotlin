@@ -57,12 +57,12 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         val includedLibraryDescriptors = mutableSetOf<ModuleDescriptorImpl>()
 
         // Build module descriptors.
-        resolvedLibraries.forEach { library ->
+        resolvedLibraries.forEach { library, packageAccessHandler ->
             profile("Loading ${library.location}") {
 
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
                 val moduleDescriptor = createDescriptorOptionalBuiltsIns(
-                    library, languageVersionSettings, storageManager, builtIns,
+                    library, languageVersionSettings, storageManager, builtIns, packageAccessHandler
                 )
                 builtIns = moduleDescriptor.builtIns
                 moduleDescriptors.add(moduleDescriptor)
@@ -162,10 +162,11 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
+        packageAccessHandler: PackageAccessHandler?
     ) = if (builtIns != null)
-        moduleDescriptorFactory.createDescriptor(library, languageVersionSettings, storageManager, builtIns)
+        moduleDescriptorFactory.createDescriptor(library, languageVersionSettings, storageManager, builtIns, packageAccessHandler)
     else
-        moduleDescriptorFactory.createDescriptorAndNewBuiltIns(library, languageVersionSettings, storageManager)
+        moduleDescriptorFactory.createDescriptorAndNewBuiltIns(library, languageVersionSettings, storageManager, packageAccessHandler)
 
     companion object {
         val FORWARD_DECLARATIONS_MODULE_NAME = Name.special("<forward declarations>")

@@ -19,10 +19,7 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
 
     val committedDiagnostics get() = _committedDiagnostics.ifEmpty { emptyMap() }
     override val hasErrors: Boolean
-        get() = committedDiagnostics.any { (_, diagnostics) -> diagnostics.any { it.severity.isError } }
-
-    override val hasWarningsForWError: Boolean
-        get() = committedDiagnostics.any { (_, diagnostics) -> diagnostics.any { it.severity.isErrorWhenWError } }
+        get() = committedDiagnostics.any { it.value.any { it.severity == Severity.ERROR } }
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic == null) return

@@ -51,7 +51,6 @@ KtCallExpression(473,479): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -65,7 +64,6 @@ KtNameReferenceExpression(473,477): 'TODO'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -80,7 +78,6 @@ KtCallExpression(529,545): 'InheritorClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -94,7 +91,6 @@ KtNameReferenceExpression(529,543): 'InheritorClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -115,7 +111,6 @@ KtNameReferenceExpression(597,612): 'InheritorObject'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -144,7 +139,6 @@ KtPropertyDelegate(713,725): 'by lazy {""}'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline operator fun <T> kotlin.Lazy<T>.getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
 
@@ -152,7 +146,6 @@ KtCallExpression(716,725): 'lazy {""}'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -166,7 +159,6 @@ KtNameReferenceExpression(716,720): 'lazy'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -180,7 +172,6 @@ KtNameReferenceExpression(752,767): 'InheritorObject'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -195,7 +186,6 @@ KtCallExpression(799,805): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -209,7 +199,6 @@ KtNameReferenceExpression(799,803): 'TODO'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -231,7 +220,6 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -245,7 +233,6 @@ KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -259,7 +246,6 @@ KtNameReferenceExpression(955,965): 'EnumValue1'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -267,7 +253,6 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -281,7 +266,6 @@ KtNameReferenceExpression(972,989): 'anonymousConsumer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -295,7 +279,6 @@ KtNameReferenceExpression(990,1005): 'InheritorObject'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -303,7 +286,6 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -317,7 +299,6 @@ KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -331,7 +312,6 @@ KtNameReferenceExpression(1029,1040): 'propMyClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -339,7 +319,6 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -353,7 +332,6 @@ KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -367,7 +345,6 @@ KtNameReferenceExpression(1065,1069): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -375,7 +352,6 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -389,7 +365,6 @@ KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -403,7 +378,6 @@ KtNameReferenceExpression(1093,1102): 'constProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -411,7 +385,6 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -425,7 +398,6 @@ KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -439,7 +411,6 @@ KtNameReferenceExpression(1126,1134): 'lazyProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -447,7 +418,6 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -461,7 +431,6 @@ KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -475,7 +444,6 @@ KtNameReferenceExpression(1158,1168): 'lambdaProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -483,7 +451,6 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -497,7 +464,6 @@ KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -511,7 +477,6 @@ KtNameReferenceExpression(1192,1201): 'superProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -519,7 +484,6 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -533,7 +497,6 @@ KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -541,7 +504,6 @@ KtCallExpression(1226,1232): 'func()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -555,7 +517,6 @@ KtNameReferenceExpression(1226,1230): 'func'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -563,7 +524,6 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -577,7 +537,6 @@ KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -585,7 +544,6 @@ KtCallExpression(1256,1267): 'superFunc()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -599,7 +557,6 @@ KtNameReferenceExpression(1256,1265): 'superFunc'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -607,7 +564,6 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Function1) operator fun invoke(p1: P1): R
 
@@ -621,7 +577,6 @@ KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -635,6 +590,5 @@ KtNameReferenceExpression(1291,1301): 'lambdaProp'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

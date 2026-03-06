@@ -297,7 +297,6 @@ private class SirEnumCaseFromKtSymbol(
             returnType = SirType.any,
             kotlinFqName = fqName,
             selfParameter = null,
-            contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = null,
             isAsync = false,

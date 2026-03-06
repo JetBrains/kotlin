@@ -9,6 +9,5 @@ KtNameReferenceExpression(208,213): 'sumOf'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

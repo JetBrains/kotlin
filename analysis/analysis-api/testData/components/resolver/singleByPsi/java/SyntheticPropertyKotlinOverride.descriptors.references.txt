@@ -9,10 +9,7 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
 <caret_2>:
@@ -26,10 +23,7 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
 <caret_3>:
@@ -43,19 +37,13 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
 <caret_4>:
@@ -69,19 +57,13 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
 <caret_5>:
@@ -95,19 +77,13 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
 <caret_6>:
@@ -121,19 +97,13 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
 <caret_7>:
@@ -147,10 +117,7 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
 <caret_8>:
@@ -164,10 +131,7 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
 <caret_9>:
@@ -181,19 +145,13 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
 <caret_10>:
@@ -207,19 +165,13 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
 <caret_11>:
@@ -233,17 +185,11 @@
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
-      attempt: null
       symbols:
-        Nothing (Unresolved reference)
-      resolveToSymbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)

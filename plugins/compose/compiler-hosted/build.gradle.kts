@@ -40,7 +40,6 @@ dependencies {
     compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":compiler:ir.serialization.js"))
     compileOnly(project(":compiler:backend.jvm.codegen"))
-    compileOnly(project(":compiler:fir:diagnostic-renderers"))
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":native:native.config"))
 
@@ -57,7 +56,7 @@ dependencies {
     testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testImplementation(testFixtures(project(":analysis:low-level-api-fir")))
     testImplementation(testFixtures(project(":compiler:test-infrastructure")))
-    testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testImplementation(testFixtures(project(":generators:analysis-api-generator")))
     testImplementation(project(":compiler:plugin-api"))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(testFixtures(project(":js:js.tests")))
@@ -134,7 +133,7 @@ projectTests {
         systemProperty("compose.compiler.hosted.jar.path", runtimeJar.get().outputs.files.singleFile.relativeTo(rootDir))
         systemProperty("compose.compiler.test.js.classpath", testJsRuntime.asPath)
         workingDir = rootDir
-        useJsIrBoxTests(buildDir = layout.buildDirectory)
+        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
     }
 
     testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)

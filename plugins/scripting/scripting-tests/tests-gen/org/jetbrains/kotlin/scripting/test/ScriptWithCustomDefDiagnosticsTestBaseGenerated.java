@@ -18,10 +18,6 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/scripting/scripting-tests/testData/diagnostics/testScripts")
 @TestDataPath("$PROJECT_ROOT")
 public class ScriptWithCustomDefDiagnosticsTestBaseGenerated extends AbstractScriptWithCustomDefDiagnosticsTestBase {
-  private void run(String fileName) {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/" + fileName);
-  }
-
   @Test
   public void testAllFilesPresentInTestScripts() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/diagnostics/testScripts"), Pattern.compile("^(.+)\\.kts$"), null, true);
@@ -30,42 +26,42 @@ public class ScriptWithCustomDefDiagnosticsTestBaseGenerated extends AbstractScr
   @Test
   @TestMetadata("conflictingImportsWithJava.test.kts")
   public void testConflictingImportsWithJava_test() {
-    run("conflictingImportsWithJava.test.kts");
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/conflictingImportsWithJava.test.kts");
   }
 
   @Test
   @TestMetadata("explicitApi.test.kts")
   public void testExplicitApi_test() {
-    run("explicitApi.test.kts");
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/explicitApi.test.kts");
   }
 
   @Test
   @TestMetadata("invokeResolve.test.kts")
   public void testInvokeResolve_test() {
-    run("invokeResolve.test.kts");
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/invokeResolve.test.kts");
   }
 
   @Test
   @TestMetadata("providedPropertiesShadowing.test.kts")
   public void testProvidedPropertiesShadowing_test() {
-    run("providedPropertiesShadowing.test.kts");
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/providedPropertiesShadowing.test.kts");
   }
 
   @Test
   @TestMetadata("providedProperties.test.kts")
   public void testProvidedProperties_test() {
-    run("providedProperties.test.kts");
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/providedProperties.test.kts");
   }
 
   @Test
   @TestMetadata("resultVisibilityTest.test.kts")
   public void testResultVisibilityTest_test() {
-    run("resultVisibilityTest.test.kts");
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/resultVisibilityTest.test.kts");
   }
 
   @Test
   @TestMetadata("simple.test.kts")
   public void testSimple_test() {
-    run("simple.test.kts");
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/testScripts/simple.test.kts");
   }
 }

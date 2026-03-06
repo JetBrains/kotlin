@@ -303,14 +303,14 @@ private fun buildSuffix(
                 appendDeprecationWarningSuffix(LanguageFeature.SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced)
             }
             actualType.isExplicitTypeArgumentMadeFlexibleSynthetically() || expectedType.isExplicitTypeArgumentMadeFlexibleSynthetically() -> {
-                appendDeprecationWarningSuffix(LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible)
+                appendDeprecationWarningSuffix(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)
             }
         }
     }
 }
 
 private fun ConeKotlinType.isExplicitTypeArgumentMadeFlexibleSynthetically(): Boolean =
-    attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.relevantFeature == LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible
+    attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.relevantFeature == LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible
 
 context(context: CheckerContext)
 private fun getEnhancedTypesForComparison(
@@ -338,6 +338,6 @@ context(context: CheckerContext)
 private fun enhancedForWarningSubstitutor(): EnhancedForWarningConeSubstitutor {
     return EnhancedForWarningConeSubstitutor(
         context.session.typeContext,
-        useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature = LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible
+        useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature = LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible
     )
 }

@@ -1,24 +1,9 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// FILE: test/J1.java
-package test;
 
-public class J1 {}
-
-// FILE: test/J2.java
-package test;
-
-public class J2 {
-    public J2(String s) {}
-    protected J2(int x) {}
-    private J2(double x) {}
-}
-
-// FILE: box.kt
 import kotlin.test.assertNull
 import kotlin.test.assertNotNull
 import kotlin.reflect.full.*
-import test.*
 
 class OnlyPrimary
 
@@ -67,9 +52,6 @@ fun box(): String {
     assertNull(C.Companion::class.primaryConstructor)
 
     assertNull(object {}::class.primaryConstructor)
-
-    assertNull(J1::class.primaryConstructor)
-    assertNull(J2::class.primaryConstructor)
 
     return "OK"
 }

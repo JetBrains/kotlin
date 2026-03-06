@@ -10,10 +10,12 @@ import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("unused")
 class ImportTrackerImpl: ImportTracker {
+    private val filePathToImportedFqNames = ConcurrentHashMap<String, MutableSet<String>>()
+
     val filePathToImportedFqNamesMap: Map<String, Collection<String>>
-        field = ConcurrentHashMap<String, MutableSet<String>>()
+        get() = filePathToImportedFqNames
 
     override fun report(filePath: String, importedFqName: String) {
-        filePathToImportedFqNamesMap.getOrPut(filePath) { hashSetOf() }.add(importedFqName)
+        filePathToImportedFqNames.getOrPut(filePath) { hashSetOf() }.add(importedFqName)
     }
 }

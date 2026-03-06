@@ -309,9 +309,14 @@ object KotlinToJVMBytecodeCompiler {
     fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
         val klibs: List<KotlinLibrary> = loadJvmKlibs(environment.configuration).all
 
+        val collector = environment.messageCollector
         val sourceFiles = environment.getSourceFiles()
 
-        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(environment.configuration)
+        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
+            collector,
+            environment.configuration.languageVersionSettings,
+            environment.configuration.renderDiagnosticInternalName,
+        )
         analyzerWithCompilerReport.analyzeAndReport(sourceFiles) {
             val project = environment.project
             val moduleOutputs = environment.configuration.get(JVMConfigurationKeys.MODULES)?.mapNotNullTo(hashSetOf()) { module ->

@@ -87,7 +87,7 @@ fun buildResolveAndCheckFirViaLightTree(
     session: FirSession,
     ktFiles: Collection<KtSourceFile>,
     diagnosticsReporter: BaseDiagnosticsCollector,
-    countFilesAndLines: ((Int, Int) -> Unit)?
+    countFilesAndLines: KFunction2<Int, Int, Unit>?
 ): SingleModuleFrontendOutput {
     val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countFilesAndLines)
     return resolveAndCheckFir(session, firFiles, diagnosticsReporter)

@@ -74,7 +74,7 @@ object ValueClassDeclarationChecker : DeclarationChecker {
             return
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.JvmInlineMultiFieldValueClasses)) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
             if (primaryConstructor.valueParameters.isEmpty()) {
                 (primaryConstructor.valueParameterList ?: declaration).let {
                     trace.report(Errors.VALUE_CLASS_EMPTY_CONSTRUCTOR.on(it))

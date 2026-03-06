@@ -46,12 +46,13 @@ class NativeVersionDiagnosticTest {
     @Test
     fun kotlinNativeVersionCheck() {
         val project = setUpProject(CURRENT)
-        project.assertNoDiagnostics(filterDiagnosticIds = listOf(KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning))
+        project.assertNoDiagnostics(filterDiagnosticIds = emptyList())
     }
 
     @Test
     fun checkIsSkippedInProjectWithoutNativeTargets() {
         val project = setUpProject("1.0.0", true)
+
         project.assertNoDiagnostics(filterDiagnosticIds = emptyList())
     }
 

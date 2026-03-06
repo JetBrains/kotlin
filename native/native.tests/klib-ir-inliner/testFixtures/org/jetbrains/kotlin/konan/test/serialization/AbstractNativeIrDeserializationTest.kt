@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.konan.test.serialization
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
-import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
-import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
-import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
+import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
+import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
+import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
@@ -22,30 +21,30 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_IR_DESERIALIZATION_TEST
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 
 // Base class for IR serialization/deserialization test, configured with FIR frontend, in Native-specific way.
 open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
     val targetFrontend = FrontendKinds.FIR
     val parser = FirParser.LightTree
     val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirCliNativeFacade
+        get() = ::FirFrontendFacade
     val frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrCliNativeFacade
+        get() = ::Fir2IrNativeResultsConverter
     open val irPreSerializationLoweringFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
-        get() = ::NativePreSerializationLoweringCliFacade
+        get() = ::NativePreSerializationLoweringFacade
     val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::KlibSerializerNativeCliFacade
+        get() = ::NativeKlibSerializerFacade
     val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>
         get() = ::NativeDeserializerFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        useConfigurators(::CommonEnvironmentConfigurator, ::NativeFirstStageEnvironmentConfigurator)
+        useConfigurators(::NativeEnvironmentConfigurator)
         useAfterAnalysisCheckers(::FirMetaInfoDiffSuppressor)
         commonConfigurationForNativeFirstStageUpToSerialization(
             targetFrontend,
@@ -87,6 +86,16 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
 
         configureIrHandlersStep {
             useHandlers(::IrMangledNameAndSignatureDumpHandler)
+        }
+
+        forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
+            enableMetaInfoHandler()
+            configureFirHandlersStep {
+                useHandlers(::FirInterpreterDumpHandler)
+            }
+            configureKlibArtifactsHandlersStep {
+                useHandlers(::NativeKlibInterpreterDumpHandler)
+            }
         }
     }
 }

@@ -142,16 +142,6 @@ public class KmClass : KmDeclarationContainer {
      */
     public val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
 
-    /**
-     * Compiler plugin metadata attached to this class, indexed by plugin ID.
-     *
-     * Each entry maps a plugin ID (String) to its opaque binary data (ByteArray).
-     * Plugins can store arbitrary metadata that gets preserved during serialization.
-     *
-     * If duplicate plugin IDs appear in serialized data, the last entry wins.
-     */
-    public val compilerPluginMetadata: MutableMap<String, ByteArray> = LinkedHashMap(0)
-
     internal val extensions: List<KmClassExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createClassExtension)
 }
@@ -209,16 +199,6 @@ public class KmConstructor internal constructor(internal var flags: Int) {
      * Version requirements on the constructor.
      */
     public val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
-
-    /**
-     * Compiler plugin metadata attached to this constructor, indexed by plugin ID.
-     *
-     * Each entry maps a plugin ID (String) to its opaque binary data (ByteArray).
-     * Plugins can store arbitrary metadata that gets preserved during serialization.
-     *
-     * If duplicate plugin IDs appear in serialized data, the last entry wins.
-     */
-    public val compilerPluginMetadata: MutableMap<String, ByteArray> = LinkedHashMap(0)
 
     /**
      * Annotations on the constructor.
@@ -294,16 +274,6 @@ public class KmFunction internal constructor(internal var flags: Int, public var
      * Version requirements on the function.
      */
     public val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
-
-    /**
-     * Compiler plugin metadata attached to this function, indexed by plugin ID.
-     *
-     * Each entry maps a plugin ID (String) to its opaque binary data (ByteArray).
-     * Plugins can store arbitrary metadata that gets preserved during serialization.
-     *
-     * If duplicate plugin IDs appear in serialized data, the last entry wins.
-     */
-    public val compilerPluginMetadata: MutableMap<String, ByteArray> = LinkedHashMap(0)
 
     /**
      * Contract of the function.
@@ -443,16 +413,6 @@ public class KmProperty internal constructor(
     public val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
 
     /**
-     * Compiler plugin metadata attached to this property, indexed by plugin ID.
-     *
-     * Each entry maps a plugin ID (String) to its opaque binary data (ByteArray).
-     * Plugins can store arbitrary metadata that gets preserved during serialization.
-     *
-     * If duplicate plugin IDs appear in serialized data, the last entry wins.
-     */
-    public val compilerPluginMetadata: MutableMap<String, ByteArray> = LinkedHashMap(0)
-
-    /**
      * Annotations on the property.
      */
     @ExperimentalAnnotationsInMetadata
@@ -514,16 +474,6 @@ public class KmTypeAlias internal constructor(
      * Version requirements on the type alias.
      */
     public val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
-
-    /**
-     * Compiler plugin metadata attached to this type alias, indexed by plugin ID.
-     *
-     * Each entry maps a plugin ID (String) to its opaque binary data (ByteArray).
-     * Plugins can store arbitrary metadata that gets preserved during serialization.
-     *
-     * If duplicate plugin IDs appear in serialized data, the last entry wins.
-     */
-    public val compilerPluginMetadata: MutableMap<String, ByteArray> = LinkedHashMap(0)
 
     internal val extensions: List<KmTypeAliasExtension> =
         MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createTypeAliasExtension)
@@ -614,9 +564,6 @@ public class KmEnumEntry(public var name: String) {
     internal val extensions: List<KmEnumEntryExtension> =
         MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createEnumEntryExtension)
 
-    /**
-     * Returns the name of the enum entry.
-     */
     override fun toString(): String = name
 }
 

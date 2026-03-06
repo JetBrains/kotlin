@@ -90,9 +90,9 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         val effectiveValueParametersCount = superMethod.nonDispatchParameters.size
         val invocableFunctionClass =
             if (superMethod.isSuspend)
-                jvmContext.irBuiltIns.suspendFunctionN(effectiveValueParametersCount)
+                jvmContext.symbols.suspendFunctionN(effectiveValueParametersCount).owner
             else
-                jvmContext.irBuiltIns.functionN(effectiveValueParametersCount)
+                jvmContext.symbols.functionN(effectiveValueParametersCount).owner
         val invokeFunction = invocableFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }
         val typeSubstitutor = createTypeSubstitutor(superType)
 

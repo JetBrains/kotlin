@@ -13,4 +13,4 @@ class TopLevel<T1> {
     }
 }
 
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers

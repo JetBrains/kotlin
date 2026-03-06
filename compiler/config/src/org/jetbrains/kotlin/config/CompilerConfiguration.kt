@@ -36,10 +36,6 @@ class CompilerConfiguration {
         return getValue(key) ?: defaultValue
     }
 
-    fun <T : Any> getOrDefault(key: CompilerConfigurationKey<T>, defaultValue: () -> T): T {
-        return getValue(key) ?: defaultValue()
-    }
-
     fun <T : Any> getNotNull(key: CompilerConfigurationKey<T>): T {
         return getValue(key) ?: error("No value for configuration key: $key")
     }
@@ -117,7 +113,7 @@ class CompilerConfiguration {
     override fun toString(): String {
         return buildString {
             for ((key, value) in map) {
-                append(key).append(":")
+                append(key).append("=")
                 when (value) {
                     is Collection<*> -> {
                         appendLine()
@@ -131,7 +127,7 @@ class CompilerConfiguration {
                             append("  ").append(k).append("=").appendLine(v)
                         }
                     }
-                    else -> append(" ").appendLine(value)
+                    else -> append("  ").appendLine(value)
                 }
             }
         }.trim()

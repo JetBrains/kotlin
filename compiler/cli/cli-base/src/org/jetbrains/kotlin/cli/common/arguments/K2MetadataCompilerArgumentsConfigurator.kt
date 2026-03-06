@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -13,11 +14,11 @@ import org.jetbrains.kotlin.config.LanguageVersion
 class K2MetadataCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator() {
     override fun configureAnalysisFlags(
         arguments: CommonCompilerArguments,
-        reporter: Reporter,
+        collector: MessageCollector,
         languageVersion: LanguageVersion,
     ): MutableMap<AnalysisFlag<*>, Any> = with(arguments) {
         require(this is K2MetadataCompilerArguments)
-        super.configureAnalysisFlags(arguments, reporter, languageVersion).also {
+        super.configureAnalysisFlags(arguments, collector, languageVersion).also {
             it[AnalysisFlags.metadataCompilation] = true
         }
     }
@@ -25,7 +26,7 @@ class K2MetadataCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigura
     override fun configureExtraLanguageFeatures(
         arguments: CommonCompilerArguments,
         map: HashMap<LanguageFeature, LanguageFeature.State>,
-        reporter: Reporter,
+        collector: MessageCollector,
     ) {
         map[LanguageFeature.MultiPlatformProjects] = LanguageFeature.State.ENABLED
     }

@@ -204,10 +204,9 @@ kotlin {
 
 tasks.withType<KotlinCompilationTask<*>>().configureEach {
     compilerOptions {
-        // Use this to override language and API versions for stdlib compared to the version used to build the whole Kotlin
-        // languageVersion = KotlinVersion.KOTLIN_...
-        // apiVersion = KotlinVersion.KOTLIN_...
-        freeCompilerArgs.addAll(
+        compilerOptions.languageVersion = KotlinVersion.KOTLIN_2_3
+        compilerOptions.apiVersion = KotlinVersion.KOTLIN_2_3
+        compilerOptions.freeCompilerArgs.addAll(
             listOf(
                 "-Xallow-kotlin-package",
                 "-Xexpect-actual-classes",

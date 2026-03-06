@@ -93,7 +93,7 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
 
     val noNewJavaAnnotationTargets: Boolean = configuration.getBoolean(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
 
-    val supportJvmInlineMultiFieldValueClasses: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.JvmInlineMultiFieldValueClasses)
+    val supportMultiFieldValueClasses: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)
 
     val enableDebugMode: Boolean = configuration.getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
 

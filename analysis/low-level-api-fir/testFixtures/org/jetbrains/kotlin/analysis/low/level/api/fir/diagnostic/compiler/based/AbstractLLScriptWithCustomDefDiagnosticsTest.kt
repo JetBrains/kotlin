@@ -24,7 +24,7 @@ abstract class AbstractLLScriptWithCustomDefDiagnosticsTest : AbstractLLDiagnost
     }
 }
 
-fun TestConfigurationBuilder.configureCustomScriptDefinitions() {
+internal fun TestConfigurationBuilder.configureCustomScriptDefinitions() {
     configureWithCustomScriptDef()
     useConfigurators(::CustomScriptDefinitionEnvironmentConfigurator)
 }

@@ -6,9 +6,7 @@
 package kotlin.native.internal
 
 import kotlin.Function
-import kotlin.internal.UsedFromCompilerGeneratedCode
 
-@UsedFromCompilerGeneratedCode
 internal interface FunctionAdapter {
     fun getFunctionDelegate(): Function<*>
 }

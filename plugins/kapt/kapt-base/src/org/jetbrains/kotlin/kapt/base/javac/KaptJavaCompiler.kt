@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.kapt.base.javac
 
-import com.sun.tools.javac.api.MultiTaskListener
 import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.util.Context
@@ -18,11 +17,11 @@ class KaptJavaCompiler(context: Context) : JavaCompiler(context) {
         return if (shouldStop(cs)) JavacList.nil<T>() else list
     }
 
-    fun getTaskListeners(): MultiTaskListener = this.taskListener
+    fun getTaskListeners() = this.taskListener
 
     companion object {
         internal fun preRegister(context: Context) {
-            context.put(compilerKey, Context.Factory(::KaptJavaCompiler))
+            context.put(compilerKey, Context.Factory<JavaCompiler>(::KaptJavaCompiler))
         }
     }
 }

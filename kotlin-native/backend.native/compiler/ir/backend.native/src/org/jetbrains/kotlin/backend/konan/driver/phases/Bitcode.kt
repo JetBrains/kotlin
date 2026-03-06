@@ -68,10 +68,10 @@ internal val RewriteExternalCallsCheckerGlobals = createSimpleNamedCompilerPhase
 }
 
 internal class OptimizationState(
-        config: NativeSecondStageCompilationConfig,
+        konanConfig: KonanConfig,
         val llvmConfig: LlvmPipelineConfig,
         override val performanceManager: PerformanceManager?,
-) : BasicNativeBackendPhaseContext(config)
+) : BasicNativeBackendPhaseContext(konanConfig)
 
 internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPipelineConfig, PerformanceManager?, LoggingContext) -> LlvmOptimizationPipeline) =
         createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(

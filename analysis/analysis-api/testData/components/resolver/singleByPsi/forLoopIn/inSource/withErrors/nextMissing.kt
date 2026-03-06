@@ -10,3 +10,4 @@ interface Iterator {
     operator fun hasNext(): Boolean
 }
 
+// MULTIRESOLVE

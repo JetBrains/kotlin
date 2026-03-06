@@ -18,10 +18,6 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kotlinx-serialization/testData/matrix")
 @TestDataPath("$PROJECT_ROOT")
 public class TestMatrixGenerated extends AbstractTestMatrix {
-  private void run(String fileName) {
-    runTest("plugins/kotlinx-serialization/testData/matrix/" + fileName);
-  }
-
   @Test
   public void testAllFilesPresentInMatrix() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/matrix"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -30,6 +26,6 @@ public class TestMatrixGenerated extends AbstractTestMatrix {
   @Test
   @TestMetadata("enums.kt")
   public void testEnums() {
-    run("enums.kt");
+    runTest("plugins/kotlinx-serialization/testData/matrix/enums.kt");
   }
 }

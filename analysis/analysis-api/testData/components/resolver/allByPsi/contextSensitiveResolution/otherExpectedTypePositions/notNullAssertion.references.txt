@@ -37,7 +37,6 @@ KtCallExpression(245,254): 'MyClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -87,7 +86,6 @@ KtCallExpression(456,491): 'receive<MyClass>(NestedInheritor!!)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -123,7 +121,6 @@ KtCallExpression(496,527): 'receive<MyClass>(myClassProp!!)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -159,7 +156,6 @@ KtCallExpression(532,562): 'receive<MyClass>(stringProp!!)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -195,7 +191,6 @@ KtCallExpression(567,607): 'receive<MyClass>(getNestedInheritor()!!)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -217,7 +212,6 @@ KtCallExpression(584,604): 'getNestedInheritor()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -246,7 +240,6 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -345,7 +338,6 @@ KtCallExpression(765,785): 'getNestedInheritor()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -367,7 +359,6 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections.Map) operator fun get(key: K): V?
 
@@ -389,8 +380,6 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionError
-    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in kotlin.collections.Map) operator fun get(key: K): V?
 
@@ -412,7 +401,6 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections.Map) operator fun get(key: K): V?
 
@@ -434,7 +422,6 @@ KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections.Map) operator fun get(key: K): V?
 
@@ -449,7 +436,6 @@ KtCallExpression(894,914): 'getNestedInheritor()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

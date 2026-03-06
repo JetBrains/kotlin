@@ -45,7 +45,6 @@ import java.lang.invoke.MethodType
 class JvmSymbols(
     private val context: JvmBackendContext,
 ) : BackendSymbols(context.irBuiltIns) {
-    private val irBuiltIns = context.irBuiltIns
     private val storageManager = LockBasedStorageManager(this::class.java.simpleName)
     private val irFactory = context.irFactory
 

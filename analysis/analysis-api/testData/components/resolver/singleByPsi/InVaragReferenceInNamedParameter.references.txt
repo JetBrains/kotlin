@@ -9,6 +9,5 @@ KtCallExpression(82,104): 'some(a = arrayOf(A()))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

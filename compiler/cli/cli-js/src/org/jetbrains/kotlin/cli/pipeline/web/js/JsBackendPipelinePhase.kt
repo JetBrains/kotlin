@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.cli.pipeline.web.js
 
 import org.jetbrains.kotlin.backend.common.CompilationException
-import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_EXCEPTION
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.js.Ir2JsTransformer
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.pipeline.web.JsBackendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
-import org.jetbrains.kotlin.cli.report
-import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
@@ -48,6 +48,7 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
         configuration: CompilerConfiguration,
         artifactConfiguration: WebArtifactConfiguration,
     ): CompilationOutputs {
+        val messageCollector = configuration.messageCollector
         val beforeIc2Js = System.currentTimeMillis()
 
         val jsArtifacts = icCaches.artifacts.filterIsInstance<JsModuleArtifact>()
@@ -61,13 +62,13 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
         val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(artifactConfiguration.granularity, outJsProgram = false)
         outputs.writeAll(artifactConfiguration)
 
-        configuration.reportLog("Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
+        messageCollector.report(LOGGING, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
         for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
-            configuration.reportLog("  $event: ${(duration / 1e6).toInt()}ms")
+            messageCollector.report(LOGGING, "  $event: ${(duration / 1e6).toInt()}ms")
         }
 
         for (module in rebuiltModules) {
-            configuration.reportLog("IC module builder rebuilt JS for module [${File(module).name}]")
+            messageCollector.report(LOGGING, "IC module builder rebuilt JS for module [${File(module).name}]")
         }
         return outputs
     }
@@ -77,9 +78,10 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
         module: ModulesStructure,
         mainCallArguments: List<String>?,
     ): JsBackendPipelineArtifact? {
-        val ir2JsTransformer = Ir2JsTransformer(configuration, module, configuration.messageCollector, mainCallArguments)
+        val messageCollector = configuration.messageCollector
+        val ir2JsTransformer = Ir2JsTransformer(configuration, module, messageCollector, mainCallArguments)
         val outputs = compileNonIncrementally(
-            configuration,
+            messageCollector,
             ir2JsTransformer,
             configuration.artifactConfiguration!!,
         ) ?: return null
@@ -92,19 +94,19 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
     ): JsBackendPipelineArtifact = intermediateResult
 
     private fun compileNonIncrementally(
-        configuration: CompilerConfiguration,
+        messageCollector: MessageCollector,
         ir2JsTransformer: Ir2JsTransformer,
         artifactConfiguration: WebArtifactConfiguration,
     ): CompilationOutputs? {
         val start = System.currentTimeMillis()
         try {
             val outputs = ir2JsTransformer.compileAndTransformIrNew()
-            configuration.reportLog("Executable production duration: ${System.currentTimeMillis() - start}ms")
+            messageCollector.report(LOGGING, "Executable production duration: ${System.currentTimeMillis() - start}ms")
             outputs.writeAll(artifactConfiguration)
             return outputs
         } catch (e: CompilationException) {
-            configuration.report(
-                COMPILER_EXCEPTION,
+            messageCollector.report(
+                ERROR,
                 e.stackTraceToString(),
                 CompilerMessageLocation.create(
                     path = e.path,

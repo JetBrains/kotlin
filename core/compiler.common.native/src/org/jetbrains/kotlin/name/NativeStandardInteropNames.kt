@@ -41,10 +41,4 @@ object NativeStandardInteropNames {
     }
 
     const val cTypeDefinitionsFileName = "CTypeDefinitions"
-
-    const val nativePointed = "NativePointed"
-    const val cPointer = "CPointer"
-    const val cValue = "CValue"
-    const val cValuesRef = "CValuesRef"
-    const val cEnumVar = "CEnumVar"
 }

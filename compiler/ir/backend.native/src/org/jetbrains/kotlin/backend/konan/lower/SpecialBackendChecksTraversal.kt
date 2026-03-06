@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.Closure
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
@@ -48,7 +47,7 @@ import java.io.File
  */
 class SpecialBackendChecksTraversal(
     private val context: NativePhaseContext,
-    private val symbols: PreSerializationNativeSymbols,
+    private val symbols: BackendNativeSymbols,
     private val irBuiltIns: IrBuiltIns,
 ) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -60,7 +59,7 @@ class SpecialBackendChecksTraversal(
 
 private class BackendChecker(
     private val context: NativePhaseContext,
-    val symbols: PreSerializationNativeSymbols,
+    val symbols: BackendNativeSymbols,
     val irBuiltIns: IrBuiltIns,
     private val irFile: IrFile,
 ) : IrVisitorVoid() {

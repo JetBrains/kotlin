@@ -132,9 +132,6 @@ Run across all modules with the test-data-manager plugin:
 
 # Run only golden tests (skip all variant-specific tests)
 ./gradlew manageTestDataGlobally --mode=update --golden-only
-
-# Incremental update — skip variant tests for unchanged golden paths
-./gradlew manageTestDataGlobally --mode=update --incremental
 ```
 
 ### Per-Module Execution

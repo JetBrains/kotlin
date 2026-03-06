@@ -8,6 +8,5 @@ KtNameReferenceExpression(46,56): 'emptyArray'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)

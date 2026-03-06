@@ -69,11 +69,6 @@ public class KDocTagContentTestGenerated extends AbstractKDocTagContentTest {
     runTest("compiler/testData/psi/kdoc/EndRightAfterText.kt");
   }
 
-  @TestMetadata("Escapes.kt")
-  public void testEscapes() {
-    runTest("compiler/testData/psi/kdoc/Escapes.kt");
-  }
-
   @TestMetadata("HttpLink.kt")
   public void testHttpLink() {
     runTest("compiler/testData/psi/kdoc/HttpLink.kt");
@@ -112,11 +107,6 @@ public class KDocTagContentTestGenerated extends AbstractKDocTagContentTest {
   @TestMetadata("Markdown.kt")
   public void testMarkdown() {
     runTest("compiler/testData/psi/kdoc/Markdown.kt");
-  }
-
-  @TestMetadata("MarkdownCodeBlocks.kt")
-  public void testMarkdownCodeBlocks() {
-    runTest("compiler/testData/psi/kdoc/MarkdownCodeBlocks.kt");
   }
 
   @TestMetadata("MarkdownLinkWithError.kt")

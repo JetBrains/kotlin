@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces
+// LANGUAGE: +ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces +DontMakeExplicitJavaTypeArgumentsFlexible
 // ISSUE: KT-57014, KT-66730
 // FULL_JDK
 // JVM_TARGET: 1.8
@@ -33,15 +33,15 @@ typealias StringAlias = String
 
 fun main() {
     Supplier<String> {
-        returnNullableString()
+        <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
     }
 
     Supplier<StringAlias> {
-        returnNullableString()
+        <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
     }
 
     Supplier<String> {
-        TestValueProvider.getNullableString()
+        <!ARGUMENT_TYPE_MISMATCH!>TestValueProvider.getNullableString()<!>
     }
 
     val sam: Supplier<String> = Supplier{
@@ -50,17 +50,17 @@ fun main() {
 
     Supplier<String> {
         val x = 1
-        when(x) {
+        <!ARGUMENT_TYPE_MISMATCH!>when(x) {
             1 -> returnNullableString()
             else -> ""
-        }
+        }<!>
     }
 
     Supplier<String> {
-        if (true) return@Supplier returnNullableString()
-        run { return@Supplier returnNullableString() }
+        if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
+        run { return@Supplier <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!> }
         try {
-            if (true) return@Supplier returnNullableString()
+            if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
             2
         } finally {
             Unit
@@ -104,7 +104,7 @@ fun main() {
 
     Supplier<String>(
         fun(): String? {
-            if (true) return returnNullableString()
+            if (true) return <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
             return ""
         }
     )
@@ -117,7 +117,7 @@ fun main() {
     }
 
     Supplier<String> {
-        if (true) return@Supplier returnNullableString()
+        if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
         ""
     }
 
@@ -191,13 +191,13 @@ fun scopes () {
 
 fun <T: Number> test1(x: T) {
     Supplier<T> {
-        x.foo()
+        <!ARGUMENT_TYPE_MISMATCH!>x.foo()<!>
     }
 }
 
 fun <T> test2(x: T) where T: Any?, T: Comparable<T> {
     Supplier<T> {
-        x.foo()
+        <!ARGUMENT_TYPE_MISMATCH!>x.foo()<!>
     }
 }
 
@@ -207,7 +207,7 @@ fun <T> T.foo2(): T? = null!!
 
 fun test()  {
     Supplier<String> {
-        returnNullableString().foo2()
+        <!ARGUMENT_TYPE_MISMATCH!>returnNullableString().foo2()<!>
     }
 }
 

@@ -23,7 +23,6 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) constructor(i: T)
 
@@ -37,7 +36,6 @@ KtNameReferenceExpression(69,70): 'i'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -59,7 +57,6 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) constructor(i: T)
 
@@ -73,7 +70,6 @@ KtNameReferenceExpression(116,117): 'i'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -87,7 +83,6 @@ KtNameReferenceExpression(123,124): 'i'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -109,7 +104,6 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) constructor(i: T)
 
@@ -124,7 +118,6 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) constructor(i: T)
 
@@ -138,7 +131,6 @@ KtNameReferenceExpression(227,228): 'i'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -152,7 +144,6 @@ KtNameReferenceExpression(233,238): 'value'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -167,7 +158,6 @@ KtConstructorDelegationReferenceExpression(276,281): 'super'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) constructor(i: T)
 
@@ -181,7 +171,6 @@ KtNameReferenceExpression(282,283): 'i'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

@@ -3,7 +3,7 @@ FILE: simpleTypeAlias.kt
     }
     public final typealias C = B
     public final? class D : C {
-        public? [ContainingClassKey=D] constructor(): R|D| {
+        public? constructor(): R|D| {
             LAZY_super<<implicit>>
         }
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
@@ -19,19 +20,24 @@ import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiUpdateTask
  * Configures the extension for Kotlin/JVM or Kotlin Android Gradle plugins.
  */
 @ExperimentalAbiValidation
-internal fun AbiValidationExtensionImpl.configure(project: Project) {
+internal fun AbiValidationExtension.configure(project: Project) {
+    this as AbiValidationExtensionImpl
+
     referenceDumpDir.convention(project.layout.projectDirectory.dir(AbiValidationPaths.LEGACY_DEFAULT_REFERENCE_DUMP_DIR))
     keepLocallyUnsupportedTargets.convention(true)
+
+    configureTasks(project.name, project.tasks, project.layout, enabled)
 }
 
 /**
- * Registers and preconfigures ABI validation's tasks.
+ * Creates and preconfigures legacy tasks for [this] report variant.
  */
 @ExperimentalAbiValidation
-internal fun AbiValidationExtension.registerTasks(
+private fun AbiValidationExtension.configureTasks(
     projectName: String,
     tasks: TaskContainer,
-    layout: ProjectLayout
+    layout: ProjectLayout,
+    isEnabled: Property<Boolean>,
 ) {
     val klibFileName = "$projectName${AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION}"
 
@@ -57,6 +63,8 @@ internal fun AbiValidationExtension.registerTasks(
             it.description = "Dumps the public Application Binary Interface (ABI) into files in the build directory."
             // task should be hidden from the task list
             it.group = null
+
+            it.onlyIf { isEnabled.get() }
         }
 
     val checkTaskProvider = tasks.register(KotlinAbiCheckTaskImpl.NAME, KotlinAbiCheckTaskImpl::class.java) {
@@ -66,6 +74,8 @@ internal fun AbiValidationExtension.registerTasks(
         it.description = "Checks that the public Application Binary Interface (ABI) of the current project code matches" +
                 "the reference dump file"
         it.group = LifecycleBasePlugin.VERIFICATION_GROUP
+
+        it.onlyIf { isEnabled.get() }
     }
 
     val updateTaskProvider = tasks.register(KotlinAbiUpdateTask.NAME, KotlinAbiUpdateTask::class.java) {
@@ -74,6 +84,8 @@ internal fun AbiValidationExtension.registerTasks(
 
         it.description = "Writes the public Application Binary Interface (ABI) of the current code to the reference dump file."
         it.group = LifecycleBasePlugin.VERIFICATION_GROUP
+
+        it.onlyIf { isEnabled.get() }
     }
 
     /**

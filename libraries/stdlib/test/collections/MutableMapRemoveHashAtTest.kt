@@ -15,7 +15,7 @@ class MutableMapRemoveHashAtTest {
 
     // Reproducer from KT-82783
     @Test
-    fun buildMapDuplicatesReproducer() = testOnMaps {
+    fun buildMapDuplicatesReproducer() = performOnMaps {
         put(148961824, 1)
         put(148962400, 1)
         put(148963552, 1)
@@ -34,10 +34,13 @@ class MutableMapRemoveHashAtTest {
         put(148978528, 1)
         remove(148961824)
         put(148978528, 1)
+
+        val duplicates = keys.groupingBy { it }.eachCount().filterValues { it > 1 }
+        assertTrue(duplicates.isEmpty(), "Found duplicates: $duplicates")
     }
 
     @Test
-    fun buildMapDuplicatesReproducerReduced() = testOnMaps {
+    fun buildMapDuplicatesReproducerReduced() = performOnMaps {
         put(59, 1)
         put(38, 1)
         put(67, 1)
@@ -47,6 +50,9 @@ class MutableMapRemoveHashAtTest {
         put(65, 1)
         remove(59)
         put(65, 1) // it will be duplicated
+
+        val duplicates = keys.groupingBy { it }.eachCount().filterValues { it > 1 }
+        assertTrue(duplicates.isEmpty(), "Found duplicates: $duplicates")
     }
 
     /**
@@ -70,7 +76,7 @@ class MutableMapRemoveHashAtTest {
      * |   15 | 8, 21     |
      */
     @Test
-    fun buildMapDuplicatesMinimalProbeDistance() = testOnMaps {
+    fun buildMapDuplicatesMinimalProbeDistance() = performOnMaps {
         put(4, 1)   // hash == 7
         put(25, 1)  // hash == 7
         put(12, 1)  // hash == 6
@@ -80,10 +86,13 @@ class MutableMapRemoveHashAtTest {
         put(2, 1)   // hash == 3
         remove(4)
         put(2, 1)
+
+        val duplicates = keys.groupingBy { it }.eachCount().filterValues { it > 1 }
+        assertTrue(duplicates.isEmpty(), "Found duplicates: $duplicates")
     }
 
     @Test
-    fun removeHashAtReturnByProbeDistance() = testOnMaps {
+    fun removeHashAtReturnByProbeDistance() = performOnMaps {
         put(7, 1)   // hash == 5
         put(15, 1)  // hash == 4
         put(2, 1)   // hash == 3
@@ -100,8 +109,8 @@ class MutableMapRemoveHashAtTest {
     @Test
     fun removeHashAtStressTest() {
         val random = Random(0xcafebabe)
-        repeat(50_000) {
-            testOnMaps {
+        repeat(100_000) {
+            performOnMaps {
                 val inserted = mutableSetOf<Int>()
 
                 repeat(8) {
@@ -125,22 +134,17 @@ class MutableMapRemoveHashAtTest {
                     val key = random.nextInt(50)
                     put(key, key)
                 }
+
+                val duplicates = keys.groupingBy { it }.eachCount().filterValues { it > 1 }
+                assertTrue(duplicates.isEmpty(), "Found duplicates: $duplicates")
             }
         }
     }
 
-    private inline fun testOnMaps(performOperations: MutableMap<Int, Int>.() -> Unit) {
+    private fun performOnMaps(performOperations: MutableMap<Int, Int>.() -> Unit) {
         val capacity = 8
-        buildMap(capacity) { performOperations() }.assertNoDuplicateKeys()
-        HashMap<Int, Int>(capacity).apply { performOperations() }.assertNoDuplicateKeys()
-        LinkedHashMap<Int, Int>(capacity).apply { performOperations() }.assertNoDuplicateKeys()
-    }
-
-    private fun Map<Int, Int>.assertNoDuplicateKeys() {
-        val uniqueKeys = HashSet(keys)
-        if (uniqueKeys.size != keys.size) {
-            val duplicates = keys.groupingBy { it }.eachCount().filterValues { it > 1 }
-            assertTrue(duplicates.isEmpty(), "Found duplicates: $duplicates")
-        }
+        buildMap(capacity) { performOperations() }
+        HashMap<Int, Int>(capacity).performOperations()
+        LinkedHashMap<Int, Int>(capacity).performOperations()
     }
 }

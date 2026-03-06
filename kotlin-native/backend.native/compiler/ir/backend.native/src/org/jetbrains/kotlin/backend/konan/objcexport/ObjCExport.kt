@@ -62,7 +62,7 @@ internal fun produceObjCExportInterface(
     val reportNameCollisions = config.configuration.getBoolean(BinaryOptions.objcExportReportNameCollisions)
     val errorOnNameCollisions = config.configuration.getBoolean(BinaryOptions.objcExportErrorOnNameCollisions)
     val explicitMethodFamily = config.configuration.getBoolean(BinaryOptions.objcExportExplicitMethodFamily)
-    val objcExportBlockExplicitParameterNames = config.configuration.get(BinaryOptions.objcExportBlockExplicitParameterNames, false)
+    val objcExportBlockExplicitParameterNames = config.configuration.get(BinaryOptions.objcExportBlockExplicitParameterNames, true)
 
     val problemCollector = ObjCExportCompilerProblemCollector(context)
 
@@ -129,10 +129,10 @@ private class ObjCExportCompilerProblemCollector(val context: NativeBackendPhase
  * Populate framework directory with headers, module and info.plist.
  */
 internal fun createObjCFramework(
-        config: NativeSecondStageCompilationConfig,
-        moduleDescriptor: ModuleDescriptor,
-        exportedInterface: ObjCExportedInterface,
-        frameworkDirectory: File
+    config: KonanConfig,
+    moduleDescriptor: ModuleDescriptor,
+    exportedInterface: ObjCExportedInterface,
+    frameworkDirectory: File
 ) {
     val frameworkName = frameworkDirectory.name.removeSuffix(CompilerOutputKind.FRAMEWORK.suffix())
     val frameworkBuilder = FrameworkBuilder(
@@ -152,7 +152,7 @@ internal fun createObjCFramework(
 }
 
 internal fun createTestBundle(
-        config: NativeSecondStageCompilationConfig,
+        config: KonanConfig,
         moduleDescriptor: ModuleDescriptor,
         bundleDirectory: File
 ) {

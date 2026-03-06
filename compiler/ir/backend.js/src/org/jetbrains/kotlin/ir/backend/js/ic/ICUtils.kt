@@ -81,13 +81,15 @@ internal class StopwatchIC {
     private var lapStart: Long = 0
     private var lapDescription: String? = null
 
+    private val lapsImpl = mutableListOf<Pair<String, Long>>()
+
     val laps: List<Pair<String, Long>>
-        field = mutableListOf<Pair<String, Long>>()
+        get() = lapsImpl
 
     fun clear() {
         lapStart = 0
         lapDescription = null
-        laps.clear()
+        lapsImpl.clear()
     }
 
     fun startNext(description: String) {
@@ -99,7 +101,7 @@ internal class StopwatchIC {
 
     fun stop(stopTime: Long? = null) {
         lapDescription?.let { description ->
-            laps += description to ((stopTime ?: System.nanoTime()) - lapStart)
+            lapsImpl += description to ((stopTime ?: System.nanoTime()) - lapStart)
         }
         lapDescription = null
     }

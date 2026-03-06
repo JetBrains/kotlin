@@ -4,7 +4,6 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
 }
 
 dependencies {
@@ -22,7 +21,9 @@ dependencies {
     testRuntimeOnly(libs.junit.vintage.engine)
 
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(libs.junit4)
 
     testRuntimeOnly(toolsJar())
 
@@ -33,6 +34,7 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
+    "test" { generatedTestDir() }
     "testFixtures" { projectDefault() }
 }
 
@@ -44,15 +46,12 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
+    }
 
-    testGenerator("org.jetbrains.kotlin.samWithReceiver.TestGeneratorKt", generateTestsInBuildDirectory = true)
+    testGenerator("org.jetbrains.kotlin.samWithReceiver.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
-    withTestJar()
-    withScriptRuntime()
-    withMockJdkRuntime()
-    withMockJdkAnnotationsJar()
-
-    testData(project(":kotlin-sam-with-receiver-compiler-plugin").isolated, "testData")
 }

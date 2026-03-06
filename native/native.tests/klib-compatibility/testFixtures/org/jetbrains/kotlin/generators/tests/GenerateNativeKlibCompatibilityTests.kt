@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseDummyTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.klib.AbstractCustomNativeCompilerFirstStageTest
 import org.jetbrains.kotlin.konan.test.klib.AbstractCustomNativeCompilerSecondStageTest
 import org.jetbrains.kotlin.test.HeavyTest
@@ -26,20 +25,13 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest") {
             testClass<AbstractCustomNativeCompilerFirstStageTest>(
-                annotations = listOf(
-                    provider<UseDummyTestCaseGroupProvider>(),
-                    annotation(HeavyTest::class.java),
-                )
+                annotations = listOf(annotation(HeavyTest::class.java))
             ) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, excludedPattern = CUSTOM_FIRST_STAGE_EXCLUSION_PATTERN)
                 model("boxInline")
             }
             testClass<AbstractCustomNativeCompilerSecondStageTest>(
-                annotations = listOf(
-                    provider<UseDummyTestCaseGroupProvider>(),
-                    annotation(HeavyTest::class.java),
-                    annotation(org.junit.jupiter.api.Disabled::class.java),
-                )
+                annotations = listOf(annotation(HeavyTest::class.java))
             ) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
                 model("boxInline")
@@ -50,7 +42,6 @@ fun main(args: Array<String>) {
                 annotations = listOf(
                     annotation(HeavyTest::class.java),
                     aggregate(),
-                    provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
                 model("boxInline")
@@ -59,9 +50,7 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "CustomNativeAggregateSecondStageTestGenerated",
                 annotations = listOf(
                     annotation(HeavyTest::class.java),
-                    annotation(org.junit.jupiter.api.Disabled::class.java),
                     aggregate(),
-                    provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
                 model("boxInline")

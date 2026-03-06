@@ -92,29 +92,18 @@ context(level: KotlinCompilerArgumentsLevel)
 private fun KotlinCompilerArgument.transform(): ArgumentTransform =
     levelsToArgumentTransforms[level.name]?.get(name) ?: ArgumentTransform.NoOp
 
+private fun KotlinCompilerArgumentsLevel.filterOutDroppedArguments(): List<KotlinCompilerArgument> =
+    arguments.filter { it.transform() != ArgumentTransform.Drop }
+
 private fun KotlinCompilerArgumentsLevel.generateCustomArguments(): List<BtaCompilerArgument<*>> {
     val levelTransforms = levelsToArgumentTransforms[name] ?: error("Level $this is not found in levelsToArgumentTransforms")
     return levelTransforms.values.filterIsInstance<ArgumentTransform.CustomArgument>().map { it.argument }
 }
 
 internal fun KotlinCompilerArgumentsLevel.transformApiArguments(): List<BtaCompilerArgument<*>> {
-    val transformedArguments = arguments.mapNotNull { argument ->
-        when (argument.transform()) {
-            is ArgumentTransform.NoOp -> BtaCompilerArgument.SSoTCompilerArgument(argument)
-            is ArgumentTransform.Drop, is ArgumentTransform.CustomArgument -> null
-        }
-    }
-
-    return transformedArguments + generateCustomArguments()
+    return filterOutDroppedArguments().map { BtaCompilerArgument.SSoTCompilerArgument(it) } + generateCustomArguments()
 }
 
 internal fun KotlinCompilerArgumentsLevel.transformImplArguments(): List<BtaCompilerArgument<*>> {
-    val transformedArguments = arguments.mapNotNull { argument ->
-        when (argument.transform()) {
-            is ArgumentTransform.NoOp, is ArgumentTransform.Drop -> BtaCompilerArgument.SSoTCompilerArgument(argument)
-            is ArgumentTransform.CustomArgument -> null
-        }
-    }
-
-    return transformedArguments + generateCustomArguments()
+    return arguments.map { BtaCompilerArgument.SSoTCompilerArgument(it) } + generateCustomArguments()
 }

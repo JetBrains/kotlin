@@ -91,10 +91,8 @@ kotlin {
                 compileTaskProvider.configure {
                     compilerOptions {
                         moduleName = "kotlin-stdlib"
-                        // Use this to override language and API versions for stdlib compared to the version used to build the whole Kotlin
-                        // languageVersion = KotlinVersion.KOTLIN_...
-                        // apiVersion = KotlinVersion.KOTLIN_...
-
+                        languageVersion = KotlinVersion.KOTLIN_2_3
+                        apiVersion = KotlinVersion.KOTLIN_2_3
                         // providing exhaustive list of args here
                         freeCompilerArgs.set(
                             listOfNotNull(
@@ -108,13 +106,7 @@ kotlin {
                                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                                 "-opt-in=kotlin.ExperimentalMultiplatform",
                                 "-Xcontext-parameters",
-                                "-Xreturn-value-checker=full",
-                                // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
-                                // But this produces a warning
-                                // "The argument ... is redundant for the current language version ..."
-                                // in the bootstrap test and fails because of -Werror.
-                                // To work around it, we suppress the warning.
-                                "-Xwarning-level=REDUNDANT_CLI_ARG:disabled",
+                                "-Xreturn-value-checker=full"
                             )
                         )
                     }

@@ -10,8 +10,7 @@ import java.nio.file.Paths
 
 object KotlinNativePaths {
     private val validPropertiesNames = listOf(
-        "kotlin.native.home", "org.jetbrains.kotlin.native.home", "konan.home",
-        "kotlin.internal.native.test.nativeHome" // TODO(KT-84552): this property should be removed
+        "kotlin.native.home", "org.jetbrains.kotlin.native.home", "konan.home"
     )
     private val kotlinNativeHome
         get() = validPropertiesNames.firstNotNullOfOrNull(System::getProperty)

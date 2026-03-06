@@ -31,13 +31,16 @@ class IrSymbolDeserializer(
 ) {
     /** The deserialized symbols of declarations belonging only to the current file, [libraryFile]. */
     val deserializedSymbolsWithOwnersInCurrentFile: Map<IdSignature, IrSymbol>
-        field = hashMapOf()
+        get() = _deserializedSymbolsWithOwnersInCurrentFile
+
+    /** The deserialized symbols of declarations belonging only to the current file, [libraryFile]. */
+    private val _deserializedSymbolsWithOwnersInCurrentFile: MutableMap<IdSignature, IrSymbol> = hashMapOf()
 
     private val symbolCache = HashMap<Long, IrSymbol>()
 
     /** Deserializes a symbol known to belong to the current file, [libraryFile]. */
     fun deserializeSymbolWithOwnerInCurrentFile(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        return deserializedSymbolsWithOwnersInCurrentFile.getOrPut(signature) {
+        return _deserializedSymbolsWithOwnersInCurrentFile.getOrPut(signature) {
             referenceDeserializedSymbol(symbolKind, signature)
         }
     }
@@ -70,7 +73,7 @@ class IrSymbolDeserializer(
 
     private fun deserializeSymbolWithOwnerMaybeInOtherFile(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         if (!signature.isPubliclyVisible) {
-            return deserializedSymbolsWithOwnersInCurrentFile.getOrPut(signature) {
+            return _deserializedSymbolsWithOwnersInCurrentFile.getOrPut(signature) {
                 if (signature.hasTopLevel) {
                     enqueueLocalTopLevelDeclaration(signature.topLevelSignature())
                 }
@@ -89,7 +92,7 @@ class IrSymbolDeserializer(
 
     /** Notify [IrSymbolDeserializer] about a known symbol that belongs to the current file, [libraryFile]. */
     fun referenceLocalIrSymbol(symbol: IrSymbol, signature: IdSignature) {
-        deserializedSymbolsWithOwnersInCurrentFile.put(signature, symbol)
+        _deserializedSymbolsWithOwnersInCurrentFile.put(signature, symbol)
     }
 
     fun referenceSimpleFunctionByLocalSignature(signature: IdSignature): IrSimpleFunctionSymbol =

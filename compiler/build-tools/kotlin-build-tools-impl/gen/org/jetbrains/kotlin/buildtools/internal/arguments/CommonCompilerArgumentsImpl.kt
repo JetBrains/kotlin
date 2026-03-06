@@ -62,7 +62,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_EXPECT_ACTUAL_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_EXPLICIT_API
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_EXPLICIT_BACKING_FIELDS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_EXPLICIT_CONTEXT_ARGUMENTS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENTS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_DEPENDENCY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_FRIEND_DEPENDENCY
@@ -131,12 +130,8 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments as Comm
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal abstract class CommonCompilerArgumentsImpl(
-  private val adapter:
-      CompilerArgumentValueAdapter<ArgumentsCommonCompilerArguments.CommonCompilerArgument<*>>? = null,
-) : CommonToolArgumentsImpl(),
-    ArgumentsCommonCompilerArguments,
-    ArgumentsCommonCompilerArguments.Builder {
+internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
+    ArgumentsCommonCompilerArguments, ArgumentsCommonCompilerArguments.Builder {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   init {
@@ -147,7 +142,7 @@ internal abstract class CommonCompilerArgumentsImpl(
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+    return optionsMap[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -155,7 +150,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+    optionsMap[key.id] = `value`
   }
 
   override operator fun contains(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<*>): Boolean = key.id in optionsMap
@@ -212,7 +207,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_EXPECT_ACTUAL_CLASSES in this) { arguments.expectActualClasses = get(X_EXPECT_ACTUAL_CLASSES)}
     if (X_EXPLICIT_API in this) { arguments.explicitApi = get(X_EXPLICIT_API).stringValue}
     if (X_EXPLICIT_BACKING_FIELDS in this) { arguments.explicitBackingFields = get(X_EXPLICIT_BACKING_FIELDS)}
-    if (X_EXPLICIT_CONTEXT_ARGUMENTS in this) { arguments.explicitContextArguments = get(X_EXPLICIT_CONTEXT_ARGUMENTS)}
     if (X_FRAGMENT_DEPENDENCY in this) { arguments.fragmentDependencies = get(X_FRAGMENT_DEPENDENCY)}
     if (X_FRAGMENT_FRIEND_DEPENDENCY in this) { arguments.fragmentFriendDependencies = get(X_FRAGMENT_FRIEND_DEPENDENCY)}
     if (X_FRAGMENT_REFINES in this) { arguments.fragmentRefines = get(X_FRAGMENT_REFINES)}
@@ -317,7 +311,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_EXPECT_ACTUAL_CLASSES] = arguments.expectActualClasses } catch (_: NoSuchMethodError) {  }
     try { this[X_EXPLICIT_API] = arguments.explicitApi.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xexplicit-api value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_EXPLICIT_BACKING_FIELDS] = arguments.explicitBackingFields } catch (_: NoSuchMethodError) {  }
-    try { this[X_EXPLICIT_CONTEXT_ARGUMENTS] = arguments.explicitContextArguments } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_DEPENDENCY] = arguments.fragmentDependencies } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_FRIEND_DEPENDENCY] = arguments.fragmentFriendDependencies } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_REFINES] = arguments.fragmentRefines } catch (_: NoSuchMethodError) {  }
@@ -498,9 +491,6 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_EXPLICIT_BACKING_FIELDS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_EXPLICIT_BACKING_FIELDS")
-
-    public val X_EXPLICIT_CONTEXT_ARGUMENTS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_EXPLICIT_CONTEXT_ARGUMENTS")
 
     public val X_FRAGMENT_DEPENDENCY: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("X_FRAGMENT_DEPENDENCY")

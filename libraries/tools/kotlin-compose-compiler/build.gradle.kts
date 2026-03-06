@@ -33,16 +33,18 @@ gradlePlugin {
 
 pluginApiReference {
     enableForAllGradlePluginVariants()
+    enableKotlinlangDocumentation()
+
     failOnWarning = true
 
+    moduleName("The Compose compiler Gradle plugin")
+
     additionalDokkaConfiguration {
-        dokkaSourceSets.configureEach {
-            includes.from("api-reference-description.md")
-            reportUndocumented.set(true)
-            perPackageOption {
-                matchingRegex.set("org\\.jetbrains\\.kotlin\\.compose\\.compiler\\.gradle\\.model(\$|\\.).*")
-                suppress.set(true)
-            }
+        includes.from("api-reference-description.md")
+        reportUndocumented.set(true)
+        perPackageOption {
+            matchingRegex.set("org\\.jetbrains\\.kotlin\\.compose\\.compiler\\.gradle\\.model(\$|\\.).*")
+            suppress.set(true)
         }
     }
 }

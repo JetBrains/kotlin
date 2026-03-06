@@ -425,6 +425,11 @@ object FirOptInUsageBaseChecker {
         }
     }
 
+    fun FirAnnotationCall.getSourceForIsMarkerDiagnostic(argumentIndex: Int): KtSourceElement? {
+        val markerArgumentsSources = this.getMarkerArgumentsSources()
+        return markerArgumentsSources[argumentIndex]
+    }
+
     context(context: CheckerContext)
     private fun isExperimentalityAcceptableInContext(
         annotationClassId: ClassId,

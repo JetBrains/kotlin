@@ -18,10 +18,6 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kotlinx-serialization/testData/jdk11BoxIr")
 @TestDataPath("$PROJECT_ROOT")
 public class SerializationJdk11IrBoxTestGenerated extends AbstractSerializationJdk11IrBoxTest {
-  private void run(String fileName) {
-    runTest("plugins/kotlinx-serialization/testData/jdk11BoxIr/" + fileName);
-  }
-
   @Test
   public void testAllFilesPresentInJdk11BoxIr() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/jdk11BoxIr"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -30,18 +26,18 @@ public class SerializationJdk11IrBoxTestGenerated extends AbstractSerializationJ
   @Test
   @TestMetadata("flexibleType.kt")
   public void testFlexibleType() {
-    run("flexibleType.kt");
+    runTest("plugins/kotlinx-serialization/testData/jdk11BoxIr/flexibleType.kt");
   }
 
   @Test
   @TestMetadata("kt57647.kt")
   public void testKt57647() {
-    run("kt57647.kt");
+    runTest("plugins/kotlinx-serialization/testData/jdk11BoxIr/kt57647.kt");
   }
 
   @Test
   @TestMetadata("serializableOnJavaClass.kt")
   public void testSerializableOnJavaClass() {
-    run("serializableOnJavaClass.kt");
+    runTest("plugins/kotlinx-serialization/testData/jdk11BoxIr/serializableOnJavaClass.kt");
   }
 }

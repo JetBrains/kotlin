@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
 // FULL_JDK
-// LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible
 
 import java.util.Comparator;
 

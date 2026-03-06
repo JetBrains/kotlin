@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K2: ANY
 // FIR_IDENTICAL
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 
 class C {
     val c = 42

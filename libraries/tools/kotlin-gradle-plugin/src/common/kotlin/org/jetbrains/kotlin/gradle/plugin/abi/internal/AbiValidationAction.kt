@@ -16,34 +16,38 @@ import org.jetbrains.kotlin.gradle.plugin.await
 internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
     val abiClasspath = prepareAbiClasspath()
 
-    val kotlin = kotlinExtensionOrNull ?: return@KotlinProjectSetupCoroutine
-    val abiValidation = kotlin.abiValidationInternal
-    abiValidation.configure(project)
+    kotlinExtensionOrNull?.abiValidation?.configure(project)
 
     // wait until all compilations are configured
     KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
-
-    if (!abiValidation.isActivated) return@KotlinProjectSetupCoroutine
-
-    tasks.named("check") { checkTask -> checkTask.dependsOn(abiValidation.checkTaskProvider) }
 
     when {
         kotlinJvmExtensionOrNull != null -> {
             val extension = kotlinJvmExtension
             val target = extension.target
             finalizeJvmVariant(this, abiClasspath, target)
+
+            val abiValidation = extension.abiValidation
+            addDependencyWithCheckTask(abiValidation)
         }
 
         kotlinAndroidExtensionOrNull != null -> {
             val extension = kotlinAndroidExtension
             val target = extension.target
             finalizeAndroidVariant(this, abiClasspath, target)
+
+            val abiValidation = extension.abiValidation
+            addDependencyWithCheckTask(abiValidation)
         }
 
         multiplatformExtensionOrNull != null -> {
             val extension = multiplatformExtension
+            val abiValidation = extension.abiValidation
+
             val targets = extension.awaitTargets()
-            finalizeMultiplatformVariant(this, abiClasspath, targets, abiValidation.keepLocallyUnsupportedTargets)
+            abiValidation.finalizeMultiplatformVariant(this, abiClasspath, targets)
+
+            addDependencyWithCheckTask(abiValidation)
         }
     }
 }

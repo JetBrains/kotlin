@@ -10,10 +10,12 @@ import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("unused")
 class EnumWhenTrackerImpl: EnumWhenTracker {
+    private val whenExpressionFilePathToEnumClass = ConcurrentHashMap<String, MutableSet<String>>()
+
     val whenExpressionFilePathToEnumClassMap: Map<String, Collection<String>>
-        field = ConcurrentHashMap<String, MutableSet<String>>()
+        get() = whenExpressionFilePathToEnumClass
 
     override fun report(whenExpressionFilePath: String, enumClassFqName: String) {
-        whenExpressionFilePathToEnumClassMap.getOrPut(whenExpressionFilePath) { hashSetOf() }.add(enumClassFqName)
+        whenExpressionFilePathToEnumClass.getOrPut(whenExpressionFilePath) { hashSetOf() }.add(enumClassFqName)
     }
 }

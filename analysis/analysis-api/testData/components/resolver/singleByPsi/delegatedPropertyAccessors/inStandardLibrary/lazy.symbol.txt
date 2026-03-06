@@ -1,5 +1,2 @@
-KtPropertyDelegate(26,37): 'by lazy {1}'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      kotlin/getValue(<extension receiver>: kotlin.Lazy<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
-    ]
+KtProperty(0,37): '// WITH_STDLIB'
+  null

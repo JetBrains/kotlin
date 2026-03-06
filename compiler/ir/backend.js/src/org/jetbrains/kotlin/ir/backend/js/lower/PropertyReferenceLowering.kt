@@ -63,7 +63,7 @@ class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyR
     }
 
     override fun functionReferenceClass(arity: Int): IrClassSymbol {
-        return context.irBuiltIns.functionN(arity).symbol
+        return context.symbols.functionN(arity)
     }
 
     private fun IrExpression.getJsTypeConstructor(): IrExpression {

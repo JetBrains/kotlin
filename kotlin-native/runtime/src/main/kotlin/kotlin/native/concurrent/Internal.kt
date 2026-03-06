@@ -10,7 +10,6 @@ import kotlin.native.identityHashCode
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.*
 import kotlin.native.internal.ref.*
 import kotlin.native.NoInline
@@ -47,7 +46,6 @@ external internal fun versionToken(): Int
 @ExportForCompiler
 @ObsoleteWorkersApi
 @NoInline
-@UsedFromCompilerGeneratedCode
 internal fun executeImpl(worker: Worker, mode: TransferMode, producer: () -> Any?,
                          job: CPointer<CFunction<*>>): Future<Any?> {
     val jobArgument = createRetainedExternalRCRef(producer())

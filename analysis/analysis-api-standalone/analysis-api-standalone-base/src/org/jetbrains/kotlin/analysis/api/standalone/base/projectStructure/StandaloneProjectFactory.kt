@@ -64,11 +64,11 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.utils.topologicalSort
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.picocontainer.PicoContainer
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -208,7 +208,7 @@ object StandaloneProjectFactory {
     ) {
         val project = environment.project
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
-        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, project, null)
+        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), null, javaFileManager, project, null)
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val allSourceFileRoots = sourceFiles.map { JavaRoot(it.virtualFile, JavaRoot.RootType.SOURCE) }
@@ -298,7 +298,7 @@ object StandaloneProjectFactory {
         jdkHome: Path?,
     ): List<Path> {
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
-        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, project, null)
+        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), null, javaFileManager, project, null)
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val javaRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
@@ -498,10 +498,30 @@ object StandaloneProjectFactory {
     }
 
     private fun withAllTransitiveDependencies(ktModules: List<KaModule>): List<KaModule> {
-        // here, the lists are reversed to ensure that in the result, the earlier module from `ktModules`
-        // will also appear earlier (ceteris paribus)
-        return topologicalSort(ktModules.reversed()) {
-            allDirectDependencies().asIterable().reversed()
+        val visited = hashSetOf<KaModule>()
+        val stack = ktModules.toMutableList()
+        while (stack.isNotEmpty()) {
+            val module = stack.popLast()
+            if (module in visited) continue
+            visited += module
+            for (dependency in module.allDependencies()) {
+                if (dependency !in visited) {
+                    stack += dependency
+                }
+            }
+        }
+        return visited.toList()
+    }
+
+    private fun KaModule.allDependencies(): List<KaModule> = buildList {
+        addAll(allDirectDependencies())
+        when (this) {
+            is KaLibrarySourceModule -> {
+                add(binaryLibrary)
+            }
+            is KaLibraryModule -> {
+                addIfNotNull(librarySources)
+            }
         }
     }
 
@@ -557,14 +577,10 @@ object StandaloneProjectFactory {
         languageVersionSettings: LanguageVersionSettings = latestLanguageVersionSettings,
     ): (GlobalSearchScope) -> JvmPackagePartProvider = { scope ->
         JvmPackagePartProvider(languageVersionSettings, scope).apply {
-            addRoots(libraryRoots, createStubConfigurationForReporting())
+            addRoots(libraryRoots, MessageCollector.NONE)
         }
     }
 
     private val latestLanguageVersionSettings: LanguageVersionSettings =
         LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST)
-
-    private fun createStubConfigurationForReporting(): CompilerConfiguration {
-        return CompilerConfiguration.create(BaseDiagnosticsCollector.DoNothing, MessageCollector.NONE)
-    }
 }

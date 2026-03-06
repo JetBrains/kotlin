@@ -6,9 +6,7 @@
 package kotlin.wasm.internal
 
 import kotlin.internal.throwIrLinkageError
-import kotlin.internal.UsedFromCompilerGeneratedCode
 
-@UsedFromCompilerGeneratedCode
 internal abstract class KFunctionImpl(val flags: Int, val arity: Int, val id: String) {
     protected open fun computeReceiver(): Any? = null
 
@@ -30,7 +28,6 @@ internal abstract class KFunctionImpl(val flags: Int, val arity: Int, val id: St
     }
 }
 
-@UsedFromCompilerGeneratedCode
 internal abstract class KFunctionErrorImpl(val message: String) {
     override fun equals(other: Any?): Boolean = throwIrLinkageError(message)
 

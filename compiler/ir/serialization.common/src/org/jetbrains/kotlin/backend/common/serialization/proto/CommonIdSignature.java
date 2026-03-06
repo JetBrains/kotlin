@@ -97,22 +97,17 @@ public final class CommonIdSignature extends
           }
           case 24: {
             bitField0_ |= 0x00000001;
-            memberUniqIdPre240_ = input.readInt64();
+            memberUniqId_ = input.readInt64();
             break;
           }
           case 32: {
-            bitField0_ |= 0x00000004;
+            bitField0_ |= 0x00000002;
             flags_ = input.readInt64();
             break;
           }
           case 40: {
-            bitField0_ |= 0x00000008;
+            bitField0_ |= 0x00000004;
             debugInfo_ = input.readInt32();
-            break;
-          }
-          case 49: {
-            bitField0_ |= 0x00000002;
-            memberUniqId_ = input.readFixed64();
             break;
           }
         }
@@ -201,31 +196,16 @@ public final class CommonIdSignature extends
   }
   private int declarationFqNameMemoizedSerializedSize = -1;
 
-  public static final int MEMBER_UNIQ_ID_PRE_2_4_0_FIELD_NUMBER = 3;
-  private long memberUniqIdPre240_;
+  public static final int MEMBER_UNIQ_ID_FIELD_NUMBER = 3;
+  private long memberUniqId_;
   /**
-   * <code>optional int64 member_uniq_id_pre_2_4_0 = 3;</code>
+   * <code>optional int64 member_uniq_id = 3;</code>
    */
-  public boolean hasMemberUniqIdPre240() {
+  public boolean hasMemberUniqId() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>optional int64 member_uniq_id_pre_2_4_0 = 3;</code>
-   */
-  public long getMemberUniqIdPre240() {
-    return memberUniqIdPre240_;
-  }
-
-  public static final int MEMBER_UNIQ_ID_FIELD_NUMBER = 6;
-  private long memberUniqId_;
-  /**
-   * <code>optional fixed64 member_uniq_id = 6;</code>
-   */
-  public boolean hasMemberUniqId() {
-    return ((bitField0_ & 0x00000002) == 0x00000002);
-  }
-  /**
-   * <code>optional fixed64 member_uniq_id = 6;</code>
+   * <code>optional int64 member_uniq_id = 3;</code>
    */
   public long getMemberUniqId() {
     return memberUniqId_;
@@ -237,7 +217,7 @@ public final class CommonIdSignature extends
    * <code>optional int64 flags = 4 [default = 0];</code>
    */
   public boolean hasFlags() {
-    return ((bitField0_ & 0x00000004) == 0x00000004);
+    return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
    * <code>optional int64 flags = 4 [default = 0];</code>
@@ -252,7 +232,7 @@ public final class CommonIdSignature extends
    * <code>optional int32 debug_info = 5;</code>
    */
   public boolean hasDebugInfo() {
-    return ((bitField0_ & 0x00000008) == 0x00000008);
+    return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
    * <code>optional int32 debug_info = 5;</code>
@@ -264,7 +244,6 @@ public final class CommonIdSignature extends
   private void initFields() {
     packageFqName_ = java.util.Collections.emptyList();
     declarationFqName_ = java.util.Collections.emptyList();
-    memberUniqIdPre240_ = 0L;
     memberUniqId_ = 0L;
     flags_ = 0L;
     debugInfo_ = 0;
@@ -297,16 +276,13 @@ public final class CommonIdSignature extends
       output.writeInt32NoTag(declarationFqName_.get(i));
     }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeInt64(3, memberUniqIdPre240_);
-    }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeInt64(4, flags_);
-    }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeInt32(5, debugInfo_);
+      output.writeInt64(3, memberUniqId_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeFixed64(6, memberUniqId_);
+      output.writeInt64(4, flags_);
+    }
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      output.writeInt32(5, debugInfo_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -347,19 +323,15 @@ public final class CommonIdSignature extends
     }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(3, memberUniqIdPre240_);
-    }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(4, flags_);
-    }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(5, debugInfo_);
+        .computeInt64Size(3, memberUniqId_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeFixed64Size(6, memberUniqId_);
+        .computeInt64Size(4, flags_);
+    }
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(5, debugInfo_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -459,14 +431,12 @@ public final class CommonIdSignature extends
       bitField0_ = (bitField0_ & ~0x00000001);
       declarationFqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000002);
-      memberUniqIdPre240_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000004);
       memberUniqId_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000004);
       flags_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000010);
+      bitField0_ = (bitField0_ & ~0x00000008);
       debugInfo_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -503,17 +473,13 @@ public final class CommonIdSignature extends
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000001;
       }
-      result.memberUniqIdPre240_ = memberUniqIdPre240_;
+      result.memberUniqId_ = memberUniqId_;
       if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.memberUniqId_ = memberUniqId_;
+      result.flags_ = flags_;
       if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
         to_bitField0_ |= 0x00000004;
-      }
-      result.flags_ = flags_;
-      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-        to_bitField0_ |= 0x00000008;
       }
       result.debugInfo_ = debugInfo_;
       result.bitField0_ = to_bitField0_;
@@ -541,9 +507,6 @@ public final class CommonIdSignature extends
           declarationFqName_.addAll(other.declarationFqName_);
         }
         
-      }
-      if (other.hasMemberUniqIdPre240()) {
-        setMemberUniqIdPre240(other.getMemberUniqIdPre240());
       }
       if (other.hasMemberUniqId()) {
         setMemberUniqId(other.getMemberUniqId());
@@ -714,65 +677,33 @@ public final class CommonIdSignature extends
       return this;
     }
 
-    private long memberUniqIdPre240_ ;
+    private long memberUniqId_ ;
     /**
-     * <code>optional int64 member_uniq_id_pre_2_4_0 = 3;</code>
+     * <code>optional int64 member_uniq_id = 3;</code>
      */
-    public boolean hasMemberUniqIdPre240() {
+    public boolean hasMemberUniqId() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional int64 member_uniq_id_pre_2_4_0 = 3;</code>
-     */
-    public long getMemberUniqIdPre240() {
-      return memberUniqIdPre240_;
-    }
-    /**
-     * <code>optional int64 member_uniq_id_pre_2_4_0 = 3;</code>
-     */
-    public Builder setMemberUniqIdPre240(long value) {
-      bitField0_ |= 0x00000004;
-      memberUniqIdPre240_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>optional int64 member_uniq_id_pre_2_4_0 = 3;</code>
-     */
-    public Builder clearMemberUniqIdPre240() {
-      bitField0_ = (bitField0_ & ~0x00000004);
-      memberUniqIdPre240_ = 0L;
-      
-      return this;
-    }
-
-    private long memberUniqId_ ;
-    /**
-     * <code>optional fixed64 member_uniq_id = 6;</code>
-     */
-    public boolean hasMemberUniqId() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>optional fixed64 member_uniq_id = 6;</code>
+     * <code>optional int64 member_uniq_id = 3;</code>
      */
     public long getMemberUniqId() {
       return memberUniqId_;
     }
     /**
-     * <code>optional fixed64 member_uniq_id = 6;</code>
+     * <code>optional int64 member_uniq_id = 3;</code>
      */
     public Builder setMemberUniqId(long value) {
-      bitField0_ |= 0x00000008;
+      bitField0_ |= 0x00000004;
       memberUniqId_ = value;
       
       return this;
     }
     /**
-     * <code>optional fixed64 member_uniq_id = 6;</code>
+     * <code>optional int64 member_uniq_id = 3;</code>
      */
     public Builder clearMemberUniqId() {
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000004);
       memberUniqId_ = 0L;
       
       return this;
@@ -783,7 +714,7 @@ public final class CommonIdSignature extends
      * <code>optional int64 flags = 4 [default = 0];</code>
      */
     public boolean hasFlags() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
+      return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
      * <code>optional int64 flags = 4 [default = 0];</code>
@@ -795,7 +726,7 @@ public final class CommonIdSignature extends
      * <code>optional int64 flags = 4 [default = 0];</code>
      */
     public Builder setFlags(long value) {
-      bitField0_ |= 0x00000010;
+      bitField0_ |= 0x00000008;
       flags_ = value;
       
       return this;
@@ -804,7 +735,7 @@ public final class CommonIdSignature extends
      * <code>optional int64 flags = 4 [default = 0];</code>
      */
     public Builder clearFlags() {
-      bitField0_ = (bitField0_ & ~0x00000010);
+      bitField0_ = (bitField0_ & ~0x00000008);
       flags_ = 0L;
       
       return this;
@@ -815,7 +746,7 @@ public final class CommonIdSignature extends
      * <code>optional int32 debug_info = 5;</code>
      */
     public boolean hasDebugInfo() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
+      return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
      * <code>optional int32 debug_info = 5;</code>
@@ -827,7 +758,7 @@ public final class CommonIdSignature extends
      * <code>optional int32 debug_info = 5;</code>
      */
     public Builder setDebugInfo(int value) {
-      bitField0_ |= 0x00000020;
+      bitField0_ |= 0x00000010;
       debugInfo_ = value;
       
       return this;
@@ -836,7 +767,7 @@ public final class CommonIdSignature extends
      * <code>optional int32 debug_info = 5;</code>
      */
     public Builder clearDebugInfo() {
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00000010);
       debugInfo_ = 0;
       
       return this;

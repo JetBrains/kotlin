@@ -12,6 +12,6 @@ external class ExternalClass: Dummy.ExternalInterface
 
 // MODULE: main-js()()(common)
 
-actual external interface <!JS_ACTUAL_EXTERNAL_INTERFACE_WHILE_EXPECT_WITHOUT_JS_NO_RUNTIME!>Dummy<!> {
+actual external interface Dummy {
     actual interface ExternalInterface
 }

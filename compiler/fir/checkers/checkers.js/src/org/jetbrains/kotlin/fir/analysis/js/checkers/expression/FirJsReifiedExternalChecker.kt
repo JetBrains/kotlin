@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.js.checkers.expression
 
-import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsWebCheckerUtils
-import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirAbstractReifiedOnDeclarationWithoutRuntimeChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirAbstractReifiedExternalChecker
 
-object FirJsReifiedExternalChecker : FirAbstractReifiedOnDeclarationWithoutRuntimeChecker(
-    webCheckerUtils = FirJsWebCheckerUtils,
-    diagnostic = FirWebCommonErrors.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT
-)
+object FirJsReifiedExternalChecker : FirAbstractReifiedExternalChecker(FirJsWebCheckerUtils)

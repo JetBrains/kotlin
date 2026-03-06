@@ -41,7 +41,7 @@ dependencies {
     testFixturesApi(project(":kotlin-annotation-processing-runtime"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    testFixturesCompileOnly(toolsJarApi())
+    testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
 
     embedded(project(":kotlin-annotation-processing-runtime")) { isTransitive = false }

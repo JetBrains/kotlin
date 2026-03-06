@@ -14,3 +14,4 @@ fun test(c: C) {
     c.<caret>foo()
 }
 
+// MULTIRESOLVE

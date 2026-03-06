@@ -1,6 +1,6 @@
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// LANGUAGE: +ContextReceivers, -ContextParameters
+// LANGUAGE: +ContextReceivers
 // JSR305_GLOBAL_REPORT: warn
 
 // FILE: J.java

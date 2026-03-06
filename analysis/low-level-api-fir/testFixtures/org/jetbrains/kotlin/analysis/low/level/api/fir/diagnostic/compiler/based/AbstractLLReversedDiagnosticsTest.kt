@@ -48,7 +48,7 @@ abstract class AbstractLLReversedDiagnosticsTest : AbstractLLCompilerBasedTest()
     }
 }
 
-fun reversedDiagnosticsConfigurator(testServices: TestServices): MetaTestConfigurator {
+internal fun reversedDiagnosticsConfigurator(testServices: TestServices): MetaTestConfigurator {
     return CustomOutputDiagnosticsConfigurator(".reversed.", testServices)
 }
 

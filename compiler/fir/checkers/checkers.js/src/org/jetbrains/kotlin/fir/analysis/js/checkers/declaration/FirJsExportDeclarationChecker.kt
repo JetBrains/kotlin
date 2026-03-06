@@ -167,26 +167,16 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                 val wrongDeclaration: String? = when (declaration.classKind) {
                     ClassKind.ANNOTATION_CLASS -> "annotation class"
                     ClassKind.CLASS -> when {
-                        !context.languageVersionSettings.supportsFeature(LanguageFeature.AllowInterfaceNestedClassesInJsExport) && context.isInsideInterface -> "nested class inside exported interface"
+                        context.isInsideInterface -> "nested class inside exported interface"
                         declaration.isInlineOrValue -> "value class"
                         else -> null
                     }
-
-                    else if context.isInsideInterface -> when {
-                        !declaration.status.isCompanion -> "nested/inner declaration inside exported interface"
-                        declaration.symbol.isEffectivelyExternal(context.session) -> "external companion object"
-                        else -> null
-                    }
-
-                    else -> null
+                    else -> if (context.isInsideInterface && !declaration.status.isCompanion) {
+                        "nested/inner declaration inside exported interface"
+                    } else null
                 }
 
-                if (
-                    !context.languageVersionSettings.supportsFeature(LanguageFeature.AllowNamedCompanionForJsExport) &&
-                    context.isInsideInterface &&
-                    declaration.status.isCompanion &&
-                    declaration.nameOrSpecialName != DEFAULT_NAME_FOR_COMPANION_OBJECT
-                ) {
+                if (context.isInsideInterface && declaration.status.isCompanion && declaration.nameOrSpecialName != DEFAULT_NAME_FOR_COMPANION_OBJECT) {
                     reporter.reportOn(declaration.source, FirJsErrors.NAMED_COMPANION_IN_EXPORTED_INTERFACE)
                 }
 

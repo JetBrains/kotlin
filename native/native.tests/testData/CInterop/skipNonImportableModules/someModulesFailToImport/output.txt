@@ -1,0 +1,20 @@
+library {
+  // module name: <skip_non_importable_modules.def>
+
+  library fragment {
+    // package name: skip_non_importable_modules
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall.Direct(name = "_one")
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_skip_non_importable_modules0_one")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun one(): kotlin/Unit
+
+      @kotlinx/cinterop/internal/CCall.Direct(name = "_two")
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_skip_non_importable_modules1_two")
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final external fun two(): kotlin/Unit
+    }
+  }
+}

@@ -4,5 +4,3 @@ public enum kotlinx {
         }
     }
 }
-public enum namespace {
-}

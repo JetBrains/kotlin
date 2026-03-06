@@ -36,7 +36,7 @@ internal interface FrontendContext : NativeBackendPhaseContext {
 }
 
 internal class FrontendContextImpl(
-        config: NativeSecondStageCompilationConfig
+        config: KonanConfig
 ) : BasicNativeBackendPhaseContext(config), FrontendContext {
     override lateinit var frontendServices: FrontendServices
 }
@@ -48,7 +48,11 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
     lateinit var analysisResult: AnalysisResult
 
     do {
-        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(input.configuration)
+        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
+                context.messageCollector,
+                input.configuration.languageVersionSettings,
+                input.configuration.renderDiagnosticInternalName,
+        )
 
         val sourceFiles = input.getSourceFiles()
 

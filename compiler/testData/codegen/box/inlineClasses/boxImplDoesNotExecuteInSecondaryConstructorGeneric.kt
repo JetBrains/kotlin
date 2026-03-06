@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter, +ValueClassesSecondaryConstructorWithBody
+// LANGUAGE: +ValueClasses, +GenericInlineClassParameter, +ValueClassesSecondaryConstructorWithBody
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC<T: Int> private constructor(val i: T) {

@@ -1,6 +1,6 @@
 // SKIP_WHEN_OUT_OF_CONTENT_ROOT
 // ISSUE: KT-77082
-// LANGUAGE:-DontMakeExplicitNullableJavaTypeArgumentsFlexible
+// LANGUAGE:-DontMakeExplicitJavaTypeArgumentsFlexible
 
 // MODULE: lib
 // MODULE_KIND: LibraryBinary

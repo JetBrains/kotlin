@@ -39,5 +39,7 @@ dependencies {
 
 kotlin {
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
-    abiValidation()
+    abiValidation {
+        enabled = true
+    }
 }

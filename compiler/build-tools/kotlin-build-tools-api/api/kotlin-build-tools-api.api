@@ -57,40 +57,6 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerExec
 	public abstract fun useInProcessStrategy ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer {
-	public abstract fun render (Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;)Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity : java/lang/Enum {
-	public static final field DEBUG Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
-	public static final field ERROR Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
-	public static final field INFO Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
-	public static final field WARNING Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
-	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation {
-	public fun <init> (Ljava/lang/String;IIIILjava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()I
-	public final fun component3 ()I
-	public final fun component4 ()I
-	public final fun component5 ()I
-	public final fun component6 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;IIIILjava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;Ljava/lang/String;IIIILjava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getColumn ()I
-	public final fun getColumnEnd ()I
-	public final fun getLine ()I
-	public final fun getLineContent ()Ljava/lang/String;
-	public final fun getLineEnd ()I
-	public final fun getPath ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/DelicateBuildToolsApi : java/lang/annotation/Annotation {
 }
 
@@ -265,7 +231,6 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field X_EXPECT_ACTUAL_CLASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_EXPLICIT_API Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_EXPLICIT_BACKING_FIELDS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
-	public static final field X_EXPLICIT_CONTEXT_ARGUMENTS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_HEADER_MODE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_HEADER_MODE_TYPE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_IGNORE_CONST_OPTIMIZATION_ERRORS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
@@ -556,13 +521,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnVal
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
 }
 
-public final class org/jetbrains/kotlin/buildtools/api/arguments/types/ProfileCompilerCommand {
-	public fun <init> (Ljava/nio/file/Path;Ljava/lang/String;Ljava/nio/file/Path;)V
-	public final fun getCommand ()Ljava/lang/String;
-	public final fun getOutputDir ()Ljava/nio/file/Path;
-	public final fun getProfilerPath ()Ljava/nio/file/Path;
-}
-
 public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CriFileIdToPathDataDeserializationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
 }
 
@@ -777,8 +735,6 @@ public class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncremental
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
-	public static final field COMPILER_MESSAGE_RENDERER Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option;
-	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Companion;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option;)Ljava/lang/Object;
 	public abstract fun getClasspath ()Ljava/util/List;
 	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Builder;
@@ -789,9 +745,6 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operatio
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option;)Ljava/lang/Object;
 	public abstract fun getClasspath ()Ljava/util/List;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option;Ljava/lang/Object;)V
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Companion {
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
@@ -822,7 +775,6 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspa
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation : org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation {
 	public static final field COMPILER_ARGUMENTS_LOG_LEVEL Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
-	public static final field COMPILER_MESSAGE_RENDERER Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Companion;
 	public static final field GENERATE_COMPILER_REF_INDEX Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
 	public static final field INCREMENTAL_COMPILATION Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;

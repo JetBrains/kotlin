@@ -73,10 +73,6 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.ExplicitBackingFields, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.explicitContextArguments) {
-        put(LanguageFeature.ExplicitContextArguments, LanguageFeature.State.ENABLED)
-    }
-
     if (arguments.inlineClasses) {
         put(LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED)
     }

@@ -623,16 +623,10 @@ class Fir2IrVisitor(
                 varargArgumentsExpression.resolvedType.toIrType(),
                 varargArgumentsExpression.coneElementTypeOrNull?.toIrType()
                     ?: error("Vararg expression has incorrect type: ${varargArgumentsExpression.render()}"),
-                varargArgumentsExpression.arguments
-                    .filter { !isGetClassOfUnresolvedTypeInAnnotation(it) }
-                    .flatMap {
-                        val varargElement = it.convertToIrVarargElement()
-                        if (!annotationMode) return@flatMap listOf(varargElement)
-                        when (val unwrapped = (varargElement as? IrSpreadElement)?.expression ?: varargElement) {
-                            is IrVararg -> unwrapped.elements
-                            else -> listOf(unwrapped)
-                        }
-                    }
+                varargArgumentsExpression.arguments.mapNotNull {
+                    if (isGetClassOfUnresolvedTypeInAnnotation(it)) null
+                    else it.convertToIrVarargElement()
+                }
             )
         }
     }
@@ -1005,17 +999,9 @@ class Fir2IrVisitor(
                 }
                 expression.convertToIrExpressionOrBlock(
                     origin,
-                    // We only pass the expected type in 2 cases:
-                    // 1. If it's Unit to trigger coercion to Unit.
-                    // 2. If it's Nothing to propagate Nothing type from outer expression and avoid putting non-conforming Unit type to subblocks.
-                    //
+                    // We only pass the expected type if it's Unit to trigger coercion to Unit.
                     // In all other cases, the block should have the type of the last statement, not the expected type.
-                    expectedType =
-                        if (origin == IrStatementOrigin.FOR_LOOP || expectedType?.isUnit == true)
-                            unitType
-                        else if (expectedType?.isNothing == true)
-                            expectedType
-                        else null
+                    expectedType = if (origin == IrStatementOrigin.FOR_LOOP || expectedType?.isUnit == true) unitType else null
                 )
             }
             is FirUnitExpression -> expression.convertWithOffsets { _, endOffset ->

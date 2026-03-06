@@ -85,10 +85,6 @@ open annotation class kotlin.js/ExperimentalJsFileName : kotlin/Annotation { // 
     constructor <init>() // kotlin.js/ExperimentalJsFileName.<init>|<init>(){}[0]
 }
 
-open annotation class kotlin.js/ExperimentalJsNoRuntime : kotlin/Annotation { // kotlin.js/ExperimentalJsNoRuntime|null[0]
-    constructor <init>() // kotlin.js/ExperimentalJsNoRuntime.<init>|<init>(){}[0]
-}
-
 open annotation class kotlin.js/ExperimentalJsReflectionCreateInstance : kotlin/Annotation { // kotlin.js/ExperimentalJsReflectionCreateInstance|null[0]
     constructor <init>() // kotlin.js/ExperimentalJsReflectionCreateInstance.<init>|<init>(){}[0]
 }
@@ -822,7 +818,6 @@ abstract interface kotlin.contracts/ContractBuilder { // kotlin.contracts/Contra
     abstract fun (kotlin/Boolean).implies(kotlin.contracts/ReturnsNotNull) // kotlin.contracts/ContractBuilder.implies|implies@kotlin.Boolean(kotlin.contracts.ReturnsNotNull){}[0]
     abstract fun <#A1: kotlin/Any?> (kotlin/Boolean).holdsIn(kotlin/Function<#A1>): kotlin.contracts/HoldsIn // kotlin.contracts/ContractBuilder.holdsIn|holdsIn@kotlin.Boolean(kotlin.Function<0:0>){0§<kotlin.Any?>}[0]
     abstract fun <#A1: kotlin/Any?> callsInPlace(kotlin/Function<#A1>, kotlin.contracts/InvocationKind = ...): kotlin.contracts/CallsInPlace // kotlin.contracts/ContractBuilder.callsInPlace|callsInPlace(kotlin.Function<0:0>;kotlin.contracts.InvocationKind){0§<kotlin.Any?>}[0]
-    abstract fun <#A1: kotlin/Any?> returnsResultOf(kotlin/Function<#A1>) // kotlin.contracts/ContractBuilder.returnsResultOf|returnsResultOf(kotlin.Function<0:0>){0§<kotlin.Any?>}[0]
     abstract fun returns(): kotlin.contracts/Returns // kotlin.contracts/ContractBuilder.returns|returns(){}[0]
     abstract fun returns(kotlin/Any?): kotlin.contracts/Returns // kotlin.contracts/ContractBuilder.returns|returns(kotlin.Any?){}[0]
     abstract fun returnsNotNull(): kotlin.contracts/ReturnsNotNull // kotlin.contracts/ContractBuilder.returnsNotNull|returnsNotNull(){}[0]
@@ -9079,11 +9074,6 @@ open annotation class kotlin.js/JsFileName : kotlin/Annotation { // kotlin.js/Js
 }
 
 // Targets: [native, wasmJs, wasmWasi]
-open annotation class kotlin.js/JsNoRuntime : kotlin/Annotation { // kotlin.js/JsNoRuntime|null[1]
-    constructor <init>() // kotlin.js/JsNoRuntime.<init>|<init>(){}[1]
-}
-
-// Targets: [native, wasmJs, wasmWasi]
 open annotation class kotlin.js/JsStatic : kotlin/Annotation { // kotlin.js/JsStatic|null[1]
     constructor <init>() // kotlin.js/JsStatic.<init>|<init>(){}[1]
 }
@@ -14215,11 +14205,6 @@ open annotation class kotlin.js/JsNoDispatchReceiver : kotlin/Annotation { // ko
 }
 
 // Targets: [js]
-open annotation class kotlin.js/JsNoRuntime : kotlin/Annotation { // kotlin.js/JsNoRuntime|null[0]
-    constructor <init>() // kotlin.js/JsNoRuntime.<init>|<init>(){}[0]
-}
-
-// Targets: [js]
 open annotation class kotlin.js/JsNonModule : kotlin/Annotation { // kotlin.js/JsNonModule|null[0]
     constructor <init>() // kotlin.js/JsNonModule.<init>|<init>(){}[0]
 }
@@ -15141,9 +15126,6 @@ final inline fun <#A: kotlin/Any> (#A).kotlin.js/toJsReference(): kotlin.js/JsRe
 
 // Targets: [js]
 final inline fun <#A: kotlin/Any> (kotlin.js/JsReference<#A>).kotlin.js/get(): #A // kotlin.js/get|get@kotlin.js.JsReference<0:0>(){0§<kotlin.Any>}[0]
-
-// Targets: [js]
-final inline fun <#A: kotlin/Any> (kotlin/Any).kotlin.js/get(): #A // kotlin.js/get|get@kotlin.Any(){0§<kotlin.Any>}[0]
 
 // Targets: [js]
 final inline fun <#A: kotlin/Any> (kotlin/Any).kotlin.js/unsafeCast(): #A // kotlin.js/unsafeCast|unsafeCast@kotlin.Any(){0§<kotlin.Any>}[0]
