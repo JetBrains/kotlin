@@ -27,12 +27,15 @@ RUN curl https://corretto.aws/downloads/resources/17.0.9.8.1/amazon-corretto-17.
 
 RUN curl https://corretto.aws/downloads/resources/21.0.1.12.1/amazon-corretto-21.0.1.12.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
 
+RUN curl https://corretto.aws/downloads/resources/25.0.2.10.1/amazon-corretto-25.0.2.10.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
+
 # New naming conventions
 ENV JDK8=/usr/lib/jvm/amazon-corretto-8.392.08.1-linux-x64 \
     JDK9=/usr/lib/jvm/zulu9.0.7.1-jdk9.0.7-linux_x64 \
     JDK11=/usr/lib/jvm/amazon-corretto-11.0.26.4.1-linux-x64 \
     JDK17=/usr/lib/jvm/amazon-corretto-17.0.9.8.1-linux-x64 \
-    JDK21=/usr/lib/jvm/amazon-corretto-21.0.1.12.1-linux-x64
+    JDK21=/usr/lib/jvm/amazon-corretto-21.0.1.12.1-linux-x64 \
+    JDK25=/usr/lib/jvm/amazon-corretto-25.0.2.10.1-linux-x64
 
 # TeamCity JDK old naming conventions. Kotlin build still have dependencies in Maven build.
 ENV JDK_18=$JDK8 \
@@ -44,7 +47,8 @@ ENV JDK_18_x64=$JDK8 \
 
 ENV JDK_11_0=$JDK11 \
     JDK_17_0=$JDK17 \
-    JDK_21_0=$JDK21
+    JDK_21_0=$JDK21 \
+    JDK_25_0=$JDK25
 
 ENV JAVA_HOME=$JDK_17_0
 ENV PATH="$PATH:$JAVA_HOME/bin"
