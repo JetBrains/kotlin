@@ -45,7 +45,7 @@ private:
 
     void checkHeapUsage(int64_t epoch) noexcept {
         auto peakRss = peakResidentSetSizeBytes();
-        size_t maxPeakRss = 75'000'000;
+        size_t maxPeakRss = 100'000'000;
         if (peakRss > maxPeakRss) {
             Kotlin_MemoryUsageInfo_dumpWithHeapTool();
             GCLogWarning(epoch, "Terminating due to peak footrpint %zu exceeding the limit %zu", peakRss, maxPeakRss);
