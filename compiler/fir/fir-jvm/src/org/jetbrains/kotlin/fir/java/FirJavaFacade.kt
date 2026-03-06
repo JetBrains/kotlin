@@ -337,8 +337,8 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
             )
 
             val enumEntriesOrigin = when {
-                firJavaClass.origin.fromSource -> FirDeclarationOrigin.Source
-                else -> FirDeclarationOrigin.Library
+                firJavaClass.origin.fromSource -> FirDeclarationOrigin.Java.Source
+                else -> FirDeclarationOrigin.Java.Library
             }
 
             declarations += generateEntriesGetter(

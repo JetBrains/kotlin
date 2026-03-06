@@ -119,12 +119,20 @@ class JavaClassOverAst(
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
     override val methods: Collection<JavaMethod>
-        get() = node.getChildrenByType("METHOD")
-            .filter { it.findChildByType("TYPE") != null }
-            .map { JavaMethodOverAst(it, this) }
+        get() {
+            // Both regular methods and annotation interface methods need to be included
+            val methodNodes = node.getChildrenByType("METHOD") + node.getChildrenByType("ANNOTATION_METHOD")
+            return methodNodes
+                .filter { it.findChildByType("TYPE") != null }
+                .map { JavaMethodOverAst(it, this) }
+        }
 
     override val fields: Collection<JavaField>
-        get() = node.getChildrenByType("FIELD").map { JavaFieldOverAst(it, this) }
+        get() {
+            // Include both regular fields and enum constants
+            val fieldNodes = node.getChildrenByType("FIELD") + node.getChildrenByType("ENUM_CONSTANT")
+            return fieldNodes.map { JavaFieldOverAst(it, this) }
+        }
 
     override val constructors: Collection<JavaConstructor>
         get() = node.getChildrenByType("METHOD")

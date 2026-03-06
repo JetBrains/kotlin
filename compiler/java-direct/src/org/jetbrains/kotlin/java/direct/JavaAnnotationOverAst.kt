@@ -20,7 +20,7 @@ class JavaAnnotationOverAst(
         get() {
             val parameterList = node.findChildByType("ANNOTATION_PARAMETER_LIST")
             if (parameterList == null) return emptyList()
-            
+
             return parameterList.getChildrenByType("NAME_VALUE_PAIR").map { nvp ->
                 createAnnotationArgument(nvp, resolutionContext)
             }
@@ -37,18 +37,18 @@ class JavaAnnotationOverAst(
     override val classId: ClassId?
         get() {
             val reference = annotationName ?: return null
-            
+
             // If already qualified (contains dot), use as-is
             if (reference.contains('.')) {
                 return ClassId.topLevel(FqName(reference))
             }
-            
+
             // Try to resolve via explicit imports
             val imported = resolutionContext.getSimpleImport(reference)
             if (imported != null) {
                 return ClassId.topLevel(imported)
             }
-            
+
             // Return unqualified - FIR will need to resolve via resolveAnnotation
             return ClassId.topLevel(FqName(reference))
         }
@@ -70,18 +70,18 @@ class JavaAnnotationOverAst(
      */
     override fun resolveAnnotation(tryResolve: (String) -> Boolean): String? {
         val reference = annotationName ?: return null
-        
+
         // If already qualified, return as-is (but verify it exists)
         if (reference.contains('.')) {
             return if (tryResolve(reference)) reference else null
         }
-        
+
         // Try to resolve via explicit imports
         val imported = resolutionContext.getSimpleImport(reference)
         if (imported != null) {
             return imported.asString()
         }
-        
+
         // Use the same resolution logic as types: same package, java.lang, star imports
         return resolutionContext.resolveWithCallback(reference, tryResolve)
     }
@@ -91,33 +91,33 @@ class JavaAnnotationOverAst(
 
 private fun createAnnotationArgument(
     nameValuePair: JavaSyntaxNode,
-    resolutionContext: JavaResolutionContext
+    resolutionContext: JavaResolutionContext,
 ): JavaAnnotationArgument {
     val name = nameValuePair.findChildByType("IDENTIFIER")?.let { Name.identifier(it.text) }
-    
-    // Find the value expression - it's the child that's not IDENTIFIER or EQ
+
+    // Find the value expression - it's the child that's not IDENTIFIER, EQ, or whitespace
     val valueNode = nameValuePair.children.firstOrNull { child ->
-        child.nodeType != "IDENTIFIER" && child.nodeType != "EQ"
+        child.nodeType !in listOf("IDENTIFIER", "EQ", "WHITE_SPACE")
     }
-    
+
     return createAnnotationArgumentFromValue(name, valueNode, resolutionContext)
 }
 
-private fun createAnnotationArgumentFromValue(
+internal fun createAnnotationArgumentFromValue(
     name: Name?,
     valueNode: JavaSyntaxNode?,
-    resolutionContext: JavaResolutionContext
+    resolutionContext: JavaResolutionContext,
 ): JavaAnnotationArgument {
     if (valueNode == null) {
         return JavaUnknownAnnotationArgumentOverAst(name)
     }
-    
+
     return when (valueNode.nodeType) {
         "LITERAL_EXPRESSION" -> {
             val value = evaluateLiteral(valueNode)
             JavaLiteralAnnotationArgumentOverAst(name, value)
         }
-        "ARRAY_INITIALIZER_EXPRESSION" -> {
+        "ARRAY_INITIALIZER_EXPRESSION", "ANNOTATION_ARRAY_INITIALIZER" -> {
             JavaArrayAnnotationArgumentOverAst(name, valueNode, resolutionContext)
         }
         "REFERENCE_EXPRESSION" -> {
@@ -144,7 +144,7 @@ private fun createAnnotationArgumentFromValue(
 private fun evaluateLiteral(node: JavaSyntaxNode): Any? {
     val literalChild = node.children.firstOrNull() ?: return null
     val text = literalChild.text
-    
+
     return when (literalChild.nodeType) {
         "STRING_LITERAL" -> {
             // Remove surrounding quotes and unescape
@@ -199,11 +199,11 @@ private fun evaluateConstantExpression(node: JavaSyntaxNode): Any? {
 private fun parseIntegerLiteral(text: String): Any {
     val cleaned = text.replace("_", "")
     return when {
-        cleaned.startsWith("0x") || cleaned.startsWith("0X") -> 
+        cleaned.startsWith("0x") || cleaned.startsWith("0X") ->
             cleaned.substring(2).toIntOrNull(16) ?: cleaned.substring(2).toLongOrNull(16) ?: 0
-        cleaned.startsWith("0b") || cleaned.startsWith("0B") -> 
+        cleaned.startsWith("0b") || cleaned.startsWith("0B") ->
             cleaned.substring(2).toIntOrNull(2) ?: cleaned.substring(2).toLongOrNull(2) ?: 0
-        cleaned.startsWith("0") && cleaned.length > 1 -> 
+        cleaned.startsWith("0") && cleaned.length > 1 ->
             cleaned.toIntOrNull(8) ?: cleaned.toLongOrNull(8) ?: 0
         else -> cleaned.toIntOrNull() ?: cleaned.toLongOrNull() ?: 0
     }
@@ -212,11 +212,11 @@ private fun parseIntegerLiteral(text: String): Any {
 private fun parseLongLiteral(text: String): Long {
     val cleaned = text.replace("_", "").removeSuffix("L").removeSuffix("l")
     return when {
-        cleaned.startsWith("0x") || cleaned.startsWith("0X") -> 
+        cleaned.startsWith("0x") || cleaned.startsWith("0X") ->
             cleaned.substring(2).toLongOrNull(16) ?: 0L
-        cleaned.startsWith("0b") || cleaned.startsWith("0B") -> 
+        cleaned.startsWith("0b") || cleaned.startsWith("0B") ->
             cleaned.substring(2).toLongOrNull(2) ?: 0L
-        cleaned.startsWith("0") && cleaned.length > 1 -> 
+        cleaned.startsWith("0") && cleaned.length > 1 ->
             cleaned.toLongOrNull(8) ?: 0L
         else -> cleaned.toLongOrNull() ?: 0L
     }
@@ -288,17 +288,17 @@ private fun String.unescapeJavaString(): String {
 
 class JavaLiteralAnnotationArgumentOverAst(
     override val name: Name?,
-    override val value: Any?
+    override val value: Any?,
 ) : JavaLiteralAnnotationArgument
 
 class JavaArrayAnnotationArgumentOverAst(
     override val name: Name?,
     private val arrayNode: JavaSyntaxNode,
-    private val resolutionContext: JavaResolutionContext
+    private val resolutionContext: JavaResolutionContext,
 ) : JavaArrayAnnotationArgument {
     override fun getElements(): List<JavaAnnotationArgument> {
         return arrayNode.children
-            .filter { it.nodeType != "LBRACE" && it.nodeType != "RBRACE" && it.nodeType != "COMMA" }
+            .filter { it.nodeType !in listOf("LBRACE", "RBRACE", "COMMA", "WHITE_SPACE") }
             .map { createAnnotationArgumentFromValue(null, it, resolutionContext) }
     }
 }
@@ -306,7 +306,7 @@ class JavaArrayAnnotationArgumentOverAst(
 class JavaEnumValueAnnotationArgumentOverAst(
     override val name: Name?,
     private val refNode: JavaSyntaxNode,
-    private val resolutionContext: JavaResolutionContext
+    private val resolutionContext: JavaResolutionContext,
 ) : JavaEnumValueAnnotationArgument {
     override val enumClassId: ClassId?
         get() {
@@ -314,13 +314,27 @@ class JavaEnumValueAnnotationArgumentOverAst(
             val lastDot = text.lastIndexOf('.')
             if (lastDot < 0) return null
             val className = text.substring(0, lastDot)
-            
-            // Try to resolve class name
-            val resolved = resolutionContext.resolveWithCallback(className) { true }
-                ?: return ClassId.topLevel(FqName(className))
-            return ClassId.topLevel(FqName(resolved))
+
+            // If already qualified (contains dot), use as-is
+            if (className.contains('.')) {
+                return ClassId.topLevel(FqName(className))
+            }
+
+            // Try to resolve via explicit imports first
+            val imported = resolutionContext.getSimpleImport(className)
+            if (imported != null) {
+                return ClassId.topLevel(imported)
+            }
+
+            // Assume same package - FIR will verify during resolution
+            val packageFqName = resolutionContext.packageFqName
+            return if (packageFqName.isRoot) {
+                ClassId.topLevel(FqName(className))
+            } else {
+                ClassId.topLevel(FqName("${packageFqName.asString()}.$className"))
+            }
         }
-    
+
     override val entryName: Name?
         get() {
             val text = refNode.text
@@ -333,14 +347,14 @@ class JavaEnumValueAnnotationArgumentOverAst(
 class JavaClassObjectAnnotationArgumentOverAst(
     override val name: Name?,
     private val classObjNode: JavaSyntaxNode,
-    private val resolutionContext: JavaResolutionContext
+    private val resolutionContext: JavaResolutionContext,
 ) : JavaClassObjectAnnotationArgument {
     override fun getReferencedType(): JavaType {
         // CLASS_OBJECT_ACCESS_EXPRESSION typically has structure: TYPE.class
         // Find the type reference before .class
         val typeNode = classObjNode.findChildByType("TYPE")
             ?: classObjNode.findChildByType("JAVA_CODE_REFERENCE")
-        
+
         return if (typeNode != null) {
             createJavaType(typeNode, resolutionContext)
         } else {
@@ -353,7 +367,7 @@ class JavaClassObjectAnnotationArgumentOverAst(
 class JavaAnnotationAsAnnotationArgumentOverAst(
     override val name: Name?,
     private val annotationNode: JavaSyntaxNode,
-    private val resolutionContext: JavaResolutionContext
+    private val resolutionContext: JavaResolutionContext,
 ) : JavaAnnotationAsAnnotationArgument {
     override fun getAnnotation(): JavaAnnotation {
         return JavaAnnotationOverAst(annotationNode, resolutionContext)
@@ -361,5 +375,5 @@ class JavaAnnotationAsAnnotationArgumentOverAst(
 }
 
 class JavaUnknownAnnotationArgumentOverAst(
-    override val name: Name?
+    override val name: Name?,
 ) : JavaUnknownAnnotationArgument

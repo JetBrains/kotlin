@@ -25,8 +25,11 @@ class CombinedJavaClassFinder(
     private val binaryFinder: JavaClassFinder,
 ) : JavaClassFinder {
 
-    override fun findClass(request: JavaClassFinder.Request): JavaClass? =
-        sourceFinder.findClass(request) ?: binaryFinder.findClass(request)
+    override fun findClass(request: JavaClassFinder.Request): JavaClass? {
+        val fromSource = sourceFinder.findClass(request)
+        if (fromSource != null) return fromSource
+        return binaryFinder.findClass(request)
+    }
 
     override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> {
         val fromSources = sourceFinder.findClasses(request)

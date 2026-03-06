@@ -166,6 +166,27 @@ class JavaClassifierTypeOverAst(
     }
 }
 
+/**
+ * JavaClassifierType for enum entry fields.
+ * The type of enum constant is the containing enum class itself.
+ */
+class JavaClassifierTypeForEnumEntry(
+    private val enumClass: JavaClass
+) : JavaClassifierType {
+    override val classifier: JavaClassifier get() = enumClass
+    override val classifierQualifiedName: String get() = enumClass.fqName?.asString() ?: enumClass.name.asString()
+    override val presentableText: String get() = classifierQualifiedName
+    override val isRaw: Boolean get() = false
+    override val typeArguments: List<JavaType> get() = emptyList()
+    override val annotations: Collection<JavaAnnotation> get() = emptyList()
+    override val isDeprecatedInJavaDoc: Boolean get() = false
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+
+    // Already resolved - we have direct reference to the class
+    override val isResolved: Boolean get() = true
+    override fun resolve(tryResolve: (String) -> Boolean): String? = classifierQualifiedName
+}
+
 class JavaPrimitiveTypeOverAst(
     node: JavaSyntaxNode,
     resolutionContext: JavaResolutionContext,

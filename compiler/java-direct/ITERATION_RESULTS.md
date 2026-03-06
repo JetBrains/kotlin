@@ -4,7 +4,7 @@
 
 This file captures key findings, decisions, and learnings from each iteration.
 
-**Last Updated**: 2026-03-06 (Iteration 16 complete)
+**Last Updated**: 2026-03-06 (Iteration 17b complete)
 
 ---
 
@@ -15,10 +15,12 @@ This file captures key findings, decisions, and learnings from each iteration.
 | 1-6 | Feb 2026 | Foundation | 0/138 | 90/138 (65.2%) |
 | 7-10 | 2026-03-04 | Core features | 90/138 | 117/138 (84.8%) |
 | 11-16 | 2026-03-05 | External types, raw types | 117/138 | 532/601 (88.5%) |
+| 17 | 2026-03-06 | Annotation arguments | — | +16 tests |
+| 17b | 2026-03-06 | Annotation method defaults | — | 1092/1166 (93.7%) |
 
-**Current Status**: 1317/1493 tests passing (88.2%)
-- Box tests (`JavaUsingAstBoxTestGenerated`): 1075/1166 (92.2%)
-- Phased tests (`JavaUsingAstPhasedTestGenerated`): 242/327 (74.0%)
+**Current Status**: 1092/1166 box tests passing (93.7%)
+- Box tests (`JavaUsingAstBoxTestGenerated`): 1092/1166 (93.7%)
+- 74 box tests failing
 
 ---
 
@@ -91,6 +93,62 @@ Key accomplishments:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 17b: Annotation Method Default Values - 2026-03-06
+
+### Status
+- ✅ Completed
+
+### Summary
+Implemented annotation method default values parsing. When a Java annotation declares a method with a `default` value (e.g., `String value() default "OK"`), the java-direct module now correctly parses and returns this value via `annotationParameterDefaultValue`. This allows Kotlin code to use annotations without specifying all parameters that have defaults.
+
+### Key Findings
+
+1. **ANNOTATION_METHOD vs METHOD**: Annotation interface methods use `ANNOTATION_METHOD` node type, not `METHOD`. The initial fix for `annotationParameterDefaultValue` didn't work because `getMethods()` wasn't returning `ANNOTATION_METHOD` nodes.
+
+2. **DEFAULT_KEYWORD Structure**: The AST structure for annotation method defaults is:
+   ```
+   ANNOTATION_METHOD
+   ├── TYPE (String)
+   ├── IDENTIFIER (value)
+   ├── PARAMETER_LIST
+   ├── DEFAULT_KEYWORD (default)
+   └── LITERAL_EXPRESSION ("OK")
+   ```
+
+3. **Enum ClassId Resolution Bug**: When parsing enum values in annotation defaults (e.g., `MyEnum.FIRST`), the `enumClassId` was incorrectly resolving to `java.lang.MyEnum` instead of the correct package. Fixed by assuming same package for unqualified enum class names.
+
+4. **Enum Constants Not Exposed**: `JavaClassOverAst.fields` only returned `FIELD` nodes, missing `ENUM_CONSTANT` nodes. This prevented FIR from finding enum entries when resolving annotation default values.
+
+5. **Enum Entry Type**: `JavaFieldOverAst.type` used `createJavaType()` which doesn't work for `ENUM_CONSTANT` nodes. Created new `JavaClassifierTypeForEnumEntry` class that returns the containing enum class as the type.
+
+6. **WHITE_SPACE in Annotation Arguments**: The `createAnnotationArgument` function wasn't filtering `WHITE_SPACE` nodes, causing them to be passed to `createAnnotationArgumentFromValue` and producing errors.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `JavaClassOverAst.kt` | Added `ANNOTATION_METHOD` to method discovery. Added `ENUM_CONSTANT` to fields getter. |
+| `JavaMemberOverAst.kt` | Implemented `annotationParameterDefaultValue` to find value after `DEFAULT_KEYWORD`. Fixed `JavaFieldOverAst` for enum constants (type, isStatic, isFinal). |
+| `JavaAnnotationOverAst.kt` | Fixed `enumClassId` to use same package instead of java.lang fallback. Added `WHITE_SPACE` filtering in `createAnnotationArgument`. |
+| `JavaTypeOverAst.kt` | Added `JavaClassifierTypeForEnumEntry` class for enum constant field types. |
+| `FirJavaFacade.kt` | Fixed `enumEntriesOrigin` to use `FirDeclarationOrigin.Enhancement` (from previous session). |
+
+### Test Results
+- Box tests: 1092/1166 passing (93.7%)
+- `testJavaAnnotationDefault` now passes
+
+### Key Learnings
+
+1. **Node Type Variations**: Java annotation methods use `ANNOTATION_METHOD` not `METHOD`. Always check actual AST node types.
+
+2. **Enum Constants Are Special**: Enum constants are `ENUM_CONSTANT` nodes, not `FIELD` nodes. They need special handling for type (returns containing class) and modifiers (implicitly static/final).
+
+3. **ClassId Resolution Context**: When resolving unqualified class names in annotation arguments, the correct approach is to assume same package rather than trying all possible packages (which can incorrectly match `java.lang.*`).
+
+4. **Filter Whitespace**: AST node children often include `WHITE_SPACE` nodes that must be filtered when looking for semantic content.
+
+---
 
 ## Iteration 17: Annotation Argument Subinterfaces - 2026-03-06
 

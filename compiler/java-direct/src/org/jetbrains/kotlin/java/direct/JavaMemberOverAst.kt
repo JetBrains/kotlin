@@ -62,14 +62,21 @@ class JavaFieldOverAst(
 ) : JavaMemberOverAst(node, containingClass), JavaField {
     override val isEnumEntry: Boolean get() = node.type.toString() == "ENUM_CONSTANT"
     override val type: JavaType
-        get() = createJavaType(node, resolutionContext)
+        get() {
+            // For enum constants, the type is the containing enum class itself
+            if (isEnumEntry) {
+                return JavaClassifierTypeForEnumEntry(containingClass)
+            }
+            return createJavaType(node, resolutionContext)
+        }
     override val initializerValue: Any? get() = null
     override val hasConstantNotNullInitializer: Boolean get() = false
     override val isFromSource: Boolean get() = true
 
     // Interface fields are implicitly public static final
-    override val isStatic: Boolean get() = containingClass.isInterface || super.isStatic
-    override val isFinal: Boolean get() = containingClass.isInterface || super.isFinal
+    // Enum constants are also implicitly public static final
+    override val isStatic: Boolean get() = containingClass.isInterface || isEnumEntry || super.isStatic
+    override val isFinal: Boolean get() = containingClass.isInterface || isEnumEntry || super.isFinal
 }
 
 class JavaMethodOverAst(
@@ -114,8 +121,28 @@ class JavaMethodOverAst(
     private val hasBody: Boolean
         get() = node.findChildByType("CODE_BLOCK") != null
 
-    override val annotationParameterDefaultValue: JavaAnnotationArgument? get() = null
-    override val hasAnnotationParameterDefaultValue: Boolean get() = false
+    override val annotationParameterDefaultValue: JavaAnnotationArgument?
+        get() {
+            // Only annotation interface methods can have default values
+            if (!containingClass.isAnnotationType) return null
+
+            // Look for DEFAULT_KEYWORD followed by the default value
+            val defaultKeyword = node.findChildByType("DEFAULT_KEYWORD") ?: return null
+
+            // Find the value node - it follows DEFAULT_KEYWORD in the children list
+            val children = node.children
+            val defaultIndex = children.indexOfFirst { it.type.toString() == "DEFAULT_KEYWORD" }
+            if (defaultIndex < 0) return null
+
+            // The value expression is the next non-whitespace child after DEFAULT_KEYWORD
+            val valueNode = children.drop(defaultIndex + 1).firstOrNull {
+                it.type.toString() !in listOf("WHITE_SPACE", "SEMICOLON")
+            } ?: return null
+
+            return createAnnotationArgumentFromValue(null, valueNode, resolutionContext)
+        }
+
+    override val hasAnnotationParameterDefaultValue: Boolean get() = annotationParameterDefaultValue != null
     override val isNative: Boolean get() = false
 
     override val isFromSource: Boolean get() = true
