@@ -27,7 +27,7 @@ public class MemoryUsage(
 /**
  * This class represents statistics of sweeping in one memory pool.
  *
- * @property sweptCount The of objects that were freed.
+ * @property sweptCount The number of objects that were freed.
  * @property keptCount The number of objects that were processed but kept alive.
  */
 @NativeRuntimeApi
@@ -65,17 +65,17 @@ public class RootSetStatistics(
  * It is supposed to be used for testing and debugging purposes only.
  *
  * @property epoch ID of garbage collector run.
- * @property startTimeNs Time, when garbage collector run is started, meausered by [kotlin.system.getTimeNanos].
+ * @property startTimeNs Time, when garbage collector run is started, measured by [kotlin.system.getTimeNanos].
  * @property endTimeNs Time, when garbage collector run is ended, measured by [kotlin.system.getTimeNanos].
  *                     After this point, most of the memory is reclaimed, and a new garbage collector run can start.
  * @property firstPauseRequestTimeNs Time, when the garbage collector thread requested suspension of mutator threads for the first time,
  *                                   mesured by [kotlin.system.getTimeNanos].
- * @property firstPauseStartTimeNs Time, when mutator threads are suspended for the first time, mesured by [kotlin.system.getTimeNanos].
- * @property firstPauseEndTimeNs Time, when mutator threads are unsuspended for the first time, mesured by [kotlin.system.getTimeNanos].
+ * @property firstPauseStartTimeNs Time, when mutator threads are suspended for the first time, measured by [kotlin.system.getTimeNanos].
+ * @property firstPauseEndTimeNs Time, when mutator threads are unsuspended for the first time, measured by [kotlin.system.getTimeNanos].
  * @property secondPauseRequestTimeNs Time, when the garbage collector thread requested suspension of mutator threads for the second time,
  *                                    mesured by [kotlin.system.getTimeNanos].
- * @property secondPauseStartTimeNs Time, when mutator threads are suspended for the second time, mesured by [kotlin.system.getTimeNanos].
- * @property secondPauseEndTimeNs Time, when mutator threads are unsuspended for the second time, mesured by [kotlin.system.getTimeNanos].
+ * @property secondPauseStartTimeNs Time, when mutator threads are suspended for the second time, measured by [kotlin.system.getTimeNanos].
+ * @property secondPauseEndTimeNs Time, when mutator threads are unsuspended for the second time, measured by [kotlin.system.getTimeNanos].
  * @property postGcCleanupTimeNs Time, when all memory is reclaimed, measured by [kotlin.system.getTimeNanos].
  *                                If null, memory reclamation is still in progress.
  * @property rootSet The number of objects in each root set pool. Check [RootSetStatistics] doc for details.
