@@ -70,12 +70,6 @@ class WasmJsBenchmarkRunner(
                             console.log('typeof e: ' + typeof e)
                         }
                     }
-    
-//                    if (actualResult !== "OK")
-//                        throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
-
-                    if (${debugMode >= DebugMode.DEBUG})
-                        console.log('test passed');
                 """.trimIndent()
 
         fun writeToFilesAndRunTest(mode: String, res: WasmCompilerResult): List<Throwable> {
