@@ -33,6 +33,56 @@ The original analysis **incorrectly conflated three different annotation-related
 
 ---
 
+## Iteration 17b Analysis: Annotation Method Default Values
+
+**Status**: PLANNED  
+**Expected Impact**: ~20 tests
+
+### Root Cause Discovery
+
+During deeper analysis of remaining annotation failures, discovered a critical missing feature:
+
+**Annotation method default values are not parsed.**
+
+In `JavaMethodOverAst` (`JavaMemberOverAst.kt`), these properties are hardcoded:
+
+```kotlin
+override val annotationParameterDefaultValue: JavaAnnotationArgument? get() = null
+override val hasAnnotationParameterDefaultValue: Boolean get() = false
+```
+
+When FIR builds annotation constructors, it uses `javaMethod.annotationParameterDefaultValue` to set default parameter values. Since this always returns `null`, annotation parameters without explicit values at call sites fail.
+
+### Affected Error Patterns
+
+**NAMED_PARAMETER_NOT_FOUND (11 tests)**: 
+```
+Cannot find a parameter with this name: value
+```
+When calling `@Annotation(value = "x")` but the annotation doesn't expose the `value` parameter properly.
+
+**TOO_MANY_ARGUMENTS (9 tests)**:
+```
+Too many arguments for @MyAnnotation()
+```
+When calling `@Annotation("x")` without named parameter, expecting to use default for other params.
+
+### Test Examples
+
+**testKotlinAnnotations**: Uses `@Retention` which has a default value
+**testEnumCtorAnnotation**: Uses custom annotation with defaults
+**testPropertyAnnotations**: Annotation parameters with defaults
+
+### Fix Approach
+
+1. Detect annotation methods (methods inside `@interface`)
+2. Parse the `default` keyword and following value expression
+3. Reuse `createAnnotationArgument()` from Iteration 17
+
+See detailed implementation in FIXING_ITERATIONS.md Iteration 17b.
+
+---
+
 ## What Iteration 17 Actually Fixed
 
 Iteration 17 implemented annotation argument subinterfaces correctly:

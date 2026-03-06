@@ -329,6 +329,241 @@ sealed class JavaAnnotationArgumentImpl(override val name: Name?) : JavaAnnotati
 
 ---
 
+## Iteration 17b: Annotation Method Default Values
+
+**Status**: 🔲 Planned  
+**Expected Impact**: ~20 tests  
+**Priority**: HIGH  
+**Complexity**: LOW-MEDIUM
+
+### Problem Statement
+
+Annotation method default values are not being parsed. When a Java annotation declares a method with a `default` value, the java-direct module returns `null` instead of the default value.
+
+```java
+public @interface MyAnnotation {
+    String value() default "default";  // ← default value not parsed
+    int count() default 42;
+}
+```
+
+This causes Kotlin code using these annotations to fail with `NAMED_PARAMETER_NOT_FOUND` or `TOO_MANY_ARGUMENTS` when:
+- Omitting parameters that have defaults
+- Using named parameters syntax
+
+### Root Cause
+
+In `JavaMethodOverAst` (`compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt`), the annotation default value properties are hardcoded:
+
+```kotlin
+override val annotationParameterDefaultValue: JavaAnnotationArgument? get() = null
+override val hasAnnotationParameterDefaultValue: Boolean get() = false
+```
+
+### Reference Implementation
+
+PSI implementation in `JavaMethodImpl.java` (`compiler/frontend.common.jvm/src/org/jetbrains/kotlin/load/java/structure/impl/JavaMethodImpl.java`):
+
+```java
+@Override
+@Nullable
+public JavaAnnotationArgument getAnnotationParameterDefaultValue() {
+    PsiMethod psiMethod = getPsi();
+    if (psiMethod instanceof PsiAnnotationMethod) {
+        PsiAnnotationMemberValue defaultValue = ((PsiAnnotationMethod) psiMethod).getDefaultValue();
+        if (defaultValue != null) {
+            return JavaAnnotationArgumentImpl.Factory.create(defaultValue, null, getSourceFactory());
+        }
+    }
+    return null;
+}
+```
+
+### Affected Tests (20+ tests)
+
+**NAMED_PARAMETER_NOT_FOUND (11 tests)**:
+- `testAnnotationsOnNonExistentAccessors`
+- `testCallableReferencesOnEnumMembers`
+- `testEnumCtorAnnotation`
+- `testEnumInteractionWithJava`
+- `testJavaToKotlinAnnotationConflictingTargets`
+- `testKotlinAnnotations`
+- `testSimpleEnumWithSingleArg`
+- `testPropertyAnnotations`
+- `testAnnotatedEnumEntry`
+- `testEnumArgWithDefault`
+- `testJavaFieldAccessedAsProperty`
+
+**TOO_MANY_ARGUMENTS (9 tests)**:
+- `testEnumEntryWithAnnotation`
+- `testEnumWithCompanion`
+- `testEnumWithDefaultParameter`
+- `testAnnotationUseSiteTarget`
+- `testEnumConstructorInnerClass`
+- `testJavaAnnotationOnKotlinClass`
+- `testEnumEntryCtorCall`
+- `testEnumEntryWithLambda`
+- `testAnnotationDefaultArgs`
+
+### Symptoms
+
+```
+NAMED_PARAMETER_NOT_FOUND: Cannot find a parameter with this name: value
+```
+
+```
+TOO_MANY_ARGUMENTS: Too many arguments for @MyAnnotation()
+```
+
+When FIR processes annotation usage, it expects to find default values from `javaMethod.annotationParameterDefaultValue` (used in `FirJavaFacade.kt:384`):
+
+```kotlin
+javaMethod.annotationParameterDefaultValue?.let { javaDefaultValue ->
+    firValueParameter.lazyDefaultValue = lazy {
+        javaDefaultValue.toFirExpression(...)
+    }
+}
+```
+
+### Phase 1: Analysis
+
+**Goal**: Understand AST structure for annotation method default values
+
+1. Find test data with annotation defaults:
+   ```bash
+   grep -r "default" compiler/testData/codegen/box/annotations/ | grep "\.java:" | head -5
+   ```
+
+2. Create minimal test case and dump AST:
+   ```java
+   public @interface TestAnnotation {
+       String value() default "hello";
+   }
+   ```
+
+3. Add debug in `JavaMethodOverAst`:
+   ```kotlin
+   override val annotationParameterDefaultValue: JavaAnnotationArgument?
+       get() {
+           // Look for DEFAULT node or "default" keyword
+           val methodNode = node // assuming node is the method declaration
+           throw IllegalStateException("DEBUG: method AST dump:\n${methodNode.dump()}")
+       }
+   ```
+
+4. Expected AST structure (to verify):
+   ```
+   ANNOTATION_METHOD
+   ├── TYPE
+   │   └── JAVA_CODE_REFERENCE (String)
+   ├── IDENTIFIER (value)
+   ├── PARAMETER_LIST
+   ├── DEFAULT_KEYWORD (default)
+   └── LITERAL_EXPRESSION ("hello")
+   ```
+
+### Phase 2: Implementation
+
+**File to modify**: `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt`
+
+1. **Check if method is in an annotation interface**:
+   ```kotlin
+   private fun isAnnotationMethod(): Boolean {
+       // The containing class should be an annotation (@interface)
+       val containingClass = containingClass
+       return containingClass.isAnnotationType
+   }
+   ```
+
+2. **Parse the default value**:
+   ```kotlin
+   override val annotationParameterDefaultValue: JavaAnnotationArgument?
+       get() {
+           if (!isAnnotationMethod()) return null
+           
+           // Look for default value in AST
+           // Structure may be: METHOD -> ... -> DEFAULT_KEYWORD -> VALUE_EXPRESSION
+           // Or: ANNOTATION_METHOD -> DEFAULT_VALUE -> EXPRESSION
+           
+           val defaultKeyword = node.findChildByType("DEFAULT_KEYWORD") ?: return null
+           
+           // The value expression should follow the default keyword
+           val valueNode = defaultKeyword.nextSibling() 
+               ?: node.children.dropWhile { it != defaultKeyword }.drop(1).firstOrNull()
+               ?: return null
+           
+           // Reuse the annotation argument creation logic from Iteration 17
+           return createAnnotationArgument(valueNode, resolutionContext)
+       }
+   
+   override val hasAnnotationParameterDefaultValue: Boolean
+       get() = annotationParameterDefaultValue != null
+   ```
+
+3. **Alternative if AST structure differs**:
+   ```kotlin
+   override val annotationParameterDefaultValue: JavaAnnotationArgument?
+       get() {
+           if (!isAnnotationMethod()) return null
+           
+           // Try finding a DEFAULT_VALUE child node
+           val defaultValue = node.findChildByType("DEFAULT_VALUE")
+           if (defaultValue != null) {
+               val valueExpr = defaultValue.children.firstOrNull() ?: return null
+               return createAnnotationArgument(valueExpr, resolutionContext)
+           }
+           
+           // Try finding default keyword followed by value
+           val text = node.text
+           val defaultIdx = text.indexOf(" default ")
+           if (defaultIdx >= 0) {
+               // Parse value after "default "
+               // This is a fallback - prefer structured AST parsing
+           }
+           
+           return null
+       }
+   ```
+
+4. **Ensure `createAnnotationArgument` is accessible** from `JavaMethodOverAst`:
+   - Either move it to a shared utility class
+   - Or make it a top-level function in the same package
+   - It was implemented in `JavaAnnotationOverAst.kt` during Iteration 17
+
+### Phase 3: Validation
+
+1. Run a single affected test:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Annotations\$*testKotlinAnnotations*" -q
+   ```
+
+2. Run all annotation tests:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Annotations.*" -q
+   ```
+
+3. Run full suite:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated" -q 2>&1 | tail -5
+   ```
+
+### Success Criteria
+
+- `NAMED_PARAMETER_NOT_FOUND` errors for annotation defaults are resolved
+- `TOO_MANY_ARGUMENTS` errors for annotation defaults are resolved
+- ~20 test improvements expected
+- No regressions in existing annotation tests
+
+### Implementation Notes
+
+1. **Sharing code with Iteration 17**: The `createAnnotationArgument()` function created in Iteration 17 should be reusable here. Consider refactoring it to a shared location.
+
+2. **Null handling**: Some annotation methods don't have defaults. Make sure to return `null` correctly in those cases.
+
+3. **Type consistency**: The default value should be convertible to the method's declared return type. FIR handles this validation, but ensure the value types are correct.
+
+---
+
 ## Iteration 18: Nested Class Resolution
 
 **Status**: 🔲 Planned  
