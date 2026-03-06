@@ -79,20 +79,41 @@ This proved more effective than detailed upfront planning for the later iteratio
 
 ## Iteration 17: Annotation Arguments
 
-**Status**: 🔲 Planned  
-**Expected Impact**: ~30 tests  
+**Status**: ✅ Completed  
+**Actual Impact**: +4 tests (176 → 172)  
 **Priority**: HIGH  
 **Complexity**: MEDIUM
 
-### Problem Statement
+### What Was Done
 
-`JavaAnnotationArgumentOverAst` only implements the base `JavaAnnotationArgument` interface, returning just the argument name. It does NOT implement the required value-bearing subinterfaces:
+Implemented annotation argument value subinterfaces:
+- `JavaLiteralAnnotationArgument` — for literal values ✅
+- `JavaArrayAnnotationArgument` — for array initializers ✅
+- `JavaEnumValueAnnotationArgument` — for enum constant references ✅
+- `JavaClassObjectAnnotationArgument` — for `Foo.class` references ✅
+- `JavaAnnotationAsAnnotationArgument` — for nested annotations ✅
 
-- `JavaLiteralAnnotationArgument` — for literal values (strings, ints, booleans)
-- `JavaArrayAnnotationArgument` — for array initializers `{a, b, c}`
-- `JavaEnumValueAnnotationArgument` — for enum constant references
-- `JavaClassObjectAnnotationArgument` — for `Foo.class` references
-- `JavaAnnotationAsAnnotationArgument` — for nested annotations
+### Why Fewer Tests Fixed Than Expected
+
+The original analysis incorrectly estimated ~30 tests. The actual breakdown:
+1. **Basic annotation arguments** — FIXED (most were already working or masked by other issues)
+2. **Const val references** — NOT FIXED (2 tests: `REFERENCE_EXPRESSION` incorrectly treated as enum)
+3. **Annotation method access** — NOT FIXED (2 tests: different issue - annotation instantiation)
+4. **Baseline diffs** — NOT related to annotation arguments (104 tests)
+
+### Remaining Annotation Issues
+
+**Const Val References (2 tests)**:
+- `testConstValAsAnnotationArgumentInJava`
+- `testFakeJvmNameInJava`
+
+These use `@Annotation(KOTLIN_CONST_VAL)` where the argument is a static import of a Kotlin const val. Current code treats ALL `REFERENCE_EXPRESSION` as enum values.
+
+**Annotation Method Access (2 tests)**:
+- `testJavaAnnotation`
+- `testClassArrayInAnnotation`
+
+These use annotation instantiation (`B("OK")`) and access `b.value`. This is NOT about annotation argument parsing — it's about exposing annotation interface methods as properties.
 
 ### Symptoms
 
@@ -825,43 +846,55 @@ fun Base<Any>.confirmOrFail(): String {
 
 ## Remaining Work
 
-### Current Status: 1317/1493 (88.2%)
+### Current Status After Iteration 17: 1321/1493 (88.5%)
 
-After completing iterations 17-21, expected improvement: **~50-55 additional tests**
+| Category | Count | Notes |
+|----------|-------|-------|
+| Baseline/Content Diffs | 104 | Need individual triage |
+| Nested Class Resolution | 12 | `Outer.Inner` in binary classes |
+| Missing Dep Superclass | 8 | Supertype resolution |
+| Visibility Issues | 6 | Protected/package-private |
+| Nullability TYPE_USE | 5 | `List<@NotNull T>` |
+| Abstract Member | 3 | Override detection |
+| Const Val in Annotations | 2 | Reference expression resolution |
+| Annotation Method Access | 2 | Annotation instantiation feature |
+| Other Edge Cases | 30 | Various |
+
+### Realistic Expectations for Iterations 18-21
 
 | Iteration | Target | Expected Tests Fixed |
 |-----------|--------|---------------------|
-| 17 | Annotation Arguments | ~30 |
-| 18 | Nested Class Resolution | ~10 |
+| 18 | Nested Class Resolution | ~10-12 |
 | 19 | TYPE_USE on Type Args | ~5 |
-| 20 | Wildcard Edge Cases | ~5 |
-| 21 | Raw Type Visibility | ~3 |
+| 20 | Wildcard Edge Cases | ~3-5 |
+| 21 | Visibility Issues | ~6 |
 
-**Projected Status**: ~1370/1493 (91.8%)
+**Projected Status**: ~1350/1493 (~90.4%)
 
-### Remaining After Iterations 17-21
+### Key Insight: Baseline Diffs Dominate
 
-| Category | Est. Count | Notes |
-|----------|------------|-------|
-| Baseline Diffs | ~80 | May auto-resolve or need individual review |
-| Other edge cases | ~40 | Require individual investigation |
+104 of 172 failures (60%) are baseline/content diffs. These require individual investigation to determine:
+- Is the output incorrect? → Fix the code
+- Is the output correct but different? → Update the baseline
+- Is it an acceptable variation? → Mark as expected
 
 ### Potential Future Iterations
 
-**Iteration 22+: Baseline Diff Triage**
-- Review remaining baseline diffs
-- Categorize into: legitimate differences, bugs, or acceptable variations
-- May require test data updates rather than code fixes
+**Iteration 22: Const Val Annotation Arguments**
+- Handle `REFERENCE_EXPRESSION` for const val references
+- Distinguish from enum constant references
+- May need FIR-level resolution
 
-**Iteration 23+: Modern Java Features** (if needed)
-- Records (`record class Foo(...)`)
-- Sealed classes (`sealed interface`)
-- Pattern matching constructs
+**Iteration 23: Baseline Diff Triage**
+- Review each baseline diff individually
+- Categorize: bug, acceptable, or needs baseline update
 
-**Iteration 24+: Performance Optimization** (if needed)
-- Lazy evaluation audit
-- Caching strategies
-- Index optimization
+**Iteration 24: Missing Dep Superclass**
+- Investigate supertype resolution failures
+- May overlap with nested class resolution
+
+**Iteration 25+: Modern Java Features** (if needed)
+- Records, sealed classes, pattern matching
 
 ---
 

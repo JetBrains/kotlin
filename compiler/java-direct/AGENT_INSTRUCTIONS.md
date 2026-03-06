@@ -112,7 +112,9 @@ mcp__jetbrains__find_files_by_name_keyword("javaAnnotation", ...)
 | `MISSING_DEPENDENCY_CLASS: 'Outer.Inner'` | Nested class in binary - need to resolve outer first, then lookup nested |
 | Raw type errors | Check `isRaw` detection, ensure `ConeRawType.create()` wrapping in FIR |
 | Annotation not resolved | Use callback pattern via `resolveAnnotation(tryResolve)` |
-| `IR annotation has null argument` | `JavaAnnotationArgument` must implement value subinterfaces (Literal/Array/Enum/etc) |
+| `IR annotation has null argument` (literal) | `JavaAnnotationArgument` must implement value subinterfaces (Literal/Array/Enum/etc) |
+| `IR annotation has null argument` (const val) | `REFERENCE_EXPRESSION` for const val needs special handling, not enum |
+| `UNRESOLVED_REFERENCE: 'value'` on annotation | Annotation INTERFACE methods need to be exposed (not annotation argument issue) |
 | `@Override` on return type | Filter non-TYPE_USE annotations in `JavaTypeOverAst.annotations` |
 | Nested interface wrong `isInner` | `isStatic` must return `true` for nested interfaces/enums |
 | Nullability check fails | TYPE_USE annotations on type arguments need parsing |

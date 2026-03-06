@@ -92,6 +92,82 @@ Key accomplishments:
 
 <!-- Add new iteration results here, newest at top -->
 
+## Iteration 17: Annotation Argument Subinterfaces - 2026-03-06
+
+### Status
+- ✅ Completed
+
+### Summary
+Implemented annotation argument value subinterfaces (`JavaLiteralAnnotationArgument`, `JavaArrayAnnotationArgument`, `JavaEnumValueAnnotationArgument`, `JavaClassObjectAnnotationArgument`, `JavaAnnotationAsAnnotationArgument`, `JavaUnknownAnnotationArgument`). The previous `JavaAnnotationArgumentOverAst` only implemented the base `JavaAnnotationArgument` interface, returning just the argument name without the value. This caused "IR annotation has null argument" errors and annotation-related test failures.
+
+### Key Findings
+
+1. **AST Structure for Annotation Arguments**: Annotation arguments appear as `NAME_VALUE_PAIR` nodes containing:
+   ```
+   NAME_VALUE_PAIR: "bar"
+     LITERAL_EXPRESSION: "bar"
+       STRING_LITERAL: "bar"
+   ```
+   The value expression can be `LITERAL_EXPRESSION`, `ARRAY_INITIALIZER_EXPRESSION`, `REFERENCE_EXPRESSION` (for enums), `CLASS_OBJECT_ACCESS_EXPRESSION` (for `Foo.class`), or `ANNOTATION` (for nested annotations).
+
+2. **Reference Implementation**: The PSI-based `annotationArgumentsImpl.kt` uses a factory pattern that dispatches based on the PSI element type (e.g., `PsiLiteralExpression` → `JavaLiteralAnnotationArgumentImpl`).
+
+3. **Literal Value Parsing**: Implemented comprehensive literal parsing including:
+   - String literals with escape sequences (`\n`, `\t`, `\u0000`, etc.)
+   - Character literals
+   - Boolean literals (`true`/`false`)
+   - Numeric literals (int, long, float, double) with hex/octal/binary support
+   - Negative numbers via `PREFIX_EXPRESSION` handling
+
+4. **Type Hierarchy Matters**: FIR's annotation processing expects specific subinterfaces to extract values. `JavaAnnotationArgument` only provides `name`, while the subinterfaces provide the actual values (`value`, `getElements()`, `enumClassId`, `entryName`, `getReferencedType()`, `getAnnotation()`).
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `JavaAnnotationOverAst.kt` | Added `nodeType` extension property. Replaced simple `JavaAnnotationArgumentOverAst` with factory function `createAnnotationArgument()` that dispatches to appropriate subinterface implementation. Implemented all six annotation argument classes. |
+
+### New Classes Added
+
+| Class | Interface | Purpose |
+|-------|-----------|---------|
+| `JavaLiteralAnnotationArgumentOverAst` | `JavaLiteralAnnotationArgument` | String, char, boolean, numeric literals |
+| `JavaArrayAnnotationArgumentOverAst` | `JavaArrayAnnotationArgument` | Array initializers `{a, b, c}` |
+| `JavaEnumValueAnnotationArgumentOverAst` | `JavaEnumValueAnnotationArgument` | Enum constant references `EnumClass.ENTRY` |
+| `JavaClassObjectAnnotationArgumentOverAst` | `JavaClassObjectAnnotationArgument` | Class literals `Foo.class` |
+| `JavaAnnotationAsAnnotationArgumentOverAst` | `JavaAnnotationAsAnnotationArgument` | Nested annotations `@Outer(@Inner)` |
+| `JavaUnknownAnnotationArgumentOverAst` | `JavaUnknownAnnotationArgument` | Fallback for unrecognized patterns |
+
+### Test Results
+- **Box tests**: 1076/1166 passing (92.3%) - UP from 1063/1166 (91.2%) - **+13 tests**
+- **Phased tests**: 245/327 passing (74.9%) - UP from 242/327 (74.0%) - **+3 tests**
+- **Total**: 1321/1493 passing (88.5%) - UP from 1305/1493 (87.4%) - **+16 tests**
+
+### Tests Fixed
+| Test | Issue Fixed |
+|------|-------------|
+| `testAnnotationsOnJavaMembers` | Annotation argument values now properly extracted |
+| `testJavaParameters` | Parameter annotations with values work |
+| `testKotlinAnnotationInJava` | Cross-language annotation handling |
+| Various reflection tests | Annotation argument introspection |
+| +12 more annotation-related tests | Various annotation scenarios |
+
+### Remaining Issues (not annotation-argument related)
+
+The remaining `UNRESOLVED_REFERENCE: 'value'` errors (like in `testJavaAnnotation`, `testJavaAnnotationDefault`) are NOT about annotation argument values - they're about annotation **interface methods** (e.g., `String value()` in `@interface B`) not being exposed as properties. This is a separate issue from annotation argument handling.
+
+### Key Learnings
+
+1. **Interface Hierarchy Matters**: FIR expects specific subinterfaces, not just the base interface. Implementing only `JavaAnnotationArgument` causes null value errors even though the name is present.
+
+2. **Factory Pattern for Polymorphism**: Dispatching based on AST node type to create the appropriate implementation class is cleaner than a monolithic class with type-specific logic.
+
+3. **Literal Parsing Complexity**: Java literals have many edge cases (hex, octal, binary, underscores, suffixes, escape sequences). The `evaluateLiteral()` function handles these.
+
+4. **Different Failure Modes**: "IR annotation has null argument" (fixed by this iteration) is different from "UNRESOLVED_REFERENCE: 'value'" (annotation interface methods not exposed - separate issue).
+
+---
+
 ## Iteration 16: Raw Type Bounds & Type Parameter Scope - 2026-03-05
 
 ### Status

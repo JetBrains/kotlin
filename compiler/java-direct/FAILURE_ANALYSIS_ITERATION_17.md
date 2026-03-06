@@ -1,27 +1,98 @@
-# Java-Direct Failure Analysis: Iteration 17 Planning
+# Java-Direct Failure Analysis: Post-Iteration 17 Update
 
 **Date**: 2026-03-06  
 **Tests Run**: Box (1166), Phased (327)  
-**Results**: Box 91 failing, Phased 85 failing = 176 total failures (88.2% pass rate)
+**Results After Iteration 17**: Box 90 failing, Phased 82 failing = 172 total failures (88.5% pass rate)
 
 ---
 
 ## Executive Summary
 
-After running the full test suite and analyzing failures, the issues fall into **6 major categories**:
+**Iteration 17 Results**: Fixed 4 tests (176 → 172 failures), NOT the expected ~30.
 
-| Category | Count | Priority | Complexity |
-|----------|-------|----------|------------|
-| Annotation Arguments Not Implemented | ~30 | HIGH | MEDIUM |
-| Nested Class Resolution | ~10 | HIGH | MEDIUM |
-| TYPE_USE Annotations on Type Arguments | ~5 | MEDIUM | HIGH |
-| Wildcard/Projection Edge Cases | ~5 | MEDIUM | HIGH |
-| Raw Type Visibility Issues | ~3 | LOW | LOW |
-| Other/Baseline Diffs | ~120+ | VARIES | VARIES |
+### Why Fewer Tests Fixed Than Expected
+
+The original analysis **incorrectly conflated three different annotation-related issues**:
+
+1. **Annotation Argument Values** (FIXED by iteration 17) — `@Foo(value = "x")` argument parsing
+2. **Annotation Method Access** (NOT FIXED) — Accessing annotation interface methods as properties (`b.value` where `b` is annotation instance)
+3. **Const Val Reference Resolution** (NOT FIXED) — `@Foo(CONST_VAL)` where the argument is a reference to a Kotlin const val
+
+### Revised Category Summary
+
+| Category | Count | Priority | Notes |
+|----------|-------|----------|-------|
+| Baseline/Content Diffs | 104 | VARIES | Need individual review |
+| Nested Class Resolution | ~12 | HIGH | `Outer.Inner` in binary classes |
+| Visibility Issues | 6 | MEDIUM | Protected/package-private access |
+| Nullability TYPE_USE | 5 | MEDIUM | `List<@NotNull T>` |
+| Missing Dep Superclass | 8 | HIGH | Supertype resolution |
+| Const Val in Annotation Args | 2 | MEDIUM | Reference expression resolution |
+| Annotation Method Access | 2 | LOW | Annotation instantiation feature |
+| Other Edge Cases | ~30 | VARIES | Various |
 
 ---
 
-## Category 1: Annotation Arguments Not Implemented (HIGH PRIORITY)
+## What Iteration 17 Actually Fixed
+
+Iteration 17 implemented annotation argument subinterfaces correctly:
+- `JavaLiteralAnnotationArgument` for literals ✅
+- `JavaArrayAnnotationArgument` for arrays ✅  
+- `JavaEnumValueAnnotationArgument` for enums ✅
+- `JavaClassObjectAnnotationArgument` for `.class` ✅
+- `JavaAnnotationAsAnnotationArgument` for nested annotations ✅
+
+This fixed tests where annotation arguments were simple literals or enums.
+
+---
+
+## Remaining Issues (Corrected Analysis)
+
+### Issue 1: Const Val Reference in Annotation Arguments (2 tests)
+
+**Tests**: `testConstValAsAnnotationArgumentInJava`, `testFakeJvmNameInJava`
+
+**Problem**: When annotation argument is a reference to a Kotlin const val:
+```java
+import static example.KotlinDtoMapping.ID;  // ID is a Kotlin const val
+
+@SimpleAnnotation(ID)  // REFERENCE_EXPRESSION, not literal
+public String getId() { ... }
+```
+
+The current code treats ALL `REFERENCE_EXPRESSION` as enum values, but const val references need to be resolved to their literal value or handled specially.
+
+**Fix**: In `createAnnotationArgumentFromValue`, distinguish between:
+- Enum constant references (`EnumClass.ENTRY`)
+- Const val references (`KotlinDtoMapping.ID`)
+- Static field references
+
+### Issue 2: Annotation Method Access (2 tests)
+
+**Tests**: `testJavaAnnotation`, `testClassArrayInAnnotation`
+
+**Problem**: These tests use annotation instantiation (`B("OK")`) and access annotation interface methods as properties (`b.value`). This is a Kotlin language feature (`InstantiationOfAnnotationClasses`) that requires annotation interfaces to expose their methods.
+
+**Root Cause**: NOT about annotation argument parsing. The annotation INTERFACE methods (`String value()`) need to be exposed as callable members.
+
+**Fix Location**: `JavaClassOverAst` or `JavaMemberOverAst` — annotation interface methods need special handling.
+
+### Issue 3: Baseline/Content Diffs (104 tests)
+
+These are the majority of failures. The test output differs from expected baselines. Categories:
+- May be legitimate differences in how java-direct represents types
+- May indicate missing features
+- May need baseline updates if behavior is correct
+
+**Action**: Need individual triage to determine if each is a bug or acceptable difference.
+
+---
+
+## Original Category 1: Annotation Arguments Not Implemented
+
+**STATUS: MOSTLY FIXED by Iteration 17**
+
+Only 2 tests remain with `ANNOTATION_NULL_ARG_IR` error, and those are due to const val reference resolution, not basic annotation argument parsing.
 
 ### Symptoms
 - `IR annotation has null argument` errors
