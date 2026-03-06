@@ -104,7 +104,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     }
 
                     swiftPMDependencies {
-                        localPackage(
+                        localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
                             products = listOf("LocalSwiftPackage"),
                         )
@@ -164,11 +164,11 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     }
 
                     swiftPMDependencies {
-                        iosDeploymentVersion.set("16.4")
-                        macosDeploymentVersion.set("14.6")
-                        watchosDeploymentVersion.set("11.6")
-                        tvosDeploymentVersion.set("18.6")
-                        localPackage(
+                        iosMinimumDeploymentTarget.set("16.4")
+                        macosMinimumDeploymentTarget.set("14.6")
+                        watchosMinimumDeploymentTarget.set("11.6")
+                        tvosMinimumDeploymentTarget.set("18.6")
+                        localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
                             products = listOf("LocalSwiftPackage"),
                         )
@@ -234,32 +234,32 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     }
 
                     swiftPMDependencies {
-                        `package`(
+                        swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf-exact.git"),
                             version = exact("1.32.0-exact"),
                             products = listOf(),
                         )
-                        `package`(
+                        swiftPackage(
                             url = "https://github.com/apple/swift-protobuf-string.git",
                             version = "1.32.0-string",
                             products = listOf(),
                         )
-                        `package`(
+                        swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf-from.git"),
                             version = from("1.32.0-from"),
                             products = listOf(),
                         )
-                        `package`(
+                        swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf-range.git"),
                             version = range("1.32.0-range1", "1.32.0-range2"),
                             products = listOf(),
                         )
-                        `package`(
+                        swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf-branch.git"),
                             version = branch("git-branch"),
                             products = listOf(),
                         )
-                        `package`(
+                        swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf-revision.git"),
                             version = revision("git-revision"),
                             products = listOf(),
@@ -305,7 +305,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     }
 
                     swiftPMDependencies {
-                        `package`(
+                        swiftPackage(
                             url = url("https://github.com/aws-amplify/aws-sdk-ios-spm.git"),
                             version = from("2.41.0"),
                             products = listOf(
@@ -401,16 +401,16 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     }
 
                     swiftPMDependencies {
-                        localPackage(
+                        localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
                             products = listOf("LocalSwiftPackage"),
                         )
                         if (project.hasProperty(includeSecondPackageProp)) {
-                            localPackage(
+                            localSwiftPackage(
                                 directory = project.layout.projectDirectory.dir(secondLocalSwiftPackageRelativePath),
                                 products = listOf("SecondLocalSwiftPackage"),
                             )
-                            `package`(
+                            swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf.git"),
                                 version = exact("1.32.0"),
                                 products = listOf(),
@@ -476,12 +476,12 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     }
 
                     swiftPMDependencies {
-                        localPackage(
+                        localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
                             products = listOf("LocalSwiftPackage"),
                         )
                         if (project.hasProperty(includeSecondPackageProp)) {
-                            `package`(
+                            swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf.git"),
                                 version = exact("1.32.0"),
                                 products = listOf(),
@@ -545,7 +545,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                         iosSimulatorArm64()
 
                         swiftPMDependencies {
-                            `package`(
+                            swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf-subprojectA.git"),
                                 version = exact("1.32.0"),
                                 products = listOf(),
@@ -562,7 +562,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                         iosSimulatorArm64()
 
                         swiftPMDependencies {
-                            `package`(
+                            swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf-subprojectB.git"),
                                 version = exact("1.32.0"),
                                 products = listOf(),
@@ -647,7 +647,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                         iosSimulatorArm64()
 
                         swiftPMDependencies {
-                            `package`(
+                            swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf-subprojectA.git"),
                                 version = exact("1.32.0"),
                                 products = listOf(),
@@ -664,7 +664,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                         iosSimulatorArm64()
 
                         swiftPMDependencies {
-                            `package`(
+                            swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf-subprojectB.git"),
                                 version = exact("1.32.0"),
                                 products = listOf(),
@@ -733,7 +733,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
 
                     swiftPMDependencies {
-                        `package`(
+                        swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf.git"),
                             version = exact("1.32.0"),
                             products = listOf(),
@@ -812,7 +812,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
 
                     swiftPMDependencies {
-                        `package`(
+                        swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf.git"),
                             version = exact("1.32.0"),
                             products = listOf(),
@@ -924,7 +924,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                         }
 
                         swiftPMDependencies {
-                            localPackage(
+                            localSwiftPackage(
                                 directory = project.layout.projectDirectory.dir("../$localSwiftPackageRelativePath"),
                                 products = listOf("LocalSwiftPackage"),
                             )
@@ -940,7 +940,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                         iosSimulatorArm64()
 
                         swiftPMDependencies {
-                            `package`(
+                            swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf.git"),
                                 version = exact("1.32.0"),
                                 products = listOf(),
@@ -1099,7 +1099,7 @@ private fun TestProject.initDefaultKmpWithLocalSPM(extra: KotlinMultiplatformExt
             }
 
             swiftPMDependencies {
-                localPackage(
+                localSwiftPackage(
                     directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
                     products = listOf("LocalSwiftPackage"),
                 )

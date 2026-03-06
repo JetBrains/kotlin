@@ -114,12 +114,12 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/firebase/firebase-ios-sdk.git"),
             version = exact("12.5.0"),
             products = listOf(product("FirebaseAnalytics"), product("FirebaseFirestore")),
         )
-        `package`(
+        swiftPackage(
             url = url("https://github.com/apple/swift-protobuf.git"),
             version = exact("1.32.0"),
             products = listOf(),
@@ -169,8 +169,8 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        iosDeploymentVersion.set("16.0")
-        `package`(
+        iosMinimumDeploymentTarget.set("16.0")
+        swiftPackage(
             url = url("https://github.com/googlemaps/ios-maps-sdk.git"),
             version = exact("10.6.0"),
             products = listOf(product("GoogleMaps")),
@@ -212,7 +212,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/getsentry/sentry-cocoa.git"),
             version = exact("9.0.0-rc.1"), // use rc to get the fix: https://github.com/getsentry/sentry-cocoa/pull/6607
             products = listOf(product("Sentry")),
@@ -263,7 +263,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/RevenueCat/purchases-ios-spm.git"),
             version = exact("5.49.0"),
             products = listOf(product("RevenueCat")),
@@ -396,7 +396,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/aws-amplify/aws-sdk-ios-spm.git"),
             version = exact("2.41.0"),
             products = listOf(product("AWSS3"), product("AWSEC2")),
@@ -458,7 +458,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/mapbox/mapbox-maps-ios.git"),
             version = exact("11.16.6"),
             products = listOf(product("MapboxMaps")),
@@ -515,7 +515,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/EbrahimTahernejad/Tun2SocksKit.git"),
             version = exact("5.14.1"),
             products = listOf(product("Tun2SocksKit"))
@@ -611,7 +611,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/DataDog/dd-sdk-ios.git"),
             version = exact("3.3.0"),
             products = listOf(product("DatadogCore"), product("DatadogLogs")),
@@ -770,7 +770,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/adjust/ios_sdk.git"),
             version = exact("5.4.6"),
             products = listOf(product("AdjustWebBridge"))
@@ -823,7 +823,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/openid/AppAuth-iOS.git"),
             version = exact("2.0.0"),
             products = listOf(product("AppAuth"))
@@ -905,7 +905,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
             createLocalSwiftPackage(projectPath.resolve(localSwiftPackageRelativePath))
         }
     ) { layout ->
-        localPackage(
+        localSwiftPackage(
             directory = layout.projectDirectory.dir("../localSwiftPackage"),
             products = listOf("LocalSwiftPackage"),
         )
@@ -922,7 +922,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
      * │   ├── localSwiftPackage/           <- Local Swift Package
      * │   │   ├── Package.swift
      * │   │   └── Sources/LocalSwiftPackage/LocalSwiftPackage.swift
-     * │   └── build.gradle.kts             <- swiftPMDependencies { localPackage(...) }
+     * │   └── build.gradle.kts             <- swiftPMDependencies { localSwiftPackage(...) }
      * └── build.gradle.kts                 <- depends on :producer (commonMain)
      *                                         framework binaries (Shared.framework)
      * ```
@@ -1019,7 +1019,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
                         )
 
                         swiftPMDependencies {
-                            localPackage(
+                            localSwiftPackage(
                                 directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
                                 products = listOf("LocalSwiftPackage"),
                             )

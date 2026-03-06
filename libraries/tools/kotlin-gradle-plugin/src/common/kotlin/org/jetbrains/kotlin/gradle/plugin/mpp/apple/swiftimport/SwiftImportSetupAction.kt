@@ -548,10 +548,10 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
     protected abstract val execOps: ExecOperations
 
     fun configureWithExtension(swiftPMImportExtension: SwiftImportExtension) {
-        iosDeploymentVersion.set(swiftPMImportExtension.iosDeploymentVersion)
-        macosDeploymentVersion.set(swiftPMImportExtension.macosDeploymentVersion)
-        watchosDeploymentVersion.set(swiftPMImportExtension.watchosDeploymentVersion)
-        tvosDeploymentVersion.set(swiftPMImportExtension.tvosDeploymentVersion)
+        iosDeploymentVersion.set(swiftPMImportExtension.iosMinimumDeploymentTarget)
+        macosDeploymentVersion.set(swiftPMImportExtension.macosMinimumDeploymentTarget)
+        watchosDeploymentVersion.set(swiftPMImportExtension.watchosMinimumDeploymentTarget)
+        tvosDeploymentVersion.set(swiftPMImportExtension.tvosMinimumDeploymentTarget)
     }
 
     override fun parallelWork() = generateSwiftPMSyntheticImportProjectAndFetchPackages()
@@ -1864,10 +1864,10 @@ internal abstract class SerializeSwiftPMDependenciesMetadata : ParallelTask() {
     val serializationFile: Provider<RegularFile> = project.layout.buildDirectory.file("kotlin/importedSpmModules")
 
     fun configureWithExtension(swiftPMImportExtension: SwiftImportExtension) {
-        iosDeploymentVersion.set(swiftPMImportExtension.iosDeploymentVersion)
-        macosDeploymentVersion.set(swiftPMImportExtension.macosDeploymentVersion)
-        watchosDeploymentVersion.set(swiftPMImportExtension.watchosDeploymentVersion)
-        tvosDeploymentVersion.set(swiftPMImportExtension.tvosDeploymentVersion)
+        iosDeploymentVersion.set(swiftPMImportExtension.iosMinimumDeploymentTarget)
+        macosDeploymentVersion.set(swiftPMImportExtension.macosMinimumDeploymentTarget)
+        watchosDeploymentVersion.set(swiftPMImportExtension.watchosMinimumDeploymentTarget)
+        tvosDeploymentVersion.set(swiftPMImportExtension.tvosMinimumDeploymentTarget)
     }
 
     override fun parallelWork() = serialize()

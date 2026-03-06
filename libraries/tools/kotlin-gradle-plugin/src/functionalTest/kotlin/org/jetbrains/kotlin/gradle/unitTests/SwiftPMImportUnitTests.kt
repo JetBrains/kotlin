@@ -55,7 +55,7 @@ class SwiftPMImportUnitTests {
                 )
             },
             swiftPMDependencies = { layout ->
-                localPackage(
+                localSwiftPackage(
                     directory = layout.projectDirectory.dir("localSwiftPackage"),
                     products = listOf("LocalSwiftPackage"),
                 )
@@ -92,7 +92,7 @@ class SwiftPMImportUnitTests {
             },
             swiftPMDependencies = { layout ->
                 // Don't specify packageName - should be inferred from directory name, not manifest name
-                localPackage(
+                localSwiftPackage(
                     directory = layout.projectDirectory.dir("my-custom-pkg"),
                     products = listOf("ManifestPackage"),
                 )
@@ -126,7 +126,7 @@ class SwiftPMImportUnitTests {
             },
             swiftPMDependencies = { layout ->
                 // Specify explicit packageName different from directory name
-                localPackage(
+                localSwiftPackage(
                     directory = layout.projectDirectory.dir("some-directory"),
                     products = listOf("ActualPackageName"),
                     packageName = "ExplicitCustomName",
@@ -149,7 +149,7 @@ class SwiftPMImportUnitTests {
         val project = swiftPMImportProject(
             swiftPMDependencies = { layout ->
                 // Reference a directory that doesn't exist
-                localPackage(
+                localSwiftPackage(
                     directory = layout.projectDirectory.dir("nonExistentDirectory"),
                     products = listOf("SomeProduct"),
                 )
@@ -172,7 +172,7 @@ class SwiftPMImportUnitTests {
                 // Intentionally NOT creating Package.swift
             },
             swiftPMDependencies = { layout ->
-                localPackage(
+                localSwiftPackage(
                     directory = layout.projectDirectory.dir("packageWithoutManifest"),
                     products = listOf("SomeProduct"),
                 )
@@ -192,7 +192,7 @@ class SwiftPMImportUnitTests {
                 packageFile.writeText("not a directory")
             },
             swiftPMDependencies = { layout ->
-                localPackage(
+                localSwiftPackage(
                     directory = layout.projectDirectory.dir("packageAsFile"),
                     products = listOf("SomeProduct"),
                 )
@@ -219,7 +219,7 @@ class SwiftPMImportUnitTests {
                 )
             },
             swiftPMDependencies = { layout ->
-                localPackage(
+                localSwiftPackage(
                     directory = layout.projectDirectory.dir("Package With Spaces"),
                     products = listOf("PackageWithSpaces"),
                 )
@@ -249,7 +249,7 @@ class SwiftPMImportUnitTests {
                 )
             },
             swiftPMDependencies = { layout ->
-                localPackage(
+                localSwiftPackage(
                     directory = layout.projectDirectory.dir("../siblingSwiftPackage"),
                     products = listOf("SiblingSwiftPackage"),
                 )
@@ -284,7 +284,7 @@ class SwiftPMImportUnitTests {
             },
             swiftPMDependencies = { layout ->
                 // Use ".." which should resolve to parent directory name, NOT ".."
-                localPackage(
+                localSwiftPackage(
                     directory = layout.projectDirectory.dir(".."),
                     products = listOf("ParentProduct"),
                 )
@@ -324,7 +324,7 @@ class SwiftPMImportUnitTests {
                 Files.createSymbolicLink(symlinkDir.toPath(), realPackageDir.toPath())
             },
             swiftPMDependencies = { layout ->
-                localPackage(
+                localSwiftPackage(
                     directory = layout.projectDirectory.dir("symlinkPackage"),
                     products = listOf("RealPackage"),
                 )
@@ -349,7 +349,7 @@ class SwiftPMImportUnitTests {
                 Files.createSymbolicLink(brokenSymlinkDir.toPath(), missingTargetDir.toPath())
             },
             swiftPMDependencies = { layout ->
-                localPackage(
+                localSwiftPackage(
                     directory = layout.projectDirectory.dir("brokenLink"),
                     products = listOf("MissingPackage"),
                 )
@@ -376,7 +376,7 @@ class SwiftPMImportUnitTests {
                 )
             },
             swiftPMDependencies = { layout ->
-                localPackage(
+                localSwiftPackage(
                     directory = layout.projectDirectory.dir("blankNamePackage"),
                     products = listOf("BlankNamePackage"),
                     packageName = " ",

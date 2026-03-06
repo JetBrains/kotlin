@@ -16,10 +16,10 @@ abstract class SwiftImportExtension @Inject constructor(
     private val objects: ObjectFactory,
 ) {
     // FIXME: Maybe tests against CI RECOMMENDED_ version to keep up to date?
-    val iosDeploymentVersion: Property<String> = objects.property(String::class.java)
-    val macosDeploymentVersion: Property<String> = objects.property(String::class.java)
-    val watchosDeploymentVersion: Property<String> = objects.property(String::class.java)
-    val tvosDeploymentVersion: Property<String> = objects.property(String::class.java)
+    val iosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
+    val macosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
+    val watchosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
+    val tvosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
 
     val discoverModulesImplicitly: Property<Boolean> = objects.property(Boolean::class.java)
         .convention(true)
@@ -51,7 +51,7 @@ abstract class SwiftImportExtension @Inject constructor(
     fun watchOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.watchOS
     fun tvOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.tvOS
 
-    fun `package`(
+    fun swiftPackage(
         url: String,
         version: String,
         products: List<String>,
@@ -73,7 +73,7 @@ abstract class SwiftImportExtension @Inject constructor(
         )
     }
 
-    fun `package`(
+    fun swiftPackage(
         url: Repository.Url,
         version: Version,
         products: List<SwiftPMDependency.Product>,
@@ -101,7 +101,7 @@ abstract class SwiftImportExtension @Inject constructor(
         )
     }
 
-    fun `package`(
+    fun swiftPackage(
         repository: Repository,
         version: Version,
         products: List<SwiftPMDependency.Product>,
@@ -140,13 +140,13 @@ abstract class SwiftImportExtension @Inject constructor(
      *
      * Example:
      * ```
-     * localPackage(
+     * localSwiftPackage(
      *     directory = layout.projectDirectory.dir("../MySwiftPackage"),
      *     products = listOf("MySwiftPackage"),
      * )
      * ```
      */
-    fun localPackage(
+    fun localSwiftPackage(
         directory: Directory,
         products: List<String>,
         packageName: String = inferLocalPackageName(directory),
@@ -177,7 +177,7 @@ abstract class SwiftImportExtension @Inject constructor(
      * @param importedModules List of modules to import
      * @param traits SwiftPM traits to enable
      */
-    fun localPackage(
+    fun localSwiftPackage(
         directory: Directory,
         products: List<SwiftPMDependency.Product>,
         packageName: String = inferLocalPackageName(directory),
