@@ -12,7 +12,6 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lang.BinaryOperationPrecedence
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
-import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 /**
@@ -64,8 +63,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
  * @see KtBinaryExpression
  * @see KtUnaryExpression
  */
-@OptIn(KtExperimentalApi::class)
-class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node), KtResolvable {
+class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node) {
     private companion object {
         private val OPERATION_TOKENS: TokenSet = TokenSet.create(*buildList {
             addAll(KtTokenSets.POSTFIX_OPERATIONS.types)
