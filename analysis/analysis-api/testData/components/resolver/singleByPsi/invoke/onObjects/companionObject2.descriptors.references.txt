@@ -4,8 +4,6 @@ KtNameReferenceExpression(119,122): 'Foo'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in foo) class Foo(i: kotlin.Int)
-    resolveToSymbols:
       (in foo.Foo) companion object
 
   SyntheticPropertyAccessorReference:

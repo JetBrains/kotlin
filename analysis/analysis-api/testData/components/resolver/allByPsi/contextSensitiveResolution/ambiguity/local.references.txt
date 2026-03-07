@@ -354,8 +354,6 @@ KtNameReferenceExpression(827,833): 'Sealed'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in foo) sealed class Sealed
-    resolveToSymbols:
       (in foo.Sealed) companion object
 
 KtNameReferenceExpression(834,844): 'CompanionB'
@@ -744,8 +742,6 @@ KtNameReferenceExpression(1760,1766): 'Sealed'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in foo) sealed class Sealed
-    resolveToSymbols:
       (in foo.Sealed) companion object
 
 KtNameReferenceExpression(1767,1777): 'CompanionA'
@@ -762,8 +758,6 @@ KtNameReferenceExpression(1795,1801): 'Sealed'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in foo) sealed class Sealed
-    resolveToSymbols:
       (in foo.Sealed) companion object
 
 KtNameReferenceExpression(1802,1812): 'CompanionB'

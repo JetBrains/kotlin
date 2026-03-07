@@ -4,8 +4,6 @@ KtNameReferenceExpression(156,164): 'FooAlias'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in test) class Foo private constructor
-    resolveToSymbols:
       (in test) typealias FooAlias = test.Foo
 
   SyntheticPropertyAccessorReference:

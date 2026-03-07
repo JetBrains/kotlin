@@ -4,8 +4,6 @@ KtNameReferenceExpression(121,123): 'BB'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in foo.bar.baz.AA) class BB
-    resolveToSymbols:
       (in foo.bar.baz.AA.BB) companion object
 
   SyntheticPropertyAccessorReference:

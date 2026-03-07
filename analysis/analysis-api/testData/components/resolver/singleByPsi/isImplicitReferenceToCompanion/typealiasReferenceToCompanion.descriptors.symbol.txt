@@ -1,5 +1,0 @@
-KtNameReferenceExpression(71,73): 'TA'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      /AA
-    ]

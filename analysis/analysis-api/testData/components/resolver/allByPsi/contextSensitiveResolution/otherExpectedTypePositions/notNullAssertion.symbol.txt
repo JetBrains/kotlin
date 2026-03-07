@@ -456,7 +456,7 @@ KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
 KtNameReferenceExpression(675,682): 'MyClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      /MyClass
+      /MyClass.Companion
     ]
 
 KtNameReferenceExpression(683,694): 'myClassProp'
@@ -492,7 +492,7 @@ KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
 KtNameReferenceExpression(702,709): 'MyClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      /MyClass
+      /MyClass.Companion
     ]
 
 KtNameReferenceExpression(710,720): 'stringProp'
@@ -561,7 +561,7 @@ KtDotQualifiedExpression(757,785): 'MyClass.getNestedInheritor()'
 KtNameReferenceExpression(757,764): 'MyClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      /MyClass
+      /MyClass.Companion
     ]
 
 KtCallExpression(765,785): 'getNestedInheritor()'
@@ -945,7 +945,7 @@ KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
 KtNameReferenceExpression(1248,1255): 'MyClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      /MyClass
+      /MyClass.Companion
     ]
 
 KtNameReferenceExpression(1256,1267): 'myClassProp'

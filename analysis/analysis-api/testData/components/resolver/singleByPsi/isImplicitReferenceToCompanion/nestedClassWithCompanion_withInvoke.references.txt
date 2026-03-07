@@ -4,6 +4,4 @@ KtNameReferenceExpression(137,143): 'Nested'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in AA) interface Nested
-    resolveToSymbols:
       (in AA.Nested) companion object

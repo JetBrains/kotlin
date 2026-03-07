@@ -4,6 +4,4 @@ KtNameReferenceExpression(146,163): 'NestedInCompanion'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in AA.Companion) class NestedInCompanion
-    resolveToSymbols:
       (in AA.Companion.NestedInCompanion) companion object

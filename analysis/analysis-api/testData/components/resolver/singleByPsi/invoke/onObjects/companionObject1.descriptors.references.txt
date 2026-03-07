@@ -4,8 +4,6 @@ KtNameReferenceExpression(116,119): 'Foo'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in ROOT) class Foo private constructor
-    resolveToSymbols:
       (in Foo) companion object
 
   SyntheticPropertyAccessorReference:

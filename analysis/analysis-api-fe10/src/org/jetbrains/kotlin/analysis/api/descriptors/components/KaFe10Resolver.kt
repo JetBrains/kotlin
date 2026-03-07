@@ -115,7 +115,7 @@ internal class KaFe10Resolver(
 
         if (resolvedCall != null) {
             val candidate = when (val candidate = resolvedCall.candidateDescriptor) {
-                is FakeCallableDescriptorForObject if (psi is KtNameReferenceExpression) -> candidate.classDescriptor
+                is FakeCallableDescriptorForObject if (psi is KtNameReferenceExpression) -> candidate.getReferencedDescriptor()
                 else -> candidate
             }
 

@@ -4,8 +4,6 @@ KtNameReferenceExpression(116,118): 'TA'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in ROOT) interface AA
-    resolveToSymbols:
       (in ROOT) typealias TA = AA
 
   SyntheticPropertyAccessorReference:

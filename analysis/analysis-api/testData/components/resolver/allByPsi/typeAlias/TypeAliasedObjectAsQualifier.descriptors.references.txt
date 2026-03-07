@@ -102,8 +102,6 @@ KtNameReferenceExpression(178,185): 'MyAlias'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in test) object MyObject
-    resolveToSymbols:
       (in test) typealias MyAlias = test.MyObject
 
   SyntheticPropertyAccessorReference:
@@ -134,8 +132,6 @@ KtNameReferenceExpression(200,207): 'MyAlias'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in test) object MyObject
-    resolveToSymbols:
       (in test) typealias MyAlias = test.MyObject
 
   SyntheticPropertyAccessorReference:

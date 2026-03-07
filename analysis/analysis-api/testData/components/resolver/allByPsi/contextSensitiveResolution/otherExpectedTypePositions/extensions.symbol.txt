@@ -131,7 +131,7 @@ KtDotQualifiedExpression(232,243): 'MyClass.bar'
 KtNameReferenceExpression(232,239): 'MyClass'
   KaSymbolResolutionSuccess:
     symbols = [
-      /MyClass
+      /MyClass.Companion
     ]
 
 KtNameReferenceExpression(240,243): 'bar'
@@ -282,7 +282,7 @@ KtDotQualifiedExpression(408,420): 'MyClass2.bar'
 KtNameReferenceExpression(408,416): 'MyClass2'
   KaSymbolResolutionSuccess:
     symbols = [
-      /MyClass2
+      /MyClass2.Companion
     ]
 
 KtNameReferenceExpression(417,420): 'bar'

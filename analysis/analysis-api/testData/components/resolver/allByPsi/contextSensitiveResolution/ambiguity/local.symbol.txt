@@ -634,7 +634,7 @@ KtDotQualifiedExpression(827,844): 'Sealed.CompanionB'
 KtNameReferenceExpression(827,833): 'Sealed'
   KaSymbolResolutionSuccess:
     symbols = [
-      foo/Sealed
+      foo/Sealed.Companion
     ]
 
 KtNameReferenceExpression(834,844): 'CompanionB'
@@ -1255,7 +1255,7 @@ KtDotQualifiedExpression(1760,1777): 'Sealed.CompanionA'
 KtNameReferenceExpression(1760,1766): 'Sealed'
   KaSymbolResolutionSuccess:
     symbols = [
-      foo/Sealed
+      foo/Sealed.Companion
     ]
 
 KtNameReferenceExpression(1767,1777): 'CompanionA'
@@ -1282,7 +1282,7 @@ KtDotQualifiedExpression(1795,1812): 'Sealed.CompanionB'
 KtNameReferenceExpression(1795,1801): 'Sealed'
   KaSymbolResolutionSuccess:
     symbols = [
-      foo/Sealed
+      foo/Sealed.Companion
     ]
 
 KtNameReferenceExpression(1802,1812): 'CompanionB'

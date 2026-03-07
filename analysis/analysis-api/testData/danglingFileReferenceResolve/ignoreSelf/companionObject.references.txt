@@ -4,6 +4,4 @@ KtNameReferenceExpression(61,64): 'Foo'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in ROOT) class Foo [companionObject.kt]
-    resolveToSymbols:
       (in Foo) companion object [companionObject.kt]

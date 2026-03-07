@@ -4,8 +4,6 @@ KtNameReferenceExpression(97,99): 'AA'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in ROOT) interface AA
-    resolveToSymbols:
       (in AA) companion object
 
   SyntheticPropertyAccessorReference:

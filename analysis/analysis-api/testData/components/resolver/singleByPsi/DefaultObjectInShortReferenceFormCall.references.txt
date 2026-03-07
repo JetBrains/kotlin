@@ -4,6 +4,4 @@ KtNameReferenceExpression(102,103): 'A'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in t) class A
-    resolveToSymbols:
       (in t.A) companion object

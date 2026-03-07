@@ -339,8 +339,6 @@ KtNameReferenceExpression(675,682): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in ROOT) open class MyClass
-    resolveToSymbols:
       (in MyClass) companion object
 
 KtNameReferenceExpression(683,694): 'myClassProp'
@@ -365,8 +363,6 @@ KtNameReferenceExpression(702,709): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in ROOT) open class MyClass
-    resolveToSymbols:
       (in MyClass) companion object
 
 KtNameReferenceExpression(710,720): 'stringProp'
@@ -415,8 +411,6 @@ KtNameReferenceExpression(757,764): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in ROOT) open class MyClass
-    resolveToSymbols:
       (in MyClass) companion object
 
 KtCallExpression(765,785): 'getNestedInheritor()'
@@ -706,8 +700,6 @@ KtNameReferenceExpression(1248,1255): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in ROOT) open class MyClass
-    resolveToSymbols:
       (in MyClass) companion object
 
 KtNameReferenceExpression(1256,1267): 'myClassProp'

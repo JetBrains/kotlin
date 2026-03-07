@@ -4,6 +4,6 @@ KtNameReferenceExpression(58,64): 'sample'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in my.sample) class Inner
+      (in my.sample.Inner) companion object Inner
     resolveToSymbols:
       package my.sample

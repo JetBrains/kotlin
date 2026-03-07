@@ -288,7 +288,7 @@ KtNameReferenceExpression(429,432): 'bar'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in bar) sealed class Sealed
+      (in bar.Sealed) companion object
     resolveToSymbols:
       package bar
 
@@ -298,8 +298,6 @@ KtNameReferenceExpression(433,439): 'Sealed'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in bar) sealed class Sealed
-    resolveToSymbols:
       (in bar.Sealed) companion object
 
 KtNameReferenceExpression(440,450): 'CompanionA'
@@ -316,7 +314,7 @@ KtNameReferenceExpression(460,463): 'bar'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in bar) sealed class Sealed
+      (in bar.Sealed) companion object
     resolveToSymbols:
       package bar
 
@@ -326,8 +324,6 @@ KtNameReferenceExpression(464,470): 'Sealed'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in bar) sealed class Sealed
-    resolveToSymbols:
       (in bar.Sealed) companion object
 
 KtNameReferenceExpression(471,481): 'CompanionB'
@@ -1256,8 +1252,6 @@ KtNameReferenceExpression(1587,1593): 'Sealed'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in bar) sealed class Sealed
-    resolveToSymbols:
       (in bar.Sealed) companion object
 
 KtNameReferenceExpression(1594,1604): 'CompanionA'

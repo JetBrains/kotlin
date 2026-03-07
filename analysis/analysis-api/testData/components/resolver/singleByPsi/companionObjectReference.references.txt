@@ -4,6 +4,4 @@ KtNameReferenceExpression(122,128): 'Server'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in ROOT) open class Server
-    resolveToSymbols:
       (in Server) companion object

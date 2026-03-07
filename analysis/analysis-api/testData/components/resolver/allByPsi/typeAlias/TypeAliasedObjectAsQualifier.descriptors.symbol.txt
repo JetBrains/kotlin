@@ -109,7 +109,7 @@ KtCallableReferenceExpression(178,195): 'MyAlias::function'
 KtNameReferenceExpression(178,185): 'MyAlias'
   KaSymbolResolutionSuccess:
     symbols = [
-      test/MyObject
+      test/MyAlias
     ]
 
 KtNameReferenceExpression(187,195): 'function'
@@ -127,7 +127,7 @@ KtCallableReferenceExpression(200,217): 'MyAlias::property'
 KtNameReferenceExpression(200,207): 'MyAlias'
   KaSymbolResolutionSuccess:
     symbols = [
-      test/MyObject
+      test/MyAlias
     ]
 
 KtNameReferenceExpression(209,217): 'property'

@@ -376,7 +376,13 @@ internal class KaFirResolver(
      * @see FirReferenceResolveHelper
      */
     private fun FirResolvedQualifier.toKaSymbolResolutionAttempt(): KaSymbolResolutionAttempt? {
-        return symbol?.buildSymbol(firSymbolBuilder)?.let(::KaBaseSymbolResolutionSuccess)
+        val referencedSymbol = when (val symbol = symbol) {
+            // Note: we want to consider the companion object only for regular class qualifiers (and not for typealiased ones)
+            is FirRegularClassSymbol if (resolvedToCompanionObject) -> symbol.companionObjectSymbol
+            else -> symbol
+        }
+
+        return referencedSymbol?.buildSymbol(firSymbolBuilder)?.let(::KaBaseSymbolResolutionSuccess)
     }
 
     private fun FirDiagnosticHolder.toKaSymbolResolutionError(psi: KtElement): KaSymbolResolutionError =

@@ -77,8 +77,6 @@ KtNameReferenceExpression(232,239): 'MyClass'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in ROOT) class MyClass
-    resolveToSymbols:
       (in MyClass) companion object
 
 KtNameReferenceExpression(240,243): 'bar'
@@ -194,8 +192,6 @@ KtNameReferenceExpression(408,416): 'MyClass2'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in ROOT) class MyClass2
-    resolveToSymbols:
       (in MyClass2) companion object
 
 KtNameReferenceExpression(417,420): 'bar'
