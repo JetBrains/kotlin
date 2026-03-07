@@ -50,7 +50,10 @@ KtThisExpression(47,51): 'this'
     ]
 
 KtNameReferenceExpression(47,51): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNamedFunction(56,94): 'operator fun minus(other: A): A = this'
   null
@@ -89,7 +92,10 @@ KtThisExpression(90,94): 'this'
     ]
 
 KtNameReferenceExpression(90,94): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNamedFunction(99,137): 'operator fun times(other: A): A = this'
   null
@@ -128,7 +134,10 @@ KtThisExpression(133,137): 'this'
     ]
 
 KtNameReferenceExpression(133,137): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNamedFunction(142,178): 'operator fun div(other: A): A = this'
   null
@@ -167,7 +176,10 @@ KtThisExpression(174,178): 'this'
     ]
 
 KtNameReferenceExpression(174,178): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNamedFunction(183,219): 'operator fun rem(other: A): A = this'
   null
@@ -206,7 +218,10 @@ KtThisExpression(215,219): 'this'
     ]
 
 KtNameReferenceExpression(215,219): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNamedFunction(223,319): 'fun test() {'
   null

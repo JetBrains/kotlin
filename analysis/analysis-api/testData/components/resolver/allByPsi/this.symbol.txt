@@ -59,7 +59,10 @@ KtThisExpression(80,84): 'this'
     ]
 
 KtNameReferenceExpression(80,84): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
 
 KtCallExpression(85,90): 'foo()'
   KaSymbolResolutionSuccess:
@@ -89,7 +92,10 @@ KtThisExpression(99,111): 'this@MyClass'
     ]
 
 KtNameReferenceExpression(99,103): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
 
 KtContainerNode(103,111): '@MyClass'
   null
@@ -167,7 +173,10 @@ KtThisExpression(221,225): 'this'
     ]
 
 KtNameReferenceExpression(221,225): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
 
 KtCallExpression(226,231): 'foo()'
   KaSymbolResolutionSuccess:
@@ -197,7 +206,10 @@ KtThisExpression(244,259): 'this@InnerOuter'
     ]
 
 KtNameReferenceExpression(244,248): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
 
 KtContainerNode(248,259): '@InnerOuter'
   null
@@ -236,7 +248,10 @@ KtThisExpression(278,290): 'this@MyClass'
     ]
 
 KtNameReferenceExpression(278,282): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
 
 KtContainerNode(282,290): '@MyClass'
   null
@@ -314,7 +329,10 @@ KtThisExpression(425,429): 'this'
     ]
 
 KtNameReferenceExpression(425,429): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
 
 KtCallExpression(430,435): 'foo()'
   KaSymbolResolutionSuccess:
@@ -344,7 +362,10 @@ KtThisExpression(452,468): 'this@InnerNested'
     ]
 
 KtNameReferenceExpression(452,456): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
 
 KtContainerNode(456,468): '@InnerNested'
   null
@@ -383,7 +404,10 @@ KtThisExpression(491,506): 'this@InnerOuter'
     ]
 
 KtNameReferenceExpression(491,495): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
 
 KtContainerNode(495,506): '@InnerOuter'
   null
@@ -422,7 +446,10 @@ KtThisExpression(529,541): 'this@MyClass'
     ]
 
 KtNameReferenceExpression(529,533): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
 
 KtContainerNode(533,541): '@MyClass'
   null
@@ -538,7 +565,30 @@ KtThisExpression(651,655): 'this'
     ]
 
 KtNameReferenceExpression(651,655): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: PUBLIC
+    ]
 
 KtCallExpression(656,661): 'foo()'
   KaSymbolResolutionSuccess:
@@ -588,7 +638,30 @@ KtThisExpression(682,691): 'this@anon'
     ]
 
 KtNameReferenceExpression(682,686): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass
+        visibility: PUBLIC
+    ]
 
 KtContainerNode(686,691): '@anon'
   null
@@ -647,7 +720,10 @@ KtThisExpression(718,734): 'this@InnerNested'
     ]
 
 KtNameReferenceExpression(718,722): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
 
 KtContainerNode(722,734): '@InnerNested'
   null
@@ -686,7 +762,10 @@ KtThisExpression(761,776): 'this@InnerOuter'
     ]
 
 KtNameReferenceExpression(761,765): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
 
 KtContainerNode(765,776): '@InnerOuter'
   null
@@ -725,7 +804,10 @@ KtThisExpression(803,815): 'this@MyClass'
     ]
 
 KtNameReferenceExpression(803,807): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
 
 KtContainerNode(807,815): '@MyClass'
   null
@@ -829,7 +911,30 @@ KtThisExpression(917,921): 'this'
     ]
 
 KtNameReferenceExpression(917,921): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: PUBLIC
+    ]
 
 KtCallExpression(922,927): 'foo()'
   KaSymbolResolutionSuccess:
@@ -879,7 +984,30 @@ KtThisExpression(948,959): 'this@myWith'
     ]
 
 KtNameReferenceExpression(948,952): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: PUBLIC
+    ]
 
 KtContainerNode(952,959): '@myWith'
   null
@@ -938,7 +1066,10 @@ KtThisExpression(986,1002): 'this@InnerNested'
     ]
 
 KtNameReferenceExpression(986,990): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter.InnerNested
+    ]
 
 KtContainerNode(990,1002): '@InnerNested'
   null
@@ -977,7 +1108,10 @@ KtThisExpression(1029,1044): 'this@InnerOuter'
     ]
 
 KtNameReferenceExpression(1029,1033): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass.InnerOuter
+    ]
 
 KtContainerNode(1033,1044): '@InnerOuter'
   null
@@ -1016,7 +1150,10 @@ KtThisExpression(1071,1083): 'this@MyClass'
     ]
 
 KtNameReferenceExpression(1071,1075): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/MyClass
+    ]
 
 KtContainerNode(1075,1083): '@MyClass'
   null
@@ -1108,7 +1245,30 @@ KtThisExpression(1160,1170): 'this@label'
     ]
 
 KtNameReferenceExpression(1160,1164): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/MyClass.InnerOuter.InnerNested
+        visibility: PUBLIC
+    ]
 
 KtContainerNode(1164,1170): '@label'
   null
@@ -1267,4 +1427,26 @@ KtThisExpression(1277,1281): 'this'
     ]
 
 KtNameReferenceExpression(1277,1281): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(one/myWith)
+        receiverParameter: null
+        returnType: KaTypeParameterType:
+          annotations: []
+          type: T
+        visibility: PUBLIC
+    ]

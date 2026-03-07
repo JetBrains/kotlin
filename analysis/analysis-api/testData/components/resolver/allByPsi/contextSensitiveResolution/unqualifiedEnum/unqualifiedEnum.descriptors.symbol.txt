@@ -269,7 +269,10 @@ KtNameReferenceExpression(434,440): 'Sample'
   null
 
 KtNameReferenceExpression(441,447): 'SECOND'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.SECOND
+    ]
 
 KtNamedFunction(453,667): 'fun priority(s: Sample): Int {'
   null
@@ -317,7 +320,10 @@ KtNameReferenceExpression(509,515): 'Sample'
   null
 
 KtNameReferenceExpression(516,521): 'THIRD'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.THIRD
+    ]
 
 KtReturnExpression(530,661): 'return when (s) {'
   KaSymbolResolutionSuccess:
@@ -383,7 +389,10 @@ KtNameReferenceExpression(612,618): 'Sample'
   null
 
 KtNameReferenceExpression(619,624): 'FIRST'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample.FIRST
+    ]
 
 KtConstantExpression(628,629): '1'
   null

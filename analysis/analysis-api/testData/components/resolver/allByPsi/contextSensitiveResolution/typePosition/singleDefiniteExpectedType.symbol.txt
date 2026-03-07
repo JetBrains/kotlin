@@ -1893,7 +1893,10 @@ KtUserType(2752,2766): 'UnsafeVariance'
   null
 
 KtNameReferenceExpression(2752,2766): 'UnsafeVariance'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/UnsafeVariance
+    ]
 
 KtUserType(2767,2768): 'T'
   null

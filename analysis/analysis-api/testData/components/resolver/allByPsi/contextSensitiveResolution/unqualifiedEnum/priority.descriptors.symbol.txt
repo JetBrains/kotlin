@@ -59,7 +59,10 @@ KtNameReferenceExpression(134,140): 'Second'
   null
 
 KtNameReferenceExpression(141,146): 'THREE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Second.THREE
+    ]
 
 KtNamedFunction(148,206): 'fun foo(f: First) = when (f) {'
   null

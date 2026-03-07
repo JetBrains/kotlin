@@ -41,7 +41,10 @@ KtUserType(39,45): 'Target'
   null
 
 KtNameReferenceExpression(39,45): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Target
+    ]
 
 KtValueArgumentList(45,74): '(AnnotationTarget.EXPRESSION)'
   null
@@ -83,7 +86,10 @@ KtUserType(76,85): 'Retention'
   null
 
 KtNameReferenceExpression(76,85): 'Retention'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Retention
+    ]
 
 KtValueArgumentList(85,113): '(AnnotationRetention.SOURCE)'
   null
@@ -155,7 +161,10 @@ KtUserType(173,177): 'Anno'
   null
 
 KtNameReferenceExpression(173,177): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(177,190): '(0 + integer)'
   null
@@ -212,7 +221,10 @@ KtUserType(193,197): 'Anno'
   null
 
 KtNameReferenceExpression(193,197): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(197,206): '(integer)'
   null

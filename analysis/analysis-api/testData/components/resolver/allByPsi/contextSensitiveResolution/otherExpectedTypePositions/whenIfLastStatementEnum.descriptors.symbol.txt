@@ -221,7 +221,10 @@ KtNameReferenceExpression(285,291): 'MyEnum'
   null
 
 KtNameReferenceExpression(292,293): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.X
+    ]
 
 KtProperty(299,404): 'val m1: MyEnum = when (i) {'
   null

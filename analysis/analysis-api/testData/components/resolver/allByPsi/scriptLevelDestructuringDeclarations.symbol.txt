@@ -92,7 +92,10 @@ KtUserType(102,106): 'Anno'
   null
 
 KtNameReferenceExpression(102,106): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(106,126): '("a type $constant")'
   null
@@ -155,7 +158,10 @@ KtUserType(133,137): 'Anno'
   null
 
 KtNameReferenceExpression(133,137): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(137,164): '("a nested type $constant")'
   null
@@ -215,7 +221,10 @@ KtUserType(177,181): 'Anno'
   null
 
 KtNameReferenceExpression(177,181): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(181,215): '("a nested nested type $constant")'
   null
@@ -272,7 +281,10 @@ KtUserType(235,239): 'Anno'
   null
 
 KtNameReferenceExpression(235,239): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(239,259): '("b type $constant")'
   null
@@ -335,7 +347,10 @@ KtUserType(267,271): 'Anno'
   null
 
 KtNameReferenceExpression(267,271): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(271,298): '("b nested type $constant")'
   null
@@ -395,7 +410,10 @@ KtUserType(305,309): 'Anno'
   null
 
 KtNameReferenceExpression(305,309): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(309,343): '("b nested nested type $constant")'
   null
@@ -461,7 +479,10 @@ KtUserType(377,381): 'Anno'
   null
 
 KtNameReferenceExpression(377,381): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(381,398): '("destr 1 $prop")'
   null
@@ -512,7 +533,10 @@ KtUserType(405,409): 'Anno'
   null
 
 KtNameReferenceExpression(405,409): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(409,420): '("a $prop")'
   null
@@ -563,7 +587,10 @@ KtUserType(425,429): 'Anno'
   null
 
 KtNameReferenceExpression(425,429): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(429,440): '("b $prop")'
   null
@@ -638,7 +665,10 @@ KtUserType(465,469): 'Anno'
   null
 
 KtNameReferenceExpression(465,469): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(469,486): '("destr 1 $prop")'
   null
@@ -689,7 +719,10 @@ KtUserType(493,497): 'Anno'
   null
 
 KtNameReferenceExpression(493,497): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(497,508): '("c $prop")'
   null
@@ -740,7 +773,10 @@ KtUserType(513,517): 'Anno'
   null
 
 KtNameReferenceExpression(513,517): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      util/Anno
+    ]
 
 KtValueArgumentList(517,528): '("d $prop")'
   null

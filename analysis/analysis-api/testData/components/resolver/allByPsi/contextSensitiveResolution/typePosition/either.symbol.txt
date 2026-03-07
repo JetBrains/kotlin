@@ -281,7 +281,37 @@ KtThisExpression(299,303): 'this'
     ]
 
 KtNameReferenceExpression(299,303): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: [
+            KaTypeParameterType:
+              annotations: []
+              type: E
+            KaTypeParameterType:
+              annotations: []
+              type: A
+          ]
+          type: Either<E, A>
+        visibility: PUBLIC
+    ]
 
 KtWhenEntry(311,329): 'is Left -> default'
   null

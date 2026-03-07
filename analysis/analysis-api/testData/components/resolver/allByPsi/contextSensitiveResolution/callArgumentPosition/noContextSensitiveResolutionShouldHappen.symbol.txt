@@ -147,7 +147,10 @@ KtUserType(216,225): 'DslMarker'
   null
 
 KtNameReferenceExpression(216,225): 'DslMarker'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/DslMarker
+    ]
 
 KtClass(250,264): '@MyDsl'
   null
@@ -174,7 +177,10 @@ KtUserType(251,256): 'MyDsl'
   null
 
 KtNameReferenceExpression(251,256): 'MyDsl'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyDsl
+    ]
 
 KtClass(266,280): '@MyDsl'
   null
@@ -201,7 +207,10 @@ KtUserType(267,272): 'MyDsl'
   null
 
 KtNameReferenceExpression(267,272): 'MyDsl'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyDsl
+    ]
 
 KtProperty(282,308): 'val A.X: String get() = ""'
   null

@@ -173,7 +173,10 @@ KtNameReferenceExpression(331,337): 'MyEnum'
   null
 
 KtNameReferenceExpression(338,339): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/MyEnum.A
+    ]
 
 KtNamedFunction(351,429): 'fun test1companion(x: MyEnum): Boolean {'
   null
@@ -355,7 +358,10 @@ KtNameReferenceExpression(571,577): 'MyEnum'
   null
 
 KtNameReferenceExpression(578,579): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/MyEnum.A
+    ]
 
 KtConstantExpression(583,584): '1'
   null

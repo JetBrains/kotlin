@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.getCall
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
@@ -109,9 +110,24 @@ internal class KaFe10Resolver(
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val resolvedCall = psi.getResolvedCall(bindingContext)
         if (resolvedCall != null) {
-            val symbol = resolvedCall.candidateDescriptor.toKtSymbol(analysisContext)
+            val candidate = when (val candidate = resolvedCall.candidateDescriptor) {
+                is FakeCallableDescriptorForObject if (psi is KtNameReferenceExpression) -> candidate.classDescriptor
+                else -> candidate
+            }
+
+            val symbol = candidate.toKtSymbol(analysisContext)
             return if (resolvedCall.status.isSuccess && symbol != null) {
-                KaBaseSymbolResolutionSuccess(symbol)
+                val symbolToReturn = when (symbol) {
+                    is KaConstructorSymbol if psi is KtNameReferenceExpression -> with(analysisSession) {
+                        // Callee reference for a constructor call is supposed to refer to the class
+                        // while the entire call refers to the constructor
+                        symbol.containingDeclaration ?: return null
+                    }
+
+                    else -> symbol
+                }
+
+                KaBaseSymbolResolutionSuccess(symbolToReturn)
             } else {
                 val diagnostic = getDiagnosticToReport(bindingContext, psi, null)?.let {
                     KaFe10Diagnostic(it, token)

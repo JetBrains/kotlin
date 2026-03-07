@@ -62,7 +62,10 @@ KtNameReferenceExpression(191,197): 'MyEnum'
   null
 
 KtNameReferenceExpression(198,208): 'EnumValue1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtProperty(213,234): 'val arg2 = EnumValue2'
   null

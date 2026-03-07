@@ -110,7 +110,10 @@ KtNameReferenceExpression(189,195): 'MyEnum'
   null
 
 KtNameReferenceExpression(196,197): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.X
+    ]
 
 KtCallExpression(203,213): 'foo(id(X))'
   KaSymbolResolutionError:

@@ -260,7 +260,10 @@ KtNameReferenceExpression(539,554): 'InheritorObject'
   null
 
 KtNameReferenceExpression(557,572): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtProperty(581,602): 'val prop: String = ""'
   null
@@ -353,7 +356,10 @@ KtBlockExpression(712,727): 'InheritorObject'
   null
 
 KtNameReferenceExpression(712,727): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNamedFunction(737,765): 'fun func(): MyClass = TODO()'
   null

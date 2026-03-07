@@ -191,7 +191,10 @@ KtNameReferenceExpression(265,273): 'MySealed'
   null
 
 KtNameReferenceExpression(274,275): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtIfExpression(281,295): 'if (a == X) {}'
   null

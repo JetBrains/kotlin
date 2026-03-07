@@ -65,7 +65,10 @@ KtNameReferenceExpression(150,151): 'A'
   null
 
 KtNameReferenceExpression(152,153): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.A
+    ]
 
 KtStringTemplateExpression(157,160): '"A"'
   null
@@ -86,7 +89,10 @@ KtNameReferenceExpression(169,170): 'A'
   null
 
 KtNameReferenceExpression(171,172): 'B'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.B
+    ]
 
 KtStringTemplateExpression(176,179): '"B"'
   null

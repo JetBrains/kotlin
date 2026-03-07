@@ -1004,7 +1004,10 @@ KtThisExpression(1479,1483): 'this'
     ]
 
 KtNameReferenceExpression(1479,1483): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Test
+    ]
 
 KtNameReferenceExpression(1484,1494): 'CompanionB'
   KaSymbolResolutionSuccess:

@@ -53,7 +53,10 @@ KtUserType(60,70): 'Repeatable'
   null
 
 KtNameReferenceExpression(60,70): 'Repeatable'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Repeatable
+    ]
 
 KtPrimaryConstructor(101,120): '(val arr: IntArray)'
   null
@@ -98,7 +101,10 @@ KtUserType(123,133): 'Repeatable'
   null
 
 KtNameReferenceExpression(123,133): 'Repeatable'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Repeatable
+    ]
 
 KtPrimaryConstructor(165,183): '(val k: KClass<*>)'
   null
@@ -149,7 +155,10 @@ KtUserType(186,196): 'Repeatable'
   null
 
 KtNameReferenceExpression(186,196): 'Repeatable'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Repeatable
+    ]
 
 KtPrimaryConstructor(235,260): '(val a: Array<KClass<*>>)'
   null
@@ -290,7 +299,10 @@ KtUserType(424,437): 'AnnoWithArray'
   null
 
 KtNameReferenceExpression(424,437): 'AnnoWithArray'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithArray
+    ]
 
 KtValueArgumentList(437,448): '([1, 2, 3])'
   null
@@ -332,7 +344,10 @@ KtUserType(450,463): 'AnnoWithArray'
   null
 
 KtNameReferenceExpression(450,463): 'AnnoWithArray'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithArray
+    ]
 
 KtValueArgumentList(463,480): '(arr = [4, 5, 6])'
   null
@@ -380,7 +395,10 @@ KtUserType(482,495): 'AnnoWithArray'
   null
 
 KtNameReferenceExpression(482,495): 'AnnoWithArray'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithArray
+    ]
 
 KtValueArgumentList(495,516): '(intArrayOf(7, 8, 9))'
   null
@@ -440,7 +458,10 @@ KtUserType(518,532): 'AnnoWithKClass'
   null
 
 KtNameReferenceExpression(518,532): 'AnnoWithKClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithKClass
+    ]
 
 KtValueArgumentList(532,555): '(AnnoWithKClass::class)'
   null
@@ -476,7 +497,10 @@ KtUserType(558,572): 'AnnoWithKClass'
   null
 
 KtNameReferenceExpression(558,572): 'AnnoWithKClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithKClass
+    ]
 
 KtValueArgumentList(572,599): '(one.AnnoWithKClass::class)'
   null
@@ -515,7 +539,10 @@ KtUserType(602,623): 'AnnoWithArrayOfKClass'
   null
 
 KtNameReferenceExpression(602,623): 'AnnoWithArrayOfKClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithArrayOfKClass
+    ]
 
 KtValueArgumentList(623,675): '([AnnoWithKClass::class, one.AnnoWithKClass::class])'
   null
@@ -566,7 +593,10 @@ KtUserType(677,702): 'AnnoWithAnotherAnnotation'
   null
 
 KtNameReferenceExpression(677,702): 'AnnoWithAnotherAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithAnotherAnnotation
+    ]
 
 KtValueArgumentList(702,783): '(arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))))'
   null
@@ -707,7 +737,10 @@ KtUserType(785,799): 'AnnoWithString'
   null
 
 KtNameReferenceExpression(785,799): 'AnnoWithString'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithString
+    ]
 
 KtValueArgumentList(799,826): '(stringConstant + " 1.2.3")'
   null

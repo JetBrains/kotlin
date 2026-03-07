@@ -1,2 +1,5 @@
 KtNameReferenceExpression(138,153): 'MyRestrictedApi'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyRestrictedApi
+    ]

@@ -221,7 +221,10 @@ KtNameReferenceExpression(451,466): 'InheritorObject'
   null
 
 KtNameReferenceExpression(469,484): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtProperty(493,514): 'val prop: String = ""'
   null
@@ -326,7 +329,10 @@ KtBlockExpression(620,635): 'InheritorObject'
   null
 
 KtNameReferenceExpression(620,635): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNamedFunction(646,681): 'fun consumeMyClass(arg: MyClass) {}'
   null

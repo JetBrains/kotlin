@@ -32,7 +32,10 @@ KtUserType(16,22): 'Target'
   null
 
 KtNameReferenceExpression(16,22): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Target
+    ]
 
 KtValueArgumentList(22,45): '(AnnotationTarget.TYPE)'
   null
@@ -125,7 +128,10 @@ KtUserType(149,153): 'Anno'
   null
 
 KtNameReferenceExpression(149,153): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(153,177): '("parameter type $prop")'
   null
@@ -185,7 +191,10 @@ KtUserType(184,188): 'Anno'
   null
 
 KtNameReferenceExpression(184,188): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(188,219): '("nested parameter type $prop")'
   null
@@ -245,7 +254,10 @@ KtUserType(232,236): 'Anno'
   null
 
 KtNameReferenceExpression(232,236): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(236,274): '("nested nested parameter type $prop")'
   null
@@ -299,7 +311,10 @@ KtUserType(287,291): 'Anno'
   null
 
 KtNameReferenceExpression(287,291): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(291,313): '("defaultValue $prop")'
   null
@@ -353,7 +368,10 @@ KtUserType(322,326): 'Anno'
   null
 
 KtNameReferenceExpression(322,326): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(326,368): '("anonymousFunction parameter type $prop")'
   null
@@ -407,7 +425,10 @@ KtUserType(376,380): 'Anno'
   null
 
 KtNameReferenceExpression(376,380): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(380,419): '("anonymousFunction return type $prop")'
   null
@@ -506,7 +527,10 @@ KtUserType(481,485): 'Anno'
   null
 
 KtNameReferenceExpression(481,485): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(485,510): '("super type call $prop")'
   null
@@ -566,7 +590,10 @@ KtUserType(526,530): 'Anno'
   null
 
 KtNameReferenceExpression(526,530): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(530,561): '("nested super type ref $prop")'
   null
@@ -626,7 +653,10 @@ KtUserType(568,572): 'Anno'
   null
 
 KtNameReferenceExpression(568,572): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(572,610): '("nested nested super type ref $prop")'
   null
@@ -707,7 +737,10 @@ KtUserType(654,658): 'Anno'
   null
 
 KtNameReferenceExpression(654,658): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(658,683): '("super type call $prop")'
   null
@@ -767,7 +800,10 @@ KtUserType(699,703): 'Anno'
   null
 
 KtNameReferenceExpression(699,703): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(703,734): '("nested super type ref $prop")'
   null
@@ -827,7 +863,10 @@ KtUserType(741,745): 'Anno'
   null
 
 KtNameReferenceExpression(741,745): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(745,783): '("nested nested super type ref $prop")'
   null
@@ -896,7 +935,10 @@ KtUserType(841,845): 'Anno'
   null
 
 KtNameReferenceExpression(841,845): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(845,869): '("super type ref $prop")'
   null
@@ -956,7 +998,10 @@ KtUserType(876,880): 'Anno'
   null
 
 KtNameReferenceExpression(876,880): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(880,911): '("nested super type ref $prop")'
   null
@@ -1016,7 +1061,10 @@ KtUserType(918,922): 'Anno'
   null
 
 KtNameReferenceExpression(918,922): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
 
 KtValueArgumentList(922,960): '("nested nested super type ref $prop")'
   null

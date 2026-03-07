@@ -154,7 +154,10 @@ KtUserType(136,144): 'Suppress'
   null
 
 KtNameReferenceExpression(136,144): 'Suppress'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Suppress
+    ]
 
 KtValueArgumentList(144,158): '("SOME_ERROR")'
   null

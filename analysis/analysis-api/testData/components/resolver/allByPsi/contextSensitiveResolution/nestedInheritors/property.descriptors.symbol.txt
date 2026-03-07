@@ -92,7 +92,10 @@ KtNameReferenceExpression(224,231): 'MyClass'
   null
 
 KtNameReferenceExpression(234,249): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtProperty(258,285): 'val stringProp: String = ""'
   null
@@ -119,7 +122,10 @@ KtNameReferenceExpression(318,325): 'MyClass'
   null
 
 KtNameReferenceExpression(326,341): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtNamedFunction(343,534): 'fun testIfElse(i: Int) {'
   null

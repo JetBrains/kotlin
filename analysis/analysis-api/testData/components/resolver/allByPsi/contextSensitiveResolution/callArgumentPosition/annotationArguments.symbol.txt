@@ -71,7 +71,10 @@ KtUserType(158,160): 'A1'
   null
 
 KtNameReferenceExpression(158,160): 'A1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A1
+    ]
 
 KtValueArgumentList(160,163): '(X)'
   null
@@ -143,7 +146,10 @@ KtUserType(234,236): 'A2'
   null
 
 KtNameReferenceExpression(234,236): 'A2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A2
+    ]
 
 KtValueArgumentList(236,242): '(X, Y)'
   null
@@ -197,7 +203,10 @@ KtUserType(260,262): 'A2'
   null
 
 KtNameReferenceExpression(260,262): 'A2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A2
+    ]
 
 KtValueArgumentList(262,271): '(*[X, Y])'
   null
@@ -293,7 +302,10 @@ KtUserType(343,345): 'A3'
   null
 
 KtNameReferenceExpression(343,345): 'A3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A3
+    ]
 
 KtValueArgumentList(345,350): '([X])'
   null
@@ -344,7 +356,10 @@ KtUserType(368,370): 'A3'
   null
 
 KtNameReferenceExpression(368,370): 'A3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A3
+    ]
 
 KtValueArgumentList(370,382): '(arrayOf(X))'
   null
@@ -431,7 +446,10 @@ KtUserType(444,446): 'A4'
   null
 
 KtNameReferenceExpression(444,446): 'A4'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A4
+    ]
 
 KtValueArgumentList(446,457): '(MAX_VALUE)'
   null
@@ -476,7 +494,10 @@ KtUserType(474,483): 'Retention'
   null
 
 KtNameReferenceExpression(474,483): 'Retention'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Retention
+    ]
 
 KtValueArgumentList(483,492): '(RUNTIME)'
   null
@@ -509,7 +530,10 @@ KtUserType(494,500): 'Target'
   null
 
 KtNameReferenceExpression(494,500): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Target
+    ]
 
 KtValueArgumentList(500,517): '(CLASS, PROPERTY)'
   null
@@ -557,7 +581,10 @@ KtUserType(550,562): 'MyAnnotation'
   null
 
 KtNameReferenceExpression(550,562): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnotation
+    ]
 
 KtTypeReference(570,573): 'Int'
   null
@@ -596,7 +623,10 @@ KtUserType(580,592): 'MyAnnotation'
   null
 
 KtNameReferenceExpression(580,592): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnotation
+    ]
 
 KtNamedFunction(608,641): '@MyAnnotation'
   null
@@ -623,7 +653,10 @@ KtUserType(609,621): 'MyAnnotation'
   null
 
 KtNameReferenceExpression(609,621): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnotation
+    ]
 
 KtParameterList(636,638): '()'
   null

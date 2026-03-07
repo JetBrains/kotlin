@@ -68,7 +68,10 @@ KtSuperExpression(79,84): 'super'
     ]
 
 KtNameReferenceExpression(79,84): 'super'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtCallExpression(85,98): 'equals(other)'
   KaSymbolResolutionSuccess:
@@ -188,7 +191,10 @@ KtSuperExpression(217,222): 'super'
     ]
 
 KtNameReferenceExpression(217,222): 'super'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Another
+    ]
 
 KtCallExpression(223,236): 'equals(other)'
   KaSymbolResolutionSuccess:

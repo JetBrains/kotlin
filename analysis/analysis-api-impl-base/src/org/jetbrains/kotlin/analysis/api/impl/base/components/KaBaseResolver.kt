@@ -54,21 +54,29 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
                     token = callAttempt.token,
                 )
 
-                null -> null
+                null -> when (this) {
+                    // Name reference expressions are special since they might represent not only calls
+                    // but also types
+                    is KtNameReferenceExpression -> tryResolveSymbolsImpl()
+                    else -> null
+                }
             }
 
-            is KtElement -> {
-                checkValidity()
-                performSymbolResolution(this)
-            }
-
-            is KtReference -> {
-                element.checkValidity()
-                performSymbolResolution(this)
-            }
-
+            is KtElement -> tryResolveSymbolsImpl()
+            is KtReference -> tryResolveSymbolsImpl()
             else -> null
         }
+    }
+
+    private fun <T> T.tryResolveSymbolsImpl(): KaSymbolResolutionAttempt? where T : KtResolvable, T : KtElement {
+        checkValidity()
+        return performSymbolResolution(this)
+    }
+
+    @JvmName("tryResolveSymbolsImplReference")
+    private fun <T> T.tryResolveSymbolsImpl(): KaSymbolResolutionAttempt? where T : KtResolvable, T : KtReference {
+        element.checkValidity()
+        return performSymbolResolution(this)
     }
 
     final override fun KtResolvable.resolveSymbols(): Collection<KaSymbol> = withValidityAssertion {

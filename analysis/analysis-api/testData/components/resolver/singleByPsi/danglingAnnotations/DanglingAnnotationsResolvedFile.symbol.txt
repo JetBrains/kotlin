@@ -1,2 +1,5 @@
 KtNameReferenceExpression(49,56): 'JvmName'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/jvm/JvmName
+    ]

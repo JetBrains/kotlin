@@ -107,7 +107,10 @@ KtParameterList(273,275): '()'
   null
 
 KtNameReferenceExpression(278,293): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtProperty(303,349): 'val ClassMemberAlias = MyClass.NestedInheritor'
   null
@@ -119,7 +122,10 @@ KtNameReferenceExpression(326,333): 'MyClass'
   null
 
 KtNameReferenceExpression(334,349): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtClass(351,384): 'class E1(m: String): Exception(m)'
   null

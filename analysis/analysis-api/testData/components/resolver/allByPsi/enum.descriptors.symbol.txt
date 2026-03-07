@@ -191,7 +191,31 @@ KtThisExpression(234,238): 'this'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(234,238): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaEnumEntrySymbol(/EnumWithoutConstructor.EntryWithBody)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: EnumWithoutConstructor.EntryWithBody
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtCallExpression(239,244): 'baz()'
   KaSymbolResolutionSuccess:
@@ -254,7 +278,10 @@ KtNameReferenceExpression(325,344): 'EnumWithConstructor'
   null
 
 KtNameReferenceExpression(345,350): 'Entry'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor.Entry
+    ]
 
 KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
   KaSymbolResolutionSuccess:
@@ -284,7 +311,10 @@ KtNameReferenceExpression(390,409): 'EnumWithConstructor'
   null
 
 KtNameReferenceExpression(410,423): 'EntryWithBody'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithConstructor.EntryWithBody
+    ]
 
 KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
   KaSymbolResolutionSuccess:
@@ -329,7 +359,10 @@ KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
   null
 
 KtNameReferenceExpression(527,532): 'Entry'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithoutConstructor.Entry
+    ]
 
 KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
   null
@@ -338,4 +371,7 @@ KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
   null
 
 KtNameReferenceExpression(560,573): 'EntryWithBody'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /EnumWithoutConstructor.EntryWithBody
+    ]

@@ -38,7 +38,10 @@ KtThisExpression(44,48): 'this'
     ]
 
 KtNameReferenceExpression(44,48): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNamedFunction(53,88): 'operator fun unaryMinus(): A = this'
   null
@@ -65,7 +68,10 @@ KtThisExpression(84,88): 'this'
     ]
 
 KtNameReferenceExpression(84,88): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNamedFunction(93,127): 'operator fun not(): Boolean = true'
   null
@@ -113,7 +119,10 @@ KtThisExpression(156,160): 'this'
     ]
 
 KtNameReferenceExpression(156,160): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNamedFunction(165,193): 'operator fun dec(): A = this'
   null
@@ -140,7 +149,10 @@ KtThisExpression(189,193): 'this'
     ]
 
 KtNameReferenceExpression(189,193): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNamedFunction(197,280): 'fun test() {'
   null

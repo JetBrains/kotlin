@@ -260,7 +260,10 @@ KtNameReferenceExpression(539,554): 'InheritorObject'
   null
 
 KtNameReferenceExpression(557,572): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtProperty(581,602): 'val prop: String = ""'
   null
@@ -383,7 +386,10 @@ KtBlockExpression(749,764): 'InheritorObject'
   null
 
 KtNameReferenceExpression(749,764): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNamedFunction(775,825): 'fun <T>receiveParametrizedLambda(l: (T)->Unit) { }'
   null

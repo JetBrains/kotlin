@@ -179,7 +179,10 @@ KtThisExpression(179,183): 'this'
     ]
 
 KtNameReferenceExpression(179,183): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNamedFunction(188,228): 'operator fun unaryPlus(): MyClass = this'
   null
@@ -206,7 +209,10 @@ KtThisExpression(224,228): 'this'
     ]
 
 KtNameReferenceExpression(224,228): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNamedFunction(233,267): 'operator fun not(): MyClass = this'
   null
@@ -233,4 +239,7 @@ KtThisExpression(263,267): 'this'
     ]
 
 KtNameReferenceExpression(263,267): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]

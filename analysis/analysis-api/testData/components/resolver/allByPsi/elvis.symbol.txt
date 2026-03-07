@@ -95,7 +95,10 @@ KtThisExpression(93,97): 'this'
     ]
 
 KtNameReferenceExpression(93,97): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtOperationReferenceExpression(99,101): '?:'
   null

@@ -632,7 +632,13 @@ public interface KaResolver : KaSessionComponent {
     /**
      * Resolves the declaration symbol referenced by the given [KtNameReferenceExpression].
      *
-     * #### Example
+     * **Note:** Unlike other [KtResolvableCall] entry points that provide both [resolveCall]
+     * and [resolveSymbol] specializations, [KtNameReferenceExpression.resolveCall] may return a different [KaSymbol].
+     *
+     * For instance, this happens for constructor references. While [resolveCall] returns a
+     * [KaConstructorSymbol], this method returns the corresponding [KaClassLikeSymbol].
+     *
+     * #### Example #1
      *
      * ```kotlin
      * fun foo() {}
@@ -644,10 +650,26 @@ public interface KaResolver : KaSessionComponent {
      * Calling `resolveSymbol()` on the [KtNameReferenceExpression] (`foo`) returns the [KaDeclarationSymbol] of `foo`
      * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
      *
+     * [KtNameReferenceExpression] might be resolved not only to callables but also to types.
+     *
+     * #### Example #2
+     *
+     * ```kotlin
+     * class MyClass
+     * object MyObject
+     *
+     * val c = MyClass()
+     * //      ^^^^^^^  resolves to the class `MyClass`
+     *
+     * val o = MyObject
+     * //      ^^^^^^^^  resolves to the object `MyObject`
+     * ```
+     *
      * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on name reference expressions
      *
      * @see tryResolveSymbols
      * @see KtResolvable.resolveSymbol
+     * @see KtNameReferenceExpression.resolveCall
      */
     @KaExperimentalApi
     public fun KtNameReferenceExpression.resolveSymbol(): KaDeclarationSymbol?
@@ -2020,7 +2042,13 @@ public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? {
 /**
  * Resolves the declaration symbol referenced by the given [KtNameReferenceExpression].
  *
- * #### Example
+ * **Note:** Unlike other [KtResolvableCall] entry points that provide both [resolveCall]
+ * and [resolveSymbol] specializations, [KtNameReferenceExpression.resolveCall] may return a different [KaSymbol].
+ *
+ * For instance, this happens for constructor references. While [resolveCall] returns a
+ * [KaConstructorSymbol], this method returns the corresponding [KaClassLikeSymbol].
+ *
+ * #### Example #1
  *
  * ```kotlin
  * fun foo() {}
@@ -2032,10 +2060,26 @@ public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? {
  * Calling `resolveSymbol()` on the [KtNameReferenceExpression] (`foo`) returns the [KaDeclarationSymbol] of `foo`
  * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
+ * [KtNameReferenceExpression] might be resolved not only to callables but also to types.
+ *
+ * #### Example #2
+ *
+ * ```kotlin
+ * class MyClass
+ * object MyObject
+ *
+ * val c = MyClass()
+ * //      ^^^^^^^  resolves to the class `MyClass`
+ *
+ * val o = MyObject
+ * //      ^^^^^^^^  resolves to the object `MyObject`
+ * ```
+ *
  * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on name reference expressions
  *
  * @see tryResolveSymbols
  * @see KtResolvable.resolveSymbol
+ * @see KtNameReferenceExpression.resolveCall
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi

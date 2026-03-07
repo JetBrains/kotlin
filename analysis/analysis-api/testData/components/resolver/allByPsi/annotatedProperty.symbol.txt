@@ -35,7 +35,10 @@ KtUserType(32,38): 'Target'
   null
 
 KtNameReferenceExpression(32,38): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Target
+    ]
 
 KtValueArgumentList(38,281): '('
   null
@@ -221,7 +224,10 @@ KtUserType(351,355): 'Anno'
   null
 
 KtNameReferenceExpression(351,355): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Anno
+    ]
 
 KtValueArgumentList(355,373): '("property $prop")'
   null
@@ -272,7 +278,10 @@ KtUserType(380,384): 'Anno'
   null
 
 KtNameReferenceExpression(380,384): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Anno
+    ]
 
 KtValueArgumentList(384,408): '("type parameter $prop")'
   null
@@ -320,7 +329,10 @@ KtUserType(414,418): 'Anno'
   null
 
 KtNameReferenceExpression(414,418): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Anno
+    ]
 
 KtValueArgumentList(418,433): '("bound $prop")'
   null
@@ -380,7 +392,10 @@ KtUserType(440,444): 'Anno'
   null
 
 KtNameReferenceExpression(440,444): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Anno
+    ]
 
 KtValueArgumentList(444,466): '("nested bound $prop")'
   null
@@ -437,7 +452,10 @@ KtUserType(486,490): 'Anno'
   null
 
 KtNameReferenceExpression(486,490): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Anno
+    ]
 
 KtValueArgumentList(490,508): '("receiver $prop")'
   null
@@ -479,7 +497,10 @@ KtUserType(510,514): 'Anno'
   null
 
 KtNameReferenceExpression(510,514): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Anno
+    ]
 
 KtValueArgumentList(514,537): '("receiver type $prop")'
   null
@@ -539,7 +560,10 @@ KtUserType(544,548): 'Anno'
   null
 
 KtNameReferenceExpression(544,548): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Anno
+    ]
 
 KtValueArgumentList(548,578): '("nested receiver type $prop")'
   null
@@ -593,7 +617,10 @@ KtUserType(602,606): 'Anno'
   null
 
 KtNameReferenceExpression(602,606): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Anno
+    ]
 
 KtValueArgumentList(606,627): '("return type $prop")'
   null
@@ -656,7 +683,10 @@ KtUserType(640,644): 'Anno'
   null
 
 KtNameReferenceExpression(640,644): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Anno
+    ]
 
 KtValueArgumentList(644,672): '("nested return type $prop")'
   null
@@ -716,7 +746,10 @@ KtUserType(679,683): 'Anno'
   null
 
 KtNameReferenceExpression(679,683): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Anno
+    ]
 
 KtValueArgumentList(683,718): '("nested nested return type $prop")'
   null
@@ -770,7 +803,10 @@ KtUserType(731,735): 'Anno'
   null
 
 KtNameReferenceExpression(731,735): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Anno
+    ]
 
 KtValueArgumentList(735,751): '("getter $prop")'
   null
@@ -824,7 +860,10 @@ KtUserType(774,778): 'Anno'
   null
 
 KtNameReferenceExpression(774,778): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Anno
+    ]
 
 KtValueArgumentList(778,794): '("setter $prop")'
   null
@@ -875,7 +914,10 @@ KtUserType(804,808): 'Anno'
   null
 
 KtNameReferenceExpression(804,808): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Anno
+    ]
 
 KtValueArgumentList(808,834): '("setter parameter $prop")'
   null

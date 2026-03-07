@@ -41,7 +41,10 @@ KtUserType(37,41): 'Anno'
   null
 
 KtNameReferenceExpression(37,41): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/Anno
+    ]
 
 KtParameterList(49,51): '()'
   null

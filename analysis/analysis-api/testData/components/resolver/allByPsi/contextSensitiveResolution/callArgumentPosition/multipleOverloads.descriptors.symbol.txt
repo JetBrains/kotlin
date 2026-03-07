@@ -265,7 +265,10 @@ KtNameReferenceExpression(325,332): 'MyEnum1'
   null
 
 KtNameReferenceExpression(333,334): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum1.X
+    ]
 
 KtCallExpression(340,358): 'foo(id(MyEnum1.X))'
   KaSymbolResolutionSuccess:
@@ -310,7 +313,10 @@ KtNameReferenceExpression(347,354): 'MyEnum1'
   null
 
 KtNameReferenceExpression(355,356): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum1.X
+    ]
 
 KtCallExpression(364,370): 'bar(X)'
   KaSymbolResolutionSuccess:
@@ -524,4 +530,7 @@ KtNameReferenceExpression(493,500): 'MyEnum3'
   null
 
 KtNameReferenceExpression(501,502): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum3.X
+    ]

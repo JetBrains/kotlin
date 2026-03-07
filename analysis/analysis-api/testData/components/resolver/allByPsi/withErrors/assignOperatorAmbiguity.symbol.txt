@@ -76,7 +76,30 @@ KtThisExpression(51,55): 'this'
     ]
 
 KtNameReferenceExpression(51,55): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/plus)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNamedFunction(56,101): 'operator fun Test.plusAssign(i: Int): Unit {}'
   null
@@ -186,7 +209,30 @@ KtThisExpression(143,147): 'this'
     ]
 
 KtNameReferenceExpression(143,147): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/minus)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNamedFunction(148,194): 'operator fun Test.minusAssign(i: Int): Unit {}'
   null
@@ -296,7 +342,30 @@ KtThisExpression(234,238): 'this'
     ]
 
 KtNameReferenceExpression(234,238): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/div)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNamedFunction(239,283): 'operator fun Test.divAssign(i: Int): Unit {}'
   null
@@ -406,7 +475,30 @@ KtThisExpression(325,329): 'this'
     ]
 
 KtNameReferenceExpression(325,329): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/times)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNamedFunction(330,376): 'operator fun Test.timesAssign(i: Int): Unit {}'
   null
@@ -516,7 +608,30 @@ KtThisExpression(416,420): 'this'
     ]
 
 KtNameReferenceExpression(416,420): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/rem)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        visibility: PUBLIC
+    ]
 
 KtNamedFunction(421,465): 'operator fun Test.remAssign(i: Int): Unit {}'
   null

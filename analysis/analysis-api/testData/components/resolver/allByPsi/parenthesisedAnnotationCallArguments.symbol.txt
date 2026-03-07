@@ -125,7 +125,10 @@ KtUserType(168,174): 'MyAnno'
   null
 
 KtNameReferenceExpression(168,174): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnno
+    ]
 
 KtValueArgumentList(174,183): '((("A")))'
   null
@@ -176,7 +179,10 @@ KtUserType(200,206): 'MyAnno'
   null
 
 KtNameReferenceExpression(200,206): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnno
+    ]
 
 KtValueArgumentList(206,223): '(value = (("A")))'
   null
@@ -233,7 +239,10 @@ KtUserType(240,246): 'MyAnno'
   null
 
 KtNameReferenceExpression(240,246): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnno
+    ]
 
 KtValueArgumentList(246,269): '((((("A")) as String)))'
   null
@@ -305,7 +314,10 @@ KtUserType(286,298): 'MyAnnoVararg'
   null
 
 KtNameReferenceExpression(286,298): 'MyAnnoVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnoVararg
+    ]
 
 KtValueArgumentList(298,341): '((("A")), "B", *((arrayOf("A", "B", "C"))))'
   null
@@ -416,7 +428,10 @@ KtUserType(358,370): 'MyAnnoVararg'
   null
 
 KtNameReferenceExpression(358,370): 'MyAnnoVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnoVararg
+    ]
 
 KtValueArgumentList(370,403): '(value = ((arrayOf(("A"), "B"))))'
   null
@@ -503,7 +518,10 @@ KtUserType(420,432): 'MyAnnoKClass'
   null
 
 KtNameReferenceExpression(420,432): 'MyAnnoKClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnoKClass
+    ]
 
 KtValueArgumentList(432,453): '((((String::class))))'
   null

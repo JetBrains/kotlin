@@ -50,7 +50,10 @@ KtNameReferenceExpression(23,39): 'AnnotationTarget'
   null
 
 KtNameReferenceExpression(40,44): 'TYPE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.TYPE
+    ]
 
 KtPrimaryConstructor(67,89): '(val position: String)'
   null

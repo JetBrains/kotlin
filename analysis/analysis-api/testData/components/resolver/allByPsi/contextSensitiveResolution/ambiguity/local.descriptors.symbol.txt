@@ -287,7 +287,10 @@ KtNameReferenceExpression(344,350): 'Sealed'
   null
 
 KtNameReferenceExpression(351,352): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Sealed.A
+    ]
 
 KtProperty(361,394): 'val CompanionB: Sealed = Sealed.A'
   null
@@ -308,7 +311,10 @@ KtNameReferenceExpression(386,392): 'Sealed'
   null
 
 KtNameReferenceExpression(393,394): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Sealed.A
+    ]
 
 KtNamedFunction(404,619): 'fun test(s: Sealed): Int {'
   null
@@ -564,7 +570,10 @@ KtNameReferenceExpression(750,756): 'Sealed'
   null
 
 KtNameReferenceExpression(757,758): 'C'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Sealed.C
+    ]
 
 KtConstantExpression(762,763): '3'
   null
@@ -729,7 +738,10 @@ KtWhenConditionWithExpression(1038,1039): 'A'
   null
 
 KtNameReferenceExpression(1038,1039): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Test.A
+    ]
 
 KtConstantExpression(1043,1044): '1'
   null
@@ -811,7 +823,10 @@ KtWhenConditionWithExpression(1147,1157): 'CompanionA'
   null
 
 KtNameReferenceExpression(1147,1157): 'CompanionA'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Test.CompanionA
+    ]
 
 KtConstantExpression(1161,1162): '6'
   null
@@ -895,7 +910,10 @@ KtNameReferenceExpression(1306,1310): 'Test'
   null
 
 KtNameReferenceExpression(1311,1312): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Test.A
+    ]
 
 KtConstantExpression(1316,1317): '1'
   null
@@ -937,7 +955,10 @@ KtNameReferenceExpression(1357,1363): 'Sealed'
   null
 
 KtNameReferenceExpression(1364,1365): 'C'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Sealed.C
+    ]
 
 KtConstantExpression(1369,1370): '3'
   null
@@ -1003,7 +1024,10 @@ KtNameReferenceExpression(1446,1450): 'Test'
   null
 
 KtNameReferenceExpression(1451,1461): 'CompanionA'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Test.CompanionA
+    ]
 
 KtConstantExpression(1465,1466): '6'
   null
@@ -1049,7 +1073,32 @@ KtThisExpression(1479,1483): 'this'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(1479,1483): 'this'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Local
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassSymbol cannot be cast to org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: foo/Test
+        visibility: LOCAL
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
 
 KtNameReferenceExpression(1484,1494): 'CompanionB'
   KaSymbolResolutionSuccess:
@@ -1124,7 +1173,10 @@ KtNameReferenceExpression(1616,1622): 'Sealed'
   null
 
 KtNameReferenceExpression(1623,1624): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Sealed.A
+    ]
 
 KtConstantExpression(1628,1629): '1'
   null
@@ -1166,7 +1218,10 @@ KtNameReferenceExpression(1671,1677): 'Sealed'
   null
 
 KtNameReferenceExpression(1678,1679): 'C'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Sealed.C
+    ]
 
 KtConstantExpression(1683,1684): '3'
   null

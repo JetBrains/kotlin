@@ -47,7 +47,10 @@ KtNameReferenceExpression(174,180): 'MyEnum'
   null
 
 KtNameReferenceExpression(183,190): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(199,226): 'val stringProp: String = ""'
   null
@@ -71,7 +74,10 @@ KtParameterList(248,250): '()'
   null
 
 KtNameReferenceExpression(253,260): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtProperty(270,306): 'val EnumOptionAlias = MyEnum.Option1'
   null
@@ -83,7 +89,10 @@ KtNameReferenceExpression(292,298): 'MyEnum'
   null
 
 KtNameReferenceExpression(299,306): 'Option1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.Option1
+    ]
 
 KtNamedFunction(308,336): 'fun fun1(): MyEnum = Option1'
   null

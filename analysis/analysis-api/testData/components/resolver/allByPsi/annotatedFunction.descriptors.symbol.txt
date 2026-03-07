@@ -53,7 +53,10 @@ KtNameReferenceExpression(46,62): 'AnnotationTarget'
   null
 
 KtNameReferenceExpression(63,77): 'TYPE_PARAMETER'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.TYPE_PARAMETER
+    ]
 
 KtValueArgument(83,108): 'AnnotationTarget.FUNCTION'
   null
@@ -65,7 +68,10 @@ KtNameReferenceExpression(83,99): 'AnnotationTarget'
   null
 
 KtNameReferenceExpression(100,108): 'FUNCTION'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.FUNCTION
+    ]
 
 KtValueArgument(114,146): 'AnnotationTarget.VALUE_PARAMETER'
   null
@@ -77,7 +83,10 @@ KtNameReferenceExpression(114,130): 'AnnotationTarget'
   null
 
 KtNameReferenceExpression(131,146): 'VALUE_PARAMETER'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.VALUE_PARAMETER
+    ]
 
 KtValueArgument(152,173): 'AnnotationTarget.TYPE'
   null
@@ -89,7 +98,10 @@ KtNameReferenceExpression(152,168): 'AnnotationTarget'
   null
 
 KtNameReferenceExpression(169,173): 'TYPE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.TYPE
+    ]
 
 KtPrimaryConstructor(198,220): '(val position: String)'
   null

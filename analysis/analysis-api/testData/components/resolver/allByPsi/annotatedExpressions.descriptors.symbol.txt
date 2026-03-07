@@ -59,7 +59,10 @@ KtNameReferenceExpression(46,62): 'AnnotationTarget'
   null
 
 KtNameReferenceExpression(63,73): 'EXPRESSION'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.EXPRESSION
+    ]
 
 KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
   KaSymbolResolutionSuccess:
@@ -98,7 +101,10 @@ KtNameReferenceExpression(86,105): 'AnnotationRetention'
   null
 
 KtNameReferenceExpression(106,112): 'SOURCE'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationRetention.SOURCE
+    ]
 
 KtPrimaryConstructor(135,152): '(val number: Int)'
   null

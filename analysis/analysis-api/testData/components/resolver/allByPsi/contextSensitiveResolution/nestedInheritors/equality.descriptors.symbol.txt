@@ -252,7 +252,10 @@ KtNameReferenceExpression(431,439): 'Settings'
   null
 
 KtNameReferenceExpression(440,456): 'SpecificSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings.SpecificSettings
+    ]
 
 KtContainerNodeForControlStructureBody(458,474): 'work("Specific")'
   null
@@ -535,7 +538,10 @@ KtNameReferenceExpression(842,854): 'OpenSettings'
   null
 
 KtNameReferenceExpression(855,875): 'OpenSpecificSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenSettings.OpenSpecificSettings
+    ]
 
 KtContainerNodeForControlStructureBody(877,893): 'work("Specific")'
   null

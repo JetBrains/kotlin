@@ -209,7 +209,10 @@ KtNameReferenceExpression(277,283): 'MyEnum'
   null
 
 KtNameReferenceExpression(284,285): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.X
+    ]
 
 KtCallExpression(291,364): 'myRunWithMyEnum {'
   KaSymbolResolutionSuccess:
@@ -743,7 +746,10 @@ KtNameReferenceExpression(782,788): 'MyEnum'
   null
 
 KtNameReferenceExpression(789,790): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.X
+    ]
 
 KtNameReferenceExpression(799,800): 'Y'
   KaSymbolResolutionError:

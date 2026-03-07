@@ -125,7 +125,10 @@ KtParameterList(321,323): '()'
   null
 
 KtNameReferenceExpression(326,341): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtNamedFunction(351,374): 'fun <T>receive(e: T) {}'
   null
@@ -164,7 +167,10 @@ KtNameReferenceExpression(398,405): 'MyClass'
   null
 
 KtNameReferenceExpression(406,421): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtNamedFunction(423,609): 'fun testNotNullAssertion() {'
   null
@@ -511,7 +517,10 @@ KtNameReferenceExpression(727,734): 'MyClass'
   null
 
 KtNameReferenceExpression(735,750): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtOperationReferenceExpression(751,753): 'to'
   null

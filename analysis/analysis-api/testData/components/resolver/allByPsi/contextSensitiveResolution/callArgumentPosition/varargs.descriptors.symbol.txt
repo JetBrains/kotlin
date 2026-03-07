@@ -260,7 +260,10 @@ KtNameReferenceExpression(540,555): 'InheritorObject'
   null
 
 KtNameReferenceExpression(558,573): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtProperty(582,603): 'val prop: String = ""'
   null
@@ -383,7 +386,10 @@ KtBlockExpression(750,765): 'InheritorObject'
   null
 
 KtNameReferenceExpression(750,765): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNamedFunction(776,818): 'fun <T>receiverVarArg(vararg arg: T) = arg'
   null

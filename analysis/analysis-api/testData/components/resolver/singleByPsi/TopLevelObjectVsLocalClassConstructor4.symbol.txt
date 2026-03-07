@@ -1,2 +1,5 @@
 KtNameReferenceExpression(111,119): 'Conflict'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/invoke(<extension receiver>: test.Conflict): kotlin.Unit
+    ]

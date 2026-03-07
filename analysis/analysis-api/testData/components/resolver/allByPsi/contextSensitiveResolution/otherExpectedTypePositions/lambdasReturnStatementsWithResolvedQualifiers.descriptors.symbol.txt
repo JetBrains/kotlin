@@ -275,7 +275,10 @@ KtNameReferenceExpression(340,348): 'MySealed'
   null
 
 KtNameReferenceExpression(349,350): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtCallExpression(356,433): 'myRunWithMySealed {'
   KaSymbolResolutionSuccess:
@@ -809,7 +812,10 @@ KtNameReferenceExpression(859,867): 'MySealed'
   null
 
 KtNameReferenceExpression(868,869): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtNameReferenceExpression(878,879): 'Y'
   KaSymbolResolutionError:

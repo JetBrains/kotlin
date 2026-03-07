@@ -35,7 +35,10 @@ KtUserType(32,38): 'Target'
   null
 
 KtNameReferenceExpression(32,38): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Target
+    ]
 
 KtValueArgumentList(38,61): '(AnnotationTarget.TYPE)'
   null
@@ -161,7 +164,10 @@ KtUserType(226,230): 'Anno'
   null
 
 KtNameReferenceExpression(226,230): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(230,241): '(0 + outer)'
   null
@@ -224,7 +230,10 @@ KtUserType(248,252): 'Anno'
   null
 
 KtNameReferenceExpression(248,252): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(252,263): '(1 + outer)'
   null
@@ -287,7 +296,10 @@ KtUserType(270,274): 'Anno'
   null
 
 KtNameReferenceExpression(270,274): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(274,285): '(2 + outer)'
   null
@@ -350,7 +362,10 @@ KtUserType(311,315): 'Anno'
   null
 
 KtNameReferenceExpression(311,315): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(315,326): '(4 + outer)'
   null
@@ -413,7 +428,10 @@ KtUserType(335,339): 'Anno'
   null
 
 KtNameReferenceExpression(335,339): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(339,350): '(5 + outer)'
   null
@@ -488,7 +506,10 @@ KtUserType(401,405): 'Anno'
   null
 
 KtNameReferenceExpression(401,405): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(405,416): '(6 + inner)'
   null
@@ -575,7 +596,10 @@ KtUserType(423,427): 'Anno'
   null
 
 KtNameReferenceExpression(423,427): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(427,438): '(7 + inner)'
   null
@@ -662,7 +686,10 @@ KtUserType(445,449): 'Anno'
   null
 
 KtNameReferenceExpression(445,449): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(449,460): '(8 + inner)'
   null
@@ -773,7 +800,10 @@ KtUserType(560,564): 'Anno'
   null
 
 KtNameReferenceExpression(560,564): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(564,575): '(9 + inner)'
   null
@@ -836,7 +866,10 @@ KtUserType(584,588): 'Anno'
   null
 
 KtNameReferenceExpression(584,588): 'Anno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Anno
+    ]
 
 KtValueArgumentList(588,600): '(10 + inner)'
   null

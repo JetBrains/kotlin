@@ -38,11 +38,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findStringPlusSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirScriptReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.*
@@ -335,7 +331,18 @@ internal class KaFirResolver(
             }
         }
 
-        val symbol = firSymbolToBuild?.buildSymbol(firSymbolBuilder) ?: return null
+        val symbol = when (val symbol = firSymbolToBuild?.buildSymbol(firSymbolBuilder)) {
+            is KaConstructorSymbol if psi is KtNameReferenceExpression -> with(analysisSession) {
+                // Callee reference for a constructor call is supposed to refer to the class
+                // while the entire call refers to the constructor.
+                // `KaSymbol` instead of `FirSymbol` is checked intentionally to properly support
+                // type-aliased constructors
+                symbol.containingDeclaration
+            }
+
+            else -> symbol
+        } ?: return null
+
         return KaBaseSymbolResolutionSuccess(backingSymbol = symbol)
     }
 

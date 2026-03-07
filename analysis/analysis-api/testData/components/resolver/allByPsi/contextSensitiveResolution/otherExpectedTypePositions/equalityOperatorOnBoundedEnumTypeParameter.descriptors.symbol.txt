@@ -116,7 +116,10 @@ KtNameReferenceExpression(181,187): 'MyEnum'
   null
 
 KtNameReferenceExpression(188,189): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.X
+    ]
 
 KtIfExpression(195,209): 'if (a == X) {}'
   null

@@ -101,7 +101,10 @@ KtThisExpression(130,134): 'this'
     ]
 
 KtNameReferenceExpression(130,134): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base
+    ]
 
 KtCallExpression(135,140): 'bar()'
   KaSymbolResolutionSuccess:
@@ -203,7 +206,10 @@ KtThisExpression(243,247): 'this'
     ]
 
 KtNameReferenceExpression(243,247): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base
+    ]
 
 KtCallExpression(248,253): 'bar()'
   KaSymbolResolutionSuccess:

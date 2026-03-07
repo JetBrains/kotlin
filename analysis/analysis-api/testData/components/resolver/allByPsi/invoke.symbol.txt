@@ -32,7 +32,10 @@ KtThisExpression(55,59): 'this'
     ]
 
 KtNameReferenceExpression(55,59): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass
+    ]
 
 KtNamedFunction(65,82): 'fun self() = this'
   null
@@ -47,7 +50,10 @@ KtThisExpression(78,82): 'this'
     ]
 
 KtNameReferenceExpression(78,82): 'this'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass
+    ]
 
 KtNamedFunction(86,104): 'fun foo(): Int = 1'
   null

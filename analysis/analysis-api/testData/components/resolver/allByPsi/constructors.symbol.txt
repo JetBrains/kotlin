@@ -215,7 +215,10 @@ KtSuperExpression(245,250): 'super'
     ]
 
 KtNameReferenceExpression(245,250): 'super'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/BaseClass
+    ]
 
 KtCallExpression(251,257): 'call()'
   KaSymbolResolutionSuccess:
