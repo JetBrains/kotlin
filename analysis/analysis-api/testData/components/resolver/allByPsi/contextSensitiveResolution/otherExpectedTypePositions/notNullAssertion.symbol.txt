@@ -122,7 +122,10 @@ KtParameterList(321,323): '()'
   null
 
 KtNameReferenceExpression(326,341): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtNamedFunction(351,374): 'fun <T>receive(e: T) {}'
   null
@@ -158,10 +161,16 @@ KtDotQualifiedExpression(398,421): 'MyClass.NestedInheritor'
   null
 
 KtNameReferenceExpression(398,405): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(406,421): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtNamedFunction(423,609): 'fun testNotNullAssertion() {'
   null
@@ -209,7 +218,10 @@ KtPostfixExpression(473,490): 'NestedInheritor!!'
   null
 
 KtNameReferenceExpression(473,488): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtOperationReferenceExpression(488,490): '!!'
   null
@@ -442,7 +454,10 @@ KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
     ]
 
 KtNameReferenceExpression(675,682): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(683,694): 'myClassProp'
   KaSymbolResolutionSuccess:
@@ -472,7 +487,10 @@ KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
     ]
 
 KtNameReferenceExpression(702,709): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(710,720): 'stringProp'
   KaSymbolResolutionSuccess:
@@ -499,10 +517,16 @@ KtDotQualifiedExpression(727,750): 'MyClass.NestedInheritor'
   null
 
 KtNameReferenceExpression(727,734): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(735,750): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtOperationReferenceExpression(751,753): 'to'
   null
@@ -526,7 +550,10 @@ KtDotQualifiedExpression(757,785): 'MyClass.getNestedInheritor()'
     ]
 
 KtNameReferenceExpression(757,764): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(765,785): 'getNestedInheritor()'
   KaSymbolResolutionSuccess:
@@ -626,7 +653,10 @@ KtContainerNode(861,878): '[NestedInheritor]'
   null
 
 KtNameReferenceExpression(862,877): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtReturnExpression(883,915): 'return map[getNestedInheritor()]'
   KaSymbolResolutionSuccess:
@@ -898,7 +928,10 @@ KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
     ]
 
 KtNameReferenceExpression(1248,1255): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1256,1267): 'myClassProp'
   KaSymbolResolutionSuccess:
@@ -910,4 +943,7 @@ KtOperationReferenceExpression(1267,1269): '..'
   null
 
 KtNameReferenceExpression(1269,1284): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]

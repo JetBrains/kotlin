@@ -216,13 +216,16 @@ internal class KaFirResolver(
     }
 
     private fun resolveSymbol(psi: KtElement): KaSymbolResolutionAttempt? {
-        return when (val unwrappedFir = psi.getOrBuildFirWithAdjustments()?.unwrapSafeCall()) {
-            is FirDiagnosticHolder -> unwrappedFir.toKaSymbolResolutionError(psi)
-            is FirResolvable -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
-            is FirReference -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
-            is FirReturnExpression -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
-            else -> null
-        }
+        return psi.getOrBuildFirWithAdjustments()?.unwrapSafeCall()?.toKaSymbolResolutionAttempt(psi)
+    }
+
+    private fun FirElement.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt? = when (this) {
+        is FirDiagnosticHolder -> toKaSymbolResolutionError(psi)
+        is FirResolvable -> toKaSymbolResolutionAttempt(psi)
+        is FirReference -> toKaSymbolResolutionAttempt(psi)
+        is FirReturnExpression -> toKaSymbolResolutionAttempt(psi)
+        is FirResolvedQualifier -> toKaSymbolResolutionAttempt()
+        else -> null
     }
 
     override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {
@@ -344,6 +347,15 @@ internal class KaFirResolver(
         } ?: return null
 
         return KaBaseSymbolResolutionSuccess(backingSymbol = symbol)
+    }
+
+    /**
+     * TODO: support corner cases such as packages
+     *
+     * @see FirReferenceResolveHelper
+     */
+    private fun FirResolvedQualifier.toKaSymbolResolutionAttempt(): KaSymbolResolutionAttempt? {
+        return symbol?.buildSymbol(firSymbolBuilder)?.let(::KaBaseSymbolResolutionSuccess)
     }
 
     private fun FirDiagnosticHolder.toKaSymbolResolutionError(psi: KtElement): KaSymbolResolutionError =

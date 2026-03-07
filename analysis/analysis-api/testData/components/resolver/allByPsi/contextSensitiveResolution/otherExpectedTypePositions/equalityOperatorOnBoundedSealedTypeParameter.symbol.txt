@@ -182,10 +182,16 @@ KtDotQualifiedExpression(265,275): 'MySealed.X'
   null
 
 KtNameReferenceExpression(265,273): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtNameReferenceExpression(274,275): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtIfExpression(281,295): 'if (a == X) {}'
   null
@@ -209,7 +215,10 @@ KtOperationReferenceExpression(287,289): '=='
   null
 
 KtNameReferenceExpression(290,291): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtContainerNodeForControlStructureBody(293,295): '{}'
   null
@@ -239,7 +248,10 @@ KtOperationReferenceExpression(306,308): '=='
   null
 
 KtNameReferenceExpression(309,310): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtContainerNodeForControlStructureBody(312,314): '{}'
   null
@@ -269,7 +281,10 @@ KtOperationReferenceExpression(325,327): '!='
   null
 
 KtNameReferenceExpression(328,329): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtContainerNodeForControlStructureBody(331,333): '{}'
   null
@@ -299,7 +314,10 @@ KtOperationReferenceExpression(344,346): '!='
   null
 
 KtNameReferenceExpression(347,348): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtContainerNodeForControlStructureBody(350,352): '{}'
   null
@@ -326,7 +344,10 @@ KtOperationReferenceExpression(363,366): '==='
   null
 
 KtNameReferenceExpression(367,368): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtContainerNodeForControlStructureBody(370,372): '{}'
   null
@@ -353,7 +374,10 @@ KtOperationReferenceExpression(383,386): '==='
   null
 
 KtNameReferenceExpression(387,388): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtContainerNodeForControlStructureBody(390,392): '{}'
   null
@@ -380,7 +404,10 @@ KtOperationReferenceExpression(403,406): '!=='
   null
 
 KtNameReferenceExpression(407,408): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtContainerNodeForControlStructureBody(410,412): '{}'
   null
@@ -407,7 +434,10 @@ KtOperationReferenceExpression(423,426): '!=='
   null
 
 KtNameReferenceExpression(427,428): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtContainerNodeForControlStructureBody(430,432): '{}'
   null
@@ -723,7 +753,10 @@ KtOperationReferenceExpression(973,975): '=='
   null
 
 KtNameReferenceExpression(976,977): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtBlockExpression(981,983): '{}'
   null
@@ -750,7 +783,10 @@ KtOperationReferenceExpression(994,996): '!='
   null
 
 KtNameReferenceExpression(997,998): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtBlockExpression(1002,1004): '{}'
   null
@@ -777,7 +813,10 @@ KtOperationReferenceExpression(1033,1036): '==='
   null
 
 KtNameReferenceExpression(1037,1038): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtBlockExpression(1042,1044): '{}'
   null
@@ -861,7 +900,10 @@ KtOperationReferenceExpression(1103,1106): '!=='
   null
 
 KtNameReferenceExpression(1107,1108): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtBlockExpression(1112,1114): '{}'
   null
@@ -882,7 +924,10 @@ KtWhenConditionWithExpression(1144,1145): 'X'
   null
 
 KtNameReferenceExpression(1144,1145): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtBlockExpression(1149,1151): '{}'
   null
@@ -894,7 +939,10 @@ KtWhenConditionWithExpression(1160,1161): 'Y'
   null
 
 KtNameReferenceExpression(1160,1161): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtWhenConditionWithExpression(1163,1164): 'L'
   null
@@ -945,7 +993,10 @@ KtWhenConditionWithExpression(1234,1235): 'X'
   null
 
 KtNameReferenceExpression(1234,1235): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtBlockExpression(1239,1241): '{}'
   null
@@ -957,7 +1008,10 @@ KtWhenConditionWithExpression(1250,1251): 'Y'
   null
 
 KtNameReferenceExpression(1250,1251): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtWhenConditionWithExpression(1253,1254): 'L'
   null

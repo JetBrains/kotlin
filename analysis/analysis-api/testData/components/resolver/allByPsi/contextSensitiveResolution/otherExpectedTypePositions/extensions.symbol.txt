@@ -129,7 +129,10 @@ KtDotQualifiedExpression(232,243): 'MyClass.bar'
     val MyClass2.Companion.bar: MyClass2>
 
 KtNameReferenceExpression(232,239): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(240,243): 'bar'
   KaSymbolResolutionError:
@@ -277,7 +280,10 @@ KtDotQualifiedExpression(408,420): 'MyClass2.bar'
     ]
 
 KtNameReferenceExpression(408,416): 'MyClass2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass2
+    ]
 
 KtNameReferenceExpression(417,420): 'bar'
   KaSymbolResolutionSuccess:

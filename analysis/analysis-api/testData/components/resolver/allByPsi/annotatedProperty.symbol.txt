@@ -53,7 +53,10 @@ KtDotQualifiedExpression(44,69): 'AnnotationTarget.PROPERTY'
     ]
 
 KtNameReferenceExpression(44,60): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(61,69): 'PROPERTY'
   KaSymbolResolutionSuccess:
@@ -71,7 +74,10 @@ KtDotQualifiedExpression(75,106): 'AnnotationTarget.TYPE_PARAMETER'
     ]
 
 KtNameReferenceExpression(75,91): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(92,106): 'TYPE_PARAMETER'
   KaSymbolResolutionSuccess:
@@ -89,7 +95,10 @@ KtDotQualifiedExpression(112,137): 'AnnotationTarget.FUNCTION'
     ]
 
 KtNameReferenceExpression(112,128): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(129,137): 'FUNCTION'
   KaSymbolResolutionSuccess:
@@ -107,7 +116,10 @@ KtDotQualifiedExpression(143,175): 'AnnotationTarget.VALUE_PARAMETER'
     ]
 
 KtNameReferenceExpression(143,159): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(160,175): 'VALUE_PARAMETER'
   KaSymbolResolutionSuccess:
@@ -125,7 +137,10 @@ KtDotQualifiedExpression(181,213): 'AnnotationTarget.PROPERTY_GETTER'
     ]
 
 KtNameReferenceExpression(181,197): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(198,213): 'PROPERTY_GETTER'
   KaSymbolResolutionSuccess:
@@ -143,7 +158,10 @@ KtDotQualifiedExpression(219,251): 'AnnotationTarget.PROPERTY_SETTER'
     ]
 
 KtNameReferenceExpression(219,235): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(236,251): 'PROPERTY_SETTER'
   KaSymbolResolutionSuccess:
@@ -161,7 +179,10 @@ KtDotQualifiedExpression(257,278): 'AnnotationTarget.TYPE'
     ]
 
 KtNameReferenceExpression(257,273): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(274,278): 'TYPE'
   KaSymbolResolutionSuccess:
@@ -941,4 +962,7 @@ KtNameReferenceExpression(828,832): 'prop'
     ]
 
 KtNameReferenceExpression(844,848): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]

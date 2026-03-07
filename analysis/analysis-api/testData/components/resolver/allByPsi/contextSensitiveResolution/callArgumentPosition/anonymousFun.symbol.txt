@@ -263,7 +263,10 @@ KtNameReferenceExpression(579,594): 'InheritorObject'
   null
 
 KtNameReferenceExpression(597,612): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtProperty(621,642): 'val prop: String = ""'
   null
@@ -356,7 +359,10 @@ KtBlockExpression(752,767): 'InheritorObject'
   null
 
 KtNameReferenceExpression(752,767): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNamedFunction(777,805): 'fun func(): MyClass = TODO()'
   null
@@ -488,7 +494,10 @@ KtValueArgument(990,1005): 'InheritorObject'
   null
 
 KtNameReferenceExpression(990,1005): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
   KaSymbolResolutionSuccess:

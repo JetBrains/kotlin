@@ -53,7 +53,10 @@ KtDotQualifiedExpression(46,77): 'AnnotationTarget.TYPE_PARAMETER'
     ]
 
 KtNameReferenceExpression(46,62): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(63,77): 'TYPE_PARAMETER'
   KaSymbolResolutionSuccess:
@@ -71,7 +74,10 @@ KtDotQualifiedExpression(83,108): 'AnnotationTarget.FUNCTION'
     ]
 
 KtNameReferenceExpression(83,99): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(100,108): 'FUNCTION'
   KaSymbolResolutionSuccess:
@@ -89,7 +95,10 @@ KtDotQualifiedExpression(114,146): 'AnnotationTarget.VALUE_PARAMETER'
     ]
 
 KtNameReferenceExpression(114,130): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(131,146): 'VALUE_PARAMETER'
   KaSymbolResolutionSuccess:
@@ -107,7 +116,10 @@ KtDotQualifiedExpression(152,173): 'AnnotationTarget.TYPE'
     ]
 
 KtNameReferenceExpression(152,168): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(169,173): 'TYPE'
   KaSymbolResolutionSuccess:

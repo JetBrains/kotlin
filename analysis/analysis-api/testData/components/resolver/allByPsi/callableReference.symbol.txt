@@ -308,7 +308,10 @@ KtCallableReferenceExpression(497,520): 'MyClass::memberFunction'
     ]
 
 KtNameReferenceExpression(497,504): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/MyClass
+    ]
 
 KtNameReferenceExpression(506,520): 'memberFunction'
   KaSymbolResolutionSuccess:
@@ -362,7 +365,10 @@ KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
     ]
 
 KtNameReferenceExpression(543,550): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/MyClass
+    ]
 
 KtNameReferenceExpression(552,566): 'memberProperty'
   KaSymbolResolutionSuccess:
@@ -389,7 +395,10 @@ KtCallableReferenceExpression(577,598): 'Child::memberFunction'
     ]
 
 KtNameReferenceExpression(577,582): 'Child'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/Child
+    ]
 
 KtNameReferenceExpression(584,598): 'memberFunction'
   KaSymbolResolutionSuccess:
@@ -443,7 +452,10 @@ KtCallableReferenceExpression(619,640): 'Child::memberProperty'
     ]
 
 KtNameReferenceExpression(619,624): 'Child'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/Child
+    ]
 
 KtNameReferenceExpression(626,640): 'memberProperty'
   KaSymbolResolutionSuccess:
@@ -470,10 +482,16 @@ KtDotQualifiedExpression(659,671): 'pack.MyClass'
   null
 
 KtNameReferenceExpression(659,663): 'pack'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/MyClass
+    ]
 
 KtNameReferenceExpression(664,671): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/MyClass
+    ]
 
 KtNameReferenceExpression(673,690): 'extensionFunction'
   KaSymbolResolutionSuccess:
@@ -491,7 +509,10 @@ KtCallableReferenceExpression(703,729): 'MyClass::extensionProperty'
     ]
 
 KtNameReferenceExpression(703,710): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/MyClass
+    ]
 
 KtNameReferenceExpression(712,729): 'extensionProperty'
   KaSymbolResolutionSuccess:
@@ -509,7 +530,10 @@ KtCallableReferenceExpression(744,768): 'Child::extensionFunction'
     ]
 
 KtNameReferenceExpression(744,749): 'Child'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/Child
+    ]
 
 KtNameReferenceExpression(751,768): 'extensionFunction'
   KaSymbolResolutionSuccess:
@@ -530,10 +554,16 @@ KtDotQualifiedExpression(782,792): 'pack.Child'
   null
 
 KtNameReferenceExpression(782,786): 'pack'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/Child
+    ]
 
 KtNameReferenceExpression(787,792): 'Child'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/Child
+    ]
 
 KtNameReferenceExpression(794,811): 'extensionProperty'
   KaSymbolResolutionSuccess:
@@ -554,7 +584,10 @@ KtCallableReferenceExpression(817,848): 'ChildWithType::functionWithType'
     ]
 
 KtNameReferenceExpression(817,830): 'ChildWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/ChildWithType
+    ]
 
 KtNameReferenceExpression(832,848): 'functionWithType'
   KaSymbolResolutionSuccess:
@@ -581,7 +614,10 @@ KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
     ]
 
 KtNameReferenceExpression(858,871): 'ChildWithType'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/ChildWithType
+    ]
 
 KtNameReferenceExpression(873,889): 'propertyWithType'
   KaSymbolResolutionSuccess:

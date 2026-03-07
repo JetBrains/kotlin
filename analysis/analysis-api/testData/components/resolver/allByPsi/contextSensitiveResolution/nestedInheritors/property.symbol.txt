@@ -89,7 +89,10 @@ KtNameReferenceExpression(224,231): 'MyClass'
   null
 
 KtNameReferenceExpression(234,249): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtProperty(258,285): 'val stringProp: String = ""'
   null
@@ -113,10 +116,16 @@ KtDotQualifiedExpression(318,341): 'MyClass.NestedInheritor'
   null
 
 KtNameReferenceExpression(318,325): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(326,341): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtNamedFunction(343,534): 'fun testIfElse(i: Int) {'
   null
@@ -185,7 +194,10 @@ KtContainerNodeForControlStructureBody(408,423): 'NestedInheritor'
   null
 
 KtNameReferenceExpression(408,423): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtContainerNodeForControlStructureBody(437,526): 'if (i == 1) myClassProp'
   null

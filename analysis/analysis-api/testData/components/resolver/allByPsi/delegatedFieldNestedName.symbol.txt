@@ -53,7 +53,10 @@ KtDotQualifiedExpression(39,60): 'AnnotationTarget.TYPE'
     ]
 
 KtNameReferenceExpression(39,55): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(56,60): 'TYPE'
   KaSymbolResolutionSuccess:
@@ -332,7 +335,10 @@ KtNameReferenceExpression(286,289): 'Int'
   null
 
 KtNameReferenceExpression(295,304): 'Companion'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/MyClass.Companion
+    ]
 
 KtDelegatedSuperTypeEntry(310,374): '@Anno(4 + outer) Second<@Anno(5 + outer) String> by NestedObject'
   null
@@ -464,7 +470,10 @@ KtNameReferenceExpression(351,357): 'String'
   null
 
 KtNameReferenceExpression(362,374): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/MyClass.NestedObject
+    ]
 
 KtClassBody(375,610): '{'
   null

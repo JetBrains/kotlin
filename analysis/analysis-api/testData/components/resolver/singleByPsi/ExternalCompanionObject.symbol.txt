@@ -1,2 +1,5 @@
 KtNameReferenceExpression(48,57): 'Companion'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      dependency/C.Companion
+    ]

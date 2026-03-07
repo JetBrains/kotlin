@@ -767,7 +767,10 @@ KtValueArgument(1092,1107): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1092,1107): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtCallExpression(1114,1145): 'receive<MyEnum>(id(EnumValue1))'
   KaSymbolResolutionSuccess:
@@ -878,7 +881,10 @@ KtValueArgument(1170,1185): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1170,1185): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtCallExpression(1193,1222): 'testNullable(InheritorObject)'
   KaSymbolResolutionSuccess:
@@ -899,7 +905,10 @@ KtValueArgument(1206,1221): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1206,1221): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtCallExpression(1227,1266): 'testTypeParam<MyClass>(InheritorObject)'
   KaSymbolResolutionSuccess:
@@ -935,7 +944,10 @@ KtValueArgument(1250,1265): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1250,1265): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtCallExpression(1272,1302): 'testTypeParam(InheritorObject)'
   KaSymbolResolutionError:

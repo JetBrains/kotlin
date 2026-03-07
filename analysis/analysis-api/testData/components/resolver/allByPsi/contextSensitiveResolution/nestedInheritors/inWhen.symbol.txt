@@ -143,7 +143,10 @@ KtWhenEntry(294,317): 'else -> NestedInheritor'
   null
 
 KtNameReferenceExpression(302,317): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtNamedFunction(337,512): 'fun sealed2(b: Boolean, subClass: MyClass.NestedInheritor) {'
   null
@@ -227,7 +230,10 @@ KtWhenEntry(471,494): 'else -> NestedInheritor'
   null
 
 KtNameReferenceExpression(479,494): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtNamedFunction(514,737): 'fun sealed3(b1: Boolean, b2: Boolean, subClass: MyClass.NestedInheritor) {'
   null
@@ -332,7 +338,10 @@ KtNameReferenceExpression(663,665): 'b2'
     ]
 
 KtNameReferenceExpression(669,684): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtWhenEntry(697,719): 'else -> OtherInheritor'
   null
@@ -625,7 +634,10 @@ KtWhenEntry(1114,1123): 'else -> C'
   null
 
 KtNameReferenceExpression(1122,1123): 'C'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OtherClass.C
+    ]
 
 KtClass(1143,1219): 'open class OpenClass {'
   null
@@ -763,7 +775,10 @@ KtWhenEntry(1382,1416): 'else -> NestedInheritorOfOpenClass'
   null
 
 KtNameReferenceExpression(1390,1416): 'NestedInheritorOfOpenClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenClass.NestedInheritorOfOpenClass
+    ]
 
 KtNamedFunction(1436,1635): 'fun open2(b: Boolean, subClass: OpenClass.NestedInheritorOfOpenClass) {'
   null

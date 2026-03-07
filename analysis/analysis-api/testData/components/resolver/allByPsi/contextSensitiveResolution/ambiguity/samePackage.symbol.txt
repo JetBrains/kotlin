@@ -293,7 +293,10 @@ KtWhenConditionWithExpression(352,353): 'A'
   null
 
 KtNameReferenceExpression(352,353): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/A
+    ]
 
 KtConstantExpression(357,358): '1'
   null
@@ -323,7 +326,10 @@ KtWhenConditionWithExpression(377,378): 'C'
   null
 
 KtNameReferenceExpression(377,378): 'C'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Sealed.C
+    ]
 
 KtConstantExpression(382,383): '3'
   null
@@ -416,10 +422,16 @@ KtDotQualifiedExpression(486,494): 'Sealed.A'
   null
 
 KtNameReferenceExpression(486,492): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Sealed
+    ]
 
 KtNameReferenceExpression(493,494): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Sealed.A
+    ]
 
 KtConstantExpression(498,499): '1'
   null
@@ -503,7 +515,10 @@ KtNameReferenceExpression(592,595): 'foo'
   null
 
 KtNameReferenceExpression(596,597): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/A
+    ]
 
 KtConstantExpression(601,602): '1'
   null
@@ -1085,7 +1100,10 @@ KtOperationReferenceExpression(1185,1187): '=='
   null
 
 KtNameReferenceExpression(1188,1189): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/A
+    ]
 
 KtNamedFunction(1190,1245): 'fun equality1sealed(s: Sealed): Boolean = s == Sealed.A'
   null
@@ -1133,10 +1151,16 @@ KtDotQualifiedExpression(1237,1245): 'Sealed.A'
   null
 
 KtNameReferenceExpression(1237,1243): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Sealed
+    ]
 
 KtNameReferenceExpression(1244,1245): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Sealed.A
+    ]
 
 KtNamedFunction(1246,1300): 'fun equality1topLevel(s: Sealed): Boolean = s == foo.A'
   null
@@ -1187,7 +1211,10 @@ KtNameReferenceExpression(1295,1298): 'foo'
   null
 
 KtNameReferenceExpression(1299,1300): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/A
+    ]
 
 KtNamedFunction(1301,1352): 'fun equality2ok(s: Sealed): Boolean = s == Sealed.C'
   null
@@ -1235,7 +1262,13 @@ KtDotQualifiedExpression(1344,1352): 'Sealed.C'
   null
 
 KtNameReferenceExpression(1344,1350): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Sealed
+    ]
 
 KtNameReferenceExpression(1351,1352): 'C'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Sealed.C
+    ]

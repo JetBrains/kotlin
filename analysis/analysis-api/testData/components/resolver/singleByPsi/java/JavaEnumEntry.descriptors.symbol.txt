@@ -1,5 +1,0 @@
-KtNameReferenceExpression(69,76): 'RUNTIME'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      java/lang/annotation/RetentionPolicy.RUNTIME
-    ]

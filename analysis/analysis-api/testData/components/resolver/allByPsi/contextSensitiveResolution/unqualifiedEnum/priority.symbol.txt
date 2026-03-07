@@ -59,7 +59,10 @@ KtDotQualifiedExpression(134,146): 'Second.THREE'
     ]
 
 KtNameReferenceExpression(134,140): 'Second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Second
+    ]
 
 KtNameReferenceExpression(141,146): 'THREE'
   KaSymbolResolutionSuccess:

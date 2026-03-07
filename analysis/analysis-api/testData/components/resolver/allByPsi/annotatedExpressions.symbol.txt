@@ -59,7 +59,10 @@ KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
     ]
 
 KtNameReferenceExpression(46,62): 'AnnotationTarget'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
 
 KtNameReferenceExpression(63,73): 'EXPRESSION'
   KaSymbolResolutionSuccess:
@@ -104,7 +107,10 @@ KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
     ]
 
 KtNameReferenceExpression(86,105): 'AnnotationRetention'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationRetention
+    ]
 
 KtNameReferenceExpression(106,112): 'SOURCE'
   KaSymbolResolutionSuccess:

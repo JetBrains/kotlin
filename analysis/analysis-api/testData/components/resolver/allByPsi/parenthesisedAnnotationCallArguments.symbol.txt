@@ -542,7 +542,10 @@ KtClassLiteralExpression(436,449): 'String::class'
   null
 
 KtNameReferenceExpression(436,442): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtParameterList(462,464): '()'
   null

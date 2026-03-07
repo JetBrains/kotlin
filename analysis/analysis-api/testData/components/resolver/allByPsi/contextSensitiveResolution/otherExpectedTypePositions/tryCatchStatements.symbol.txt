@@ -104,7 +104,10 @@ KtParameterList(273,275): '()'
   null
 
 KtNameReferenceExpression(278,293): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtProperty(303,349): 'val ClassMemberAlias = MyClass.NestedInheritor'
   null
@@ -113,10 +116,16 @@ KtDotQualifiedExpression(326,349): 'MyClass.NestedInheritor'
   null
 
 KtNameReferenceExpression(326,333): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(334,349): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtClass(351,384): 'class E1(m: String): Exception(m)'
   null
@@ -406,7 +415,10 @@ KtNameReferenceExpression(568,583): 'NestedInheritor'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
 KtNameReferenceExpression(666,681): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtCatchClause(688,819): 'catch (e: E1) {'
   null
@@ -531,7 +543,10 @@ KtNameReferenceExpression(1152,1167): 'NestedInheritor'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
 KtNameReferenceExpression(1180,1195): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtCatchClause(1206,1278): 'catch(e: E1) {'
   null
@@ -709,7 +724,10 @@ KtNameReferenceExpression(1544,1559): 'NestedInheritor'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
 KtNameReferenceExpression(1572,1587): 'NestedInheritor'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtCatchClause(1598,1670): 'catch(e: E1) {'
   null

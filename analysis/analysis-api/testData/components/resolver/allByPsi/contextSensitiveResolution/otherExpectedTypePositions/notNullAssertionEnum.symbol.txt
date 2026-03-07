@@ -134,7 +134,10 @@ KtDotQualifiedExpression(349,363): 'MyEnum.Option1'
     ]
 
 KtNameReferenceExpression(349,355): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(356,363): 'Option1'
   KaSymbolResolutionSuccess:

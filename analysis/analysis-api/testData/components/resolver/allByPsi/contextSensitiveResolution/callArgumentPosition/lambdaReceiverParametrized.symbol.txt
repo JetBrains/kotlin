@@ -251,7 +251,10 @@ KtNameReferenceExpression(539,554): 'InheritorObject'
   null
 
 KtNameReferenceExpression(557,572): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtProperty(581,602): 'val prop: String = ""'
   null
@@ -374,7 +377,10 @@ KtBlockExpression(749,764): 'InheritorObject'
   null
 
 KtNameReferenceExpression(749,764): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNamedFunction(775,825): 'fun <T>receiveParametrizedLambda(l: (T)->Unit) { }'
   null
@@ -503,7 +509,10 @@ KtOperationReferenceExpression(922,924): '=='
   null
 
 KtNameReferenceExpression(925,940): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtCallExpression(947,1016): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == propMyClass }'
   KaSymbolResolutionSuccess:
@@ -1100,7 +1109,10 @@ KtOperationReferenceExpression(1521,1523): '=='
   null
 
 KtNameReferenceExpression(1524,1536): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedObject
+    ]
 
 KtCallExpression(1543,1611): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == lambdaProp }'
   KaSymbolResolutionSuccess:

@@ -251,7 +251,10 @@ KtNameReferenceExpression(539,554): 'InheritorObject'
   null
 
 KtNameReferenceExpression(557,572): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtProperty(581,602): 'val prop: String = ""'
   null
@@ -344,7 +347,10 @@ KtBlockExpression(712,727): 'InheritorObject'
   null
 
 KtNameReferenceExpression(712,727): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNamedFunction(737,765): 'fun func(): MyClass = TODO()'
   null
@@ -437,7 +443,10 @@ KtValueArgument(839,854): 'InheritorObject'
   null
 
 KtNameReferenceExpression(839,854): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtCallExpression(860,881): 'lMyClass(propMyClass)'
   KaSymbolResolutionSuccess:
@@ -531,7 +540,10 @@ KtValueArgument(963,975): 'NestedObject'
   null
 
 KtNameReferenceExpression(963,975): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedObject
+    ]
 
 KtCallExpression(981,995): 'lMyClass(prop)'
   KaSymbolResolutionError:

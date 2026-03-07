@@ -1767,7 +1767,10 @@ KtDotQualifiedExpression(2598,2615): 'JClass.staticProp'
     ]
 
 KtNameReferenceExpression(2598,2604): 'JClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JClass
+    ]
 
 KtNameReferenceExpression(2605,2615): 'staticProp'
   KaSymbolResolutionSuccess:

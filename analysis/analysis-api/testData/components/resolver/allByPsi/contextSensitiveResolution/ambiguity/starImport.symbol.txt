@@ -86,7 +86,10 @@ KtWhenConditionWithExpression(148,149): 'A'
   null
 
 KtNameReferenceExpression(148,149): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/A
+    ]
 
 KtConstantExpression(153,154): '1'
   null
@@ -116,7 +119,10 @@ KtWhenConditionWithExpression(173,174): 'C'
   null
 
 KtNameReferenceExpression(173,174): 'C'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed.C
+    ]
 
 KtConstantExpression(178,179): '3'
   null
@@ -164,7 +170,10 @@ KtWhenConditionWithExpression(217,227): 'CompanionA'
   null
 
 KtNameReferenceExpression(217,227): 'CompanionA'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/CompanionA
+    ]
 
 KtConstantExpression(231,232): '6'
   null
@@ -275,13 +284,22 @@ KtDotQualifiedExpression(352,362): 'bar.Sealed'
   null
 
 KtNameReferenceExpression(352,355): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed
+    ]
 
 KtNameReferenceExpression(356,362): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed
+    ]
 
 KtNameReferenceExpression(363,364): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed.A
+    ]
 
 KtConstantExpression(368,369): '1'
   null
@@ -362,10 +380,16 @@ KtDotQualifiedExpression(429,439): 'bar.Sealed'
   null
 
 KtNameReferenceExpression(429,432): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed
+    ]
 
 KtNameReferenceExpression(433,439): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed
+    ]
 
 KtNameReferenceExpression(440,450): 'CompanionA'
   KaSymbolResolutionSuccess:
@@ -392,10 +416,16 @@ KtDotQualifiedExpression(460,470): 'bar.Sealed'
   null
 
 KtNameReferenceExpression(460,463): 'bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed
+    ]
 
 KtNameReferenceExpression(464,470): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed
+    ]
 
 KtNameReferenceExpression(471,481): 'CompanionB'
   KaSymbolResolutionSuccess:
@@ -521,7 +551,10 @@ KtNameReferenceExpression(610,613): 'foo'
   null
 
 KtNameReferenceExpression(614,615): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/A
+    ]
 
 KtConstantExpression(619,620): '1'
   null
@@ -587,7 +620,10 @@ KtNameReferenceExpression(669,672): 'foo'
   null
 
 KtNameReferenceExpression(673,683): 'CompanionA'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/CompanionA
+    ]
 
 KtConstantExpression(687,688): '6'
   null
@@ -1217,7 +1253,10 @@ KtOperationReferenceExpression(1313,1315): '=='
   null
 
 KtNameReferenceExpression(1316,1317): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/A
+    ]
 
 KtNamedFunction(1318,1373): 'fun equality1sealed(s: Sealed): Boolean = s == Sealed.A'
   null
@@ -1265,10 +1304,16 @@ KtDotQualifiedExpression(1365,1373): 'Sealed.A'
   null
 
 KtNameReferenceExpression(1365,1371): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed
+    ]
 
 KtNameReferenceExpression(1372,1373): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed.A
+    ]
 
 KtNamedFunction(1374,1428): 'fun equality1topLevel(s: Sealed): Boolean = s == foo.A'
   null
@@ -1319,7 +1364,10 @@ KtNameReferenceExpression(1423,1426): 'foo'
   null
 
 KtNameReferenceExpression(1427,1428): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/A
+    ]
 
 KtNamedFunction(1430,1481): 'fun equality2ok(s: Sealed): Boolean = s == Sealed.C'
   null
@@ -1367,10 +1415,16 @@ KtDotQualifiedExpression(1473,1481): 'Sealed.C'
   null
 
 KtNameReferenceExpression(1473,1479): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed
+    ]
 
 KtNameReferenceExpression(1480,1481): 'C'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed.C
+    ]
 
 KtNamedFunction(1483,1539): 'fun equality3wrong(s: Sealed): Boolean = s == CompanionA'
   null
@@ -1415,7 +1469,10 @@ KtOperationReferenceExpression(1526,1528): '=='
   null
 
 KtNameReferenceExpression(1529,1539): 'CompanionA'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/CompanionA
+    ]
 
 KtNamedFunction(1540,1604): 'fun equality3sealed(s: Sealed): Boolean = s == Sealed.CompanionA'
   null
@@ -1466,7 +1523,10 @@ KtDotQualifiedExpression(1587,1604): 'Sealed.CompanionA'
     ]
 
 KtNameReferenceExpression(1587,1593): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed
+    ]
 
 KtNameReferenceExpression(1594,1604): 'CompanionA'
   KaSymbolResolutionSuccess:
@@ -1523,7 +1583,10 @@ KtNameReferenceExpression(1654,1657): 'foo'
   null
 
 KtNameReferenceExpression(1658,1668): 'CompanionA'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/CompanionA
+    ]
 
 KtNamedFunction(1670,1714): 'fun equality4ok(s: Sealed): Boolean = s == F'
   null
@@ -1568,7 +1631,10 @@ KtOperationReferenceExpression(1710,1712): '=='
   null
 
 KtNameReferenceExpression(1713,1714): 'F'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/F
+    ]
 
 KtNamedFunction(1715,1770): 'fun equality4sealed(s: Sealed): Boolean = s == Sealed.F'
   null
@@ -1616,10 +1682,16 @@ KtDotQualifiedExpression(1762,1770): 'Sealed.F'
   null
 
 KtNameReferenceExpression(1762,1768): 'Sealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed
+    ]
 
 KtNameReferenceExpression(1769,1770): 'F'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar/Sealed.F
+    ]
 
 KtNamedFunction(1771,1825): 'fun equality4topLevel(s: Sealed): Boolean = s == foo.F'
   null
@@ -1670,4 +1742,7 @@ KtNameReferenceExpression(1820,1823): 'foo'
   null
 
 KtNameReferenceExpression(1824,1825): 'F'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/F
+    ]

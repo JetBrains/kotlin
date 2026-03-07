@@ -473,7 +473,10 @@ KtClassLiteralExpression(533,554): 'AnnoWithKClass::class'
   null
 
 KtNameReferenceExpression(533,547): 'AnnoWithKClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithKClass
+    ]
 
 KtAnnotation(556,600): '@[AnnoWithKClass(one.AnnoWithKClass::class)]'
   null
@@ -515,10 +518,16 @@ KtDotQualifiedExpression(573,591): 'one.AnnoWithKClass'
   null
 
 KtNameReferenceExpression(573,576): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithKClass
+    ]
 
 KtNameReferenceExpression(577,591): 'AnnoWithKClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithKClass
+    ]
 
 KtAnnotationEntry(601,675): '@AnnoWithArrayOfKClass([AnnoWithKClass::class, one.AnnoWithKClass::class])'
   KaSymbolResolutionSuccess:
@@ -560,7 +569,10 @@ KtClassLiteralExpression(625,646): 'AnnoWithKClass::class'
   null
 
 KtNameReferenceExpression(625,639): 'AnnoWithKClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithKClass
+    ]
 
 KtClassLiteralExpression(648,673): 'one.AnnoWithKClass::class'
   null
@@ -569,10 +581,16 @@ KtDotQualifiedExpression(648,666): 'one.AnnoWithKClass'
   null
 
 KtNameReferenceExpression(648,651): 'one'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithKClass
+    ]
 
 KtNameReferenceExpression(652,666): 'AnnoWithKClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/AnnoWithKClass
+    ]
 
 KtAnnotationEntry(676,783): '@AnnoWithAnotherAnnotation(arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15))))'
   KaSymbolResolutionSuccess:

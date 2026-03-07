@@ -308,7 +308,10 @@ KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
     ]
 
 KtNameReferenceExpression(403,412): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtCallExpression(413,418): 'foo()'
   KaSymbolResolutionSuccess:

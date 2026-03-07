@@ -266,10 +266,16 @@ KtDotQualifiedExpression(340,350): 'MySealed.X'
   null
 
 KtNameReferenceExpression(340,348): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtNameReferenceExpression(349,350): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtCallExpression(356,433): 'myRunWithMySealed {'
   KaSymbolResolutionSuccess:
@@ -326,10 +332,16 @@ KtLabelReferenceExpression(397,415): '@myRunWithMySealed'
     ]
 
 KtNameReferenceExpression(416,417): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtNameReferenceExpression(426,427): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtCallExpression(439,524): 'myRunWithMySealed {'
   KaSymbolResolutionSuccess:
@@ -404,7 +416,10 @@ KtValueArgument(502,503): 'X'
   null
 
 KtNameReferenceExpression(502,503): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtCallExpression(513,518): 'id(Y)'
   KaSymbolResolutionSuccess:
@@ -425,7 +440,10 @@ KtValueArgument(516,517): 'Y'
   null
 
 KtNameReferenceExpression(516,517): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtCallExpression(530,593): 'myRun<MySealed> {'
   KaSymbolResolutionSuccess:
@@ -497,10 +515,16 @@ KtLabelReferenceExpression(569,575): '@myRun'
     ]
 
 KtNameReferenceExpression(576,577): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtNameReferenceExpression(586,587): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtCallExpression(598,682): 'foo('
   KaSymbolResolutionSuccess:
@@ -575,10 +599,16 @@ KtLabelReferenceExpression(644,650): '@myRun'
     ]
 
 KtNameReferenceExpression(651,652): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtNameReferenceExpression(665,666): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtProperty(688,759): 'val z: MySealed = myRun {'
   null
@@ -647,10 +677,16 @@ KtLabelReferenceExpression(735,741): '@myRun'
     ]
 
 KtNameReferenceExpression(742,743): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtNameReferenceExpression(752,753): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]
 
 KtCallExpression(765,818): 'myRun {'
   KaSymbolResolutionError:
@@ -778,10 +814,19 @@ KtDotQualifiedExpression(859,869): 'MySealed.X'
   null
 
 KtNameReferenceExpression(859,867): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtNameReferenceExpression(868,869): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X
+    ]
 
 KtNameReferenceExpression(878,879): 'Y'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Y
+    ]

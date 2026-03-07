@@ -140,7 +140,10 @@ KtOperationReferenceExpression(313,315): '=='
   null
 
 KtNameReferenceExpression(316,329): 'BasicSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings.BasicSettings
+    ]
 
 KtContainerNodeForControlStructureBody(331,344): 'work("Basic")'
   null
@@ -191,7 +194,10 @@ KtOperationReferenceExpression(368,370): '=='
   null
 
 KtNameReferenceExpression(371,387): 'SpecificSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings.SpecificSettings
+    ]
 
 KtContainerNodeForControlStructureBody(389,405): 'work("Specific")'
   null
@@ -245,10 +251,16 @@ KtDotQualifiedExpression(431,456): 'Settings.SpecificSettings'
   null
 
 KtNameReferenceExpression(431,439): 'Settings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings
+    ]
 
 KtNameReferenceExpression(440,456): 'SpecificSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings.SpecificSettings
+    ]
 
 KtContainerNodeForControlStructureBody(458,474): 'work("Specific")'
   null
@@ -413,7 +425,10 @@ KtOperationReferenceExpression(716,718): '=='
   null
 
 KtNameReferenceExpression(719,736): 'OpenBasicSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenSettings.OpenBasicSettings
+    ]
 
 KtContainerNodeForControlStructureBody(738,751): 'work("Basic")'
   null
@@ -520,10 +535,16 @@ KtDotQualifiedExpression(842,875): 'OpenSettings.OpenSpecificSettings'
   null
 
 KtNameReferenceExpression(842,854): 'OpenSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenSettings
+    ]
 
 KtNameReferenceExpression(855,875): 'OpenSpecificSettings'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenSettings.OpenSpecificSettings
+    ]
 
 KtContainerNodeForControlStructureBody(877,893): 'work("Specific")'
   null

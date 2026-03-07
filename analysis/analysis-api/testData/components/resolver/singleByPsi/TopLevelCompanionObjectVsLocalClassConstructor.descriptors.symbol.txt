@@ -1,5 +1,0 @@
-KtNameReferenceExpression(92,100): 'Conflict'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      test/Conflict
-    ]

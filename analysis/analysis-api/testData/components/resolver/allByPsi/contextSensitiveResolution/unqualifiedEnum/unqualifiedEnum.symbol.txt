@@ -272,10 +272,16 @@ KtDotQualifiedExpression(429,440): 'test.Sample'
   null
 
 KtNameReferenceExpression(429,433): 'test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(434,440): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(441,447): 'SECOND'
   KaSymbolResolutionSuccess:
@@ -326,10 +332,16 @@ KtDotQualifiedExpression(504,515): 'test.Sample'
   null
 
 KtNameReferenceExpression(504,508): 'test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(509,515): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(516,521): 'THIRD'
   KaSymbolResolutionSuccess:
@@ -398,10 +410,16 @@ KtDotQualifiedExpression(607,618): 'test.Sample'
   null
 
 KtNameReferenceExpression(607,611): 'test'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(612,618): 'Sample'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Sample
+    ]
 
 KtNameReferenceExpression(619,624): 'FIRST'
   KaSymbolResolutionSuccess:

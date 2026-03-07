@@ -248,7 +248,10 @@ KtValueArgument(377,392): 'InheritorObject'
   null
 
 KtNameReferenceExpression(377,392): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.InheritorObject
+    ]
 
 KtLambdaArgument(393,414): '{'
   null

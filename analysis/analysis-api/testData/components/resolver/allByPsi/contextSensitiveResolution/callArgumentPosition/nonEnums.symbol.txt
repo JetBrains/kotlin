@@ -378,7 +378,10 @@ KtValueArgument(491,494): 'Bar'
   null
 
 KtNameReferenceExpression(491,494): 'Bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.Bar
+    ]
 
 KtCallExpression(500,522): 'expectMyClass(id(Bar))'
   KaSymbolResolutionSuccess:
@@ -417,7 +420,10 @@ KtValueArgument(517,520): 'Bar'
   null
 
 KtNameReferenceExpression(517,520): 'Bar'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.Bar
+    ]
 
 KtCallExpression(528,558): 'expectMyClass(ForTypeMismatch)'
   KaSymbolResolutionError:
@@ -440,7 +446,10 @@ KtValueArgument(542,557): 'ForTypeMismatch'
   null
 
 KtNameReferenceExpression(542,557): 'ForTypeMismatch'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.ForTypeMismatch
+    ]
 
 KtCallExpression(563,597): 'expectMyClass(id(ForTypeMismatch))'
   KaSymbolResolutionError:
@@ -481,7 +490,10 @@ KtValueArgument(580,595): 'ForTypeMismatch'
   null
 
 KtNameReferenceExpression(580,595): 'ForTypeMismatch'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.ForTypeMismatch
+    ]
 
 KtDotQualifiedExpression(603,638): 'JavaClass.expectJavaClass(INSTANCE)'
   KaSymbolResolutionSuccess:
@@ -490,7 +502,10 @@ KtDotQualifiedExpression(603,638): 'JavaClass.expectJavaClass(INSTANCE)'
     ]
 
 KtNameReferenceExpression(603,612): 'JavaClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
 
 KtCallExpression(613,638): 'expectJavaClass(INSTANCE)'
   KaSymbolResolutionSuccess:

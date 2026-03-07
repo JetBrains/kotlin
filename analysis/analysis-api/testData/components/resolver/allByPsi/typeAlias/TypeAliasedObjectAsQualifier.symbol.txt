@@ -68,7 +68,10 @@ KtDotQualifiedExpression(133,151): 'MyAlias.function()'
     ]
 
 KtNameReferenceExpression(133,140): 'MyAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyAlias
+    ]
 
 KtCallExpression(141,151): 'function()'
   KaSymbolResolutionSuccess:
@@ -92,7 +95,10 @@ KtDotQualifiedExpression(156,172): 'MyAlias.property'
     ]
 
 KtNameReferenceExpression(156,163): 'MyAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyAlias
+    ]
 
 KtNameReferenceExpression(164,172): 'property'
   KaSymbolResolutionSuccess:
@@ -107,7 +113,10 @@ KtCallableReferenceExpression(178,195): 'MyAlias::function'
     ]
 
 KtNameReferenceExpression(178,185): 'MyAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyAlias
+    ]
 
 KtNameReferenceExpression(187,195): 'function'
   KaSymbolResolutionSuccess:
@@ -122,7 +131,10 @@ KtCallableReferenceExpression(200,217): 'MyAlias::property'
     ]
 
 KtNameReferenceExpression(200,207): 'MyAlias'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyAlias
+    ]
 
 KtNameReferenceExpression(209,217): 'property'
   KaSymbolResolutionSuccess:

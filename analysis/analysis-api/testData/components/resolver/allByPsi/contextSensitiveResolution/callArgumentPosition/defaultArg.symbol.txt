@@ -134,7 +134,10 @@ KtNameReferenceExpression(318,325): 'MyClass'
   null
 
 KtNameReferenceExpression(328,343): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtParameter(349,377): 'sealedArg2: MyClass = func()'
   null

@@ -193,4 +193,7 @@ KtOperationReferenceExpression(405,418): 'infixConsumer'
   null
 
 KtNameReferenceExpression(419,434): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]

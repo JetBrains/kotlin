@@ -199,4 +199,7 @@ KtOperationReferenceExpression(384,385): '-'
   null
 
 KtNameReferenceExpression(386,401): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]

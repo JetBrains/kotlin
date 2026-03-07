@@ -251,7 +251,10 @@ KtNameReferenceExpression(540,555): 'InheritorObject'
   null
 
 KtNameReferenceExpression(558,573): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtProperty(582,603): 'val prop: String = ""'
   null
@@ -374,7 +377,10 @@ KtBlockExpression(750,765): 'InheritorObject'
   null
 
 KtNameReferenceExpression(750,765): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNamedFunction(776,811): 'fun receiveMyClass(arg: MyClass) {}'
   null
@@ -425,7 +431,10 @@ KtValueArgument(846,861): 'InheritorObject'
   null
 
 KtNameReferenceExpression(846,861): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtCallExpression(867,894): 'receiveMyClass(propMyClass)'
   KaSymbolResolutionSuccess:
@@ -520,7 +529,10 @@ KtValueArgument(994,1006): 'NestedObject'
   null
 
 KtNameReferenceExpression(994,1006): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedObject
+    ]
 
 KtCallExpression(1012,1032): 'receiveMyClass(prop)'
   KaSymbolResolutionError:

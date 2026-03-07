@@ -248,7 +248,10 @@ KtNameReferenceExpression(592,607): 'InheritorObject'
   null
 
 KtNameReferenceExpression(610,625): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtProperty(634,655): 'val prop: String = ""'
   null
@@ -353,7 +356,10 @@ KtBlockExpression(761,776): 'InheritorObject'
   null
 
 KtNameReferenceExpression(761,776): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNamedFunction(787,845): 'fun namedArgumentsHolder(enumArg: MyEnum, arg: MyClass) {}'
   null
@@ -443,7 +449,10 @@ KtNameReferenceExpression(944,947): 'arg'
   null
 
 KtNameReferenceExpression(950,965): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtValueArgument(975,995): 'enumArg = EnumValue1'
   null

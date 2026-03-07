@@ -173,7 +173,10 @@ KtDotQualifiedExpression(331,339): 'MyEnum.A'
     ]
 
 KtNameReferenceExpression(331,337): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/MyEnum
+    ]
 
 KtNameReferenceExpression(338,339): 'A'
   KaSymbolResolutionSuccess:
@@ -239,7 +242,10 @@ KtDotQualifiedExpression(412,423): 'Companion.A'
     ]
 
 KtNameReferenceExpression(412,421): 'Companion'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Test.Companion
+    ]
 
 KtNameReferenceExpression(422,423): 'A'
   KaSymbolResolutionSuccess:
@@ -362,7 +368,10 @@ KtDotQualifiedExpression(571,579): 'MyEnum.A'
     ]
 
 KtNameReferenceExpression(571,577): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/MyEnum
+    ]
 
 KtNameReferenceExpression(578,579): 'A'
   KaSymbolResolutionSuccess:
@@ -437,7 +446,10 @@ KtDotQualifiedExpression(667,678): 'Companion.A'
     ]
 
 KtNameReferenceExpression(667,676): 'Companion'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Test.Companion
+    ]
 
 KtNameReferenceExpression(677,678): 'A'
   KaSymbolResolutionSuccess:

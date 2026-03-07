@@ -185,13 +185,19 @@ KtNameReferenceExpression(330,333): 'two'
   null
 
 KtNameReferenceExpression(334,348): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject
+    ]
 
 KtProperty(353,391): 'val importedTopObject = TopLevelObject'
   null
 
 KtNameReferenceExpression(377,391): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject
+    ]
 
 KtProperty(397,435): 'val explicitFoo = TopLevelObject.foo()'
   null
@@ -203,7 +209,10 @@ KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
     ]
 
 KtNameReferenceExpression(415,429): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject
+    ]
 
 KtCallExpression(430,435): 'foo()'
   KaSymbolResolutionSuccess:
@@ -248,7 +257,10 @@ KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
     ]
 
 KtNameReferenceExpression(487,501): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject
+    ]
 
 KtNameReferenceExpression(502,505): 'bar'
   KaSymbolResolutionSuccess:
@@ -272,16 +284,25 @@ KtDotQualifiedExpression(564,591): 'TopLevelObject.NestedObject'
   null
 
 KtNameReferenceExpression(564,578): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject
+    ]
 
 KtNameReferenceExpression(579,591): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject
+    ]
 
 KtProperty(596,635): 'val importedNestedObject = NestedObject'
   null
 
 KtNameReferenceExpression(623,635): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject
+    ]
 
 KtProperty(641,692): 'val explicitBaz = TopLevelObject.NestedObject.baz()'
   null
@@ -296,10 +317,16 @@ KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
   null
 
 KtNameReferenceExpression(659,673): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject
+    ]
 
 KtNameReferenceExpression(674,686): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject
+    ]
 
 KtCallExpression(687,692): 'baz()'
   KaSymbolResolutionSuccess:
@@ -326,7 +353,10 @@ KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
     ]
 
 KtNameReferenceExpression(721,733): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject
+    ]
 
 KtCallExpression(734,739): 'baz()'
   KaSymbolResolutionSuccess:
@@ -374,10 +404,16 @@ KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
   null
 
 KtNameReferenceExpression(791,805): 'TopLevelObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject
+    ]
 
 KtNameReferenceExpression(806,818): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject
+    ]
 
 KtNameReferenceExpression(819,822): 'doo'
   KaSymbolResolutionSuccess:
@@ -395,7 +431,10 @@ KtDotQualifiedExpression(851,867): 'NestedObject.doo'
     ]
 
 KtNameReferenceExpression(851,863): 'NestedObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.NestedObject
+    ]
 
 KtNameReferenceExpression(864,867): 'doo'
   KaSymbolResolutionSuccess:

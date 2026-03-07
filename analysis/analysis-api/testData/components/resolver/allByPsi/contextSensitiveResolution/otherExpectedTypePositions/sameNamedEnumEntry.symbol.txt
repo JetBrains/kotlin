@@ -65,7 +65,10 @@ KtDotQualifiedExpression(150,153): 'A.A'
     ]
 
 KtNameReferenceExpression(150,151): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNameReferenceExpression(152,153): 'A'
   KaSymbolResolutionSuccess:
@@ -92,7 +95,10 @@ KtDotQualifiedExpression(169,172): 'A.B'
     ]
 
 KtNameReferenceExpression(169,170): 'A'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNameReferenceExpression(171,172): 'B'
   KaSymbolResolutionSuccess:
