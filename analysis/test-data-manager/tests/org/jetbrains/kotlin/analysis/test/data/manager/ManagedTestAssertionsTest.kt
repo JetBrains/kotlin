@@ -102,6 +102,19 @@ class ManagedTestAssertionsTest {
     }
 
     @Test
+    fun `UPDATE mode - mismatch deletes redundant write-target`() {
+        setupFiles(
+            "test.txt" to "golden",
+            "test.js.txt" to "old"
+        )
+
+        runAssertion(variantChain = listOf("js"), actual = "golden", mode = TestDataManagerMode.UPDATE)
+
+        assertFileState("test.txt: golden")  // js.txt deleted after update
+        // No exception thrown
+    }
+
+    @Test
     fun `UPDATE mode - redundant deletes silently`() {
         setupFiles(
             "test.txt" to "same",

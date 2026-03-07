@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.test.data.manager
 
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions.updatedTestDataPaths
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.opentest4j.AssertionFailedError
@@ -100,21 +101,17 @@ object ManagedTestAssertions {
         val expectedContent = expectedFile.readText()
         val normalizedExpected = normalizeContent(expectedContent)
 
-        // Content comparison
-        if (normalizedActual == normalizedExpected) {
-            // Check and handle redundant write-target file
-            checkAndHandleRedundantFile(testDataFiles, mode)
-            return
+        if (normalizedActual != normalizedExpected) {
+            handleMismatch(
+                testDataFiles = testDataFiles,
+                normalizedActual = normalizedActual,
+                expectedContent = expectedContent,
+                mode = mode,
+                testDataPath = testDataPath,
+            )
         }
 
-        // Content mismatch
-        handleMismatch(
-            testDataFiles = testDataFiles,
-            normalizedActual = normalizedActual,
-            expectedContent = expectedContent,
-            mode = mode,
-            testDataPath = testDataPath,
-        )
+        checkAndHandleRedundantFile(testDataFiles, mode)
     }
 
     private fun handleMissingFile(
