@@ -2,6 +2,7 @@ KtNameReferenceExpression(94,97): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelObject) val bar: kotlin.Int
 

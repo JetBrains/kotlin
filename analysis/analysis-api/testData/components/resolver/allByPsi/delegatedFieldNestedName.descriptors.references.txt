@@ -2,13 +2,17 @@ KtNameReferenceExpression(23,29): 'second'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package second
 
 KtNameReferenceExpression(32,38): 'Target'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.annotation.Target) constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
 
@@ -24,7 +28,10 @@ KtNameReferenceExpression(39,55): 'AnnotationTarget'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin.annotation) enum class AnnotationTarget
 
   SyntheticPropertyAccessorReference:
@@ -38,6 +45,7 @@ KtNameReferenceExpression(56,60): 'TYPE'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.annotation.AnnotationTarget) TYPE
 
@@ -52,13 +60,17 @@ KtNameReferenceExpression(91,94): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(226,230): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.Anno) constructor(i: kotlin.Int)
 
@@ -74,6 +86,7 @@ KtOperationReferenceExpression(233,234): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
@@ -81,6 +94,7 @@ KtNameReferenceExpression(235,240): 'outer'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) const val outer: kotlin.Int
 
@@ -95,13 +109,17 @@ KtNameReferenceExpression(242,246): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in second) interface Base<A>
 
 KtNameReferenceExpression(248,252): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.Anno) constructor(i: kotlin.Int)
 
@@ -117,6 +135,7 @@ KtOperationReferenceExpression(255,256): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
@@ -124,6 +143,7 @@ KtNameReferenceExpression(257,262): 'outer'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) const val outer: kotlin.Int
 
@@ -131,13 +151,17 @@ KtNameReferenceExpression(264,268): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in second) interface Base<A>
 
 KtNameReferenceExpression(270,274): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.Anno) constructor(i: kotlin.Int)
 
@@ -153,6 +177,7 @@ KtOperationReferenceExpression(277,278): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
@@ -160,6 +185,7 @@ KtNameReferenceExpression(279,284): 'outer'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) const val outer: kotlin.Int
 
@@ -167,13 +193,17 @@ KtNameReferenceExpression(286,289): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(295,304): 'Companion'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.MyClass) companion object : @second.Anno second.Base<@second.Anno second.Base<@second.Anno kotlin.Int>>
 
@@ -188,6 +218,7 @@ KtNameReferenceExpression(311,315): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.Anno) constructor(i: kotlin.Int)
 
@@ -203,6 +234,7 @@ KtOperationReferenceExpression(318,319): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
@@ -210,6 +242,7 @@ KtNameReferenceExpression(320,325): 'outer'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) const val outer: kotlin.Int
 
@@ -224,13 +257,17 @@ KtNameReferenceExpression(327,333): 'Second'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in second) interface Second<T>
 
 KtNameReferenceExpression(335,339): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.Anno) constructor(i: kotlin.Int)
 
@@ -246,6 +283,7 @@ KtOperationReferenceExpression(342,343): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
@@ -253,6 +291,7 @@ KtNameReferenceExpression(344,349): 'outer'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) const val outer: kotlin.Int
 
@@ -260,13 +299,17 @@ KtNameReferenceExpression(351,357): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(362,374): 'NestedObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.MyClass) object NestedObject : @second.Anno(i = 9) second.Second<@second.Anno(i = 10) kotlin.String>
 
@@ -281,6 +324,7 @@ KtNameReferenceExpression(401,405): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.Anno) constructor(i: kotlin.Int)
 
@@ -296,7 +340,10 @@ KtOperationReferenceExpression(408,409): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       0: (in kotlin.Int) operator fun plus(other: kotlin.Byte): kotlin.Int
       1: (in kotlin.Int) operator fun plus(other: kotlin.Double): kotlin.Double
       2: (in kotlin.Int) operator fun plus(other: kotlin.Float): kotlin.Float
@@ -308,6 +355,7 @@ KtNameReferenceExpression(410,415): 'inner'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) const val inner: kotlin.String
 
@@ -322,13 +370,17 @@ KtNameReferenceExpression(417,421): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in second) interface Base<A>
 
 KtNameReferenceExpression(423,427): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.Anno) constructor(i: kotlin.Int)
 
@@ -344,7 +396,10 @@ KtOperationReferenceExpression(430,431): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       0: (in kotlin.Int) operator fun plus(other: kotlin.Byte): kotlin.Int
       1: (in kotlin.Int) operator fun plus(other: kotlin.Double): kotlin.Double
       2: (in kotlin.Int) operator fun plus(other: kotlin.Float): kotlin.Float
@@ -356,6 +411,7 @@ KtNameReferenceExpression(432,437): 'inner'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) const val inner: kotlin.String
 
@@ -363,13 +419,17 @@ KtNameReferenceExpression(439,443): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in second) interface Base<A>
 
 KtNameReferenceExpression(445,449): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.Anno) constructor(i: kotlin.Int)
 
@@ -385,7 +445,10 @@ KtOperationReferenceExpression(452,453): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       0: (in kotlin.Int) operator fun plus(other: kotlin.Byte): kotlin.Int
       1: (in kotlin.Int) operator fun plus(other: kotlin.Double): kotlin.Double
       2: (in kotlin.Int) operator fun plus(other: kotlin.Float): kotlin.Float
@@ -397,6 +460,7 @@ KtNameReferenceExpression(454,459): 'inner'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) const val inner: kotlin.String
 
@@ -404,13 +468,17 @@ KtNameReferenceExpression(461,464): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(560,564): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.Anno) constructor(i: kotlin.Int)
 
@@ -426,6 +494,7 @@ KtOperationReferenceExpression(567,568): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
@@ -433,6 +502,7 @@ KtNameReferenceExpression(569,574): 'inner'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.MyClass.Companion) const val inner: kotlin.Int
 
@@ -447,13 +517,17 @@ KtNameReferenceExpression(576,582): 'Second'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in second) interface Second<T>
 
 KtNameReferenceExpression(584,588): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.Anno) constructor(i: kotlin.Int)
 
@@ -469,6 +543,7 @@ KtOperationReferenceExpression(592,593): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
@@ -476,6 +551,7 @@ KtNameReferenceExpression(594,599): 'inner'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.MyClass.Companion) const val inner: kotlin.Int
 
@@ -483,5 +559,8 @@ KtNameReferenceExpression(601,607): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable

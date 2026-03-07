@@ -2,5 +2,8 @@ KtNameReferenceExpression(93,96): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package foo.bar

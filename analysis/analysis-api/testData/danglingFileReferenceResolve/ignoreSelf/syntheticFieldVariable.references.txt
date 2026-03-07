@@ -2,5 +2,7 @@ KtNameReferenceExpression(27,32): 'field'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<INVISIBLE_REFERENCE: Cannot access 'backing field field: Int': it is private in file.>
     symbols:
       (in <local>: x) field

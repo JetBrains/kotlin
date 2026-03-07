@@ -3,6 +3,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) override var foo: Foo<kotlin.Any>
 
@@ -11,6 +12,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) override var foo: Foo<kotlin.Any>
 
@@ -19,5 +21,6 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) override var foo: Foo<kotlin.Any> & Foo<T!>

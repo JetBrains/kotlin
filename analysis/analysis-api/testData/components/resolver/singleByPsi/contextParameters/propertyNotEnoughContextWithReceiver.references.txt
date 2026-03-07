@@ -2,6 +2,8 @@ KtNameReferenceExpression(88,91): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'string: String' found.>
     symbols:
       (in ROOT) context(int@kotlin.Int, string@kotlin.String)
       val foo: kotlin.Boolean

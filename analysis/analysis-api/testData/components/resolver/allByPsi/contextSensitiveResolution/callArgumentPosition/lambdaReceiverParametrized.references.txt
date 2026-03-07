@@ -2,49 +2,70 @@ KtNameReferenceExpression(130,136): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(217,224): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MyClass) constructor()
 
 KtNameReferenceExpression(247,253): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(292,299): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MyClass) constructor()
 
 KtNameReferenceExpression(322,328): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(388,393): 'Super'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in Super) constructor()
 
 KtNameReferenceExpression(423,430): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtCallExpression(433,439): 'TODO()'
@@ -59,6 +80,7 @@ KtNameReferenceExpression(433,437): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -66,7 +88,10 @@ KtNameReferenceExpression(472,486): 'InheritorClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MyClass) class InheritorClass : MyClass()
 
 KtCallExpression(489,505): 'InheritorClass()'
@@ -81,6 +106,7 @@ KtNameReferenceExpression(489,503): 'InheritorClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.InheritorClass) constructor()
 
@@ -88,13 +114,17 @@ KtNameReferenceExpression(539,554): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MyClass) object InheritorObject : MyClass()
 
 KtNameReferenceExpression(557,572): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object InheritorObject : MyClass()
 
@@ -102,21 +132,30 @@ KtNameReferenceExpression(591,597): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(632,638): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(666,672): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtPropertyDelegate(673,685): 'by lazy {""}'
@@ -139,6 +178,7 @@ KtNameReferenceExpression(676,680): 'lazy'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) fun <T> lazy(initializer: () -> T): kotlin.Lazy<T>
 
@@ -146,7 +186,10 @@ KtNameReferenceExpression(706,713): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtCallExpression(716,722): 'TODO()'
@@ -161,6 +204,7 @@ KtNameReferenceExpression(716,720): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -168,6 +212,7 @@ KtNameReferenceExpression(749,764): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object InheritorObject : MyClass()
 
@@ -175,14 +220,20 @@ KtNameReferenceExpression(812,813): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: receiveParametrizedLambda) T
 
 KtNameReferenceExpression(816,820): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) object Unit
 
 KtCallExpression(869,942): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == InheritorObject }'
@@ -197,6 +248,7 @@ KtNameReferenceExpression(869,894): 'receiveParametrizedLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receiveParametrizedLambda(l: (T) -> kotlin.Unit)
 
@@ -204,20 +256,27 @@ KtNameReferenceExpression(895,902): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(909,916): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(920,921): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: MyClass
 
@@ -225,6 +284,7 @@ KtOperationReferenceExpression(922,924): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -232,6 +292,7 @@ KtNameReferenceExpression(925,940): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object InheritorObject : MyClass()
 
@@ -247,6 +308,7 @@ KtNameReferenceExpression(947,972): 'receiveParametrizedLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receiveParametrizedLambda(l: (T) -> kotlin.Unit)
 
@@ -254,20 +316,27 @@ KtNameReferenceExpression(973,980): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(987,994): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(998,999): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: MyClass
 
@@ -275,6 +344,7 @@ KtOperationReferenceExpression(1000,1002): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -282,6 +352,7 @@ KtNameReferenceExpression(1003,1014): 'propMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val propMyClass: MyClass
 
@@ -297,6 +368,7 @@ KtNameReferenceExpression(1021,1046): 'receiveParametrizedLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receiveParametrizedLambda(l: (T) -> kotlin.Unit)
 
@@ -304,20 +376,27 @@ KtNameReferenceExpression(1047,1054): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1061,1068): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1072,1073): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: MyClass
 
@@ -325,6 +404,7 @@ KtOperationReferenceExpression(1074,1076): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -332,6 +412,7 @@ KtNameReferenceExpression(1077,1095): 'propInheritorClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val propInheritorClass: MyClass.InheritorClass
 
@@ -347,6 +428,7 @@ KtNameReferenceExpression(1102,1127): 'receiveParametrizedLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receiveParametrizedLambda(l: (T) -> kotlin.Unit)
 
@@ -354,20 +436,27 @@ KtNameReferenceExpression(1128,1135): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1142,1149): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1153,1154): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: MyClass
 
@@ -375,6 +464,7 @@ KtOperationReferenceExpression(1155,1157): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -382,6 +472,7 @@ KtNameReferenceExpression(1158,1177): 'propInheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val propInheritorObject: MyClass.InheritorObject
 
@@ -397,6 +488,7 @@ KtNameReferenceExpression(1185,1210): 'receiveParametrizedLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receiveParametrizedLambda(l: (T) -> kotlin.Unit)
 
@@ -404,20 +496,27 @@ KtNameReferenceExpression(1211,1218): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1225,1232): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1236,1237): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: MyClass
 
@@ -425,6 +524,7 @@ KtOperationReferenceExpression(1238,1240): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -432,6 +532,7 @@ KtNameReferenceExpression(1241,1245): 'prop'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val prop: kotlin.String
 
@@ -447,6 +548,7 @@ KtNameReferenceExpression(1252,1277): 'receiveParametrizedLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receiveParametrizedLambda(l: (T) -> kotlin.Unit)
 
@@ -454,20 +556,27 @@ KtNameReferenceExpression(1278,1285): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1292,1299): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1303,1304): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: MyClass
 
@@ -475,6 +584,7 @@ KtOperationReferenceExpression(1305,1307): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -482,6 +592,7 @@ KtNameReferenceExpression(1308,1317): 'superProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Super) val superProp: kotlin.String
 
@@ -497,6 +608,7 @@ KtNameReferenceExpression(1324,1349): 'receiveParametrizedLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receiveParametrizedLambda(l: (T) -> kotlin.Unit)
 
@@ -504,20 +616,27 @@ KtNameReferenceExpression(1350,1357): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1364,1371): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1375,1376): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: MyClass
 
@@ -525,6 +644,7 @@ KtOperationReferenceExpression(1377,1379): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -532,6 +652,7 @@ KtNameReferenceExpression(1380,1389): 'constProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) const val constProp: kotlin.String
 
@@ -547,6 +668,7 @@ KtNameReferenceExpression(1396,1421): 'receiveParametrizedLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receiveParametrizedLambda(l: (T) -> kotlin.Unit)
 
@@ -554,20 +676,27 @@ KtNameReferenceExpression(1422,1429): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1436,1443): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1447,1448): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: MyClass
 
@@ -575,6 +704,7 @@ KtOperationReferenceExpression(1449,1451): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -582,6 +712,7 @@ KtNameReferenceExpression(1452,1460): 'lazyProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val lazyProp: kotlin.String
 
@@ -597,6 +728,7 @@ KtNameReferenceExpression(1468,1493): 'receiveParametrizedLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receiveParametrizedLambda(l: (T) -> kotlin.Unit)
 
@@ -604,20 +736,27 @@ KtNameReferenceExpression(1494,1501): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1508,1515): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1519,1520): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: MyClass
 
@@ -625,6 +764,7 @@ KtOperationReferenceExpression(1521,1523): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -632,6 +772,7 @@ KtNameReferenceExpression(1524,1536): 'NestedObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object NestedObject
 
@@ -647,6 +788,7 @@ KtNameReferenceExpression(1543,1568): 'receiveParametrizedLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receiveParametrizedLambda(l: (T) -> kotlin.Unit)
 
@@ -654,20 +796,27 @@ KtNameReferenceExpression(1569,1576): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1583,1590): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1594,1595): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: MyClass
 
@@ -675,6 +824,7 @@ KtOperationReferenceExpression(1596,1598): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -682,6 +832,7 @@ KtNameReferenceExpression(1599,1609): 'lambdaProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val lambdaProp: () -> MyClass.InheritorObject
 
@@ -697,6 +848,7 @@ KtNameReferenceExpression(1617,1642): 'receiveParametrizedLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receiveParametrizedLambda(l: (T) -> kotlin.Unit)
 
@@ -704,20 +856,27 @@ KtNameReferenceExpression(1643,1650): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1657,1664): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1668,1669): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: MyClass
 
@@ -725,6 +884,7 @@ KtOperationReferenceExpression(1670,1672): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -740,6 +900,8 @@ KtNameReferenceExpression(1673,1677): 'func'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -755,6 +917,7 @@ KtNameReferenceExpression(1686,1711): 'receiveParametrizedLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receiveParametrizedLambda(l: (T) -> kotlin.Unit)
 
@@ -762,20 +925,27 @@ KtNameReferenceExpression(1712,1719): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1726,1733): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1737,1738): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: MyClass
 
@@ -783,6 +953,7 @@ KtOperationReferenceExpression(1739,1741): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -798,6 +969,8 @@ KtNameReferenceExpression(1742,1751): 'superFunc'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -813,6 +986,7 @@ KtNameReferenceExpression(1760,1785): 'receiveParametrizedLambda'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receiveParametrizedLambda(l: (T) -> kotlin.Unit)
 
@@ -820,20 +994,27 @@ KtNameReferenceExpression(1786,1793): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1800,1807): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1811,1812): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: MyClass
 
@@ -841,6 +1022,7 @@ KtOperationReferenceExpression(1813,1815): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -856,5 +1038,7 @@ KtNameReferenceExpression(1816,1830): 'InheritorClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
     symbols:
       Nothing (Unresolved reference)

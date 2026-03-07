@@ -2,7 +2,10 @@ KtNameReferenceExpression(22,26): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) object Unit
 
 KtCallExpression(34,42): 'action()'
@@ -17,6 +20,7 @@ KtNameReferenceExpression(34,40): 'action'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       action: () -> kotlin.Unit
 
@@ -39,6 +43,7 @@ KtNameReferenceExpression(64,67): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(action: () -> kotlin.Unit)
 
@@ -53,6 +58,7 @@ KtLabelReferenceExpression(68,74): 'label@'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -60,6 +66,7 @@ KtLabelReferenceExpression(90,96): '@label'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: usage) fun(): kotlin.Unit
 
@@ -67,6 +74,7 @@ KtLabelReferenceExpression(108,114): 'myFor@'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -84,6 +92,7 @@ KtOperationReferenceExpression(126,128): '..'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun rangeTo(other: kotlin.Int): kotlin.ranges.IntRange
 
@@ -91,5 +100,6 @@ KtLabelReferenceExpression(149,155): '@myFor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

@@ -2,41 +2,57 @@ KtNameReferenceExpression(128,134): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(137,145): 'MySealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface MySealed
 
 KtNameReferenceExpression(169,175): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(178,186): 'MySealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface MySealed
 
 KtNameReferenceExpression(194,202): 'MySealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface MySealed
 
 KtNameReferenceExpression(223,227): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       extension receiver with type MySealed
 
@@ -44,13 +60,17 @@ KtNameReferenceExpression(238,242): 'Left'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MySealed) class Left(x: kotlin.String) : MySealed
 
 KtNameReferenceExpression(246,247): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed.Left) val x: kotlin.String
 
@@ -58,12 +78,16 @@ KtNameReferenceExpression(255,260): 'Right'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MySealed) class Right(y: kotlin.String) : MySealed
 
 KtNameReferenceExpression(264,265): 'y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed.Right) val y: kotlin.String

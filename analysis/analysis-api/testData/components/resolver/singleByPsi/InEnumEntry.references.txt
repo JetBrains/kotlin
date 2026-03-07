@@ -2,5 +2,6 @@ KtNameReferenceExpression(100,109): 'TOP_LEVEL'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test) val TOP_LEVEL: kotlin.Int

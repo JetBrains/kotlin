@@ -2,5 +2,6 @@ KtNameReferenceExpression(20,29): 'compareTo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) override operator fun compareTo(other: kotlin.Int): kotlin.Int

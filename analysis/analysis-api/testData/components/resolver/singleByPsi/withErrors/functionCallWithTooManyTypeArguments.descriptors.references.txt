@@ -2,6 +2,8 @@ KtNameReferenceExpression(39,46): 'generic'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generic>
     symbols:
       (in ROOT) fun <A> generic()
 

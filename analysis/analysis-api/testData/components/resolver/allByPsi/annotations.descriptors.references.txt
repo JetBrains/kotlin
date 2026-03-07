@@ -2,34 +2,47 @@ KtNameReferenceExpression(24,27): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package one
 
 KtNameReferenceExpression(36,42): 'kotlin'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package kotlin
 
 KtNameReferenceExpression(43,50): 'reflect'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package kotlin.reflect
 
 KtNameReferenceExpression(51,57): 'KClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin.reflect) interface KClass<T : kotlin.Any> : kotlin.reflect.KDeclarationContainer, kotlin.reflect.KAnnotatedElement, kotlin.reflect.KClassifier
 
 KtNameReferenceExpression(60,70): 'Repeatable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.annotation.Repeatable) constructor()
 
@@ -37,13 +50,17 @@ KtNameReferenceExpression(111,119): 'IntArray'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class IntArray(size: kotlin.Int) : kotlin.Cloneable, java.io.Serializable
 
 KtNameReferenceExpression(123,133): 'Repeatable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.annotation.Repeatable) constructor()
 
@@ -51,13 +68,17 @@ KtNameReferenceExpression(173,179): 'KClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin.reflect) interface KClass<T : kotlin.Any> : kotlin.reflect.KDeclarationContainer, kotlin.reflect.KAnnotatedElement, kotlin.reflect.KClassifier
 
 KtNameReferenceExpression(186,196): 'Repeatable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.annotation.Repeatable) constructor()
 
@@ -65,41 +86,57 @@ KtNameReferenceExpression(243,248): 'Array'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Array<T> : kotlin.Cloneable, java.io.Serializable
 
 KtNameReferenceExpression(249,255): 'KClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin.reflect) interface KClass<T : kotlin.Any> : kotlin.reflect.KDeclarationContainer, kotlin.reflect.KAnnotatedElement, kotlin.reflect.KClassifier
 
 KtNameReferenceExpression(318,323): 'Array'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Array<T> : kotlin.Cloneable, java.io.Serializable
 
 KtNameReferenceExpression(324,337): 'AnnoWithArray'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in one) annotation class AnnoWithArray(arr: kotlin.IntArray)
 
 KtNameReferenceExpression(382,388): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(424,437): 'AnnoWithArray'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.AnnoWithArray) constructor(arr: kotlin.IntArray)
 
@@ -123,6 +160,7 @@ KtNameReferenceExpression(450,463): 'AnnoWithArray'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.AnnoWithArray) constructor(arr: kotlin.IntArray)
 
@@ -130,7 +168,10 @@ KtNameReferenceExpression(464,467): 'arr'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       arr: kotlin.IntArray
 
   SyntheticPropertyAccessorReference:
@@ -152,6 +193,7 @@ KtNameReferenceExpression(482,495): 'AnnoWithArray'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.AnnoWithArray) constructor(arr: kotlin.IntArray)
 
@@ -175,6 +217,7 @@ KtNameReferenceExpression(496,506): 'intArrayOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
@@ -213,6 +256,7 @@ KtNameReferenceExpression(518,532): 'AnnoWithKClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.AnnoWithKClass) constructor(k: kotlin.reflect.KClass<*>)
 
@@ -228,7 +272,10 @@ KtNameReferenceExpression(533,547): 'AnnoWithKClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in one) annotation class AnnoWithKClass(k: kotlin.reflect.KClass<*>)
 
   SyntheticPropertyAccessorReference:
@@ -242,6 +289,7 @@ KtNameReferenceExpression(558,572): 'AnnoWithKClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.AnnoWithKClass) constructor(k: kotlin.reflect.KClass<*>)
 
@@ -257,7 +305,10 @@ KtNameReferenceExpression(573,576): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package one
 
   SyntheticPropertyAccessorReference:
@@ -271,7 +322,10 @@ KtNameReferenceExpression(577,591): 'AnnoWithKClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in one) annotation class AnnoWithKClass(k: kotlin.reflect.KClass<*>)
 
   SyntheticPropertyAccessorReference:
@@ -285,6 +339,7 @@ KtNameReferenceExpression(602,623): 'AnnoWithArrayOfKClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.AnnoWithArrayOfKClass) constructor(a: kotlin.Array<kotlin.reflect.KClass<*>>)
 
@@ -308,7 +363,10 @@ KtNameReferenceExpression(625,639): 'AnnoWithKClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in one) annotation class AnnoWithKClass(k: kotlin.reflect.KClass<*>)
 
   SyntheticPropertyAccessorReference:
@@ -322,7 +380,10 @@ KtNameReferenceExpression(648,651): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package one
 
   SyntheticPropertyAccessorReference:
@@ -336,7 +397,10 @@ KtNameReferenceExpression(652,666): 'AnnoWithKClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in one) annotation class AnnoWithKClass(k: kotlin.reflect.KClass<*>)
 
   SyntheticPropertyAccessorReference:
@@ -350,6 +414,7 @@ KtNameReferenceExpression(677,702): 'AnnoWithAnotherAnnotation'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.AnnoWithAnotherAnnotation) constructor(another: kotlin.Array<one.AnnoWithArray>)
 
@@ -373,6 +438,7 @@ KtNameReferenceExpression(703,710): 'arrayOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
 
@@ -395,7 +461,10 @@ KtNameReferenceExpression(711,714): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package one
 
   SyntheticPropertyAccessorReference:
@@ -417,6 +486,7 @@ KtNameReferenceExpression(715,728): 'AnnoWithArray'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.AnnoWithArray) constructor(arr: kotlin.IntArray)
 
@@ -463,6 +533,7 @@ KtNameReferenceExpression(744,757): 'AnnoWithArray'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.AnnoWithArray) constructor(arr: kotlin.IntArray)
 
@@ -493,6 +564,7 @@ KtNameReferenceExpression(758,768): 'intArrayOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
@@ -531,6 +603,7 @@ KtNameReferenceExpression(785,799): 'AnnoWithString'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.AnnoWithString) constructor(str: kotlin.String)
 
@@ -546,6 +619,7 @@ KtNameReferenceExpression(800,814): 'stringConstant'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one) const val stringConstant: kotlin.String
 
@@ -560,5 +634,6 @@ KtOperationReferenceExpression(815,816): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.String) operator fun plus(other: kotlin.Any?): kotlin.String

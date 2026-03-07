@@ -2,5 +2,6 @@ KtNameReferenceExpression(357,364): 'oldItem'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       oldItem: T

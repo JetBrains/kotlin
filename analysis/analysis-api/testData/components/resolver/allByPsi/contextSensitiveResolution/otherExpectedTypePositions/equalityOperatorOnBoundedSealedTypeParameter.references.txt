@@ -2,28 +2,40 @@ KtNameReferenceExpression(122,130): 'MySealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MySealed) constructor()
 
 KtNameReferenceExpression(178,186): 'MySealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MySealed) constructor()
 
 KtNameReferenceExpression(206,207): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: id) X
 
 KtNameReferenceExpression(210,211): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: id) X
 
 KtCallExpression(214,220): 'TODO()'
@@ -38,6 +50,7 @@ KtNameReferenceExpression(214,218): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -45,20 +58,27 @@ KtNameReferenceExpression(231,239): 'MySealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) sealed class MySealed
 
 KtNameReferenceExpression(248,249): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: foo) T
 
 KtNameReferenceExpression(265,273): 'MySealed'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) sealed class MySealed
 
@@ -66,6 +86,7 @@ KtNameReferenceExpression(274,275): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object X : MySealed()
 
@@ -73,6 +94,7 @@ KtNameReferenceExpression(285,286): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -80,6 +102,7 @@ KtOperationReferenceExpression(287,289): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -87,6 +110,7 @@ KtNameReferenceExpression(290,291): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object X : MySealed()
 
@@ -94,6 +118,7 @@ KtNameReferenceExpression(304,305): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -101,6 +126,7 @@ KtOperationReferenceExpression(306,308): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -108,6 +134,7 @@ KtNameReferenceExpression(309,310): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object Y
 
@@ -115,6 +142,7 @@ KtNameReferenceExpression(323,324): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -122,6 +150,7 @@ KtOperationReferenceExpression(325,327): '!='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -129,6 +158,7 @@ KtNameReferenceExpression(328,329): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object X : MySealed()
 
@@ -136,6 +166,7 @@ KtNameReferenceExpression(342,343): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -143,6 +174,7 @@ KtOperationReferenceExpression(344,346): '!='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -150,6 +182,7 @@ KtNameReferenceExpression(347,348): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object Y
 
@@ -157,6 +190,7 @@ KtNameReferenceExpression(361,362): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -164,6 +198,7 @@ KtOperationReferenceExpression(363,366): '==='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -171,6 +206,7 @@ KtNameReferenceExpression(367,368): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object X : MySealed()
 
@@ -178,6 +214,7 @@ KtNameReferenceExpression(381,382): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -185,6 +222,7 @@ KtOperationReferenceExpression(383,386): '==='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -192,6 +230,7 @@ KtNameReferenceExpression(387,388): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object Y
 
@@ -199,6 +238,7 @@ KtNameReferenceExpression(401,402): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -206,6 +246,7 @@ KtOperationReferenceExpression(403,406): '!=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -213,6 +254,7 @@ KtNameReferenceExpression(407,408): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object X : MySealed()
 
@@ -220,6 +262,7 @@ KtNameReferenceExpression(421,422): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -227,6 +270,7 @@ KtOperationReferenceExpression(423,426): '!=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -234,6 +278,7 @@ KtNameReferenceExpression(427,428): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object Y
 
@@ -241,6 +286,7 @@ KtNameReferenceExpression(441,442): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -248,6 +294,7 @@ KtOperationReferenceExpression(443,445): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -255,6 +302,7 @@ KtNameReferenceExpression(446,447): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MySealed.X
 
@@ -262,6 +310,7 @@ KtNameReferenceExpression(460,461): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -269,6 +318,7 @@ KtOperationReferenceExpression(462,464): 'is'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -276,7 +326,10 @@ KtNameReferenceExpression(465,472): 'Derived'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MySealed) class Derived : MySealed()
 
 KtCallExpression(485,490): 'id(a)'
@@ -291,6 +344,7 @@ KtNameReferenceExpression(485,487): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -298,6 +352,7 @@ KtNameReferenceExpression(488,489): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -305,6 +360,7 @@ KtOperationReferenceExpression(491,493): 'is'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -312,13 +368,18 @@ KtNameReferenceExpression(494,501): 'Derived'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MySealed) class Derived : MySealed()
 
 KtNameReferenceExpression(685,686): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -326,13 +387,17 @@ KtOperationReferenceExpression(687,689): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(690,691): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -340,6 +405,7 @@ KtNameReferenceExpression(704,705): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MySealed.X
 
@@ -347,6 +413,7 @@ KtOperationReferenceExpression(706,708): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed.X) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -354,6 +421,7 @@ KtNameReferenceExpression(709,710): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -361,6 +429,7 @@ KtNameReferenceExpression(913,914): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -368,6 +437,7 @@ KtOperationReferenceExpression(915,917): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -383,6 +453,7 @@ KtNameReferenceExpression(918,920): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -390,6 +461,8 @@ KtNameReferenceExpression(921,922): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -397,6 +470,7 @@ KtNameReferenceExpression(936,937): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -404,6 +478,7 @@ KtOperationReferenceExpression(938,940): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -419,6 +494,7 @@ KtNameReferenceExpression(941,943): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -426,6 +502,7 @@ KtNameReferenceExpression(944,945): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MySealed.X
 
@@ -433,6 +510,7 @@ KtNameReferenceExpression(971,972): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -440,6 +518,7 @@ KtOperationReferenceExpression(973,975): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -447,6 +526,7 @@ KtNameReferenceExpression(976,977): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object X : MySealed()
 
@@ -454,6 +534,7 @@ KtNameReferenceExpression(992,993): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -461,6 +542,7 @@ KtOperationReferenceExpression(994,996): '!='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -468,6 +550,7 @@ KtNameReferenceExpression(997,998): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object Y
 
@@ -475,6 +558,7 @@ KtNameReferenceExpression(1031,1032): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -482,6 +566,7 @@ KtOperationReferenceExpression(1033,1036): '==='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -489,6 +574,7 @@ KtNameReferenceExpression(1037,1038): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object X : MySealed()
 
@@ -496,6 +582,7 @@ KtNameReferenceExpression(1053,1054): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -503,6 +590,7 @@ KtOperationReferenceExpression(1055,1057): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -510,6 +598,7 @@ KtNameReferenceExpression(1058,1059): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MySealed.X
 
@@ -517,6 +606,7 @@ KtNameReferenceExpression(1074,1075): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -524,6 +614,7 @@ KtOperationReferenceExpression(1076,1078): 'is'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -531,13 +622,17 @@ KtNameReferenceExpression(1079,1086): 'Derived'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MySealed) class Derived : MySealed()
 
 KtNameReferenceExpression(1101,1102): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -545,6 +640,7 @@ KtOperationReferenceExpression(1103,1106): '!=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -552,6 +648,7 @@ KtNameReferenceExpression(1107,1108): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object Y
 
@@ -559,6 +656,7 @@ KtNameReferenceExpression(1131,1132): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -566,6 +664,7 @@ KtNameReferenceExpression(1144,1145): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object X : MySealed()
 
@@ -573,6 +672,7 @@ KtNameReferenceExpression(1160,1161): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object Y
 
@@ -580,6 +680,7 @@ KtNameReferenceExpression(1163,1164): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MySealed.X
 
@@ -587,13 +688,17 @@ KtNameReferenceExpression(1182,1189): 'Derived'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MySealed) class Derived : MySealed()
 
 KtNameReferenceExpression(1221,1222): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -601,6 +706,7 @@ KtNameReferenceExpression(1234,1235): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object X : MySealed()
 
@@ -608,6 +714,7 @@ KtNameReferenceExpression(1250,1251): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MySealed) data object Y
 
@@ -615,6 +722,7 @@ KtNameReferenceExpression(1253,1254): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MySealed.X
 
@@ -622,13 +730,17 @@ KtNameReferenceExpression(1272,1279): 'Derived'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MySealed) class Derived : MySealed()
 
 KtNameReferenceExpression(1303,1304): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -644,6 +756,7 @@ KtNameReferenceExpression(1316,1318): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -651,6 +764,8 @@ KtNameReferenceExpression(1319,1320): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -666,6 +781,7 @@ KtNameReferenceExpression(1336,1338): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -673,6 +789,8 @@ KtNameReferenceExpression(1339,1340): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Y'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -688,6 +806,7 @@ KtNameReferenceExpression(1343,1345): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -695,6 +814,7 @@ KtNameReferenceExpression(1346,1347): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MySealed.X
 
@@ -702,6 +822,7 @@ KtNameReferenceExpression(1399,1400): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -717,6 +838,7 @@ KtNameReferenceExpression(1412,1414): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -724,6 +846,8 @@ KtNameReferenceExpression(1415,1416): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -739,6 +863,7 @@ KtNameReferenceExpression(1432,1434): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -746,6 +871,8 @@ KtNameReferenceExpression(1435,1436): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Y'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -761,6 +888,7 @@ KtNameReferenceExpression(1439,1441): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -768,5 +896,6 @@ KtNameReferenceExpression(1442,1443): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MySealed.X

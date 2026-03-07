@@ -2,5 +2,7 @@ KtNameReferenceExpression(65,74): 'Cloneable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Cloneable'.>
     symbols:
       Nothing (Unresolved reference)

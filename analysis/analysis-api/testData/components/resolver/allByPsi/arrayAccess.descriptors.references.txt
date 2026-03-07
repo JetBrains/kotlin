@@ -2,20 +2,27 @@ KtNameReferenceExpression(16,27): 'MutableList'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
 
 KtNameReferenceExpression(28,31): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(40,44): 'list'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       list: kotlin.collections.MutableList<kotlin.Int>
 
@@ -37,6 +44,7 @@ KtOperationReferenceExpression(45,47): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections) inline operator fun <T> kotlin.collections.MutableCollection<in T>.plusAssign(element: T)
 
@@ -52,6 +60,7 @@ KtNameReferenceExpression(74,78): 'list'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       list: kotlin.collections.MutableList<kotlin.Int>
 
@@ -66,6 +75,7 @@ KtNameReferenceExpression(106,110): 'list'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       list: kotlin.collections.MutableList<kotlin.Int>
 
@@ -88,6 +98,7 @@ KtNameReferenceExpression(111,114): 'get'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.collections.MutableList) operator fun get(index: kotlin.Int): E
 
@@ -102,6 +113,7 @@ KtNameReferenceExpression(115,128): 'implicitIndex'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: usage) val implicitIndex: kotlin.Int
 
@@ -116,6 +128,7 @@ KtNameReferenceExpression(136,144): 'Suppress'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Suppress) constructor(vararg names: kotlin.String)
 
@@ -142,6 +155,7 @@ KtNameReferenceExpression(159,163): 'list'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       list: kotlin.collections.MutableList<kotlin.Int>
 
@@ -156,6 +170,7 @@ KtOperationReferenceExpression(168,170): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
@@ -174,6 +189,7 @@ KtNameReferenceExpression(178,182): 'list'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       list: kotlin.collections.MutableList<kotlin.Int>
 
@@ -188,6 +204,7 @@ KtOperationReferenceExpression(187,189): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
@@ -195,21 +212,30 @@ KtNameReferenceExpression(206,209): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(217,228): 'MutableList'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
 
 KtNameReferenceExpression(229,232): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtCallExpression(241,261): 'foo(--list[i], list)'
@@ -224,6 +250,7 @@ KtNameReferenceExpression(241,244): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>)
 
@@ -238,7 +265,11 @@ KtOperationReferenceExpression(245,247): '--'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      0: (in kotlin.Int) operator fun dec(): kotlin.Int
+      1: (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
+    resolveToSymbols:
       (in kotlin.Int) operator fun dec(): kotlin.Int
 
 KtArrayAccessExpression(247,254): 'list[i]'
@@ -256,6 +287,7 @@ KtNameReferenceExpression(247,251): 'list'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       list: kotlin.collections.MutableList<kotlin.Int>
 
@@ -270,6 +302,7 @@ KtNameReferenceExpression(252,253): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       i: kotlin.Int
 
@@ -284,6 +317,7 @@ KtNameReferenceExpression(256,260): 'list'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       list: kotlin.collections.MutableList<kotlin.Int>
 
@@ -298,6 +332,7 @@ KtOperationReferenceExpression(266,268): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun inc(): kotlin.Int
 
@@ -316,6 +351,7 @@ KtNameReferenceExpression(269,273): 'list'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       list: kotlin.collections.MutableList<kotlin.Int>
 

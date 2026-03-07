@@ -2,41 +2,57 @@ KtNameReferenceExpression(150,156): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(159,174): 'SealedInterface'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface SealedInterface
 
 KtNameReferenceExpression(269,276): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MyClass) constructor()
 
 KtNameReferenceExpression(296,297): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: id) X
 
 KtNameReferenceExpression(300,301): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: id) X
 
 KtNameReferenceExpression(304,305): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: X
 
@@ -44,28 +60,40 @@ KtNameReferenceExpression(327,328): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: receive) T
 
 KtNameReferenceExpression(341,348): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(373,374): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testTypeParam) T
 
 KtNameReferenceExpression(377,383): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtCallExpression(386,392): 'TODO()'
@@ -80,6 +108,7 @@ KtNameReferenceExpression(386,390): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -87,42 +116,60 @@ KtNameReferenceExpression(460,461): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testTypeParamWithMultipleBound) T
 
 KtNameReferenceExpression(464,470): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(477,478): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testTypeParamWithMultipleBound) T
 
 KtNameReferenceExpression(481,488): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(490,491): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testTypeParamWithMultipleBound) T
 
 KtNameReferenceExpression(494,500): 'OtherI'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface OtherI
 
 KtCallExpression(503,509): 'TODO()'
@@ -137,6 +184,7 @@ KtNameReferenceExpression(503,507): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -144,14 +192,20 @@ KtNameReferenceExpression(538,545): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(549,555): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtCallExpression(558,564): 'TODO()'
@@ -166,6 +220,7 @@ KtNameReferenceExpression(558,562): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -173,28 +228,40 @@ KtNameReferenceExpression(574,581): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(627,628): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testDefinitelyNotNullIntersection) T
 
 KtNameReferenceExpression(631,634): 'Any'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) open class Any
 
 KtNameReferenceExpression(637,643): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtCallExpression(646,652): 'TODO()'
@@ -209,6 +276,7 @@ KtNameReferenceExpression(646,650): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -216,49 +284,70 @@ KtNameReferenceExpression(692,693): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testFakeIntersection) T
 
 KtNameReferenceExpression(696,702): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(709,710): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testFakeIntersection) T
 
 KtNameReferenceExpression(713,728): 'SealedInterface'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface SealedInterface
 
 KtNameReferenceExpression(730,731): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testFakeIntersection) T
 
 KtNameReferenceExpression(734,749): 'SealedInterface'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface SealedInterface
 
 KtNameReferenceExpression(750,765): 'NestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in SealedInterface) class NestedInheritor(prop: kotlin.String) : SealedInterface
 
 KtCallExpression(768,774): 'TODO()'
@@ -273,6 +362,7 @@ KtNameReferenceExpression(768,772): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -280,49 +370,70 @@ KtNameReferenceExpression(821,822): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testReverseFakeIntersection) T
 
 KtNameReferenceExpression(825,831): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(838,839): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testReverseFakeIntersection) T
 
 KtNameReferenceExpression(842,857): 'SealedInterface'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface SealedInterface
 
 KtNameReferenceExpression(858,873): 'NestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in SealedInterface) class NestedInheritor(prop: kotlin.String) : SealedInterface
 
 KtNameReferenceExpression(875,876): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testReverseFakeIntersection) T
 
 KtNameReferenceExpression(879,894): 'SealedInterface'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface SealedInterface
 
 KtCallExpression(897,903): 'TODO()'
@@ -337,6 +448,7 @@ KtNameReferenceExpression(897,901): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -344,42 +456,60 @@ KtNameReferenceExpression(946,947): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testRegularIntersection) T
 
 KtNameReferenceExpression(950,956): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(963,964): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testRegularIntersection) T
 
 KtNameReferenceExpression(967,982): 'SealedInterface'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) interface SealedInterface
 
 KtNameReferenceExpression(984,985): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: testRegularIntersection) T
 
 KtNameReferenceExpression(988,995): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtCallExpression(998,1004): 'TODO()'
@@ -394,6 +524,7 @@ KtNameReferenceExpression(998,1002): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -401,7 +532,10 @@ KtNameReferenceExpression(1043,1049): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtCallExpression(1052,1066): 'id(EnumValue1)'
@@ -416,6 +550,7 @@ KtNameReferenceExpression(1052,1054): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -423,6 +558,7 @@ KtNameReferenceExpression(1055,1065): 'EnumValue1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) EnumValue1
 
@@ -430,7 +566,10 @@ KtNameReferenceExpression(1079,1086): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtCallExpression(1089,1108): 'id(InheritorObject)'
@@ -445,6 +584,7 @@ KtNameReferenceExpression(1089,1091): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -452,6 +592,7 @@ KtNameReferenceExpression(1092,1107): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object InheritorObject : MyClass()
 
@@ -467,6 +608,7 @@ KtNameReferenceExpression(1114,1121): 'receive'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receive(arg: T)
 
@@ -474,7 +616,10 @@ KtNameReferenceExpression(1122,1128): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtCallExpression(1130,1144): 'id(EnumValue1)'
@@ -489,6 +634,7 @@ KtNameReferenceExpression(1130,1132): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -496,6 +642,7 @@ KtNameReferenceExpression(1133,1143): 'EnumValue1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) EnumValue1
 
@@ -511,6 +658,7 @@ KtNameReferenceExpression(1150,1157): 'receive'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T> receive(arg: T)
 
@@ -518,7 +666,10 @@ KtNameReferenceExpression(1158,1165): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtCallExpression(1167,1186): 'id(InheritorObject)'
@@ -533,6 +684,7 @@ KtNameReferenceExpression(1167,1169): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -540,6 +692,7 @@ KtNameReferenceExpression(1170,1185): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object InheritorObject : MyClass()
 
@@ -555,6 +708,7 @@ KtNameReferenceExpression(1193,1205): 'testNullable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun testNullable(instance: MyClass?): kotlin.String
 
@@ -562,6 +716,7 @@ KtNameReferenceExpression(1206,1221): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object InheritorObject : MyClass()
 
@@ -577,6 +732,7 @@ KtNameReferenceExpression(1227,1240): 'testTypeParam'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <T : MyClass> testTypeParam(instance: T): kotlin.String
 
@@ -584,13 +740,17 @@ KtNameReferenceExpression(1241,1248): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) open class MyClass
 
 KtNameReferenceExpression(1250,1265): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object InheritorObject : MyClass()
 
@@ -606,6 +766,8 @@ KtNameReferenceExpression(1272,1285): 'testTypeParam'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParam>
     symbols:
       (in ROOT) fun <T : MyClass> testTypeParam(instance: T): kotlin.String
 
@@ -613,6 +775,8 @@ KtNameReferenceExpression(1286,1301): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -628,6 +792,8 @@ KtNameReferenceExpression(1307,1337): 'testTypeParamWithMultipleBound'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParamWithMultipleBound>
     symbols:
       (in ROOT) fun <T> testTypeParamWithMultipleBound(instance: T): kotlin.String where T : MyClass, T : OtherI
 
@@ -635,6 +801,8 @@ KtNameReferenceExpression(1338,1353): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -650,6 +818,8 @@ KtNameReferenceExpression(1359,1392): 'testDefinitelyNotNullIntersection'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testDefinitelyNotNullIntersection>
     symbols:
       (in ROOT) fun <T : MyClass?> testDefinitelyNotNullIntersection(instance: T & kotlin.Any): kotlin.String
 
@@ -657,6 +827,8 @@ KtNameReferenceExpression(1393,1408): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -672,6 +844,8 @@ KtNameReferenceExpression(1414,1434): 'testFakeIntersection'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testFakeIntersection>
     symbols:
       (in ROOT) fun <T> testFakeIntersection(instance: T): kotlin.String where T : SealedInterface, T : SealedInterface.NestedInheritor
 
@@ -679,6 +853,8 @@ KtNameReferenceExpression(1435,1450): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -694,6 +870,8 @@ KtNameReferenceExpression(1456,1483): 'testReverseFakeIntersection'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testReverseFakeIntersection>
     symbols:
       (in ROOT) fun <T> testReverseFakeIntersection(instance: T): kotlin.String where T : SealedInterface.NestedInheritor, T : SealedInterface
 
@@ -701,6 +879,8 @@ KtNameReferenceExpression(1484,1499): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -716,6 +896,8 @@ KtNameReferenceExpression(1505,1528): 'testRegularIntersection'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testRegularIntersection>
     symbols:
       (in ROOT) fun <T> testRegularIntersection(instance: T): kotlin.String where T : SealedInterface, T : MyClass
 
@@ -723,5 +905,7 @@ KtNameReferenceExpression(1529,1544): 'InheritorObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
     symbols:
       Nothing (Unresolved reference)

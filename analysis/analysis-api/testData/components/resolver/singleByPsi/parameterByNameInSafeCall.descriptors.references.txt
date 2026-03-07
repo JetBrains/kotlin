@@ -2,7 +2,10 @@ KtNameReferenceExpression(76,80): 'name'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       name: kotlin.Int
 
   SyntheticPropertyAccessorReference:

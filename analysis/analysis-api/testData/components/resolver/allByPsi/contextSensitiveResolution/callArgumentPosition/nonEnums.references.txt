@@ -2,7 +2,10 @@ KtNameReferenceExpression(91,98): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) sealed class MyClass
 
 KtCallExpression(101,107): 'TODO()'
@@ -17,6 +20,7 @@ KtNameReferenceExpression(101,105): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -24,35 +28,50 @@ KtNameReferenceExpression(167,174): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MyClass) constructor()
 
 KtNameReferenceExpression(224,227): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(254,261): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) sealed class MyClass
 
 KtNameReferenceExpression(281,282): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: id) X
 
 KtNameReferenceExpression(285,286): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: id) X
 
 KtCallExpression(289,295): 'TODO()'
@@ -67,6 +86,7 @@ KtNameReferenceExpression(289,293): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -74,7 +94,10 @@ KtNameReferenceExpression(301,308): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) sealed class MyClass
 
 KtCallExpression(321,341): 'expectInt(MAX_VALUE)'
@@ -89,6 +112,7 @@ KtNameReferenceExpression(321,330): 'expectInt'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun expectInt(x: kotlin.Int)
 
@@ -96,6 +120,7 @@ KtNameReferenceExpression(331,340): 'MAX_VALUE'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int.Companion) const val MAX_VALUE: kotlin.Int
 
@@ -111,6 +136,7 @@ KtNameReferenceExpression(347,360): 'expectMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun expectMyClass(x: MyClass)
 
@@ -118,6 +144,7 @@ KtNameReferenceExpression(361,364): 'FOO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val FOO: MyClass
 
@@ -133,6 +160,7 @@ KtNameReferenceExpression(370,383): 'expectMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun expectMyClass(x: MyClass)
 
@@ -148,6 +176,7 @@ KtNameReferenceExpression(384,386): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -155,6 +184,7 @@ KtNameReferenceExpression(387,390): 'FOO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val FOO: MyClass
 
@@ -170,6 +200,8 @@ KtNameReferenceExpression(398,411): 'expectMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in ROOT) fun expectMyClass(x: MyClass)
 
@@ -177,6 +209,7 @@ KtNameReferenceExpression(412,429): 'FOR_TYPE_MISMATCH'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val FOR_TYPE_MISMATCH: kotlin.String
 
@@ -192,6 +225,8 @@ KtNameReferenceExpression(435,448): 'expectMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     symbols:
       (in ROOT) fun expectMyClass(x: MyClass)
 
@@ -207,6 +242,7 @@ KtNameReferenceExpression(449,451): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -214,6 +250,7 @@ KtNameReferenceExpression(452,469): 'FOR_TYPE_MISMATCH'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass.Companion) val FOR_TYPE_MISMATCH: kotlin.String
 
@@ -229,6 +266,7 @@ KtNameReferenceExpression(477,490): 'expectMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun expectMyClass(x: MyClass)
 
@@ -236,6 +274,7 @@ KtNameReferenceExpression(491,494): 'Bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object Bar : MyClass()
 
@@ -251,6 +290,7 @@ KtNameReferenceExpression(500,513): 'expectMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun expectMyClass(x: MyClass)
 
@@ -266,6 +306,7 @@ KtNameReferenceExpression(514,516): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -273,6 +314,7 @@ KtNameReferenceExpression(517,520): 'Bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object Bar : MyClass()
 
@@ -288,6 +330,8 @@ KtNameReferenceExpression(528,541): 'expectMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
     symbols:
       (in ROOT) fun expectMyClass(x: MyClass)
 
@@ -295,6 +339,7 @@ KtNameReferenceExpression(542,557): 'ForTypeMismatch'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object ForTypeMismatch
 
@@ -310,6 +355,8 @@ KtNameReferenceExpression(563,576): 'expectMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
     symbols:
       (in ROOT) fun expectMyClass(x: MyClass)
 
@@ -325,6 +372,7 @@ KtNameReferenceExpression(577,579): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -332,6 +380,7 @@ KtNameReferenceExpression(580,595): 'ForTypeMismatch'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) object ForTypeMismatch
 
@@ -339,6 +388,7 @@ KtNameReferenceExpression(603,612): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) open class JavaClass
 
@@ -354,6 +404,7 @@ KtNameReferenceExpression(613,628): 'expectJavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) open fun expectJavaClass(j: JavaClass!)
 
@@ -361,5 +412,6 @@ KtNameReferenceExpression(629,637): 'INSTANCE'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in JavaClass) var INSTANCE: JavaClass!

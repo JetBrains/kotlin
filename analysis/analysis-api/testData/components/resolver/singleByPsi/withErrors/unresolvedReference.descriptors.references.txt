@@ -2,6 +2,8 @@ KtNameReferenceExpression(17,25): 'function'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: function>
     symbols:
       Nothing (Unresolved reference)
 

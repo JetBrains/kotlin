@@ -2,6 +2,8 @@ KtNameReferenceExpression(153,163): 'Annotation'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Array<String>', but 'String' was expected.>
     symbols:
       (in Annotation) constructor(vararg strings: kotlin.String)
 

@@ -2,6 +2,7 @@ KtNameReferenceExpression(84,87): 'obj'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       obj: Foo
 

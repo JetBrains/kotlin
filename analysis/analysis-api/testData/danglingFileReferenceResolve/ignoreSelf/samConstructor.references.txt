@@ -2,5 +2,7 @@ KtNameReferenceExpression(69,79): 'MyRunnable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<INVISIBLE_REFERENCE: Cannot access 'fun fun MyRunnable(function: () -> Unit): MyRunnable': it is private in file.>
     symbols:
       (in ROOT) private MyRunnable(function: () -> kotlin.Unit): MyRunnable [samConstructor.kt]

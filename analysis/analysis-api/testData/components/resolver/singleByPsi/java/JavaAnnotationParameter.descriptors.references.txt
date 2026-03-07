@@ -2,7 +2,10 @@ KtNameReferenceExpression(32,37): 'value'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       value: java.lang.annotation.RetentionPolicy
 
   SyntheticPropertyAccessorReference:

@@ -2,5 +2,7 @@ KtNameReferenceExpression(63,64): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<INVISIBLE_REFERENCE: Cannot access 'val i: Int': it is private in 'A'.>
     symbols:
       (in A) private val i: kotlin.Int

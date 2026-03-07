@@ -2,7 +2,10 @@ KtNameReferenceExpression(102,110): 'FooAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in test) object Foo
+    resolveToSymbols:
       (in test) typealias FooAlias = test.Foo
 
   SyntheticPropertyAccessorReference:

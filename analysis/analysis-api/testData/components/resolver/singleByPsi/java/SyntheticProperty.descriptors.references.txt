@@ -3,6 +3,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in JavaClass) var JavaClass.something: kotlin.Int
 
@@ -20,6 +21,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in JavaClass) var JavaClass.something: kotlin.Int
 
@@ -37,6 +39,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in JavaClass) var JavaClass.something: kotlin.Int
 
@@ -63,6 +66,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in JavaClass) var JavaClass.something: kotlin.Int
 
@@ -89,6 +93,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in JavaClass) var JavaClass.something: kotlin.Int
 
@@ -115,6 +120,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in JavaClass) var JavaClass.something: kotlin.Int
 

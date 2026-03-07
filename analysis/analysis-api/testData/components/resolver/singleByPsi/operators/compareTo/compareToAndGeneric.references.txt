@@ -2,5 +2,6 @@ KtNameReferenceExpression(114,123): 'compareTo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) operator fun <T> T.compareTo(int: kotlin.Int): kotlin.Int

@@ -2,7 +2,10 @@ KtNameReferenceExpression(132,139): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtCallExpression(142,151): 'MyClass()'
@@ -17,6 +20,7 @@ KtNameReferenceExpression(142,149): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) constructor()
 
@@ -31,20 +35,28 @@ KtNameReferenceExpression(167,173): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(195,202): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(205,206): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
     symbols:
       Nothing (Unresolved reference)
 
@@ -59,13 +71,18 @@ KtNameReferenceExpression(214,221): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(224,225): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
     symbols:
       Nothing (Unresolved reference)
 
@@ -80,13 +97,18 @@ KtNameReferenceExpression(238,245): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(248,249): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
     symbols:
       Nothing (Unresolved reference)
 
@@ -101,13 +123,18 @@ KtNameReferenceExpression(261,268): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(271,272): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
     symbols:
       Nothing (Unresolved reference)
 
@@ -122,13 +149,18 @@ KtNameReferenceExpression(285,292): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(295,296): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
     symbols:
       Nothing (Unresolved reference)
 
@@ -143,13 +175,18 @@ KtNameReferenceExpression(317,324): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(337,338): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
     symbols:
       Nothing (Unresolved reference)
 
@@ -164,13 +201,18 @@ KtNameReferenceExpression(365,372): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(375,376): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
     symbols:
       Nothing (Unresolved reference)
 
@@ -185,13 +227,18 @@ KtNameReferenceExpression(393,400): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(413,414): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
     symbols:
       Nothing (Unresolved reference)
 
@@ -206,13 +253,18 @@ KtNameReferenceExpression(441,448): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(451,452): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
     symbols:
       Nothing (Unresolved reference)
 
@@ -227,13 +279,17 @@ KtNameReferenceExpression(478,485): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(498,499): 'm'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: main) var m: MyClass?
 
@@ -248,13 +304,18 @@ KtOperationReferenceExpression(500,501): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in <local>: main) var m: MyClass?
+    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(502,503): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
     symbols:
       Nothing (Unresolved reference)
 
@@ -269,6 +330,7 @@ KtNameReferenceExpression(508,509): 'm'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: main) var m: MyClass?
 
@@ -283,13 +345,18 @@ KtOperationReferenceExpression(510,511): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in <local>: main) var m: MyClass?
+    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(512,513): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
     symbols:
       Nothing (Unresolved reference)
 
@@ -304,20 +371,27 @@ KtNameReferenceExpression(528,535): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(538,545): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(556,557): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       b: kotlin.Boolean
 
@@ -332,6 +406,8 @@ KtNameReferenceExpression(566,567): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
     symbols:
       Nothing (Unresolved reference)
 
@@ -346,6 +422,8 @@ KtNameReferenceExpression(579,580): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
     symbols:
       Nothing (Unresolved reference)
 

@@ -2,5 +2,6 @@ KtNameReferenceExpression(65,69): 'call'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Foo) fun call() [fake.kt]

@@ -2,41 +2,57 @@ KtNameReferenceExpression(35,41): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(91,97): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(140,146): 'kotlin'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package kotlin
 
 KtNameReferenceExpression(147,154): 'reflect'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package kotlin.reflect
 
 KtNameReferenceExpression(155,161): 'KClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin.reflect) expect interface KClass<T : kotlin.Any> : kotlin.reflect.KClassifier
 
 KtNameReferenceExpression(168,174): 'MyAnno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyAnno) constructor(value: kotlin.String)
 
@@ -52,6 +68,7 @@ KtNameReferenceExpression(200,206): 'MyAnno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyAnno) constructor(value: kotlin.String)
 
@@ -59,7 +76,10 @@ KtNameReferenceExpression(207,212): 'value'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       value: kotlin.String
 
   SyntheticPropertyAccessorReference:
@@ -73,6 +93,7 @@ KtNameReferenceExpression(240,246): 'MyAnno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyAnno) constructor(value: kotlin.String)
 
@@ -88,6 +109,7 @@ KtOperationReferenceExpression(257,259): 'as'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -95,13 +117,17 @@ KtNameReferenceExpression(260,266): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(286,298): 'MyAnnoVararg'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyAnnoVararg) constructor(vararg value: kotlin.String)
 
@@ -117,6 +143,7 @@ KtNameReferenceExpression(316,323): 'arrayOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
 
@@ -131,6 +158,7 @@ KtNameReferenceExpression(358,370): 'MyAnnoVararg'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyAnnoVararg) constructor(vararg value: kotlin.String)
 
@@ -138,7 +166,10 @@ KtNameReferenceExpression(371,376): 'value'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       vararg value: kotlin.String
 
   SyntheticPropertyAccessorReference:
@@ -160,6 +191,7 @@ KtNameReferenceExpression(381,388): 'arrayOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
 
@@ -190,6 +222,7 @@ KtNameReferenceExpression(420,432): 'MyAnnoKClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyAnnoKClass) constructor(value: kotlin.reflect.KClass<*>)
 
@@ -205,7 +238,10 @@ KtNameReferenceExpression(436,442): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
   SyntheticPropertyAccessorReference:

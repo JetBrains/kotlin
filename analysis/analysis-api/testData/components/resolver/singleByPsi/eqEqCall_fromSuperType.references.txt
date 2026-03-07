@@ -2,5 +2,6 @@ KtNameReferenceExpression(136,138): 'b1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       b1: B

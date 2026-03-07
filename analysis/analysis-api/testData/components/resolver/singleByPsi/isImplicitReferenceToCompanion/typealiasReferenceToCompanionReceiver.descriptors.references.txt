@@ -2,6 +2,7 @@ KtNameReferenceExpression(100,102): 'TA'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

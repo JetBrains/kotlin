@@ -2,5 +2,6 @@ KtNameReferenceExpression(146,150): 'test'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Test) fun test(foo: Test.Foo)

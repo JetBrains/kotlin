@@ -2,5 +2,6 @@ KtNameReferenceExpression(54,62): 'function'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun kotlin.String.function(a: kotlin.Int)

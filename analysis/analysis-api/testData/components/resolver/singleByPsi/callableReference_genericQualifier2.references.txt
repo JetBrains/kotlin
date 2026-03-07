@@ -2,5 +2,9 @@ KtNameReferenceExpression(76,80): 'Test'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OTHER_ERROR: Inapplicable candidate>
     symbols:
+      (in test.Test) constructor <T>()
+    resolveToSymbols:
       (in test) class Test<T>

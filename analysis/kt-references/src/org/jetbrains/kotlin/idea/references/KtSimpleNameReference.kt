@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,15 +9,16 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.psi.KtImportAlias
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.KtWhenConditionInRange
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolution.KtResolvable
 
+@OptIn(KtExperimentalApi::class)
 @SubclassOptInRequired(KtImplementationDetail::class)
-abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleReference<KtSimpleNameExpression>(expression) {
+abstract class KtSimpleNameReference(
+    expression: KtSimpleNameExpression,
+) : KtSimpleReference<KtSimpleNameExpression>(expression), KtResolvable {
     // Extension point used by deprecated android extensions.
     abstract fun isReferenceToViaExtension(element: PsiElement): Boolean
 

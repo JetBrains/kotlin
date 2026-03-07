@@ -2,7 +2,10 @@ KtNameReferenceExpression(8,9): 'f'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package f
 
 KtForExpression(29,54): 'for (i in 1..<5) {'
@@ -19,5 +22,6 @@ KtOperationReferenceExpression(40,43): '..<'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange

@@ -2,5 +2,8 @@ KtNameReferenceExpression(81,83): 'AA'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in ROOT) class AA
+    resolveToSymbols:
       (in AA) companion object

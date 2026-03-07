@@ -2,5 +2,6 @@ KtNameReferenceExpression(50,55): 'myRun'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo) fun kotlin.Any.myRun()

@@ -3,6 +3,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
 
@@ -20,6 +21,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
 
@@ -37,6 +39,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
 

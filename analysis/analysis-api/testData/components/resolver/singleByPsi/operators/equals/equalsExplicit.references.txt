@@ -2,5 +2,6 @@ KtNameReferenceExpression(62,68): 'equals'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean

@@ -3,7 +3,10 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
+        (in JavaClass) override var something: kotlin.Int
+      resolveToSymbols:
         (in <local>: JavaClass.something) get()
 
     SyntheticPropertyAccessorReference:
@@ -18,7 +21,10 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
+        (in JavaClass) override var something: kotlin.Int
+      resolveToSymbols:
         (in <local>: JavaClass.something) set(value: kotlin.Int)
 
     SyntheticPropertyAccessorReference:
@@ -33,7 +39,10 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
+        (in JavaClass) override var something: kotlin.Int
+      resolveToSymbols:
         0: (in <local>: JavaClass.something) get()
         1: (in <local>: JavaClass.something) set(value: kotlin.Int)
 
@@ -56,7 +65,10 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
+        (in JavaClass) override var something: kotlin.Int
+      resolveToSymbols:
         0: (in <local>: JavaClass.something) get()
         1: (in <local>: JavaClass.something) set(value: kotlin.Int)
 
@@ -79,7 +91,10 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
+        (in JavaClass) override var something: kotlin.Int
+      resolveToSymbols:
         0: (in <local>: JavaClass.something) get()
         1: (in <local>: JavaClass.something) set(value: kotlin.Int)
 
@@ -102,7 +117,10 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
+        (in JavaClass) override var something: kotlin.Int
+      resolveToSymbols:
         0: (in <local>: JavaClass.something) get()
         1: (in <local>: JavaClass.something) set(value: kotlin.Int)
 
@@ -125,6 +143,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) open var something: kotlin.Int
 
@@ -140,6 +159,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) open var something: kotlin.Int
 
@@ -155,6 +175,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) open var something: kotlin.Int
 
@@ -177,6 +198,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) open var something: kotlin.Int
 
@@ -199,6 +221,7 @@
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in KotlinClass) open var something: kotlin.Int
 

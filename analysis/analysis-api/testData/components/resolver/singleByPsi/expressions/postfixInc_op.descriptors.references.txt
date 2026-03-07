@@ -2,5 +2,6 @@ KtOperationReferenceExpression(146,148): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) operator fun inc(): MyClass

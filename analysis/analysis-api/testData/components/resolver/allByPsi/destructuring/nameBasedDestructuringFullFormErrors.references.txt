@@ -2,21 +2,30 @@ KtNameReferenceExpression(79,85): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(94,97): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(119,124): 'Tuple'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class Tuple(a: kotlin.String, b: kotlin.Int)
 
 KtDestructuringDeclarationEntry(145,150): 'val a'
@@ -45,6 +54,7 @@ KtNameReferenceExpression(167,168): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: Tuple
 
@@ -63,6 +73,7 @@ KtNameReferenceExpression(201,202): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: Tuple
 
@@ -81,13 +92,17 @@ KtNameReferenceExpression(233,239): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(243,244): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: Tuple
 
@@ -106,6 +121,7 @@ KtNameReferenceExpression(273,278): 'first'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -113,6 +129,7 @@ KtNameReferenceExpression(282,283): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: Tuple
 
@@ -131,13 +148,17 @@ KtNameReferenceExpression(311,317): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(320,325): 'first'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -145,6 +166,7 @@ KtNameReferenceExpression(329,330): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: Tuple
 
@@ -174,13 +196,17 @@ KtNameReferenceExpression(388,394): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(397,402): 'first'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -199,7 +225,10 @@ KtNameReferenceExpression(430,433): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtDestructuringDeclarationEntry(435,448): 'val b: String'
@@ -217,13 +246,17 @@ KtNameReferenceExpression(442,448): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(452,453): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: Tuple
 
@@ -242,13 +275,17 @@ KtNameReferenceExpression(484,487): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(490,491): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -267,13 +304,17 @@ KtNameReferenceExpression(505,511): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(514,515): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -281,6 +322,7 @@ KtNameReferenceExpression(519,520): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: Tuple
 
@@ -299,6 +341,7 @@ KtNameReferenceExpression(549,550): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: Tuple
 
@@ -317,13 +360,17 @@ KtNameReferenceExpression(577,583): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(587,588): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: Tuple
 
@@ -331,14 +378,20 @@ KtNameReferenceExpression(606,610): 'List'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
 KtNameReferenceExpression(611,616): 'Tuple'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class Tuple(a: kotlin.String, b: kotlin.Int)
 
 KtForExpression(625,663): 'for ((val first, val second,) in x) {}'
@@ -377,6 +430,7 @@ KtNameReferenceExpression(658,659): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.collections.List<Tuple>
 
@@ -405,6 +459,7 @@ KtNameReferenceExpression(688,689): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.collections.List<Tuple>
 
@@ -433,13 +488,17 @@ KtNameReferenceExpression(715,721): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(726,727): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.collections.List<Tuple>
 
@@ -468,6 +527,7 @@ KtNameReferenceExpression(751,756): 'first'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -475,6 +535,7 @@ KtNameReferenceExpression(761,762): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.collections.List<Tuple>
 
@@ -503,13 +564,17 @@ KtNameReferenceExpression(785,791): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(794,799): 'first'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -517,6 +582,7 @@ KtNameReferenceExpression(804,805): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.collections.List<Tuple>
 
@@ -545,7 +611,10 @@ KtNameReferenceExpression(827,830): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtDestructuringDeclarationEntry(832,845): 'val b: String'
@@ -563,13 +632,17 @@ KtNameReferenceExpression(839,845): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(850,851): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.collections.List<Tuple>
 
@@ -598,13 +671,17 @@ KtNameReferenceExpression(877,880): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(883,884): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -623,13 +700,17 @@ KtNameReferenceExpression(898,904): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(907,908): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -637,6 +718,7 @@ KtNameReferenceExpression(913,914): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.collections.List<Tuple>
 
@@ -665,6 +747,7 @@ KtNameReferenceExpression(939,940): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.collections.List<Tuple>
 
@@ -693,13 +776,17 @@ KtNameReferenceExpression(962,968): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(973,974): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.collections.List<Tuple>
 
@@ -707,14 +794,20 @@ KtNameReferenceExpression(1013,1018): 'Tuple'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class Tuple(a: kotlin.String, b: kotlin.Int)
 
 KtNameReferenceExpression(1023,1027): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) object Unit
 
 KtCallExpression(1037,1072): 'foo { (val first, val second,) -> }'
@@ -729,6 +822,7 @@ KtNameReferenceExpression(1037,1040): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
 
@@ -766,6 +860,7 @@ KtNameReferenceExpression(1077,1080): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
 
@@ -792,6 +887,7 @@ KtNameReferenceExpression(1104,1107): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
 
@@ -810,7 +906,10 @@ KtNameReferenceExpression(1122,1128): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtCallExpression(1139,1166): 'foo { (val aa = first) -> }'
@@ -825,6 +924,7 @@ KtNameReferenceExpression(1139,1142): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
 
@@ -843,6 +943,7 @@ KtNameReferenceExpression(1155,1160): 'first'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -858,6 +959,7 @@ KtNameReferenceExpression(1171,1174): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
 
@@ -876,13 +978,17 @@ KtNameReferenceExpression(1186,1192): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(1195,1200): 'first'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -898,6 +1004,7 @@ KtNameReferenceExpression(1211,1214): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
 
@@ -916,7 +1023,10 @@ KtNameReferenceExpression(1225,1228): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtDestructuringDeclarationEntry(1230,1243): 'val b: String'
@@ -934,7 +1044,10 @@ KtNameReferenceExpression(1237,1243): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtCallExpression(1254,1309): 'foo { (val first: Int = a, val second: String = b) -> }'
@@ -949,6 +1062,7 @@ KtNameReferenceExpression(1254,1257): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
 
@@ -967,13 +1081,17 @@ KtNameReferenceExpression(1272,1275): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(1278,1279): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -992,13 +1110,17 @@ KtNameReferenceExpression(1293,1299): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(1302,1303): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -1014,6 +1136,7 @@ KtNameReferenceExpression(1314,1317): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
 
@@ -1040,6 +1163,7 @@ KtNameReferenceExpression(1337,1340): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: lambda) fun foo(f: (Tuple) -> kotlin.Unit)
 
@@ -1058,5 +1182,8 @@ KtNameReferenceExpression(1351,1357): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable

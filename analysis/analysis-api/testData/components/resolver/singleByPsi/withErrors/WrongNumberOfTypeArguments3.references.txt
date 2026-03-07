@@ -2,5 +2,9 @@ KtNameReferenceExpression(51,53): 'DD'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OTHER_ERROR: Inapplicable candidate>
     symbols:
+      (in foo.DD) constructor <T, T2>()
+    resolveToSymbols:
       (in foo) class DD<T, T2>

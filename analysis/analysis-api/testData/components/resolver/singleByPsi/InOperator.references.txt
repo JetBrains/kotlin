@@ -2,5 +2,6 @@ KtOperationReferenceExpression(69,71): 'in'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Foo) operator fun contains(v: kotlin.Int): kotlin.Boolean

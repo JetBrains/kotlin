@@ -2,5 +2,6 @@ KtNameReferenceExpression(16,20): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       script <script-ScriptThis.kts>

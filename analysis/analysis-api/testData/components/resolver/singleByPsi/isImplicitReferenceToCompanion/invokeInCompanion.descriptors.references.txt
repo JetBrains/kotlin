@@ -2,7 +2,10 @@ KtNameReferenceExpression(97,99): 'AA'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in ROOT) interface AA
+    resolveToSymbols:
       (in AA) companion object
 
   SyntheticPropertyAccessorReference:

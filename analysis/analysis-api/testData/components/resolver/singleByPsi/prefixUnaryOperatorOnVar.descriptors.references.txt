@@ -2,5 +2,6 @@ KtOperationReferenceExpression(31,33): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun inc(): kotlin.Int

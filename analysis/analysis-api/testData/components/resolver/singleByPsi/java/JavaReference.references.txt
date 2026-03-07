@@ -2,5 +2,8 @@ KtNameReferenceExpression(17,24): 'HashSet'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in java.util) open class HashSet<E : kotlin.Any!> : java.util.AbstractSet<E!>(), kotlin.Cloneable, java.io.Serializable, kotlin.collections.MutableSet<E>

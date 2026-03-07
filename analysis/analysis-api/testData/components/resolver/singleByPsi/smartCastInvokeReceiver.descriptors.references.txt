@@ -2,6 +2,7 @@ KtNameReferenceExpression(124,133): 'parameter'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       parameter: kotlin.Any
 

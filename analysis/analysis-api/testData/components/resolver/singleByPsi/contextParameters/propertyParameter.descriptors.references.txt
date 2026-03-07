@@ -2,6 +2,8 @@ KtNameReferenceExpression(102,107): 'param'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: param>
     symbols:
       Nothing (Unresolved reference)
 

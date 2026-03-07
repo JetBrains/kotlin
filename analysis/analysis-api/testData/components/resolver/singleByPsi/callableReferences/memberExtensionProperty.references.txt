@@ -2,6 +2,7 @@ KtNameReferenceExpression(249,252): 'Bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) interface Bar
 

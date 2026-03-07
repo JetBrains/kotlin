@@ -2,6 +2,7 @@ KtNameReferenceExpression(68,69): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: kotlin.Int
 

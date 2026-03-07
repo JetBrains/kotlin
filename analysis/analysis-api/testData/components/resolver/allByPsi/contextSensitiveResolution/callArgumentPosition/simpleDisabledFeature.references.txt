@@ -2,13 +2,17 @@ KtNameReferenceExpression(121,127): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(159,165): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -16,6 +20,7 @@ KtNameReferenceExpression(166,167): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) X
 
@@ -31,6 +36,7 @@ KtNameReferenceExpression(173,176): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(a: MyEnum)
 
@@ -38,6 +44,8 @@ KtNameReferenceExpression(177,178): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -53,6 +61,7 @@ KtNameReferenceExpression(184,187): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(a: MyEnum)
 
@@ -60,6 +69,7 @@ KtNameReferenceExpression(188,189): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: main) val L: MyEnum
 
@@ -75,6 +85,7 @@ KtNameReferenceExpression(195,198): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(a: MyEnum)
 
@@ -82,5 +93,7 @@ KtNameReferenceExpression(199,209): 'UNRESOLVED'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'UNRESOLVED'.>
     symbols:
       Nothing (Unresolved reference)

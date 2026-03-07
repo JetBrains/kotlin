@@ -2,6 +2,7 @@ KtNameReferenceExpression(39,50): 'uintArrayOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
 

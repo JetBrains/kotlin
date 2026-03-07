@@ -1,0 +1,8 @@
+KtNameReferenceExpression(63,67): 'Ann0'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Ann0>
+    symbols:
+      Nothing (Unresolved reference)

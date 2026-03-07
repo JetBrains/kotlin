@@ -2,6 +2,8 @@ KtNameReferenceExpression(93,99): 'action'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: UNSAFE_CALL_ERROR with invoke>
     symbols:
       (in test.Foo) val action: () -> kotlin.Unit
 

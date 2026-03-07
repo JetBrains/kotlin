@@ -2,5 +2,6 @@ KtNameReferenceExpression(31,34): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo() [fake.kt]

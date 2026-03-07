@@ -2,14 +2,20 @@ KtNameReferenceExpression(124,125): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: id) X
 
 KtNameReferenceExpression(128,129): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: id) X
 
 KtCallExpression(132,138): 'TODO()'
@@ -24,6 +30,7 @@ KtNameReferenceExpression(132,136): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
@@ -31,20 +38,27 @@ KtNameReferenceExpression(149,155): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(164,165): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: foo) T
 
 KtNameReferenceExpression(181,187): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) enum class MyEnum
 
@@ -52,6 +66,7 @@ KtNameReferenceExpression(188,189): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) X
 
@@ -59,6 +74,7 @@ KtNameReferenceExpression(199,200): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -66,6 +82,7 @@ KtOperationReferenceExpression(201,203): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -73,6 +90,7 @@ KtNameReferenceExpression(204,205): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) X
 
@@ -80,6 +98,7 @@ KtNameReferenceExpression(218,219): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -87,6 +106,7 @@ KtOperationReferenceExpression(220,222): '!='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -94,6 +114,7 @@ KtNameReferenceExpression(223,224): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) X
 
@@ -101,6 +122,7 @@ KtNameReferenceExpression(237,238): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -108,6 +130,7 @@ KtOperationReferenceExpression(239,242): '==='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -115,6 +138,7 @@ KtNameReferenceExpression(243,244): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) X
 
@@ -122,6 +146,7 @@ KtNameReferenceExpression(257,258): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -129,6 +154,7 @@ KtOperationReferenceExpression(259,262): '!=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -136,6 +162,7 @@ KtNameReferenceExpression(263,264): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) X
 
@@ -143,6 +170,7 @@ KtNameReferenceExpression(277,278): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -150,6 +178,7 @@ KtOperationReferenceExpression(279,281): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -157,6 +186,7 @@ KtNameReferenceExpression(282,283): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MyEnum
 
@@ -164,6 +194,8 @@ KtNameReferenceExpression(467,468): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -171,13 +203,17 @@ KtOperationReferenceExpression(469,471): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(472,473): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -185,6 +221,7 @@ KtNameReferenceExpression(486,487): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MyEnum
 
@@ -192,6 +229,7 @@ KtOperationReferenceExpression(488,490): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -199,6 +237,7 @@ KtNameReferenceExpression(491,492): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -206,6 +245,7 @@ KtNameReferenceExpression(695,696): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -213,6 +253,7 @@ KtOperationReferenceExpression(697,699): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -228,6 +269,7 @@ KtNameReferenceExpression(700,702): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -235,6 +277,8 @@ KtNameReferenceExpression(703,704): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -242,6 +286,7 @@ KtNameReferenceExpression(718,719): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -249,6 +294,7 @@ KtOperationReferenceExpression(720,722): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -264,6 +310,7 @@ KtNameReferenceExpression(723,725): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -271,6 +318,7 @@ KtNameReferenceExpression(726,727): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MyEnum
 
@@ -278,6 +326,7 @@ KtNameReferenceExpression(753,754): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -285,6 +334,7 @@ KtOperationReferenceExpression(755,757): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -292,6 +342,7 @@ KtNameReferenceExpression(758,759): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) X
 
@@ -299,6 +350,7 @@ KtNameReferenceExpression(774,775): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -306,6 +358,7 @@ KtOperationReferenceExpression(776,778): '!='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -313,6 +366,7 @@ KtNameReferenceExpression(779,780): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Y
 
@@ -320,6 +374,7 @@ KtNameReferenceExpression(795,796): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -327,6 +382,7 @@ KtOperationReferenceExpression(797,800): '==='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -334,6 +390,7 @@ KtNameReferenceExpression(801,802): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) X
 
@@ -341,6 +398,7 @@ KtNameReferenceExpression(817,818): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -348,6 +406,7 @@ KtOperationReferenceExpression(819,822): '!=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -355,6 +414,7 @@ KtNameReferenceExpression(823,824): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Y
 
@@ -362,6 +422,7 @@ KtNameReferenceExpression(839,840): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -369,6 +430,7 @@ KtOperationReferenceExpression(841,843): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -376,6 +438,7 @@ KtNameReferenceExpression(844,845): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MyEnum
 
@@ -383,6 +446,7 @@ KtNameReferenceExpression(869,870): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -390,6 +454,7 @@ KtNameReferenceExpression(882,883): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) X
 
@@ -397,6 +462,7 @@ KtNameReferenceExpression(898,899): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Y
 
@@ -404,6 +470,7 @@ KtNameReferenceExpression(901,902): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MyEnum
 
@@ -411,6 +478,7 @@ KtNameReferenceExpression(934,935): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -418,6 +486,7 @@ KtNameReferenceExpression(947,948): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) X
 
@@ -425,6 +494,7 @@ KtNameReferenceExpression(963,964): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Y
 
@@ -432,6 +502,7 @@ KtNameReferenceExpression(966,967): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MyEnum
 
@@ -439,6 +510,7 @@ KtNameReferenceExpression(991,992): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -454,6 +526,7 @@ KtNameReferenceExpression(1004,1006): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -461,6 +534,8 @@ KtNameReferenceExpression(1007,1008): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -476,6 +551,7 @@ KtNameReferenceExpression(1024,1026): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -483,6 +559,8 @@ KtNameReferenceExpression(1027,1028): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Y'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -498,6 +576,7 @@ KtNameReferenceExpression(1031,1033): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -505,6 +584,7 @@ KtNameReferenceExpression(1034,1035): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MyEnum
 
@@ -512,6 +592,7 @@ KtNameReferenceExpression(1087,1088): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       a: T
 
@@ -527,6 +608,7 @@ KtNameReferenceExpression(1100,1102): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -534,6 +616,8 @@ KtNameReferenceExpression(1103,1104): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -549,6 +633,7 @@ KtNameReferenceExpression(1120,1122): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -556,6 +641,8 @@ KtNameReferenceExpression(1123,1124): 'Y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Y'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -571,6 +658,7 @@ KtNameReferenceExpression(1127,1129): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -578,5 +666,6 @@ KtNameReferenceExpression(1130,1131): 'L'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: foo) val L: MyEnum

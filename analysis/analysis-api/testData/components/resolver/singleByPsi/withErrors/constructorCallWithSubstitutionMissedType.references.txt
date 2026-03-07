@@ -2,5 +2,7 @@ KtNameReferenceExpression(45,48): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'.>
     symbols:
       (in Foo) constructor <T>(x: T)

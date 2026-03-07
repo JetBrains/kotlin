@@ -2,13 +2,17 @@ KtNameReferenceExpression(38,41): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtEnumEntrySuperclassReferenceExpression(54,54): ''
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in EnumWithConstructor) constructor(i: kotlin.Int)
 
@@ -16,6 +20,7 @@ KtEnumEntrySuperclassReferenceExpression(76,76): ''
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in EnumWithConstructor) constructor(i: kotlin.Int)
 
@@ -23,6 +28,7 @@ KtNameReferenceExpression(114,115): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in EnumWithConstructor) val i: kotlin.Int
 
@@ -37,7 +43,11 @@ KtNameReferenceExpression(234,238): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: UNKNOWN_STATUS with <this>>
     symbols:
+      extension receiver with type EnumWithoutConstructor.EntryWithBody
+    resolveToSymbols:
       (in EnumWithoutConstructor) EntryWithBody
 
 KtCallExpression(239,244): 'baz()'
@@ -52,6 +62,7 @@ KtNameReferenceExpression(239,242): 'baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: EnumWithoutConstructor.EntryWithBody) fun baz()
 
@@ -66,13 +77,17 @@ KtNameReferenceExpression(280,299): 'EnumWithConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
 
 KtNameReferenceExpression(307,311): 'with'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       with: EnumWithConstructor
 
@@ -87,6 +102,7 @@ KtNameReferenceExpression(312,319): 'ordinal'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) val ordinal: kotlin.Int
 
@@ -101,7 +117,10 @@ KtNameReferenceExpression(325,344): 'EnumWithConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
 
   SyntheticPropertyAccessorReference:
@@ -115,6 +134,7 @@ KtNameReferenceExpression(345,350): 'Entry'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in EnumWithConstructor) Entry
 
@@ -129,7 +149,10 @@ KtNameReferenceExpression(355,374): 'EnumWithConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
 
   SyntheticPropertyAccessorReference:
@@ -143,7 +166,10 @@ KtNameReferenceExpression(375,380): 'Entry'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in EnumWithConstructor) Entry
 
   SyntheticPropertyAccessorReference:
@@ -157,6 +183,7 @@ KtNameReferenceExpression(381,385): 'name'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) val name: kotlin.String
 
@@ -171,7 +198,10 @@ KtNameReferenceExpression(390,409): 'EnumWithConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
 
   SyntheticPropertyAccessorReference:
@@ -185,6 +215,7 @@ KtNameReferenceExpression(410,423): 'EntryWithBody'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in EnumWithConstructor) EntryWithBody
 
@@ -199,7 +230,10 @@ KtNameReferenceExpression(428,447): 'EnumWithConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
 
   SyntheticPropertyAccessorReference:
@@ -213,7 +247,10 @@ KtNameReferenceExpression(448,461): 'EntryWithBody'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in EnumWithConstructor) EntryWithBody
 
   SyntheticPropertyAccessorReference:
@@ -227,6 +264,7 @@ KtNameReferenceExpression(462,463): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in EnumWithConstructor) val i: kotlin.Int
 
@@ -241,7 +279,10 @@ KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class EnumWithoutConstructor
 
   SyntheticPropertyAccessorReference:
@@ -255,6 +296,7 @@ KtNameReferenceExpression(492,499): 'entries'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in EnumWithoutConstructor) val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
 
@@ -269,7 +311,10 @@ KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class EnumWithoutConstructor
 
   SyntheticPropertyAccessorReference:
@@ -283,6 +328,7 @@ KtNameReferenceExpression(527,532): 'Entry'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in EnumWithoutConstructor) Entry
 
@@ -297,7 +343,10 @@ KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class EnumWithoutConstructor
 
   SyntheticPropertyAccessorReference:
@@ -311,6 +360,7 @@ KtNameReferenceExpression(560,573): 'EntryWithBody'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in EnumWithoutConstructor) EntryWithBody
 

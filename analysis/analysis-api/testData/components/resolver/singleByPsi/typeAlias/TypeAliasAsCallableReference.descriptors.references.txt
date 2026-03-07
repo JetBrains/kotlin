@@ -3,6 +3,7 @@ KtNameReferenceExpression(88,95): 'MyAlias'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     resolvesByNamesViolations: 'MyClass' !in [MyAlias]
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.MyClass) constructor()
 

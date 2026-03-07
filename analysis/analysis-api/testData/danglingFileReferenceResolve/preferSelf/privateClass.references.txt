@@ -2,5 +2,6 @@ KtNameReferenceExpression(97,100): 'Bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Foo.Bar) constructor() [fake.kt]

@@ -2,13 +2,17 @@ KtNameReferenceExpression(44,52): 'JavaEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class JavaEnum
 
 KtNameReferenceExpression(62,70): 'javaEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       javaEnum: JavaEnum
 
@@ -23,6 +27,8 @@ KtNameReferenceExpression(78,83): 'FIRST'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FIRST>
     symbols:
       Nothing (Unresolved reference)
 
@@ -37,6 +43,8 @@ KtNameReferenceExpression(93,99): 'SECOND'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SECOND>
     symbols:
       Nothing (Unresolved reference)
 

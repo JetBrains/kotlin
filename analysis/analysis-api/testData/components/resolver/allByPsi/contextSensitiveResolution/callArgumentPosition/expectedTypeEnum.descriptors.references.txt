@@ -2,20 +2,27 @@ KtNameReferenceExpression(131,132): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: id) X
 
 KtNameReferenceExpression(135,136): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: id) X
 
 KtNameReferenceExpression(139,140): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: X
 
@@ -30,14 +37,20 @@ KtNameReferenceExpression(162,163): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: receive) T
 
 KtNameReferenceExpression(206,212): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtCallExpression(215,229): 'id(EnumValue1)'
@@ -52,6 +65,8 @@ KtNameReferenceExpression(215,217): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -66,6 +81,8 @@ KtNameReferenceExpression(218,228): 'EnumValue1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
     symbols:
       Nothing (Unresolved reference)
 
@@ -88,6 +105,8 @@ KtNameReferenceExpression(235,242): 'receive'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
     symbols:
       (in ROOT) fun <T> receive(arg: T)
 
@@ -102,7 +121,10 @@ KtNameReferenceExpression(243,249): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtCallExpression(251,265): 'id(EnumValue1)'
@@ -117,6 +139,8 @@ KtNameReferenceExpression(251,253): 'id'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
     symbols:
       (in ROOT) fun <X> id(x: X): X
 
@@ -131,6 +155,8 @@ KtNameReferenceExpression(254,264): 'EnumValue1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
     symbols:
       Nothing (Unresolved reference)
 

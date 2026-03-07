@@ -2,5 +2,6 @@ KtNameReferenceExpression(99,104): 'coreR'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.pkg) class R

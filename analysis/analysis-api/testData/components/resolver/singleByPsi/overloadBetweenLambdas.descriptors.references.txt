@@ -2,6 +2,7 @@ KtNameReferenceExpression(129,133): 'post'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test) fun post(action: (kotlin.Unit) -> kotlin.Unit)
 

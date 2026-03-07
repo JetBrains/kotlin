@@ -2,6 +2,7 @@ KtNameReferenceExpression(104,107): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in one.two.TopLevelObject.Nested) fun foo()
 

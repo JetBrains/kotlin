@@ -2,5 +2,7 @@ KtNameReferenceExpression(86,89): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T : ??? (Unresolved qualified name: NonExistent)> foo(x: Int): T>
     symbols:
       (in ROOT) fun <T : ERROR_TYPE(Symbol not found for NonExistent)> foo(x: kotlin.Int): T

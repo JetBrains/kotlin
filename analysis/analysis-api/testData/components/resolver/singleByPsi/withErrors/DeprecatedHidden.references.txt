@@ -2,5 +2,7 @@ KtNameReferenceExpression(93,94): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'i'.>
     symbols:
       Nothing (Unresolved reference)

@@ -2,42 +2,60 @@ KtNameReferenceExpression(37,43): 'second'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package second
 
 KtNameReferenceExpression(52,57): 'first'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package first
 
 KtNameReferenceExpression(58,63): 'First'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in first) enum class First
 
 KtNameReferenceExpression(71,76): 'first'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package first
 
 KtNameReferenceExpression(77,82): 'THREE'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in first) val THREE: first.First
 
 KtNameReferenceExpression(134,140): 'Second'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in second) enum class Second
 
   SyntheticPropertyAccessorReference:
@@ -51,6 +69,7 @@ KtNameReferenceExpression(141,146): 'THREE'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second.Second) THREE
 
@@ -65,13 +84,17 @@ KtNameReferenceExpression(159,164): 'First'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in first) enum class First
 
 KtNameReferenceExpression(174,175): 'f'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       f: first.First
 
@@ -86,6 +109,7 @@ KtNameReferenceExpression(183,186): 'ONE'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in second) val ONE: second.Second
 
@@ -100,6 +124,8 @@ KtNameReferenceExpression(196,199): 'TWO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: TWO>
     symbols:
       Nothing (Unresolved reference)
 
@@ -114,13 +140,17 @@ KtNameReferenceExpression(219,225): 'Second'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in second) enum class Second
 
 KtNameReferenceExpression(235,236): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       s: second.Second
 
@@ -135,6 +165,7 @@ KtNameReferenceExpression(244,249): 'THREE'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in first) val THREE: first.First
 
@@ -149,6 +180,8 @@ KtNameReferenceExpression(259,263): 'FOUR'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: FOUR>
     symbols:
       Nothing (Unresolved reference)
 

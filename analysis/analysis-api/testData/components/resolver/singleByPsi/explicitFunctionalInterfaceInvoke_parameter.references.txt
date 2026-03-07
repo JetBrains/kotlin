@@ -2,5 +2,6 @@ KtNameReferenceExpression(77,83): 'invoke'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) operator fun invoke()

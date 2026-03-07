@@ -2,6 +2,7 @@ KtNameReferenceExpression(50,52): 'aa'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in A) val aa: A?
 

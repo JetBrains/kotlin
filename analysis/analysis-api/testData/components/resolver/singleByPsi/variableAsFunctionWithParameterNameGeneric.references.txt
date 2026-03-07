@@ -2,5 +2,6 @@ KtNameReferenceExpression(81,82): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: call) val x: (a: kotlin.Int) -> kotlin.Unit

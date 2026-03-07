@@ -2,7 +2,10 @@ KtNameReferenceExpression(99,102): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package foo
 
 KtCallExpression(188,193): 'Any()'
@@ -17,6 +20,7 @@ KtNameReferenceExpression(188,191): 'Any'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Any) constructor()
 
@@ -24,20 +28,27 @@ KtNameReferenceExpression(223,229): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in foo) enum class MyEnum
 
 KtNameReferenceExpression(232,239): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(257,258): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: foo.MyEnum
 
@@ -45,6 +56,7 @@ KtOperationReferenceExpression(259,261): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -52,6 +64,7 @@ KtNameReferenceExpression(262,263): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.Test.Companion) val A: kotlin.Any
 
@@ -59,20 +72,27 @@ KtNameReferenceExpression(292,298): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in foo) enum class MyEnum
 
 KtNameReferenceExpression(301,308): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(326,327): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: foo.MyEnum
 
@@ -80,6 +100,7 @@ KtOperationReferenceExpression(328,330): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -87,6 +108,7 @@ KtNameReferenceExpression(331,337): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo) enum class MyEnum
 
@@ -94,6 +116,7 @@ KtNameReferenceExpression(338,339): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.MyEnum) A
 
@@ -101,20 +124,27 @@ KtNameReferenceExpression(373,379): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in foo) enum class MyEnum
 
 KtNameReferenceExpression(382,389): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(407,408): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: foo.MyEnum
 
@@ -122,6 +152,7 @@ KtOperationReferenceExpression(409,411): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -129,6 +160,7 @@ KtNameReferenceExpression(412,421): 'Companion'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.Test) companion object
 
@@ -136,6 +168,7 @@ KtNameReferenceExpression(422,423): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.Test.Companion) val A: kotlin.Any
 
@@ -143,20 +176,27 @@ KtNameReferenceExpression(453,459): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in foo) enum class MyEnum
 
 KtNameReferenceExpression(462,465): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(474,475): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: foo.MyEnum
 
@@ -164,6 +204,7 @@ KtNameReferenceExpression(487,488): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.Test.Companion) val A: kotlin.Any
 
@@ -171,6 +212,7 @@ KtNameReferenceExpression(502,503): 'B'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.MyEnum) B
 
@@ -178,20 +220,27 @@ KtNameReferenceExpression(537,543): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in foo) enum class MyEnum
 
 KtNameReferenceExpression(546,549): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(558,559): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: foo.MyEnum
 
@@ -199,6 +248,7 @@ KtNameReferenceExpression(571,577): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo) enum class MyEnum
 
@@ -206,6 +256,7 @@ KtNameReferenceExpression(578,579): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.MyEnum) A
 
@@ -213,6 +264,7 @@ KtNameReferenceExpression(593,594): 'B'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.MyEnum) B
 
@@ -220,20 +272,27 @@ KtNameReferenceExpression(633,639): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in foo) enum class MyEnum
 
 KtNameReferenceExpression(642,645): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(654,655): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       x: foo.MyEnum
 
@@ -241,6 +300,7 @@ KtNameReferenceExpression(667,676): 'Companion'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.Test) companion object
 
@@ -248,6 +308,7 @@ KtNameReferenceExpression(677,678): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.Test.Companion) val A: kotlin.Any
 
@@ -255,5 +316,6 @@ KtNameReferenceExpression(692,693): 'B'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in foo.MyEnum) B

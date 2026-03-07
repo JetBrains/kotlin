@@ -2,13 +2,17 @@ KtNameReferenceExpression(209,215): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(218,225): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Option1
 
@@ -23,13 +27,17 @@ KtNameReferenceExpression(250,256): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(288,295): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Option1
 
@@ -44,7 +52,10 @@ KtNameReferenceExpression(327,333): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
   SyntheticPropertyAccessorReference:
@@ -58,6 +69,7 @@ KtNameReferenceExpression(334,341): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyEnum) Option1
 
@@ -72,20 +84,27 @@ KtNameReferenceExpression(365,372): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(377,383): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(399,402): 'arg'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       arg: kotlin.Boolean
 
@@ -100,6 +119,8 @@ KtNameReferenceExpression(404,412): 'enumProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
     symbols:
       Nothing (Unresolved reference)
 
@@ -114,6 +135,8 @@ KtNameReferenceExpression(418,425): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
     symbols:
       Nothing (Unresolved reference)
 
@@ -128,7 +151,10 @@ KtNameReferenceExpression(453,459): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(true)'
@@ -143,13 +169,17 @@ KtNameReferenceExpression(469,476): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(484,487): 'arg'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       arg: kotlin.Boolean
 
@@ -164,6 +194,8 @@ KtNameReferenceExpression(489,497): 'enumProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
     symbols:
       Nothing (Unresolved reference)
 
@@ -178,6 +210,8 @@ KtNameReferenceExpression(503,510): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
     symbols:
       Nothing (Unresolved reference)
 
@@ -192,20 +226,28 @@ KtNameReferenceExpression(543,550): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(555,561): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(577,585): 'enumProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
     symbols:
       Nothing (Unresolved reference)
 
@@ -220,6 +262,7 @@ KtNameReferenceExpression(594,597): 'arg'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       arg: kotlin.Boolean
 
@@ -234,6 +277,8 @@ KtNameReferenceExpression(599,607): 'enumProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
     symbols:
       Nothing (Unresolved reference)
 
@@ -248,6 +293,8 @@ KtNameReferenceExpression(613,620): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
     symbols:
       Nothing (Unresolved reference)
 
@@ -262,20 +309,28 @@ KtNameReferenceExpression(647,654): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(659,665): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(695,703): 'enumProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
     symbols:
       Nothing (Unresolved reference)
 
@@ -290,6 +345,7 @@ KtNameReferenceExpression(716,719): 'arg'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       arg: kotlin.Boolean
 
@@ -304,6 +360,8 @@ KtNameReferenceExpression(721,729): 'enumProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
     symbols:
       Nothing (Unresolved reference)
 
@@ -318,6 +376,8 @@ KtNameReferenceExpression(735,742): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
     symbols:
       Nothing (Unresolved reference)
 
@@ -332,13 +392,18 @@ KtNameReferenceExpression(759,768): 'Exception'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) typealias Exception = java.lang.Exception
 
 KtNameReferenceExpression(780,787): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
     symbols:
       Nothing (Unresolved reference)
 
@@ -353,34 +418,47 @@ KtNameReferenceExpression(825,832): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(837,843): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(855,862): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(865,871): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(889,892): 'arg'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       arg: kotlin.Boolean
 
@@ -395,6 +473,8 @@ KtNameReferenceExpression(894,902): 'enumProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
     symbols:
       Nothing (Unresolved reference)
 
@@ -409,6 +489,8 @@ KtNameReferenceExpression(908,915): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
     symbols:
       Nothing (Unresolved reference)
 
@@ -423,14 +505,20 @@ KtNameReferenceExpression(949,955): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(962,966): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) object Unit
 
 KtCallExpression(975,994): 'contextOf<MyEnum>()'
@@ -445,6 +533,7 @@ KtNameReferenceExpression(975,984): 'contextOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) context(@kotlin.internal.NoInfer A)
       inline fun <A> contextOf(): @kotlin.internal.NoInfer A
@@ -460,13 +549,17 @@ KtNameReferenceExpression(985,991): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
 KtOperationReferenceExpression(995,997): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
@@ -474,6 +567,8 @@ KtNameReferenceExpression(998,1005): 'Option1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option1>
     symbols:
       Nothing (Unresolved reference)
 

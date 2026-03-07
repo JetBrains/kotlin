@@ -2,5 +2,6 @@ KtNameReferenceExpression(202,205): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in r) fun foo(): kotlin.Int

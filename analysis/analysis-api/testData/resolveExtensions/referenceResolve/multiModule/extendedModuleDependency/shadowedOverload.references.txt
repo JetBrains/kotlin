@@ -2,5 +2,6 @@ KtNameReferenceExpression(131,167): 'generatedOverloadedExtensionFunction'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in generated) fun kotlin.Any.generatedOverloadedExtensionFunction(): kotlin.Int [origin = SOURCE]

@@ -123,7 +123,7 @@ public abstract interface class org/jetbrains/kotlin/idea/references/KtReference
 	public abstract fun handleElementRename (Lorg/jetbrains/kotlin/idea/references/KtReference;Ljava/lang/String;)Lcom/intellij/psi/PsiElement;
 }
 
-public abstract class org/jetbrains/kotlin/idea/references/KtSimpleNameReference : org/jetbrains/kotlin/idea/references/KtSimpleReference {
+public abstract class org/jetbrains/kotlin/idea/references/KtSimpleNameReference : org/jetbrains/kotlin/idea/references/KtSimpleReference, org/jetbrains/kotlin/resolution/KtResolvable {
 	public fun <init> (Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;)V
 	public final fun bindToElement (Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;)Lcom/intellij/psi/PsiElement;
 	public static synthetic fun bindToElement$default (Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference;Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/idea/references/KtSimpleNameReference$ShorteningMode;ILjava/lang/Object;)Lcom/intellij/psi/PsiElement;

@@ -2,7 +2,10 @@ KtNameReferenceExpression(137,143): 'Nested'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in AA) interface Nested
+    resolveToSymbols:
       (in AA.Nested) companion object
 
   SyntheticPropertyAccessorReference:

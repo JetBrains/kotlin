@@ -2,27 +2,37 @@ KtNameReferenceExpression(8,12): 'test'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       package test
 
 KtNameReferenceExpression(102,105): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(140,147): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in test) class MyClass
 
 KtNameReferenceExpression(167,174): 'MyAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -45,6 +55,7 @@ KtNameReferenceExpression(175,183): 'function'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.MyClass.Companion) fun function()
 
@@ -59,6 +70,7 @@ KtNameReferenceExpression(190,197): 'MyAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -73,6 +85,7 @@ KtNameReferenceExpression(198,206): 'property'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.MyClass.Companion) val property: kotlin.Int
 
@@ -87,7 +100,10 @@ KtNameReferenceExpression(212,219): 'MyAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in test) typealias MyAlias = test.MyClass
 
   SyntheticPropertyAccessorReference:
@@ -101,6 +117,7 @@ KtNameReferenceExpression(221,229): 'function'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.MyClass.Companion) fun function()
 
@@ -115,7 +132,10 @@ KtNameReferenceExpression(234,241): 'MyAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in test) typealias MyAlias = test.MyClass
 
   SyntheticPropertyAccessorReference:
@@ -129,6 +149,7 @@ KtNameReferenceExpression(243,251): 'property'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in test.MyClass.Companion) val property: kotlin.Int
 

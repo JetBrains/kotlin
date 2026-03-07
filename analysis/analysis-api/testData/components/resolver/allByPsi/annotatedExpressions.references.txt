@@ -2,7 +2,10 @@ KtNameReferenceExpression(39,45): 'Target'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in kotlin.annotation) annotation class Target(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
+    resolveToSymbols:
       (in kotlin.annotation.Target) constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
 
 KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
@@ -17,6 +20,7 @@ KtNameReferenceExpression(46,62): 'AnnotationTarget'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.annotation) enum class AnnotationTarget
 
@@ -24,6 +28,7 @@ KtNameReferenceExpression(63,73): 'EXPRESSION'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.annotation.AnnotationTarget) EXPRESSION
 
@@ -31,7 +36,10 @@ KtNameReferenceExpression(76,85): 'Retention'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in kotlin.annotation) annotation class Retention(value: kotlin.annotation.AnnotationRetention)
+    resolveToSymbols:
       (in kotlin.annotation.Retention) constructor(value: kotlin.annotation.AnnotationRetention)
 
 KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
@@ -46,6 +54,7 @@ KtNameReferenceExpression(86,105): 'AnnotationRetention'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.annotation) enum class AnnotationRetention
 
@@ -53,6 +62,7 @@ KtNameReferenceExpression(106,112): 'SOURCE'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.annotation.AnnotationRetention) SOURCE
 
@@ -60,14 +70,20 @@ KtNameReferenceExpression(148,151): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(173,177): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in ROOT) annotation class Anno(number: kotlin.Int)
+    resolveToSymbols:
       (in Anno) constructor(number: kotlin.Int)
 
 KtValueArgument(178,189): '0 + integer'
@@ -82,6 +98,7 @@ KtOperationReferenceExpression(180,181): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
@@ -89,6 +106,7 @@ KtNameReferenceExpression(182,189): 'integer'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) const val integer: kotlin.Int
 
@@ -96,7 +114,10 @@ KtNameReferenceExpression(193,197): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in ROOT) annotation class Anno(number: kotlin.Int)
+    resolveToSymbols:
       (in Anno) constructor(number: kotlin.Int)
 
 KtValueArgument(198,205): 'integer'
@@ -111,6 +132,7 @@ KtNameReferenceExpression(198,205): 'integer'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) const val integer: kotlin.Int
 
@@ -126,6 +148,7 @@ KtNameReferenceExpression(207,212): 'usage'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun usage()
 
@@ -141,5 +164,6 @@ KtNameReferenceExpression(216,224): 'toString'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin.Unit) override fun toString(): kotlin.String

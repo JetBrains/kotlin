@@ -2,6 +2,7 @@ KtNameReferenceExpression(589,592): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in pkg.Foo) open fun bar()
 

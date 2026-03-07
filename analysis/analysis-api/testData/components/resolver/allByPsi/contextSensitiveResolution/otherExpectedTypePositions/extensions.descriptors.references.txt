@@ -2,21 +2,30 @@ KtNameReferenceExpression(129,136): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtNameReferenceExpression(137,146): 'Companion'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MyClass) companion object
 
 KtNameReferenceExpression(152,159): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtCallExpression(168,177): 'MyClass()'
@@ -31,6 +40,7 @@ KtNameReferenceExpression(168,175): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass) constructor()
 
@@ -45,7 +55,10 @@ KtNameReferenceExpression(198,205): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
 KtCallExpression(228,244): 'foo(MyClass.bar)'
@@ -60,6 +73,7 @@ KtNameReferenceExpression(228,231): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(a: MyClass)
 
@@ -74,7 +88,10 @@ KtNameReferenceExpression(232,239): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass
 
   SyntheticPropertyAccessorReference:
@@ -88,7 +105,12 @@ KtNameReferenceExpression(240,243): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
+    public val MyClass2.Companion.bar: MyClass2 defined in root package in file extensions.kt>
     symbols:
+      (in ROOT) val MyClass2.Companion.bar: MyClass2
+    resolveToSymbols:
       Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
@@ -110,6 +132,7 @@ KtNameReferenceExpression(249,252): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo(a: MyClass)
 
@@ -124,6 +147,8 @@ KtNameReferenceExpression(253,256): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: bar>
     symbols:
       Nothing (Unresolved reference)
 
@@ -138,21 +163,30 @@ KtNameReferenceExpression(306,314): 'MyClass2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass2
 
 KtNameReferenceExpression(315,324): 'Companion'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MyClass2) companion object
 
 KtNameReferenceExpression(330,338): 'MyClass2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass2
 
 KtCallExpression(347,357): 'MyClass2()'
@@ -167,6 +201,7 @@ KtNameReferenceExpression(347,355): 'MyClass2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in MyClass2) constructor()
 
@@ -181,7 +216,10 @@ KtNameReferenceExpression(371,379): 'MyClass2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class MyClass2
 
 KtCallExpression(403,421): 'foo2(MyClass2.bar)'
@@ -196,6 +234,7 @@ KtNameReferenceExpression(403,407): 'foo2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo2(a: MyClass2)
 
@@ -210,7 +249,10 @@ KtNameReferenceExpression(408,416): 'MyClass2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in MyClass2) companion object
 
   SyntheticPropertyAccessorReference:
@@ -224,6 +266,7 @@ KtNameReferenceExpression(417,420): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) val MyClass2.Companion.bar: MyClass2
 
@@ -246,6 +289,7 @@ KtNameReferenceExpression(426,430): 'foo2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun foo2(a: MyClass2)
 
@@ -260,6 +304,8 @@ KtNameReferenceExpression(431,434): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference: bar>
     symbols:
       Nothing (Unresolved reference)
 

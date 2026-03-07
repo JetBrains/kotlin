@@ -2,5 +2,6 @@ KtNameReferenceExpression(160,163): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: <no name>) fun bar()
