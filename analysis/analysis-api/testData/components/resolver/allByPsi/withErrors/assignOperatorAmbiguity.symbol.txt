@@ -704,21 +704,30 @@ KtValueArgumentList(498,500): '()'
 
 KtBinaryExpression(505,513): 'foo += 1'
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /plus(<extension receiver>: Test, i: kotlin.Int): Test,
+      /plusAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.plus(i: Int): Test
     fun Test.plusAssign(i: Int): Unit>
 
 KtNameReferenceExpression(505,508): 'foo'
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /plus(<extension receiver>: Test, i: kotlin.Int): Test,
+      /plusAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.plus(i: Int): Test
     fun Test.plusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(509,511): '+='
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /plus(<extension receiver>: Test, i: kotlin.Int): Test,
+      /plusAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.plus(i: Int): Test
     fun Test.plusAssign(i: Int): Unit>
@@ -728,21 +737,30 @@ KtConstantExpression(512,513): '1'
 
 KtBinaryExpression(518,526): 'foo -= 1'
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /minus(<extension receiver>: Test, i: kotlin.Int): Test,
+      /minusAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.minus(i: Int): Test
     fun Test.minusAssign(i: Int): Unit>
 
 KtNameReferenceExpression(518,521): 'foo'
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /minus(<extension receiver>: Test, i: kotlin.Int): Test,
+      /minusAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.minus(i: Int): Test
     fun Test.minusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(522,524): '-='
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /minus(<extension receiver>: Test, i: kotlin.Int): Test,
+      /minusAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.minus(i: Int): Test
     fun Test.minusAssign(i: Int): Unit>
@@ -752,21 +770,30 @@ KtConstantExpression(525,526): '1'
 
 KtBinaryExpression(531,539): 'foo /= 1'
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /div(<extension receiver>: Test, i: kotlin.Int): Test,
+      /divAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.div(i: Int): Test
     fun Test.divAssign(i: Int): Unit>
 
 KtNameReferenceExpression(531,534): 'foo'
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /div(<extension receiver>: Test, i: kotlin.Int): Test,
+      /divAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.div(i: Int): Test
     fun Test.divAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(535,537): '/='
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /div(<extension receiver>: Test, i: kotlin.Int): Test,
+      /divAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.div(i: Int): Test
     fun Test.divAssign(i: Int): Unit>
@@ -776,21 +803,30 @@ KtConstantExpression(538,539): '1'
 
 KtBinaryExpression(544,552): 'foo *= 1'
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /times(<extension receiver>: Test, i: kotlin.Int): Test,
+      /timesAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.times(i: Int): Test
     fun Test.timesAssign(i: Int): Unit>
 
 KtNameReferenceExpression(544,547): 'foo'
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /times(<extension receiver>: Test, i: kotlin.Int): Test,
+      /timesAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.times(i: Int): Test
     fun Test.timesAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(548,550): '*='
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /times(<extension receiver>: Test, i: kotlin.Int): Test,
+      /timesAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.times(i: Int): Test
     fun Test.timesAssign(i: Int): Unit>
@@ -800,21 +836,30 @@ KtConstantExpression(551,552): '1'
 
 KtBinaryExpression(557,565): 'foo %= 1'
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /rem(<extension receiver>: Test, i: kotlin.Int): Test,
+      /remAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.rem(i: Int): Test
     fun Test.remAssign(i: Int): Unit>
 
 KtNameReferenceExpression(557,560): 'foo'
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /rem(<extension receiver>: Test, i: kotlin.Int): Test,
+      /remAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.rem(i: Int): Test
     fun Test.remAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(561,563): '%='
   KaSymbolResolutionError:
-    candidateSymbols = []
+    candidateSymbols = [
+      /rem(<extension receiver>: Test, i: kotlin.Int): Test,
+      /remAssign(<extension receiver>: Test, i: kotlin.Int): kotlin.Unit
+    ]
     diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
     fun Test.rem(i: Int): Test
     fun Test.remAssign(i: Int): Unit>
