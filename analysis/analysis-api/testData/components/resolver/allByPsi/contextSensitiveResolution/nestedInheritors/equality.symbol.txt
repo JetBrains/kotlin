@@ -137,7 +137,10 @@ KtNameReferenceExpression(304,312): 'settings'
     ]
 
 KtOperationReferenceExpression(313,315): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(316,329): 'BasicSettings'
   KaSymbolResolutionSuccess:
@@ -191,7 +194,10 @@ KtNameReferenceExpression(354,367): 'basicSettings'
     ]
 
 KtOperationReferenceExpression(368,370): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(371,387): 'SpecificSettings'
   KaSymbolResolutionSuccess:
@@ -245,7 +251,10 @@ KtNameReferenceExpression(414,427): 'basicSettings'
     ]
 
 KtOperationReferenceExpression(428,430): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(431,456): 'Settings.SpecificSettings'
   null
@@ -422,7 +431,10 @@ KtNameReferenceExpression(707,715): 'settings'
     ]
 
 KtOperationReferenceExpression(716,718): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(719,736): 'OpenBasicSettings'
   KaSymbolResolutionSuccess:
@@ -476,7 +488,10 @@ KtNameReferenceExpression(761,774): 'basicSettings'
     ]
 
 KtOperationReferenceExpression(775,777): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(778,798): 'OpenSpecificSettings'
   KaSymbolResolutionError:
@@ -529,7 +544,10 @@ KtNameReferenceExpression(825,838): 'basicSettings'
     ]
 
 KtOperationReferenceExpression(839,841): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(842,875): 'OpenSettings.OpenSpecificSettings'
   null

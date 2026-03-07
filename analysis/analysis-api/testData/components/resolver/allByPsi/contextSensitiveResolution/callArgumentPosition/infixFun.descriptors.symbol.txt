@@ -152,7 +152,10 @@ KtConstantExpression(310,311): '1'
   null
 
 KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(330,340): 'EnumValue1'
   KaSymbolResolutionError:
@@ -172,7 +175,10 @@ KtConstantExpression(354,355): '1'
   null
 
 KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(374,389): 'InheritorObject'
   KaSymbolResolutionError:
@@ -192,7 +198,10 @@ KtConstantExpression(403,404): '1'
   null
 
 KtOperationReferenceExpression(405,418): 'infixConsumer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /infixConsumer(<extension receiver>: kotlin.Int, arg: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(419,434): 'InheritorObject'
   KaSymbolResolutionError:

@@ -105,7 +105,10 @@ KtNameReferenceExpression(37,41): 'this'
     ]
 
 KtOperationReferenceExpression(42,43): '-'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.minus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(44,45): 'i'
   KaSymbolResolutionSuccess:
@@ -150,7 +153,10 @@ KtNameReferenceExpression(98,107): 'parameter'
     ]
 
 KtOperationReferenceExpression(108,115): 'myMinus'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(116,117): '5'
   null
@@ -177,13 +183,19 @@ KtNameReferenceExpression(145,157): 'newParameter'
     ]
 
 KtOperationReferenceExpression(158,159): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(160,161): '1'
   null
 
 KtOperationReferenceExpression(162,169): 'myMinus'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(170,171): '4'
   null

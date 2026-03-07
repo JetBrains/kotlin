@@ -107,7 +107,10 @@ KtNameReferenceExpression(257,258): 'x'
     ]
 
 KtOperationReferenceExpression(259,261): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(262,263): 'A'
   KaSymbolResolutionSuccess:
@@ -164,7 +167,10 @@ KtNameReferenceExpression(326,327): 'x'
     ]
 
 KtOperationReferenceExpression(328,330): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(331,339): 'MyEnum.A'
   KaSymbolResolutionSuccess:
@@ -233,7 +239,10 @@ KtNameReferenceExpression(407,408): 'x'
     ]
 
 KtOperationReferenceExpression(409,411): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(412,423): 'Companion.A'
   KaSymbolResolutionSuccess:

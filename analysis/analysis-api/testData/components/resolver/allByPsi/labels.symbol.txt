@@ -142,7 +142,10 @@ KtConstantExpression(125,126): '0'
   null
 
 KtOperationReferenceExpression(126,128): '..'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+    ]
 
 KtConstantExpression(128,129): '1'
   null

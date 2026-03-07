@@ -38,7 +38,10 @@ KtLiteralStringTemplateEntry(31,32): '1'
   null
 
 KtOperationReferenceExpression(34,35): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+    ]
 
 KtStringTemplateExpression(36,39): '"2"'
   null
@@ -47,7 +50,10 @@ KtLiteralStringTemplateEntry(37,38): '2'
   null
 
 KtOperationReferenceExpression(40,41): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+    ]
 
 KtStringTemplateExpression(42,45): '"3"'
   null

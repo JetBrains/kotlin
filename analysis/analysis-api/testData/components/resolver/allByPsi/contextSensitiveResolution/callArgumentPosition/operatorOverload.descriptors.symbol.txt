@@ -158,7 +158,10 @@ KtNameReferenceExpression(339,340): 'i'
     ]
 
 KtOperationReferenceExpression(341,342): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(343,353): 'EnumValue1'
   KaSymbolResolutionError:
@@ -178,7 +181,10 @@ KtNameReferenceExpression(358,359): 'i'
     ]
 
 KtOperationReferenceExpression(360,361): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(362,377): 'InheritorObject'
   KaSymbolResolutionError:
@@ -198,7 +204,10 @@ KtNameReferenceExpression(382,383): 'i'
     ]
 
 KtOperationReferenceExpression(384,385): '-'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder.minus(<dispatch receiver>: OperatorHolder, arg: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(386,401): 'InheritorObject'
   KaSymbolResolutionError:

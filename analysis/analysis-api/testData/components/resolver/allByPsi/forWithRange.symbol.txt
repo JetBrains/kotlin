@@ -43,7 +43,10 @@ KtConstantExpression(39,40): '1'
   null
 
 KtOperationReferenceExpression(40,43): '..<'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.rangeUntil(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+    ]
 
 KtConstantExpression(43,44): '5'
   null

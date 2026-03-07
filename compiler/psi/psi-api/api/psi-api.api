@@ -2009,7 +2009,7 @@ public abstract interface class org/jetbrains/kotlin/psi/KtOperationExpression :
 	public abstract fun getOperationReference ()Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;
 }
 
-public final class org/jetbrains/kotlin/psi/KtOperationReferenceExpression : org/jetbrains/kotlin/psi/KtSimpleNameExpressionImpl {
+public final class org/jetbrains/kotlin/psi/KtOperationReferenceExpression : org/jetbrains/kotlin/psi/KtSimpleNameExpressionImpl, org/jetbrains/kotlin/resolution/KtResolvable {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public final fun getOperationSignTokenType ()Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public fun getReferencedNameElement ()Lcom/intellij/psi/PsiElement;

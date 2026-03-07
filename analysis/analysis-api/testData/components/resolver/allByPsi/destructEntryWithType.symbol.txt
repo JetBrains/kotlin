@@ -183,7 +183,10 @@ KtConstantExpression(165,166): '0'
   null
 
 KtOperationReferenceExpression(167,168): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(169,177): 'constant'
   KaSymbolResolutionSuccess:
@@ -250,7 +253,10 @@ KtConstantExpression(190,191): '1'
   null
 
 KtOperationReferenceExpression(192,193): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(194,202): 'constant'
   KaSymbolResolutionSuccess:
@@ -317,7 +323,10 @@ KtConstantExpression(215,216): '2'
   null
 
 KtOperationReferenceExpression(217,218): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(219,227): 'constant'
   KaSymbolResolutionSuccess:

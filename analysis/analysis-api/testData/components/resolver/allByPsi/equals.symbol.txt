@@ -302,7 +302,10 @@ KtNameReferenceExpression(318,320): 'm1'
     ]
 
 KtOperationReferenceExpression(321,323): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(324,326): 'm2'
   KaSymbolResolutionSuccess:
@@ -323,7 +326,10 @@ KtNameReferenceExpression(331,333): 'm1'
     ]
 
 KtOperationReferenceExpression(334,336): '!='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(337,339): 'm2'
   KaSymbolResolutionSuccess:
@@ -416,7 +422,10 @@ KtNameReferenceExpression(391,393): 'm2'
     ]
 
 KtOperationReferenceExpression(394,396): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(397,399): 'm1'
   KaSymbolResolutionSuccess:
@@ -437,7 +446,10 @@ KtNameReferenceExpression(404,406): 'm2'
     ]
 
 KtOperationReferenceExpression(407,409): '!='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(410,412): 'm1'
   KaSymbolResolutionSuccess:
@@ -557,7 +569,10 @@ KtNameReferenceExpression(530,537): 'another'
     ]
 
 KtOperationReferenceExpression(538,540): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtCallExpression(541,550): 'Another()'
   KaSymbolResolutionSuccess:
@@ -587,7 +602,10 @@ KtNameReferenceExpression(555,562): 'another'
     ]
 
 KtOperationReferenceExpression(563,565): '!='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtCallExpression(566,575): 'Another()'
   KaSymbolResolutionSuccess:
@@ -734,7 +752,10 @@ KtNameReferenceExpression(708,713): 'child'
     ]
 
 KtOperationReferenceExpression(714,716): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(717,724): 'myClass'
   KaSymbolResolutionSuccess:
@@ -791,7 +812,10 @@ KtNameReferenceExpression(755,762): 'myClass'
     ]
 
 KtOperationReferenceExpression(763,765): '!='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(766,771): 'child'
   KaSymbolResolutionSuccess:
@@ -806,7 +830,10 @@ KtPrefixExpression(776,798): '!myClass.equals(child)'
     ]
 
 KtOperationReferenceExpression(776,777): '!'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
   KaSymbolResolutionSuccess:
@@ -857,7 +884,10 @@ KtNameReferenceExpression(804,811): 'another'
     ]
 
 KtOperationReferenceExpression(812,814): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(815,820): 'child'
   KaSymbolResolutionSuccess:
@@ -914,7 +944,10 @@ KtNameReferenceExpression(851,856): 'child'
     ]
 
 KtOperationReferenceExpression(857,859): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(860,867): 'another'
   KaSymbolResolutionSuccess:
@@ -971,7 +1004,10 @@ KtNameReferenceExpression(899,906): 'another'
     ]
 
 KtOperationReferenceExpression(907,909): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(910,917): 'myClass'
   KaSymbolResolutionSuccess:
@@ -1028,7 +1064,10 @@ KtNameReferenceExpression(950,957): 'myClass'
     ]
 
 KtOperationReferenceExpression(958,960): '!='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(961,968): 'another'
   KaSymbolResolutionSuccess:
@@ -1043,7 +1082,10 @@ KtPrefixExpression(973,997): '!myClass.equals(another)'
     ]
 
 KtOperationReferenceExpression(973,974): '!'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
   KaSymbolResolutionSuccess:

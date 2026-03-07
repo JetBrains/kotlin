@@ -191,7 +191,10 @@ KtNameReferenceExpression(267,268): 'a'
     ]
 
 KtOperationReferenceExpression(269,271): '+='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.plusAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(272,273): 'b'
   KaSymbolResolutionSuccess:
@@ -212,7 +215,10 @@ KtNameReferenceExpression(278,279): 'a'
     ]
 
 KtOperationReferenceExpression(280,282): '-='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.minusAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(283,284): 'b'
   KaSymbolResolutionSuccess:
@@ -233,7 +239,10 @@ KtNameReferenceExpression(289,290): 'a'
     ]
 
 KtOperationReferenceExpression(291,293): '*='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.timesAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(294,295): 'b'
   KaSymbolResolutionSuccess:
@@ -254,7 +263,10 @@ KtNameReferenceExpression(300,301): 'a'
     ]
 
 KtOperationReferenceExpression(302,304): '/='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.divAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(305,306): 'b'
   KaSymbolResolutionSuccess:
@@ -275,7 +287,10 @@ KtNameReferenceExpression(311,312): 'a'
     ]
 
 KtOperationReferenceExpression(313,315): '%='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.remAssign(<dispatch receiver>: A, other: A): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(316,317): 'b'
   KaSymbolResolutionSuccess:

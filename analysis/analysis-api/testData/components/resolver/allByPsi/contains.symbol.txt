@@ -119,7 +119,10 @@ KtConstantExpression(126,127): '1'
   null
 
 KtOperationReferenceExpression(128,130): 'in'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+    ]
 
 KtCallExpression(131,140): 'MyClass()'
   KaSymbolResolutionSuccess:
@@ -188,7 +191,10 @@ KtConstantExpression(171,172): '2'
   null
 
 KtOperationReferenceExpression(173,176): '!in'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+    ]
 
 KtCallExpression(177,186): 'MyClass()'
   KaSymbolResolutionSuccess:
@@ -221,7 +227,10 @@ KtWhenConditionInRange(211,223): 'in MyClass()'
     ]
 
 KtOperationReferenceExpression(211,213): 'in'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+    ]
 
 KtCallExpression(214,223): 'MyClass()'
   KaSymbolResolutionSuccess:
@@ -260,7 +269,10 @@ KtWhenConditionInRange(270,283): '!in MyClass()'
     ]
 
 KtOperationReferenceExpression(270,273): '!in'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+    ]
 
 KtCallExpression(274,283): 'MyClass()'
   KaSymbolResolutionSuccess:

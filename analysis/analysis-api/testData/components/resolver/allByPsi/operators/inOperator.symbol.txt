@@ -83,7 +83,10 @@ KtConstantExpression(118,119): '1'
   null
 
 KtOperationReferenceExpression(120,122): 'in'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Container.contains(<dispatch receiver>: Container, element: kotlin.Int): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(123,124): 'c'
   KaSymbolResolutionSuccess:
@@ -101,7 +104,10 @@ KtConstantExpression(129,130): '2'
   null
 
 KtOperationReferenceExpression(131,134): '!in'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Container.contains(<dispatch receiver>: Container, element: kotlin.Int): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(135,136): 'c'
   KaSymbolResolutionSuccess:

@@ -233,7 +233,10 @@ KtNameReferenceExpression(546,547): 'm'
     ]
 
 KtOperationReferenceExpression(548,549): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(550,557): 'Option1'
   KaSymbolResolutionSuccess:
@@ -254,7 +257,10 @@ KtNameReferenceExpression(562,563): 'm'
     ]
 
 KtOperationReferenceExpression(564,565): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(566,577): 'OptionAlias'
   KaSymbolResolutionSuccess:
@@ -275,7 +281,10 @@ KtNameReferenceExpression(582,583): 'm'
     ]
 
 KtOperationReferenceExpression(584,585): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(586,596): 'stringProp'
   KaSymbolResolutionSuccess:

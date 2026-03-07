@@ -182,7 +182,10 @@ KtConstantExpression(231,232): '0'
   null
 
 KtOperationReferenceExpression(233,234): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(235,240): 'outer'
   KaSymbolResolutionSuccess:
@@ -248,7 +251,10 @@ KtConstantExpression(253,254): '1'
   null
 
 KtOperationReferenceExpression(255,256): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(257,262): 'outer'
   KaSymbolResolutionSuccess:
@@ -314,7 +320,10 @@ KtConstantExpression(275,276): '2'
   null
 
 KtOperationReferenceExpression(277,278): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(279,284): 'outer'
   KaSymbolResolutionSuccess:
@@ -383,7 +392,10 @@ KtConstantExpression(316,317): '4'
   null
 
 KtOperationReferenceExpression(318,319): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(320,325): 'outer'
   KaSymbolResolutionSuccess:
@@ -449,7 +461,10 @@ KtConstantExpression(340,341): '5'
   null
 
 KtOperationReferenceExpression(342,343): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(344,349): 'outer'
   KaSymbolResolutionSuccess:
@@ -743,7 +758,10 @@ KtConstantExpression(565,566): '9'
   null
 
 KtOperationReferenceExpression(567,568): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(569,574): 'inner'
   KaSymbolResolutionSuccess:
@@ -809,7 +827,10 @@ KtConstantExpression(589,591): '10'
   null
 
 KtOperationReferenceExpression(592,593): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(594,599): 'inner'
   KaSymbolResolutionSuccess:

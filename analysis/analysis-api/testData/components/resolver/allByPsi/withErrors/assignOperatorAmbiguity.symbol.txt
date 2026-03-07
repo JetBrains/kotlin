@@ -717,7 +717,11 @@ KtNameReferenceExpression(505,508): 'foo'
     fun Test.plusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(509,511): '+='
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.plus(i: Int): Test
+    fun Test.plusAssign(i: Int): Unit>
 
 KtConstantExpression(512,513): '1'
   null
@@ -737,7 +741,11 @@ KtNameReferenceExpression(518,521): 'foo'
     fun Test.minusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(522,524): '-='
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.minus(i: Int): Test
+    fun Test.minusAssign(i: Int): Unit>
 
 KtConstantExpression(525,526): '1'
   null
@@ -757,7 +765,11 @@ KtNameReferenceExpression(531,534): 'foo'
     fun Test.divAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(535,537): '/='
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.div(i: Int): Test
+    fun Test.divAssign(i: Int): Unit>
 
 KtConstantExpression(538,539): '1'
   null
@@ -777,7 +789,11 @@ KtNameReferenceExpression(544,547): 'foo'
     fun Test.timesAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(548,550): '*='
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.times(i: Int): Test
+    fun Test.timesAssign(i: Int): Unit>
 
 KtConstantExpression(551,552): '1'
   null
@@ -797,7 +813,11 @@ KtNameReferenceExpression(557,560): 'foo'
     fun Test.remAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(561,563): '%='
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    fun Test.rem(i: Int): Test
+    fun Test.remAssign(i: Int): Unit>
 
 KtConstantExpression(564,565): '1'
   null

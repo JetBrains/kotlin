@@ -296,7 +296,10 @@ KtNameReferenceExpression(498,499): 'm'
     ]
 
 KtOperationReferenceExpression(500,501): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyClass?
+    ]
 
 KtNameReferenceExpression(502,503): 'Y'
   KaSymbolResolutionError:
@@ -316,7 +319,10 @@ KtNameReferenceExpression(508,509): 'm'
     ]
 
 KtOperationReferenceExpression(510,511): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyClass?
+    ]
 
 KtNameReferenceExpression(512,513): 'X'
   KaSymbolResolutionError:

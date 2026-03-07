@@ -501,7 +501,10 @@ KtNameReferenceExpression(272,273): 'a'
     ]
 
 KtOperationReferenceExpression(274,275): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.plus(<dispatch receiver>: A, other: A): A
+    ]
 
 KtNameReferenceExpression(276,277): 'b'
   KaSymbolResolutionSuccess:
@@ -522,7 +525,10 @@ KtNameReferenceExpression(282,283): 'a'
     ]
 
 KtOperationReferenceExpression(284,285): '-'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.minus(<dispatch receiver>: A, other: A): A
+    ]
 
 KtNameReferenceExpression(286,287): 'b'
   KaSymbolResolutionSuccess:
@@ -543,7 +549,10 @@ KtNameReferenceExpression(292,293): 'a'
     ]
 
 KtOperationReferenceExpression(294,295): '*'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.times(<dispatch receiver>: A, other: A): A
+    ]
 
 KtNameReferenceExpression(296,297): 'b'
   KaSymbolResolutionSuccess:
@@ -564,7 +573,10 @@ KtNameReferenceExpression(302,303): 'a'
     ]
 
 KtOperationReferenceExpression(304,305): '/'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.div(<dispatch receiver>: A, other: A): A
+    ]
 
 KtNameReferenceExpression(306,307): 'b'
   KaSymbolResolutionSuccess:
@@ -585,7 +597,10 @@ KtNameReferenceExpression(312,313): 'a'
     ]
 
 KtOperationReferenceExpression(314,315): '%'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.rem(<dispatch receiver>: A, other: A): A
+    ]
 
 KtNameReferenceExpression(316,317): 'b'
   KaSymbolResolutionSuccess:

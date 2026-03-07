@@ -98,7 +98,10 @@ KtNameReferenceExpression(119,128): 'something'
     ]
 
 KtOperationReferenceExpression(129,130): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtConstantExpression(131,132): '1'
   null
@@ -129,7 +132,10 @@ KtNameReferenceExpression(147,156): 'something'
     ]
 
 KtOperationReferenceExpression(157,159): '+='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(160,161): '1'
   null
@@ -160,7 +166,10 @@ KtNameReferenceExpression(176,185): 'something'
     ]
 
 KtOperationReferenceExpression(185,187): '++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtPrefixExpression(192,213): '--javaClass.something'
   KaSymbolResolutionSuccess:
@@ -170,7 +179,10 @@ KtPrefixExpression(192,213): '--javaClass.something'
     ]
 
 KtOperationReferenceExpression(192,194): '--'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(194,213): 'javaClass.something'
   KaSymbolResolutionSuccess:
@@ -204,7 +216,10 @@ KtNameReferenceExpression(219,228): 'something'
     ]
 
 KtOperationReferenceExpression(228,230): '++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtPostfixExpression(235,248): '(something)++'
   KaSymbolResolutionSuccess:
@@ -223,7 +238,10 @@ KtNameReferenceExpression(236,245): 'something'
     ]
 
 KtOperationReferenceExpression(246,248): '++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtBinaryExpression(253,268): '(something) = 1'
   KaSymbolResolutionSuccess:
@@ -241,7 +259,10 @@ KtNameReferenceExpression(254,263): 'something'
     ]
 
 KtOperationReferenceExpression(265,266): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtConstantExpression(267,268): '1'
   null
@@ -274,7 +295,10 @@ KtNameReferenceExpression(284,293): 'something'
     ]
 
 KtOperationReferenceExpression(295,296): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var something: kotlin.Int
+    ]
 
 KtConstantExpression(297,298): '1'
   null

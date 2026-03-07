@@ -176,7 +176,10 @@ KtConstantExpression(178,179): '0'
   null
 
 KtOperationReferenceExpression(180,181): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(182,189): 'integer'
   KaSymbolResolutionSuccess:

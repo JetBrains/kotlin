@@ -107,7 +107,10 @@ KtNameReferenceExpression(115,116): 'a'
     ]
 
 KtOperationReferenceExpression(117,119): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(120,121): 'b'
   KaSymbolResolutionSuccess:
@@ -128,7 +131,10 @@ KtNameReferenceExpression(126,127): 'a'
     ]
 
 KtOperationReferenceExpression(128,130): '!='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(131,132): 'b'
   KaSymbolResolutionSuccess:

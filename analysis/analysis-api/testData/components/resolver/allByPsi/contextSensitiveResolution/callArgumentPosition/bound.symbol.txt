@@ -192,7 +192,10 @@ KtNameReferenceExpression(331,336): 'value'
     ]
 
 KtOperationReferenceExpression(337,339): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(340,350): 'EnumValue1'
   KaSymbolResolutionSuccess:
@@ -249,7 +252,10 @@ KtNameReferenceExpression(399,404): 'value'
     ]
 
 KtOperationReferenceExpression(405,407): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(408,418): 'EnumValue1'
   KaSymbolResolutionSuccess:

@@ -173,7 +173,10 @@ KtNameReferenceExpression(302,303): 's'
     ]
 
 KtOperationReferenceExpression(304,306): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(307,312): 'FIRST'
   KaSymbolResolutionError:
@@ -202,7 +205,10 @@ KtNameReferenceExpression(326,327): 's'
     ]
 
 KtOperationReferenceExpression(328,330): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(331,337): 'SECOND'
   KaSymbolResolutionError:
@@ -231,7 +237,10 @@ KtNameReferenceExpression(351,352): 's'
     ]
 
 KtOperationReferenceExpression(353,355): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(356,361): 'THIRD'
   KaSymbolResolutionError:

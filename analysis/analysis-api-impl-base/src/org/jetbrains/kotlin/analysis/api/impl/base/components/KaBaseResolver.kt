@@ -62,8 +62,43 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
                 }
             }
 
+            is KtOperationReferenceExpression -> tryResolveSymbolsImpl()
             is KtElement -> tryResolveSymbolsImpl()
             is KtReference -> tryResolveSymbolsImpl()
+            else -> null
+        }
+    }
+
+    /**
+     * Logic for operations might be non-trivial, so it is more efficient to rely on the call resolution
+     */
+    private fun KtOperationReferenceExpression.tryResolveSymbolsImpl(): KaSymbolResolutionAttempt? {
+        val resolvableCall = parent as? KtResolvableCall ?: return null
+        return when (val callAttempt = resolvableCall.tryResolveCall()) {
+            is KaCallResolutionError -> KaBaseSymbolResolutionError(
+                backingDiagnostic = callAttempt.diagnostic,
+                backingCandidateSymbols = callAttempt.candidateCalls.flatMap(KaSingleOrMultiCall::symbols)
+            )
+
+            is KaCallResolutionSuccess -> when (val call = callAttempt.call) {
+                is KaCompoundArrayAccessCall -> KaBaseSymbolResolutionSuccess(
+                    backingSymbols = listOf(call.operationCall.signature.symbol, call.setterCall.signature.symbol),
+                    token = call.token,
+                )
+
+                is KaCompoundVariableAccessCall -> KaBaseSymbolResolutionSuccess(
+                    backingSymbols = listOf(call.operationCall.signature.symbol),
+                    token = call.token,
+                )
+
+                is KaSingleCall<*, *> -> KaBaseSymbolResolutionSuccess(
+                    backingSymbols = listOf(call.signature.symbol),
+                    token = call.token,
+                )
+
+                else -> null
+            }
+
             else -> null
         }
     }

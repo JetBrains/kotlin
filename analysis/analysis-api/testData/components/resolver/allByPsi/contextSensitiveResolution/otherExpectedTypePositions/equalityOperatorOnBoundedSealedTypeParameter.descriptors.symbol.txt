@@ -215,7 +215,10 @@ KtNameReferenceExpression(285,286): 'a'
     ]
 
 KtOperationReferenceExpression(287,289): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(290,291): 'X'
   KaSymbolResolutionError:
@@ -247,7 +250,10 @@ KtNameReferenceExpression(304,305): 'a'
     ]
 
 KtOperationReferenceExpression(306,308): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(309,310): 'Y'
   KaSymbolResolutionError:
@@ -279,7 +285,10 @@ KtNameReferenceExpression(323,324): 'a'
     ]
 
 KtOperationReferenceExpression(325,327): '!='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(328,329): 'X'
   KaSymbolResolutionError:
@@ -311,7 +320,10 @@ KtNameReferenceExpression(342,343): 'a'
     ]
 
 KtOperationReferenceExpression(344,346): '!='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(347,348): 'Y'
   KaSymbolResolutionError:
@@ -459,7 +471,10 @@ KtNameReferenceExpression(441,442): 'a'
     ]
 
 KtOperationReferenceExpression(443,445): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(446,447): 'L'
   KaSymbolResolutionSuccess:
@@ -609,7 +624,10 @@ KtNameReferenceExpression(704,705): 'L'
     ]
 
 KtOperationReferenceExpression(706,708): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.X.equals(<dispatch receiver>: MySealed.X, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(709,710): 'a'
   KaSymbolResolutionSuccess:
@@ -643,7 +661,11 @@ KtNameReferenceExpression(913,914): 'a'
     ]
 
 KtOperationReferenceExpression(915,917): '=='
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with equals>
 
 KtCallExpression(918,923): 'id(X)'
   KaSymbolResolutionError:
@@ -695,7 +717,10 @@ KtNameReferenceExpression(936,937): 'a'
     ]
 
 KtOperationReferenceExpression(938,940): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtCallExpression(941,946): 'id(L)'
   KaSymbolResolutionSuccess:
@@ -749,7 +774,10 @@ KtNameReferenceExpression(971,972): 'a'
     ]
 
 KtOperationReferenceExpression(973,975): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(976,977): 'X'
   KaSymbolResolutionError:
@@ -778,7 +806,10 @@ KtNameReferenceExpression(992,993): 'a'
     ]
 
 KtOperationReferenceExpression(994,996): '!='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(997,998): 'Y'
   KaSymbolResolutionError:
@@ -836,7 +867,10 @@ KtNameReferenceExpression(1053,1054): 'a'
     ]
 
 KtOperationReferenceExpression(1055,1057): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1058,1059): 'L'
   KaSymbolResolutionSuccess:

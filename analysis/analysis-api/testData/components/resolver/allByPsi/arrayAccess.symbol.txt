@@ -56,7 +56,10 @@ KtNameReferenceExpression(40,44): 'list'
     ]
 
 KtOperationReferenceExpression(45,47): '+='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
+    ]
 
 KtConstantExpression(48,49): '1'
   null
@@ -190,7 +193,11 @@ KtConstantExpression(164,165): '1'
   null
 
 KtOperationReferenceExpression(168,170): '+='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
+      kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+    ]
 
 KtConstantExpression(171,172): '2'
   null
@@ -225,7 +232,11 @@ KtConstantExpression(183,184): '2'
   null
 
 KtOperationReferenceExpression(187,189): '+='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
+      kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+    ]
 
 KtConstantExpression(190,191): '3'
   null
@@ -305,7 +316,11 @@ KtPrefixExpression(245,254): '--list[i]'
     ]
 
 KtOperationReferenceExpression(245,247): '--'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int,
+      kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+    ]
 
 KtArrayAccessExpression(247,254): 'list[i]'
   KaSymbolResolutionSuccess:
@@ -346,7 +361,11 @@ KtPrefixExpression(266,277): '++(list[2])'
     ]
 
 KtOperationReferenceExpression(266,268): '++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int,
+      kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+    ]
 
 KtParenthesizedExpression(268,277): '(list[2])'
   null

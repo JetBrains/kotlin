@@ -200,7 +200,10 @@ KtNameReferenceExpression(196,203): 'current'
     ]
 
 KtOperationReferenceExpression(204,206): '<='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(207,224): 'this@iterator.end'
   KaSymbolResolutionSuccess:
@@ -309,7 +312,10 @@ KtNameReferenceExpression(256,263): 'current'
     ]
 
 KtOperationReferenceExpression(263,265): '++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtNamedFunction(269,330): 'fun usage() {'
   null

@@ -1237,7 +1237,10 @@ KtNameReferenceExpression(1311,1312): 's'
     ]
 
 KtOperationReferenceExpression(1313,1315): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1316,1317): 'A'
   KaSymbolResolutionSuccess:
@@ -1285,7 +1288,10 @@ KtNameReferenceExpression(1360,1361): 's'
     ]
 
 KtOperationReferenceExpression(1362,1364): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(1365,1373): 'Sealed.A'
   null
@@ -1339,7 +1345,10 @@ KtNameReferenceExpression(1418,1419): 's'
     ]
 
 KtOperationReferenceExpression(1420,1422): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(1423,1428): 'foo.A'
   null
@@ -1393,7 +1402,10 @@ KtNameReferenceExpression(1468,1469): 's'
     ]
 
 KtOperationReferenceExpression(1470,1472): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(1473,1481): 'Sealed.C'
   null
@@ -1447,7 +1459,10 @@ KtNameReferenceExpression(1524,1525): 's'
     ]
 
 KtOperationReferenceExpression(1526,1528): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1529,1539): 'CompanionA'
   KaSymbolResolutionSuccess:
@@ -1495,7 +1510,10 @@ KtNameReferenceExpression(1582,1583): 's'
     ]
 
 KtOperationReferenceExpression(1584,1586): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(1587,1604): 'Sealed.CompanionA'
   KaSymbolResolutionSuccess:
@@ -1552,7 +1570,10 @@ KtNameReferenceExpression(1649,1650): 's'
     ]
 
 KtOperationReferenceExpression(1651,1653): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(1654,1668): 'foo.CompanionA'
   null
@@ -1606,7 +1627,10 @@ KtNameReferenceExpression(1708,1709): 's'
     ]
 
 KtOperationReferenceExpression(1710,1712): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1713,1714): 'F'
   KaSymbolResolutionSuccess:
@@ -1654,7 +1678,10 @@ KtNameReferenceExpression(1757,1758): 's'
     ]
 
 KtOperationReferenceExpression(1759,1761): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(1762,1770): 'Sealed.F'
   null
@@ -1708,7 +1735,10 @@ KtNameReferenceExpression(1815,1816): 's'
     ]
 
 KtOperationReferenceExpression(1817,1819): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(1820,1825): 'foo.F'
   null

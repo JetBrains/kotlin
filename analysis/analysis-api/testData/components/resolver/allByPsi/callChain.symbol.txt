@@ -102,7 +102,10 @@ KtNameReferenceExpression(27,31): 'this'
     ]
 
 KtOperationReferenceExpression(32,33): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(34,35): 'a'
   KaSymbolResolutionSuccess:

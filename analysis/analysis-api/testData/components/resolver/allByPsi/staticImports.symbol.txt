@@ -464,7 +464,10 @@ KtNameReferenceExpression(899,902): 'doo'
     ]
 
 KtOperationReferenceExpression(903,904): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var doo: kotlin.String
+    ]
 
 KtStringTemplateExpression(905,910): '"str"'
   null

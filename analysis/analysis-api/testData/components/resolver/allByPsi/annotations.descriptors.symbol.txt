@@ -761,7 +761,10 @@ KtNameReferenceExpression(800,814): 'stringConstant'
     ]
 
 KtOperationReferenceExpression(815,816): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+    ]
 
 KtStringTemplateExpression(817,825): '" 1.2.3"'
   null

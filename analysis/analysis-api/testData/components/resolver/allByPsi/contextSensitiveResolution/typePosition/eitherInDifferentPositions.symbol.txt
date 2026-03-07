@@ -341,7 +341,10 @@ KtNameReferenceExpression(350,355): 'value'
     ]
 
 KtOperationReferenceExpression(356,357): '*'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.times(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(358,359): '1'
   null
@@ -422,7 +425,10 @@ KtConstantExpression(425,426): '1'
   null
 
 KtOperationReferenceExpression(427,429): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtDotQualifiedExpression(430,443): '"".hashCode()'
   KaSymbolResolutionSuccess:

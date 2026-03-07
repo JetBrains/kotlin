@@ -429,7 +429,10 @@ KtPrefixExpression(382,389): '++value'
     ]
 
 KtOperationReferenceExpression(382,384): '++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(384,389): 'value'
   KaSymbolResolutionSuccess:

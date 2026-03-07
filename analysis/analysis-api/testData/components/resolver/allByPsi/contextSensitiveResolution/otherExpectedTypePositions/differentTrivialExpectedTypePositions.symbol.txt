@@ -236,7 +236,10 @@ KtNameReferenceExpression(350,351): 'm'
     ]
 
 KtOperationReferenceExpression(352,353): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(354,355): 'Y'
   KaSymbolResolutionSuccess:
@@ -257,7 +260,10 @@ KtNameReferenceExpression(360,361): 'm'
     ]
 
 KtOperationReferenceExpression(362,363): '='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var m: MyEnum
+    ]
 
 KtNameReferenceExpression(364,365): 'L'
   KaSymbolResolutionSuccess:

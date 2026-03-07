@@ -323,7 +323,10 @@ KtNameReferenceExpression(479,486): 'oldItem'
     ]
 
 KtOperationReferenceExpression(487,489): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(490,497): 'newItem'
   KaSymbolResolutionSuccess:
@@ -509,7 +512,10 @@ KtNameReferenceExpression(706,713): 'oldItem'
     ]
 
 KtOperationReferenceExpression(714,716): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(717,724): 'newItem'
   KaSymbolResolutionSuccess:
@@ -647,7 +653,10 @@ KtNameReferenceExpression(875,882): 'oldItem'
     ]
 
 KtOperationReferenceExpression(883,885): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(886,893): 'newItem'
   KaSymbolResolutionSuccess:
@@ -701,7 +710,10 @@ KtNameReferenceExpression(956,957): 'i'
     ]
 
 KtOperationReferenceExpression(958,960): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(961,962): 'm'
   KaSymbolResolutionSuccess:
@@ -722,7 +734,10 @@ KtNameReferenceExpression(967,968): 'i'
     ]
 
 KtOperationReferenceExpression(969,971): '!='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(972,973): 'm'
   KaSymbolResolutionSuccess:
@@ -743,7 +758,10 @@ KtNameReferenceExpression(979,980): 'm'
     ]
 
 KtOperationReferenceExpression(981,983): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(984,985): 'i'
   KaSymbolResolutionSuccess:
@@ -764,7 +782,10 @@ KtNameReferenceExpression(990,991): 'm'
     ]
 
 KtOperationReferenceExpression(992,994): '!='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(995,996): 'i'
   KaSymbolResolutionSuccess:

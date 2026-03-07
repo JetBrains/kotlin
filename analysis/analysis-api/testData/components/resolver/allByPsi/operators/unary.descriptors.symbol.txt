@@ -364,7 +364,10 @@ KtPrefixExpression(230,232): '+a'
     ]
 
 KtOperationReferenceExpression(230,231): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.unaryPlus(<dispatch receiver>: A): A
+    ]
 
 KtNameReferenceExpression(231,232): 'a'
   KaSymbolResolutionSuccess:
@@ -379,7 +382,10 @@ KtPrefixExpression(237,239): '-a'
     ]
 
 KtOperationReferenceExpression(237,238): '-'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.unaryMinus(<dispatch receiver>: A): A
+    ]
 
 KtNameReferenceExpression(238,239): 'a'
   KaSymbolResolutionSuccess:
@@ -394,7 +400,10 @@ KtPrefixExpression(244,246): '!a'
     ]
 
 KtOperationReferenceExpression(244,245): '!'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.not(<dispatch receiver>: A): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(245,246): 'a'
   KaSymbolResolutionSuccess:
@@ -410,7 +419,10 @@ KtPrefixExpression(251,254): '++a'
     ]
 
 KtOperationReferenceExpression(251,253): '++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.inc(<dispatch receiver>: A): A
+    ]
 
 KtNameReferenceExpression(253,254): 'a'
   KaSymbolResolutionSuccess:
@@ -426,7 +438,10 @@ KtPrefixExpression(259,262): '--a'
     ]
 
 KtOperationReferenceExpression(259,261): '--'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.dec(<dispatch receiver>: A): A
+    ]
 
 KtNameReferenceExpression(261,262): 'a'
   KaSymbolResolutionSuccess:
@@ -448,7 +463,10 @@ KtNameReferenceExpression(267,268): 'a'
     ]
 
 KtOperationReferenceExpression(268,270): '++'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.inc(<dispatch receiver>: A): A
+    ]
 
 KtPostfixExpression(275,278): 'a--'
   KaSymbolResolutionSuccess:
@@ -464,4 +482,7 @@ KtNameReferenceExpression(275,276): 'a'
     ]
 
 KtOperationReferenceExpression(276,278): '--'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.dec(<dispatch receiver>: A): A
+    ]

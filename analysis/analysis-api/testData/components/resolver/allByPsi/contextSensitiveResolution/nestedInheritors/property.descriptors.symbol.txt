@@ -185,7 +185,10 @@ KtNameReferenceExpression(400,401): 'i'
     ]
 
 KtOperationReferenceExpression(402,404): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtConstantExpression(405,406): '0'
   null
@@ -220,7 +223,10 @@ KtNameReferenceExpression(441,442): 'i'
     ]
 
 KtOperationReferenceExpression(443,445): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtConstantExpression(446,447): '1'
   null
@@ -255,7 +261,10 @@ KtNameReferenceExpression(478,479): 'i'
     ]
 
 KtOperationReferenceExpression(480,482): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtConstantExpression(483,484): '2'
   null

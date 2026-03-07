@@ -466,7 +466,10 @@ KtNameReferenceExpression(683,694): 'myClassProp'
     ]
 
 KtOperationReferenceExpression(695,697): 'to'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+    ]
 
 KtConstantExpression(698,699): '1'
   null
@@ -499,7 +502,10 @@ KtNameReferenceExpression(710,720): 'stringProp'
     ]
 
 KtOperationReferenceExpression(721,723): 'to'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+    ]
 
 KtConstantExpression(724,725): '2'
   null
@@ -529,7 +535,10 @@ KtNameReferenceExpression(735,750): 'NestedInheritor'
     ]
 
 KtOperationReferenceExpression(751,753): 'to'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+    ]
 
 KtConstantExpression(754,755): '3'
   null
@@ -571,7 +580,10 @@ KtValueArgumentList(783,785): '()'
   null
 
 KtOperationReferenceExpression(786,788): 'to'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+    ]
 
 KtConstantExpression(789,790): '4'
   null
@@ -913,7 +925,10 @@ KtNameReferenceExpression(1242,1243): 'a'
     ]
 
 KtOperationReferenceExpression(1244,1247): '!in'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/ranges/ClosedFloatingPointRange.contains(<dispatch receiver>: kotlin.ranges.ClosedFloatingPointRange<T>, value: T): kotlin.Boolean
+    ]
 
 KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
   KaSymbolResolutionSuccess:
@@ -940,7 +955,10 @@ KtNameReferenceExpression(1256,1267): 'myClassProp'
     ]
 
 KtOperationReferenceExpression(1267,1269): '..'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /rangeTo(<extension receiver>: MyClass, that: MyClass): kotlin.ranges.ClosedFloatingPointRange<MyClass>
+    ]
 
 KtNameReferenceExpression(1269,1284): 'NestedInheritor'
   KaSymbolResolutionSuccess:

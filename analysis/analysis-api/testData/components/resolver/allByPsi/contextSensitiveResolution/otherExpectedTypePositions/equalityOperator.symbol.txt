@@ -131,7 +131,10 @@ KtNameReferenceExpression(191,192): 'a'
     ]
 
 KtOperationReferenceExpression(193,195): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(196,197): 'X'
   KaSymbolResolutionSuccess:
@@ -164,7 +167,10 @@ KtNameReferenceExpression(210,211): 'a'
     ]
 
 KtOperationReferenceExpression(212,214): '!='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(215,216): 'X'
   KaSymbolResolutionSuccess:
@@ -257,7 +263,10 @@ KtNameReferenceExpression(269,270): 'a'
     ]
 
 KtOperationReferenceExpression(271,273): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(274,275): 'L'
   KaSymbolResolutionSuccess:
@@ -289,7 +298,10 @@ KtNameReferenceExpression(459,460): 'X'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 
 KtOperationReferenceExpression(461,463): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(464,465): 'a'
   KaSymbolResolutionSuccess:
@@ -322,7 +334,10 @@ KtNameReferenceExpression(478,479): 'L'
     ]
 
 KtOperationReferenceExpression(480,482): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(483,484): 'a'
   KaSymbolResolutionSuccess:
@@ -355,7 +370,10 @@ KtNameReferenceExpression(687,688): 'a'
     ]
 
 KtOperationReferenceExpression(689,691): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtCallExpression(692,697): 'id(X)'
   KaSymbolResolutionSuccess:
@@ -405,7 +423,10 @@ KtNameReferenceExpression(710,711): 'a'
     ]
 
 KtOperationReferenceExpression(712,714): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtCallExpression(715,720): 'id(L)'
   KaSymbolResolutionSuccess:
@@ -459,7 +480,10 @@ KtNameReferenceExpression(745,746): 'a'
     ]
 
 KtOperationReferenceExpression(747,749): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(750,751): 'X'
   KaSymbolResolutionSuccess:
@@ -489,7 +513,10 @@ KtNameReferenceExpression(766,767): 'a'
     ]
 
 KtOperationReferenceExpression(768,770): '!='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(771,772): 'Y'
   KaSymbolResolutionSuccess:
@@ -573,7 +600,10 @@ KtNameReferenceExpression(831,832): 'a'
     ]
 
 KtOperationReferenceExpression(833,835): '=='
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(836,837): 'L'
   KaSymbolResolutionSuccess:

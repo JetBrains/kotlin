@@ -188,7 +188,10 @@ KtConstantExpression(231,232): '0'
   null
 
 KtOperationReferenceExpression(233,234): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(235,240): 'outer'
   KaSymbolResolutionSuccess:
@@ -254,7 +257,10 @@ KtConstantExpression(253,254): '1'
   null
 
 KtOperationReferenceExpression(255,256): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(257,262): 'outer'
   KaSymbolResolutionSuccess:
@@ -320,7 +326,10 @@ KtConstantExpression(275,276): '2'
   null
 
 KtOperationReferenceExpression(277,278): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(279,284): 'outer'
   KaSymbolResolutionSuccess:
@@ -389,7 +398,10 @@ KtConstantExpression(316,317): '4'
   null
 
 KtOperationReferenceExpression(318,319): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(320,325): 'outer'
   KaSymbolResolutionSuccess:
@@ -455,7 +467,10 @@ KtConstantExpression(340,341): '5'
   null
 
 KtOperationReferenceExpression(342,343): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(344,349): 'outer'
   KaSymbolResolutionSuccess:
@@ -560,7 +575,34 @@ KtConstantExpression(406,407): '6'
   null
 
 KtOperationReferenceExpression(408,409): '+'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun plus(other: Int): Int:
+      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+
+    fun plus(other: Byte): Int:
+      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+
+    fun plus(other: Short): Int:
+      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+
+    fun plus(other: Long): Long:
+      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+
+    fun plus(other: Float): Float:
+      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+
+    fun plus(other: Double): Double:
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(410,415): 'inner'
   KaSymbolResolutionSuccess:
@@ -650,7 +692,34 @@ KtConstantExpression(428,429): '7'
   null
 
 KtOperationReferenceExpression(430,431): '+'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun plus(other: Int): Int:
+      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+
+    fun plus(other: Byte): Int:
+      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+
+    fun plus(other: Short): Int:
+      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+
+    fun plus(other: Long): Long:
+      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+
+    fun plus(other: Float): Float:
+      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+
+    fun plus(other: Double): Double:
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(432,437): 'inner'
   KaSymbolResolutionSuccess:
@@ -740,7 +809,34 @@ KtConstantExpression(450,451): '8'
   null
 
 KtOperationReferenceExpression(452,453): '+'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Double,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Float,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Long,
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun plus(other: Int): Int:
+      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+
+    fun plus(other: Byte): Int:
+      Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+
+    fun plus(other: Short): Int:
+      Argument type mismatch: actual type is 'String', but 'Short' was expected.
+
+    fun plus(other: Long): Long:
+      Argument type mismatch: actual type is 'String', but 'Long' was expected.
+
+    fun plus(other: Float): Float:
+      Argument type mismatch: actual type is 'String', but 'Float' was expected.
+
+    fun plus(other: Double): Double:
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(454,459): 'inner'
   KaSymbolResolutionSuccess:
@@ -830,7 +926,10 @@ KtConstantExpression(565,566): '9'
   null
 
 KtOperationReferenceExpression(567,568): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(569,574): 'inner'
   KaSymbolResolutionSuccess:
@@ -896,7 +995,10 @@ KtConstantExpression(589,591): '10'
   null
 
 KtOperationReferenceExpression(592,593): '+'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(594,599): 'inner'
   KaSymbolResolutionSuccess:
