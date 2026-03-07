@@ -80,13 +80,14 @@ class ManagedTestAssertionsTest {
     }
 
     private fun runAssertion(
+        testDataFileName: String = "test.kt",
         variantChain: TestVariantChain,
         actual: String,
         mode: TestDataManagerMode = TestDataManagerMode.UPDATE,
         extension: String = ".txt",
     ) {
         ManagedTestAssertions.assertEqualsToTestDataFile(
-            testDataPath = tempDir.resolve("test.kt"),
+            testDataPath = tempDir.resolve(testDataFileName),
             actual = actual,
             variantChain = variantChain,
             extension = extension,
@@ -631,6 +632,49 @@ class ManagedTestAssertionsTest {
         assertTrackedPathsAndFileState(
             expectedTrackedPaths = "test.kt",
             expectedFileState = "test.txt: new",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - tracking records multiple test data paths`() {
+        setupFiles("other.kt" to "// other")
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(
+            testDataFileName = "test.kt",
+            variantChain = emptyList(),
+            actual = "first",
+            mode = TestDataManagerMode.UPDATE,
+        )
+
+        runAssertion(
+            testDataFileName = "test.kt",
+            variantChain = listOf("variant"),
+            actual = "first_variant",
+            mode = TestDataManagerMode.UPDATE,
+        )
+
+        runAssertion(
+            testDataFileName = "other.kt",
+            variantChain = emptyList(),
+            actual = "second",
+            mode = TestDataManagerMode.UPDATE,
+        )
+
+        assertTrackedPaths(
+            """
+                other.kt
+                test.kt
+            """
+        )
+
+        assertFileState(
+            fileNames = listOf("other.txt", "test.txt", "test.variant.txt"),
+            expected = """
+                other.txt: second
+                test.txt: first
+                test.variant.txt: first_variant
+            """,
         )
     }
 
