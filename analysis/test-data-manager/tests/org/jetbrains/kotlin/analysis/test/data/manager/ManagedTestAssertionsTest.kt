@@ -618,6 +618,36 @@ class ManagedTestAssertionsTest {
     }
 
     @Test
+    fun `UPDATE mode - tracking records path on redundant delete`() {
+        setupFiles(
+            "test.txt" to "same",
+            "test.js.txt" to "same"
+        )
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(variantChain = listOf("js"), actual = "same", mode = TestDataManagerMode.UPDATE)
+
+        val paths = ManagedTestAssertions.drainUpdatedTestDataPaths()
+        assertEquals(1, paths.size)
+        assertTrue(paths.single().endsWith("test.kt"))
+    }
+
+    @Test
+    fun `UPDATE mode - tracking records path when mismatch deletes redundant write-target`() {
+        setupFiles(
+            "test.txt" to "golden",
+            "test.js.txt" to "old"
+        )
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(variantChain = listOf("js"), actual = "golden", mode = TestDataManagerMode.UPDATE)
+
+        val paths = ManagedTestAssertions.drainUpdatedTestDataPaths()
+        assertEquals(1, paths.size)
+        assertTrue(paths.single().endsWith("test.kt"))
+    }
+
+    @Test
     fun `UPDATE mode - tracking does not record when disabled`() {
         setupFiles()  // No expected files
         ManagedTestAssertions.trackUpdatedPaths = false

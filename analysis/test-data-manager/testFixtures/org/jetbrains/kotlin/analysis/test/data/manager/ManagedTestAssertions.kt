@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.test.data.manager
 
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions.trackUpdatedPaths
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions.updatedTestDataPaths
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
@@ -28,6 +29,19 @@ object ManagedTestAssertions {
      * Used by incremental mode to determine which variant tests to run.
      */
     private val updatedTestDataPaths: MutableSet<String> = ConcurrentHashMap.newKeySet()
+
+    /**
+     * Auto-updates the [updatedTestDataPaths] set if [trackUpdatedPaths] is true.
+     *
+     * This function must wrap all modification actions
+     */
+    private inline fun TestDataFiles.update(block: () -> Unit) {
+        if (trackUpdatedPaths) {
+            updatedTestDataPaths.add(testDataPath.toString())
+        }
+
+        block()
+    }
 
     /**
      * When true, file writes in UPDATE mode will record the test data path in [updatedTestDataPaths].
@@ -92,7 +106,6 @@ object ManagedTestAssertions {
                 normalizedActual = normalizedActual,
                 mode = mode,
                 variantChain = variantChain,
-                testDataPath = testDataPath,
             )
 
             return
@@ -107,7 +120,6 @@ object ManagedTestAssertions {
                 normalizedActual = normalizedActual,
                 expectedContent = expectedContent,
                 mode = mode,
-                testDataPath = testDataPath,
             )
         }
 
@@ -120,26 +132,24 @@ object ManagedTestAssertions {
         normalizedActual: String,
         mode: TestDataManagerMode,
         variantChain: TestVariantChain,
-        testDataPath: Path,
     ) {
         val writeTargetFile = testDataFiles.writeTargetFile
 
         if (isGoldenTest) {
             when (mode) {
-                TestDataManagerMode.UPDATE -> {
+                TestDataManagerMode.UPDATE -> testDataFiles.update {
                     writeTargetFile.createParentDirectories()
                     writeTargetFile.writeText(normalizedActual)
-                    if (trackUpdatedPaths) updatedTestDataPaths.add(testDataPath.toString())
                 }
 
-                TestDataManagerMode.CHECK -> {
-                    if (TestDataManagerMode.isUnderTeamCity) {
-                        throw AssertionFailedError(
-                            "Expected data file did not exist: $writeTargetFile",
-                            FileInfo(writeTargetFile.absolutePathString(), byteArrayOf()),
-                            normalizedActual,
-                        )
-                    } else {
+                TestDataManagerMode.CHECK -> when {
+                    TestDataManagerMode.isUnderTeamCity -> throw AssertionFailedError(
+                        "Expected data file did not exist: $writeTargetFile",
+                        FileInfo(writeTargetFile.absolutePathString(), byteArrayOf()),
+                        normalizedActual,
+                    )
+
+                    else -> testDataFiles.update {
                         writeTargetFile.createParentDirectories()
                         writeTargetFile.writeText(normalizedActual)
                         throw AssertionFailedError(
@@ -175,17 +185,17 @@ object ManagedTestAssertions {
 
         if (writeTargetContent == nextContent) {
             when (mode) {
-                TestDataManagerMode.UPDATE -> {
+                TestDataManagerMode.UPDATE -> testDataFiles.update {
                     writeTargetFile.deleteIfExists()
                 }
 
-                TestDataManagerMode.CHECK -> {
-                    if (TestDataManagerMode.isUnderTeamCity) {
-                        throw AssertionFailedError(
-                            "\"${writeTargetFile.name}\" has the same content as \"${nextExistingFile.name}\". " +
-                                    "Delete the prefixed file."
-                        )
-                    } else {
+                TestDataManagerMode.CHECK -> when {
+                    TestDataManagerMode.isUnderTeamCity -> throw AssertionFailedError(
+                        "\"${writeTargetFile.name}\" has the same content as \"${nextExistingFile.name}\". " +
+                                "Delete the prefixed file."
+                    )
+
+                    else -> testDataFiles.update {
                         writeTargetFile.deleteIfExists()
                         throw AssertionFailedError(
                             "\"${writeTargetFile.name}\" had the same content as \"${nextExistingFile.name}\". " +
@@ -202,27 +212,24 @@ object ManagedTestAssertions {
         normalizedActual: String,
         expectedContent: String,
         mode: TestDataManagerMode,
-        testDataPath: Path,
     ) {
         val writeTargetFile = testDataFiles.writeTargetFile
         val contentToWrite = preserveEofNewline(normalizedActual, expectedContent)
 
         when (mode) {
-            TestDataManagerMode.UPDATE -> {
+            TestDataManagerMode.UPDATE -> testDataFiles.update {
                 writeTargetFile.createParentDirectories()
                 writeTargetFile.writeText(contentToWrite)
-                if (trackUpdatedPaths) updatedTestDataPaths.add(testDataPath.toString())
             }
-            TestDataManagerMode.CHECK -> {
-                throw AssertionFailedError(
-                    "Actual data differs from file content: ${writeTargetFile.name}",
-                    FileInfo(
-                        writeTargetFile.absolutePathString(),
-                        contentToWrite.toByteArray(StandardCharsets.UTF_8),
-                    ),
-                    normalizedActual,
-                )
-            }
+
+            TestDataManagerMode.CHECK -> throw AssertionFailedError(
+                "Actual data differs from file content: ${writeTargetFile.name}",
+                FileInfo(
+                    writeTargetFile.absolutePathString(),
+                    contentToWrite.toByteArray(StandardCharsets.UTF_8),
+                ),
+                normalizedActual,
+            )
         }
     }
 
