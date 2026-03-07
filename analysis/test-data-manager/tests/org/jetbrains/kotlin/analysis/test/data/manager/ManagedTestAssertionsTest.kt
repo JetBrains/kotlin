@@ -13,6 +13,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import org.opentest4j.AssertionFailedError
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -55,6 +56,20 @@ class ManagedTestAssertionsTest {
         }.joinToString("\n")
 
         assertEquals(expected.trimIndent(), actual)
+    }
+
+    private fun assertTrackedPaths(expected: String) {
+        val actual = ManagedTestAssertions.drainUpdatedTestDataPaths()
+            .map { Path(it).fileName.toString() }
+            .sorted()
+            .joinToString("\n")
+
+        assertEquals(expected.trimIndent(), actual)
+    }
+
+    private fun assertTrackedPathsAndFileState(expectedTrackedPaths: String, expectedFileState: String) {
+        assertTrackedPaths(expectedTrackedPaths)
+        assertFileState(expectedFileState)
     }
 
     private fun setupFiles(vararg files: Pair<String, String>) {
@@ -600,9 +615,10 @@ class ManagedTestAssertionsTest {
 
         runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
 
-        val paths = ManagedTestAssertions.drainUpdatedTestDataPaths()
-        assertEquals(1, paths.size)
-        assertTrue(paths.single().endsWith("test.kt"))
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "test.kt",
+            expectedFileState = "test.txt: new content",
+        )
     }
 
     @Test
@@ -612,9 +628,10 @@ class ManagedTestAssertionsTest {
 
         runAssertion(variantChain = emptyList(), actual = "new", mode = TestDataManagerMode.UPDATE)
 
-        val paths = ManagedTestAssertions.drainUpdatedTestDataPaths()
-        assertEquals(1, paths.size)
-        assertTrue(paths.single().endsWith("test.kt"))
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "test.kt",
+            expectedFileState = "test.txt: new",
+        )
     }
 
     @Test
@@ -627,9 +644,10 @@ class ManagedTestAssertionsTest {
 
         runAssertion(variantChain = listOf("js"), actual = "same", mode = TestDataManagerMode.UPDATE)
 
-        val paths = ManagedTestAssertions.drainUpdatedTestDataPaths()
-        assertEquals(1, paths.size)
-        assertTrue(paths.single().endsWith("test.kt"))
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "test.kt",
+            expectedFileState = "test.txt: same",
+        )
     }
 
     @Test
@@ -642,9 +660,10 @@ class ManagedTestAssertionsTest {
 
         runAssertion(variantChain = listOf("js"), actual = "golden", mode = TestDataManagerMode.UPDATE)
 
-        val paths = ManagedTestAssertions.drainUpdatedTestDataPaths()
-        assertEquals(1, paths.size)
-        assertTrue(paths.single().endsWith("test.kt"))
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "test.kt",
+            expectedFileState = "test.txt: golden",
+        )
     }
 
     @Test
@@ -654,8 +673,10 @@ class ManagedTestAssertionsTest {
 
         runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
 
-        val paths = ManagedTestAssertions.drainUpdatedTestDataPaths()
-        assertTrue(paths.isEmpty())
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "",
+            expectedFileState = "test.txt: new content",
+        )
     }
 
     @Test
@@ -665,8 +686,10 @@ class ManagedTestAssertionsTest {
 
         runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.UPDATE)
 
-        val paths = ManagedTestAssertions.drainUpdatedTestDataPaths()
-        assertTrue(paths.isEmpty())
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "",
+            expectedFileState = "test.txt: content",
+        )
     }
 
     @Test
@@ -676,10 +699,10 @@ class ManagedTestAssertionsTest {
 
         runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.UPDATE)
 
-        val firstDrain = ManagedTestAssertions.drainUpdatedTestDataPaths()
-        assertEquals(1, firstDrain.size)
+        assertTrackedPaths("test.kt")
 
-        val secondDrain = ManagedTestAssertions.drainUpdatedTestDataPaths()
-        assertTrue(secondDrain.isEmpty())
+        // Second drain is expected to have nothing
+        assertTrackedPaths("")
+        assertFileState("test.txt: content")
     }
 }
