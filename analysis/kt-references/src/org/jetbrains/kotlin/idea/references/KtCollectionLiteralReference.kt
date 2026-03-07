@@ -10,18 +10,15 @@ import com.intellij.psi.MultiRangeReference
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.CollectionNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-@OptIn(KtExperimentalApi::class)
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtCollectionLiteralReference(
     expression: KtCollectionLiteralExpression,
-) : KtSimpleReference<KtCollectionLiteralExpression>(expression), MultiRangeReference, KtResolvable {
+) : KtSimpleReference<KtCollectionLiteralExpression>(expression), MultiRangeReference {
     companion object {
         private val COLLECTION_LITERAL_CALL_NAMES: List<Name> = buildList {
             addAll(ArrayFqNames.ARRAY_CALL_NAMES)

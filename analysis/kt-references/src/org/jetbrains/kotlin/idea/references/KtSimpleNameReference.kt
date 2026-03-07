@@ -9,16 +9,17 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtWhenConditionInRange
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolution.KtResolvable
 
-@OptIn(KtExperimentalApi::class)
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtSimpleNameReference(
     expression: KtSimpleNameExpression,
-) : KtSimpleReference<KtSimpleNameExpression>(expression), KtResolvable {
+) : KtSimpleReference<KtSimpleNameExpression>(expression) {
     // Extension point used by deprecated android extensions.
     abstract fun isReferenceToViaExtension(element: PsiElement): Boolean
 

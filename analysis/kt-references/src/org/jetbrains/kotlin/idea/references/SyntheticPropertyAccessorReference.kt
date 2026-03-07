@@ -12,18 +12,15 @@ import org.jetbrains.kotlin.asJava.canHaveSyntheticGetter
 import org.jetbrains.kotlin.asJava.canHaveSyntheticSetter
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
-@OptIn(KtExperimentalApi::class)
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class SyntheticPropertyAccessorReference(
     expression: KtNameReferenceExpression,
     val getter: Boolean,
-) : KtSimpleReference<KtNameReferenceExpression>(expression), KtResolvable {
+) : KtSimpleReference<KtNameReferenceExpression>(expression) {
     protected fun isAccessorName(name: String): Boolean {
         if (getter) {
             return name.startsWith("get") || name.startsWith("is")

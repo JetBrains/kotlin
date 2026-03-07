@@ -10,16 +10,13 @@ import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-@OptIn(KtExperimentalApi::class)
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtArrayAccessReference(
     expression: KtArrayAccessExpression
-) : KtSimpleReference<KtArrayAccessExpression>(expression), MultiRangeReference, KtResolvable {
+) : KtSimpleReference<KtArrayAccessExpression>(expression), MultiRangeReference {
     override val resolvesByNames: Collection<Name>
         get() = NAMES
 

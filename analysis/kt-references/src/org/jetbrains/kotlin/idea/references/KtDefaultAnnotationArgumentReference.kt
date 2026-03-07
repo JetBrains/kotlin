@@ -12,11 +12,9 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.resolution.KtResolvable
 
 /**
  * A reference pointing to a single argument in the annotation's constructor call.
@@ -34,11 +32,10 @@ import org.jetbrains.kotlin.resolution.KtResolvable
  *
  * **Note**: the reference might be resolved only when the annotation parameter has [PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME] name.
  */
-@OptIn(KtExperimentalApi::class)
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtDefaultAnnotationArgumentReference(
     element: KtValueArgument,
-) : AbstractKtReference<KtValueArgument>(element), KtResolvable {
+) : AbstractKtReference<KtValueArgument>(element) {
     override val resolvesByNames: Collection<Name>
         get() = listOf(Name.identifier(PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME))
 

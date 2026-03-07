@@ -19,8 +19,9 @@ import org.jetbrains.kotlin.psi.psiUtil.isInImportDirective
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@OptIn(KtExperimentalApi::class)
 @SubclassOptInRequired(KtImplementationDetail::class)
-interface KtReference : PsiPolyVariantReference {
+interface KtReference : PsiPolyVariantReference, KtResolvable {
     val resolver: ResolveCache.PolyVariantResolver<KtReference>
 
     override fun getElement(): KtElement
@@ -180,6 +181,5 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtSimpleReference<T : KtReferenceExpression>(expression: T) : AbstractKtReference<T>(expression)
 
-@OptIn(KtExperimentalApi::class)
 @SubclassOptInRequired(KtImplementationDetail::class)
-abstract class KtMultiReference<T : KtElement>(expression: T) : AbstractKtReference<T>(expression), KtResolvable
+abstract class KtMultiReference<T : KtElement>(expression: T) : AbstractKtReference<T>(expression)

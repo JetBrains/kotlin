@@ -11,16 +11,13 @@ import com.intellij.psi.MultiRangeReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-@OptIn(KtExperimentalApi::class)
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtInvokeFunctionReference(
     expression: KtCallExpression,
-) : KtSimpleReference<KtCallExpression>(expression), MultiRangeReference, KtResolvable {
+) : KtSimpleReference<KtCallExpression>(expression), MultiRangeReference {
 
     override val resolvesByNames: Collection<Name> get() = NAMES
 

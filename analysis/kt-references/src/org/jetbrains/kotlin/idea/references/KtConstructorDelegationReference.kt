@@ -9,15 +9,12 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtConstructorDelegationReferenceExpression
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.resolution.KtResolvable
 
-@OptIn(KtExperimentalApi::class)
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtConstructorDelegationReference(
     expression: KtConstructorDelegationReferenceExpression,
-) : KtSimpleReference<KtConstructorDelegationReferenceExpression>(expression), KtResolvable {
+) : KtSimpleReference<KtConstructorDelegationReferenceExpression>(expression) {
     override fun getRangeInElement(): TextRange {
         return TextRange(0, element.textLength)
     }
