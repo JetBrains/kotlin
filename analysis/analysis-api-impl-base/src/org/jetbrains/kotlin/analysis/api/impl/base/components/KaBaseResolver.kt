@@ -38,41 +38,49 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
 
     final override fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? = withValidityAssertion {
         when (this) {
-            // Technically, symbol resolution can be more efficient than calls,
-            // because calls require collecting more information (e.g., argument mappings).
-            // However, the tradeoff is almost complete code duplication and duplicate caches that seem too high.
-            // In reality, the reuse of call resolution is actually a benefit because its result is cached and
-            // effectively reused at all entry points into the resolver API
-            is KtResolvableCall -> when (val callAttempt = tryResolveCall()) {
-                is KaCallResolutionError -> KaBaseSymbolResolutionError(
-                    backingDiagnostic = callAttempt.diagnostic,
-                    backingCandidateSymbols = callAttempt.candidateCalls.flatMap(KaSingleOrMultiCall::symbols)
-                )
-
-                is KaCallResolutionSuccess -> KaBaseSymbolResolutionSuccess(
-                    backingSymbols = callAttempt.call.symbols,
-                    token = callAttempt.token,
-                )
-
-                null -> when (this) {
-                    // Name reference expressions are special since they might represent not only calls
-                    // but also types
-                    is KtNameReferenceExpression -> tryResolveSymbolsImpl()
-                    else -> null
-                }
-            }
-
-            is KtOperationReferenceExpression -> tryResolveSymbolsImpl()
-            is KtElement -> tryResolveSymbolsImpl()
-            is KtReference -> tryResolveSymbolsImpl()
+            is KtResolvableCall -> tryResolveSymbolsForResolvableCall()
+            is KtOperationReferenceExpression -> tryResolveSymbolsForOperationReference()
+            is KtElement -> tryResolveSymbolsForElement()
+            is KtReference -> tryResolveSymbolsForReference()
             else -> null
+        }
+    }
+
+
+    /**
+     * Technically, symbol resolution can be more efficient than calls,
+     * because calls require collecting more information (e.g., argument mappings).
+     * However, the tradeoff is almost complete code duplication and duplicate caches that seem too high.
+     * In reality, the reuse of call resolution is actually a benefit because its result is cached and
+     * effectively reused at all entry points into the resolver API
+     */
+    private fun KtResolvableCall.tryResolveSymbolsForResolvableCall(): KaSymbolResolutionAttempt? {
+        return when (val callAttempt = tryResolveCall()) {
+            is KaCallResolutionError -> KaBaseSymbolResolutionError(
+                backingDiagnostic = callAttempt.diagnostic,
+                backingCandidateSymbols = callAttempt.candidateCalls.flatMap(KaSingleOrMultiCall::symbols)
+            )
+
+            is KaCallResolutionSuccess -> KaBaseSymbolResolutionSuccess(
+                backingSymbols = callAttempt.call.symbols,
+                token = callAttempt.token,
+            )
+
+            null -> when (this) {
+                // Name reference expressions are special since they might represent not only calls
+                // but also types
+                is KtNameReferenceExpression -> tryResolveSymbolsForElement()
+                else -> null
+            }
         }
     }
 
     /**
      * Logic for operations might be non-trivial, so it is more efficient to rely on the call resolution
+     *
+     * @see tryResolveSymbolsForResolvableCall
      */
-    private fun KtOperationReferenceExpression.tryResolveSymbolsImpl(): KaSymbolResolutionAttempt? {
+    private fun KtOperationReferenceExpression.tryResolveSymbolsForOperationReference(): KaSymbolResolutionAttempt? {
         val resolvableCall = parent as? KtResolvableCall ?: return null
         return when (val callAttempt = resolvableCall.tryResolveCall()) {
             is KaCallResolutionError -> KaBaseSymbolResolutionError(
@@ -103,13 +111,12 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
         }
     }
 
-    private fun <T> T.tryResolveSymbolsImpl(): KaSymbolResolutionAttempt? where T : KtResolvable, T : KtElement {
+    private fun <T> T.tryResolveSymbolsForElement(): KaSymbolResolutionAttempt? where T : KtResolvable, T : KtElement {
         checkValidity()
         return performSymbolResolution(this)
     }
 
-    @JvmName("tryResolveSymbolsImplReference")
-    private fun <T> T.tryResolveSymbolsImpl(): KaSymbolResolutionAttempt? where T : KtResolvable, T : KtReference {
+    private fun <T> T.tryResolveSymbolsForReference(): KaSymbolResolutionAttempt? where T : KtResolvable, T : KtReference {
         element.checkValidity()
         return performSymbolResolution(this)
     }
