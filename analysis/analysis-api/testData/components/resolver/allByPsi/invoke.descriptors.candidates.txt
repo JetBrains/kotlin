@@ -29,25 +29,7 @@ KtThisExpression(55,59): 'this'
   NO_CANDIDATES
 
 KtNameReferenceExpression(55,59): 'this'
-  KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = this
-        isSafeNavigation = false
-        type = r.MyClass
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = r.MyClass
-        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-        valueParameters = []
-        contextParameters = []
-        callableId = r/MyClass.invoke
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNamedFunction(65,82): 'fun self() = this'
   NO_CANDIDATES
@@ -59,25 +41,7 @@ KtThisExpression(78,82): 'this'
   NO_CANDIDATES
 
 KtNameReferenceExpression(78,82): 'this'
-  KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = this
-        isSafeNavigation = false
-        type = r.MyClass
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = r.MyClass
-        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-        valueParameters = []
-        contextParameters = []
-        callableId = r/MyClass.invoke
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNamedFunction(86,104): 'fun foo(): Int = 1'
   NO_CANDIDATES

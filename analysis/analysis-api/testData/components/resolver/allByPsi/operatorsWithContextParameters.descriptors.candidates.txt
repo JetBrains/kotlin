@@ -338,25 +338,7 @@ KtThisExpression(337,341): 'this'
   NO_CANDIDATES
 
 KtNameReferenceExpression(337,341): 'this'
-  KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = this
-        isSafeNavigation = false
-        type = A
-      signature = KaFunctionSignature:
-        receiverType = A
-        returnType = kotlin.Unit
-        symbol = /invoke(<extension receiver>: A): kotlin.Unit
-        valueParameters = []
-        contextParameters = []
-        callableId = /invoke
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtClass(345,777): 'class SimpleOperators {'
   NO_CANDIDATES
@@ -629,46 +611,7 @@ KtThisExpression(753,773): 'this@SimpleOperators'
   NO_CANDIDATES
 
 KtNameReferenceExpression(753,757): 'this'
-  KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = this@SimpleOperators
-        isSafeNavigation = false
-        type = SimpleOperators
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /SimpleOperators.invoke(<dispatch receiver>: SimpleOperators): kotlin.Unit
-        valueParameters = []
-        contextParameters = []
-        callableId = /SimpleOperators.invoke
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = this@SimpleOperators
-        isSafeNavigation = false
-        type = SimpleOperators
-      signature = KaFunctionSignature:
-        receiverType = A
-        returnType = kotlin.Unit
-        symbol = /invoke(<extension receiver>: A): kotlin.Unit
-        valueParameters = []
-        contextParameters = []
-        callableId = /invoke
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with invoke>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtContainerNode(757,773): '@SimpleOperators'
   NO_CANDIDATES
@@ -983,25 +926,7 @@ KtThisExpression(877,881): 'this'
   NO_CANDIDATES
 
 KtNameReferenceExpression(877,881): 'this'
-  KaApplicableCallCandidate:
-    candidate = KaImplicitInvokeCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = this
-        isSafeNavigation = false
-        type = A
-      signature = KaFunctionSignature:
-        receiverType = A
-        returnType = kotlin.Unit
-        symbol = /invoke(<extension receiver>: A): kotlin.Unit
-        valueParameters = []
-        contextParameters = []
-        callableId = /invoke
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtPrefixExpression(890,899): '+thisProp'
   KaApplicableCallCandidate:

@@ -299,7 +299,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
         is KtCallElement -> true
         is KtConstructorCalleeExpression -> true
         is KtQualifiedExpression -> true
-        is KtNameReferenceExpression -> true
+        is KtNameReferenceExpression -> ktElement.parent !is KtInstanceExpressionWithLabel
         is KtArrayAccessExpression -> true
         is KtCallableReferenceExpression -> true
         is KtWhenConditionInRange -> true
