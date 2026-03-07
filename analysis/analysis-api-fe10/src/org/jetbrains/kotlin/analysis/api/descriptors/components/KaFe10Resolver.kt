@@ -108,7 +108,11 @@ internal class KaFe10Resolver(
 
     override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? {
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
-        val resolvedCall = psi.getResolvedCall(bindingContext)
+        val resolvedCall = when (val resolvedCall = psi.getResolvedCall(bindingContext)) {
+            is VariableAsFunctionResolvedCall -> resolvedCall.variableCall
+            else -> resolvedCall
+        }
+
         if (resolvedCall != null) {
             val candidate = when (val candidate = resolvedCall.candidateDescriptor) {
                 is FakeCallableDescriptorForObject if (psi is KtNameReferenceExpression) -> candidate.classDescriptor

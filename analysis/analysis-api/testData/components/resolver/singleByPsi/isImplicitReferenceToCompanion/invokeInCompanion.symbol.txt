@@ -1,5 +1,5 @@
 KtNameReferenceExpression(97,99): 'AA'
   KaSymbolResolutionSuccess:
     symbols = [
-      /AA.Companion.invoke(<dispatch receiver>: AA.Companion): kotlin.Unit
+      /AA
     ]

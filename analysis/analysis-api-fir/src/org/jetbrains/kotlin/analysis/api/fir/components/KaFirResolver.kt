@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
@@ -330,6 +331,11 @@ internal class KaFirResolver(
                     symbol.containingDeclarationSymbol
                 }
 
+                is FirNamedFunctionSymbol if psi is KtNameReferenceExpression && symbol.name == OperatorNameConventions.INVOKE -> {
+                    invokeFunctionReceiver(psi)?.let { return it }
+                    symbol
+                }
+
                 else -> symbol
             }
         }
@@ -347,6 +353,18 @@ internal class KaFirResolver(
         } ?: return null
 
         return KaBaseSymbolResolutionSuccess(backingSymbol = symbol)
+    }
+
+    /**
+     * [KtNameReferenceExpression] maps directly to the invoke function, so the corresponding [KtCallExpression]
+     * has to be checked to get the real callee
+     *
+     * @see getContainingCallExpressionForCalleeExpression
+     */
+    private fun invokeFunctionReceiver(psi: KtNameReferenceExpression): KaSymbolResolutionAttempt? {
+        val callExpression = psi.getContainingCallExpressionForCalleeExpression() ?: return null
+        val implicitInvokeCall = callExpression.getOrBuildFirSafe<FirImplicitInvokeCall>(analysisSession.resolutionFacade) ?: return null
+        return implicitInvokeCall.explicitReceiver?.toKaSymbolResolutionAttempt(psi)
     }
 
     /**
