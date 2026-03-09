@@ -96,7 +96,8 @@ internal class WasmUsefulDeclarationProcessor(
                 }!!.owner.enqueue(from, "suspend invoke")
                 true
             }
-            context.wasmSymbols.resumeIntrinsic -> {
+            context.wasmSymbols.resumeWithIntrinsic,
+            context.wasmSymbols.resumeThrowIntrinsic -> {
                 val buildResumeIntrinsicValueResult = context.wasmSymbols.buildResumeIntrinsicValueResult.owner
                 val buildResumeIntrinsicSuspendResult = context.wasmSymbols.buildResumeIntrinsicSuspendResult.owner
                 buildResumeIntrinsicValueResult.enqueue(from, "intrinsic ${buildResumeIntrinsicValueResult.name}")

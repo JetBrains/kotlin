@@ -769,7 +769,7 @@ class BodyGenerator(
             }
         }
 
-        if (call.symbol == wasmSymbols.resumeIntrinsic) {
+        if (call.symbol == wasmSymbols.resumeWithIntrinsic || call.symbol == wasmSymbols.resumeThrowIntrinsic) {
             tryToGenerateIntrinsicCall(call, call.symbol.owner)
             return
         }
@@ -1183,13 +1183,39 @@ class BodyGenerator(
                 body.buildSuspend(contTagId, location)
             }
 
+            wasmSymbols.resumeThrowIntrinsic -> {
+                val wasmContinuation = functionContext.referenceLocal(1)
+
+                val kotlinAny = wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass)
+                val kotlinAnyRefType = WasmRefNullType(WasmHeapType.Type(kotlinAny))
+                val zeroArgContType = WasmHeapType.Type(wasmFileCodegenContext.referenceContType(1))
+                val blockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContType)))
+                wasmFileCodegenContext.defineContBlockType(blockType)
+                val blockTypeSymbol = wasmFileCodegenContext.referenceContBlockType(blockType)
+                body.buildFunctionTypedBlock("on_suspend", blockTypeSymbol) { idx ->
+                    // Throwable
+                    body.buildGetLocal(functionContext.referenceLocal(0), location)
+
+                    if (backendContext.isWasmJsTarget) {
+                        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getJsError), location)
+                    }
+
+                    body.buildGetLocal(wasmContinuation, location)
+                    val contHandle = body.createNewContHandle(contTagId, idx)
+                    body.buildResumeThrow(zeroArgContType, exceptionTagId, contHandle, location)
+                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicValueResult), location)
+                    body.buildInstr(WasmOp.RETURN, location)
+                }
+                body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicSuspendResult), location)
+            }
+
             wasmSymbols.nullable_contref_intrinsic -> {
                 val wasmToType = wasmFileCodegenContext.referenceContType(1)
                 val type = WasmImmediate.HeapType(WasmHeapType.Type(wasmToType))
                 body.buildInstr(WasmOp.REF_NULL, location, type)
             }
 
-            wasmSymbols.resumeIntrinsic -> {
+            wasmSymbols.resumeWithIntrinsic -> {
                 val wasmContinuation = functionContext.referenceLocal(0)
 
                 val kotlinAny = wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass)
@@ -1199,29 +1225,11 @@ class BodyGenerator(
                 wasmFileCodegenContext.defineContBlockType(blockType)
                 val blockTypeSymbol = wasmFileCodegenContext.referenceContBlockType(blockType)
                 body.buildFunctionTypedBlock("on_suspend", blockTypeSymbol) { idx ->
-                    // Check if exception (local 1) is null
+                    // result: Result<T>
                     body.buildGetLocal(functionContext.referenceLocal(1), location)
-                    body.buildInstr(WasmOp.REF_IS_NULL, location)
-                    body.buildIf(null, null)
-                    
-                    // If exception is null: resume with result (local 2)
-                    body.buildGetLocal(functionContext.referenceLocal(2), location)
                     body.buildGetLocal(wasmContinuation, location)
-                    val contHandleResume = body.createNewContHandle(contTagId, idx)
-                    body.buildResume(zeroArgContType, contHandleResume, location)
-                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicValueResult), location)
-                    body.buildInstr(WasmOp.RETURN, location)
-                    
-                    body.buildEnd()
-                    
-                    // If exception is not null: resume_throw with exception (local 1)
-                    body.buildGetLocal(functionContext.referenceLocal(1), location)
-                    if (backendContext.isWasmJsTarget) {
-                        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getJsError), location)
-                    }
-                    body.buildGetLocal(wasmContinuation, location)
-                    val contHandleThrow = body.createNewContHandle(contTagId, idx)
-                    body.buildResumeThrow(zeroArgContType, exceptionTagId, contHandleThrow, location)
+                    val contHandle = body.createNewContHandle(contTagId, idx)
+                    body.buildResume(zeroArgContType, contHandle, location)
                     body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicValueResult), location)
                     body.buildInstr(WasmOp.RETURN, location)
                 }

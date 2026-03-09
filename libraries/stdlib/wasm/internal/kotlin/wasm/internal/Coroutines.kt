@@ -52,7 +52,9 @@ internal class WasmContinuation<T, R>(
         do {
             require(!isResumed) { "WasmContinuation can be resumed only once" }
             isResumed = true
-            val resumeResult: ResumeIntrinsicResult = resumeImpl(wasmContBox, exception, this)
+            val resumeResult: ResumeIntrinsicResult = exception?.let {
+                resumeThrowImpl(it, wasmContBox)
+            } ?: resumeWithImpl(wasmContBox, this)
             wasmContBox = resumeResult.remainingFunction ?: return resumeResult.result
             isResumed = false
             wasSuspended = true
@@ -70,15 +72,6 @@ internal class WasmContinuation<T, R>(
             exception = suspendBodyResult.exceptionOrNull()
         } while (true)
     }
-}
-
-internal fun resumeImpl(wasmContinuation: contref1, exception: Throwable?, result: Any?): ResumeIntrinsicResult =
-    resumeIntrinsic(wasmContinuation, exception, result)
-
-@Suppress("UNUSED_PARAMETER")
-@ExcludedFromCodegen
-internal fun resumeIntrinsic(wasmContinuation: contref1, exception: Throwable?, result: Any?): ResumeIntrinsicResult {
-    implementedAsIntrinsic
 }
 
 internal fun resumeWithImpl(wasmContinuation: contref1, result: Any?): ResumeIntrinsicResult =
