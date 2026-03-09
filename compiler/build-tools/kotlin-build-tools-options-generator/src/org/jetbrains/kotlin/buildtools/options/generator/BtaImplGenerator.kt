@@ -371,7 +371,7 @@ internal class BtaImplGenerator(
             }
             argument.valueType.origin is LiteralPathType -> {
                 add(
-                    maybeGetNullabilitySign(argument) + ".%M { it.%M() }" + maybeGetNullabilitySign(argument) + ".%M() ?: emptyArray()",
+                    maybeGetNullabilitySign(argument) + ".%M { it.%M() }" + maybeGetNullabilitySign(argument) + ".%M()",
                     MemberName(KOTLIN_COLLECTIONS, "map"),
                     MemberName(targetPackage, "absolutePathStringOrThrow", true),
                     MemberName(KOTLIN_COLLECTIONS, "toTypedArray")
@@ -463,7 +463,7 @@ internal class BtaImplGenerator(
             }
             argument.valueType.origin is LiteralPathType -> {
                 add(
-                    ".%M { %M(it) }",
+                    maybeGetNullabilitySign(argument) + ".%M { %M(it) }",
                     MemberName(targetPackage, "mapOrEmpty", true),
                     MemberName(KOTLIN_IO_PATH, "Path")
                 )

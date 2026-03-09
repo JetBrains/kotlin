@@ -77,7 +77,7 @@ internal class JavaSourceRootsConversionTest : BaseArgumentTest<Array<String>>("
         val javaSourceRoots = jvmOperation.compilerArguments[X_JAVA_SOURCE_ROOTS]
 
         assertEquals(
-            getDefaultValueString() ?: "", getValueString(javaSourceRoots)
+            getDefaultValueString(), getValueString(javaSourceRoots)
         )
     }
 
@@ -108,7 +108,7 @@ internal class JavaSourceRootsConversionTest : BaseArgumentTest<Array<String>>("
         operation.compilerArguments.applyArgumentStrings(listOf())
 
         assertEquals(
-            getDefaultValueString() ?: "", getValueString(operation.compilerArguments[X_JAVA_SOURCE_ROOTS])
+            getDefaultValueString(), getValueString(operation.compilerArguments[X_JAVA_SOURCE_ROOTS])
         )
     }
 

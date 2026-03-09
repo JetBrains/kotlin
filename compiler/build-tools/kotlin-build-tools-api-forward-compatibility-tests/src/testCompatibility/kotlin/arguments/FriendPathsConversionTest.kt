@@ -77,7 +77,7 @@ internal class FriendPathsConversionTest : BaseArgumentTest<Array<String>>("Xfri
         val friendPaths = jvmOperation.compilerArguments[X_FRIEND_PATHS]
 
         assertEquals(
-            getDefaultValueString() ?: "", getValueString(friendPaths)
+            getDefaultValueString(), getValueString(friendPaths)
         )
     }
 
@@ -108,7 +108,7 @@ internal class FriendPathsConversionTest : BaseArgumentTest<Array<String>>("Xfri
         operation.compilerArguments.applyArgumentStrings(listOf())
 
         assertEquals(
-            getDefaultValueString() ?: "", getValueString(operation.compilerArguments[X_FRIEND_PATHS])
+            getDefaultValueString(), getValueString(operation.compilerArguments[X_FRIEND_PATHS])
         )
     }
 

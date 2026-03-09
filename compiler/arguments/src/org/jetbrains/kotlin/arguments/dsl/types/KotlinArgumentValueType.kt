@@ -319,16 +319,15 @@ class SystemPathType(
     }
 }
 
-// TODO(KT-84609) Change to be non-nullable with default of emptyList()
 /**
  * A [PathListType] rendered as individually quoted paths separated by commas.
  * Example: `"/usr/bin", "/usr/local/bin"`
  */
 @Serializable
 class LiteralPathType(
-    override val defaultValue: ReleaseDependent<List<Path>?> = ReleaseDependent(null),
+    override val defaultValue: ReleaseDependent<List<Path>?> = ReleaseDependent(emptyList()),
 ) : PathListType() {
-    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true)
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false)
 
     override fun stringRepresentation(value: List<Path>?): String? {
         if (value == null) return null

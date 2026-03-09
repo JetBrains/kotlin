@@ -76,7 +76,7 @@ internal class JavaSourceRootsConversionTest : BaseArgumentTest<List<Path>>("Xja
         val javaSourceRoots = jvmOperation.compilerArguments[X_JAVA_SOURCE_ROOTS]
 
         assertEquals(
-            getDefaultValueString(toolchain.getCompilerVersion()) ?: "",
+            getDefaultValueString(toolchain.getCompilerVersion()),
             getValueString(javaSourceRoots)
         )
     }
@@ -112,7 +112,7 @@ internal class JavaSourceRootsConversionTest : BaseArgumentTest<List<Path>>("Xja
         operation.compilerArguments.applyArgumentStrings(listOf())
 
         assertEquals(
-            getDefaultValueString(toolchain.getCompilerVersion()) ?: "",
+            getDefaultValueString(toolchain.getCompilerVersion()),
             getValueString(operation.compilerArguments[X_JAVA_SOURCE_ROOTS])
         )
     }
@@ -121,6 +121,6 @@ internal class JavaSourceRootsConversionTest : BaseArgumentTest<List<Path>>("Xja
         return listOf("-$argumentName=$value")
     }
 
-    override fun getValueString(argument: List<Path>?): String =
-        argument?.joinToString(",") { it.toFile().absolutePath } ?: ""
+    override fun getValueString(argument: List<Path>?): String? =
+        argument?.joinToString(",") { it.toFile().absolutePath }
 }

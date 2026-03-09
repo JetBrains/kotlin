@@ -190,13 +190,13 @@ internal class JvmCompilerArgumentsImpl(
     if (X_EMIT_JVM_TYPE_ANNOTATIONS in this) { arguments.emitJvmTypeAnnotations = get(X_EMIT_JVM_TYPE_ANNOTATIONS)}
     if (X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL in this) { arguments.enhanceTypeParameterTypesToDefNotNull = get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL)}
     try { if (X_ENHANCED_COROUTINES_DEBUGGING in this) { arguments.enhancedCoroutinesDebugging = get(X_ENHANCED_COROUTINES_DEBUGGING)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ENHANCED_COROUTINES_DEBUGGING. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
-    if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS)?.map { it.absolutePathStringOrThrow() }?.toTypedArray() ?: emptyArray()}
+    if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (X_GENERATE_STRICT_METADATA_VERSION in this) { arguments.strictMetadataVersionSemantics = get(X_GENERATE_STRICT_METADATA_VERSION)}
     try { if (X_INDY_ALLOW_ANNOTATED_LAMBDAS in this) { arguments.indyAllowAnnotatedLambdas = get(X_INDY_ALLOW_ANNOTATED_LAMBDAS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INDY_ALLOW_ANNOTATED_LAMBDAS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     if (X_IR_DO_NOT_CLEAR_BINDING_CONTEXT in this) { arguments.doNotClearBindingContext = get(X_IR_DO_NOT_CLEAR_BINDING_CONTEXT)}
     try { if (X_IR_INLINER in this) { arguments.setUsingReflection("enableIrInliner", get(X_IR_INLINER))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IR_INLINER. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
     if (X_JAVA_PACKAGE_PREFIX in this) { arguments.javaPackagePrefix = get(X_JAVA_PACKAGE_PREFIX)}
-    if (X_JAVA_SOURCE_ROOTS in this) { arguments.javaSourceRoots = get(X_JAVA_SOURCE_ROOTS)?.map { it.absolutePathStringOrThrow() }?.toTypedArray() ?: emptyArray()}
+    if (X_JAVA_SOURCE_ROOTS in this) { arguments.javaSourceRoots = get(X_JAVA_SOURCE_ROOTS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     try { if (X_JAVAC_ARGUMENTS in this) { arguments.setUsingReflection("javacArguments", get(X_JAVAC_ARGUMENTS) ?: emptyArray())} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_JAVAC_ARGUMENTS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     if (X_JDK_RELEASE in this) { arguments.jdkRelease = get(X_JDK_RELEASE)?.stringValue}
     if (X_JSPECIFY_ANNOTATIONS in this) { arguments.jspecifyAnnotations = get(X_JSPECIFY_ANNOTATIONS)?.stringValue}
@@ -406,7 +406,7 @@ internal class JvmCompilerArgumentsImpl(
     public val X_ENHANCED_COROUTINES_DEBUGGING: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_ENHANCED_COROUTINES_DEBUGGING")
 
-    public val X_FRIEND_PATHS: JvmCompilerArgument<List<java.nio.`file`.Path>?> =
+    public val X_FRIEND_PATHS: JvmCompilerArgument<List<java.nio.`file`.Path>> =
         JvmCompilerArgument("X_FRIEND_PATHS")
 
     public val X_GENERATE_STRICT_METADATA_VERSION: JvmCompilerArgument<Boolean> =
@@ -423,7 +423,7 @@ internal class JvmCompilerArgumentsImpl(
     public val X_JAVA_PACKAGE_PREFIX: JvmCompilerArgument<String?> =
         JvmCompilerArgument("X_JAVA_PACKAGE_PREFIX")
 
-    public val X_JAVA_SOURCE_ROOTS: JvmCompilerArgument<List<java.nio.`file`.Path>?> =
+    public val X_JAVA_SOURCE_ROOTS: JvmCompilerArgument<List<java.nio.`file`.Path>> =
         JvmCompilerArgument("X_JAVA_SOURCE_ROOTS")
 
     public val X_JAVAC_ARGUMENTS: JvmCompilerArgument<Array<String>?> =

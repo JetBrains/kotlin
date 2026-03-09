@@ -282,14 +282,16 @@ internal class KotlinWrapperPre2_4_0(
                 }
 
                 JvmCompilerArguments.X_FRIEND_PATHS -> {
-                    if (delegate[key] == null) return null as V
+                    @Suppress("SENSELESS_COMPARISON")
+                    if (delegate[key] == null) return emptyList<String>() as V
 
                     val arrayValue = delegate[key] as Array<String>
                     arrayValue.map { Path(it) } as V
                 }
 
                 JvmCompilerArguments.X_JAVA_SOURCE_ROOTS -> {
-                    if (delegate[key] == null) return null as V
+                    @Suppress("SENSELESS_COMPARISON")
+                    if (delegate[key] == null) return emptyList<String>() as V
 
                     val arrayValue = delegate[key] as Array<String>
                     arrayValue.map { Path(it) } as V

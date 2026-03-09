@@ -76,7 +76,7 @@ internal class FriendPathsConversionTest : BaseArgumentTest<List<Path>>("Xfriend
         val friendPaths = jvmOperation.compilerArguments[X_FRIEND_PATHS]
 
         assertEquals(
-            getDefaultValueString(toolchain.getCompilerVersion()) ?: "",
+            getDefaultValueString(toolchain.getCompilerVersion()),
             getValueString(friendPaths)
         )
     }
@@ -112,7 +112,7 @@ internal class FriendPathsConversionTest : BaseArgumentTest<List<Path>>("Xfriend
         operation.compilerArguments.applyArgumentStrings(listOf())
 
         assertEquals(
-            getDefaultValueString(toolchain.getCompilerVersion()) ?: "",
+            getDefaultValueString(toolchain.getCompilerVersion()),
             getValueString(operation.compilerArguments[X_FRIEND_PATHS])
         )
     }
@@ -121,6 +121,6 @@ internal class FriendPathsConversionTest : BaseArgumentTest<List<Path>>("Xfriend
         return listOf("-$argumentName=$value")
     }
 
-    override fun getValueString(argument: List<Path>?): String =
-        argument?.joinToString(",") { it.toFile().absolutePath } ?: ""
+    override fun getValueString(argument: List<Path>?): String? =
+        argument?.joinToString(",") { it.toFile().absolutePath }
 }

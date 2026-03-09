@@ -263,7 +263,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_FRIEND_PATHS: JvmCompilerArgument<List<Path>?> =
+    public val X_FRIEND_PATHS: JvmCompilerArgument<List<Path>> =
         JvmCompilerArgument("X_FRIEND_PATHS", KotlinReleaseVersion(1, 2, 70))
 
     /**
@@ -336,7 +336,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_JAVA_SOURCE_ROOTS: JvmCompilerArgument<List<Path>?> =
+    public val X_JAVA_SOURCE_ROOTS: JvmCompilerArgument<List<Path>> =
         JvmCompilerArgument("X_JAVA_SOURCE_ROOTS", KotlinReleaseVersion(1, 3, 40))
 
     /**
