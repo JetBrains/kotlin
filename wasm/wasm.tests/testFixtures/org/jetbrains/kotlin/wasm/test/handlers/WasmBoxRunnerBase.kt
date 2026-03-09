@@ -29,7 +29,7 @@ abstract class WasmBoxRunnerBase(
         val jscOfNotWindows = WasmVM.JavaScriptCore.takeIf {
             !System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
         }
-        listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey, jscOfNotWindows)
+        listOfNotNull(WasmVM.V8)
     }
 
     protected fun saveAdditionalFilesAndRun(
