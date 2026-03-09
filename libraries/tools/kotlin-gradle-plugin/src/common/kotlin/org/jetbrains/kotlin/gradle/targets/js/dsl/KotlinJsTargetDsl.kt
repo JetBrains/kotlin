@@ -58,6 +58,17 @@ interface KotlinJsSubTargetContainerDsl : KotlinTarget {
     val browser: KotlinJsBrowserDsl
 
     /**
+     * Returns the configuration options for generic execution environments
+     * used for this [KotlinTarget].
+     *
+     * For more information about execution environments, see
+     * https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsGenericDsl
+     */
+    val generic: KotlinJsGenericDsl
+
+    /**
      * Container for all execution environments enabled for this target.
      * Currently, the only supported environments are Node.js and browser.
      */
@@ -132,6 +143,7 @@ interface KotlinJsSubTargetContainerDsl : KotlinTarget {
 interface KotlinJsTargetDsl :
     KotlinTarget,
     KotlinTargetWithNodeJsDsl,
+    KotlinTargetWithGenericJsDsl,
     HasBinaries<KotlinJsBinaryContainer>,
     HasConfigurableKotlinCompilerOptions<KotlinJsCompilerOptions> {
 
@@ -323,6 +335,46 @@ interface KotlinTargetWithNodeJsDsl {
 }
 
 /**
+ * Base options for configuring generic JS for use in
+ * Kotlin JS targets.
+ *
+ * To learn more see:
+ * - [Set up a Kotlin/JS project](https://kotl.in/kotlin-js-setup).
+ */
+interface KotlinTargetWithGenericJsDsl {
+    /**
+     * Enables 'generic' as the execution environment for this target,
+     * so the project can be used running JavaScript code in generic environments.
+     *
+     * For more information, see https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see KotlinJsGenericDsl
+     */
+    fun generic() = generic { }
+
+    /**
+     * Enables 'generic' as the execution environment for this target,
+     * so the project can be used running JavaScript code in generic environments.
+     *
+     * The target can be configured using [body].
+     *
+     * For more information, see https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see KotlinJsGenericDsl
+     */
+    fun generic(body: KotlinJsGenericDsl.() -> Unit)
+
+    /**
+     * [Action] based version of [generic] above.
+     */
+    fun generic(fn: Action<KotlinJsGenericDsl>) {
+        generic {
+            fn.execute(this)
+        }
+    }
+}
+
+/**
  * Common options for the configuring execution environments for Kotlin JS and Wasm targets.
  *
  * For more information about execution environments, see https://kotl.in/kotlin-js-execution-environments
@@ -440,6 +492,49 @@ interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
      * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
      */
     fun runTask(body: Action<NodeJsExec>)
+
+    /**
+     * _This option is only relevant for JS targets._
+     * _Do not use in WasmJS targets._
+     *
+     * > Note: Passing arguments to the main function is Experimental.
+     * > It may be dropped or changed at any time.
+     *
+     * Enable passing `process.argv` to the main function's `args` parameter.
+     *
+     * See https://kotl.in/kotlin-js-pass-arguments-to-main-function
+     *
+     * @see KotlinJsTargetDsl.passAsArgumentToMainFunction
+     */
+    @ExperimentalMainFunctionArgumentsDsl
+    fun passProcessArgvToMainFunction()
+
+    /**
+     * _This option is only relevant for JS targets._
+     * _Do not use in WasmJS targets._
+     *
+     * > Note: Passing arguments to the main function is Experimental.
+     * > It may be dropped or changed at any time.
+     *
+     * Enable passing `process.argv.slice(2)` to the main function's `args` parameter.
+     *
+     * See https://kotl.in/kotlin-js-pass-arguments-to-main-function
+     *
+     * @see KotlinJsTargetDsl.passAsArgumentToMainFunction
+     */
+    @ExperimentalMainFunctionArgumentsDsl
+    fun passCliArgumentsToMainFunction()
+}
+
+/**
+ * Generic execution environment options for Kotlin JS targets.
+ *
+ * For more information about execution environments, see
+ * https://kotl.in/kotlin-js-execution-environments
+ *
+ * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ */
+interface KotlinJsGenericDsl : KotlinJsSubTargetDsl {
 
     /**
      * _This option is only relevant for JS targets._

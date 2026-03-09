@@ -262,6 +262,31 @@ constructor(
         body(nodejs)
     }
 
+    private val genericLazyDelegate = lazy {
+        compilations.all { compilation ->
+            compilation.binaries
+                .withType(JsIrBinary::class.java)
+                .all { binary ->
+                    val syncTask = binary.linkSyncTask
+
+                    binary.linkTask.configure {
+                        it.finalizedBy(syncTask)
+                    }
+                }
+        }
+        addSubTarget(KotlinGenericJsIr::class.java) {
+            configureSubTarget()
+            subTargetConfigurators.add(LibraryConfigurator(this))
+            subTargetConfigurators.add(GenericJsEnvironmentConfigurator(this))
+        }
+    }
+
+    override val generic: KotlinJsGenericDsl by genericLazyDelegate
+
+    override fun generic(body: KotlinJsGenericDsl.() -> Unit) {
+        body(generic)
+    }
+
     //d8
     @OptIn(ExperimentalWasmDsl::class)
     private val d8LazyDelegate = lazy {

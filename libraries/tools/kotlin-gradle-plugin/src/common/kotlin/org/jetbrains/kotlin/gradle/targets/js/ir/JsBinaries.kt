@@ -16,6 +16,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.addToAssemble
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
@@ -84,7 +85,7 @@ sealed class JsIrBinary(
 
                 task.from.from(linkSyncTaskRegisteredResources)
 
-                task.destinationDirectory.set(compilation.npmProject.dist.mapToFile())
+                task.destinationDirectory.set(if (target.isNodejsConfigured || target.isBrowserConfigured) compilation.npmProject.dist.mapToFile() else project.layout.buildDirectory.dir(KotlinPlatformType.js.name).map { it.dir(compilation.outputModuleName) }.get().mapToFile())
             }
         }
 
