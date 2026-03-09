@@ -89,6 +89,21 @@ internal class WasmUsefulDeclarationProcessor(
                 call.typeArguments[0]?.enqueueRuntimeClassOrAny(from, "intrinsic ${call.symbol.owner.name}")
                 true
             }
+            in context.wasmSymbols.suspendFunctionToContref -> {
+                val classType = call.arguments[0]!!.type
+                classType.classOrFail.functions.singleOrNull {
+                    it.owner.name.asString() == "invoke"
+                }!!.owner.enqueue(from, "suspend invoke")
+                true
+            }
+            context.wasmSymbols.resumeWithIntrinsic,
+            context.wasmSymbols.resumeThrowIntrinsic -> {
+                val buildResumeIntrinsicValueResult = context.wasmSymbols.buildResumeIntrinsicValueResult.owner
+                val buildResumeIntrinsicSuspendResult = context.wasmSymbols.buildResumeIntrinsicSuspendResult.owner
+                buildResumeIntrinsicValueResult.enqueue(from, "intrinsic ${buildResumeIntrinsicValueResult.name}")
+                buildResumeIntrinsicSuspendResult.enqueue(from, "intrinsic ${buildResumeIntrinsicSuspendResult.name}")
+                true
+            }
             context.wasmSymbols.boxIntrinsic -> {
                 val type = call.typeArguments[0]!!
                 if (type == context.irBuiltIns.booleanType) {

@@ -198,11 +198,15 @@ class BackendWasmSymbols(
 
     val returnArgumentIfItIsKotlinAny = CallableIds.returnArgumentIfItIsKotlinAny.functionSymbol()
 
-    val startCoroutineUninterceptedOrReturnIntrinsics = listOf(
-        CallableIds.startCoroutineUninterceptedOrReturnIntrinsics0.functionSymbol(),
-        CallableIds.startCoroutineUninterceptedOrReturnIntrinsics1.functionSymbol(),
-        CallableIds.startCoroutineUninterceptedOrReturnIntrinsics2.functionSymbol(),
-    )
+    // Coroutine Intrinsics
+    val suspendFunctionToContref =
+        CallableIds.suspendFunctionToContref.map { it.functionSymbol() }
+    val nullableContrefIntrinsic = CallableIds.nullableContrefIntrinsic.functionSymbol()
+    val suspendIntrinsic = CallableIds.suspendIntrinsic.functionSymbol()
+    val resumeThrowIntrinsic = CallableIds.resumeThrowIntrinsic.functionSymbol()
+    val resumeWithIntrinsic = CallableIds.resumeWithIntrinsic.functionSymbol()
+    val buildResumeIntrinsicSuspendResult = CallableIds.buildResumeIntrinsicSuspendResult.functionSymbol()
+    val buildResumeIntrinsicValueResult = CallableIds.buildResumeIntrinsicValueResult.functionSymbol()
 
     // KProperty implementations
     val kLocalDelegatedPropertyImpl: IrClassSymbol = ClassIds.KLocalDelegatedPropertyImpl.classSymbol()
@@ -312,6 +316,8 @@ class BackendWasmSymbols(
         val throwValue = CallableIds.throwValue.functionSymbol()
 
         val throw0 = CallableIds.throw0.functionSymbol()
+
+        val getJsError = CallableIds.getJsError.functionSymbol()
 
         val jsConcat = CallableIds.jsConcat.functionSymbol()
     }
@@ -454,9 +460,15 @@ private object CallableIds {
     val nullableFloatIeee754Equals = "nullableFloatIeee754Equals".wasmCallableId
     val nullableDoubleIeee754Equals = "nullableDoubleIeee754Equals".wasmCallableId
     val returnArgumentIfItIsKotlinAny = "returnArgumentIfItIsKotlinAny".wasmCallableId
-    val startCoroutineUninterceptedOrReturnIntrinsics0 = "startCoroutineUninterceptedOrReturnIntrinsic0".wasmCallableId
-    val startCoroutineUninterceptedOrReturnIntrinsics1 = "startCoroutineUninterceptedOrReturnIntrinsic1".wasmCallableId
-    val startCoroutineUninterceptedOrReturnIntrinsics2 = "startCoroutineUninterceptedOrReturnIntrinsic2".wasmCallableId
+
+    val suspendFunctionToContref = (0..2).map { "suspendFunction${it}ToContref".wasmCallableId }
+    val nullableContrefIntrinsic = "nullableContrefIntrinsic".wasmCallableId
+    val suspendIntrinsic = "suspendIntrinsic".wasmCallableId
+    val resumeThrowIntrinsic = "resumeThrowIntrinsic".wasmCallableId
+    val resumeWithIntrinsic = "resumeWithIntrinsic".wasmCallableId
+    val buildResumeIntrinsicSuspendResult = "buildResumeIntrinsicSuspendResult".wasmCallableId
+    val buildResumeIntrinsicValueResult = "buildResumeIntrinsicValueResult".wasmCallableId
+
     val kotlinToJsStringAdapter = "kotlinToJsStringAdapter".wasmCallableId
     val kotlinToJsAnyAdapter = "kotlinToJsAnyAdapter".wasmCallableId
     val numberToDoubleAdapter = "numberToDoubleAdapter".wasmCallableId
@@ -494,6 +506,7 @@ private object CallableIds {
     val throwValue = "throwValue".wasmCallableId
     val throw0 = "throw0".wasmCallableId
     val invokeOnExportedFunctionExit = "invokeOnExportedFunctionExit".wasmCallableId
+    val getJsError = "getJsError".wasmCallableId
 
     val isNotFirstWasmExportCall = "isNotFirstWasmExportCall".wasmCallableId
     val EmptyContinuation = "EmptyContinuation".wasmCallableId
