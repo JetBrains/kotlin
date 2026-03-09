@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.wasm.ir.*
 
 class TypeGenerator(
@@ -47,6 +48,25 @@ class TypeGenerator(
             )
 
         typeCodegenContext.defineFunctionType(declaration.symbol, wasmFunctionType)
+
+        val arity = parameterTypes.size
+        val wasmFunctionTypeRef = typeCodegenContext.referenceFunctionHeapType(declaration.symbol)
+        val suspendFunctionNames = buildSet { repeat(3) { add(FqName("kotlin.coroutines.SuspendFunction$size.invoke")) } }
+        val suspendFunArity = suspendFunctionNames.indexOfFirst { declaration.hasEqualFqName(it) }.takeIf { it >= 0 }
+        if (suspendFunArity != null) {
+
+            typeCodegenContext.defineContFunctionType(suspendFunArity, wasmFunctionType)
+            typeCodegenContext.defineContType(arity, WasmContType(arity, wasmFunctionTypeRef))
+
+            val kotlinAny = wasmModuleTypeTransformer.transformType(irBuiltIns.anyType)
+            val suspendedContFunctionType = WasmFunctionType(listOf(kotlinAny), listOf(kotlinAny))
+
+            typeCodegenContext.defineContFunctionType(1, suspendedContFunctionType)
+
+            val suspendedContFunctionTypeRef = typeCodegenContext.referenceHeapContFunctionType(1)
+            val suspendedContType = WasmContType(1, suspendedContFunctionTypeRef)
+            typeCodegenContext.defineContType(1, suspendedContType)
+        }
     }
 
     fun generateClassTypes(declaration: IrClass) {
