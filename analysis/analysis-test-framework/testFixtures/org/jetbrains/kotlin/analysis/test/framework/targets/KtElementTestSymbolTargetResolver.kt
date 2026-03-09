@@ -100,6 +100,16 @@ internal class KtElementTestSymbolTargetResolver(project: Project) : TestSymbolT
         return owner.valueParameters.find { it.name == target.name.asString() }
     }
 
+    override fun resolveGetterTarget(target: GetterTarget, owner: KtElement): KtElement? {
+        requireSpecificOwner<KtProperty>(target, owner)
+        return owner.getter
+    }
+
+    override fun resolveSetterTarget(target: SetterTarget, owner: KtElement): KtElement? {
+        requireSpecificOwner<KtProperty>(target, owner)
+        return owner.setter
+    }
+
     override fun resolveFieldTarget(target: FieldTarget): KtElement? {
         val callables = resolveCallableTarget(CallableTarget(target.callableId))
         return callables
