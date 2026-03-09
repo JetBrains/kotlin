@@ -163,11 +163,6 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     }
                 }
             }
-            in symbols.startCoroutineUninterceptedOrReturnIntrinsics -> {
-                val arity = symbols.startCoroutineUninterceptedOrReturnIntrinsics.indexOf(symbol)
-                val newSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
-                return irCall(call, newSymbol)
-            }
             context.reflectionSymbols.getKClass -> {
                 val type = call.typeArguments[0]!!
                 val klass = type.classOrNull?.owner ?: error("Invalid type")
