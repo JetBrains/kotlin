@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-79864
 // DUMP_INFERENCE_LOGS: FIXATION, MARKDOWN
 
@@ -11,7 +11,7 @@ interface Owner {
         // valueOf: Expected argument: Class<T!>!, actual argument: Class<C>
         // myJava: Expected receiver: KClass<C & Any> (or KClass<C>), actual receiver: KClass<F>
         // C & Any <: F ==> C <: F?    F <: C & Any  ==> F <: C
-        java.lang.Enum.valueOf(<!ARGUMENT_TYPE_MISMATCH!>defValue::class.myJava<!>, "str")
+        java.lang.Enum.valueOf(defValue::class.myJava, "str")
     }
 }
 

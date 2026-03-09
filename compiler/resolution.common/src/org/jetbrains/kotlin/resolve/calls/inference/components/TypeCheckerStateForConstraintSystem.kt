@@ -29,7 +29,9 @@ abstract class TypeCheckerStateForConstraintSystem(
     abstract fun isMyTypeVariable(type: RigidTypeMarker): Boolean
 
     // super and sub type isSingleClassifierType
-    abstract fun addUpperConstraint(typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker, isNoInfer: Boolean)
+    abstract fun addUpperConstraint(
+        typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker, isDefinitelyNotNullConstraint: Boolean, isNoInfer: Boolean
+    )
 
     abstract fun addLowerConstraint(
         typeVariable: TypeConstructorMarker,
@@ -425,6 +427,7 @@ abstract class TypeCheckerStateForConstraintSystem(
         isNoInfer: Boolean
     ): Boolean = with(extensionTypeContext) {
         val typeVariableLowerBound = typeVariable.lowerBoundIfFlexible()
+        var isDefinitelyNotNullConstraint = false
 
         val simplifiedSuperType = if (typeVariable.isFlexible()) {
             if (typeVariableLowerBound.isDefinitelyNotNullType() && simplifyFlexibleUpperConstraintWithDnnBoundToNullable) {
@@ -436,12 +439,13 @@ abstract class TypeCheckerStateForConstraintSystem(
                 superType
             }
         } else if (typeVariableLowerBound.isDefinitelyNotNullType()) {
+            isDefinitelyNotNullConstraint = true
             superType.withNullability(true)
         } else {
             superType
         }
 
-        addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType, isNoInfer)
+        addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType, isDefinitelyNotNullConstraint, isNoInfer)
 
         if (typeVariableLowerBound.isMarkedNullable()) {
             // here is important that superType is singleClassifierType

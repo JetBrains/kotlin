@@ -142,6 +142,8 @@ class Constraint(
     val isNullabilityConstraint: Boolean,
     // Can only be true in K2
     val isNoInfer: Boolean,
+    //
+    val isDefinitelyNotNullConstraint: Boolean,
     val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
 ) {
     override fun equals(other: Any?): Boolean {

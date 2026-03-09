@@ -153,6 +153,7 @@ class MutableVariableWithConstraints private constructor(
                             constraint.typeHashCode,
                             derivedFrom = constraint.derivedFrom,
                             isNullabilityConstraint = false,
+                            isDefinitelyNotNullConstraint = false,
                             isNoInfer = constraint.isNoInfer && previousConstraint.isNoInfer,
                         ).also {
                             inferenceLogger.withOrigins(

@@ -226,20 +226,41 @@ private class CalculatorForNestedCall(
         var nonNothingProperConstraintPresent = false
 
         for (constraint in constraints) {
-            if (!constraint.hasRequiredKind(direction) || !isProperType(constraint.type))
-                continue
+            val constraintWithProperTypeAndRequiredKind = constraint.hasRequiredKind(direction) && isProperType(constraint.type)
 
             if (constraint.type.typeConstructor().isIntegerLiteralTypeConstructor()) {
                 iltConstraintPresent = true
             } else if (oracle.isSuitableResultedType(constraint.type)) {
-                properConstraintPresent = true
+                if (constraintWithProperTypeAndRequiredKind) {
+                    properConstraintPresent = true
+                }
                 nonNothingProperConstraintPresent = true
-            } else if (!isLowerConstraintForPartiallyAnalyzedVariable(constraint, variable)) {
+            } else if (constraintWithProperTypeAndRequiredKind && !isLowerConstraintForPartiallyAnalyzedVariable(constraint, variable)) {
                 properConstraintPresent = true
             }
         }
 
-        if (!properConstraintPresent) return false
+        if (!properConstraintPresent) {
+            if (direction == FixationDirection.EQUALITY) {
+                val properConstraints = constraints.filter { isProperType(it.type) }
+                val lowerConstraints = properConstraints.filter { it.kind.isLower() }
+                val upperConstraints = properConstraints.filter { it.kind.isUpper() && it.isDefinitelyNotNullConstraint }
+                var flexiblePairFound = false
+                for (lowerConstraint in lowerConstraints) {
+                    for (upperConstraint in upperConstraints) {
+                        if (lowerConstraint.type.lowerBoundIfFlexible().typeConstructor() == upperConstraint.type.lowerBoundIfFlexible().typeConstructor()) {
+                            flexiblePairFound = true
+                            break
+                        }
+                    }
+                }
+                if (!flexiblePairFound) {
+                    return false
+                }
+            } else {
+                return false
+            }
+        }
 
         return !iltConstraintPresent || nonNothingProperConstraintPresent
     }

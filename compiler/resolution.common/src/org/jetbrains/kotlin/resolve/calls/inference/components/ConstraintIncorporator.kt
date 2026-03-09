@@ -352,6 +352,7 @@ class ConstraintIncorporator(
             derivedFrom = derivedFrom,
             inputTypePositionBeforeIncorporation = inputTypePosition,
             isNullabilityConstraint = isNullabilityConstraint,
+            isDefinitelyNotNullConstraint = false,
             isNoInfer = causeOfIncorporationConstraint.isNoInfer || otherConstraint.isNoInfer
         )
 
