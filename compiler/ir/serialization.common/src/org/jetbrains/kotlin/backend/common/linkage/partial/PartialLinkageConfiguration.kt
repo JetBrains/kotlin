@@ -21,6 +21,7 @@ fun CompilerConfiguration.setupPartialLinkageConfig(
     warningDiagnosticFactory: KtSourcelessDiagnosticFactory,
     errorDiagnosticFactory: KtSourcelessDiagnosticFactory,
 ) {
+    @Suppress("DEPRECATION")
     if (arguments.partialLinkageMode != null) {
         report(
             warningDiagnosticFactory,
