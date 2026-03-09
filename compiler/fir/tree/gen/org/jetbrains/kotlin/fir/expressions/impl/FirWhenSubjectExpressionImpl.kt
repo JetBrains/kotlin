@@ -32,6 +32,7 @@ internal class FirWhenSubjectExpressionImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
+    override var domainStatus: DomainStatus?,
     @property:FirIdeOnly
     override var contextSensitiveAlternative: FirPropertyAccessExpression?,
     override var calleeReference: FirNamedReference,
@@ -105,6 +106,10 @@ internal class FirWhenSubjectExpressionImpl(
 
     override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
         nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
+    }
+
+    override fun replaceDomainStatus(newDomainStatus: DomainStatus?) {
+        domainStatus = newDomainStatus
     }
 
     override fun replaceContextSensitiveAlternative(newContextSensitiveAlternative: FirPropertyAccessExpression?) {

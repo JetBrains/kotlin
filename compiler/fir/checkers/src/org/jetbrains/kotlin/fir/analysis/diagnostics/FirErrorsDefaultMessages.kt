@@ -495,6 +495,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_RECEIVER_OR_CONTEXT_PARAMETER_POSITION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_VARARG
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALIDATED_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_REFERENCE_WARNING
@@ -2876,6 +2877,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Unused return value{0}. It was coerced to ''Unit'' due to a functional parameter type.",
             OF_OPTIONAL_NAME
         )
+
+        map.put(INVALIDATED_REFERENCE, "May point to value that has been {0}.", TO_STRING)
 
         map.put(MUST_BE_INITIALIZED, "Property must be initialized.")
         map.put(

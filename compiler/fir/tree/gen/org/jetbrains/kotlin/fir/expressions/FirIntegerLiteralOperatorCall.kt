@@ -31,6 +31,7 @@ abstract class FirIntegerLiteralOperatorCall : FirFunctionCall() {
     abstract override val explicitReceiver: FirExpression?
     abstract override val source: KtSourceElement?
     abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
+    abstract override val domainStatus: DomainStatus?
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
     abstract override val origin: FirFunctionCallOrigin
@@ -58,6 +59,8 @@ abstract class FirIntegerLiteralOperatorCall : FirFunctionCall() {
     abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
+
+    abstract override fun replaceDomainStatus(newDomainStatus: DomainStatus?)
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 

@@ -66,3 +66,23 @@ class ReturnsResultOfEffectDeclaration(val variableReference: VariableReference)
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitReturnsResultOfEffectDeclaration(this, data)
 }
+
+class InvalidatesEffectDeclaration(val variableReference: VariableReference) : EffectDeclaration {
+    override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitInvalidatesEffectDeclaration(this, data)
+}
+
+class ResultFollowsEffectDeclaration(val variableReference: VariableReference) : EffectDeclaration {
+    override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitResultFollowsEffectDeclaration(this, data)
+}
+
+class LocalEffectDeclaration(val variableReference: VariableReference) : EffectDeclaration {
+    override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitLocalEffectDeclaration(this, data)
+}
+
+class ScopedCallsEffectDeclaration(val variableReference: VariableReference) : EffectDeclaration {
+    override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitScopedCallsEffectDeclaration(this, data)
+}

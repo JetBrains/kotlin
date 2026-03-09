@@ -268,6 +268,12 @@ abstract class FirDataFlowAnalyzer(
         return buildSmartCastStatement(flow, variable, typeStatement)
     }
 
+    fun getDomainStatus(expression: FirExpression): DomainStatus? {
+        val flow = currentSmartCastPosition ?: return null
+        val variable = flow.getVariableWithoutUnwrappingAlias(expression, createReal = false) ?: return null
+        return logicSystem.getDomainStatus(flow, variable)
+    }
+
     open fun extractTypeStatementFrom(flow: Flow, variable: DataFlowVariable): TypeStatement? = flow.getTypeStatement(variable)
 
     fun buildSmartCastStatement(
@@ -1185,6 +1191,7 @@ abstract class FirDataFlowAnalyzer(
         val conditionalEffects: MutableList<ConeConditionalEffectDeclaration> = mutableListOf()
         val conditionalReturns: MutableList<ConeConditionalReturnsDeclaration> = mutableListOf()
         val conditionalHoldsIn: MutableList<ConeHoldsInEffectDeclaration> = mutableListOf()
+        val conditionalInvalidates: MutableList<ConeInvalidatesEffectDeclaration> = mutableListOf()
 
         val indexOfLambdaArgument =
             if (targetLambdaArgument == null) -1
@@ -1203,9 +1210,12 @@ abstract class FirDataFlowAnalyzer(
                     hasAnyContractsToProcess = true
                 }
                 targetLambdaArgument != null && effect is ConeHoldsInEffectDeclaration
-                    && effect.valueParameterReference.parameterIndex == indexOfLambdaArgument ->
-                {
+                        && effect.valueParameterReference.parameterIndex == indexOfLambdaArgument -> {
                     conditionalHoldsIn.add(effect)
+                    hasAnyContractsToProcess = true
+                }
+                targetLambdaArgument == null && effect is ConeInvalidatesEffectDeclaration -> {
+                    conditionalInvalidates.add(effect)
                     hasAnyContractsToProcess = true
                 }
             }
@@ -1275,6 +1285,10 @@ abstract class FirDataFlowAnalyzer(
                         }
                     }
                 }
+                for (conditionalInvalidate in conditionalInvalidates) {
+                    val variable = allArgumentVariables.getOrNull(conditionalInvalidate.valueParameterReference.parameterIndex + 1)
+                    variable?.let { logicSystem.updateDomainStatus(flow, it, DomainStatus.INVALIDATED) }
+                }
             }
         }
     }
@@ -1322,6 +1336,7 @@ abstract class FirDataFlowAnalyzer(
 
     fun exitLocalVariableDeclaration(variable: FirProperty, hadExplicitType: Boolean) {
         graphBuilder.exitVariableDeclaration(variable).mergeIncomingFlow { _, flow ->
+            getLocal(variable.symbol, create = true)?.let { logicSystem.addReferenceToDomain(flow, Domain.Unreachable, it) }
             val initializer = variable.initializer ?: return@mergeIncomingFlow
             exitVariableInitialization(flow, initializer, variable, assignmentLhs = null, hadExplicitType)
         }
@@ -1341,6 +1356,12 @@ abstract class FirDataFlowAnalyzer(
                 val variable = flow.getRealVariableWithoutUnwrappingAlias(assignment.lValue)
                 if (variable != null) {
                     logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
+                }
+                flow.getOrCreateVariable(assignment.lValue)?.let { variable ->
+                    logicSystem.removePreviousDomainReferences(flow, variable)
+                    flow.getOrCreateVariable(assignment.rValue)?.let { value ->
+                        logicSystem.addReferenceToDomain(flow, value, variable)
+                    }
                 }
             }
             processConditionalContract(flow, assignment, callArgsExit = null)
@@ -1408,6 +1429,11 @@ abstract class FirDataFlowAnalyzer(
             // `propertyVariable` can be an alias to `initializerVariable`, in which case this will add
             // a redundant type statement which is fine...probably
             flow.addTypeStatement(flow.unwrapVariable(propertyVariable) typeEq initializer.resolvedType)
+        }
+
+        logicSystem.removePreviousDomainReferences(flow, propertyVariable)
+        flow.getOrCreateVariable(initializer)?.let {
+            logicSystem.addReferenceToDomain(flow, it, propertyVariable)
         }
     }
 

@@ -44,6 +44,30 @@ class ContractDescriptionRenderer(private val builder: StringBuilder) : Contract
         builder.append(")")
     }
 
+    override fun visitInvalidatesEffectDeclaration(invalidatesEffect: InvalidatesEffectDeclaration, data: Unit) {
+        builder.append("Invalidates(")
+        invalidatesEffect.variableReference.accept(this, data)
+        builder.append(")")
+    }
+
+    override fun visitResultFollowsEffectDeclaration(resultFollowsEffect: ResultFollowsEffectDeclaration, data: Unit) {
+        builder.append("ResultFollows(")
+        resultFollowsEffect.variableReference.accept(this, data)
+        builder.append(")")
+    }
+
+    override fun visitLocalEffectDeclaration(localEffect: LocalEffectDeclaration, data: Unit) {
+        builder.append("Local(")
+        localEffect.variableReference.accept(this, data)
+        builder.append(")")
+    }
+
+    override fun visitScopedCallsEffectDeclaration(scopedCallsEffect: ScopedCallsEffectDeclaration, data: Unit) {
+        builder.append("ScopedCalls(")
+        scopedCallsEffect.variableReference.accept(this, data)
+        builder.append(")")
+    }
+
     override fun visitLogicalOr(logicalOr: LogicalOr, data: Unit) {
         inBracketsIfNecessary(logicalOr, logicalOr.left) { logicalOr.left.accept(this, data) }
         builder.append(" || ")

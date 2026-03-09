@@ -622,6 +622,18 @@ message Effect {
 
     // ReturnsResultOf(callable: ParameterReference)
     RETURNS_RESULT_OF = 3;
+
+    // Invalidates(callable: ParameterReference)
+    INVALIDATES = 4;
+
+    // ResultFollows(callable: ParameterReference)
+    RESULT_FOLLOWS = 5;
+
+    // Local(callable: ParameterReference)
+    LOCAL = 6;
+
+    // SCOPED_CALLS(callable: ParameterReference)
+    SCOPED_CALLS = 7;
   }
   optional EffectType effect_type = 1;
 

@@ -88,6 +88,26 @@ class ContractSerializer {
                     builder.addEffectConstructorArgument(contractExpressionProto(effectDeclaration.variableReference, contractDescription))
                 }
 
+                is InvalidatesEffectDeclaration -> {
+                    builder.effectType = ProtoBuf.Effect.EffectType.INVALIDATES
+                    builder.addEffectConstructorArgument(contractExpressionProto(effectDeclaration.variableReference, contractDescription))
+                }
+
+                is ResultFollowsEffectDeclaration -> {
+                    builder.effectType = ProtoBuf.Effect.EffectType.RESULT_FOLLOWS
+                    builder.addEffectConstructorArgument(contractExpressionProto(effectDeclaration.variableReference, contractDescription))
+                }
+
+                is LocalEffectDeclaration -> {
+                    builder.effectType = ProtoBuf.Effect.EffectType.LOCAL
+                    builder.addEffectConstructorArgument(contractExpressionProto(effectDeclaration.variableReference, contractDescription))
+                }
+
+                is ScopedCallsEffectDeclaration -> {
+                    builder.effectType = ProtoBuf.Effect.EffectType.SCOPED_CALLS
+                    builder.addEffectConstructorArgument(contractExpressionProto(effectDeclaration.variableReference, contractDescription))
+                }
+
                 // TODO: Add else and do something like reporting issue?
             }
         }

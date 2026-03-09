@@ -156,6 +156,18 @@ public interface ContractBuilder {
     @ContractsDsl
     @SinceKotlin("2.4")
     public fun <R> returnsResultOf(lambda: Function<R>)
+
+    @ContractsDsl
+    public fun invalidates(value: Any?)
+
+    @ContractsDsl
+    public fun resultFollows(value: Any?)
+
+    @ContractsDsl
+    public fun local(value: Any?)
+
+    @ContractsDsl
+    public fun <R> scopedCalls(lambda: Function<R>)
 }
 
 /**

@@ -30854,6 +30854,38 @@ public final class ProtoBuf {
        * </pre>
        */
       RETURNS_RESULT_OF(3, 3),
+      /**
+       * <code>INVALIDATES = 4;</code>
+       *
+       * <pre>
+       * Invalidates(callable: ParameterReference)
+       * </pre>
+       */
+      INVALIDATES(4, 4),
+      /**
+       * <code>RESULT_FOLLOWS = 5;</code>
+       *
+       * <pre>
+       * ResultFollows(callable: ParameterReference)
+       * </pre>
+       */
+      RESULT_FOLLOWS(5, 5),
+      /**
+       * <code>LOCAL = 6;</code>
+       *
+       * <pre>
+       * Local(callable: ParameterReference)
+       * </pre>
+       */
+      LOCAL(6, 6),
+      /**
+       * <code>SCOPED_CALLS = 7;</code>
+       *
+       * <pre>
+       * SCOPED_CALLS(callable: ParameterReference)
+       * </pre>
+       */
+      SCOPED_CALLS(7, 7),
       ;
 
       /**
@@ -30889,6 +30921,38 @@ public final class ProtoBuf {
        * </pre>
        */
       public static final int RETURNS_RESULT_OF_VALUE = 3;
+      /**
+       * <code>INVALIDATES = 4;</code>
+       *
+       * <pre>
+       * Invalidates(callable: ParameterReference)
+       * </pre>
+       */
+      public static final int INVALIDATES_VALUE = 4;
+      /**
+       * <code>RESULT_FOLLOWS = 5;</code>
+       *
+       * <pre>
+       * ResultFollows(callable: ParameterReference)
+       * </pre>
+       */
+      public static final int RESULT_FOLLOWS_VALUE = 5;
+      /**
+       * <code>LOCAL = 6;</code>
+       *
+       * <pre>
+       * Local(callable: ParameterReference)
+       * </pre>
+       */
+      public static final int LOCAL_VALUE = 6;
+      /**
+       * <code>SCOPED_CALLS = 7;</code>
+       *
+       * <pre>
+       * SCOPED_CALLS(callable: ParameterReference)
+       * </pre>
+       */
+      public static final int SCOPED_CALLS_VALUE = 7;
 
 
       public final int getNumber() { return value; }
@@ -30899,6 +30963,10 @@ public final class ProtoBuf {
           case 1: return CALLS;
           case 2: return RETURNS_NOT_NULL;
           case 3: return RETURNS_RESULT_OF;
+          case 4: return INVALIDATES;
+          case 5: return RESULT_FOLLOWS;
+          case 6: return LOCAL;
+          case 7: return SCOPED_CALLS;
           default: return null;
         }
       }

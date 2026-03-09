@@ -99,6 +99,41 @@ class KtReturnsResultOfDeclaration<Type, Diagnostic>(
         contractDescriptionVisitor.visitReturnsResultOfEffectDeclaration(this, data)
 }
 
+abstract class DomainEffectDeclaration<Type, Diagnostic> : KtEffectDeclaration<Type, Diagnostic>() {
+    abstract val valueParameterReference: KtValueParameterReference<Type, Diagnostic>
+
+    override val erroneous: Boolean
+        get() = valueParameterReference.erroneous
+}
+
+class KtInvalidatesEffectDeclaration<Type, Diagnostic>(
+    override val valueParameterReference: KtValueParameterReference<Type, Diagnostic>
+) : DomainEffectDeclaration<Type, Diagnostic>() {
+    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D, Type, Diagnostic>, data: D): R =
+        contractDescriptionVisitor.visitInvalidatesEffectDeclaration(this, data)
+}
+
+class KtResultFollowsEffectDeclaration<Type, Diagnostic>(
+    override val valueParameterReference: KtValueParameterReference<Type, Diagnostic>
+) : DomainEffectDeclaration<Type, Diagnostic>() {
+    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D, Type, Diagnostic>, data: D): R =
+        contractDescriptionVisitor.visitResultFollowsEffectDeclaration(this, data)
+}
+
+class KtLocalEffectDeclaration<Type, Diagnostic>(
+    override val valueParameterReference: KtValueParameterReference<Type, Diagnostic>
+) : DomainEffectDeclaration<Type, Diagnostic>() {
+    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D, Type, Diagnostic>, data: D): R =
+        contractDescriptionVisitor.visitLocalEffectDeclaration(this, data)
+}
+
+class KtScopedCallsEffectDeclaration<Type, Diagnostic>(
+    override val valueParameterReference: KtValueParameterReference<Type, Diagnostic>
+) : DomainEffectDeclaration<Type, Diagnostic>() {
+    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D, Type, Diagnostic>, data: D): R =
+        contractDescriptionVisitor.visitScopedCallsEffectDeclaration(this, data)
+}
+
 class KtErroneousCallsEffectDeclaration<Type, Diagnostic>(
     valueParameterReference: KtValueParameterReference<Type, Diagnostic>,
     val diagnostic: Diagnostic

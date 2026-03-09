@@ -41810,6 +41810,38 @@ public final class DebugProtoBuf {
        * </pre>
        */
       RETURNS_RESULT_OF(3, 3),
+      /**
+       * <code>INVALIDATES = 4;</code>
+       *
+       * <pre>
+       * Invalidates(callable: ParameterReference)
+       * </pre>
+       */
+      INVALIDATES(4, 4),
+      /**
+       * <code>RESULT_FOLLOWS = 5;</code>
+       *
+       * <pre>
+       * ResultFollows(callable: ParameterReference)
+       * </pre>
+       */
+      RESULT_FOLLOWS(5, 5),
+      /**
+       * <code>LOCAL = 6;</code>
+       *
+       * <pre>
+       * Local(callable: ParameterReference)
+       * </pre>
+       */
+      LOCAL(6, 6),
+      /**
+       * <code>SCOPED_CALLS = 7;</code>
+       *
+       * <pre>
+       * SCOPED_CALLS(callable: ParameterReference)
+       * </pre>
+       */
+      SCOPED_CALLS(7, 7),
       ;
 
       /**
@@ -41845,6 +41877,38 @@ public final class DebugProtoBuf {
        * </pre>
        */
       public static final int RETURNS_RESULT_OF_VALUE = 3;
+      /**
+       * <code>INVALIDATES = 4;</code>
+       *
+       * <pre>
+       * Invalidates(callable: ParameterReference)
+       * </pre>
+       */
+      public static final int INVALIDATES_VALUE = 4;
+      /**
+       * <code>RESULT_FOLLOWS = 5;</code>
+       *
+       * <pre>
+       * ResultFollows(callable: ParameterReference)
+       * </pre>
+       */
+      public static final int RESULT_FOLLOWS_VALUE = 5;
+      /**
+       * <code>LOCAL = 6;</code>
+       *
+       * <pre>
+       * Local(callable: ParameterReference)
+       * </pre>
+       */
+      public static final int LOCAL_VALUE = 6;
+      /**
+       * <code>SCOPED_CALLS = 7;</code>
+       *
+       * <pre>
+       * SCOPED_CALLS(callable: ParameterReference)
+       * </pre>
+       */
+      public static final int SCOPED_CALLS_VALUE = 7;
 
 
       public final int getNumber() { return value; }
@@ -41855,6 +41919,10 @@ public final class DebugProtoBuf {
           case 1: return CALLS;
           case 2: return RETURNS_NOT_NULL;
           case 3: return RETURNS_RESULT_OF;
+          case 4: return INVALIDATES;
+          case 5: return RESULT_FOLLOWS;
+          case 6: return LOCAL;
+          case 7: return SCOPED_CALLS;
           default: return null;
         }
       }
@@ -46135,7 +46203,7 @@ public final class DebugProtoBuf {
       "B\n\017file_annotation\030\005 \003(\0132).org.jetbrains" +
       ".kotlin.metadata.Annotation*\005\010d\020\310\001\"A\n\010Co" +
       "ntract\0225\n\006effect\030\001 \003(\0132%.org.jetbrains.k" +
-      "otlin.metadata.Effect\"\217\005\n\006Effect\022E\n\013effe",
+      "otlin.metadata.Effect\"\322\005\n\006Effect\022E\n\013effe",
       "ct_type\030\001 \001(\01620.org.jetbrains.kotlin.met" +
       "adata.Effect.EffectType\022N\n\033effect_constr" +
       "uctor_argument\030\002 \003(\0132).org.jetbrains.kot" +
@@ -46145,34 +46213,36 @@ public final class DebugProtoBuf {
       "(\01624.org.jetbrains.kotlin.metadata.Effec" +
       "t.InvocationKind\022Q\n\016condition_kind\030\005 \001(\016" +
       "29.org.jetbrains.kotlin.metadata.Effect." +
-      "EffectConditionKind\"Z\n\nEffectType\022\024\n\020RET",
-      "URNS_CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETURNS_NO" +
-      "T_NULL\020\002\022\025\n\021RETURNS_RESULT_OF\020\003\"G\n\016Invoc" +
-      "ationKind\022\020\n\014AT_MOST_ONCE\020\000\022\020\n\014EXACTLY_O" +
-      "NCE\020\001\022\021\n\rAT_LEAST_ONCE\020\002\"]\n\023EffectCondit" +
-      "ionKind\022\030\n\024CONCLUSION_CONDITION\020\000\022\025\n\021RET" +
-      "URNS_CONDITION\020\001\022\025\n\021HOLDSIN_CONDITION\020\002\"" +
-      "\245\003\n\nExpression\022\020\n\005flags\030\001 \001(\005:\0010\022!\n\031valu" +
-      "e_parameter_reference\030\002 \001(\005\022O\n\016constant_" +
-      "value\030\003 \001(\01627.org.jetbrains.kotlin.metad" +
-      "ata.Expression.ConstantValue\022=\n\020is_insta",
-      "nce_type\030\004 \001(\0132#.org.jetbrains.kotlin.me" +
-      "tadata.Type\022!\n\023is_instance_type_id\030\005 \001(\005" +
-      "B\004\240\265\030\001\022?\n\014and_argument\030\006 \003(\0132).org.jetbr" +
-      "ains.kotlin.metadata.Expression\022>\n\013or_ar" +
-      "gument\030\007 \003(\0132).org.jetbrains.kotlin.meta" +
-      "data.Expression\".\n\rConstantValue\022\010\n\004TRUE" +
-      "\020\000\022\t\n\005FALSE\020\001\022\010\n\004NULL\020\002\";\n\022CompilerPlugi" +
-      "nData\022\027\n\tplugin_id\030\001 \002(\005B\004\230\265\030\001\022\014\n\004data\030\002" +
-      " \002(\014*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n" +
-      "\010ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n",
-      "\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022" +
-      "\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCA" +
-      "L\020\005*Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFA" +
-      "KE_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHES" +
-      "IZED\020\003*L\n\021ReturnValueStatus\022\017\n\013UNSPECIFI" +
-      "ED\020\000\022\014\n\010MUST_USE\020\001\022\030\n\024EXPLICITLY_IGNORAB" +
-      "LE\020\002B\017B\rDebugProtoBuf"
+      "EffectConditionKind\"\234\001\n\nEffectType\022\024\n\020RE",
+      "TURNS_CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETURNS_N" +
+      "OT_NULL\020\002\022\025\n\021RETURNS_RESULT_OF\020\003\022\017\n\013INVA" +
+      "LIDATES\020\004\022\022\n\016RESULT_FOLLOWS\020\005\022\t\n\005LOCAL\020\006" +
+      "\022\020\n\014SCOPED_CALLS\020\007\"G\n\016InvocationKind\022\020\n\014" +
+      "AT_MOST_ONCE\020\000\022\020\n\014EXACTLY_ONCE\020\001\022\021\n\rAT_L" +
+      "EAST_ONCE\020\002\"]\n\023EffectConditionKind\022\030\n\024CO" +
+      "NCLUSION_CONDITION\020\000\022\025\n\021RETURNS_CONDITIO" +
+      "N\020\001\022\025\n\021HOLDSIN_CONDITION\020\002\"\245\003\n\nExpressio" +
+      "n\022\020\n\005flags\030\001 \001(\005:\0010\022!\n\031value_parameter_r" +
+      "eference\030\002 \001(\005\022O\n\016constant_value\030\003 \001(\01627",
+      ".org.jetbrains.kotlin.metadata.Expressio" +
+      "n.ConstantValue\022=\n\020is_instance_type\030\004 \001(" +
+      "\0132#.org.jetbrains.kotlin.metadata.Type\022!" +
+      "\n\023is_instance_type_id\030\005 \001(\005B\004\240\265\030\001\022?\n\014and" +
+      "_argument\030\006 \003(\0132).org.jetbrains.kotlin.m" +
+      "etadata.Expression\022>\n\013or_argument\030\007 \003(\0132" +
+      ").org.jetbrains.kotlin.metadata.Expressi" +
+      "on\".\n\rConstantValue\022\010\n\004TRUE\020\000\022\t\n\005FALSE\020\001" +
+      "\022\010\n\004NULL\020\002\";\n\022CompilerPluginData\022\027\n\tplug" +
+      "in_id\030\001 \002(\005B\004\230\265\030\001\022\014\n\004data\030\002 \002(\014*9\n\010Modal",
+      "ity\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n" +
+      "\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013" +
+      "\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023" +
+      "\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMember" +
+      "Kind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001" +
+      "\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003*L\n\021Ret" +
+      "urnValueStatus\022\017\n\013UNSPECIFIED\020\000\022\014\n\010MUST_" +
+      "USE\020\001\022\030\n\024EXPLICITLY_IGNORABLE\020\002B\017B\rDebug" +
+      "ProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

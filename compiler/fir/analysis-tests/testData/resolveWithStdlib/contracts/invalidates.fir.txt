@@ -1,0 +1,50 @@
+FILE: invalidates.kt
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final inline fun <A, B> R|A|.uses(block: R|(A) -> B|): R|B|
+        [R|Contract description]
+         <
+            Invalidates(this)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.invalidates|(this@R|/uses|)
+            }
+            )
+        }
+
+        ^uses R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|B|>|(this@R|/uses|)
+    }
+    public final data class A : R|kotlin/Any| {
+        public constructor(n: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val n: R|kotlin/Int| = R|<local>/n|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(n: R|kotlin/Int| = this@R|/A|.R|/A.n|): R|A|
+
+    }
+    public final fun R|A|.foo(): R|kotlin/Unit| {
+    }
+    public final fun test1(): R|kotlin/Unit| {
+        lval x: R|A| = R|/A.A|(Int(1))
+        lval t: R|kotlin/Int| = R|<local>/x|.R|/uses|<R|A|, R|kotlin/Int|>(<L> = uses@fun <anonymous>(it: R|A|): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|<local>/it|.R|/A.n|
+        }
+        )
+        lval g: R|kotlin/Int| = R|<local>/x|.R|/A.n|
+        lval h: R|A| = R|<local>/x|
+        R|<local>/x|.R|/foo|()
+    }
+    public final fun test2(): R|kotlin/Unit| {
+        lval x: R|A| = R|/A.A|(Int(1))
+        lval y: R|A| = R|<local>/x|
+        lval t: R|kotlin/Int| = R|<local>/x|.R|/uses|<R|A|, R|kotlin/Int|>(<L> = uses@fun <anonymous>(it: R|A|): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|<local>/it|.R|/A.n|
+        }
+        )
+        R|<local>/y|.R|/foo|()
+    }

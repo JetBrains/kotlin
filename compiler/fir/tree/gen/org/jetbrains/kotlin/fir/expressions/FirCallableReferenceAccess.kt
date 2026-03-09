@@ -33,6 +33,7 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
     abstract override val extensionReceiver: FirExpression?
     abstract override val source: KtSourceElement?
     abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
+    abstract override val domainStatus: DomainStatus?
     abstract override val calleeReference: FirNamedReference
     abstract val hasQuestionMarkAtLHS: Boolean
     /**
@@ -66,6 +67,8 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
     abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
+
+    abstract override fun replaceDomainStatus(newDomainStatus: DomainStatus?)
 
     abstract fun replaceCalleeReference(newCalleeReference: FirNamedReference)
 

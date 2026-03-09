@@ -33,6 +33,7 @@ open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnn
     override var extensionReceiver: FirExpression? = null
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    override var domainStatus: DomainStatus? = null
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
     open var isCallWithExplicitReceiver: Boolean = false
@@ -48,6 +49,7 @@ open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnn
             extensionReceiver,
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
+            domainStatus,
             argumentList,
             calleeReference,
             isCallWithExplicitReceiver,

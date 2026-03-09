@@ -5502,6 +5502,13 @@ private fun KaDiagnosticConverterBuilder.addConversions122() {
             token,
         )
     }
+    add(FirErrors.INVALIDATED_REFERENCE) { firDiagnostic ->
+        InvalidatedReferenceImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.USELESS_IS_CHECK) { firDiagnostic ->
         UselessIsCheckImpl(
             firDiagnostic.a,

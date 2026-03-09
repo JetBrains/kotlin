@@ -37,6 +37,7 @@ internal class FirComponentCallImpl(
     override var extensionReceiver: FirExpression?,
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
+    override var domainStatus: DomainStatus?,
     override var argumentList: FirArgumentList,
     override var explicitReceiver: FirExpression,
     override val componentIndex: Int,
@@ -131,6 +132,10 @@ internal class FirComponentCallImpl(
 
     override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
         nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
+    }
+
+    override fun replaceDomainStatus(newDomainStatus: DomainStatus?) {
+        domainStatus = newDomainStatus
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

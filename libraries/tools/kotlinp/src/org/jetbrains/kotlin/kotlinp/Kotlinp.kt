@@ -255,6 +255,22 @@ abstract class Kotlinp(protected val settings: Settings) {
             KmEffectType.RETURNS_RESULT_OF -> {
                 printer.append("returnsResultOf(").appendMeaningfulConstructorArgument(effect).append(")")
             }
+
+            KmEffectType.INVALIDATES -> {
+                printer.append("invalidates(").appendMeaningfulConstructorArgument(effect).append(")")
+            }
+
+            KmEffectType.RESULT_FOLLOWS -> {
+                printer.append("resultFollows(").appendMeaningfulConstructorArgument(effect).append(")")
+            }
+
+            KmEffectType.LOCAL -> {
+                printer.append("local(").appendMeaningfulConstructorArgument(effect).append(")")
+            }
+
+            KmEffectType.SCOPED_CALLS -> {
+                printer.append("scopedCalls(").appendMeaningfulConstructorArgument(effect).append(")")
+            }
         }
         effect.conclusion?.let {
             printer.append(" implies (", printEffectExpression(it), ")")

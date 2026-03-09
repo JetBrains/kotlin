@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -40,6 +37,7 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     override var extensionReceiver: FirExpression?,
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
+    override var domainStatus: DomainStatus?,
     @property:FirIdeOnly
     override var contextSensitiveAlternative: FirPropertyAccessExpression?,
     override var calleeReference: FirNamedReference,
@@ -134,6 +132,10 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
 
     override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
         nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
+    }
+
+    override fun replaceDomainStatus(newDomainStatus: DomainStatus?) {
+        domainStatus = newDomainStatus
     }
 
     override fun replaceContextSensitiveAlternative(newContextSensitiveAlternative: FirPropertyAccessExpression?) {

@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirCallableReferenceAccessImpl
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -36,6 +33,7 @@ class FirCallableReferenceAccessBuilder : FirQualifiedAccessExpressionBuilder, F
     override var extensionReceiver: FirExpression? = null
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    override var domainStatus: DomainStatus? = null
     lateinit var calleeReference: FirNamedReference
     var hasQuestionMarkAtLHS: Boolean = false
     var errorArgumentList: FirArgumentList? = null
@@ -51,6 +49,7 @@ class FirCallableReferenceAccessBuilder : FirQualifiedAccessExpressionBuilder, F
             extensionReceiver,
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
+            domainStatus,
             calleeReference,
             hasQuestionMarkAtLHS,
             errorArgumentList,

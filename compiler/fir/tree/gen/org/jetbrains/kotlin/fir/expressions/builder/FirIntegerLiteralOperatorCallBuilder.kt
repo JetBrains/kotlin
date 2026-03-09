@@ -31,6 +31,7 @@ open class FirIntegerLiteralOperatorCallBuilder : FirAbstractFunctionCallBuilder
     override var explicitReceiver: FirExpression? = null
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    override var domainStatus: DomainStatus? = null
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
     override lateinit var origin: FirFunctionCallOrigin
@@ -46,6 +47,7 @@ open class FirIntegerLiteralOperatorCallBuilder : FirAbstractFunctionCallBuilder
             explicitReceiver,
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
+            domainStatus,
             argumentList,
             calleeReference,
             origin,

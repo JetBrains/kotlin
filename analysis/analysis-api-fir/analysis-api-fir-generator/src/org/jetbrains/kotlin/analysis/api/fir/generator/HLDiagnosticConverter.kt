@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.DomainStatus
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -393,6 +394,7 @@ internal object FirToKtConversionCreator {
         KotlinTarget::class,
         ReturnValueStatus::class,
         MavenComparableVersion::class,
+        DomainStatus::class,
     )
 
     private val KType.kClass: KClass<*>

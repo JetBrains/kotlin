@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.fir.DfaType
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.DomainStatus
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -52,6 +53,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         }
         result.copyStatements(statementFlows, commonFlow, union)
         result.copyImplications(statementFlows)
+        result.copyDomains(flows)
         return result
     }
 
@@ -251,6 +253,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             variableStorage.replaceReceiverReferencesInMembers(variable, replacementOrNext) { old, new -> replaceVariable(old, new) }
             implications.replaceVariable(variable, replacementOrNext)
             approvedTypeStatements.replaceVariable(variable, replacementOrNext)
+            domainReferences.replaceVariable(variable, replacementOrNext)
             if (aliases != null && replacementOrNext != null) {
                 directAliasMap -= replacementOrNext
                 val withoutSelf = aliases - replacementOrNext
@@ -261,6 +264,45 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             }
         }
     }
+
+    private fun MutableFlow.copyDomains(flows: Collection<PersistentFlow>) {
+        for (flow in flows) {
+            for ((domain, references) in flow.domainReferences) {
+                domainReferences[domain] = domainReferences.getOrElse(domain) { persistentSetOf() } + references
+            }
+            for ((domain, status) in flow.domainStatus) {
+                domainStatus[domain] = domainStatus.getOrDefault(domain, DomainStatus.OK).join(status)
+            }
+        }
+    }
+
+    fun removePreviousDomainReferences(flow: MutableFlow, variable: DataFlowVariable) {
+        for (domain in flow.domainReferences.keys.toList()) {
+            val references = flow.domainReferences[domain] ?: continue
+            flow.domainReferences[domain] = references - variable
+        }
+    }
+
+    fun addReferenceToDomain(flow: MutableFlow, domain: Domain, variable: DataFlowVariable) {
+        flow.domainReferences[domain] = flow.domainReferences.getOrElse(domain) { persistentSetOf() } + variable
+    }
+
+    fun addReferenceToDomain(flow: MutableFlow, old: DataFlowVariable, new: DataFlowVariable) {
+        for (domain in flow.getDomains(old)) {
+            addReferenceToDomain(flow, domain, new)
+        }
+    }
+
+    fun updateDomainStatus(flow: MutableFlow, variable: DataFlowVariable, newStatus: DomainStatus) {
+        for (domain in flow.getDomains(variable)) {
+            flow.domainStatus[domain] = (flow.domainStatus[domain] ?: DomainStatus.OK).join(newStatus)
+        }
+    }
+
+    fun getDomainStatus(flow: Flow, variable: DataFlowVariable): DomainStatus =
+        flow.getDomains(variable).fold(DomainStatus.OK) { acc, domain ->
+            acc.join(flow.domainStatus(domain))
+        }
 
     private fun approveOperationStatement(
         logicStatements: Map<DataFlowVariable, PersistentList<Implication>>,
@@ -512,5 +554,14 @@ private fun Statement.replaceVariable(from: RealVariable, to: RealVariable): Sta
         is OperationStatement -> copy(variable = to)
         is PersistentTypeStatement -> copy(variable = to)
         is MutableTypeStatement -> MutableTypeStatement(to, upperTypes, lowerTypes)
+    }
+}
+
+private fun <A> PersistentMap.Builder<A, PersistentSet<DataFlowVariable>>.replaceVariable(from: DataFlowVariable, to: DataFlowVariable?) {
+    for (key in keys.toList()) {
+        val current = this[key] ?: continue
+        if (from in current) {
+            this[key] = current - from + setOfNotNull(to)
+        }
     }
 }

@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirPropertyAccessExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -38,6 +35,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessExpressionBuilder, 
     override var extensionReceiver: FirExpression? = null
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    override var domainStatus: DomainStatus? = null
     var contextSensitiveAlternative: FirPropertyAccessExpression? = null
     lateinit var calleeReference: FirNamedReference
 
@@ -53,6 +51,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessExpressionBuilder, 
             extensionReceiver,
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
+            domainStatus,
             contextSensitiveAlternative,
             calleeReference,
         )
@@ -83,6 +82,7 @@ inline fun buildPropertyAccessExpressionCopy(original: FirPropertyAccessExpressi
     copyBuilder.extensionReceiver = original.extensionReceiver
     copyBuilder.source = original.source
     copyBuilder.nonFatalDiagnostics.addAll(original.nonFatalDiagnostics)
+    copyBuilder.domainStatus = original.domainStatus
     copyBuilder.contextSensitiveAlternative = original.contextSensitiveAlternative
     copyBuilder.calleeReference = original.calleeReference
     return copyBuilder.apply(init).build()

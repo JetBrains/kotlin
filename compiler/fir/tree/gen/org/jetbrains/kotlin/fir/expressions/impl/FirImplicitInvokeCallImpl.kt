@@ -36,6 +36,7 @@ internal class FirImplicitInvokeCallImpl(
     override var extensionReceiver: FirExpression?,
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
+    override var domainStatus: DomainStatus?,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
     override val isCallWithExplicitReceiver: Boolean,
@@ -133,6 +134,10 @@ internal class FirImplicitInvokeCallImpl(
 
     override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
         nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
+    }
+
+    override fun replaceDomainStatus(newDomainStatus: DomainStatus?) {
+        domainStatus = newDomainStatus
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

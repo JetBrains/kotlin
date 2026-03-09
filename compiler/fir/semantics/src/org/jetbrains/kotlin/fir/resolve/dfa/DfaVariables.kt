@@ -177,3 +177,12 @@ private fun FirVariable.isInCurrentOrFriendModule(session: FirSession): Boolean 
     val currentModuleData = session.moduleData
     return currentModuleData.canSeeInternalsOf(propertyModuleData)
 }
+
+sealed interface Domain {
+    data object Unreachable : Domain
+    data class Known(val originalVariable: DataFlowVariable) : Domain
+
+    companion object {
+        fun fresh(originalVariable: DataFlowVariable): Domain = Known(originalVariable)
+    }
+}

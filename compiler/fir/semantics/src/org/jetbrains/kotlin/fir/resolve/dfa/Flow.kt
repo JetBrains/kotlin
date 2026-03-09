@@ -9,6 +9,8 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentHashMapOf
+import kotlinx.collections.immutable.persistentSetOf
+import org.jetbrains.kotlin.fir.expressions.DomainStatus
 
 abstract class Flow {
     abstract val knownVariables: Set<DataFlowVariable>
@@ -18,6 +20,11 @@ abstract class Flow {
 
     open fun unwrapVariable(variable: DataFlowVariable): DataFlowVariable =
         if (variable is RealVariable) unwrapVariable(variable) else variable
+
+    abstract val knownDomains: Set<Domain>
+    abstract fun getReferences(domain: Domain): Set<DataFlowVariable>
+    abstract fun getDomains(variable: DataFlowVariable): Set<Domain>
+    abstract fun domainStatus(domain: Domain): DomainStatus
 }
 
 class PersistentFlow internal constructor(
@@ -33,6 +40,8 @@ class PersistentFlow internal constructor(
     // in `directAliasMap`. `backwardsAliasMap` maps each representative to the rest of the set.
     internal val directAliasMap: PersistentMap<RealVariable, RealVariable>,
     private val backwardsAliasMap: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
+    internal val domainStatus: PersistentMap<Domain, DomainStatus>,
+    internal val domainReferences: PersistentMap<Domain, PersistentSet<DataFlowVariable>>,
 ) : Flow() {
     private val level: Int = if (previousFlow != null) previousFlow.level + 1 else 0
 
@@ -50,6 +59,18 @@ class PersistentFlow internal constructor(
 
     override fun getImplications(variable: DataFlowVariable): Collection<Implication>? =
         implications[variable]
+
+    override val knownDomains: Set<Domain>
+        get() = domainStatus.keys + domainReferences.keys
+
+    override fun getReferences(domain: Domain): Set<DataFlowVariable> =
+        domainReferences[domain] ?: emptySet()
+
+    override fun getDomains(variable: DataFlowVariable): Set<Domain> =
+        domainReferences.filterValues { it.contains(variable) }.keys
+
+    override fun domainStatus(domain: Domain): DomainStatus =
+        domainStatus[domain] ?: DomainStatus.OK
 
     fun lowestCommonAncestor(other: PersistentFlow): PersistentFlow? {
         var left = this
@@ -74,6 +95,8 @@ class PersistentFlow internal constructor(
         assignmentIndex.builder(),
         directAliasMap.builder(),
         backwardsAliasMap.builder(),
+        domainStatus.builder(),
+        domainReferences.builder(),
     )
 }
 
@@ -84,9 +107,13 @@ class MutableFlow internal constructor(
     internal val assignmentIndex: PersistentMap.Builder<RealVariable, Int>,
     internal val directAliasMap: PersistentMap.Builder<RealVariable, RealVariable>,
     internal val backwardsAliasMap: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
+    internal val domainStatus: PersistentMap.Builder<Domain, DomainStatus>,
+    internal val domainReferences: PersistentMap.Builder<Domain, PersistentSet<DataFlowVariable>>,
 ) : Flow() {
     constructor() : this(
         null,
+        emptyPersistentHashMapBuilder(),
+        emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
@@ -106,6 +133,26 @@ class MutableFlow internal constructor(
     override fun getImplications(variable: DataFlowVariable): Collection<Implication>? =
         implications[variable]
 
+    override val knownDomains: Set<Domain>
+        get() = domainStatus.keys + domainReferences.keys
+
+    override fun getReferences(domain: Domain): Set<DataFlowVariable> =
+        domainReferences[domain] ?: emptySet()
+
+    override fun getDomains(variable: DataFlowVariable): Set<Domain> {
+        val variable = unwrapVariable(variable)
+        val domains = domainReferences.filterValues { it.contains(variable) }.keys
+        if (domains.isNotEmpty()) return domains
+
+        // create a fresh domain for this variable
+        val fresh = Domain.fresh(variable)
+        domainReferences[fresh] = persistentSetOf(variable)
+        return setOf(fresh)
+    }
+
+    override fun domainStatus(domain: Domain): DomainStatus =
+        domainStatus[domain] ?: DomainStatus.OK
+
     fun freeze(): PersistentFlow = PersistentFlow(
         previousFlow,
         approvedTypeStatements.build(),
@@ -113,6 +160,8 @@ class MutableFlow internal constructor(
         assignmentIndex.build(),
         directAliasMap.build(),
         backwardsAliasMap.build(),
+        domainStatus.build(),
+        domainReferences.build(),
     )
 }
 

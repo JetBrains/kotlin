@@ -36,6 +36,7 @@ internal class FirCallableReferenceAccessImpl(
     override var extensionReceiver: FirExpression?,
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
+    override var domainStatus: DomainStatus?,
     override var calleeReference: FirNamedReference,
     override var hasQuestionMarkAtLHS: Boolean,
     override var errorArgumentList: FirArgumentList?,
@@ -137,6 +138,10 @@ internal class FirCallableReferenceAccessImpl(
 
     override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
         nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
+    }
+
+    override fun replaceDomainStatus(newDomainStatus: DomainStatus?) {
+        domainStatus = newDomainStatus
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirNamedReference) {

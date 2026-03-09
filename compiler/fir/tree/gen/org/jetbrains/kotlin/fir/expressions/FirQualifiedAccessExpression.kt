@@ -33,6 +33,7 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirResolvable, Fi
     abstract val extensionReceiver: FirExpression?
     abstract override val source: KtSourceElement?
     abstract val nonFatalDiagnostics: List<ConeDiagnostic>
+    abstract val domainStatus: DomainStatus?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitQualifiedAccessExpression(this, data)
@@ -61,6 +62,8 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirResolvable, Fi
     abstract fun replaceSource(newSource: KtSourceElement?)
 
     abstract fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
+
+    abstract fun replaceDomainStatus(newDomainStatus: DomainStatus?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
 

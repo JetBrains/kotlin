@@ -60,6 +60,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirPrivateToThisAccessChecker,
         FirContextParameterInCalledSignatureChecker,
         FirInlineExposedLessVisibleTypeQualifiedAccessChecker,
+        FirInvalidatedExpressionChecker,
     )
 
     override val callCheckers: Set<FirCallChecker> = setOf(
@@ -155,7 +156,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     )
 
     override val smartCastExpressionCheckers: Set<FirSmartCastExpressionChecker> = setOf(
-        FirDeprecatedSmartCastChecker
+        FirDeprecatedSmartCastChecker,
     )
 
     override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker> = setOf(

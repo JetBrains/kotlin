@@ -343,6 +343,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("extensionReceiver", expression, nullable = true, withReplace = true)
         +field("source", sourceElementType, nullable = true, withReplace = true)
         +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true, withReplace = true)
+        +field("domainStatus", domainStatusType, nullable = true, withReplace = true)
     }
 
     val qualifiedErrorAccessExpression: Element by element(Expression) {

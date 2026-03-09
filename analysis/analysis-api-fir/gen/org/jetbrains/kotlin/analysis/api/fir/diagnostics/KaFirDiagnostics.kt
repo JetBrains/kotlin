@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
+import org.jetbrains.kotlin.fir.expressions.DomainStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -3776,6 +3777,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface ReturnValueNotUsedCoercion : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ReturnValueNotUsedCoercion::class
         val functionName: Name?
+    }
+
+    interface InvalidatedReference : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = InvalidatedReference::class
+        val status: DomainStatus
     }
 
     interface NullForNonnullType : KaFirDiagnostic<PsiElement> {

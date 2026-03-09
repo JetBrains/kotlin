@@ -32,6 +32,21 @@ abstract class KtContractDescriptionVisitor<out R, in D, Type, Diagnostic> {
     open fun visitReturnsResultOfEffectDeclaration(returnsResultOfEffect: KtReturnsResultOfDeclaration<Type, Diagnostic>, data: D): R =
         visitEffectDeclaration(returnsResultOfEffect, data)
 
+    open fun visitDomainEffectDeclaration(domainEffect: DomainEffectDeclaration<Type, Diagnostic>, data: D): R =
+        visitEffectDeclaration(domainEffect, data)
+
+    open fun visitInvalidatesEffectDeclaration(invalidatesEffect: KtInvalidatesEffectDeclaration<Type, Diagnostic>, data: D): R =
+        visitDomainEffectDeclaration(invalidatesEffect, data)
+
+    open fun visitResultFollowsEffectDeclaration(resultFollowsEffect: KtResultFollowsEffectDeclaration<Type, Diagnostic>, data: D): R =
+        visitDomainEffectDeclaration(resultFollowsEffect, data)
+
+    open fun visitLocalEffectDeclaration(localEffect: KtLocalEffectDeclaration<Type, Diagnostic>, data: D): R =
+        visitDomainEffectDeclaration(localEffect, data)
+
+    open fun visitScopedCallsEffectDeclaration(scopedCallsEffect: KtScopedCallsEffectDeclaration<Type, Diagnostic>, data: D): R =
+        visitDomainEffectDeclaration(scopedCallsEffect, data)
+
     open fun visitErroneousCallsEffectDeclaration(callsEffect: KtErroneousCallsEffectDeclaration<Type, Diagnostic>, data: D): R =
         visitCallsEffectDeclaration(callsEffect, data)
 

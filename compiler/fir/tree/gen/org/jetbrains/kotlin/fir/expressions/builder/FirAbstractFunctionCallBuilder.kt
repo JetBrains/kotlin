@@ -29,6 +29,7 @@ interface FirAbstractFunctionCallBuilder : FirQualifiedAccessExpressionBuilder, 
     abstract override var extensionReceiver: FirExpression?
     abstract override var source: KtSourceElement?
     abstract override val nonFatalDiagnostics: MutableList<ConeDiagnostic>
+    abstract override var domainStatus: DomainStatus?
     abstract override var argumentList: FirArgumentList
     abstract var calleeReference: FirNamedReference
     abstract var origin: FirFunctionCallOrigin

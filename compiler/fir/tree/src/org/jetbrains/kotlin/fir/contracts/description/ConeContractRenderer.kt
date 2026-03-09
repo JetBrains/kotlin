@@ -122,6 +122,30 @@ class ConeContractRenderer : KtContractDescriptionVisitor<Unit, Nothing?, ConeKo
         printer.print(")")
     }
 
+    override fun visitInvalidatesEffectDeclaration(invalidatesEffect: KtInvalidatesEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
+        printer.print("Invalidates(")
+        invalidatesEffect.valueParameterReference.accept(this, data)
+        printer.print(")")
+    }
+
+    override fun visitResultFollowsEffectDeclaration(resultFollowsEffect: KtResultFollowsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
+        printer.print("ResultFollows(")
+        resultFollowsEffect.valueParameterReference.accept(this, data)
+        printer.print(")")
+    }
+
+    override fun visitLocalEffectDeclaration(localEffect: KtLocalEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
+        printer.print("Local(")
+        localEffect.valueParameterReference.accept(this, data)
+        printer.print(")")
+    }
+
+    override fun visitScopedCallsEffectDeclaration(scopedCallsEffect: KtScopedCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
+        printer.print("ScopedCalls(")
+        scopedCallsEffect.valueParameterReference.accept(this, data)
+        printer.print(")")
+    }
+
     override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
         printer.print("CallsInPlace(")
         callsEffect.valueParameterReference.accept(this, data)

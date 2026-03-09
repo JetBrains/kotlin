@@ -133,7 +133,30 @@ enum class KotlinContractEffectType {
             return KtReturnsResultOfDeclaration(declaration as KtValueParameterReference)
         }
     },
-    ;
+    INVALIDATES {
+        override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
+            val declaration = PARAMETER_REFERENCE.deserialize(dataStream)
+            return KtInvalidatesEffectDeclaration(declaration as KtValueParameterReference)
+        }
+    },
+    RESULT_FOLLOWS {
+        override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
+            val declaration = PARAMETER_REFERENCE.deserialize(dataStream)
+            return KtResultFollowsEffectDeclaration(declaration as KtValueParameterReference)
+        }
+    },
+    LOCAL {
+        override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
+            val declaration = PARAMETER_REFERENCE.deserialize(dataStream)
+            return KtLocalEffectDeclaration(declaration as KtValueParameterReference)
+        }
+    },
+    SCOPED_CALLS {
+        override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
+            val declaration = PARAMETER_REFERENCE.deserialize(dataStream)
+            return KtScopedCallsEffectDeclaration(declaration as KtValueParameterReference)
+        }
+    };
 
     abstract fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?>
 
@@ -180,6 +203,26 @@ class KotlinContractSerializationVisitor(val dataStream: StubOutputStream) :
         dataStream.writeVarInt(KotlinContractEffectType.CALLS.ordinal)
         dataStream.writeVarInt(callsEffect.valueParameterReference.parameterIndex)
         dataStream.writeVarInt(callsEffect.kind.ordinal)
+    }
+
+    override fun visitInvalidatesEffectDeclaration(invalidatesEffect: KtInvalidatesEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        dataStream.writeVarInt(KotlinContractEffectType.INVALIDATES.ordinal)
+        dataStream.writeVarInt(invalidatesEffect.valueParameterReference.parameterIndex)
+    }
+
+    override fun visitResultFollowsEffectDeclaration(resultFollowsEffect: KtResultFollowsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        dataStream.writeVarInt(KotlinContractEffectType.RESULT_FOLLOWS.ordinal)
+        dataStream.writeVarInt(resultFollowsEffect.valueParameterReference.parameterIndex)
+    }
+
+    override fun visitLocalEffectDeclaration(localEffect: KtLocalEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        dataStream.writeVarInt(KotlinContractEffectType.LOCAL.ordinal)
+        dataStream.writeVarInt(localEffect.valueParameterReference.parameterIndex)
+    }
+
+    override fun visitScopedCallsEffectDeclaration(scopedCallsEffect: KtScopedCallsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        dataStream.writeVarInt(KotlinContractEffectType.SCOPED_CALLS.ordinal)
+        dataStream.writeVarInt(scopedCallsEffect.valueParameterReference.parameterIndex)
     }
 
     override fun visitReturnsResultOfEffectDeclaration(
