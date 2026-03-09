@@ -396,6 +396,65 @@ open class WasmExpressionBuilder(
             buildInstr(WasmOp.PSEUDO_COMMENT_GROUP_END, SourceLocation.NoLocation("Pseudo-instruction"))
         }
     }
+
+    fun createNewContHandle(tagIdx: WasmSymbol<Int>, absoluteBlockLevel: Int) =
+        createNewContHandleImmediate(WasmImmediate.ContHandle.ContHandleType.ON, tagIdx, absoluteBlockLevel)
+
+    private fun createNewContHandleImmediate(
+        handleType: WasmImmediate.ContHandle.ContHandleType,
+        tagIdx: WasmSymbol<Int>,
+        absolutBlockLevel: Int,
+    ): WasmImmediate.ContHandle {
+        val relativeLevel = numberOfNestedBlocks - absolutBlockLevel
+        return WasmImmediate.ContHandle(
+            handleType,
+            listOfNotNull(
+                WasmImmediate.TagIdx(tagIdx),
+                WasmImmediate.LabelIdx.get(relativeLevel)
+            )
+        )
+    }
+
+    fun buildContNew(contType: WasmImmediate.TypeIdx, location: SourceLocation) {
+        buildInstr(WasmOp.CONT_NEW, location, contType)
+    }
+
+    fun buildContBind(contType: WasmImmediate.TypeIdx, bindContType: WasmImmediate.TypeIdx, location: SourceLocation) {
+        buildInstr(
+            WasmOp.CONT_BIND, location,
+            contType,
+            bindContType,
+        )
+    }
+
+    fun buildSuspend(tag: WasmSymbol<Int>, location: SourceLocation) {
+        buildInstr(WasmOp.SUSPEND, location, WasmImmediate.TagIdx(tag))
+    }
+
+    fun buildResume(
+        contType: WasmHeapType,
+        contHandle: WasmImmediate.ContHandle,
+        location: SourceLocation
+    ) {
+        buildInstr(WasmOp.RESUME, location, WasmImmediate.HeapType(contType), contHandle)
+    }
+
+    fun buildResumeThrow(
+        contType: WasmHeapType,
+        exceptionTag: WasmSymbol<Int>,
+        contHandle: WasmImmediate.ContHandle,
+        location: SourceLocation
+    ) {
+        buildInstr(WasmOp.RESUME_THROW, location, WasmImmediate.HeapType(contType), WasmImmediate.TagIdx(exceptionTag), contHandle)
+    }
+
+    fun buildResumeThrowRef(
+        contType: WasmHeapType,
+        contHandle: WasmImmediate.ContHandle,
+        location: SourceLocation
+    ) {
+        buildInstr(WasmOp.RESUME_THROW_REF, location, WasmImmediate.HeapType(contType), contHandle)
+    }
 }
 
 inline fun buildWasmExpression(body: WasmExpressionBuilder.() -> Unit): MutableList<WasmInstr> {
