@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroupInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslNamedGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslReferencePlus
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslStringInvoke
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddId
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Aggregate
@@ -398,6 +399,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "Add" -> Add()
         "From" -> From()
         "Into" -> Into()
+        "AddDslReferencePlus" -> AddDslReferencePlus()
         "AddWithDsl" -> AddWithDsl()
         "And10" -> And10()
         "Convert0" -> Convert0()
