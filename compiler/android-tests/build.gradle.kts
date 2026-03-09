@@ -41,6 +41,10 @@ optInToK1Deprecation()
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit4) {
+        develocity {
+            testRetry.maxRetries.set(0)
+        }
+
         dependsOn(":dist")
         val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
         doFirst {
