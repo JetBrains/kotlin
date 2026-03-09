@@ -46,6 +46,24 @@
                 </repository>
             </repositories>
         </profile>
+        <profile>
+            <id>kotlin-default-bootsrap-repo</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>PackagesKtBootstrap</id>
+                    <url>https://packages.jetbrains.team/maven/p/kt/bootstrap</url>
+                </pluginRepository>
+            </pluginRepositories>
+            <repositories>
+                <repository>
+                    <id>PackagesKtBootstrap</id>
+                    <url>https://packages.jetbrains.team/maven/p/kt/bootstrap</url>
+                </repository>
+            </repositories>
+        </profile>
     </profiles>
     <mirrors>
         <mirror>

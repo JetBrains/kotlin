@@ -38,22 +38,22 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
+            <version>${kotlin.bootstrap.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
+            <version>${kotlin.bootstrap.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-maven-plugin</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -81,18 +81,6 @@
             <version>2.0.0-M1</version>
         </dependency>
 
-        <!-- FIXME: KT-83109/Remove-beanshell-and-groovy-verification-in-kotlin-maven-plugin-test  -->
-        <dependency>
-            <groupId>org.apache-extras.beanshell</groupId>
-            <artifactId>bsh</artifactId>
-            <version>2.0b6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>4.0.29</version>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-settings</artifactId>
@@ -108,22 +96,26 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
+        <testResources>
+            <testResource>
                 <directory>${project.basedir}/src/test/resources</directory>
                 <filtering>true</filtering>
-            </resource>
-        </resources>
+            </testResource>
+        </testResources>
 
         <plugins>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.bootstrap.version}</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
                         <id>default-compile</id>
                         <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
                         <configuration>
                             <jdkHome>${defaultBuildJdk}</jdkHome>
                             <sourceDirs>
@@ -135,6 +127,9 @@
                     <execution>
                         <id>default-test-compile</id>
                         <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
                         <configuration>
                             <jdkHome>${defaultBuildJdk}</jdkHome>
                             <sourceDirs>
@@ -211,7 +206,6 @@
                                         <kotlin.version>${project.version}</kotlin.version>
                                         <kotlin.it.localRepo>${project.basedir}/local-repo</kotlin.it.localRepo>
                                         <kotlin.it.testDirs>${project.basedir}/src/it</kotlin.it.testDirs>
-                                        <kotlin.it.verify-common.bsh>${project.basedir}/verify-common.bsh</kotlin.it.verify-common.bsh>
 
                                         <!-- JDK configuration must follow this rule jdk\d+Home -->
                                         <jdk8Home>${jdk8Home}</jdk8Home>
