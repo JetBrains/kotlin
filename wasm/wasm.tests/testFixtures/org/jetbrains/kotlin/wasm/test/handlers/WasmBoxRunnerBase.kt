@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_COROUTINES_STACK_SWITCHING
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -139,12 +140,14 @@ abstract class WasmBoxRunnerBase(
         }
 
         val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
+        val wasmCoroutinesStackSwitching = WASM_COROUTINES_STACK_SWITCHING in testServices.moduleStructure.allDirectives
 
         return wasmEngines
             .mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
                     useNewExceptionHandling = useNewExceptionProposal,
+                    wasmCoroutinesStackSwitching = wasmCoroutinesStackSwitching,
                     failsIn = failsIn,
                     entryFile = collectedJsArtifacts.entryPath,
                     jsFilePaths = jsFilePaths,
@@ -157,6 +160,7 @@ abstract class WasmBoxRunnerBase(
 internal fun WasmVM.runWithCaughtExceptions(
     debugMode: DebugMode,
     useNewExceptionHandling: Boolean,
+    wasmCoroutinesStackSwitching: Boolean,
     failsIn: List<String>,
     entryFile: String?,
     jsFilePaths: List<String>,
@@ -173,6 +177,7 @@ internal fun WasmVM.runWithCaughtExceptions(
             jsFilePaths,
             workingDirectory = workingDirectory,
             useNewExceptionHandling = useNewExceptionHandling,
+            wasmCoroutinesStackSwitching = wasmCoroutinesStackSwitching,
         )
         if (shortName in failsIn) {
             return AssertionError("The test expected to fail in ${vmName}. Please update the testdata.")

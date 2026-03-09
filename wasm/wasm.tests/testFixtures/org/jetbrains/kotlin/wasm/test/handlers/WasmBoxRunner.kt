@@ -26,7 +26,7 @@ internal fun WasmCompilerResult.writeTo(outputDir: File, outputFilenameBase: Str
     }
 }
 
-class WasmBoxRunner(
+open class WasmBoxRunner(
     testServices: TestServices,
     executeWithV8Only: Boolean = false,
 ) : WasmBoxRunnerBase(testServices, executeWithV8Only) {
@@ -85,3 +85,7 @@ class WasmBoxRunner(
         processExceptions(allExceptions)
     }
 }
+
+class WasmStackSwitchingRunner(
+    testServices: TestServices,
+) : WasmBoxRunner(testServices, executeWithV8Only = true)
