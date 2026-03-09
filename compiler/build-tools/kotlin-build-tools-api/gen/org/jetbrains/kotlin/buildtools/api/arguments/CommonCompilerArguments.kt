@@ -169,6 +169,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_CHECK_PHASE_CONDITIONS", KotlinReleaseVersion(1, 3, 40))
 
     /**
+     * Enable experimental language support for collection literals.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_COLLECTION_LITERALS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_COLLECTION_LITERALS", KotlinReleaseVersion(2, 4, 0))
+
+    /**
      * Specify an execution order constraint for compiler plugins.
      * Order constraint can be specified using the 'pluginId' of compiler plugins.
      * The first specified plugin will be executed before the second plugin.

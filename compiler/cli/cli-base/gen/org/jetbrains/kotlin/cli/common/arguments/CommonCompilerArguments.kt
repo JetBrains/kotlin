@@ -204,6 +204,17 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         }
 
     @Argument(
+        value = "-Xcollection-literals",
+        description = "Enable experimental language support for collection literals.",
+    )
+    @Enables(LanguageFeature.CollectionLiterals)
+    var collectionLiterals: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xcommon-sources",
         valueDescription = "<path>",
         description = """Sources of the common module that need to be compiled together with this module in multiplatform mode.

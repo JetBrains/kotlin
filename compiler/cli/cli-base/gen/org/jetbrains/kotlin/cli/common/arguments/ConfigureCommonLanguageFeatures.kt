@@ -45,6 +45,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.AnnotationAllUseSiteTarget, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.collectionLiterals) {
+        put(LanguageFeature.CollectionLiterals, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.consistentDataClassCopyVisibility) {
         put(LanguageFeature.DataClassCopyRespectsConstructorVisibility, LanguageFeature.State.ENABLED)
     }

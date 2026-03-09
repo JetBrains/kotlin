@@ -811,6 +811,19 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
 
     compilerArgument {
+        name = "Xcollection-literals"
+        description = "Enable experimental language support for collection literals.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.CollectionLiterals))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0
+        )
+    }
+
+
+    compilerArgument {
         name = "Xdirect-java-actualization"
         description = "Enable experimental direct Java actualization support.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
