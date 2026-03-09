@@ -124,7 +124,10 @@ internal object ArgumentCheckingProcessor {
                 is FirCallableReferenceAccess -> preprocessCallableReference(atom)
                 is FirPropertyAccessExpression if atom.expression.explicitReceiver == null ->
                     preprocessSimpleNameReferenceForContextSensitiveResolution(atom, atom.expression)
-                is FirQualifierWithContextSensitiveAlternative -> preprocessQualifierWithContextSensitiveAlternative(atom, atom.expression)
+                is FirResolvedQualifier if AnalysisFlags.ideMode.isSet() ->
+                    preprocessQualifierWithContextSensitiveAlternative(atom, atom.expression)
+                is FirPropertyAccessExpression if AnalysisFlags.ideMode.isSet() ->
+                    preprocessQualifierWithContextSensitiveAlternative(atom, atom.expression)
                 is FirCollectionLiteral -> preprocessCollectionLiteral(atom)
                 else -> error("Unknown kind of atom with postponed child: ${atom.expression::class}")
             }
@@ -367,8 +370,6 @@ internal object ArgumentCheckingProcessor {
         atom: ConeResolutionAtomWithPostponedChild,
         expression: FirQualifierWithContextSensitiveAlternative,
     ) {
-        if (!AnalysisFlags.ideMode.isSet()) return
-
         @OptIn(FirIdeOnly::class)
         val alternative = expression.contextSensitiveAlternative
         // See org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom.Companion.createRawAtom
