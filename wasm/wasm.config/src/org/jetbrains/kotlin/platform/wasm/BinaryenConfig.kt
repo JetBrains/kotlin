@@ -12,6 +12,8 @@ object BinaryenConfig {
         "--enable-reference-types",
         "--enable-exception-handling",
         "--enable-bulk-memory",  // For array initialization from data sections
+        "--enable-stack-switching",
+        "--enable-multivalue", // required for block with suspend instruction
 
         // Other options
         "--enable-nontrapping-float-to-int",
@@ -37,7 +39,9 @@ object BinaryenConfig {
         "--type-ssa",
         "-O3",
         "-O3",
-        "--gufa",
+// Disabled till fixed version of Binaryen will be released
+// By now gufa isn't working with stack switching
+//        "--gufa",
         "-O3",
         // requires --closed-world
         "--type-merging",
