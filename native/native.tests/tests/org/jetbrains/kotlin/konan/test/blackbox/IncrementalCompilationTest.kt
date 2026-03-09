@@ -530,7 +530,6 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
             testRunSettings.get<KotlinNativeTargets>().testTarget,
             "STATIC",
             testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG,
-            partialLinkageEnabled = testRunSettings.get<UsedPartialLinkageConfig>().config.isEnabled,
             checkStateAtExternalCalls = testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED,
         )
 

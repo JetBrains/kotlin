@@ -84,12 +84,10 @@ internal fun LinkKlibsContext.linkKlibs(
     val (moduleDescriptor, environment) = input
     // Translate AST to high level IR.
     val messageCollector = config.configuration.messageCollector
-    val partialLinkageConfig = config.configuration.partialLinkageConfig
 
     val translator = Psi2IrTranslator(
             config.configuration.languageVersionSettings,
-            Psi2IrConfiguration(ignoreErrors = false, partialLinkageConfig.isEnabled),
-            messageCollector::checkNoUnboundSymbols
+            Psi2IrConfiguration(ignoreErrors = false),
     )
     val generatorContext = translator.createGeneratorContext(
             moduleDescriptor,
@@ -162,7 +160,7 @@ internal fun LinkKlibsContext.linkKlibs(
                 cInteropModuleDeserializerFactory = cInteropModuleDeserializerFactory,
                 exportedDependencies = exportedDependencies,
                 partialLinkageSupport = createPartialLinkageSupportForLinker(
-                        partialLinkageConfig = partialLinkageConfig,
+                        partialLinkageConfig = config.configuration.partialLinkageConfig,
                         builtIns = generatorContext.irBuiltIns,
                         diagnosticReporter = irDiagnosticReporter,
                 ),
