@@ -29,7 +29,7 @@ internal class PositiveLookAheadSet(children: List<AbstractSet>, fSet: FSet) : L
 
     /** Returns startIndex+shift, the next position to match */
     override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
-        forEachChildrenIndexed { _, child ->
+        forEachChildIndexed { _, child ->
             val shift = child.matches(startIndex, testString, matchResult)
             if (shift >= 0) {
                 // PosLookaheadFset always returns true, position remains the same next.match() from;
@@ -43,7 +43,7 @@ internal class PositiveLookAheadSet(children: List<AbstractSet>, fSet: FSet) : L
         get() = "PositiveLookaheadJointSet"
 
     override fun reportOwnProperties(properties: SetProperties) {
-        forEachChildrenIndexed { _, child -> child.collectProperties(properties, fSet) }
+        forEachChildIndexed { _, child -> child.collectProperties(properties, fSet) }
         properties.nonTrivialBacktracking = true // just in case
         properties.requiresCheckpointing = true
     }
@@ -56,7 +56,7 @@ internal class NegativeLookAheadSet(children: List<AbstractSet>, fSet: FSet) : L
 
     /** Returns startIndex+shift, the next position to match */
     override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
-        forEachChildrenIndexed { _, child ->
+        forEachChildIndexed { _, child ->
             if (child.matches(startIndex, testString, matchResult) >= 0) {
                 return -1
             }
@@ -69,7 +69,7 @@ internal class NegativeLookAheadSet(children: List<AbstractSet>, fSet: FSet) : L
         get() = "NegativeLookaheadJointSet"
 
     override fun reportOwnProperties(properties: SetProperties) {
-        forEachChildrenIndexed { _, child -> child.collectProperties(properties, fSet) }
+        forEachChildIndexed { _, child -> child.collectProperties(properties, fSet) }
         properties.nonTrivialBacktracking = true // just in case
         properties.requiresCheckpointing = true
     }

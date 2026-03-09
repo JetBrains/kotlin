@@ -32,6 +32,9 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
 
     private var children = children.toTypedArray()
 
+    protected val childrenSize: Int
+        get() = children.size
+
     var fSet: FSet = fSet
         protected set
 
@@ -65,6 +68,7 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
 
     override val name: String
             get() = "JointSet"
+
     override fun first(set: AbstractSet): Boolean = children.any { it.first(set) }
 
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean {
@@ -79,7 +83,7 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
             assert(newFSet == fSet)
         }
 
-        children.forEachIndexed { index, child ->
+        forEachChildIndexed { index, child ->
             if (!child.secondPassVisited) {
                 children[index] = child.processSecondPass()
             }
@@ -90,12 +94,12 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
 
     override fun reportOwnProperties(properties: SetProperties) {
         children.forEach { it.collectProperties(properties, fSet) }
-        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || children.size > 1
+        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || childrenSize > 1
         properties.capturesGroups = true
         fSet.reportOwnProperties(properties)
     }
 
-    protected inline fun forEachChildrenIndexed(action: (index: Int, child: AbstractSet) -> Unit) {
+    protected inline fun forEachChildIndexed(action: (index: Int, child: AbstractSet) -> Unit) {
         for (index in children.indices) {
             action(index, children[index])
         }
@@ -105,7 +109,7 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
      * If [this] set contains a single child, returns it. Otherwise, returns `null`.
      */
     internal fun getSingleChildOrNull(): AbstractSet? {
-        if (children.size == 1) {
+        if (childrenSize == 1) {
             return children[0]
         }
         return null

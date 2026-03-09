@@ -44,7 +44,7 @@ private fun AbstractSet.computeMatchLengthInChars(terminator: FSet): Int {
 internal abstract class LookBehindSetBase(children: List<AbstractSet>, fSet: FSet) : LookAroundSet(children, fSet) {
     // For leaf sets, we only have to scan a fixed-length prefix of the input;
     // this array contains the length of this prefix, or -1 if it is unknown.
-    val prefixLengths = IntArray(children.size) {
+    private val prefixLengths = IntArray(children.size) {
         children[it].computeMatchLengthInChars(fSet)
     }
 
@@ -74,7 +74,7 @@ internal class PositiveLookBehindSet(children: List<AbstractSet>, fSet: FSet) : 
     /** Returns startIndex+shift, the next position to match */
     override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         matchResult.setConsumed(groupIndex, startIndex)
-        forEachChildrenIndexed { idx, child ->
+        forEachChildIndexed { idx, child ->
             if (matchPrefix(idx, child, startIndex, testString, matchResult) >= 0) {
                 matchResult.setConsumed(groupIndex, -1)
                 return next.matches(startIndex, testString, matchResult)
@@ -88,7 +88,7 @@ internal class PositiveLookBehindSet(children: List<AbstractSet>, fSet: FSet) : 
         get() = "PositiveBehindJointSet"
 
     override fun reportOwnProperties(properties: SetProperties) {
-        forEachChildrenIndexed { _, child -> child.collectProperties(properties, fSet) }
+        forEachChildIndexed { _, child -> child.collectProperties(properties, fSet) }
         properties.nonTrivialBacktracking = true // just in case
         properties.requiresCheckpointing = true
         properties.tracksConsumption = true
@@ -102,7 +102,7 @@ internal class NegativeLookBehindSet(children: List<AbstractSet>, fSet: FSet) : 
     /** Returns startIndex+shift, the next position to match */
     override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         matchResult.setConsumed(groupIndex, startIndex)
-        forEachChildrenIndexed { idx, child ->
+        forEachChildIndexed { idx, child ->
             if (matchPrefix(idx, child, startIndex, testString, matchResult) >= 0) {
                 return -1
             }
@@ -115,7 +115,7 @@ internal class NegativeLookBehindSet(children: List<AbstractSet>, fSet: FSet) : 
         get() = "NegativeBehindJointSet"
 
     override fun reportOwnProperties(properties: SetProperties) {
-        forEachChildrenIndexed { _, child -> child.collectProperties(properties, fSet) }
+        forEachChildIndexed { _, child -> child.collectProperties(properties, fSet) }
         properties.nonTrivialBacktracking = true // just in case
         properties.requiresCheckpointing = true
         properties.tracksConsumption = true

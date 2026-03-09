@@ -34,7 +34,7 @@ open internal class NonCapturingJointSet(children: List<AbstractSet>, fSet: FSet
         val start = matchResult.getConsumed(groupIndex)
         matchResult.setConsumed(groupIndex, startIndex)
 
-        forEachChildrenIndexed { _, child ->
+        forEachChildIndexed { _, child ->
             val shift = child.matches(startIndex, testString, matchResult)
             if (shift >= 0) {
                 return shift
@@ -53,13 +53,11 @@ open internal class NonCapturingJointSet(children: List<AbstractSet>, fSet: FSet
     }
 
     override fun reportOwnProperties(properties: SetProperties) {
-        var childrenCount = 0
-        forEachChildrenIndexed { _, child ->
-            childrenCount++
+        forEachChildIndexed { _, child ->
             child.collectProperties(properties, fSet)
         }
         // if there are several children nodes, we cannot match if without a backtracking
-        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || childrenCount > 1
+        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || childrenSize > 1
         properties.tracksConsumption = true
     }
 }
