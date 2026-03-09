@@ -43,14 +43,14 @@ FILE fqName:bar fileName:/generatedClassWithMembersAndNestedClasses.kt
           ARG <this>: CALL 'public final fun materialize (): bar.Foo declared in foo.AllOpenGenerated.NestedFoo' type=bar.Foo origin=null
             ARG <this>: GET_VAR 'val nestedFoo: foo.AllOpenGenerated.NestedFoo declared in bar.testNestedClasses' type=foo.AllOpenGenerated.NestedFoo origin=null
 FILE fqName:foo fileName:foo/AllOpenGenerated.kt
-  CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] CLASS name:AllOpenGenerated modality:FINAL visibility:public superTypes:[kotlin.Any]
+  CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.ExternalClassGeneratorKey] CLASS name:AllOpenGenerated modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.AllOpenGenerated
-    CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] CLASS name:NestedFoo modality:FINAL visibility:public superTypes:[kotlin.Any]
+    CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.ExternalClassGeneratorKey] CLASS name:NestedFoo modality:FINAL visibility:public superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.AllOpenGenerated.NestedFoo
-      CONSTRUCTOR GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] visibility:public returnType:foo.AllOpenGenerated.NestedFoo
+      CONSTRUCTOR GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.ExternalClassGeneratorKey] visibility:public returnType:foo.AllOpenGenerated.NestedFoo
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] CLASS name:NestedFoo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.ExternalClassGeneratorKey] CLASS name:NestedFoo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -64,15 +64,15 @@ FILE fqName:foo fileName:foo/AllOpenGenerated.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-      FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] name:materialize visibility:public modality:FINAL returnType:bar.Foo
+      FUN GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.ExternalClassGeneratorKey] name:materialize visibility:public modality:FINAL returnType:bar.Foo
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.AllOpenGenerated.NestedFoo
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun materialize (): bar.Foo declared in foo.AllOpenGenerated.NestedFoo'
             CONSTRUCTOR_CALL 'public constructor <init> () declared in bar.Foo' type=bar.Foo origin=null
-    CONSTRUCTOR GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] visibility:public returnType:foo.AllOpenGenerated
+    CONSTRUCTOR GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.ExternalClassGeneratorKey] visibility:public returnType:foo.AllOpenGenerated
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] CLASS name:AllOpenGenerated modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.ExternalClassGeneratorKey] CLASS name:AllOpenGenerated modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
