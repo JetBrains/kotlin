@@ -41,11 +41,13 @@ ENV JDK6=/usr/lib/jvm/zulu6.22.0.3-jdk6.0.119-linux_x64 \
     JDK21=/usr/lib/jvm/amazon-corretto-21.0.1.12.1-linux-x64
 
 # TeamCity JDK old naming conventions. Kotlin build still have dependencies in Maven build.
-ENV JDK_18=$JDK8
+ENV JDK_18=$JDK8 \
+    JDK_1_8=$JDK8
 
 ENV JDK_16_x64=$JDK6 \
     JDK_17_x64=$JDK7 \
     JDK_18_x64=$JDK8 \
+    JDK_1_8_x64=$JDK8 \
     JDK_9_x64=$JDK9
 
 ENV JDK_11_0=$JDK11 \
