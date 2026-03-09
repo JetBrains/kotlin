@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.config.PartialLinkageLogLevel
-import org.jetbrains.kotlin.config.PartialLinkageMode
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
@@ -54,7 +53,7 @@ abstract class AbstractJsInvalidationWithPLTest(granularity: JsGenerationGranula
             friendLibraries = friendLibraries,
             includedLibrary = includedLibrary,
         )
-        config.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
+        config.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageLogLevel.WARNING))
         return config
     }
 }

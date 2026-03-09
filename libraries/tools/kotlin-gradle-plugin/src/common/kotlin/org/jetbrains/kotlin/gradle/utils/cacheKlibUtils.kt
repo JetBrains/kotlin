@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
-import org.jetbrains.kotlin.config.PartialLinkageMode
 import org.jetbrains.kotlin.library.uniqueName
 import org.slf4j.Logger
 import java.io.File

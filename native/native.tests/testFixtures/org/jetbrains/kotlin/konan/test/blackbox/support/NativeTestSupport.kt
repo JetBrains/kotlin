@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
 
 import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.config.PartialLinkageLogLevel
-import org.jetbrains.kotlin.config.PartialLinkageMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -585,10 +584,10 @@ object NativeTestSupport {
 
         val config = when (mode) {
             UsePartialLinkage.Mode.DEFAULT -> PartialLinkageConfig.DEFAULT
-            UsePartialLinkage.Mode.SILENT -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.SILENT)
-            UsePartialLinkage.Mode.INFO -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.INFO)
-            UsePartialLinkage.Mode.WARNING -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING)
-            UsePartialLinkage.Mode.ERROR -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR)
+            UsePartialLinkage.Mode.SILENT -> PartialLinkageConfig(PartialLinkageLogLevel.SILENT)
+            UsePartialLinkage.Mode.INFO -> PartialLinkageConfig(PartialLinkageLogLevel.INFO)
+            UsePartialLinkage.Mode.WARNING -> PartialLinkageConfig(PartialLinkageLogLevel.WARNING)
+            UsePartialLinkage.Mode.ERROR -> PartialLinkageConfig(PartialLinkageLogLevel.ERROR)
         }
 
         return UsedPartialLinkageConfig(config)

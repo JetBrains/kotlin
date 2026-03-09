@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.LoadedKlibs
 import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.config.PartialLinkageLogLevel
-import org.jetbrains.kotlin.config.PartialLinkageMode
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -71,7 +70,7 @@ abstract class WasmDeserializerFacadeBase(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
-        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageLogLevel.ERROR))
 
         val mainModule = getMainModule(module, inputArtifact)
 

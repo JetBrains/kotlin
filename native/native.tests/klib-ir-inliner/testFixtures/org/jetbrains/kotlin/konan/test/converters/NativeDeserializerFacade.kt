@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.config.PartialLinkageLogLevel
-import org.jetbrains.kotlin.config.PartialLinkageMode
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
@@ -128,7 +127,7 @@ class NativeDeserializerFacade(
             exportedDependencies = emptyList(),
             partialLinkageSupport = createPartialLinkageSupportForLinker(
                 // TODO KT-77493: Disable PL after all tests for invisible references would be migrated to diagnostic tests
-                partialLinkageConfig = PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR),
+                partialLinkageConfig = PartialLinkageConfig(PartialLinkageLogLevel.ERROR),
                 builtIns = irBuiltIns,
                 diagnosticReporter = irDiagnosticReporter,
             ),

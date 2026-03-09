@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.config.PartialLinkageLogLevel
-import org.jetbrains.kotlin.config.PartialLinkageMode
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -69,6 +68,6 @@ abstract class AbstractFirWasmInvalidationWithPLSingleModuleTest :
 abstract class AbstractWasmInvalidationWithPLTest(workingDirPath: String) :
     WasmAbstractInvalidationTest(TargetBackend.WASM, workingDirPath) {
     override fun modifyConfig(configuration: CompilerConfiguration) {
-        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageLogLevel.WARNING))
     }
 }
