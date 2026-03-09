@@ -243,7 +243,11 @@ val possibleTargetPredicateMap = mapOf(
     ),
     ANNOTATION_KEYWORD to always(KotlinTarget.ANNOTATION_CLASS),
     CROSSINLINE_KEYWORD to always(KotlinTarget.VALUE_PARAMETER),
-    CONST_KEYWORD to always(KotlinTarget.MEMBER_PROPERTY, KotlinTarget.TOP_LEVEL_PROPERTY),
+    CONST_KEYWORD to always(
+        KotlinTarget.MEMBER_PROPERTY,
+        KotlinTarget.COMPANION_EXTENSION_PROPERTY,
+        KotlinTarget.TOP_LEVEL_PROPERTY
+    ),
     OPERATOR_KEYWORD to always(KotlinTarget.FUNCTION),
     INFIX_KEYWORD to always(KotlinTarget.FUNCTION),
     EXPECT_KEYWORD to always(

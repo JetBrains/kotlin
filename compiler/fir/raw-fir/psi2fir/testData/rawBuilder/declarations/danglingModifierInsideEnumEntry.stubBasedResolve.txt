@@ -22,7 +22,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] danglingModifierInsideEnumEntry.kt
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|foo/MyEnumClass| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
 
     }

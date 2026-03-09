@@ -13,7 +13,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enums.kt
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Order] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|Order| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Order] val entries: R|kotlin/enums/EnumEntries<Order>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Order, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Order>|
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Order>|
 
     }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enums.kt
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Planet] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|Planet| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Planet] val entries: R|kotlin/enums/EnumEntries<Planet>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Planet, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Planet>|
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Planet>|
 
     }
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enums.kt
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PseudoInsn] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|PseudoInsn| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PseudoInsn] val entries: R|kotlin/enums/EnumEntries<PseudoInsn>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PseudoInsn, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<PseudoInsn>|
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<PseudoInsn>|
 
     }

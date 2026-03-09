@@ -24,7 +24,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
@@ -130,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
@@ -183,7 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
@@ -236,7 +236,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
@@ -289,7 +289,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
@@ -342,7 +342,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
@@ -395,7 +395,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
@@ -448,7 +448,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
@@ -501,7 +501,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
@@ -554,7 +554,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
@@ -607,7 +607,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
@@ -660,7 +660,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
@@ -714,7 +714,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArgumentsMixScript.kts
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|EnumClass| {
             }
 
-            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
                 public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }

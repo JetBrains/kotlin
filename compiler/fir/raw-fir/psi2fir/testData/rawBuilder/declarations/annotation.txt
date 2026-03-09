@@ -46,7 +46,7 @@ FILE: annotation.kt
         public final static [ContainingClassKey=My] fun valueOf(value: R|kotlin/String|): R|My| {
         }
 
-        public final static [ContainingClassKey=My] val entries: R|kotlin/enums/EnumEntries<My>|
+        public final static [ContainingClassKey=My, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<My>|
             public static get(): R|kotlin/enums/EnumEntries<My>|
 
     }
@@ -109,7 +109,7 @@ FILE: annotation.kt
         public final static [ContainingClassKey=MyDerived] fun valueOf(value: R|kotlin/String|): R|MyDerived| {
         }
 
-        public final static [ContainingClassKey=MyDerived] val entries: R|kotlin/enums/EnumEntries<MyDerived>|
+        public final static [ContainingClassKey=MyDerived, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<MyDerived>|
             public static get(): R|kotlin/enums/EnumEntries<MyDerived>|
 
     }

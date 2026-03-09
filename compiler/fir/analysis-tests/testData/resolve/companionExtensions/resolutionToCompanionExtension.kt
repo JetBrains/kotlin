@@ -47,8 +47,8 @@ typealias TA = C
 companion fun C.foo() {}
 companion fun TA.fooTa() {}
 
-companion val C.prop = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
-companion val TA.propTa = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+companion val C.prop = 1
+companion val TA.propTa = 1
 
 fun C.bar() {}
 

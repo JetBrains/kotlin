@@ -11,7 +11,7 @@ class C {
 
     companion {
         fun companionBlockFoo() {}
-        val companionBlockBar = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+        val companionBlockBar = 1
     }
 }
 
@@ -19,7 +19,7 @@ fun C.extensionFun() {}
 val C.extensionProp get() = 1
 
 companion fun String.irrelvantCompanionExtension() {}
-companion val String.irrelvantCompanionExtensionProp = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+companion val String.irrelvantCompanionExtensionProp = 1
 
 companion fun C.companionExtFun() {
     <!UNRESOLVED_REFERENCE!>x<!>()

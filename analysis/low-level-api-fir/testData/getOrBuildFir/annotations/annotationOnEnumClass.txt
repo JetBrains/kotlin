@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnEnumClass.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|MyClass| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] val entries: R|kotlin/enums/EnumEntries<MyClass>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<MyClass>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<MyClass>|
 
     }

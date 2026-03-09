@@ -174,7 +174,6 @@ val FirProperty.hasBackingField: Boolean
         if (delegate != null) return false
         if (hasExplicitBackingField) return true
         if (symbol is FirSyntheticPropertySymbol) return false
-        if (isStatic) return false // For Enum.entries
         when (origin) {
             is FirDeclarationOrigin.SubstitutionOverride -> return false
             FirDeclarationOrigin.IntersectionOverride -> return false

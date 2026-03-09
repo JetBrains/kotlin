@@ -22,7 +22,7 @@ FILE: danglingModifierInsideEnumEntry.kt
         public final static [ContainingClassKey=MyEnumClass] fun valueOf(value: R|kotlin/String|): R|foo/MyEnumClass| {
         }
 
-        public final static [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+        public final static [ContainingClassKey=MyEnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
             public static get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
 
     }

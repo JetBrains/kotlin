@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
@@ -263,6 +264,8 @@ fun generateEntriesGetter(
         }
     }.apply {
         containingClassForStaticMemberAttr = classSymbol.toLookupTag()
+        @OptIn(FirImplementationDetail::class)
+        hasBackingFieldAttr = false
     }
 }
 

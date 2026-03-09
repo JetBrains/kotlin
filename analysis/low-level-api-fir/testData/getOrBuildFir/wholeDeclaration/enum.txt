@@ -21,7 +21,7 @@ public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class MyClass : <ERROR TYPE
     public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|MyClass| {
     }
 
-    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] val entries: R|kotlin/enums/EnumEntries<MyClass>|
+    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<MyClass>|
         public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyClass>|
 
 }
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] enum.kt
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|MyClass| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] val entries: R|kotlin/enums/EnumEntries<MyClass>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<MyClass>|
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyClass>|
 
     }

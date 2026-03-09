@@ -14,7 +14,7 @@ FILE: Main.kt
         public final static [ContainingClassKey=A] fun valueOf(value: R|kotlin/String|): R|A| {
         }
 
-        public final static [ContainingClassKey=A] val entries: R|kotlin/enums/EnumEntries<A>|
+        public final static [ContainingClassKey=A, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<A>|
             public static get(): R|kotlin/enums/EnumEntries<A>|
 
     }

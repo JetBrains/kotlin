@@ -13,7 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] ArrayAnnUsage.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
@@ -34,7 +34,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
@@ -118,7 +118,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
@@ -139,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
@@ -181,7 +181,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
@@ -202,7 +202,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
@@ -248,7 +248,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
         public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
@@ -271,7 +271,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
         public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
@@ -294,7 +294,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] ArrayAnnUsage.kt
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnAuxEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }

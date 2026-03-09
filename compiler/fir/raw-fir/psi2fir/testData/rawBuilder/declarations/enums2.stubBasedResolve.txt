@@ -31,7 +31,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enums2.kt
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeEnum] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|SomeEnum| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeEnum] val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<SomeEnum>|
 
     }

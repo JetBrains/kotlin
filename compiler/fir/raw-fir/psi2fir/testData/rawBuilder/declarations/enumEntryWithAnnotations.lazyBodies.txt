@@ -11,7 +11,7 @@ FILE: enumEntryWithAnnotations.kt
         public final static [ContainingClassKey=MyEnumClass] fun valueOf(value: R|kotlin/String|): R|MyEnumClass| {
         }
 
-        public final static [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<MyEnumClass>|
+        public final static [ContainingClassKey=MyEnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<MyEnumClass>|
             public static get(): R|kotlin/enums/EnumEntries<MyEnumClass>|
 
     }

@@ -13,7 +13,7 @@ FILE: enums.kt
         public final static [ContainingClassKey=Order] fun valueOf(value: R|kotlin/String|): R|Order| {
         }
 
-        public final static [ContainingClassKey=Order] val entries: R|kotlin/enums/EnumEntries<Order>|
+        public final static [ContainingClassKey=Order, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Order>|
             public static get(): R|kotlin/enums/EnumEntries<Order>|
 
     }
@@ -82,7 +82,7 @@ FILE: enums.kt
         public final static [ContainingClassKey=Planet] fun valueOf(value: R|kotlin/String|): R|Planet| {
         }
 
-        public final static [ContainingClassKey=Planet] val entries: R|kotlin/enums/EnumEntries<Planet>|
+        public final static [ContainingClassKey=Planet, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Planet>|
             public static get(): R|kotlin/enums/EnumEntries<Planet>|
 
     }
@@ -152,7 +152,7 @@ FILE: enums.kt
         public final static [ContainingClassKey=PseudoInsn] fun valueOf(value: R|kotlin/String|): R|PseudoInsn| {
         }
 
-        public final static [ContainingClassKey=PseudoInsn] val entries: R|kotlin/enums/EnumEntries<PseudoInsn>|
+        public final static [ContainingClassKey=PseudoInsn, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<PseudoInsn>|
             public static get(): R|kotlin/enums/EnumEntries<PseudoInsn>|
 
     }

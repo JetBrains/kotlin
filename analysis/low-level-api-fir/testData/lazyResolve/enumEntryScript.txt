@@ -23,7 +23,7 @@ FILE: [ResolvedTo(RAW_FIR)] enumEntryScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
@@ -147,7 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
@@ -178,7 +178,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
@@ -271,7 +271,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
@@ -302,7 +302,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
@@ -333,7 +333,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
@@ -364,7 +364,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
@@ -401,7 +401,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }
@@ -438,7 +438,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enumEntryScript.kts
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|Foo| {
             }
 
-            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Foo>|
                 public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Foo>|
 
         }

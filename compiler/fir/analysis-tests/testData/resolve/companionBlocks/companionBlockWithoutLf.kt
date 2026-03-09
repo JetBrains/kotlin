@@ -13,7 +13,7 @@ class C2 {
 class C3 {
     <!UNSUPPORTED_FEATURE!>companion<!> {}
     companion {
-        val bar = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+        val bar = 1
     }
 }
 

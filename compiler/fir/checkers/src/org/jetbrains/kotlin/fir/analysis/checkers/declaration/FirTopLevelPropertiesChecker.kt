@@ -141,7 +141,7 @@ internal fun checkPropertyInitializer(
                     !backingFieldRequired -> {
                         reporter.reportOn(it, FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD)
                     }
-                    propertySymbol.receiverParameterSymbol != null -> {
+                    propertySymbol.receiverParameterSymbol != null && !propertySymbol.isCompanionExtension -> {
                         reporter.reportOn(it, FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD)
                     }
                 }

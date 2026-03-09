@@ -18,7 +18,7 @@ public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class MyEnumClass : R|kotli
     public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|MyEnumClass| {
     }
 
-    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<MyEnumClass>|
+    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<MyEnumClass>|
         public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyEnumClass>|
 
 }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] enumClassWithDanglingModifierList.kt
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|MyEnumClass| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<MyEnumClass>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<MyEnumClass>|
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyEnumClass>|
 
     }

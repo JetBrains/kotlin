@@ -70,7 +70,7 @@ FILE: enums3.kt
                 public final static [ContainingClassKey=Planet] fun valueOf(value: R|kotlin/String|): R|<local>/Planet| {
                 }
 
-                public final static [ContainingClassKey=Planet] val entries: R|kotlin/enums/EnumEntries<<local>/Planet>|
+                public final static [ContainingClassKey=Planet, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<<local>/Planet>|
                     public static get(): R|kotlin/enums/EnumEntries<<local>/Planet>|
 
             }

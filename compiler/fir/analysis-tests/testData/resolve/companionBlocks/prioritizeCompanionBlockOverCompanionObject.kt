@@ -1,9 +1,9 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +CompanionBlocksAndExtensions
 class C {
     companion {
         fun foo() = ""
-        val bar = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>""<!>
+        val bar = ""
     }
 
     companion object {

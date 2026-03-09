@@ -12,7 +12,7 @@ FILE: [ResolvedTo(RAW_FIR)] requiredAnnotationWithIncorrectImportedArgument.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
@@ -62,7 +62,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
@@ -87,7 +87,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
@@ -162,7 +162,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
@@ -187,7 +187,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
@@ -212,7 +212,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
@@ -237,7 +237,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
@@ -287,7 +287,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
@@ -312,7 +312,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithIncorrectImportedArgument.kt
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }
@@ -337,7 +337,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] requiredAnnotationWithIncorrectImportedArgument
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyTarget] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|myPack/MyTarget| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyTarget] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyTarget, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<myPack/MyTarget>|
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<myPack/MyTarget>|
 
     }

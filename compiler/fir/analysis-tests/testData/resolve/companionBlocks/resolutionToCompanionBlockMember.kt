@@ -7,7 +7,7 @@ class C {
         fun foo() {
         }
 
-        val bar = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+        val bar = 1
         val baz get() = 2
     }
 

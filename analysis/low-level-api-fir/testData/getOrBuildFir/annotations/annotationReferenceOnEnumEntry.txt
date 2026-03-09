@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationReferenceOnEnumEntry.kt
         public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|MyClass| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] val entries: R|kotlin/enums/EnumEntries<MyClass>|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<MyClass>|
             public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<MyClass>|
 
     }

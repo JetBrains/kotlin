@@ -3,34 +3,34 @@
 
 class C {
     <!WRONG_MODIFIER_TARGET!>companion<!> fun String.foo() {}
-    <!WRONG_MODIFIER_TARGET!>companion<!> val String.bar = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+    <!WRONG_MODIFIER_TARGET!>companion<!> val String.bar = 1
 
     <!WRONG_MODIFIER_TARGET!>companion<!> fun noReceiverType() {}
-    <!WRONG_MODIFIER_TARGET!>companion<!> val noReceiverTypeProp = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+    <!WRONG_MODIFIER_TARGET!>companion<!> val noReceiverTypeProp = 1
 
     companion object {
         <!WRONG_MODIFIER_TARGET!>companion<!> fun String.foo2() {}
-        <!WRONG_MODIFIER_TARGET!>companion<!> val String.bar2 = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+        <!WRONG_MODIFIER_TARGET!>companion<!> val String.bar2 = 1
 
         <!WRONG_MODIFIER_TARGET!>companion<!> fun noReceiverType2() {}
-        <!WRONG_MODIFIER_TARGET!>companion<!> val noReceiverTypeProp2 = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+        <!WRONG_MODIFIER_TARGET!>companion<!> val noReceiverTypeProp2 = 1
     }
 
     companion {
         companion fun String.foo3() {}
-        companion val String.bar3 = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+        companion val String.bar3 = 1
 
         <!WRONG_MODIFIER_TARGET!>companion<!> fun noReceiverType3() {}
-        <!WRONG_MODIFIER_TARGET!>companion<!> val noReceiverTypeProp3 = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+        <!WRONG_MODIFIER_TARGET!>companion<!> val noReceiverTypeProp3 = 1
     }
 }
 
 object O {
     <!WRONG_MODIFIER_TARGET!>companion<!> fun String.foo() {}
-    <!WRONG_MODIFIER_TARGET!>companion<!> val String.bar = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+    <!WRONG_MODIFIER_TARGET!>companion<!> val String.bar = 1
 
     <!WRONG_MODIFIER_TARGET!>companion<!> fun noReceiverType() {}
-    <!WRONG_MODIFIER_TARGET!>companion<!> val noReceiverTypeProp = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+    <!WRONG_MODIFIER_TARGET!>companion<!> val noReceiverTypeProp = 1
 }
 
 fun local() {
@@ -42,7 +42,7 @@ fun local() {
 }
 
 <!WRONG_MODIFIER_TARGET!>companion<!> fun noReceiverType() {}
-<!WRONG_MODIFIER_TARGET!>companion<!> val noReceiverTypeProp = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+<!WRONG_MODIFIER_TARGET!>companion<!> val noReceiverTypeProp = 1
 
 fun anonymousFunction() {
     val x: String.() -> String = run {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.ConstantArgumentKind
 import org.jetbrains.kotlin.fir.expressions.canBeUsedForConstVal
@@ -39,7 +40,7 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
         }
 
         val classKind = (context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol)?.classKind
-        if (classKind != ClassKind.OBJECT && context.containingDeclarations.size > 1) {
+        if (classKind != ClassKind.OBJECT && context.containingDeclarations.size > 1 && !declaration.isCompanionBlockMember) {
             reporter.reportOn(declaration.source, FirErrors.CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT)
             return
         }

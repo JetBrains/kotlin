@@ -45,7 +45,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation.kt
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|My| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] val entries: R|kotlin/enums/EnumEntries<My>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<My>|
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<My>|
 
     }
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation.kt
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|MyDerived| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] val entries: R|kotlin/enums/EnumEntries<MyDerived>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<MyDerived>|
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyDerived>|
 
     }
