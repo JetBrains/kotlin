@@ -657,12 +657,6 @@ fun Project.configureKotlinCompileTasksGradleCompatibility() {
     tasks.named("compileKotlin", KotlinCompile::class.java) {
         configureGradleCompatibility()
     }
-
-    tasks.withType<KotlinCompile>().configureEach {
-        compilerOptions.freeCompilerArgs.set(
-            compilerOptions.freeCompilerArgs.get().filter { !it.contains("REDUNDANT_CLI_ARG") }
-        )
-    }
 }
 
 /**

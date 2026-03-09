@@ -19,12 +19,6 @@ repositories {
     gradlePluginPortal()
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    compilerOptions.freeCompilerArgs.set(
-        compilerOptions.freeCompilerArgs.get().filter { !it.contains("REDUNDANT_CLI_ARG") }
-    )
-}
-
 kotlin {
     compilerOptions {
         optIn.addAll(
