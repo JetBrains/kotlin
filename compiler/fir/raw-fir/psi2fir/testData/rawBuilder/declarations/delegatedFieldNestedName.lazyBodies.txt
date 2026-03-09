@@ -18,7 +18,7 @@ FILE: delegatedFieldNestedName.kt
         public? get(): <implicit>
     public? final? const val inner: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>
-    public final? [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : @Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Int>>, @Anno(LAZY_EXPRESSION) Second<@Anno(LAZY_EXPRESSION) String> {
+    public final? [DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}] class MyClass : @Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Int>>, @Anno(LAZY_EXPRESSION) Second<@Anno(LAZY_EXPRESSION) String> {
         public? [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<<implicit>>
         }

@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -47,7 +47,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -83,7 +83,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -119,7 +119,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -155,7 +155,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -191,7 +191,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailable.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -227,7 +227,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailable.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -261,7 +261,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithExplicitTypeUnavailable.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor([ResolvedTo(BODY_RESOLVE)] i: R|OriginalInterface|): R|Derived| {
             super<R|kotlin/Any|>()
         }

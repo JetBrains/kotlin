@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClash.kt
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): Base { LAZY_BLOCK }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(int = R|second/constant| [evaluated = Int(0)])  second/Base| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<<implicit>>
         }

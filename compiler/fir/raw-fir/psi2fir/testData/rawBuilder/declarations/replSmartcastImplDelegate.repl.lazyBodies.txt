@@ -14,7 +14,7 @@ FILE: replSmartcastImplDelegate.repl.kts
         public? final? [ReplSnippetTopLevelDeclaration=true] val localProperty: Any = REPL_EXPRESSION_REF
             public? [ContainingClassKey=ReplSmartcastImplDelegate_repl] get(): Any
 
-        public final? [ContainingReplKey=FirReplSnippetSymbol ReplSmartcastImplDelegate_repl, DelegateFieldsMapKey={0=FirFieldSymbol /ReplSmartcastImplDelegate_repl.MyClass.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class MyClass : MyInterface {
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplSmartcastImplDelegate_repl, DelegateFieldsMapKey={0=/ReplSmartcastImplDelegate_repl.MyClass.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class MyClass : MyInterface {
             public? [ContainingClassKey=MyClass] constructor(): R|ReplSmartcastImplDelegate_repl.MyClass| {
                 LAZY_super<<implicit>>
             }

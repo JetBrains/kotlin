@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
             LAZY_super<<implicit>>
         }
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
             LAZY_super<<implicit>>
         }
@@ -83,7 +83,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
             LAZY_super<<implicit>>
         }
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
             LAZY_super<<implicit>>
         }
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
             LAZY_super<<implicit>>
         }
@@ -185,7 +185,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
             LAZY_super<<implicit>>
         }
@@ -219,7 +219,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
             LAZY_super<<implicit>>
         }
@@ -249,7 +249,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyDelegateWithImplicitType.kt
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val constant: R|kotlin/String| = String(str)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Aaa] constructor([ResolvedTo(BODY_RESOLVE)] i: R|second/Interface|): R|second/Aaa| {
             super<R|kotlin/Any|>()
         }

@@ -10,7 +10,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] delegates.kt
         public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|Base| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor([ResolvedTo(BODY_RESOLVE)] b: R|Base|): R|Derived| {
             super<R|kotlin/Any|>()
         }

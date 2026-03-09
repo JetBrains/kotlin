@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(3)])  second/Base<@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Base<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/Int>>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(3)])  second/Base<@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Base<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/Int>>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: @Anno[Unresolved](LAZY_EXPRESSION) second.Base<@Anno[Unresolved](LAZY_EXPRESSION) second.Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|second/MyClass| {
             LAZY_super<<implicit>>
         }

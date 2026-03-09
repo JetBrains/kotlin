@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=/Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
             LAZY_super<<implicit>>
         }

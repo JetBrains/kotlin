@@ -28,7 +28,7 @@ FILE: [ResolvedTo(RAW_FIR)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -214,7 +214,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+        public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -276,7 +276,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -338,7 +338,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -400,7 +400,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -462,7 +462,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -524,7 +524,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -586,7 +586,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -648,7 +648,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -710,7 +710,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(0)])  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/String>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(0)])  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -772,7 +772,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(0)])  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/String>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(0)])  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/String>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -835,7 +835,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameScript.kts
         public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(), ScriptTopLevelDeclaration=true] val inner: R|kotlin/String| = String()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(0)])  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/String>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameScript.kts>, DelegateFieldsMapKey={0=second/MyClass.$$delegate_0, 1=second/MyClass.$$delegate_1}, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(0)])  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(1)])  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(2)])  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(4)])  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|) [evaluated = Int(5)])  kotlin/String>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 super<R|kotlin/Any|>()
             }
@@ -865,4 +865,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameScript.kts
             }
 
         }
-

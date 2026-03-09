@@ -36,7 +36,7 @@ FILE: D.kt
     }
 Module: platform
 FILE: B.kt
-    public abstract actual [ExpectForActualAttributeKey={MatchedSuccessfully=[FirRegularClassSymbol B]}] interface B : R|kotlin/Any| {
+    public abstract actual [ExpectForActualAttributeKey={MatchedSuccessfully=[B]}] interface B : R|kotlin/Any| {
         @R|A|(x = String(12345678) [evaluated = String(12345678)]) public open [ExpectForActualAttributeKey={}] fun foo(): R|kotlin/Unit| {
         }
 

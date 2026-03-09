@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeScript.kts>, DelegateFieldsMapKey={0=/Derived.$$delegate_0}, ScriptTopLevelDeclaration=true] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -79,4 +79,3 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeScript.kts
             @R|Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(STATUS)] fun <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] F : R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|> [ResolvedTo(STATUS)] @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|.explicitType([ResolvedTo(STATUS)] @R|Anno|[Types](LAZY_EXPRESSION) param: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/ListIterator<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>|): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
 
         }
-
