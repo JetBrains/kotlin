@@ -322,7 +322,6 @@ public actual class Byte private constructor() : Number(), Comparable<Byte> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Byte): IntRange =
         this until other
 
@@ -332,7 +331,6 @@ public actual class Byte private constructor() : Number(), Comparable<Byte> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Short): IntRange =
         this until other
 
@@ -342,7 +340,6 @@ public actual class Byte private constructor() : Number(), Comparable<Byte> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Int): IntRange =
         this until other
 
@@ -352,7 +349,6 @@ public actual class Byte private constructor() : Number(), Comparable<Byte> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Long): LongRange =
         this until other
 
@@ -756,7 +752,6 @@ public actual class Short private constructor() : Number(), Comparable<Short> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Byte): IntRange =
         this until other
 
@@ -766,7 +761,6 @@ public actual class Short private constructor() : Number(), Comparable<Short> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Short): IntRange =
         this until other
 
@@ -776,7 +770,6 @@ public actual class Short private constructor() : Number(), Comparable<Short> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Int): IntRange =
         this until other
 
@@ -786,7 +779,6 @@ public actual class Short private constructor() : Number(), Comparable<Short> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Long): LongRange =
         this until other
 
@@ -1188,7 +1180,6 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Byte): IntRange =
         this until other
 
@@ -1198,7 +1189,6 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Short): IntRange =
         this until other
 
@@ -1208,7 +1198,6 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Int): IntRange =
         this until other
 
@@ -1218,7 +1207,6 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Long): LongRange =
         this until other
 
@@ -1673,7 +1661,6 @@ public actual class Long private constructor() : Number(), Comparable<Long> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Byte): LongRange =
         this until other
 
@@ -1683,7 +1670,6 @@ public actual class Long private constructor() : Number(), Comparable<Long> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Short): LongRange =
         this until other
 
@@ -1693,7 +1679,6 @@ public actual class Long private constructor() : Number(), Comparable<Long> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Int): LongRange =
         this until other
 
@@ -1703,7 +1688,6 @@ public actual class Long private constructor() : Number(), Comparable<Long> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Long): LongRange =
         this until other
 

@@ -70,7 +70,6 @@ internal constructor(private val value: Int) : Comparable<Char> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual operator fun rangeUntil(other: Char): CharRange =
         this until other
 

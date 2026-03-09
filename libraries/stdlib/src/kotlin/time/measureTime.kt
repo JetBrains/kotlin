@@ -16,7 +16,6 @@ import kotlin.contracts.*
  * @sample samples.time.MeasureTime.measureTimeSample
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalTime::class)
 public inline fun measureTime(block: () -> Unit): Duration {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -33,7 +32,6 @@ public inline fun measureTime(block: () -> Unit): Duration {
  * @sample samples.time.MeasureTime.explicitMeasureTimeSample
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalTime::class)
 public inline fun TimeSource.measureTime(block: () -> Unit): Duration {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -54,7 +52,6 @@ public inline fun TimeSource.measureTime(block: () -> Unit): Duration {
  * @sample samples.time.MeasureTime.monotonicMeasureTimeSample
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalTime::class)
 public inline fun TimeSource.Monotonic.measureTime(block: () -> Unit): Duration {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -73,7 +70,6 @@ public inline fun TimeSource.Monotonic.measureTime(block: () -> Unit): Duration 
  * @property duration the time elapsed to execute the action.
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalTime::class)
 public data class TimedValue<T>(val value: T, val duration: Duration)
 
 /**
@@ -86,7 +82,6 @@ public data class TimedValue<T>(val value: T, val duration: Duration)
  * @sample samples.time.MeasureTime.measureTimedValueSample
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalTime::class)
 public inline fun <T> measureTimedValue(block: () -> T): TimedValue<T> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -104,7 +99,6 @@ public inline fun <T> measureTimedValue(block: () -> T): TimedValue<T> {
  * @sample samples.time.MeasureTime.explicitMeasureTimedValueSample
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalTime::class)
 public inline fun <T> TimeSource.measureTimedValue(block: () -> T): TimedValue<T> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -126,7 +120,6 @@ public inline fun <T> TimeSource.measureTimedValue(block: () -> T): TimedValue<T
  * @sample samples.time.MeasureTime.monotonicMeasureTimedValueSample
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalTime::class)
 public inline fun <T> TimeSource.Monotonic.measureTimedValue(block: () -> T): TimedValue<T> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)

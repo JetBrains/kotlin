@@ -48,7 +48,6 @@ public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInc
     
     @Deprecated("Can throw an exception when it's impossible to represent the value with $t type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     override val endExclusive: $t get() {
         if (last == $t.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1

@@ -18,7 +18,6 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
     
     @Deprecated("Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     override val endExclusive: Char get() {
         if (last == Char.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1
@@ -57,7 +56,6 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
     
     @Deprecated("Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     override val endExclusive: Int get() {
         if (last == Int.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1
@@ -96,7 +94,6 @@ public class LongRange(start: Long, endInclusive: Long) : LongProgression(start,
     
     @Deprecated("Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     override val endExclusive: Long get() {
         if (last == Long.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1

@@ -1134,7 +1134,6 @@ public actual fun max(a: Float, b: Float): Float = when {
  * @sample samples.math.MathSamples.Floats.cbrt
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 @GCUnsafeCall("Kotlin_math_cbrtf")
 public external actual fun cbrt(x: Float): Float
 

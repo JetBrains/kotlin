@@ -44,7 +44,7 @@ public interface ClosedRange<T : Comparable<T>> {
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/ranges.html) for more information.
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalStdlibApi::class)
+
 public interface OpenEndRange<T : Comparable<T>> {
     /**
      * The minimum value in the range.

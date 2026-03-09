@@ -256,7 +256,6 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
         method {
             appendDoc(doc)
             annotations += "SinceKotlin(\"1.9\")"
-            annotations += "WasExperimental(ExperimentalStdlibApi::class)"
             signature {
                 isOperator = true
                 methodName = "rangeUntil"

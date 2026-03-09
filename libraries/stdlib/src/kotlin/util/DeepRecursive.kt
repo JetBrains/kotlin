@@ -91,7 +91,6 @@ public operator fun <T, R> DeepRecursiveFunction<T, R>.invoke(value: T): R =
  */
 @RestrictsSuspension
 @SinceKotlin("1.7")
-@WasExperimental(ExperimentalStdlibApi::class)
 public sealed class DeepRecursiveScope<T, R> {
     /**
      * Makes recursive call to this [DeepRecursiveFunction] function putting the call activation frame on the heap,

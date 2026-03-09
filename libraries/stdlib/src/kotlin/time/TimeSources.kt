@@ -24,7 +24,6 @@ internal expect object MonotonicTimeSource : TimeSource.WithComparableMarks {
  * @property unit The unit in which this time source's readings are expressed.
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalTime::class)
 public abstract class AbstractLongTimeSource(protected val unit: DurationUnit) : TimeSource.WithComparableMarks {
     /**
      * This protected method should be overridden to return the current reading of the time source expressed as a [Long] number
@@ -160,7 +159,6 @@ public abstract class AbstractDoubleTimeSource(protected val unit: DurationUnit)
  * @sample samples.time.MeasureTime.explicitMeasureTimedValueSample
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalTime::class)
 public class TestTimeSource : AbstractLongTimeSource(unit = DurationUnit.NANOSECONDS) {
     private var reading: Long = 0L
 

@@ -233,7 +233,6 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println("     * If the [other] value is less than or equal to `this` value, then the returned range is empty.")
         out.println("     */")
         out.println("    @SinceKotlin(\"1.9\")")
-        out.println("    @WasExperimental(ExperimentalStdlibApi::class)")
         out.println("    @kotlin.internal.InlineOnly")
         out.println("    public inline operator fun rangeUntil(other: $className): $rangeType = ${convert("this")} until ${convert("other")}")
         out.println()
@@ -581,7 +580,6 @@ public class ${elementType}Range(start: $elementType, endInclusive: $elementType
     
     @Deprecated("Can throw an exception when it's impossible to represent the value with $elementType type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     override val endExclusive: $elementType get() {
         if (last == $elementType.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1u

@@ -54,7 +54,6 @@ public expect class Char : Comparable<Char> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Char): CharRange
 
     /** Returns the value of this character as a `Byte`. */

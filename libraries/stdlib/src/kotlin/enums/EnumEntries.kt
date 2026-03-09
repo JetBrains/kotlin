@@ -24,7 +24,6 @@ import kotlin.internal.throwReadObjectNotSupported
  * faster than regular `ArrayList<E>` counterparts.
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalStdlibApi::class)
 public sealed interface EnumEntries<E : Enum<E>> : List<E>
 
 /**

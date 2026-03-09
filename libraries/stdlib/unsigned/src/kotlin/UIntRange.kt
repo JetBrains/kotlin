@@ -22,7 +22,6 @@ public class UIntRange(start: UInt, endInclusive: UInt) : UIntProgression(start,
     
     @Deprecated("Can throw an exception when it's impossible to represent the value with UInt type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     override val endExclusive: UInt get() {
         if (last == UInt.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1u

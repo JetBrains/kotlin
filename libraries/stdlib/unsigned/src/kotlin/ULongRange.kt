@@ -22,7 +22,6 @@ public class ULongRange(start: ULong, endInclusive: ULong) : ULongProgression(st
     
     @Deprecated("Can throw an exception when it's impossible to represent the value with ULong type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     override val endExclusive: ULong get() {
         if (last == ULong.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1u

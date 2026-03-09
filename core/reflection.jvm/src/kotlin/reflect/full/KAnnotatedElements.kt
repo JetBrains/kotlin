@@ -50,7 +50,6 @@ inline fun <reified T : Annotation> KAnnotatedElement.findAnnotations(): List<T>
  */
 @SinceKotlin("1.7")
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@WasExperimental(ExperimentalStdlibApi::class)
 fun <T : Annotation> KAnnotatedElement.findAnnotations(klass: KClass<T>): List<T> {
     val filtered = annotations.filterIsInstance(klass.java)
     if (filtered.isNotEmpty()) return filtered

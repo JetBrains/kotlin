@@ -60,7 +60,6 @@ public expect class Regex {
      * @sample samples.text.Regexps.matchesAt
      */
     @SinceKotlin("1.7")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public fun matchesAt(input: CharSequence, index: Int): Boolean
 
     /** Indicates whether the regular expression can find at least one match in the specified [input]. */

@@ -273,7 +273,6 @@ public expect class Byte : Number, Comparable<Byte> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Byte): IntRange
 
     /**
@@ -282,7 +281,6 @@ public expect class Byte : Number, Comparable<Byte> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Short): IntRange
 
     /**
@@ -291,7 +289,6 @@ public expect class Byte : Number, Comparable<Byte> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Int): IntRange
 
     /**
@@ -300,7 +297,6 @@ public expect class Byte : Number, Comparable<Byte> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Long): LongRange
 
     /** Returns this value. */
@@ -643,7 +639,6 @@ public expect class Short : Number, Comparable<Short> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Byte): IntRange
 
     /**
@@ -652,7 +647,6 @@ public expect class Short : Number, Comparable<Short> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Short): IntRange
 
     /**
@@ -661,7 +655,6 @@ public expect class Short : Number, Comparable<Short> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Int): IntRange
 
     /**
@@ -670,7 +663,6 @@ public expect class Short : Number, Comparable<Short> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Long): LongRange
 
     /**
@@ -1011,7 +1003,6 @@ public expect class Int : Number, Comparable<Int> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Byte): IntRange
 
     /**
@@ -1020,7 +1011,6 @@ public expect class Int : Number, Comparable<Int> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Short): IntRange
 
     /**
@@ -1029,7 +1019,6 @@ public expect class Int : Number, Comparable<Int> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Int): IntRange
 
     /**
@@ -1038,7 +1027,6 @@ public expect class Int : Number, Comparable<Int> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Long): LongRange
 
     /**
@@ -1425,7 +1413,6 @@ public expect class Long : Number, Comparable<Long> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Byte): LongRange
 
     /**
@@ -1434,7 +1421,6 @@ public expect class Long : Number, Comparable<Long> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Short): LongRange
 
     /**
@@ -1443,7 +1429,6 @@ public expect class Long : Number, Comparable<Long> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Int): LongRange
 
     /**
@@ -1452,7 +1437,6 @@ public expect class Long : Number, Comparable<Long> {
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
     @SinceKotlin("1.9")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Long): LongRange
 
     /**

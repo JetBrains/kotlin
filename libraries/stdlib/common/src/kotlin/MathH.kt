@@ -1021,7 +1021,6 @@ public expect fun max(a: Float, b: Float): Float
  * @sample samples.math.MathSamples.Floats.cbrt
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun cbrt(x: Float): Float
 
 

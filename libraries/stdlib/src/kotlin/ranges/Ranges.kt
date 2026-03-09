@@ -63,7 +63,7 @@ private open class ComparableOpenEndRange<T : Comparable<T>>(
  * @sample samples.ranges.Ranges.rangeFromComparable
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalStdlibApi::class)
+
 public operator fun <T : Comparable<T>> T.rangeUntil(that: T): OpenEndRange<T> = ComparableOpenEndRange(this, that)
 
 
@@ -163,7 +163,7 @@ private class OpenEndDoubleRange(
  * Numbers are compared with the ends of this range according to IEEE-754.
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalStdlibApi::class)
+
 public operator fun Double.rangeUntil(that: Double): OpenEndRange<Double> = OpenEndDoubleRange(this, that)
 
 
@@ -245,7 +245,7 @@ private class OpenEndFloatRange(
  * Numbers are compared with the ends of this range according to IEEE-754.
  */
 @SinceKotlin("1.9")
-@WasExperimental(ExperimentalStdlibApi::class)
+
 public operator fun Float.rangeUntil(that: Float): OpenEndRange<Float> = OpenEndFloatRange(this, that)
 
 
