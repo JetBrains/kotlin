@@ -151,6 +151,7 @@ class WasmSerializer(outputStream: OutputStream) {
             is WasmFunctionType -> withTag(TypeDeclarationTags.FUNCTION) { serializeWasmFunctionType(typeDecl) }
             is WasmStructDeclaration -> withTag(TypeDeclarationTags.STRUCT) { serializeWasmStructDeclaration(typeDecl) }
             is WasmArrayDeclaration -> withTag(TypeDeclarationTags.ARRAY) { serializeWasmArrayDeclaration(typeDecl) }
+            is WasmContType -> withTag(TypeDeclarationTags.CONT) { TODO() }
         }
 
     private fun serializeWasmStructDeclaration(structDecl: WasmStructDeclaration) {
@@ -207,6 +208,7 @@ class WasmSerializer(outputStream: OutputStream) {
             WasmUnreachableType -> setTag(TypeTags.UNREACHABLE_TYPE)
             WasmV128 -> setTag(TypeTags.V12)
             WasmArrayRef -> setTag(TypeTags.ARRAY_REF)
+            WasmContRefType -> setTag(TypeTags.CONT_TYPE)
         }
 
     private fun serializeWasmHeapType(type: WasmHeapType) =
@@ -222,6 +224,8 @@ class WasmSerializer(outputStream: OutputStream) {
             is GcHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_GC_TYPE) { serializeIdSignature(type.type) }
             is VTableHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_VT_TYPE) { serializeIdSignature(type.type) }
             is FunctionHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_FUNC_TYPE) { serializeIdSignature(type.type) }
+            WasmHeapType.Simple.Cont -> setTag(HeapTypeTags.CONT)
+            WasmHeapType.Simple.NoCont -> setTag(HeapTypeTags.NO_CONT)
             else -> error("Unknown heap type:${type::class.simpleName}")
         }
 
@@ -311,6 +315,7 @@ class WasmSerializer(outputStream: OutputStream) {
             is WasmImmediate.TableIdx -> withTag(ImmediateTags.TABLE_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeInt(it) } }
             is WasmImmediate.TagIdx -> withTag(ImmediateTags.TAG_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeInt(it) } }
             is WasmImmediate.ValTypeVector -> withTag(ImmediateTags.VALUE_TYPE_VECTOR) { serializeList(i.value, ::serializeWasmType) }
+            is WasmImmediate.ContHandle -> withTag(ImmediateTags.CONT_HANDLE) { TODO() }
             else -> error("Unknown WasmImmediate type: ${i::class.simpleName}")
         }
 
