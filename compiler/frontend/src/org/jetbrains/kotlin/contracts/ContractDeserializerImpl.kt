@@ -59,7 +59,8 @@ class ContractDeserializerImpl(
     ) {
 
         fun deserializeContract(proto: ProtoBuf.Contract): ContractDescription? {
-            val effects = proto.effectList.map { deserializePossiblyConditionalEffect(it) ?: return null }
+            val effects = proto.effectList.mapNotNull { deserializePossiblyConditionalEffect(it) }
+            if (effects.isEmpty()) return null
             return ContractDescription(effects, ownerFunction, storageManager)
         }
 

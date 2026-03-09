@@ -39,6 +39,7 @@ abstract class ProtoBufContractDeserializer<Type, Diagnostic, Owner> {
 
     private fun loadSimpleEffect(proto: ProtoBuf.Effect, owner: Owner): KtEffectDeclaration<Type, Diagnostic>? {
         val type: ProtoBuf.Effect.EffectType = if (proto.hasEffectType()) proto.effectType else return null
+        @Suppress("REDUNDANT_ELSE_IN_WHEN") // else branch handles unknown future effect types for backward compatibility
         return when(type) {
             ProtoBuf.Effect.EffectType.RETURNS_CONSTANT -> {
                 val argument = proto.effectConstructorArgumentList.firstOrNull()
@@ -67,6 +68,7 @@ abstract class ProtoBufContractDeserializer<Type, Diagnostic, Owner> {
                 val callable = extractVariable(argument, owner) ?: return null
                 KtReturnsResultOfDeclaration(callable)
             }
+            else -> null
         }
     }
 

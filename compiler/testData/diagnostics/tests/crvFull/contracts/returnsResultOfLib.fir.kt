@@ -24,6 +24,12 @@ fun main(s: String?, sb: StringBuilder) {
     s?.<!RETURN_VALUE_NOT_USED!>myLet<!> { sb.toString() + it }
 }
 
+fun foobar(s: String?, ss: String?) {
+    val a: String
+    s.myLet { a = s!! }
+    a.<!RETURN_VALUE_NOT_USED!>length<!>
+}
+
 /* GENERATED_FIR_TAGS: additiveExpression, contractCallsEffect, contracts, flexibleType, funWithExtensionReceiver,
 functionDeclaration, functionalType, inline, javaFunction, lambdaLiteral, nullableType, safeCall, thisExpression,
 typeParameter */

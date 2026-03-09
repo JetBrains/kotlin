@@ -62,8 +62,10 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
         contractCallExpression.isContractDescriptionCallPreciseCheck(bindingContext)
 
     /**
-     * This function deals with some call that is guaranteed to resolve to 'contract' from stdlib, so,
-     * ideally, it should satisfy following condition: null returned <=> at least one error was reported
+     * This function deals with some call that is guaranteed to resolve to 'contract' from stdlib.
+     * Returns null if no valid effects could be parsed (all effects failed); otherwise returns
+     * a contract containing only the successfully parsed effects. Errors are always reported via
+     * [collector], but a non-null result may still be returned when only some effects had errors.
      */
     private fun parseContractAndReportErrors(callContext: ContractCallContext): ContractDescription? {
         val collector = TraceBasedCollector(callContext)
@@ -81,9 +83,12 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
             // (null returned => at least one error was reported)
             if (parsedContract == null) collector.addFallbackErrorIfNecessary()
 
-            // Make sure that we don't return non-null value if there were some errors
-            // (null returned <= at least one error was reported)
-            return parsedContract?.takeUnless { collector.hasErrors() }
+            // Return the parsed contract even if some effects had errors — PsiContractParserDispatcher
+            // already filters out invalid effects via mapNotNull, so parsedContract only contains
+            // valid effects. Discarding the whole contract when any single effect fails (e.g. an
+            // unsupported effect like returnsResultOf in K1) would lose the remaining valid effects
+            // (e.g. callsInPlace) from serialized metadata.
+            return parsedContract
         } finally {
             collector.flushDiagnostics()
         }
