@@ -177,7 +177,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
         val secondStageCompilerArgs = listOf(
             // Trigger the cache compilation to crash by passing an invalid flag:
-            "-Xoverride-konan-properties=additionalCacheFlags=-Xpartial-linkage=invalid-mode",
+            "-Xoverride-konan-properties=additionalCacheFlags=-Xpartial-linkage-loglevel=invalid-log-level",
 
             "-Xauto-cache-from=$buildDir",
             "-Xauto-cache-dir=$autoCacheDir",
@@ -212,7 +212,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
         val secondStageCompilerArgs = listOf(
             // Trigger the cache compilation to crash by passing an invalid flag:
-            "-Xoverride-konan-properties=additionalCacheFlags=-Xpartial-linkage=invalid-mode",
+            "-Xoverride-konan-properties=additionalCacheFlags=-Xpartial-linkage-loglevel=invalid-log-level",
             "-Xic-cache-dir=${icCacheDir.absolutePath}",
             "-Xenable-incremental-compilation"
         )

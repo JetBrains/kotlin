@@ -82,7 +82,6 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             add(targets.testTarget.visibleName)
             addAll(flags)
 
-            add("-Xpartial-linkage=enable")
             add("-Xpartial-linkage-loglevel=error")
         }
 
