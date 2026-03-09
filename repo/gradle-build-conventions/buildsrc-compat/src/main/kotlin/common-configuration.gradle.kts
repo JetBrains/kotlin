@@ -435,6 +435,21 @@ fun Project.configureTests() {
         if (project.kotlinBuildProperties.limitTestTasksConcurrency) {
             usesService(concurrencyLimitService)
         }
+
+        /*
+        We're disabling test reports on teamcity for Gradle 9.4 as we experienced failures like
+        'File name too long' when upgrading to Gradle 9.4 while generating those reports.
+        https://github.com/gradle/gradle/issues/36996
+         */
+        reports {
+            val isTeamcityBuild = kotlinBuildProperties.isTeamcityBuild
+            configureEach {
+                if (isTeamcityBuild.get() && GradleVersion.current() == GradleVersion.version("9.4.0")) {
+                    this.required = false
+                }
+            }
+        }
+
     }
 
     tasks.withType<AbstractTestTask>().configureEach {
