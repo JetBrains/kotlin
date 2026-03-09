@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.lastExpression
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 object FirUnsupportedArrayLiteralChecker : FirCollectionLiteralChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirCollectionLiteral) {
-        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)) return
+        if (LanguageFeature.CollectionLiterals.isEnabled()) return
         if (isInsideAnnotationConstructor()) return
 
         when (containingCallKind()) {
