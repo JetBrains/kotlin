@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ThreadStateChecker
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.UsedPartialLinkageConfig
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
@@ -31,7 +32,7 @@ import java.io.File
 @EnforcedHostTarget
 @TestMetadata(TEST_SUITE_PATH)
 @TestDataPath("\$PROJECT_ROOT")
-@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
+@UsePartialLinkage(UsePartialLinkage.Mode.ERROR)
 class IncrementalCompilationTest : AbstractNativeSimpleTest() {
     @BeforeEach
     fun assumeCachesAreEnabled() {
@@ -529,7 +530,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
             testRunSettings.get<KotlinNativeTargets>().testTarget,
             "STATIC",
             testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG,
-            partialLinkageEnabled = false,
+            partialLinkageEnabled = testRunSettings.get<UsedPartialLinkageConfig>().config.isEnabled,
             checkStateAtExternalCalls = testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED,
         )
 
