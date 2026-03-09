@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsMultimodule
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.JsCodeSnippet
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.wasm.ir.WasmContType
 import org.jetbrains.kotlin.wasm.ir.WasmExport
 import org.jetbrains.kotlin.wasm.ir.WasmFunction
 import org.jetbrains.kotlin.wasm.ir.WasmFunctionType
@@ -22,6 +22,9 @@ class WasmCompiledTypesFileFragment(
     val definedGcTypes: MutableMap<IdSignature, WasmTypeDeclaration> = mutableMapOf(),
     val definedVTableGcTypes: MutableMap<IdSignature, WasmStructDeclaration> = mutableMapOf(),
     val definedFunctionTypes: MutableMap<IdSignature, WasmFunctionType> = mutableMapOf(),
+    val contTypes: MutableMap<Int, WasmContType> = mutableMapOf(),
+    val contFunctionTypes: MutableMap<Int, WasmFunctionType> = mutableMapOf(),
+    val resumeBlockTypeSymbol: WasmSymbol<WasmFunctionType> = WasmSymbol(),
 )
 
 val WasmCompiledDeclarationsFileFragment.hasDeclarations: Boolean

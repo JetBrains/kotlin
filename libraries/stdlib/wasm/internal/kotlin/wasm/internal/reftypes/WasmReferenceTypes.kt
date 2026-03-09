@@ -27,3 +27,7 @@ internal interface eqref : anyref
 internal interface structref : eqref
 internal interface i31ref : eqref
 internal interface funcref : anyref
+
+internal interface contref
+@UsedFromCompilerGeneratedCode
+internal interface contref1 : contref
