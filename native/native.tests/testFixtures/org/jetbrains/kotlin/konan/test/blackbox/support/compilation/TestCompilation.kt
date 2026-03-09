@@ -778,11 +778,7 @@ class ExecutableCompilation(
         }
 
         internal fun ArgsBuilder.applyPartialLinkageArgs(partialLinkageConfig: UsedPartialLinkageConfig) {
-            with(partialLinkageConfig.config) {
-                add("-Xpartial-linkage=${mode.name.lowercase()}")
-                if (mode.isEnabled)
-                    add("-Xpartial-linkage-loglevel=${logLevel.name.lowercase()}")
-            }
+            add("-Xpartial-linkage-loglevel=${partialLinkageConfig.config.logLevel.name.lowercase()}")
         }
 
         internal fun ArgsBuilder.applyFileCheckArgs(fileCheckStage: String?, fileCheckDump: File?) =
