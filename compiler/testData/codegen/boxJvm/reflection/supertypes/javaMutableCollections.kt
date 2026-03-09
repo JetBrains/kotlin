@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // FILE: J.java
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ public interface J {
 
     interface J6 extends Map<Integer, Map<? super String, Number>> {}
     interface J7 extends Map<Short, Map<String, ? super Number>> {}
+
+    interface J8<W extends Number & Serializable> extends List<List<?>> {}
 }
 
 // FILE: box.kt
@@ -48,6 +51,8 @@ fun box(): String {
 
     assertEquals("kotlin.collections.MutableMap<kotlin.Int!, kotlin.collections.(Mutable)Map<in kotlin.String!, kotlin.Number!>!>", J.J6::class.supertype().toString())
     assertEquals("kotlin.collections.MutableMap<kotlin.Short!, kotlin.collections.MutableMap<kotlin.String!, in kotlin.Number!>!>", J.J7::class.supertype().toString())
+
+    assertEquals("kotlin.collections.MutableList<kotlin.collections.(Mutable)List<*>!>", J.J8::class.supertype().toString())
 
     return "OK"
 }
