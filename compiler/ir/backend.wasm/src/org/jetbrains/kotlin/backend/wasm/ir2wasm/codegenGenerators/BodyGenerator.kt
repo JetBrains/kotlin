@@ -785,6 +785,11 @@ class BodyGenerator(
             }
         }
 
+        if (call.symbol == wasmSymbols.resumeWithIntrinsic || call.symbol == wasmSymbols.resumeThrowIntrinsic) {
+            tryToGenerateIntrinsicCall(call, call.symbol.owner)
+            return
+        }
+
         call.arguments.forEach { generateExpression(it!!) }
 
         val callFunction = call.symbol.owner
@@ -884,6 +889,31 @@ class BodyGenerator(
         if (function.returnType.isUnit() && function !is IrConstructor) {
             body.buildGetUnit()
         }
+    }
+
+    private fun castAnyToInvokable(function: IrFunction, parentClass: IrClass, location: SourceLocation) {
+        require(function is IrSimpleFunction && function.isOverridable)
+        val realOverrideTargetClass = function.parentAsClass
+        val klass = when {
+            !realOverrideTargetClass.isInterface || parentClass.isInterface -> realOverrideTargetClass
+            else -> parentClass
+        }
+
+        val klassSymbol = klass.symbol
+        val vTableGcHeapTypeReference = typeCodegenContext.referenceVTableHeapType(klassSymbol)
+        val vTableGcTypeReference = typeCodegenContext.referenceVTableGcType(klassSymbol)
+
+        require(klass.isInterface)
+        require(!klassSymbol.isFunction())
+        body.commentGroupStart { "Interface call: ${function.fqNameWhenAvailable}" }
+        body.buildConstI64(serviceCodegenContext.referenceTypeId(klassSymbol), location)
+        body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceVTable), location)
+
+        body.buildRefCastStatic(vTableGcHeapTypeReference, location)
+        val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klassSymbol).methods
+            .indexOfFirst { it.function == function }
+        body.buildStructGet(vTableGcTypeReference, vfSlot, location)
+        body.commentGroupEnd()
     }
 
     private fun generateRefCast(fromType: IrType, toType: IrType, isRefNullCast: Boolean, location: SourceLocation) {
@@ -1174,6 +1204,73 @@ class BodyGenerator(
                 body.buildDrop(location)
             }
 
+
+            wasmSymbols.suspendIntrinsic -> {
+                body.buildSuspend(contTagId, location)
+            }
+
+            wasmSymbols.resumeThrowIntrinsic -> {
+                val wasmContinuation = functionContext.referenceLocal(1)
+
+                val zeroArgContType = typeCodegenContext.referenceHeapContType(1)
+
+                body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
+                    // Throwable
+                    body.buildGetLocal(functionContext.referenceLocal(0), location)
+
+                    if (backendContext.isWasmJsTarget) {
+                        body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getJsError), location)
+                    }
+
+                    body.buildGetLocal(wasmContinuation, location)
+                    val contHandle = body.createNewContHandle(contTagId, idx)
+                    body.buildResumeThrow(zeroArgContType, exceptionTagId, contHandle, location)
+                    body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicValueResult), location)
+                    body.buildInstr(WasmOp.RETURN, location)
+                }
+                body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicSuspendResult), location)
+            }
+
+            wasmSymbols.nullableContrefIntrinsic -> {
+                val wasmToType = typeCodegenContext.referenceHeapContType(1)
+                val type = WasmImmediate.HeapType(wasmToType)
+                body.buildInstr(WasmOp.REF_NULL, location, type)
+            }
+
+            wasmSymbols.resumeWithIntrinsic -> {
+                val wasmContinuation = functionContext.referenceLocal(0)
+
+                val zeroArgContType = typeCodegenContext.referenceHeapContType(1)
+
+                body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
+                    // result: Result<T>
+                    body.buildGetLocal(functionContext.referenceLocal(1), location)
+                    body.buildGetLocal(wasmContinuation, location)
+                    val contHandle = body.createNewContHandle(contTagId, idx)
+                    body.buildResume(zeroArgContType, contHandle, location)
+                    body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicValueResult), location)
+                    body.buildInstr(WasmOp.RETURN, location)
+                }
+                body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicSuspendResult), location)
+            }
+
+            in wasmSymbols.suspendFunctionToContref -> {
+                val intrinsicIndex = wasmSymbols.suspendFunctionToContref.indexOfFirst { it == function.symbol }
+                val arity = intrinsicIndex + 2
+                val suspendFunctionClassType = function.parameters[0].type
+                val suspendFunctionInvoke = suspendFunctionClassType.classOrFail.functions.singleOrNull {
+                    it.owner.name.asString() == "invoke"
+                } ?: error("No `invoke` function for suspend function type\n${suspendFunctionClassType.dumpKotlinLike()}")
+                val contType = typeCodegenContext.referenceContType(arity)
+                val bindContType = typeCodegenContext.referenceContType(1)
+
+                body.buildGetLocal(functionContext.referenceLocal(0), location)
+                castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
+                body.buildContNew(contType, location)
+                body.buildContBind(contType, bindContType, location)
+                body.buildInstr(WasmOp.RETURN, location)
+            }
+
             wasmSymbols.wasmArrayCopy -> {
                 val immediate = typeCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
                 body.buildInstr(WasmOp.ARRAY_COPY, location, immediate, immediate)
@@ -1371,6 +1468,8 @@ class BodyGenerator(
         }
 
         val expectedClassErased = expectedType.getRuntimeClass(irBuiltIns)
+
+        if (isBuiltInWasmRefType(actualType)) return
 
         // TYPE -> EXTERNAL -> TRUE
         if (expectedClassErased.isExternal) return
@@ -1626,6 +1725,7 @@ class BodyGenerator(
         const val RTTI_SIMPLE_NAME_GLOBAL_FIELD_ID = 9
         private const val CLASS_ASSOCIATED_OBJECT_GETTER_WRAPPER_FIELD_ID = 0
         private val exceptionTagId = WasmSymbol(0)
+        private val contTagId = WasmSymbol(1)
         private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx.get(0)
     }
 }
