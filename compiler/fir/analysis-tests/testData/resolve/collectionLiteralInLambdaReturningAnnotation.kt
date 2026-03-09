@@ -17,13 +17,13 @@ fun runExpected(block: () -> Array<String>): Anno {
 fun test() {
     // error
     run {
-        <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+        <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
         Anno()
     }
 
     // error
     runAnno {
-        <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+        <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
     }
 
     // warning
@@ -33,14 +33,14 @@ fun test() {
 
     // error
     run {
-        <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+        <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!>
         Anno()
     }
 
     // error
     run {
         if (true) {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
         }
         Anno()
     }
@@ -54,7 +54,7 @@ fun test() {
     // error
     run {
         if (true) {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
         } else {
             Unit
         }
@@ -64,7 +64,7 @@ fun test() {
     // error
     runAnno {
         var res = if (true) {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
         } else {
             Unit
         }
@@ -78,9 +78,9 @@ fun test() {
     // error
     runAnno {
         if (true) {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
         } else {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
         }
     }
 
@@ -88,7 +88,7 @@ fun test() {
     runAnno {
         if (true) ["42"]
         else {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
         }
     }
 
@@ -101,30 +101,30 @@ fun test() {
     // error
     runAnno {
         if (true) {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
         } else {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[42]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[42]<!>
         }
     }
 
     // error
     runAnno {
         run {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
         }
     }
 
     // error
     runAnno {
         runAnno {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
         }
     }
 
     // error
     runAnno {
         run {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!>
         }
     }
 
@@ -138,7 +138,7 @@ fun test() {
         when {
             true -> []
             else -> {
-                <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+                <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!>
             }
         }
     }
@@ -154,7 +154,7 @@ fun test() {
     // error
     runAnno {
         try {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!>
         } finally {
         }
     }
@@ -162,7 +162,7 @@ fun test() {
     // error
     runAnno {
         val res = try {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!>
         } finally {
 
         }
@@ -171,7 +171,7 @@ fun test() {
     // error
     runAnno {
         val res = try {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!>
         } finally {
         }
     }
@@ -179,7 +179,7 @@ fun test() {
     // error
     runExpected {
         try {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
         } finally {
         }
     }
@@ -188,7 +188,7 @@ fun test() {
     runAnno {
         try {
         } finally {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!>
         }
     }
 
@@ -197,7 +197,7 @@ fun test() {
         try {
             arrayOf("42")
         } catch(_: Exception) {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!>
         }
     }
 
@@ -206,7 +206,7 @@ fun test() {
         try {
             arrayOf("42")
         } catch(_: Exception) {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
         }
     }
 
@@ -214,7 +214,7 @@ fun test() {
     runAnno {
         object {
             init {
-                <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+                <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!>
             }
         }
     }
@@ -231,7 +231,7 @@ fun test() {
     // error
     runAnno {
         fun local() {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!>
         }
     }
 
@@ -255,7 +255,7 @@ fun test() {
     // error
     runAnno {
         val x = fun() {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!>
         }
         x()
     }
@@ -264,7 +264,7 @@ fun test() {
     runExpected(fun() = [])
 
     // error
-    runAnno(fun() { <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!> })
+    runAnno(fun() { <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!> })
 
     // warning
     runAnno {
@@ -274,7 +274,7 @@ fun test() {
     // error
     runAnno {
         while (true) {
-            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["42"]<!>
+            <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>["42"]<!>
         }
     }
 }

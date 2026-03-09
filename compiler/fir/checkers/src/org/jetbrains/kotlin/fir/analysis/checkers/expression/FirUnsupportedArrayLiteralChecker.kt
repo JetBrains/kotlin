@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.lastExpression
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -52,6 +51,14 @@ object FirUnsupportedArrayLiteralChecker : FirCollectionLiteralChecker(MppChecke
             reporter.reportOn(expression.source, FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION.errorFactory)
         } else {
             reporter.reportOn(expression.source, FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION)
+        }
+
+        if (forceError || LanguageFeature.ForbidArrayLiteralsInNonAnnotationContexts.isEnabled()) {
+            reporter.reportOn(
+                expression.source,
+                FirErrors.UNSUPPORTED_FEATURE,
+                LanguageFeature.CollectionLiterals to context.languageVersionSettings,
+            )
         }
     }
 
