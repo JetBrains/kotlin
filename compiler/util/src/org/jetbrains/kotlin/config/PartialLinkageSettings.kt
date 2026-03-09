@@ -5,23 +5,11 @@
 
 package org.jetbrains.kotlin.config
 
-data class PartialLinkageConfig(val mode: PartialLinkageMode, val logLevel: PartialLinkageLogLevel) {
-    val isEnabled get() = mode.isEnabled
+data class PartialLinkageConfig(val logLevel: PartialLinkageLogLevel) {
+    val isEnabled get() = true
 
     companion object {
-        val DEFAULT = PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.DEFAULT)
-    }
-}
-
-// In the future the set of supported modes can be extended.
-enum class PartialLinkageMode(val isEnabled: Boolean) {
-    ENABLE(isEnabled = true), DISABLE(isEnabled = false);
-
-    companion object {
-        val DEFAULT = ENABLE
-
-        fun resolveMode(key: String): PartialLinkageMode? =
-            entries.firstOrNull { entry -> entry.name.equals(key, ignoreCase = true) }
+        val DEFAULT = PartialLinkageConfig(PartialLinkageLogLevel.DEFAULT)
     }
 }
 

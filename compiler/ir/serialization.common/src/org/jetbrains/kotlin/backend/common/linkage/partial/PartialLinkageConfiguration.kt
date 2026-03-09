@@ -37,7 +37,7 @@ fun CompilerConfiguration.setupPartialLinkageConfig(
             )
     } ?: PartialLinkageLogLevel.DEFAULT
 
-    setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, logLevel))
+    setupPartialLinkageConfig(PartialLinkageConfig(logLevel))
 }
 
 fun CompilerConfiguration.setupPartialLinkageConfig(config: PartialLinkageConfig) {

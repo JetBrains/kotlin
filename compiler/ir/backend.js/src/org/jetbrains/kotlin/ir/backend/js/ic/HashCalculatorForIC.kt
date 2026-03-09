@@ -202,7 +202,6 @@ internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
         }
 
         hashCalculator.updateConfigKeys(config, listOf(PARTIAL_LINKAGE_CONFIGURATION)) { value: PartialLinkageConfig ->
-            hashCalculator.update(value.mode.ordinal)
             hashCalculator.update(value.logLevel.ordinal)
         }
 
