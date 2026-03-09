@@ -1,0 +1,8 @@
+-Xinclude=$TESTDATA_DIR$/lib/LibraryExample.klib
+-ir-output-name
+prohibitExportKlibToOlderAbiVersionAtSecondStage
+-ir-output-dir
+$TEMP_DIR$
+-libraries
+$STDLIB_JS$
+-XXLanguage\:+ExportKlibToOlderAbiVersion
