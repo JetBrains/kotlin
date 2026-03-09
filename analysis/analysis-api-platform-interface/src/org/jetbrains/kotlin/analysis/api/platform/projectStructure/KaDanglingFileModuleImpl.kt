@@ -7,18 +7,14 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
-import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 /**
  * The default implementation of the dangling file module, which provides all knowledge from the context module.
@@ -38,22 +34,6 @@ public class KaDanglingFileModuleImpl(
 
     init {
         require(contextModule != this)
-
-        if (contextModule is KaDanglingFileModule) {
-            // Only code fragments can depend on dangling files.
-            // This is needed for completion, inspections and refactorings.
-            @OptIn(KaImplementationDetail::class)
-            requireWithAttachment(
-                isCodeFragment,
-                message = { "Dangling file module cannot depend on another dangling file module unless it's a code fragment" },
-            ) {
-                withKaModuleEntry("contextModule", contextModule)
-                withEntryGroup("this") {
-                    files.forEachIndexed { index, file -> withPsiEntry("file_$index", file, module = null) }
-                    withEntry("resolutionMode", resolutionMode.toString())
-                }
-            }
-        }
     }
 
     override val files: List<KtFile>

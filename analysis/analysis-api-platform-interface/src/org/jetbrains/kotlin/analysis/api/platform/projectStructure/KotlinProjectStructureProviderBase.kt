@@ -65,12 +65,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
             ?: file.analysisContext?.takeIf(::isSupportedContextElement)
 
         if (contextElement != null) {
-            val contextModule = getModule(contextElement, useSiteModule = null)
-            if (contextModule is KaDanglingFileModule && file !is KtCodeFragment) {
-                // Only code fragments can have dangling file modules in contexts
-                return contextModule.baseContextModule
-            }
-            return contextModule
+            return getModule(contextElement, useSiteModule = null)
         }
 
         return getNotUnderContentRootModule(file.project)
