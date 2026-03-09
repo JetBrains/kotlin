@@ -32,6 +32,7 @@ abstract class D8Exec internal constructor() : org.jetbrains.kotlin.gradle.targe
                     it.dependsOn(project.d8SetupTaskProvider)
                 }
                 it.dependsOn(compilation.compileTaskProvider)
+                it.d8Args.convention(listOf("--experimental-wasm-wasmfx"))
                 it.configuration()
             }
         }

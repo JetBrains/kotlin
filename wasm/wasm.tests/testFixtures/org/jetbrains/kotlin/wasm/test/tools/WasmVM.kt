@@ -41,6 +41,7 @@ internal sealed class WasmVM(
                 *jsFiles.toTypedArray(),
                 "--module",
                 *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
+                "--experimental-wasm-wasmfx",
                 entryFile,
                 workingDirectory = workingDirectory,
             )
