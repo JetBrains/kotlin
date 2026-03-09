@@ -1,3 +1,14 @@
+## 2.3.20-RC3
+
+### Tools. Gradle. JS
+
+- [`KT-84772`](https://youtrack.jetbrains.com/issue/KT-84772) Bundled yarn.lock for kotlinWasmToolingSetup does not include `@swc`/helpers`@0`.5.17
+
+### Tools. Gradle. Native
+
+- [`KT-84759`](https://youtrack.jetbrains.com/issue/KT-84759) iosX64 should not be marked as deprecated in Kotlin Gradle DSL
+
+
 ## 2.3.20-RC2
 
 ### Compiler
