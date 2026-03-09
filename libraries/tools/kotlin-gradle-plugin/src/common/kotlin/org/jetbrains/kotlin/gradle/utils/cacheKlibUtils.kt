@@ -19,7 +19,6 @@ internal fun getCacheDirectory(
     dependency: ResolvedDependencyResult,
     artifact: ResolvedArtifactResult?,
     resolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
-    partialLinkageMode: String,
     logger: Logger,
 ): File {
     val moduleCacheDirectory = File(rootCacheDirectory, dependency.selected.moduleVersion?.name ?: "undefined")
@@ -42,7 +41,7 @@ internal fun getCacheDirectory(
         versionCacheDirectory.resolve(hash)
     } else versionCacheDirectory
 
-    return File(cacheDirectory, computeDependenciesHash(dependency, resolvedConfiguration, partialLinkageMode))
+    return File(cacheDirectory, computeDependenciesHash(dependency, resolvedConfiguration))
 }
 
 internal fun ByteArray.toHexString() = joinToString("") { (0xFF and it.toInt()).toString(16).padStart(2, '0') }
@@ -50,11 +49,9 @@ internal fun ByteArray.toHexString() = joinToString("") { (0xFF and it.toInt()).
 private fun computeDependenciesHash(
     dependency: ResolvedDependencyResult,
     resolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
-    partialLinkageMode: String
 ): String {
     val hashedValue = buildString {
-        if (PartialLinkageMode.resolveMode(partialLinkageMode)?.isEnabled == true)
-            append("#__PL__#")
+        append("#__PL__#")
 
         (listOf(dependency) + getAllDependencies(dependency))
             .flatMap { resolvedConfiguration.getArtifacts(it) }
@@ -74,7 +71,6 @@ internal fun getDependenciesCacheDirectories(
     dependency: ResolvedDependencyResult,
     resolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
     considerArtifact: Boolean,
-    partialLinkageMode: String,
     logger: Logger,
 ): List<File>? {
     return getAllDependencies(dependency)
@@ -86,7 +82,6 @@ internal fun getDependenciesCacheDirectories(
                         dependency = childDependency,
                         artifact = if (considerArtifact) it else null,
                         resolvedConfiguration = resolvedConfiguration,
-                        partialLinkageMode = partialLinkageMode,
                         logger = logger,
                     )
                     if (!cacheDirectory.exists()) return null
