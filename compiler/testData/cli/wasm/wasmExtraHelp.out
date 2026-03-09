@@ -1,27 +1,5 @@
-Usage: kotlinc-js <options> <source files>
+Usage: kotlinc-wasm <options> <source files>
 where advanced options include:
-  -Xenable-extension-functions-in-externals
-                             Enable extension function members in external interfaces.
-  -Xenable-implementing-interfaces-from-typescript
-                             Enable exporting of Kotlin interfaces to implement them from JavaScript/TypeScript.
-  -Xenable-suspend-function-exporting
-                             Enable exporting suspend functions to JavaScript/TypeScript.
-  -Xes-arrow-functions       Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage
-  -Xes-classes               Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
-  -Xes-generators            Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage
-  -Xes-long-as-bigint        Compile Long values as ES2020 bigint instead of object.
-  -Xgenerate-polyfills       Generate polyfills for features from the ES6+ standards.
-  -Xir-build-cache           Use the compiler to build the cache.
-  -Xir-generate-inline-anonymous-functions
-                             Lambda expressions that capture values are translated into in-line anonymous JavaScript functions.
-  -Xir-keep                  Comma-separated list of fully qualified names not to be eliminated by DCE (if it can be reached), and for which to keep non-minified names.
-  -Xir-minimized-member-names Minimize the names of members.
-  -Xir-safe-external-boolean Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'.
-  -Xir-safe-external-boolean-diagnostic={log|exception}
-                             Enable runtime diagnostics when accessing external 'Boolean' properties.
-  -Xoptimize-generated-js    Perform additional optimizations on the generated JS code.
-  -Xplatform-arguments-in-main-function
-                             JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function
   -Xir-dce-dump-reachability-info-to-file=<path>
                              Dump reachability information collected about declarations while performing DCE to a file. The format will be chosen automatically based on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xir-dump-declaration-ir-sizes-to-file=<path>

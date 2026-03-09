@@ -53,7 +53,7 @@ fun main(args: Array<String>) {
                 model("cli/jvm/XXmultiPlatformProject", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
-                model("cli/wasm", extension = "args", testMethod = "doJsTest", recursive = false)
+                model("cli/wasm", extension = "args", testMethod = "doWasmTest", recursive = false)
                 model("cli/metadata", extension = "args", testMethod = "doMetadataTest", recursive = false)
             }
         }
