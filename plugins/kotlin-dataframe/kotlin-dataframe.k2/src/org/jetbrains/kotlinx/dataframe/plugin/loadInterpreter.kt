@@ -249,6 +249,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.NestedSelect
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Parse
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ParseDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PathOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PerRowCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Percentile0
@@ -298,7 +299,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringInvokeTyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringInvokeUntyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringNestedCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringNestedColUntyped
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringParse
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ParseString
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringSelect
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum1
@@ -691,7 +692,8 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "ColumnPathSelect" -> ColumnPathSelect()
         "PathOf" -> PathOf()
         "Parse" -> Parse()
-        "StringParse" -> StringParse()
+        "ParseString" -> ParseString()
+        "ParseDefault" -> ParseDefault()
         else -> if (isTest) error(this) else null
     }
 }
