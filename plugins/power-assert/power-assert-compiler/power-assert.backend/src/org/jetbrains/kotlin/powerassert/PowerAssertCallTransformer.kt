@@ -137,7 +137,13 @@ class PowerAssertCallTransformer(
             function.parameters.size -> originalCall.arguments.last()
             else -> null
         }
-        val parameterBuilder = StringParameterBuilder(sourceFile, originalCall, function, messageArgument)
+        val parameterBuilder = if (explanationFactory != null) {
+            val diagramBuilder = CallExplanationParameterBuilder(explanationFactory, sourceFile, originalCall)
+            DefaultMessageParameterBuilder(explanationFactory, function, messageArgument, diagramBuilder)
+        } else {
+            StringParameterBuilder(sourceFile, originalCall, function, messageArgument)
+        }
+
         return buildPowerAssertCall(originalCall, callBuilder, parameterBuilder, roots)
     }
 

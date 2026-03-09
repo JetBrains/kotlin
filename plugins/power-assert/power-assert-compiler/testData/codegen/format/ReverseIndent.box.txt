@@ -11,16 +11,13 @@
         (
     text.length == 5 &&
     |    |      |
-    |    |      true
-    |    5
+    |    5      true
     Hello
 
 text.lowercase() == text
 |    |           |  |
-|    |           |  Hello
-|    |           false
-|    hello
-Hello
+|    hello       |  Hello
+Hello            false
 
     )
                     )

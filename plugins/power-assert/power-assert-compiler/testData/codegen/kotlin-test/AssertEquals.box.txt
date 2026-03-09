@@ -1,6 +1,5 @@
 ---
 assertEquals(greeting, name)
              |         |
-             |         World
-             Hello
+             Hello     World
 . Expected <Hello>, actual <World>.---

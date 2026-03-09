@@ -12,15 +12,12 @@ test3: ---
 test4: ---
 (1 + 1) mustEqual (2 + 4)
    |                 |
-   |                 6
-   2
+   2                 6
 ---
 test5: ---
 "hello".substring(1, 4).length mustEqual "world".length
         |               |                        |
-        |               |                        5
-        |               3
-        ell
+        ell             3                        5
 ---
 test6: ---Assertion failed---
 test7: ---
@@ -36,13 +33,10 @@ test8: ---
 test9: ---
 (1 + 1).mustEqual(2 + 4)
    |                |
-   |                6
-   2
+   2                6
 ---
 test10: ---
 "hello".substring(1, 4).length.mustEqual("world".length)
         |               |                        |
-        |               |                        5
-        |               3
-        ell
+        ell             3                        5
 ---

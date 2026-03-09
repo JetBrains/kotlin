@@ -2,7 +2,5 @@
 
 dbg(operation, 1 + 2 + 3)
     |            |   |
-    |            |   6
-    |            3
-    sum
+    sum          3   6
 ---

@@ -1,6 +1,5 @@
 ---
 assert(3 - 1 == 4)
          |   |
-         |   false
-         2
+         2   false
 ---

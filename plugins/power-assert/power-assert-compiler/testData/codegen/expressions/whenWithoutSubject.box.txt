@@ -3,15 +3,13 @@ assert(
     when {
         x == b -> true
         | |  |
-        | |  3
-        | false
-        2
+        2 |  3
+          false
 
         x == a -> false
         | |  |
-        | |  2
-        | true
-        2
+        2 |  2
+          true
 
         else -> true
     }
@@ -22,8 +20,7 @@ assert(
     when {
         a == A.ONE -> false
         | |    |
-        | |    ONE
-        | true
+        | true ONE
         ONE
 
         a == A.TWO -> true
@@ -36,8 +33,7 @@ assert(
     when {
         a == A.ONE || a == A.TWO -> false
         | |    |
-        | |    ONE
-        | true
+        | true ONE
         ONE
 
         else -> true
@@ -49,10 +45,8 @@ assert(
     when {
         x == a.toInt() -> false
         | |  | |
-        | |  | 2
-        | |  2
-        | true
-        2
+        2 |  2 2
+          true
 
         else -> true
     }
@@ -63,11 +57,8 @@ assert(
     when {
         x in 1..10 -> x == 3
         | |   |       | |
-        | |   |       | false
-        | |   |       2
-        | |   1..10
-        | true
-        2
+        2 |   1..10   2 false
+          true
 
         else -> true
     }
@@ -78,10 +69,7 @@ assert(
     when {
         x is Int -> x == 3
         | |         | |
-        | |         | false
-        | |         2
-        | true
-        2
+        2 true      2 false
 
         else -> true
     }

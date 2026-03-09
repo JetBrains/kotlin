@@ -1,81 +1,45 @@
 ---
 assert(if (a < b) a == b else if (b < a) b == a else false)
            | | |                  | | |  | |  |
-           | | |                  | | |  | |  2
-           | | |                  | | |  | false
-           | | |                  | | |  1
-           | | |                  | | 2
-           | | |                  | true
-           | | |                  1
-           | | 1
-           | false
-           2
+           2 | 1                  1 | 2  1 |  2
+             false                  true   false
 ---
 ---
 assert(if (a < b) a == b else if (b < a) b == a else false)
            | | |  | |  |
-           | | |  | |  2
-           | | |  | false
-           | | |  1
-           | | 2
-           | true
-           1
+           1 | 2  1 |  2
+             true   false
 ---
 ---
 assert(if (a < b) a == b else if (b < a) b == a else false)
            | | |                  | | |
-           | | |                  | | 1
-           | | |                  | false
-           | | |                  1
-           | | 1
-           | false
-           1
+           1 | 1                  1 | 1
+             false                  false
 ---
 ---
 assert(a + (if (a < b) a else b) + b == a)
        | |      | | |  |         | | |  |
-       | |      | | |  |         | | |  1
-       | |      | | |  |         | | false
-       | |      | | |  |         | 2
-       | |      | | |  |         4
-       | |      | | |  1
-       | |      | | 2
-       | |      | true
-       | |      1
-       | 2
-       1
+       1 2      1 | 2  1         4 2 |  1
+                  true               false
 ---
 ---
 assert(a + (if (a < b) a else b) + b == a)
        | |      | | |         |  | | |  |
-       | |      | | |         |  | | |  2
-       | |      | | |         |  | | false
-       | |      | | |         |  | 1
-       | |      | | |         |  4
-       | |      | | |         1
-       | |      | | 1
-       | |      | false
-       | |      2
-       | 3
-       2
+       2 3      2 | 1         1  4 1 |  2
+                  false              false
 ---
 ---
 assert(
     when {
         a < b -> a == b
         | | |
-        | | 1
-        | false
-        2
+        2 | 1
+          false
 
         b < a -> b == a
         | | |    | |  |
-        | | |    | |  2
-        | | |    | false
-        | | |    1
-        | | 2
-        | true
-        1
+        1 | 2    1 |  2
+          true     false
 
         else -> false
     }
@@ -86,12 +50,8 @@ assert(
     when {
         a < b -> a == b
         | | |    | |  |
-        | | |    | |  2
-        | | |    | false
-        | | |    1
-        | | 2
-        | true
-        1
+        1 | 2    1 |  2
+          true     false
 
         b < a -> b == a
         else -> false
@@ -103,15 +63,13 @@ assert(
     when {
         a < b -> a == b
         | | |
-        | | 1
-        | false
-        1
+        1 | 1
+          false
 
         b < a -> b == a
         | | |
-        | | 1
-        | false
-        1
+        1 | 1
+          false
 
         else -> false
     }
@@ -125,18 +83,13 @@ assert(
 
         a < b -> a == b
         | | |
-        | | 1
-        | false
-        2
+        2 | 1
+          false
 
         b < a -> b == a
         | | |    | |  |
-        | | |    | |  2
-        | | |    | false
-        | | |    1
-        | | 2
-        | true
-        1
+        1 | 2    1 |  2
+          true     false
 
         else -> false
     }
@@ -150,12 +103,8 @@ assert(
 
         a < b -> a == b
         | | |    | |  |
-        | | |    | |  2
-        | | |    | false
-        | | |    1
-        | | 2
-        | true
-        1
+        1 | 2    1 |  2
+          true     false
 
         b < a -> b == a
         else -> false
@@ -170,15 +119,13 @@ assert(
 
         a < b -> a == b
         | | |
-        | | 1
-        | false
-        1
+        1 | 1
+          false
 
         b < a -> b == a
         | | |
-        | | 1
-        | false
-        1
+        1 | 1
+          false
 
         else -> false
     }

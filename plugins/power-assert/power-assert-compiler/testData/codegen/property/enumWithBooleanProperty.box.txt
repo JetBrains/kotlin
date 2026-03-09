@@ -1,6 +1,5 @@
 ---
 assert(Status.INACTIVE.isActive)
               |        |
-              |        false
-              INACTIVE
+              INACTIVE false
 ---

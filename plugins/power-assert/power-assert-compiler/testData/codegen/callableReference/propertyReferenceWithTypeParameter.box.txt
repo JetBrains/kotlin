@@ -14,12 +14,10 @@ assert(Int::property.name == "a")
 test3: ---
 assert((Boolean::property)(false))
         |                 |
-        |                 false
-        val T.property: T
+        val T.property: T false
 ---
 test4: ---
 assert(Boolean::property.get(false))
        |                 |
-       |                 false
-       val T.property: T
+       val T.property: T false
 ---

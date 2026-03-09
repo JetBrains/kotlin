@@ -8,10 +8,8 @@ assert("Hello, $a" == "string")
 test2: ---
 assert("${a.length}" == "5")
        |  | |        |
-       |  | |        false
-       |  | 3
-       |  Joe
-       3
+       3  | 3        false
+          Joe
 ---
 test3: ---
 assert("List: $a" == "")
@@ -30,13 +28,10 @@ assert("Escaping: \$ $a" == "")
 test5: ---
 assert("""Multiline escaping: ${'$'}_9.99 """ == "price")
        |                                      |
-       |                                      false
-       Multiline escaping: $_9.99
+       Multiline escaping: $_9.99             false
 ---
 test6: ---
 assert($$"""Multidollar interpolation $a : $$a""" == "")
        |                                     |    |
-       |                                     |    false
-       |                                     Joe
-       Multidollar interpolation $a : Joe
+       Multidollar interpolation $a : Joe    Joe  false
 ---

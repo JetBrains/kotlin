@@ -7,8 +7,6 @@ assert(+b)
 test2: ---
 assert(+b == 3)
        || |
-       || false
-       |2
+       |2 false
        2
 ---
-

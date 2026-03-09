@@ -139,42 +139,36 @@ assert(extension.times(extension) == Failure)
 test19: ---
 assert(dispatch.contains(dispatch))
        |        |        |
-       |        |        Dispatch(n=1)
-       |        false
+       |        false    Dispatch(n=1)
        Dispatch(n=1)
 ---
 test20: ---
 assert(extension.contains(dispatch))
        |         |        |
-       |         |        Dispatch(n=1)
-       |         false
+       |         false    Dispatch(n=1)
        Extension(n=1)
 ---
 test21: ---
 assert(extension.contains(extension))
        |         |        |
-       |         |        Extension(n=1)
-       |         false
+       |         false    Extension(n=1)
        Extension(n=1)
 ---
 test22: ---
 assert(dispatch.contains(context))
        |        |        |
-       |        |        Context(n=1)
-       |        false
+       |        false    Context(n=1)
        Dispatch(n=1)
 ---
 test23: ---
 assert(extension.contains(dispatch))
        |         |        |
-       |         |        Dispatch(n=1)
-       |         false
+       |         false    Dispatch(n=1)
        Extension(n=1)
 ---
 test24: ---
 assert(extension.contains(context))
        |         |        |
-       |         |        Context(n=1)
-       |         false
+       |         false    Context(n=1)
        Extension(n=1)
 ---

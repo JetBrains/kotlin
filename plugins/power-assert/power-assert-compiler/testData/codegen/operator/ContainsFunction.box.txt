@@ -1,30 +1,25 @@
 test1: ---
 assert(listOf("Hello", "World").contains("Name"))
        |                        |
-       |                        false
-       [Hello, World]
+       [Hello, World]           false
 ---
 test2: ---
 assert("Hello".contains(str))
                |        |
-               |        a
-               false
+               false    a
 ---
 test3: ---
 assert("Hello".contains(str, ignoreCase = true))
                |        |
-               |        a
-               false
+               false    a
 ---
 test4: ---
 assert("Hello".contains(char))
                |        |
-               |        a
-               false
+               false    a
 ---
 test5: ---
 assert("Hello".contains(char, ignoreCase = true))
                |        |
-               |        a
-               false
+               false    a
 ---

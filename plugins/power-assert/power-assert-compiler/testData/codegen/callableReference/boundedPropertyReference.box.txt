@@ -20,8 +20,7 @@ assert((A::foo)(A()))
 test4: ---
 assert(List<Int>::bar.name == "foo")
        |              |    |
-       |              |    false
-       |              bar
+       |              bar  false
        val kotlin.collections.List<kotlin.Int>.bar: kotlin.Boolean
 ---
 test5: ---
@@ -39,33 +38,32 @@ assert((List<Int>::bar)(listOf(1,2,3)))
 ---
 test7: ---
 assert((a::foo)())
-        |      |
-        |      false
-        val kotlin.String.foo: kotlin.Boolean
+        ||      |
+        ||      false
+        |val kotlin.String.foo: kotlin.Boolean
         Some text
 ---
 test8: ---
 assert(((a+b)::foo)())
         ||||       |
-        ||||       false
-        |||b
+        |||b       false
         ||ab
         |a
         val kotlin.String.foo: kotlin.Boolean
 ---
 test9: ---
 assert(a::foo == b::foo)
-       |      |  |
-       |      |  val kotlin.String.foo: kotlin.Boolean
-       |      |  Another text
-       |      false
-       val kotlin.String.foo: kotlin.Boolean
+       ||      |  ||
+       ||      |  |val kotlin.String.foo: kotlin.Boolean
+       ||      |  Another text
+       ||      false
+       |val kotlin.String.foo: kotlin.Boolean
        Some text
 ---
 test10: ---
 assert(a::foo.isOpen)
-       |      |
-       |      false
-       val kotlin.String.foo: kotlin.Boolean
+       ||      |
+       ||      false
+       |val kotlin.String.foo: kotlin.Boolean
        Some text
 ---

@@ -36,8 +36,7 @@ assert(true.contextPropertyWithTypeParam)
 test8: ---
 assert(lateInitProperty == "b")
        |                |
-       |                false
-       a
+       a                false
 ---
 test9: ---
 assert(destructuring)

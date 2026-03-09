@@ -6,39 +6,28 @@ assert(true and false)
 test2: ---
 assert(a and b == 0b10110)
        | |   | |
-       | |   | false
-       | |   30
-       | 18
-       19
+       | 18  | false
+       19    30
 ---
 test3: ---
 assert(a or b == 0b10110)
        | |  | |
-       | |  | false
-       | |  30
-       | 31
-       19
+       | 31 | false
+       19   30
 ---
 test4: ---
 assert(a xor b == 0b10110)
        | |   | |
-       | |   | false
-       | |   30
-       | 13
-       19
+       | 13  | false
+       19    30
 ---
 test5: ---
 assert(5 and 3 + 4 or 1 == 9)
          |     |   |    |
-         |     |   |    false
-         |     |   5
-         |     7
-         5
+         5     7   5    false
 ---
 test6: ---
 assert(x ?: 2 and 1 == 1)
        |      |     |
-       |      |     false
-       |      0
-       null
+       null   0     false
 ---

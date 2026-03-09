@@ -6,8 +6,7 @@ assert(super.a)
 test2: ---
 assert(super.b == 2)
              | |
-             | false
-             1
+             1 false
 ---
 test3: ---
 assert(super<Base>.foo())

@@ -1,6 +1,5 @@
 ---
 assert(++i == 4)
        |   |
-       |   false
-       2
+       2   false
 ---

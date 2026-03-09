@@ -12,28 +12,22 @@ assert(1 == 2)
 ---
 assert(y == 2)
        | |
-       | false
-       1
+       1 false
 ---
 ---
 assert(("Hello" + ", " + "World").length == 0)
         |                         |      |
-        |                         |      false
-        |                         12
-        Hello, World
+        Hello, World              12     false
 ---
 ---
 assert("$GREETING, World".length == 0)
        | |                |      |
-       | |                |      false
-       | |                12
-       | Hello
+       | Hello            12     false
        Hello, World
 ---
 ---
 assert(WELCOME.length == 0)
        |       |      |
-       |       |      false
-       |       12
+       |       12     false
        Hello, World
 ---

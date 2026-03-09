@@ -6,27 +6,22 @@ Wrapper
 test2: ---
 Wrapper(1) mustEqual (2 + 4)
 |                       |
-|                       6
-Wrapper
+Wrapper                 6
 ---
 test3: ---
 Wrapper(1 + 1) mustEqual 6
 |         |
-|         2
-Wrapper
+Wrapper   2
 ---
 test4: ---
 Wrapper(1 + 1) mustEqual (2 + 4)
 |         |                 |
-|         |                 6
-|         2
-Wrapper
+Wrapper   2                 6
 ---
 test5: ---
 Complex.holder.wrapper mustEqual "world".length
         |      |                         |
-        |      |                         5
-        |      Wrapper
+        |      Wrapper                   5
         Holder(wrapper=Wrapper)
 ---
 test6: ---
@@ -37,26 +32,21 @@ Wrapper
 test7: ---
 Wrapper(1).mustEqual(2 + 4)
 |                      |
-|                      6
-Wrapper
+Wrapper                6
 ---
 test8: ---
 Wrapper(1 + 1).mustEqual(6)
 |         |
-|         2
-Wrapper
+Wrapper   2
 ---
 test9: ---
 Wrapper(1 + 1).mustEqual(2 + 4)
 |         |                |
-|         |                6
-|         2
-Wrapper
+Wrapper   2                6
 ---
 test10: ---
 Complex.holder.wrapper.mustEqual("world".length)
         |      |                         |
-        |      |                         5
-        |      Wrapper
+        |      Wrapper                   5
         Holder(wrapper=Wrapper)
 ---

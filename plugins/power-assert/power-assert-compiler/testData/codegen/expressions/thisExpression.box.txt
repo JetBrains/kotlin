@@ -1,15 +1,12 @@
 test1: ---
 assert(this.a)
        |    |
-       |    false
-       A
+       A    false
 ---
 test2: ---
 assert(this.b == 2)
        |    | |
-       |    | false
-       |    1
-       A
+       A    1 false
 ---
 test3: ---
 assert(this)
@@ -19,24 +16,20 @@ assert(this)
 test4: ---
 assert(this == 2)
        |    |
-       |    false
-       1
+       1    false
 ---
 test5: ---
 assert(this == 2)
        |    |
-       |    false
-       1
+       1    false
 ---
 test6: ---
 assert(this@A.a)
        |      |
-       |      false
-       A
+       A      false
 ---
 test7: ---
 assert(this@lambda == 2)
        |           |
-       |           false
-       1
+       1           false
 ---

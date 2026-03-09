@@ -17,7 +17,7 @@ fun test1() {
       }
 )
       assert(value = tmp0_Explain, lazyMessage = local fun <anonymous>(): String {
-        return "\nassert(run { getFalse() })" + "\n       |" + "\n       " + tmp0_Explain + "\n"
+        return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 174, source = "        assert(run { getFalse() })", arguments = listOf<Argument>(elements = [Argument(startOffset = 15, endOffset = 33, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [ValueExpression(startOffset = 15, endOffset = 33, displayOffset = 15, value = tmp0_Explain)]))])) */)
       }
 )
     }

@@ -51,8 +51,7 @@ assert(
 
         a.toInt() -> false
         | |
-        | 2
-        2
+        2 2
 
         else -> true
     }
@@ -66,9 +65,7 @@ assert(
 
         in 1..10 -> x == 3
         |   |       | |
-        |   |       | false
-        |   |       2
-        |   1..10
+        |   1..10   2 false
         true
 
         else -> true
@@ -83,9 +80,7 @@ assert(
 
         is Int -> x == 3
         |         | |
-        |         | false
-        |         2
-        true
+        true      2 false
 
         else -> true
     }
@@ -111,15 +106,11 @@ assert(
 
         is Int if x == 1 -> true
         |         | |
-        |         | false
-        |         2
-        true
+        true      2 false
 
         is Int if x == 2 -> false
         |         | |
-        |         | true
-        |         2
-        true
+        true      2 true
 
         else -> true
     }
@@ -129,11 +120,7 @@ test9: ---
 assert(
     when (val a = x + x + x) {
                   | | | | |
-                  | | | | 2
-                  | | | 6
-                  | | 2
-                  | 4
-                  2
+                  2 4 2 6 2
 
         x -> true
         |
@@ -141,9 +128,7 @@ assert(
 
         x + x -> true
         | | |
-        | | 2
-        | 4
-        2
+        2 4 2
 
         else -> false
     }

@@ -31,6 +31,5 @@ assert(local())
 test7: ---
 assert(funWithNotPrimitiveParameter(1, A()))
        |                               |
-       |                               A
-       false
+       false                           A
 ---
