@@ -489,6 +489,95 @@ class ManagedTestAssertionsTest {
         )
     }
 
+    // ========== EOF newline preservation tests ==========
+
+    /**
+     * Sets up test.txt with [oldContent] (exact content, no extra newline),
+     * runs UPDATE assertion with [newContent], and checks that test.txt contains [expectedFileContent].
+     */
+    private fun assertEofPreservation(oldContent: String, newContent: String, expectedFileContent: String) {
+        tempDir.resolve("test.kt").writeText("// test")
+        tempDir.resolve("test.txt").writeText(oldContent)
+
+        runAssertion(variantChain = emptyList(), actual = newContent, mode = TestDataManagerMode.UPDATE)
+
+        assertEquals(expectedFileContent, tempDir.resolve("test.txt").readText())
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch preserves no-newline EOF from existing file`() {
+        assertEofPreservation(
+            oldContent = "old",
+            newContent = "new",
+            expectedFileContent = "new",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch preserves newline EOF from existing file`() {
+        assertEofPreservation(
+            oldContent = "old\n",
+            newContent = "new",
+            expectedFileContent = "new\n",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch preserves no-newline EOF with variant chain`() {
+        tempDir.resolve("test.kt").writeText("// test")
+        tempDir.resolve("test.js.txt").writeText("old js")  // No trailing newline
+
+        runAssertion(variantChain = listOf("js"), actual = "new js", mode = TestDataManagerMode.UPDATE)
+
+        assertEquals("new js", tempDir.resolve("test.js.txt").readText())
+    }
+
+    @Test
+    fun `UPDATE mode - golden creates file with newline EOF`() {
+        setupFiles()  // No expected files
+
+        runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
+
+        // New files should have trailing newline (no existing file to preserve from)
+        assertEquals("new content\n", tempDir.resolve("test.txt").readText())
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch preserves multiple trailing newlines as single newline`() {
+        assertEofPreservation(
+            oldContent = "old\n\n\n",
+            newContent = "new",
+            expectedFileContent = "new\n",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch without trailing newline preserves internal empty lines`() {
+        assertEofPreservation(
+            oldContent = "old",
+            newContent = "line1\n\nline2",
+            expectedFileContent = "line1\n\nline2",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch normalizes actual trailing newlines and preserves newline EOF`() {
+        assertEofPreservation(
+            oldContent = "old\n",
+            newContent = "new\n\n\n",
+            expectedFileContent = "new\n",
+        )
+    }
+
+    @Test
+    fun `UPDATE mode - mismatch normalizes actual trailing newlines and preserves no-newline EOF`() {
+        assertEofPreservation(
+            oldContent = "old",
+            newContent = "new\n\n\n",
+            expectedFileContent = "new",
+        )
+    }
+
     // ========== Path tracking tests ==========
 
     @Test

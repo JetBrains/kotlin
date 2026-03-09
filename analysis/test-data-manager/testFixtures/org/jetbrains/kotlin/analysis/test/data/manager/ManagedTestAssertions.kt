@@ -208,11 +208,12 @@ object ManagedTestAssertions {
         testDataPath: Path,
     ) {
         val writeTargetFile = testDataFiles.writeTargetFile
+        val contentToWrite = preserveEofNewline(normalizedActual, expectedContent)
 
         when (mode) {
             TestDataManagerMode.UPDATE -> {
                 writeTargetFile.createParentDirectories()
-                writeTargetFile.writeText(normalizedActual)
+                writeTargetFile.writeText(contentToWrite)
                 if (trackUpdatedPaths) updatedTestDataPaths.add(testDataPath.toString())
             }
             TestDataManagerMode.CHECK -> {
@@ -220,13 +221,23 @@ object ManagedTestAssertions {
                     "Actual data differs from file content: ${writeTargetFile.name}",
                     FileInfo(
                         writeTargetFile.absolutePathString(),
-                        expectedContent.toByteArray(StandardCharsets.UTF_8),
+                        contentToWrite.toByteArray(StandardCharsets.UTF_8),
                     ),
                     normalizedActual,
                 )
             }
         }
     }
+
+    /**
+     * Adjusts the trailing newline in [normalizedContent] to match the EOF status of [existingContent].
+     *
+     * [normalizedContent] always ends with `\n` (from [normalizeContent]).
+     * If the existing file had no trailing newline, the trailing `\n` is stripped before writing,
+     * so the update doesn't introduce an unwanted EOF change.
+     */
+    private fun preserveEofNewline(normalizedContent: String, existingContent: String): String =
+        if (!existingContent.endsWith("\n")) normalizedContent.trimEnd('\n') else normalizedContent
 
     internal fun normalizeContent(content: String): String =
         content.trim().convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
