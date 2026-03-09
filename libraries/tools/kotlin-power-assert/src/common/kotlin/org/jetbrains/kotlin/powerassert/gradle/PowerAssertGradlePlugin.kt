@@ -39,9 +39,11 @@ class PowerAssertGradlePlugin : KotlinCompilerPluginSupportPlugin {
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
         val project = kotlinCompilation.target.project
         val extension = project.extensions.getByType(PowerAssertGradleExtension::class.java)
-        val includedSourceSets = extension.includedSourceSets.orNull
+        @Suppress("DEPRECATION") val includedSourceSets = extension.includedSourceSets.orNull
         return if (includedSourceSets.isNullOrEmpty()) {
-            kotlinCompilation.name == KotlinCompilation.TEST_COMPILATION_NAME
+            extension.compilationFilter
+                .getOrElse(PowerAssertCompilationFilter.TESTS)
+                .check(kotlinCompilation)
         } else {
             kotlinCompilation.defaultSourceSet.name in includedSourceSets
         }

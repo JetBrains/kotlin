@@ -20,8 +20,11 @@
 package org.jetbrains.kotlin.powerassert.gradle
 
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.gradle.kotlin.dsl.property
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import javax.inject.Inject
 
 @ExperimentalKotlinGradlePluginApi
@@ -32,11 +35,32 @@ abstract class PowerAssertGradleExtension @Inject constructor(
      * Defines the fully-qualified path of functions which should be transformed by the Power-Assert compiler plugin.
      * If nothing is defined, defaults to [`kotlin.assert`][assert].
      */
-    val functions: SetProperty<String> = objectFactory.setProperty(String::class.java).convention(setOf("kotlin.assert"))
+    val functions: SetProperty<String> =
+        objectFactory.setProperty(String::class.java).convention(setOf("kotlin.assert"))
 
     /**
      * Defines the Kotlin SourceSets by name which will be transformed by the Power-Assert compiler plugin.
-     * When the provider returns `null` - which is the default - all test SourceSets will be transformed.
+     * When the provider returns `null` or an empty Set (the default) the value of [compilationFilter] will be used.
      */
-    val includedSourceSets: SetProperty<String> = objectFactory.setProperty(String::class.java).convention(emptySet())
+    @Deprecated(
+        "It is recommended to use 'compilationFilter' instead, with one of the available preset filters.",
+        level = DeprecationLevel.WARNING,
+    )
+    val includedSourceSets: SetProperty<String> =
+        objectFactory.setProperty(String::class.java).convention(emptySet())
+
+    /**
+     * Filter applied to [KotlinCompilation]s to determine which should be transformed by the Power-Assert compiler plugin.
+     * Defaults to transforming [PowerAssertCompilationFilter.TESTS] compilations when the provider returns `null` or is unchanged.
+     *
+     * ```kotlin
+     * powerAssert {
+     *     compilationFilter.set({
+     *         it.name == KotlinCompilation.TEST_COMPILATION_NAME
+     *     })
+     * }
+     * ```
+     */
+    val compilationFilter: Property<PowerAssertCompilationFilter> =
+        objectFactory.property<PowerAssertCompilationFilter>().convention(PowerAssertCompilationFilter.TESTS)
 }

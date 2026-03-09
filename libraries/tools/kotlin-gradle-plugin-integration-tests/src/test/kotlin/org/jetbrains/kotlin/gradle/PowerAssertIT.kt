@@ -34,4 +34,31 @@ class PowerAssertIT : KGPBaseTest() {
             build("check")
         }
     }
+
+    @OtherGradlePluginTests
+    @DisplayName("power-assert applied to all compilations")
+    @GradleTest
+    fun testPowerAssertCompilationFilter_ALL(gradleVersion: GradleVersion) {
+        project("powerAssertCompilationFilter-all", gradleVersion) {
+            build("check")
+        }
+    }
+
+    @OtherGradlePluginTests
+    @DisplayName("power-assert applied to test compilations")
+    @GradleTest
+    fun testPowerAssertCompilationFilter_TEST(gradleVersion: GradleVersion) {
+        project("powerAssertCompilationFilter-test", gradleVersion) {
+            build("check")
+        }
+    }
+
+    @OtherGradlePluginTests
+    @DisplayName("power-assert applied to no compilations")
+    @GradleTest
+    fun testPowerAssertCompilationFilter_NONE(gradleVersion: GradleVersion) {
+        project("powerAssertCompilationFilter-none", gradleVersion) {
+            build("check")
+        }
+    }
 }
