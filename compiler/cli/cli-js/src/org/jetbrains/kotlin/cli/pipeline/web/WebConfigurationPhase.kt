@@ -203,13 +203,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
 
         arguments.irDceRuntimeDiagnostic?.let { configuration.dceRuntimeDiagnostic = it }
 
-        configuration.setupPartialLinkageConfig(
-            mode = arguments.partialLinkageMode,
-            logLevel = arguments.partialLinkageLogLevel,
-            compilerModeAllowsUsingPartialLinkage = arguments.includes != null, // no PL when producing KLIB
-            onWarning = { configuration.report(WEB_ARGUMENT_WARNING, it) },
-            onError = { configuration.report(WEB_ARGUMENT_ERROR, it) }
-        )
+        configuration.setupPartialLinkageConfig(arguments, WEB_ARGUMENT_WARNING, WEB_ARGUMENT_ERROR)
     }
 
     internal fun initializeCommonConfiguration(

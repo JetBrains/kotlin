@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
+import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 
 val PARTIAL_LINKAGE_CONFIGURATION = CompilerConfigurationKey.create<PartialLinkageConfig>("PARTIAL_LINKAGE_CONFIGURATION")
 
@@ -13,32 +17,26 @@ val CompilerConfiguration.partialLinkageConfig: PartialLinkageConfig
     get() = this[PARTIAL_LINKAGE_CONFIGURATION] ?: PartialLinkageConfig.DEFAULT
 
 fun CompilerConfiguration.setupPartialLinkageConfig(
-    mode: String?,
-    logLevel: String?,
-    compilerModeAllowsUsingPartialLinkage: Boolean,
-    onWarning: (String) -> Unit,
-    onError: (String) -> Unit,
+    arguments: CommonKlibBasedCompilerArguments,
+    warningDiagnosticFactory: KtSourcelessDiagnosticFactory,
+    errorDiagnosticFactory: KtSourcelessDiagnosticFactory,
 ) {
-    val resolvedMode = when {
-        mode != null -> {
-            val resolvedMode = PartialLinkageMode.resolveMode(mode) ?: return onError("Unknown partial linkage mode '$mode'")
-            if (!compilerModeAllowsUsingPartialLinkage && resolvedMode.isEnabled) {
-                onWarning("Current compiler configuration does not allow using partial linkage mode '$mode'. The partial linkage will be disabled.")
-                PartialLinkageMode.DISABLE
-            } else
-                resolvedMode
-        }
-        !compilerModeAllowsUsingPartialLinkage -> PartialLinkageMode.DISABLE
-        else -> PartialLinkageMode.DEFAULT
+    if (arguments.partialLinkageMode != null) {
+        report(
+            warningDiagnosticFactory,
+            "The ${CommonKlibBasedCompilerArguments::partialLinkageMode.cliArgument} argument is deprecated. The partial linkage engine is always turned on."
+        )
     }
 
-    val resolvedLogLevel = if (logLevel != null)
-        PartialLinkageLogLevel.resolveLogLevel(logLevel)
-            ?: return onError("Unknown partial linkage compile-time log level '$logLevel'")
-    else
-        PartialLinkageLogLevel.DEFAULT
+    val logLevel = arguments.partialLinkageLogLevel?.let { rawLogLevel ->
+        PartialLinkageLogLevel.resolveLogLevel(rawLogLevel)
+            ?: return report(
+                errorDiagnosticFactory,
+                "Unknown value for parameter -Xpartial-linkage-loglevel: '$rawLogLevel'. Value should be one of ${PartialLinkageLogLevel.availableValues()}"
+            )
+    } ?: PartialLinkageLogLevel.DEFAULT
 
-    setupPartialLinkageConfig(PartialLinkageConfig(resolvedMode, resolvedLogLevel))
+    setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, logLevel))
 }
 
 fun CompilerConfiguration.setupPartialLinkageConfig(config: PartialLinkageConfig) {
