@@ -196,7 +196,7 @@ class CurrentArgumentsConsistencyTest {
             Arguments.of(stableCommonCompilerArguments, actualCommonCompilerArguments),
             Arguments.of(stableJvmCompilerArguments, actualJvmCompilerArguments),
             Arguments.of(stableCommonKlibBasedArguments, actualCommonKlibBasedArguments),
-            Arguments.of(stableJsArguments, actualJsArguments),
+            Arguments.of(stableJsArguments, actualJsArgumentsLegacy),
             Arguments.of(stableWasmArguments, actualWasmArguments),
             Arguments.of(stableNativeArguments, actualNativeArguments),
             Arguments.of(stableMetadataArguments, actualMetadataArguments),

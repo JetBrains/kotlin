@@ -343,7 +343,7 @@ private fun generateKotlinJsOptions(
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit,
 ): GeneratedOptions {
     val jsInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinJsCompilerOptions")
-    with(actualJsArguments) {
+    with(actualJsArgumentsLegacy) {
         val jsOptions = gradleOptions()
         withPrinterToFile(fileFromFqName(apiSrcDir, jsInterfaceFqName)) {
             generateInterface(
