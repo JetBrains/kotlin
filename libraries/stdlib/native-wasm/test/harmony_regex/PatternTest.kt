@@ -912,6 +912,16 @@ class PatternTest {
         regex = Regex(baseString, RegexOption.CANON_EQ)
         assertTrue(regex.matches(testString))
 
+        baseString = "c\u0327\u0301"
+        testString = "c\u0327\u0300"
+        regex = Regex(baseString, RegexOption.CANON_EQ)
+        assertFalse(regex.matches(testString))
+
+        baseString = "c\u0327\u0301"
+        testString = "c\u0328\u0301"
+        regex = Regex(baseString, RegexOption.CANON_EQ)
+        assertFalse(regex.matches(testString))
+
         /*
          * Hangul decompositions
          */
