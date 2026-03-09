@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.util
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.stats.MarkdownReportRenderer
 import org.jetbrains.kotlin.stats.SingleReportsData
 import org.jetbrains.kotlin.stats.StatsCalculator
@@ -203,6 +204,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             firstPlatformName.contains("JVM") -> PlatformType.JVM
             firstPlatformName.contains("Native") -> PlatformType.Native
             targetPlatform.isJs() -> PlatformType.JS
+            targetPlatform.isWasm() -> PlatformType.Wasm
             targetPlatform.isCommon() -> PlatformType.Common
             else -> error("Unexpected platform $targetPlatform")
         }

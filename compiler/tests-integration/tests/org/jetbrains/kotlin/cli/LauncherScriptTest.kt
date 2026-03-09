@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -155,6 +156,22 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             K2JSCompilerArguments::outputDir.cliArgument,
             tmpdir.path,
             K2JSCompilerArguments::moduleName.cliArgument,
+            "out",
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
+        )
+    }
+
+    fun testKotlincWasmSimple() {
+        runProcess(
+            "kotlinc-wasm",
+            "$testDataDirectory/emptyMain.kt",
+            KotlinWasmCompilerArguments::suppressWarnings.cliArgument,
+            KotlinWasmCompilerArguments::libraries.cliArgument,
+            PathUtil.kotlinPathsForCompiler.wasmJsStdLibKlibPath.absolutePath,
+            KotlinWasmCompilerArguments::irProduceKlibDir.cliArgument,
+            KotlinWasmCompilerArguments::outputDir.cliArgument,
+            tmpdir.path,
+            KotlinWasmCompilerArguments::moduleName.cliArgument,
             "out",
             environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
         )

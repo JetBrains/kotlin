@@ -7,6 +7,8 @@ bin/kotlinc-js
 bin/kotlinc-js.bat
 bin/kotlinc-jvm
 bin/kotlinc-jvm.bat
+bin/kotlinc-wasm
+bin/kotlinc-wasm.bat
 bin/kotlinc.bat
 build.txt
 lib/allopen-compiler-plugin.jar

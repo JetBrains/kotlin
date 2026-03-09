@@ -10,34 +10,41 @@ package org.jetbrains.kotlin.platform.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.wasm.*
 
 abstract class WasmIdePlatformKind : IdePlatformKind() {
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
-        return if (arguments is K2JSCompilerArguments && arguments.wasm) {
-            val wasmTarget = arguments.wasmTarget?.let { WasmTarget.fromName(it) }
-            wasmTarget?.let {
-                WasmPlatforms.wasmPlatformByTargetVersion(it)
+        @Suppress("DEPRECATION")
+        return when (arguments) {
+            is K2JSCompilerArguments if arguments.wasm -> {
+                arguments.wasmTarget
             }
-        } else null
+            is KotlinWasmCompilerArguments -> {
+                arguments.wasmTarget
+            }
+            else -> null
+        }?.let { WasmTarget.fromName(it) }?.let {
+            WasmPlatforms.wasmPlatformByTargetVersion(it)
+        }
     }
 
     override fun createArguments(): CommonCompilerArguments {
-        return K2JSCompilerArguments()
+        return KotlinWasmCompilerArguments()
     }
 
-    override val argumentsClass get() = K2JSCompilerArguments::class.java
+    override val argumentsClass get() = KotlinWasmCompilerArguments::class.java
 
     @Deprecated(
         message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
         level = DeprecationLevel.ERROR
     )
-    object Platform : IdePlatform<WasmIdePlatformKind, K2JSCompilerArguments>() {
+    object Platform : IdePlatform<WasmIdePlatformKind, KotlinWasmCompilerArguments>() {
         override val kind get() = WasmJsIdePlatformKind
         override val version get() = TargetPlatformVersion.NoVersion
-        override fun createArguments(init: K2JSCompilerArguments.() -> Unit) = K2JSCompilerArguments().apply(init)
+        override fun createArguments(init: KotlinWasmCompilerArguments.() -> Unit) = KotlinWasmCompilerArguments().apply(init)
     }
 }
 
@@ -54,10 +61,10 @@ object WasmJsIdePlatformKind : WasmIdePlatformKind() {
     override fun getDefaultPlatform(): IdePlatform<*, *> = WasmIdePlatformKind.Platform
 
     override fun createArguments(): CommonCompilerArguments {
-        return K2JSCompilerArguments()
+        return KotlinWasmCompilerArguments()
     }
 
-    override val argumentsClass get() = K2JSCompilerArguments::class.java
+    override val argumentsClass get() = KotlinWasmCompilerArguments::class.java
 
     override val name get() = "WebAssembly JS"
 }
@@ -74,10 +81,10 @@ object WasmWasiIdePlatformKind : WasmIdePlatformKind() {
     override fun getDefaultPlatform(): IdePlatform<*, *> = WasmIdePlatformKind.Platform
 
     override fun createArguments(): CommonCompilerArguments {
-        return K2JSCompilerArguments()
+        return KotlinWasmCompilerArguments()
     }
 
-    override val argumentsClass get() = K2JSCompilerArguments::class.java
+    override val argumentsClass get() = KotlinWasmCompilerArguments::class.java
 
     override val name get() = "WebAssembly WASI"
 }

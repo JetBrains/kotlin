@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.cli.js
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextMultimodule
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextSingleModule
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
 import org.jetbrains.kotlin.cli.reportLog
@@ -38,13 +37,13 @@ sealed class IcCachesConfigurationData {
 
 internal fun prepareIcCaches(
     cacheDirectory: String,
-    arguments: K2JSCompilerArguments,
+    arguments: CommonJsAndWasmCompilerArguments,
     outputDir: File,
     targetConfiguration: CompilerConfiguration,
     mainCallArguments: List<String>?,
 ): IcCachesArtifacts {
     val data = when {
-        arguments.wasm -> IcCachesConfigurationData.Wasm(
+        arguments is KotlinWasmCompilerArguments -> IcCachesConfigurationData.Wasm(
             wasmDebug = arguments.wasmDebug,
             generateWat = arguments.wasmGenerateWat,
             generateDebugInformation = arguments.sourceMap || arguments.generateDwarf,

@@ -119,6 +119,7 @@ enum class PlatformType {
     JS,
     Common,
     Native,
+    Wasm,
 }
 
 /**
