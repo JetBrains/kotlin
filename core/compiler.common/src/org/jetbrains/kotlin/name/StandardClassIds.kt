@@ -113,6 +113,7 @@ object StandardClassIds {
     val constantAllowedTypes = primitiveTypes + unsignedTypes + String
 
     val Continuation = "Continuation".coroutinesId()
+    val CoroutineContext = "CoroutineContext".coroutinesId()
 
     @Suppress("FunctionName")
     fun FunctionN(n: Int): ClassId {

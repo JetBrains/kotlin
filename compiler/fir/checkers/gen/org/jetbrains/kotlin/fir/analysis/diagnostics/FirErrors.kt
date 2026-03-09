@@ -536,6 +536,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val SUBTYPING_BETWEEN_CONTEXT_RECEIVERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUBTYPING_BETWEEN_CONTEXT_RECEIVERS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val CONTEXT_RECEIVERS_DEPRECATED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("CONTEXT_RECEIVERS_DEPRECATED", ERROR, SourceElementPositioningStrategies.CONTEXT_KEYWORD, KtElement::class, getRendererFactory())
     val CONTEXT_CLASS_OR_CONSTRUCTOR: KtDiagnosticFactory0 = KtDiagnosticFactory0("CONTEXT_CLASS_OR_CONSTRUCTOR", ERROR, SourceElementPositioningStrategies.CONTEXT_KEYWORD, KtElement::class, getRendererFactory())
+    val COROUTINE_CONTEXT_AS_CONTEXT_PARAMETER_IS_RESERVED: KtDiagnosticFactory0 = KtDiagnosticFactory0("COROUTINE_CONTEXT_AS_CONTEXT_PARAMETER_IS_RESERVED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // Types & type parameters
     val RECURSION_IN_IMPLICIT_TYPES: KtDiagnosticFactory0 = KtDiagnosticFactory0("RECURSION_IN_IMPLICIT_TYPES", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

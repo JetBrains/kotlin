@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCoroutineContextAsContextParameterTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.*
 
 object CommonTypeCheckers : TypeCheckers() {
     override val typeRefCheckers: Set<FirTypeRefChecker> = setOf(
         FirSuspendModifierChecker,
+        FirCoroutineContextAsContextParameterTypeRefChecker,
     )
 
     override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = setOf(

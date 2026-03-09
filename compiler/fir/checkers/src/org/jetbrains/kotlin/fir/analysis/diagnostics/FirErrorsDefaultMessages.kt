@@ -199,6 +199,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_GE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXTUAL_OVERLOAD_SHADOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COROUTINE_CONTEXT_AS_CONTEXT_PARAMETER_IS_RESERVED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETERS_WITH_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_MUST_BE_NOINLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME
@@ -1840,6 +1841,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             Contextual classes and constructors are deprecated and will not be supported when context parameters are enabled. Consider migrating to regular parameters.
             
             See the context parameters proposal for more details: https://kotl.in/context-parameters""".trimIndent()
+        )
+        map.put(
+            COROUTINE_CONTEXT_AS_CONTEXT_PARAMETER_IS_RESERVED,
+            """
+                Context parameter of type 'kotlin.coroutines.CoroutineContext' is reserved for future use.
+                See https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0443-suspend-CoroutineContext-context-parameter.md for more information.
+            """.trimIndent(),
         )
 
         // Mismatching types
