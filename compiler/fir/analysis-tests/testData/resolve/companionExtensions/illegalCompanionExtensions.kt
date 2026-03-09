@@ -17,8 +17,8 @@ class C {
     }
 
     companion {
-        <!WRONG_MODIFIER_TARGET!>companion<!> fun String.foo3() {}
-        <!WRONG_MODIFIER_TARGET!>companion<!> val String.bar3 = 1
+        <!COMPANION_BLOCK_MEMBER_EXTENSION!><!WRONG_MODIFIER_TARGET!>companion<!> fun String.foo3() {}<!>
+        <!COMPANION_BLOCK_MEMBER_EXTENSION!><!WRONG_MODIFIER_TARGET!>companion<!> val String.bar3 = 1<!>
 
         <!WRONG_MODIFIER_TARGET!>companion<!> fun noReceiverType3() {}
         <!WRONG_MODIFIER_TARGET!>companion<!> val noReceiverTypeProp3 = 1

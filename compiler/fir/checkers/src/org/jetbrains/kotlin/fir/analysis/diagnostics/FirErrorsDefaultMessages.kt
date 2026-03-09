@@ -174,6 +174,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_LITERAL_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_BLOCK_MEMBER_EXTENSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPARE_TO_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPILER_REQUIRED_ANNOTATION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_AMBIGUITY
@@ -3878,6 +3879,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION,
             "Not supported in combination with '@IntroducedAt'."
+        )
+
+        map.put(
+            COMPANION_BLOCK_MEMBER_EXTENSION,
+            "Companion block member cannot be an extension."
         )
     }
 }

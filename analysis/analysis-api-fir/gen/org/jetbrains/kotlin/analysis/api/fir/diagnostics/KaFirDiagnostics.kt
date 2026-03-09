@@ -4690,6 +4690,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = VersionOverloadsTooComplexExpression::class
     }
 
+    interface CompanionBlockMemberExtension : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = CompanionBlockMemberExtension::class
+    }
+
     interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverrideCannotBeStatic::class
     }

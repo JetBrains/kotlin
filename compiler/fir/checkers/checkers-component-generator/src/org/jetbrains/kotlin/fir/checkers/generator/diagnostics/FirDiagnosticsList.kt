@@ -2373,6 +2373,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION by error<PsiElement>()
     }
+
+    val COMPANION_BLOCKS_AND_EXTENSIONS by object : DiagnosticGroup("Companion Blocks & Extensions") {
+        val COMPANION_BLOCK_MEMBER_EXTENSION by error<PsiElement>()
+    }
 }
 
 private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {

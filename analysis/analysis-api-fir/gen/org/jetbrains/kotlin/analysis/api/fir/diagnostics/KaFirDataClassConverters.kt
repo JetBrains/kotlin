@@ -5531,6 +5531,12 @@ private fun KaDiagnosticConverterBuilder.addConversions124() {
             token,
         )
     }
+    add(FirErrors.COMPANION_BLOCK_MEMBER_EXTENSION) { firDiagnostic ->
+        CompanionBlockMemberExtensionImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_BE_THE_SAME) { firDiagnostic ->
         JvmExposeBoxedCannotBeTheSameImpl(
             firDiagnostic as KtPsiDiagnostic,
