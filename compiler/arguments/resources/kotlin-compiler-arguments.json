@@ -5822,11 +5822,11 @@
                                 "argumentType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringListType",
                                     "defaultValue": {
-                                        "current": null,
+                                        "current": [],
                                         "valueInVersions": []
                                     },
                                     "isNullable": {
-                                        "current": true,
+                                        "current": false,
                                         "valueInVersions": []
                                     }
                                 }

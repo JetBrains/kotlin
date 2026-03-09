@@ -40,5 +40,5 @@ val IntType.Companion.defaultOne: IntType
 val PathType.Companion.defaultNull: PathType
     get() = PathType()
 
-val StringListType.Companion.defaultNull: StringListType
+val StringListType.Companion.defaultEmpty: StringListType
     get() = StringListType()

@@ -280,10 +280,10 @@ class JdkReleaseType : EnumType<JdkRelease>(ReleaseDependent(true)) {
  */
 @Serializable
 class StringListType(
-    // TODO(KT-84609) Change to be non-nullable with default of emptyList()
-    override val defaultValue: ReleaseDependent<List<String>?> = ReleaseDependent(null),
-    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<List<String>?> = ReleaseDependent(emptyList()),
 ) : KotlinArgumentValueType<List<String>> {
+
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false)
 
     override fun stringRepresentation(value: List<String>?): String? {
         if (value == null) return null

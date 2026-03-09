@@ -120,7 +120,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ADD_MODULES: JvmCompilerArgument<List<String>?> =
+    public val X_ADD_MODULES: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("X_ADD_MODULES", KotlinReleaseVersion(1, 1, 4))
 
     /**

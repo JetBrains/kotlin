@@ -253,7 +253,8 @@ internal class KotlinWrapperPre2_4_0(
                 }
 
                 JvmCompilerArguments.X_ADD_MODULES -> {
-                    if (delegate[key] == null) return null as V
+                    @Suppress("SENSELESS_COMPARISON")
+                    if (delegate[key] == null) return emptyList<String>() as V
 
                     val arrayValue = delegate[key] as Array<String>
                     arrayValue.toList() as V

@@ -361,7 +361,7 @@ internal class BtaImplGenerator(
             }
             argument.valueType.origin is StringListType -> {
                 add(
-                    maybeGetNullabilitySign(argument) + ".%M() ?: emptyArray()",
+                    maybeGetNullabilitySign(argument) + ".%M()",
                     MemberName(KOTLIN_COLLECTIONS, "toTypedArray")
                 )
             }
@@ -435,7 +435,10 @@ internal class BtaImplGenerator(
                 )
             }
             argument.valueType.origin is StringListType -> {
-                add(".%M()", MemberName(targetPackage, "toListOrEmpty", true))
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M()",
+                    MemberName(targetPackage, "toListOrEmpty", true)
+                )
             }
             else -> add("")
         }

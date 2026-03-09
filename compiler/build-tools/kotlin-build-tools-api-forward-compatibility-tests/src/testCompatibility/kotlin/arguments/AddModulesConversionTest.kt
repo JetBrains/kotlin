@@ -68,7 +68,7 @@ internal class AddModulesConversionTest : BaseArgumentTest<Array<String>>("Xadd-
         val modules = jvmOperation.compilerArguments[X_ADD_MODULES]
 
         assertEquals(
-            getDefaultValueString() ?: "",
+            getDefaultValueString(),
             getValueString(modules)
         )
     }
@@ -100,7 +100,7 @@ internal class AddModulesConversionTest : BaseArgumentTest<Array<String>>("Xadd-
         operation.compilerArguments.applyArgumentStrings(listOf())
 
         assertEquals(
-            getDefaultValueString() ?: "",
+            getDefaultValueString(),
             getValueString(operation.compilerArguments[X_ADD_MODULES])
         )
     }

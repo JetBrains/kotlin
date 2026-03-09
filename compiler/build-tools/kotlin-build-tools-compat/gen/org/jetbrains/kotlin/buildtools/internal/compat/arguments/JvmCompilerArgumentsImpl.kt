@@ -171,7 +171,7 @@ internal class JvmCompilerArgumentsImpl(
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
     if (X_ABI_STABILITY in this) { arguments.abiStability = get(X_ABI_STABILITY)?.stringValue}
-    if (X_ADD_MODULES in this) { arguments.additionalJavaModules = get(X_ADD_MODULES)?.toTypedArray() ?: emptyArray()}
+    if (X_ADD_MODULES in this) { arguments.additionalJavaModules = get(X_ADD_MODULES).toTypedArray()}
     if (X_ALLOW_NO_SOURCE_FILES in this) { arguments.allowNoSourceFiles = get(X_ALLOW_NO_SOURCE_FILES)}
     if (X_ALLOW_UNSTABLE_DEPENDENCIES in this) { arguments.allowUnstableDependencies = get(X_ALLOW_UNSTABLE_DEPENDENCIES)}
     try { if (X_ANNOTATIONS_IN_METADATA in this) { arguments.annotationsInMetadata = get(X_ANNOTATIONS_IN_METADATA)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ANNOTATIONS_IN_METADATA. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
@@ -360,7 +360,7 @@ internal class JvmCompilerArgumentsImpl(
     public val X_ABI_STABILITY: JvmCompilerArgument<AbiStabilityMode?> =
         JvmCompilerArgument("X_ABI_STABILITY")
 
-    public val X_ADD_MODULES: JvmCompilerArgument<List<String>?> =
+    public val X_ADD_MODULES: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("X_ADD_MODULES")
 
     public val X_ALLOW_NO_SOURCE_FILES: JvmCompilerArgument<Boolean> =

@@ -68,7 +68,7 @@ internal class AddModulesConversionTest : BaseArgumentTest<List<String>>("Xadd-m
         val modules = jvmOperation.compilerArguments[X_ADD_MODULES]
 
         assertEquals(
-            getDefaultValueString(toolchain.getCompilerVersion()) ?: "",
+            getDefaultValueString(toolchain.getCompilerVersion()),
             getValueString(modules)
         )
     }
@@ -100,7 +100,7 @@ internal class AddModulesConversionTest : BaseArgumentTest<List<String>>("Xadd-m
         operation.compilerArguments.applyArgumentStrings(listOf())
 
         assertEquals(
-            getDefaultValueString(toolchain.getCompilerVersion()) ?: "",
+            getDefaultValueString(toolchain.getCompilerVersion()),
             getValueString(operation.compilerArguments[X_ADD_MODULES])
         )
     }
@@ -109,5 +109,5 @@ internal class AddModulesConversionTest : BaseArgumentTest<List<String>>("Xadd-m
         return listOf("-$argumentName=$value")
     }
 
-    override fun getValueString(argument: List<String>?): String = argument?.joinToString(",") ?: ""
+    override fun getValueString(argument: List<String>?): String? = argument?.joinToString(",")
 }
