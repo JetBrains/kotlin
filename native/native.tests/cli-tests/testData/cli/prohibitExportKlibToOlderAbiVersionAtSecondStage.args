@@ -1,0 +1,6 @@
+-Xinclude=$TESTDATA_DIR$/unpackedExampleKlib
+-o
+$TEMP_DIR$/prohibitExportKlibToOlderAbiVersionAtSecondStage
+-p
+program
+-XXLanguage\:+ExportKlibToOlderAbiVersion
