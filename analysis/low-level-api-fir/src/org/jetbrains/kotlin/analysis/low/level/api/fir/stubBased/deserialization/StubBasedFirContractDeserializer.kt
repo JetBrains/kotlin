@@ -137,6 +137,33 @@ internal class StubBasedFirContractDeserializer(
             )
         }
 
+        override fun visitResultFollowsEffectDeclaration(
+            resultFollowsEffect: KtResultFollowsEffectDeclaration<KotlinTypeBean, Nothing?>,
+            data: Nothing?
+        ): ConeContractDescriptionElement {
+            return ConeResultFollowsEffectDeclaration(
+                resultFollowsEffect.valueParameterReference.accept(this, data) as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>
+            )
+        }
+
+        override fun visitLocalEffectDeclaration(
+            localEffect: KtLocalEffectDeclaration<KotlinTypeBean, Nothing?>,
+            data: Nothing?
+        ): ConeContractDescriptionElement {
+            return ConeLocalEffectDeclaration(
+                localEffect.valueParameterReference.accept(this, data) as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>
+            )
+        }
+
+        override fun visitScopedCallsEffectDeclaration(
+            scopedCallsEffect: KtScopedCallsEffectDeclaration<KotlinTypeBean, Nothing?>,
+            data: Nothing?
+        ): ConeContractDescriptionElement {
+            return ConeScopedCallsEffectDeclaration(
+                scopedCallsEffect.valueParameterReference.accept(this, data) as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>
+            )
+        }
+
         override fun visitLogicalBinaryOperationContractExpression(
             binaryLogicExpression: KtBinaryLogicExpression<KotlinTypeBean, Nothing?>,
             data: Nothing?

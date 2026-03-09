@@ -57,6 +57,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerBu
     var hasExplicitParameterList: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     var typeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource
+    var isLocallyScoped: Boolean? = null
 
     override fun build(): FirAnonymousFunction {
         return FirAnonymousFunctionImpl(
@@ -84,6 +85,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerBu
             hasExplicitParameterList,
             typeParameters,
             typeRef,
+            isLocallyScoped,
         )
     }
 
@@ -140,5 +142,6 @@ inline fun buildAnonymousFunctionCopy(original: FirAnonymousFunction, init: FirA
     copyBuilder.hasExplicitParameterList = original.hasExplicitParameterList
     copyBuilder.typeParameters.addAll(original.typeParameters)
     copyBuilder.typeRef = original.typeRef
+    copyBuilder.isLocallyScoped = original.isLocallyScoped
     return copyBuilder.apply(init).build()
 }

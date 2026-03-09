@@ -627,6 +627,15 @@ message Effect {
 
     // ReturnsResultOf(callable: ParameterReference)
     RETURNS_RESULT_OF = 3;
+
+    // ResultFollows(callable: ParameterReference)
+    RESULT_FOLLOWS = 4;
+
+    // Local(callable: ParameterReference)
+    LOCAL = 5;
+
+    // SCOPED_CALLS(callable: ParameterReference)
+    SCOPED_CALLS = 6;
   }
   optional EffectType effect_type = 1;
 

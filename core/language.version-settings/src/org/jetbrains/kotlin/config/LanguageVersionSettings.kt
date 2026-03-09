@@ -675,6 +675,7 @@ enum class LanguageFeature(
             )
         }
     },
+    ImprovedAliasTracking(sinceVersion = null, issue = NO_ISSUE_SPECIFIED),
     ;
 
     constructor(

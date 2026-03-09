@@ -14,19 +14,19 @@ fun foo(a: () -> Unit, b: () -> Unit, c: () -> Unit, d: () -> Unit, e: () -> Uni
 
     class LocalClass {
 
-        val leakedVal = <!LEAKED_IN_PLACE_LAMBDA!>a<!>
+        val leakedVal = <!LEAKED_LOCAL_THROUGH_CAPTURE!>a<!>
         val leaked: Any
 
         constructor() {
-            <!LEAKED_IN_PLACE_LAMBDA!>b<!>()
+            <!LEAKED_LOCAL_THROUGH_CAPTURE!>b<!>()
         }
 
         init {
-            leaked = <!LEAKED_IN_PLACE_LAMBDA!>c<!>
+            leaked = <!LEAKED_LOCAL_THROUGH_CAPTURE!>c<!>
         }
 
         fun run() {
-            <!LEAKED_IN_PLACE_LAMBDA!>d<!>()
+            <!LEAKED_LOCAL_THROUGH_CAPTURE!>d<!>()
         }
     }
 

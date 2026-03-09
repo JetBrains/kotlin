@@ -105,6 +105,24 @@ class ContractDeserializerImpl(
                     val callable = extractVariable(argument) ?: return null
                     ReturnsResultOfEffectDeclaration(callable)
                 }
+
+                ProtoBuf.Effect.EffectType.RESULT_FOLLOWS -> {
+                    val argument = proto.effectConstructorArgumentList.getOrNull(0) ?: return null
+                    val value = extractVariable(argument) ?: return null
+                    InvalidatesEffectDeclaration(value)
+                }
+
+                ProtoBuf.Effect.EffectType.LOCAL -> {
+                    val argument = proto.effectConstructorArgumentList.getOrNull(0) ?: return null
+                    val value = extractVariable(argument) ?: return null
+                    InvalidatesEffectDeclaration(value)
+                }
+
+                ProtoBuf.Effect.EffectType.SCOPED_CALLS -> {
+                    val argument = proto.effectConstructorArgumentList.getOrNull(0) ?: return null
+                    val value = extractVariable(argument) ?: return null
+                    InvalidatesEffectDeclaration(value)
+                }
             }
         }
 

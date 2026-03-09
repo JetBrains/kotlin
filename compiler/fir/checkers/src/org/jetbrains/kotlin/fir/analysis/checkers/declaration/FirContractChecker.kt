@@ -299,6 +299,13 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             return holdsInEffect.argumentsCondition.accept(this, null) ?: holdsInEffect.valueParameterReference.accept(this, null)
         }
 
+        override fun visitDomainEffectDeclaration(
+            domainEffect: DomainEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
+            data: Nothing?
+        ): ConeDiagnostic? {
+            return domainEffect.valueParameterReference.accept(this, null)
+        }
+
         override fun visitReturnsEffectDeclaration(returnsEffect: ConeReturnsEffectDeclaration, data: Nothing?): ConeDiagnostic? {
             return returnsEffect.value.accept(this, null)
         }

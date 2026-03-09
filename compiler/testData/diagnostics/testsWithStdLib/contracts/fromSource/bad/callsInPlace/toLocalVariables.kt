@@ -10,19 +10,19 @@ fun bar(x: () -> Unit) {
 fun foo(x: () -> Unit, y: () -> Unit, z: () -> Unit) {
     contract {
         <!LEAKED_IN_PLACE_LAMBDA!>callsInPlace(x, InvocationKind.AT_MOST_ONCE)<!>
-        <!LEAKED_IN_PLACE_LAMBDA!>callsInPlace(y, InvocationKind.AT_MOST_ONCE)<!>
-        <!LEAKED_IN_PLACE_LAMBDA!>callsInPlace(z, InvocationKind.AT_MOST_ONCE)<!>
+        callsInPlace(y, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(z, InvocationKind.AT_MOST_ONCE)
     }
 
     if (true) {
-        bar(<!LEAKED_IN_PLACE_LAMBDA!>x<!>)
+        bar(<!LEAKED_LOCAL_THROUGH_CALL!>x<!>)
     } else {
-        val yCopy = <!LEAKED_IN_PLACE_LAMBDA!>y<!>
+        val yCopy = y
         yCopy()
     }
 
     val zCopy: () -> Unit
-    zCopy = <!LEAKED_IN_PLACE_LAMBDA!>z<!>
+    zCopy = z
     zCopy()
 }
 

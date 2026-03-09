@@ -1904,6 +1904,15 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val RETURN_VALUE_NOT_USED_COERCION by warning<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Name?>("functionName")
         }
+        val LEAKED_LOCAL by warning<KtElement> {
+            parameter<Symbol>("parameter")
+        }
+        val LEAKED_LOCAL_THROUGH_CALL by warning<KtElement> {
+            parameter<Symbol>("parameter")
+        }
+        val LEAKED_LOCAL_THROUGH_CAPTURE by warning<KtElement> {
+            parameter<Symbol>("parameter")
+        }
     }
 
     val NULLABILITY by object : DiagnosticGroup("Nullability") {

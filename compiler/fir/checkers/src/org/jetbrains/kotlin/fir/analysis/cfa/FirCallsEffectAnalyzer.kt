@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.utils.contextParametersForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.locality
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -34,62 +34,57 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNonReflectFunctionType
-import org.jetbrains.kotlin.fir.types.isSomeFunctionType
-import org.jetbrains.kotlin.fir.util.SetMultimap
-import org.jetbrains.kotlin.fir.util.setMultimapOf
 
 object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
     context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun analyze(graph: ControlFlowGraph) {
-        // TODO, KT-59816: this is quadratic due to `graph.traverse`, surely there is a better way?
-        for (subGraph in graph.subGraphs) {
-            analyze(subGraph)
-        }
-
         val function = graph.declaration as? FirFunction ?: return
-        val contract = (function as? FirContractDescriptionOwner)?.contractDescription ?: return
+        val effects = (function as? FirContractDescriptionOwner)?.contractDescription?.effects.orEmpty()
 
-        val argumentsCalledInPlace = buildMap {
-            contract.effects?.forEach { firEffect ->
-                val effect = firEffect.effect as? ConeCallsEffectDeclaration ?: return@forEach
-                val index = effect.valueParameterReference.parameterIndex
-                val typeRef = when (index) {
-                    -1 -> function.receiverParameter?.typeRef
-                    in function.valueParameters.indices -> function.valueParameters[index].returnTypeRef
-                    else -> function.contextParametersForFunctionOrContainingProperty()[index - function.valueParameters.size].returnTypeRef
-                }
-                if (typeRef?.coneType?.isSomeFunctionType(context.session) != true) return@forEach
-                val key = when (index) {
-                    -1 -> function.symbol
-                    in function.valueParameters.indices -> function.valueParameters[index].symbol
-                    else -> function.contextParametersForFunctionOrContainingProperty()[index - function.valueParameters.size].symbol
-                }
-                put(key, firEffect)
+        val receiverInPace = when (val receiverLocality = function.receiverParameter?.locality) {
+            null -> emptyMap()
+            else if receiverLocality.hasLocalContract -> mapOf(function.symbol to (receiverLocality.invocationKind ?: EventOccurrencesRange.UNKNOWN))
+            else -> emptyMap()
+        }
+        val restInPlace =
+            (function.valueParameters + function.contextParameters)
+                .map { it to it.locality }
+                .filter { [_, locality] -> locality.hasLocalContract }
+                .associate { [param, locality] -> param.symbol to (locality.invocationKind ?: EventOccurrencesRange.UNKNOWN) }
+        val argumentsCalledInPlace = receiverInPace + restInPlace
+
+        // if (argumentsCalledInPlace.isEmpty()) return
+
+        val leakedSymbols = FirLocalsChecker.analyze(graph)
+        val callsEffects = argumentsCalledInPlace.mapValues { [symbol, _] ->
+            val index = function.parameterIndex(symbol)
+            effects.filter { (it.effect as? ConeCallsEffectDeclaration)?.valueParameterReference?.parameterIndex == index }
+        }
+        for ([symbol, uses] in leakedSymbols) {
+            for (contract in callsEffects[symbol].orEmpty()) {
+                reporter.reportOn(contract.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol)
+            }
+            for ([use, error] in uses) {
+                reporter.reportOn(use.source, error, symbol)
             }
         }
-        if (argumentsCalledInPlace.isEmpty()) return
 
-        val leakedSymbols = graph.findNonInPlaceUsesOf(argumentsCalledInPlace.keys, context.session)
         val invocationData = graph.traverseToFixedPoint(
             InvocationDataCollector(argumentsCalledInPlace.keys - leakedSymbols.keys, context.session)
         )
-
-        for ([symbol, uses] in leakedSymbols) {
-            reporter.reportOn(argumentsCalledInPlace[symbol]?.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol)
-            for (use in uses) {
-                reporter.reportOn(use.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol)
-            }
-        }
-
-        for ([symbol, firEffect] in argumentsCalledInPlace) {
-            val requiredRange = (firEffect.effect as ConeCallsEffectDeclaration).kind
+        for ([symbol, requiredRange] in argumentsCalledInPlace) {
             val foundRange = invocationData.getValue(graph.exitNode)[NormalPath]?.get(symbol)?.range?.withoutMarker ?: EventOccurrencesRange.ZERO
             val coercedFoundRange = foundRange.coerceToInvocationKind()
             if (foundRange !in requiredRange) {
-                reporter.reportOn(firEffect.source, FirErrors.WRONG_INVOCATION_KIND, symbol, requiredRange, coercedFoundRange)
+                for (contract in callsEffects[symbol].orEmpty()) {
+                    reporter.reportOn(contract.source, FirErrors.WRONG_INVOCATION_KIND, symbol, requiredRange, coercedFoundRange)
+                }
             }
         }
     }
+
+    private fun FirFunction.parameterIndex(symbol: FirCallableSymbol<*>): Int =
+        (valueParameters + contextParameters).indexOfFirst { it.symbol == symbol }
 
     // This maps `EventOccurrencesRange` to `InvocationKind`, as the latter has fewer and different kinds.
     private fun EventOccurrencesRange.coerceToInvocationKind(): EventOccurrencesRange = when (this) {
@@ -98,56 +93,8 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         else -> this
     }
 
-    private fun ControlFlowGraph.findNonInPlaceUsesOf(
-        lambdaSymbols: Set<FirCallableSymbol<*>>,
-        session: FirSession,
-    ): SetMultimap<FirCallableSymbol<*>, FirExpression> {
-        val result = setMultimapOf<FirCallableSymbol<*>, FirExpression>()
-
-        fun FirExpression.mark() {
-            val symbol = qualifiedAccessSymbol() ?: return
-            if (symbol in lambdaSymbols) result.put(symbol, this)
-        }
-
-        fun ControlFlowGraph.scan(isValidScope: Boolean) {
-            for (node in nodes) {
-                when (node) {
-                    is PropertyInitializerEnterNode -> {
-                        node.fir.initializer?.mark()
-                        node.fir.delegate?.mark()
-                    }
-                    is VariableDeclarationExitNode -> {
-                        node.fir.initializer?.mark()
-                        node.fir.delegate?.mark()
-                    }
-                    is VariableAssignmentNode -> {
-                        node.fir.rValue.mark()
-                    }
-                    is JumpNode -> {
-                        (node.fir as? FirReturnExpression)?.result?.mark()
-                    }
-                    is FunctionCallExitNode -> {
-                        node.firAsFunctionCallOrNull?.forEachArgument(session) { arg, range ->
-                            if (!isValidScope || range == null) {
-                                arg.mark()
-                            }
-                        }
-                    }
-                    else -> {}
-                }
-
-                if (node is CFGNodeWithSubgraphs<*>) {
-                    node.subGraphs.forEach { it.scan(isValidScope && it.declaration?.evaluatedInPlace == true) }
-                }
-            }
-        }
-
-        scan(isValidScope = true)
-        return result
-    }
-
     private class InvocationDataCollector(
-        val lambdaSymbols: Set<FirCallableSymbol<*>>,
+        val lambdaSymbols: Set<FirBasedSymbol<*>>,
         val session: FirSession,
     ) : EventCollectingControlFlowGraphVisitor<LambdaInvocationEvent>() {
         override fun visitFunctionCallExitNode(

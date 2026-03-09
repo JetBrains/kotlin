@@ -9,8 +9,8 @@ fun foo(a: () -> Unit, b: () -> Unit) {
     }
 
     fun localFun() {
-        <!LEAKED_IN_PLACE_LAMBDA!>a<!>.invoke()
-        <!LEAKED_IN_PLACE_LAMBDA!>a<!>()
+        <!LEAKED_LOCAL_THROUGH_CAPTURE!>a<!>.invoke()
+        <!LEAKED_LOCAL_THROUGH_CAPTURE!>a<!>()
     }
 
     localFun()

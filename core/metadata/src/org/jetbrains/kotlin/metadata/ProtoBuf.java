@@ -30894,6 +30894,30 @@ public final class ProtoBuf {
        * </pre>
        */
       RETURNS_RESULT_OF(3, 3),
+      /**
+       * <code>RESULT_FOLLOWS = 4;</code>
+       *
+       * <pre>
+       * ResultFollows(callable: ParameterReference)
+       * </pre>
+       */
+      RESULT_FOLLOWS(4, 4),
+      /**
+       * <code>LOCAL = 5;</code>
+       *
+       * <pre>
+       * Local(callable: ParameterReference)
+       * </pre>
+       */
+      LOCAL(5, 5),
+      /**
+       * <code>SCOPED_CALLS = 6;</code>
+       *
+       * <pre>
+       * SCOPED_CALLS(callable: ParameterReference)
+       * </pre>
+       */
+      SCOPED_CALLS(6, 6),
       ;
 
       /**
@@ -30929,6 +30953,30 @@ public final class ProtoBuf {
        * </pre>
        */
       public static final int RETURNS_RESULT_OF_VALUE = 3;
+      /**
+       * <code>RESULT_FOLLOWS = 4;</code>
+       *
+       * <pre>
+       * ResultFollows(callable: ParameterReference)
+       * </pre>
+       */
+      public static final int RESULT_FOLLOWS_VALUE = 4;
+      /**
+       * <code>LOCAL = 5;</code>
+       *
+       * <pre>
+       * Local(callable: ParameterReference)
+       * </pre>
+       */
+      public static final int LOCAL_VALUE = 5;
+      /**
+       * <code>SCOPED_CALLS = 6;</code>
+       *
+       * <pre>
+       * SCOPED_CALLS(callable: ParameterReference)
+       * </pre>
+       */
+      public static final int SCOPED_CALLS_VALUE = 6;
 
 
       public final int getNumber() { return value; }
@@ -30939,6 +30987,9 @@ public final class ProtoBuf {
           case 1: return CALLS;
           case 2: return RETURNS_NOT_NULL;
           case 3: return RETURNS_RESULT_OF;
+          case 4: return RESULT_FOLLOWS;
+          case 5: return LOCAL;
+          case 6: return SCOPED_CALLS;
           default: return null;
         }
       }

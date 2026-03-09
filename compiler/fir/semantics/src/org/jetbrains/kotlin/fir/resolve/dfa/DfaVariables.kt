@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.isImplicitWhenSubjectVariable
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -176,4 +177,64 @@ private fun FirVariable.isInCurrentOrFriendModule(session: FirSession): Boolean 
     val propertyModuleData = originalOrSelf().moduleData
     val currentModuleData = session.moduleData
     return currentModuleData.canSeeInternalsOf(propertyModuleData)
+}
+
+sealed interface Domain {
+    object Unreachable : Domain
+
+    // we use identity to differentiate domains
+    class Known() : Domain {
+        override fun equals(other: Any?): Boolean = this === other
+        override fun hashCode(): Int = System.identityHashCode(this)
+    }
+
+    companion object {
+        fun fresh(): Domain = Known()
+    }
+}
+
+sealed interface DomainReference {
+    sealed interface WithVariable : DomainReference {
+        val variable: DataFlowVariable
+    }
+
+    sealed interface WithStatement : DomainReference {
+        val statement: FirStatement
+    }
+
+    sealed interface WithSecondaryStatement : DomainReference {
+        val secondaryStatement: FirStatement?
+    }
+
+    operator fun contains(variable: DataFlowVariable): Boolean =
+        this is WithVariable && this.variable == variable
+
+    /**
+     * The original domain of a variable, like its original argument
+     */
+    data class Original(override val variable: RealVariable) : DomainReference.WithVariable
+
+    /**
+     * Reference made through a particular statement or expression
+     */
+    data class Assignment(override val variable: DataFlowVariable, override val statement: FirStatement) : DomainReference.WithVariable, DomainReference.WithStatement
+
+    /**
+     * The result of an expression with multiple branches
+     */
+    data class Join(override val statement: FirExpression, val original: FirExpression?) : DomainReference.WithStatement
+
+    /**
+     * Function call that may potentially leak locals
+     */
+    data class Call(override val statement: FirStatement, val argument: FirExpression) : DomainReference.WithStatement, DomainReference.WithSecondaryStatement {
+        override val secondaryStatement: FirExpression get() = argument
+    }
+
+    /**
+     * Record accesses, they leak local if they are captured
+     */
+    data class Access(override val statement: FirStatement, val receiver: FirExpression?) : DomainReference.WithStatement, DomainReference.WithSecondaryStatement {
+        override val secondaryStatement: FirExpression? get() = receiver
+    }
 }

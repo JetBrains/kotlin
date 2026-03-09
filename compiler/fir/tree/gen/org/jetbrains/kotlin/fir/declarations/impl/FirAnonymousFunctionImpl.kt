@@ -56,6 +56,7 @@ internal class FirAnonymousFunctionImpl(
     override val hasExplicitParameterList: Boolean,
     override val typeParameters: MutableList<FirTypeParameter>,
     override var typeRef: FirTypeRef,
+    override var isLocallyScoped: Boolean?,
 ) : FirAnonymousFunction() {
     override val isLocal: Boolean
         get() = true
@@ -197,5 +198,9 @@ internal class FirAnonymousFunctionImpl(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceIsLocallyScoped(newIsLocallyScoped: Boolean?) {
+        isLocallyScoped = newIsLocallyScoped
     }
 }

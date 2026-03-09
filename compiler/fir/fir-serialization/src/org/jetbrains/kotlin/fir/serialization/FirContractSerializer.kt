@@ -113,6 +113,27 @@ class FirContractSerializer {
                     )
                 }
 
+                is ConeResultFollowsEffectDeclaration -> {
+                    builder.effectType = ProtoBuf.Effect.EffectType.RESULT_FOLLOWS
+                    builder.addEffectConstructorArgument(
+                        contractExpressionProto(effectDeclaration.valueParameterReference, contractDescription)
+                    )
+                }
+
+                is ConeLocalEffectDeclaration -> {
+                    builder.effectType = ProtoBuf.Effect.EffectType.LOCAL
+                    builder.addEffectConstructorArgument(
+                        contractExpressionProto(effectDeclaration.valueParameterReference, contractDescription)
+                    )
+                }
+
+                is ConeScopedCallsEffectDeclaration -> {
+                    builder.effectType = ProtoBuf.Effect.EffectType.SCOPED_CALLS
+                    builder.addEffectConstructorArgument(
+                        contractExpressionProto(effectDeclaration.valueParameterReference, contractDescription)
+                    )
+                }
+
                 else -> {
                     throw IllegalStateException("Unsupported effect type: ${effectDeclaration::class.simpleName}")
                 }

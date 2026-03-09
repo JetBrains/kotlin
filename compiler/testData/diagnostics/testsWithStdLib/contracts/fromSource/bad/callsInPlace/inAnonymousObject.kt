@@ -13,15 +13,15 @@ fun foo(a: () -> Unit, b: () -> Unit, c: () -> Unit, d: () -> Unit) {
 
     val obj = object : Runnable {
 
-        val leakedVal = <!LEAKED_IN_PLACE_LAMBDA!>a<!>
+        val leakedVal = <!LEAKED_LOCAL_THROUGH_CAPTURE!>a<!>
         val leaked: Any
 
         init {
-            leaked = <!LEAKED_IN_PLACE_LAMBDA!>b<!>
+            leaked = <!LEAKED_LOCAL_THROUGH_CAPTURE!>b<!>
         }
 
         override fun run() {
-            <!LEAKED_IN_PLACE_LAMBDA!>c<!>()
+            <!LEAKED_LOCAL_THROUGH_CAPTURE!>c<!>()
         }
 
     }

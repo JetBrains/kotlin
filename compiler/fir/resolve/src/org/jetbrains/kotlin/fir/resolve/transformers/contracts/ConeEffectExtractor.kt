@@ -48,6 +48,7 @@ class ConeEffectExtractor(
         private val LAMBDA_ARGUMENT_NAME = Name.identifier("lambda")
         private val OTHER_ARGUMENT_NAME = Name.identifier("other")
         private val TARGET_ARGUMENT_NAME = Name.identifier("target")
+        private val VALUE_ARGUMENT_NAME = Name.identifier("value")
     }
 
     private fun ConeContractDescriptionError.asElement(): KtErroneousContractElement<ConeKotlinType, ConeDiagnostic> {
@@ -134,6 +135,21 @@ class ConeEffectExtractor(
                         "-Xreturn-value-checker"
                     ).asElement()
                 }
+            }
+
+            ContractsDslNames.RESULT_FOLLOWS -> {
+                val reference = functionCall.arguments.getOrNull(0).asContractValueExpression(VALUE_ARGUMENT_NAME)
+                ConeResultFollowsEffectDeclaration(reference)
+            }
+
+            ContractsDslNames.LOCAL -> {
+                val reference = functionCall.arguments.getOrNull(0).asContractValueExpression(VALUE_ARGUMENT_NAME)
+                ConeLocalEffectDeclaration(reference)
+            }
+
+            ContractsDslNames.SCOPED_CALLS -> {
+                val reference = functionCall.arguments.getOrNull(0).asContractValueExpression(VALUE_ARGUMENT_NAME)
+                ConeScopedCallsEffectDeclaration(reference)
             }
 
             BOOLEAN_AND, BOOLEAN_OR -> {

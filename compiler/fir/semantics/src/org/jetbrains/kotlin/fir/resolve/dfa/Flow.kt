@@ -18,6 +18,10 @@ abstract class Flow {
 
     open fun unwrapVariable(variable: DataFlowVariable): DataFlowVariable =
         if (variable is RealVariable) unwrapVariable(variable) else variable
+
+    abstract val knownDomains: Set<Domain>
+    abstract fun getReferences(domain: Domain): Set<DomainReference>
+    abstract fun getDomains(variable: DataFlowVariable): Set<Domain>
 }
 
 class PersistentFlow internal constructor(
@@ -33,6 +37,7 @@ class PersistentFlow internal constructor(
     // in `directAliasMap`. `backwardsAliasMap` maps each representative to the rest of the set.
     internal val directAliasMap: PersistentMap<RealVariable, RealVariable>,
     private val backwardsAliasMap: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
+    internal val domainReferences: PersistentMap<Domain, PersistentSet<DomainReference>>,
 ) : Flow() {
     private val level: Int = if (previousFlow != null) previousFlow.level + 1 else 0
 
@@ -50,6 +55,17 @@ class PersistentFlow internal constructor(
 
     override fun getImplications(variable: DataFlowVariable): Collection<Implication>? =
         implications[variable]
+
+    override val knownDomains: Set<Domain>
+        get() = domainReferences.keys
+
+    override fun getReferences(domain: Domain): Set<DomainReference> =
+        domainReferences[domain] ?: emptySet()
+
+    override fun getDomains(variable: DataFlowVariable): Set<Domain> =
+        domainReferences.mapNotNullTo(mutableSetOf()) { [domain, references] ->
+            domain.takeIf { references.any { variable in it } }
+        }
 
     fun lowestCommonAncestor(other: PersistentFlow): PersistentFlow? {
         var left = this
@@ -74,6 +90,7 @@ class PersistentFlow internal constructor(
         assignmentIndex.builder(),
         directAliasMap.builder(),
         backwardsAliasMap.builder(),
+        domainReferences.builder(),
     )
 }
 
@@ -84,9 +101,11 @@ class MutableFlow internal constructor(
     internal val assignmentIndex: PersistentMap.Builder<RealVariable, Int>,
     internal val directAliasMap: PersistentMap.Builder<RealVariable, RealVariable>,
     internal val backwardsAliasMap: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
+    internal val domainReferences: PersistentMap.Builder<Domain, PersistentSet<DomainReference>>,
 ) : Flow() {
     constructor() : this(
         null,
+        emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
@@ -106,6 +125,17 @@ class MutableFlow internal constructor(
     override fun getImplications(variable: DataFlowVariable): Collection<Implication>? =
         implications[variable]
 
+    override val knownDomains: Set<Domain>
+        get() = domainReferences.keys
+
+    override fun getReferences(domain: Domain): Set<DomainReference> =
+        domainReferences[domain] ?: emptySet()
+
+    override fun getDomains(variable: DataFlowVariable): Set<Domain> =
+        domainReferences.mapNotNullTo(mutableSetOf()) { [domain, references] ->
+            domain.takeIf { references.any { variable in it } }
+        }
+
     fun freeze(): PersistentFlow = PersistentFlow(
         previousFlow,
         approvedTypeStatements.build(),
@@ -113,6 +143,7 @@ class MutableFlow internal constructor(
         assignmentIndex.build(),
         directAliasMap.build(),
         backwardsAliasMap.build(),
+        domainReferences.build(),
     )
 }
 

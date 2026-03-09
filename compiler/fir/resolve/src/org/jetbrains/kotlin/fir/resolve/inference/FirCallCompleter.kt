@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeHoldsInEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.description.ConeScopedCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
@@ -723,6 +724,7 @@ class FirCallCompleter(
 
         val eventOccurencesRangeByParameter = mutableMapOf<FirValueParameter, EventOccurrencesRange>()
         val lambdaParametersWithHoldsInEffect = mutableSetOf<FirValueParameter>()
+        val locallyScopedLambdaParameters = mutableSetOf<FirValueParameter>()
         for (fir in effects) {
             when (val effect = fir.effect) {
                 is ConeCallsEffectDeclaration -> {
@@ -735,6 +737,12 @@ class FirCallCompleter(
                     val lambdaParameter = function.valueParameters.getOrNull(effect.valueParameterReference.parameterIndex)
                     if (lambdaParameter != null) {
                         lambdaParametersWithHoldsInEffect += lambdaParameter
+                    }
+                }
+                is ConeScopedCallsEffectDeclaration -> {
+                    val lambdaParameter = function.valueParameters.getOrNull(effect.valueParameterReference.parameterIndex)
+                    if (lambdaParameter != null) {
+                        locallyScopedLambdaParameters += lambdaParameter
                     }
                 }
             }
@@ -756,6 +764,9 @@ class FirCallCompleter(
             }
             if (lambdaParametersWithHoldsInEffect.contains(parameter)) {
                 lambda.lambdaArgumentParent = call
+            }
+            if (locallyScopedLambdaParameters.contains(parameter)) {
+                lambda.replaceIsLocallyScoped(true)
             }
         }
     }

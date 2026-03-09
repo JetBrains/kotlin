@@ -67,6 +67,21 @@ abstract class ProtoBufContractDeserializer<Type, Diagnostic, Owner> {
                 val callable = extractVariable(argument, owner) ?: return null
                 KtReturnsResultOfDeclaration(callable)
             }
+            ProtoBuf.Effect.EffectType.RESULT_FOLLOWS -> {
+                val argument = proto.effectConstructorArgumentList.firstOrNull() ?: return null
+                val value = extractVariable(argument, owner) ?: return null
+                KtResultFollowsEffectDeclaration(value)
+            }
+            ProtoBuf.Effect.EffectType.LOCAL -> {
+                val argument = proto.effectConstructorArgumentList.firstOrNull() ?: return null
+                val value = extractVariable(argument, owner) ?: return null
+                KtLocalEffectDeclaration(value)
+            }
+            ProtoBuf.Effect.EffectType.SCOPED_CALLS -> {
+                val argument = proto.effectConstructorArgumentList.firstOrNull() ?: return null
+                val value = extractVariable(argument, owner) ?: return null
+                KtScopedCallsEffectDeclaration(value)
+            }
         }
     }
 

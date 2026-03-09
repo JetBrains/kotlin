@@ -78,6 +78,7 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner, Fir
     abstract val hasExplicitParameterList: Boolean
     abstract override val typeParameters: List<FirTypeParameter>
     abstract val typeRef: FirTypeRef
+    abstract val isLocallyScoped: Boolean?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitAnonymousFunction(this, data)
@@ -111,6 +112,8 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner, Fir
     abstract fun replaceInlineStatus(newInlineStatus: InlineStatus)
 
     abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract fun replaceIsLocallyScoped(newIsLocallyScoped: Boolean?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 

@@ -59,6 +59,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.headerMode = from.headerMode
     to.headerModeType = from.headerModeType
     to.ignoreConstOptimizationErrors = from.ignoreConstOptimizationErrors
+    to.improvedAliasTracking = from.improvedAliasTracking
     to.incrementalCompilation = from.incrementalCompilation
     to.inlineClasses = from.inlineClasses
     @Suppress("DEPRECATION")

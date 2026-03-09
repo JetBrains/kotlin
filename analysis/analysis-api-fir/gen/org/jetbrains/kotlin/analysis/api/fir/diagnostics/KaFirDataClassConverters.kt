@@ -2651,6 +2651,13 @@ private fun KaDiagnosticConverterBuilder.addConversions58() {
             token,
         )
     }
+    add(FirErrors.LEAKED_LOCAL_THROUGH_CAPTURE) { firDiagnostic ->
+        LeakedLocalThroughCaptureImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.FORBIDDEN_IDENTITY_EQUALS) { firDiagnostic ->
         ForbiddenIdentityEqualsImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -3188,6 +3195,13 @@ private fun KaDiagnosticConverterBuilder.addConversions71() {
             firDiagnostic.b.map { firCallableSymbol ->
                 firSymbolBuilder.callableBuilder.buildCallableSymbol(firCallableSymbol)
             },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LEAKED_LOCAL) { firDiagnostic ->
+        LeakedLocalImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -4238,6 +4252,13 @@ private fun KaDiagnosticConverterBuilder.addConversions94() {
     }
     add(FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS) { firDiagnostic ->
         InnerClassOfGenericThrowableSubclassImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LEAKED_LOCAL_THROUGH_CALL) { firDiagnostic ->
+        LeakedLocalThroughCallImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

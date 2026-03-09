@@ -52,6 +52,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         }
         result.copyStatements(statementFlows, commonFlow, union)
         result.copyImplications(statementFlows)
+        result.copyDomains(flows)
         return result
     }
 
@@ -251,6 +252,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             variableStorage.replaceReceiverReferencesInMembers(variable, replacementOrNext) { old, new -> replaceVariable(old, new) }
             implications.replaceVariable(variable, replacementOrNext)
             approvedTypeStatements.replaceVariable(variable, replacementOrNext)
+            domainReferences.replaceVariable(variable, replacementOrNext)
             if (aliases != null && replacementOrNext != null) {
                 directAliasMap -= replacementOrNext
                 val withoutSelf = aliases - replacementOrNext
@@ -259,6 +261,31 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                     backwardsAliasMap[replacementOrNext] = backwardsAliasMap[replacementOrNext]?.addAll(withoutSelf) ?: withoutSelf
                 }
             }
+        }
+    }
+
+    private fun MutableFlow.copyDomains(flows: Collection<PersistentFlow>) {
+        for (flow in flows) {
+            for ([domain, references] in flow.domainReferences) {
+                domainReferences[domain] = domainReferences.getOrElse(domain) { persistentSetOf() } + references
+            }
+        }
+    }
+
+    fun removePreviousDomainReferences(flow: MutableFlow, variable: DataFlowVariable) {
+        for (domain in flow.domainReferences.keys.toList()) {
+            val references = flow.domainReferences[domain] ?: continue
+            flow.domainReferences[domain] = references.filterTo(mutableSetOf()) { variable !in it }.toPersistentSet()
+        }
+    }
+
+    fun addReferenceToDomain(flow: MutableFlow, domain: Domain, reference: DomainReference) {
+        flow.domainReferences[domain] = flow.domainReferences.getOrElse(domain) { persistentSetOf() } + reference
+    }
+
+    fun addReferenceToDomain(flow: MutableFlow, old: DataFlowVariable, new: DomainReference) {
+        for (domain in flow.getDomains(old)) {
+            addReferenceToDomain(flow, domain, new)
         }
     }
 
@@ -513,4 +540,20 @@ private fun Statement.replaceVariable(from: RealVariable, to: RealVariable): Sta
         is PersistentTypeStatement -> copy(variable = to)
         is MutableTypeStatement -> MutableTypeStatement(to, upperTypes, lowerTypes)
     }
+}
+
+private fun <A> PersistentMap.Builder<A, PersistentSet<DomainReference>>.replaceVariable(from: RealVariable, to: RealVariable?) =
+    this.mapValues { [_, references] ->
+        references.mapNotNull { it.replaceVariable(from, to) }.toPersistentSet()
+    }
+
+private fun DomainReference.replaceVariable(from: RealVariable, to: RealVariable?): DomainReference? = when (this) {
+    is DomainReference.WithVariable if from == variable -> {
+        if (to == null) return null
+        when (this) {
+            is DomainReference.Original -> DomainReference.Original(to)
+            is DomainReference.Assignment -> DomainReference.Assignment(to, statement)
+        }
+    }
+    else -> this
 }

@@ -157,7 +157,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             result = result.transformFinallyBlock(transformer, ResolutionMode.ContextIndependent)
             dataFlowAnalyzer.exitFinallyBlock()
         }
-        dataFlowAnalyzer.exitTryExpression(data.forceFullCompletion)
+        dataFlowAnalyzer.exitTryExpression(result, data.forceFullCompletion)
         return result
     }
 
