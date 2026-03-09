@@ -31,7 +31,7 @@ import java.io.File
 @EnforcedHostTarget
 @TestMetadata(TEST_SUITE_PATH)
 @TestDataPath("\$PROJECT_ROOT")
-@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
+@UsePartialLinkage(UsePartialLinkage.Mode.ERROR)
 class IncrementalCompilationTest : AbstractNativeSimpleTest() {
     @BeforeEach
     fun assumeCachesAreEnabled() {

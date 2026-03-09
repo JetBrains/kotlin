@@ -584,7 +584,6 @@ object NativeTestSupport {
             ?: UsePartialLinkage.Mode.ERROR // The default mode for testing.
 
         val config = when (mode) {
-            UsePartialLinkage.Mode.DISABLED -> PartialLinkageConfig(PartialLinkageMode.DISABLE, PartialLinkageLogLevel.SILENT)
             UsePartialLinkage.Mode.DEFAULT -> PartialLinkageConfig.DEFAULT
             UsePartialLinkage.Mode.SILENT -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.SILENT)
             UsePartialLinkage.Mode.INFO -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.INFO)
