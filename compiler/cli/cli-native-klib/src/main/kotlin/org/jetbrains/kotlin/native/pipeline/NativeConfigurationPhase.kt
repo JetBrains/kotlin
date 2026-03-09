@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.cli.common.checkForUnexpectedKlibLibraries
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.setupCommonKlibArguments
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
@@ -126,13 +124,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
 
         configuration.konanExportKdoc = arguments.exportKDoc
 
-        configuration.setupPartialLinkageConfig(
-            mode = arguments.partialLinkageMode,
-            logLevel = arguments.partialLinkageLogLevel,
-            compilerModeAllowsUsingPartialLinkage = false, // Don't run PL when producing KLIB
-            onWarning = { configuration.report(KONAN_ARGUMENT_WARNING, it) },
-            onError = { configuration.report(KONAN_ARGUMENT_ERROR, it) }
-        )
+        configuration.setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_WARNING, KONAN_ARGUMENT_ERROR)
     }
 
     private fun parseManifestNativeTargets(
