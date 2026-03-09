@@ -248,7 +248,11 @@ private class CalculatorForNestedCall(
                 var flexiblePairFound = false
                 for (lowerConstraint in lowerConstraints) {
                     for (upperConstraint in upperConstraints) {
-                        if (lowerConstraint.type.lowerBoundIfFlexible().typeConstructor() == upperConstraint.type.lowerBoundIfFlexible().typeConstructor()) {
+                        val lowerType = lowerConstraint.type.lowerBoundIfFlexible()
+                        val upperType = upperConstraint.type.upperBoundIfFlexible()
+                        if (lowerType.typeConstructor() == upperType.typeConstructor() &&
+                            lowerType.withNullability(true) == upperType
+                        ) {
                             flexiblePairFound = true
                             break
                         }
