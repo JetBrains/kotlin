@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_COROUTINES_STACK_SWITCHING
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -79,11 +80,13 @@ class WasiBoxRunner(
 
             val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(modulesToArtifact.keys.first())
             val useNewExceptionProposal = configuration.getNotNull(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)
+            val wasmCoroutinesStackSwitching = WASM_COROUTINES_STACK_SWITCHING in testServices.moduleStructure.allDirectives
 
             val exceptions = vmsToCheck.mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
                     useNewExceptionHandling = useNewExceptionProposal,
+                    wasmCoroutinesStackSwitching = wasmCoroutinesStackSwitching,
                     failsIn = failsIn,
                     entryFile = if (!vm.entryPointIsJsFile) "$WASM_BASE_FILE_NAME.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
                     jsFilePaths = jsFilePaths,
