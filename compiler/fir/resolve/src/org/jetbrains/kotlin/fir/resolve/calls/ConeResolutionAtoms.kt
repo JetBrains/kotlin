@@ -87,13 +87,15 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
                     expression.hasResolvedType -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
                     else -> ConeResolutionAtomWithPostponedChild(expression)
                 }
-                is FirPropertyAccessExpression if expression.shouldBeResolvedInContextSensitiveMode() -> {
-                    ConeResolutionAtomWithPostponedChild(
-                        expression,
-                        fallbackSubAtom = createRawAtomForResolvable(expression, allowUnresolvedExpression),
-                    )
+                is FirPropertyAccessExpression -> when {
+                    expression.shouldBeResolvedInContextSensitiveMode() || expression.shouldAlternativeBeResolved() ->
+                        ConeResolutionAtomWithPostponedChild(
+                            expression,
+                            fallbackSubAtom = createRawAtomForResolvable(expression, allowUnresolvedExpression),
+                        )
+                    else -> createRawAtomForResolvable(expression, allowUnresolvedExpression)
                 }
-                is FirQualifierWithContextSensitiveAlternative if expression.shouldAlternativeBeResolved() -> {
+                is FirResolvedQualifier if expression.shouldAlternativeBeResolved() -> {
                     ConeResolutionAtomWithPostponedChild(
                         expression,
                         fallbackSubAtom = createRawAtomForResolvable(expression, allowUnresolvedExpression),

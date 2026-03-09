@@ -246,7 +246,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     ): FirExpression {
         if (isForContextSensitiveAlternative) return resolvedPropertyAccess
 
-        runContextSensitiveResolutionIfNeeded(resolvedPropertyAccess, mode)?.let { return it }
+        runContextSensitiveResolutionIfNeeded(resolvedPropertyAccess, mode, forceResolutionInIdeMode = false)?.let { return it }
 
         when {
             AnalysisFlags.ideMode.isSet() && expressionBeforeResolution is FirPropertyAccessExpression ->
@@ -275,7 +275,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     ) {
         if (original.explicitReceiver == null) return
         if (original.calleeReference is FirErrorNamedReference || original.calleeReference is FirNamedReferenceWithCandidate) return
-        if (this !is FirQualifierWithContextSensitiveAlternative) return
+        if (this !is FirResolvedQualifier && this !is FirPropertyAccessExpression) return
 
         when (mode) {
             is ResolutionMode.AssignmentLValue, is ContextIndependent,
@@ -358,7 +358,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     private fun runContextSensitiveResolutionIfNeeded(
         originalExpression: FirExpression,
         data: ResolutionMode,
-        forceResolutionInIdeMode: Boolean = false,
+        forceResolutionInIdeMode: Boolean,
     ): FirExpression? {
         if (originalExpression !is FirPropertyAccessExpression) return null
         if (!forceResolutionInIdeMode && LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isDisabled()) return null
