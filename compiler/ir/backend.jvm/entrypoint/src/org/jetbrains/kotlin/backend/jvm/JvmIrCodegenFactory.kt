@@ -185,7 +185,7 @@ class JvmIrCodegenFactory(
         val messageCollector = configuration.messageCollector
         val psi2ir = Psi2IrTranslator(
             languageVersionSettings,
-            Psi2IrConfiguration(ignoreErrors, partialLinkageEnabled = false, skipBodies),
+            Psi2IrConfiguration(ignoreErrors, skipBodies),
             messageCollector::checkNoUnboundSymbols
         )
         val psi2irContext = psi2ir.createGeneratorContext(

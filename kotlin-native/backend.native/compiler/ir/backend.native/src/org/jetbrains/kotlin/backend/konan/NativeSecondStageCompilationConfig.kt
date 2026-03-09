@@ -575,7 +575,7 @@ class NativeSecondStageCompilationConfig(
     private val userCacheFlavorString = buildString {
         appendCommonCacheFlavor()
         append("-user")
-        if (partialLinkageConfig.isEnabled) append("-pl")
+        append("-pl")
     }
 
     internal val systemCacheDirectory = File(distribution.systemCacheRootDirectory.absolutePath).child(systemCacheFlavorString).also { it.mkdirs() }

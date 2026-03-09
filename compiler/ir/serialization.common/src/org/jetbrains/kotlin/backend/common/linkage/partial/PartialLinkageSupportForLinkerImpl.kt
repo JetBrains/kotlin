@@ -24,10 +24,7 @@ fun createPartialLinkageSupportForLinker(
     partialLinkageConfig: PartialLinkageConfig,
     builtIns: IrBuiltIns,
     diagnosticReporter: IrDiagnosticReporter,
-): PartialLinkageSupportForLinker = if (partialLinkageConfig.isEnabled)
-    PartialLinkageSupportForLinkerImpl(builtIns, PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel))
-else
-    PartialLinkageSupportForLinker.DISABLED
+): PartialLinkageSupportForLinker = PartialLinkageSupportForLinkerImpl(builtIns, PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel))
 
 internal class PartialLinkageSupportForLinkerImpl(
     val builtIns: IrBuiltIns,

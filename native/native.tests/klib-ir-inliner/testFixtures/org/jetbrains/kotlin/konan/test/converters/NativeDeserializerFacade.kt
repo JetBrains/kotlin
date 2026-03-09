@@ -126,7 +126,6 @@ class NativeDeserializerFacade(
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,
             exportedDependencies = emptyList(),
             partialLinkageSupport = createPartialLinkageSupportForLinker(
-                // TODO KT-77493: Disable PL after all tests for invisible references would be migrated to diagnostic tests
                 partialLinkageConfig = PartialLinkageConfig(PartialLinkageLogLevel.ERROR),
                 builtIns = irBuiltIns,
                 diagnosticReporter = irDiagnosticReporter,

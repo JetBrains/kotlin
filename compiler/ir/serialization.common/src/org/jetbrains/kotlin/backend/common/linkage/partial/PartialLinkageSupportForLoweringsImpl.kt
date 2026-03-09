@@ -22,10 +22,7 @@ fun createPartialLinkageSupportForLowerings(
     partialLinkageConfig: PartialLinkageConfig,
     builtIns: IrBuiltIns,
     diagnosticReporter: IrDiagnosticReporter,
-): PartialLinkageSupportForLowerings = if (partialLinkageConfig.isEnabled)
-    PartialLinkageSupportForLoweringsImpl(builtIns, PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel))
-else
-    PartialLinkageSupportForLowerings.DISABLED
+): PartialLinkageSupportForLowerings = PartialLinkageSupportForLoweringsImpl(builtIns, PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel))
 
 internal class PartialLinkageSupportForLoweringsImpl(
     private val builtIns: IrBuiltIns,

@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.config
 
 data class PartialLinkageConfig(val logLevel: PartialLinkageLogLevel) {
-    val isEnabled get() = true
-
     companion object {
         val DEFAULT = PartialLinkageConfig(PartialLinkageLogLevel.DEFAULT)
     }
