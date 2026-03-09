@@ -3043,7 +3043,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING, "Underscore in name-based destructuring without renaming is forbidden.")
 
-        map.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' is only allowed on top level, in named objects, or in companion objects.")
+        map.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' is only allowed on top level, in named objects, in companion objects or companion blocks.")
         map.put(CONST_VAL_WITH_GETTER, "Const 'val' cannot have a getter.")
         map.put(CONST_VAL_WITH_DELEGATE, "Const 'val' cannot have a delegate.")
         map.put(TYPE_CANT_BE_USED_FOR_CONST_VAL, "Const ''val'' has type ''{0}''. Only primitive types and ''String'' are allowed.", RENDER_TYPE)
