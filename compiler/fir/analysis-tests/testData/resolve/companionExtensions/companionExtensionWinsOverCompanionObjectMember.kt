@@ -21,7 +21,7 @@ class Example {
     }
 }
 
-<!WRONG_MODIFIER_TARGET!>companion<!> fun Example.test() = ""
+companion fun Example.test() = ""
 
 fun example() {
     val x: String = Example.test()
@@ -29,7 +29,7 @@ fun example() {
     val z: Int = Example.test3()
 }
 
-<!WRONG_MODIFIER_TARGET!>companion<!> fun Example.testInCompanionBlock() {
+companion fun Example.testInCompanionBlock() {
     // Just for completeness, but companion object members aren't in scope when unqualified anyway.
     val x: String = test()
     val y: String = test2()
@@ -41,7 +41,7 @@ package other
 
 import pack.Example
 
-<!WRONG_MODIFIER_TARGET!>companion<!> fun Example.test2() = ""
+companion fun Example.test2() = ""
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration, integerLiteral,
 localProperty, objectDeclaration, propertyDeclaration, stringLiteral */

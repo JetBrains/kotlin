@@ -18,10 +18,10 @@ class C {
 fun C.extensionFun() {}
 val C.extensionProp get() = 1
 
-<!WRONG_MODIFIER_TARGET!>companion<!> fun String.irrelvantCompanionExtension() {}
-<!WRONG_MODIFIER_TARGET!>companion<!> val String.irrelvantCompanionExtensionProp = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+companion fun String.irrelvantCompanionExtension() {}
+companion val String.irrelvantCompanionExtensionProp = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
 
-<!WRONG_MODIFIER_TARGET!>companion<!> fun C.companionExtFun() {
+companion fun C.companionExtFun() {
     <!UNRESOLVED_REFERENCE!>x<!>()
     <!UNRESOLVED_REFERENCE!>y<!>
 
@@ -41,7 +41,7 @@ val C.extensionProp get() = 1
     <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>irrelvantCompanionExtensionProp<!>
 }
 
-<!WRONG_MODIFIER_TARGET!>companion<!> var C.companionExtProp: Int
+companion var C.companionExtProp: Int
     get() {
         <!UNRESOLVED_REFERENCE!>x<!>()
         <!UNRESOLVED_REFERENCE!>y<!>

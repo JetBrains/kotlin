@@ -1,9 +1,9 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +CompanionBlocksAndExtensions +ContextSensitiveResolutionUsingExpectedType
 
 class C
 
-<!WRONG_MODIFIER_TARGET!>companion<!> val C.Instance get() = C()
+companion val C.Instance get() = C()
 
 fun test(): C {
     return Instance

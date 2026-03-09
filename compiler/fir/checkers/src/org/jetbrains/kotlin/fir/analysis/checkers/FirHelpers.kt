@@ -718,7 +718,7 @@ fun getActualTargetList(container: FirAnnotationContainer, session: FirSession):
                         TargetLists.T_MEMBER_PROPERTY(annotated.hasBackingField, annotated.delegate != null)
                     }
                 else ->
-                    TargetLists.T_TOP_LEVEL_PROPERTY(annotated.hasBackingField, annotated.delegate != null)
+                    TargetLists.T_TOP_LEVEL_PROPERTY(annotated.hasBackingField, annotated.delegate != null, isCompanionExtension = annotated.isCompanionExtension)
             }
         }
         is FirValueParameter -> {
@@ -735,6 +735,7 @@ fun getActualTargetList(container: FirAnnotationContainer, session: FirSession):
             when {
                 annotated.status.visibility == Visibilities.Local -> TargetLists.T_LOCAL_FUNCTION
                 annotated.isMember -> TargetLists.T_MEMBER_FUNCTION
+                annotated.isCompanionExtension -> TargetLists.T_COMPANION_EXTENSION_FUNCTION
                 else -> TargetLists.T_TOP_LEVEL_FUNCTION
             }
         }

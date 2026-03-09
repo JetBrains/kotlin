@@ -44,11 +44,11 @@ class D : C() {
 
 typealias TA = C
 
-<!WRONG_MODIFIER_TARGET!>companion<!> fun C.foo() {}
-<!WRONG_MODIFIER_TARGET!>companion<!> fun TA.fooTa() {}
+companion fun C.foo() {}
+companion fun TA.fooTa() {}
 
-<!WRONG_MODIFIER_TARGET!>companion<!> val C.prop = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
-<!WRONG_MODIFIER_TARGET!>companion<!> val TA.propTa = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+companion val C.prop = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
+companion val TA.propTa = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
 
 fun C.bar() {}
 

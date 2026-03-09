@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +CompanionBlocksAndExtensions
 
 class C {
@@ -7,7 +7,7 @@ class C {
     }
 }
 
-<!WRONG_MODIFIER_TARGET!>companion<!> fun C.foo() = ""
+companion fun C.foo() = ""
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, localProperty,
 propertyDeclaration, stringLiteral */

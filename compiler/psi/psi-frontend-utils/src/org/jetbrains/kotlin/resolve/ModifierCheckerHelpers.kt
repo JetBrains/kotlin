@@ -190,7 +190,7 @@ val possibleTargetPredicateMap = mapOf(
     OUT_KEYWORD to always(KotlinTarget.TYPE_PARAMETER, KotlinTarget.TYPE_PROJECTION),
     REIFIED_KEYWORD to always(KotlinTarget.TYPE_PARAMETER),
     VARARG_KEYWORD to always(KotlinTarget.VALUE_PARAMETER, KotlinTarget.PROPERTY_PARAMETER),
-    COMPANION_KEYWORD to always(KotlinTarget.OBJECT),
+    COMPANION_KEYWORD to always(KotlinTarget.OBJECT, KotlinTarget.COMPANION_EXTENSION_PROPERTY, KotlinTarget.COMPANION_EXTENSION_FUNCTION),
     LATEINIT_KEYWORD to always(
         KotlinTarget.MEMBER_PROPERTY,
         KotlinTarget.TOP_LEVEL_PROPERTY,
@@ -362,11 +362,17 @@ val possibleParentTargetPredicateMap = mapOf(
         KotlinTarget.ENUM_ENTRY,
         KotlinTarget.FILE
     ),
-    COMPANION_KEYWORD to always(
-        KotlinTarget.CLASS_ONLY,
-        KotlinTarget.INTERFACE,
-        KotlinTarget.ENUM_CLASS,
-        KotlinTarget.ANNOTATION_CLASS
+    COMPANION_KEYWORD to or(
+        always(
+            KotlinTarget.CLASS_ONLY,
+            KotlinTarget.INTERFACE,
+            KotlinTarget.ENUM_CLASS,
+            KotlinTarget.ANNOTATION_CLASS,
+        ),
+        ifSupported(
+            LanguageFeature.CompanionBlocksAndExtensions,
+            KotlinTarget.FILE,
+        )
     ),
     FINAL_KEYWORD to always(
         KotlinTarget.CLASS_ONLY,

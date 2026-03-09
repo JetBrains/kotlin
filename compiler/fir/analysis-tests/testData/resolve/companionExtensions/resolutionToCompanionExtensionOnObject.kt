@@ -19,9 +19,9 @@ object O {
     }
 }
 
-<!WRONG_MODIFIER_TARGET!>companion<!> fun C.foo() {}
-<!WRONG_MODIFIER_TARGET!>companion<!> fun C.Companion.bar() {}
-<!WRONG_MODIFIER_TARGET!>companion<!> fun O.baz() {}
+companion fun C.foo() {}
+companion fun C.Companion.bar() {}
+companion fun O.baz() {}
 
 fun test() {
     C.foo()

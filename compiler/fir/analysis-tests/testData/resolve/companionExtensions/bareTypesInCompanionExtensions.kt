@@ -5,13 +5,13 @@ class C<T>
 typealias TA = C<String>
 typealias TA2<T> = C<T>
 
-<!WRONG_MODIFIER_TARGET!>companion<!> fun C.correct1() {}
-<!WRONG_MODIFIER_TARGET!>companion<!> fun TA.correct2() {}
-<!WRONG_MODIFIER_TARGET!>companion<!> fun TA2.correct3() {}
+companion fun C.correct1() {}
+companion fun TA.correct2() {}
+companion fun TA2.correct3() {}
 
-<!WRONG_MODIFIER_TARGET!>companion<!> fun C<String>.incorrect1() {}
-<!WRONG_MODIFIER_TARGET!>companion<!> fun <T> C<T>.incorrect2() {}
-<!WRONG_MODIFIER_TARGET!>companion<!> fun TA2<String>.incorrect3() {}
+companion fun C<String>.incorrect1() {}
+companion fun <T> C<T>.incorrect2() {}
+companion fun TA2<String>.incorrect3() {}
 
 fun test() {
     C.correct1()

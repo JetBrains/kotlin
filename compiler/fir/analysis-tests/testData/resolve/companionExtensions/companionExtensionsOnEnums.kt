@@ -1,10 +1,10 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +CompanionBlocksAndExtensions
 enum class E {
     Entry;
 }
 
-<!WRONG_MODIFIER_TARGET!>companion<!> fun E.foo() {
+companion fun E.foo() {
     Entry
     entries
     values()

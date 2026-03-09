@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +CompanionBlocksAndExtensions
 // FILE: J.java
 public class J {
@@ -7,7 +7,7 @@ public class J {
 }
 
 // FILE: test.kt
-<!WRONG_MODIFIER_TARGET!>companion<!> fun J.bar() {
+companion fun J.bar() {
     foo()
     field
 }

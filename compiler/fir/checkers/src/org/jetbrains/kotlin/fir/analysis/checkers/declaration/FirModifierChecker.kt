@@ -95,7 +95,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
                 val modifier = secondModifier.token
                 when {
                     !checkTarget(modifierSource, modifier, actualTargets, parent) -> reportedNodes += secondModifier
-                    !checkParent(modifierSource, modifier, actualParents, parent) -> reportedNodes += secondModifier
+                    !checkParent(modifierSource, modifier, actualParents, owner, parent) -> reportedNodes += secondModifier
                 }
             }
         }
@@ -157,8 +157,24 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         modifierSource: KtSourceElement,
         modifierToken: KtModifierKeywordToken,
         actualParents: List<KotlinTarget>,
+        owner: FirDeclaration,
         parent: FirBasedSymbol<*>?,
     ): Boolean {
+        // possibleParentTargetPredicateMap contains FILE for companion keyword,
+        // but it's only allowed for companion extensions, not companion objects.
+        if (modifierToken == KtTokens.COMPANION_KEYWORD &&
+            owner is FirRegularClass &&
+            KotlinTarget.FILE in actualParents
+        ) {
+            reporter.reportOn(
+                modifierSource,
+                FirErrors.WRONG_MODIFIER_CONTAINING_DECLARATION,
+                modifierToken,
+                actualParents.firstOrThis()
+            )
+            return true
+        }
+
         val deprecatedParents = deprecatedParentTargetMap[modifierToken]
         if (deprecatedParents != null && actualParents.any { it in deprecatedParents }) {
             reporter.reportOn(
