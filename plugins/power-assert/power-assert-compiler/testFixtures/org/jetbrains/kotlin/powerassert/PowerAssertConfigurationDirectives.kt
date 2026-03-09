@@ -5,9 +5,20 @@
 
 package org.jetbrains.kotlin.powerassert
 
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object PowerAssertConfigurationDirectives : SimpleDirectivesContainer() {
+    val DISABLE_RUNTIME by directive(
+        description = "Disable Power-Assert runtime from being applied to module.",
+        applicability = DirectiveApplicability.Module,
+    )
+
+    val DISABLE_PLUGIN by directive(
+        description = "Disable Power-Assert compiler-plugin from being applied to module.",
+        applicability = DirectiveApplicability.Module,
+    )
+
     val FUNCTION by stringDirective(
         description = "Functions targeted by Power-Assert transformation",
         multiLine = true,

@@ -21,8 +21,10 @@ package org.jetbrains.kotlin.powerassert
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.powerassert.PowerAssertPluginNames.PLUGIN_ID
 
@@ -40,15 +42,15 @@ class PowerAssertCompilerPluginRegistrar(
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val functions = configuration[KEY_FUNCTIONS]?.map { FqName(it) } ?: functions
-        if (functions.isEmpty()) return
 
         IrGenerationExtension.registerExtension(
             PowerAssertIrGenerationExtension(
                 PowerAssertConfiguration(
-                    configuration,
-                    functions.toSet()
+                    configuration = configuration,
+                    functions = functions.toSet()
                 )
             )
         )
+        FirExtensionRegistrar.registerExtension(PowerAssertFirExtensionRegistrar())
     }
 }

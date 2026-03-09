@@ -70,9 +70,11 @@ fun test1() {
   { // BLOCK
     val tmp0_Explain: Asserter = Asserter
     { // BLOCK
-      val tmp1_Explain: Int = "test".<get-length>()
-      val tmp2_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = 5)
-      tmp0_Explain.dispatchAssert(condition = tmp2_Explain, msg = "\nAsserter.dispatchAssert(\"test\".length == 5)" + "\n                               |      |" + "\n                               |      " + tmp2_Explain + "\n                               " + tmp1_Explain + "\n")
+      val tmp1_Explain: String = "test"
+      val tmp2_Explain: Int = tmp1_Explain.<get-length>()
+      val tmp3_Explain: Int = 5
+      val tmp4_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp3_Explain)
+      tmp0_Explain.dispatchAssert(condition = tmp4_Explain, msg = "\nAsserter.dispatchAssert(\"test\".length == 5)" + "\n                               |      |" + "\n                               |      " + tmp4_Explain + "\n                               " + tmp2_Explain + "\n")
     }
   }
 }
@@ -82,9 +84,11 @@ fun test2() {
     { // BLOCK
       val tmp0_Explain: Asserter = $this$with
       { // BLOCK
-        val tmp1_Explain: Int = "test".<get-length>()
-        val tmp2_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = 5)
-        tmp0_Explain.dispatchAssert(condition = tmp2_Explain, msg = "\ndispatchAssert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp2_Explain + "\n                      " + tmp1_Explain + "\n")
+        val tmp1_Explain: String = "test"
+        val tmp2_Explain: Int = tmp1_Explain.<get-length>()
+        val tmp3_Explain: Int = 5
+        val tmp4_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp3_Explain)
+        tmp0_Explain.dispatchAssert(condition = tmp4_Explain, msg = "\ndispatchAssert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp4_Explain + "\n                      " + tmp2_Explain + "\n")
       }
     }
   }
@@ -95,9 +99,11 @@ fun test3() {
   { // BLOCK
     val tmp0_Explain: Asserter = Asserter
     { // BLOCK
-      val tmp1_Explain: Int = "test".<get-length>()
-      val tmp2_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = 5)
-      extensionAssert(/* <this> = tmp0_Explain, */ condition = tmp2_Explain, msg = "\nAsserter.extensionAssert(\"test\".length == 5)" + "\n                                |      |" + "\n                                |      " + tmp2_Explain + "\n                                " + tmp1_Explain + "\n")
+      val tmp1_Explain: String = "test"
+      val tmp2_Explain: Int = tmp1_Explain.<get-length>()
+      val tmp3_Explain: Int = 5
+      val tmp4_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp3_Explain)
+      extensionAssert(/* <this> = tmp0_Explain, */ condition = tmp4_Explain, msg = "\nAsserter.extensionAssert(\"test\".length == 5)" + "\n                                |      |" + "\n                                |      " + tmp4_Explain + "\n                                " + tmp2_Explain + "\n")
     }
   }
 }
@@ -107,9 +113,11 @@ fun test4() {
     { // BLOCK
       val tmp0_Explain: Asserter = $this$with
       { // BLOCK
-        val tmp1_Explain: Int = "test".<get-length>()
-        val tmp2_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = 5)
-        extensionAssert(/* <this> = tmp0_Explain, */ condition = tmp2_Explain, msg = "\nextensionAssert(\"test\".length == 5)" + "\n                       |      |" + "\n                       |      " + tmp2_Explain + "\n                       " + tmp1_Explain + "\n")
+        val tmp1_Explain: String = "test"
+        val tmp2_Explain: Int = tmp1_Explain.<get-length>()
+        val tmp3_Explain: Int = 5
+        val tmp4_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp3_Explain)
+        extensionAssert(/* <this> = tmp0_Explain, */ condition = tmp4_Explain, msg = "\nextensionAssert(\"test\".length == 5)" + "\n                       |      |" + "\n                       |      " + tmp4_Explain + "\n                       " + tmp2_Explain + "\n")
       }
     }
   }
@@ -123,9 +131,11 @@ fun test5() {
       { // BLOCK
         val tmp1_Explain: Asserter = Asserter
         { // BLOCK
-          val tmp2_Explain: Int = "test".<get-length>()
-          val tmp3_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = 5)
-          tmp0_Explain.memberExtensionAssert(/* <this> = tmp1_Explain, */ condition = tmp3_Explain, msg = "\nAsserter.memberExtensionAssert(\"test\".length == 5)" + "\n                                      |      |" + "\n                                      |      " + tmp3_Explain + "\n                                      " + tmp2_Explain + "\n")
+          val tmp2_Explain: String = "test"
+          val tmp3_Explain: Int = tmp2_Explain.<get-length>()
+          val tmp4_Explain: Int = 5
+          val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
+          tmp0_Explain.memberExtensionAssert(/* <this> = tmp1_Explain, */ condition = tmp5_Explain, msg = "\nAsserter.memberExtensionAssert(\"test\".length == 5)" + "\n                                      |      |" + "\n                                      |      " + tmp5_Explain + "\n                                      " + tmp3_Explain + "\n")
         }
       }
     }
@@ -140,9 +150,11 @@ fun test6() {
       { // BLOCK
         val tmp1_Explain: Asserter = $this$with
         { // BLOCK
-          val tmp2_Explain: Int = "test".<get-length>()
-          val tmp3_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = 5)
-          tmp0_Explain.memberExtensionAssert(/* <this> = tmp1_Explain, */ condition = tmp3_Explain, msg = "\nmemberExtensionAssert(\"test\".length == 5)" + "\n                             |      |" + "\n                             |      " + tmp3_Explain + "\n                             " + tmp2_Explain + "\n")
+          val tmp2_Explain: String = "test"
+          val tmp3_Explain: Int = tmp2_Explain.<get-length>()
+          val tmp4_Explain: Int = 5
+          val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
+          tmp0_Explain.memberExtensionAssert(/* <this> = tmp1_Explain, */ condition = tmp5_Explain, msg = "\nmemberExtensionAssert(\"test\".length == 5)" + "\n                             |      |" + "\n                             |      " + tmp5_Explain + "\n                             " + tmp3_Explain + "\n")
         }
       }
     }

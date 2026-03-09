@@ -9,6 +9,7 @@ dependencies {
     compileOnly(project(":compiler:ir.backend.common"))
 
     implementation(project(":kotlin-power-assert-compiler-plugin.backend"))
+    implementation(project(":kotlin-power-assert-compiler-plugin.frontend"))
 }
 
 optInToExperimentalCompilerApi()

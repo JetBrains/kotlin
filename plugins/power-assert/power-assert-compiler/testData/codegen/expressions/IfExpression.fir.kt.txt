@@ -33,7 +33,9 @@ fun test1(a: Int, b: Int): String {
 )
             }
             else -> { // BLOCK
-              assert(value = false, lazyMessage = local fun <anonymous>(): String {
+              val tmp12_Explain: Boolean = true
+              val tmp13_Explain: Boolean = false
+              assert(value = tmp13_Explain, lazyMessage = local fun <anonymous>(): String {
                 return "\nassert(if (a < b) a == b else if (b < a) b == a else false)" + "\n           | | |                  | | |" + "\n           | | |                  | | " + tmp7_Explain + "\n           | | |                  | " + tmp8_Explain + "\n           | | |                  " + tmp6_Explain + "\n           | | " + tmp1_Explain + "\n           | " + tmp2_Explain + "\n           " + tmp0_Explain + "\n"
               }
 )
@@ -67,14 +69,15 @@ fun test2(a: Int, b: Int): String {
 )
         }
         else -> { // BLOCK
-          val tmp10_Explain: Int = b
-          val tmp11_Explain: Int = tmp0_Explain.plus(other = tmp10_Explain)
-          val tmp12_Explain: Int = b
-          val tmp13_Explain: Int = tmp11_Explain.plus(other = tmp12_Explain)
-          val tmp14_Explain: Int = a
-          val tmp15_Explain: Boolean = EQEQ(arg0 = tmp13_Explain, arg1 = tmp14_Explain)
-          assert(value = tmp15_Explain, lazyMessage = local fun <anonymous>(): String {
-            return "\nassert(a + (if (a < b) a else b) + b == a)" + "\n       | |      | | |         |  | | |  |" + "\n       | |      | | |         |  | | |  " + tmp14_Explain + "\n       | |      | | |         |  | | " + tmp15_Explain + "\n       | |      | | |         |  | " + tmp12_Explain + "\n       | |      | | |         |  " + tmp13_Explain + "\n       | |      | | |         " + tmp10_Explain + "\n       | |      | | " + tmp2_Explain + "\n       | |      | " + tmp3_Explain + "\n       | |      " + tmp1_Explain + "\n       | " + tmp11_Explain + "\n       " + tmp0_Explain + "\n"
+          val tmp10_Explain: Boolean = true
+          val tmp11_Explain: Int = b
+          val tmp12_Explain: Int = tmp0_Explain.plus(other = tmp11_Explain)
+          val tmp13_Explain: Int = b
+          val tmp14_Explain: Int = tmp12_Explain.plus(other = tmp13_Explain)
+          val tmp15_Explain: Int = a
+          val tmp16_Explain: Boolean = EQEQ(arg0 = tmp14_Explain, arg1 = tmp15_Explain)
+          assert(value = tmp16_Explain, lazyMessage = local fun <anonymous>(): String {
+            return "\nassert(a + (if (a < b) a else b) + b == a)" + "\n       | |      | | |         |  | | |  |" + "\n       | |      | | |         |  | | |  " + tmp15_Explain + "\n       | |      | | |         |  | | " + tmp16_Explain + "\n       | |      | | |         |  | " + tmp13_Explain + "\n       | |      | | |         |  " + tmp14_Explain + "\n       | |      | | |         " + tmp11_Explain + "\n       | |      | | " + tmp2_Explain + "\n       | |      | " + tmp3_Explain + "\n       | |      " + tmp1_Explain + "\n       | " + tmp12_Explain + "\n       " + tmp0_Explain + "\n"
           }
 )
         }
@@ -115,7 +118,9 @@ fun test3(a: Int, b: Int): String {
 )
             }
             else -> { // BLOCK
-              assert(value = false, lazyMessage = local fun <anonymous>(): String {
+              val tmp12_Explain: Boolean = true
+              val tmp13_Explain: Boolean = false
+              assert(value = tmp13_Explain, lazyMessage = local fun <anonymous>(): String {
                 return "\nassert(" + "\n    when {" + "\n        a < b -> a == b" + "\n        | | |" + "\n        | | " + tmp1_Explain + "\n        | " + tmp2_Explain + "\n        " + tmp0_Explain + "\n\n        b < a -> b == a" + "\n        | | |" + "\n        | | " + tmp7_Explain + "\n        | " + tmp8_Explain + "\n        " + tmp6_Explain + "\n\n        else -> false" + "\n    }" + "\n)" + "\n"
               }
 )
@@ -162,7 +167,9 @@ fun test4(initial: Boolean, a: Int, b: Int): String {
 )
                 }
                 else -> { // BLOCK
-                  assert(value = false, lazyMessage = local fun <anonymous>(): String {
+                  val tmp13_Explain: Boolean = true
+                  val tmp14_Explain: Boolean = false
+                  assert(value = tmp14_Explain, lazyMessage = local fun <anonymous>(): String {
                     return "\nassert(" + "\n    initial && when {" + "\n    |" + "\n    " + tmp0_Explain + "\n\n        a < b -> a == b" + "\n        | | |" + "\n        | | " + tmp2_Explain + "\n        | " + tmp3_Explain + "\n        " + tmp1_Explain + "\n\n        b < a -> b == a" + "\n        | | |" + "\n        | | " + tmp8_Explain + "\n        | " + tmp9_Explain + "\n        " + tmp7_Explain + "\n\n        else -> false" + "\n    }" + "\n)" + "\n"
                   }
 )
@@ -172,7 +179,9 @@ fun test4(initial: Boolean, a: Int, b: Int): String {
           }
         }
         else -> { // BLOCK
-          assert(value = false, lazyMessage = local fun <anonymous>(): String {
+          val tmp15_Explain: Boolean = true
+          val tmp16_Explain: Boolean = false
+          assert(value = tmp16_Explain, lazyMessage = local fun <anonymous>(): String {
             return "\nassert(" + "\n    initial && when {" + "\n    |" + "\n    " + tmp0_Explain + "\n\n        a < b -> a == b" + "\n        b < a -> b == a" + "\n        else -> false" + "\n    }" + "\n)" + "\n"
           }
 )

@@ -28,13 +28,20 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.isComparisonOperator
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+
+fun IrSimpleFunction.hasAnnotationOrOverridden(classId: ClassId): Boolean =
+    hasAnnotation(classId) || overriddenSymbols.any { it.owner.hasAnnotationOrOverridden(classId) }
 
 fun IrBuilderWithScope.irString(builderAction: StringBuilder.() -> Unit) =
     irString(buildString { builderAction() })
@@ -76,6 +83,25 @@ val IrElement.earliestStartOffset: Int
             },
         )
         return offset
+    }
+
+private var IrElement.sourceRangeAttribute: ClosedRange<Int>? by irAttribute(copyByDefault = false)
+val IrElement.sourceRange: ClosedRange<Int>
+    get() {
+        sourceRangeAttribute?.let { return it }
+
+        var range = startOffset..endOffset
+        acceptChildrenVoid(
+            object : IrVisitorVoid() {
+                override fun visitElement(element: IrElement) {
+                    val childRange = element.sourceRange
+                    range = minOf(range.start, childRange.start)..maxOf(range.endInclusive, childRange.endInclusive)
+                }
+            },
+        )
+
+        sourceRangeAttribute = range
+        return range
     }
 
 /**

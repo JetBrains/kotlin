@@ -12,6 +12,9 @@ fun main(args: Array<String>) {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "plugins/power-assert/power-assert-compiler/testData") {
+            testClass<AbstractPowerAssertPluginFirPsiDiagnosticTest> {
+                model("diagnostic", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
             testClass<AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert> {
                 model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }

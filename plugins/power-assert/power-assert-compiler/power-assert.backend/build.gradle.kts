@@ -11,6 +11,8 @@ dependencies {
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:cli"))
 
+    implementation(project(":kotlin-power-assert-compiler-plugin.common"))
+
     compileOnly(intellijCore())
 }
 

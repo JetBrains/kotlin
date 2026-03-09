@@ -5,8 +5,16 @@
 
 package org.jetbrains.kotlin.powerassert
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
+import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
+import org.jetbrains.kotlin.name.FqName
 
-val EXPLAIN_BLOCK by IrStatementOriginImpl
-val EXPLAIN_TEMPORARY by IrDeclarationOriginImpl.Synthetic
+data object PowerAssertTemporary : GeneratedDeclarationKey()
+data object FunctionForPowerAssert : GeneratedDeclarationKey()
+
+val POWER_ASSERT_BLOCK by IrStatementOriginImpl
+val POWER_ASSERT_TEMPORARY = IrDeclarationOrigin.GeneratedByPlugin(PowerAssertTemporary)
+val FUNCTION_FOR_POWER_ASSERT = IrDeclarationOrigin.GeneratedByPlugin(FunctionForPowerAssert)
+
+val PowerAssertGetExplanation = FqName("kotlinx.powerassert.PowerAssert.Companion.<get-explanation>")

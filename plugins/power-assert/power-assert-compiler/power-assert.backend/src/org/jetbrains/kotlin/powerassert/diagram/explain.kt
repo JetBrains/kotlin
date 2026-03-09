@@ -82,19 +82,18 @@ fun IrBuilderWithScope.irExplain(
     builder: IrBlockBuilder.(List<ExplainVariable>) -> Unit,
 ): IrExpression {
     val root = buildTree(constTracker, sourceFile, parameter = null, expression)
-    val child = root.child
+    val child = root.children.singleOrNull()
     if (child == null || !child.isVisible()) return expression
     return buildDiagramNesting(sourceFile, child) { value, variables ->
-        val explainedVariables = variables
-            .filterIsInstance<IrDiagramVariable.Displayable>()
-            .map {
-                val offset = it.sourceRangeInfo.startOffset + findDisplayOffset(it.original, it.sourceRangeInfo, it.text)
-                ExplainVariable(
-                    variable = it.temporary,
-                    original = it.original,
-                    displayOffset = offset,
-                )
-            }
+        val explainedVariables = variables.mapNotNull {
+            if (it !is IrDiagramVariable.Displayable || it.literal) return@mapNotNull null
+            val offset = it.sourceRangeInfo.startOffset + findDisplayOffset(it.original, it.sourceRangeInfo, it.text)
+            ExplainVariable(
+                variable = it.temporary,
+                original = it.original,
+                displayOffset = offset,
+            )
+        }
         builder(explainedVariables)
         value
     }

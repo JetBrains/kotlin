@@ -1,0 +1,96 @@
+@JvmSynthetic
+fun recursive$powerassert(n: Int, $explanation: Function0<CallExplanation>): String? {
+  when {
+    lessOrEqual(arg0 = n, arg1 = 0) -> return { // BLOCK
+      val tmp_0: CallExplanation? = $explanation.invoke()
+      when {
+        EQEQ(arg0 = tmp_0, arg1 = null) -> null
+        else -> toDefaultMessage(/* <this> = tmp_0 /*as CallExplanation */ */)
+      }
+    }
+  }
+  return recursive$powerassert(n = n.minus(other = 1), $explanation = $explanation)
+}
+
+fun box(): String {
+  return runAllOutput(tests = [to<String, KFunction0<String>>(/* <this> = "test0", */ that = ::test0), to<String, KFunction0<String>>(/* <this> = "test1", */ that = ::test1), to<String, KFunction0<String>>(/* <this> = "test2", */ that = ::test2), to<String, KFunction0<String>>(/* <this> = "test100", */ that = ::test100)])
+}
+
+@PowerAssert
+fun recursive(n: Int): String? {
+  when {
+    lessOrEqual(arg0 = n, arg1 = 0) -> return { // BLOCK
+      val tmp_1: CallExplanation? = null
+      when {
+        EQEQ(arg0 = tmp_1, arg1 = null) -> null
+        else -> toDefaultMessage(/* <this> = tmp_1 /*as CallExplanation */ */)
+      }
+    }
+  }
+  return recursive(n = n.minus(other = 1))
+}
+
+fun test0(): String {
+  return { // BLOCK
+    val tmp_2: String? = { // BLOCK
+      val tmp0_Explain: Int = 0
+      recursive$powerassert(n = tmp0_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+        return CallExplanation(offset = 348, source = "           recursive(0)", arguments = listOf<Argument>(elements = [Argument(startOffset = 21, endOffset = 22, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 21, endOffset = 22, displayOffset = 21, value = tmp0_Explain)]))]))
+      }
+)
+    }
+    when {
+      EQEQ(arg0 = tmp_2, arg1 = null) -> "no description"
+      else -> tmp_2
+    }
+  }
+}
+
+fun test1(): String {
+  return { // BLOCK
+    val tmp_3: String? = { // BLOCK
+      val tmp0_Explain: Int = 1
+      recursive$powerassert(n = tmp0_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+        return CallExplanation(offset = 417, source = "           recursive(1)", arguments = listOf<Argument>(elements = [Argument(startOffset = 21, endOffset = 22, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 21, endOffset = 22, displayOffset = 21, value = tmp0_Explain)]))]))
+      }
+)
+    }
+    when {
+      EQEQ(arg0 = tmp_3, arg1 = null) -> "no description"
+      else -> tmp_3
+    }
+  }
+}
+
+fun test100(): String {
+  return { // BLOCK
+    val tmp_4: String? = { // BLOCK
+      val tmp0_Explain: Int = 100
+      recursive$powerassert(n = tmp0_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+        return CallExplanation(offset = 557, source = "           recursive(100)", arguments = listOf<Argument>(elements = [Argument(startOffset = 21, endOffset = 24, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 21, endOffset = 24, displayOffset = 21, value = tmp0_Explain)]))]))
+      }
+)
+    }
+    when {
+      EQEQ(arg0 = tmp_4, arg1 = null) -> "no description"
+      else -> tmp_4
+    }
+  }
+}
+
+fun test2(): String {
+  return { // BLOCK
+    val tmp_5: String? = { // BLOCK
+      val tmp0_Explain: Int = 2
+      recursive$powerassert(n = tmp0_Explain, $explanation = local fun <anonymous>(): CallExplanation {
+        return CallExplanation(offset = 486, source = "           recursive(2)", arguments = listOf<Argument>(elements = [Argument(startOffset = 21, endOffset = 22, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 21, endOffset = 22, displayOffset = 21, value = tmp0_Explain)]))]))
+      }
+)
+    }
+    when {
+      EQEQ(arg0 = tmp_5, arg1 = null) -> "no description"
+      else -> tmp_5
+    }
+  }
+}
+

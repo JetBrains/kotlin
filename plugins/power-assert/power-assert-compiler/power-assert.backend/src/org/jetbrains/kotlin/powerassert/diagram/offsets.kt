@@ -28,6 +28,10 @@ import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.powerassert.*
 
+internal fun IrDiagramVariable.Displayable.toDisplayOffset(): Int {
+    return sourceRangeInfo.startOffset + findDisplayOffset(original, sourceRangeInfo, text)
+}
+
 /**
  * Responsible for determining the diagram display offset of the expression
  * beginning from the startOffset of the expression.

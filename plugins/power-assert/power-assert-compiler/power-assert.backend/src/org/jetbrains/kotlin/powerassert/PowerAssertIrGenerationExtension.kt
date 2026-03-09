@@ -22,15 +22,25 @@ package org.jetbrains.kotlin.powerassert
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.powerassert.builder.parameter.ExplanationFactory
 import org.jetbrains.kotlin.powerassert.diagram.SourceFile
 
 class PowerAssertIrGenerationExtension(
     private val configuration: PowerAssertConfiguration,
 ) : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+        val builtIns = PowerAssertBuiltIns.from(pluginContext)
+        val factory = builtIns?.let { PowerAssertFunctionFactory(pluginContext, it) }
+        val explanationFactory = builtIns?.let { ExplanationFactory(it) }
+
+        if (builtIns != null && factory != null) {
+            val functionTransformer = PowerAssertFunctionTransformer(builtIns, factory)
+            moduleFragment.files.forEach(functionTransformer::lower)
+        }
+
         for (file in moduleFragment.files) {
             val source = SourceFile.findSource(file) ?: continue
-            PowerAssertCallTransformer(source, pluginContext, configuration)
+            PowerAssertCallTransformer(source, pluginContext, configuration, builtIns, factory, explanationFactory)
                 .visitFile(file)
         }
     }

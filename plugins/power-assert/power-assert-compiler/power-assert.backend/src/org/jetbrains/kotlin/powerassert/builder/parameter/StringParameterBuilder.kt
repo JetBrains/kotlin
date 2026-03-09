@@ -76,8 +76,7 @@ class StringParameterBuilder(
 
         // Get call source string starting at the very beginning of the first line.
         // This is so multiline calls all start from the same column offset.
-        val rows = sourceFile.getText(callInfo.startOffset - callInfo.startColumnNumber, callInfo.endOffset)
-            .clearSourcePrefix(callInfo.startColumnNumber)
+        val rows = sourceFile.getRedactedTextBlock(callInfo)
             .split("\n")
 
         val minSourceIndent = rows.minOf { line ->
@@ -88,7 +87,7 @@ class StringParameterBuilder(
 
         val valuesByRow = variables
             .filterIsInstance<IrDiagramVariable.Displayable>()
-            .map { it.toValueDisplay(callInfo) }
+            .mapNotNull { it.toValueDisplay(callInfo) }
             .sortedBy { it.indent }
             .groupBy { it.row }
 
@@ -149,20 +148,6 @@ class StringParameterBuilder(
         }
     }
 
-    private fun String.clearSourcePrefix(offset: Int): String = buildString {
-        for ((i, c) in this@clearSourcePrefix.withIndex()) {
-            when {
-                i >= offset -> {
-                    // Append the remaining characters and exit.
-                    append(this@clearSourcePrefix.substring(i))
-                    break
-                }
-                c == '\t' -> append('\t') // Preserve tabs.
-                else -> append(' ') // Replace all other characters with spaces.
-            }
-        }
-    }
-
     private data class ValueDisplay(
         val value: IrVariable,
         val indent: Int,
@@ -171,7 +156,9 @@ class StringParameterBuilder(
 
     private fun IrDiagramVariable.Displayable.toValueDisplay(
         originalInfo: SourceRangeInfo,
-    ): ValueDisplay {
+    ): ValueDisplay? {
+        if (literal) return null
+
         var indent = sourceRangeInfo.startColumnNumber
         var row = sourceRangeInfo.startLineNumber - originalInfo.startLineNumber
 

@@ -27,9 +27,6 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -41,32 +38,72 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.powerassert.PowerAssertDiagnostics.POWER_ASSERT_CAPABLE_OVERLOAD_MISSING
+import org.jetbrains.kotlin.powerassert.PowerAssertDiagnostics.POWER_ASSERT_CONSTANT
+import org.jetbrains.kotlin.powerassert.PowerAssertDiagnostics.POWER_ASSERT_FUNCTION_NOT_TRANSFORMED
+import org.jetbrains.kotlin.powerassert.PowerAssertDiagnostics.POWER_ASSERT_RUNTIME_UNAVAILABLE
 import org.jetbrains.kotlin.powerassert.builder.call.CallBuilder
 import org.jetbrains.kotlin.powerassert.builder.call.LambdaCallBuilder
 import org.jetbrains.kotlin.powerassert.builder.call.SamConversionLambdaCallBuilder
 import org.jetbrains.kotlin.powerassert.builder.call.SimpleCallBuilder
-import org.jetbrains.kotlin.powerassert.builder.parameter.ParameterBuilder
-import org.jetbrains.kotlin.powerassert.builder.parameter.StringParameterBuilder
+import org.jetbrains.kotlin.powerassert.builder.parameter.*
 import org.jetbrains.kotlin.powerassert.diagram.*
-import org.jetbrains.kotlin.powerassert.diagram.buildTree
 
 class PowerAssertCallTransformer(
     private val sourceFile: SourceFile,
     private val context: IrPluginContext,
     private val configuration: PowerAssertConfiguration,
+    private val builtIns: PowerAssertBuiltIns?,
+    private val factory: PowerAssertFunctionFactory?,
+    private val explanationFactory: ExplanationFactory?
 ) : IrElementTransformerVoidWithContext() {
     private val irTypeSystemContext = IrTypeSystemContextImpl(context.irBuiltIns)
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
 
+        val currentFunction = currentFunction?.irElement as? IrSimpleFunction
         val function = expression.symbol.owner
-        val fqName = function.kotlinFqName
         return when {
+            // Never transform recursive calls.
+            expression.symbol == currentFunction?.symbol -> expression
+            // Never transform calls to super instance of the same function. TODO is there a better check for this?
+            expression.superQualifierSymbol != null && expression.symbol in currentFunction?.overriddenSymbols.orEmpty() -> expression
+            // Called function is annotated with @PowerAssert so should be transformed with CallExplanation.
+            function.hasAnnotationOrOverridden(PowerAssertBuiltIns.powerAssertClassId) -> buildForAnnotated(expression, function)
+            // Call has no parameters to transform.
             function.parameters.isEmpty() -> expression
-            fqName in configuration.functions -> buildForOverride(expression, function)
+            // Called function is part of configuration so should be transformed with raw string diagram.
+            function.kotlinFqName in configuration.functions -> buildForOverride(expression, function)
+            // Not a transformable function call.
             else -> expression
         }
+    }
+
+    private fun buildForAnnotated(
+        originalCall: IrCall,
+        function: IrSimpleFunction,
+    ): IrExpression {
+        if (builtIns == null || explanationFactory == null || factory == null) {
+            // An IrAnnotation is never created for an unknown annotation.
+            // This means this check is entirely pointless as we cannot have an annotated function
+            // if the runtime library is missing.
+            context.diagnosticReporter.at(originalCall, currentFile)
+                .report(POWER_ASSERT_RUNTIME_UNAVAILABLE)
+            return originalCall
+        }
+
+        val synthetic = factory.find(function)
+        if (synthetic == null) {
+            context.diagnosticReporter.at(originalCall, currentFile)
+                .report(POWER_ASSERT_FUNCTION_NOT_TRANSFORMED, function.kotlinFqName)
+            return originalCall
+        }
+
+        val diagramBuilder = CallExplanationParameterBuilder(explanationFactory, sourceFile, originalCall)
+        val callBuilder = LambdaCallBuilder(synthetic, originalCall, builtIns.function0CallExplanationType, builtIns.callExplanationType)
+        val roots = buildArgumentRoots(callBuilder, function, originalCall)
+        return buildPowerAssertCall(originalCall, callBuilder, diagramBuilder, roots)
     }
 
     private fun buildForOverride(originalCall: IrCall, function: IrSimpleFunction): IrExpression {
@@ -78,21 +115,12 @@ class PowerAssertCallTransformer(
         }
 
         if (callBuilder == null) {
-            val fqName = function.kotlinFqName
             val regularParameters = function.parameters.filter { it.kind == IrParameterKind.Regular }
             val valueTypesTruncated = regularParameters.subList(0, regularParameters.size - 1)
                 .joinToString("") { it.type.render() + ", " }
             val valueTypesAll = regularParameters.joinToString("") { it.type.render() + ", " }
-            configuration.messageCollector.warn(
-                expression = originalCall,
-                message = """
-                  |Unable to find overload of function $fqName for power-assert transformation callable as:
-                  | - $fqName(${valueTypesTruncated}String)
-                  | - $fqName($valueTypesTruncated() -> String)
-                  | - $fqName(${valueTypesAll}String)
-                  | - $fqName($valueTypesAll() -> String)
-                """.trimMargin(),
-            )
+            context.diagnosticReporter.at(originalCall, currentFile)
+                .report(POWER_ASSERT_CAPABLE_OVERLOAD_MISSING, function.kotlinFqName, valueTypesTruncated, valueTypesAll)
             return super.visitCall(originalCall)
         }
 
@@ -100,7 +128,8 @@ class PowerAssertCallTransformer(
 
         // If all roots are non-visible, there are no transformable parameters
         if (roots.all { !it.isVisible() }) {
-            configuration.messageCollector.info(originalCall, "Expression is constant and will not be power-assert transformed")
+            context.diagnosticReporter.at(originalCall, currentFile)
+                .report(POWER_ASSERT_CONSTANT)
             return super.visitCall(originalCall)
         }
 
@@ -122,7 +151,20 @@ class PowerAssertCallTransformer(
             else -> originalCall.arguments.size
         }
         return (0..<argumentCount).map {
-            buildTree(configuration.constTracker, sourceFile, function.parameters[it], originalCall.arguments[it])
+            val parameter = function.parameters[it]
+            val argument = originalCall.arguments[it]
+
+            // Check if the parameter or parameter type should be ignored.
+            if (
+                parameter.hasAnnotation(PowerAssertBuiltIns.powerAssertIgnoreClassId) ||
+                parameter.type.getClass()?.hasAnnotation(PowerAssertBuiltIns.powerAssertIgnoreClassId) == true
+            ) {
+                val root = RootNode(parameter)
+                if (argument != null) root.addChild(HiddenNode(argument))
+                root
+            } else {
+                buildTree(configuration.constTracker, sourceFile, parameter, argument)
+            }
         }
     }
 
@@ -130,7 +172,7 @@ class PowerAssertCallTransformer(
         originalCall: IrCall,
         callBuilder: CallBuilder,
         parameterBuilder: ParameterBuilder,
-        roots: List<RootNode<IrValueParameter>>,
+        roots: List<RootNode<IrValueParameter>>
     ): IrExpression {
         val symbol = currentScope!!.scope.scopeOwnerSymbol
         val builder = DeclarationIrBuilder(context, symbol, originalCall.startOffset, originalCall.endOffset)
@@ -145,7 +187,7 @@ class PowerAssertCallTransformer(
                 return callBuilder.buildCall(builder, arguments, diagram)
             } else {
                 val root = roots[index]
-                val child = root.child
+                val child = root.children.singleOrNull()
                 if (child == null) {
                     val newArguments = arguments.add(originalCall.arguments[index])
                     return recursive(index + 1, newArguments, argumentVariables)
@@ -219,7 +261,7 @@ class PowerAssertCallTransformer(
             val messageType = messageParameter.type
             return@mapNotNull when {
                 isStringSupertype(messageType) -> SimpleCallBuilder(overload, original)
-                isStringFunction(messageType) -> LambdaCallBuilder(overload, original, messageType)
+                isStringFunction(messageType) -> LambdaCallBuilder(overload, original, messageType, context.irBuiltIns.stringType)
                 isStringJavaSupplierFunction(messageType) -> SamConversionLambdaCallBuilder(overload, original, messageType)
                 else -> null
             }
@@ -249,18 +291,6 @@ class PowerAssertCallTransformer(
         } else {
             return this == null && type == null
         }
-    }
-
-    private fun MessageCollector.info(expression: IrElement, message: String) {
-        report(expression, CompilerMessageSeverity.INFO, message)
-    }
-
-    private fun MessageCollector.warn(expression: IrElement, message: String) {
-        report(expression, CompilerMessageSeverity.WARNING, message)
-    }
-
-    private fun MessageCollector.report(expression: IrElement, severity: CompilerMessageSeverity, message: String) {
-        report(severity, message, sourceFile.getCompilerMessageLocation(expression))
     }
 }
 

@@ -1,0 +1,12 @@
+test0: ---
+recursive(0)
+---
+test1: ---
+recursive(1)
+---
+test2: ---
+recursive(2)
+---
+test100: ---
+recursive(100)
+---

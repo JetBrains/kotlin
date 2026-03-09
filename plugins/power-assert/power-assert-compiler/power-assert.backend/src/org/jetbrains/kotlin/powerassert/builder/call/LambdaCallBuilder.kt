@@ -31,6 +31,7 @@ class LambdaCallBuilder(
     private val overload: IrSimpleFunctionSymbol,
     private val originalCall: IrCall,
     private val lambdaType: IrType,
+    private val returnType: IrType,
 ) : CallBuilder {
     override val targetFunction = overload.owner
 
@@ -39,7 +40,7 @@ class LambdaCallBuilder(
         arguments: List<IrExpression?>,
         diagram: IrExpression,
     ): IrExpression = with(builder) {
-        val expression = irLambda(context.irBuiltIns.stringType, lambdaType) {
+        val expression = irLambda(returnType, lambdaType) {
             +irReturn(diagram)
         }
         irCallCopy(

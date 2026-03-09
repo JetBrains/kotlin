@@ -14,9 +14,10 @@ fun test1(a: Any): String {
           else -> tmp_0 /*as String */.<get-length>()
         }
       }
-      val tmp3_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = 5)
-      assert(value = tmp3_Explain, lazyMessage = local fun <anonymous>(): String {
-        return "\nassert((a as? String)?.length == 5)" + "\n        | |            |      |" + "\n        | |            |      " + tmp3_Explain + "\n        | |            " + tmp2_Explain + "\n        | " + tmp1_Explain + "\n        " + tmp0_Explain + "\n"
+      val tmp3_Explain: Int = 5
+      val tmp4_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp3_Explain)
+      assert(value = tmp4_Explain, lazyMessage = local fun <anonymous>(): String {
+        return "\nassert((a as? String)?.length == 5)" + "\n        | |            |      |" + "\n        | |            |      " + tmp4_Explain + "\n        | |            " + tmp2_Explain + "\n        | " + tmp1_Explain + "\n        " + tmp0_Explain + "\n"
       }
 )
     }

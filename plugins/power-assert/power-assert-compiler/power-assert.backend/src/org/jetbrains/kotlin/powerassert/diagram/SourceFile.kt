@@ -76,6 +76,11 @@ class SourceFile private constructor(
         return source.substring(maxOf(start, 0), minOf(end, source.length))
     }
 
+    fun getRedactedTextBlock(info: SourceRangeInfo): String {
+        val block = getText(info.startOffset - info.startColumnNumber, info.endOffset)
+        return block.clearSourcePrefix(info.startColumnNumber)
+    }
+
     fun getCompilerMessageLocation(element: IrElement): CompilerMessageLocation {
         val info = getSourceRangeInfo(element)
         val lineContent = getText(info)
@@ -96,4 +101,19 @@ private fun IrFile.readSourceText(): String? {
     }
 
     return null
+}
+
+private fun String.clearSourcePrefix(offset: Int): String = buildString {
+    val upstream = this@clearSourcePrefix
+    for ((i, c) in upstream.withIndex()) {
+        when {
+            i >= offset -> {
+                // Append the remaining characters and exit.
+                append(upstream.substring(i))
+                break
+            }
+            c == '\t' -> append('\t') // Preserve tabs.
+            else -> append(' ') // Replace all other characters with spaces.
+        }
+    }
 }

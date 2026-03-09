@@ -1,0 +1,17 @@
+callTypeA: ---
+no description---
+callTypeB: ---
+type.describe(1 == 2)
+|               |
+TypeD           false
+---
+callTypeC: ---
+type.describe(1 == 2)
+|               |
+TypeD           false
+---
+callTypeD: ---
+type.describe(1 == 2)
+|               |
+TypeD           false
+---
