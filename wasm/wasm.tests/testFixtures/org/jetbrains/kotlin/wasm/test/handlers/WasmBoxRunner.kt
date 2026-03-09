@@ -25,10 +25,11 @@ internal fun WasmCompilerResult.writeTo(outputDir: File, outputFilenameBase: Str
     }
 }
 
-class WasmBoxRunner(
+open class WasmBoxRunner(
     testServices: TestServices,
     executeWithV8Only: Boolean = false,
-) : WasmBoxRunnerBase(testServices, executeWithV8Only) {
+    functionToRun: String = "box",
+) : WasmBoxRunnerBase(testServices, executeWithV8Only, functionToRun) {
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {

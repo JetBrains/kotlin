@@ -13,14 +13,16 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import java.io.File
-import java.io.FileFilter
 
-class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
-    override fun produceAdditionalFiles(
+abstract class WasmTestRunnerProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
+
+    protected fun produceAdditionalFiles(
         globalDirectives: RegisteredDirectives,
         module: TestModule,
-        testModuleStructure: TestModuleStructure
+        testModuleStructure: TestModuleStructure,
+        testFilePath: String
     ): List<TestFile> {
+
         val fileWithBoxFun = module.files.singleOrNull {
             it.isKtFile && it.originalContent.contains(Regex("\\bfun\\s+box\\(\\)\\s*(?::\\s*String|=)"))
         }
@@ -30,7 +32,7 @@ class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : Addition
 
         val matchResult = Regex("^package\\s+([\\w.]+)", RegexOption.MULTILINE).find(fileWithBoxFun.originalContent)
 
-        val boxTestRunFile = this::class.java.classLoader.getResource("wasiAdditionalFiles/wasiBoxTestRun.kt")!!
+        val boxTestRunFile = this::class.java.classLoader.getResource(testFilePath)!!
         val boxTestRunTestFile = boxTestRunFile.toTestFile()
 
         // no package
@@ -48,6 +50,15 @@ class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : Addition
             )
         )
     }
+}
+
+open class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : WasmTestRunnerProvider(testServices) {
+    override fun produceAdditionalFiles(
+        globalDirectives: RegisteredDirectives,
+        module: TestModule,
+        testModuleStructure: TestModuleStructure
+    ): List<TestFile> =
+        produceAdditionalFiles(globalDirectives, module, testModuleStructure, "wasiAdditionalFiles/wasiBoxTestRun.kt")
 }
 
 class WasmAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
@@ -80,3 +91,18 @@ class WasmAdditionalSourceProvider(testServices: TestServices) : AdditionalSourc
         private val GLOBAL_COMMON_FILES = listOf("arrayAsserts.kt", "asserts.kt", "fail.kt").map { "commonFiles/$it" }
     }
 }
+
+abstract class WasmBenchmarkHelperSourceProvider(testServices: TestServices, val target: String) :
+    WasmTestRunnerProvider(testServices) {
+
+    override fun produceAdditionalFiles(
+        globalDirectives: RegisteredDirectives,
+        module: TestModule,
+        testModuleStructure: TestModuleStructure
+    ): List<TestFile> =
+        produceAdditionalFiles(globalDirectives, module, testModuleStructure, "${target}AdditionalFiles/${target}BenchmarkRun.kt")
+}
+
+class WasmJsBenchmarkHelperSourceProvider(testServices: TestServices) : WasmBenchmarkHelperSourceProvider(testServices, "js")
+
+class WasmWasiBenchmarkHelperSourceProvider(testServices: TestServices) : WasmBenchmarkHelperSourceProvider(testServices, "wasi")

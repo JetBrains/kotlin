@@ -18,6 +18,7 @@ import java.io.File
 abstract class WasmBoxRunnerBase(
     testServices: TestServices,
     executeWithV8Only: Boolean = false,
+    val functionToRun: String = "box",
 ) : AbstractWasmArtifactsCollector(testServices) {
     private val wasmEngines = if (executeWithV8Only) {
         // JavaScriptCore may glitch on Linux CI: `libglib-2.0.so.0: file too short`
@@ -60,7 +61,7 @@ abstract class WasmBoxRunnerBase(
                     let actualResult;
                     try {
                         ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
-                        actualResult = jsModule.box();
+                        actualResult = jsModule.$functionToRun();
                     } catch(e) {
                         console.log('Failed with exception!')
 
