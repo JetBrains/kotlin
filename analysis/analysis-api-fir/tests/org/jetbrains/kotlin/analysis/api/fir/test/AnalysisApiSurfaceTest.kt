@@ -5,15 +5,22 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test
 
+import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.analyzeCopy
+import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPrimaryConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -110,6 +117,29 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surfac
 
             val restored = pointer.restoreSymbol()
             assertEquals(constructor, restored, "Constructor pointer should be restored to original constructor")
+        }
+    }
+
+    @Test
+    fun javaTypeParameterSubstitutor(mainFile: KtFile) {
+        analyze(mainFile) {
+            fun checkSubstitution(classSymbol: KaNamedClassSymbol) {
+                val substitutor = buildSubstitutor {
+                    substitution(classSymbol.typeParameters.single(), builtinTypes.int)
+                }
+                val substitutedType = substitutor.substitute(classSymbol.defaultType) as KaClassType
+                val typeArgument = substitutedType.typeArguments.single()
+                assertEquals(builtinTypes.int, typeArgument.type, "Type argument should be Int after substitution")
+            }
+
+            val regularClassSymbol = findClass(ClassId.fromString("test/JavaBox")) as KaNamedClassSymbol
+            val psiBasedClassSymbol = (regularClassSymbol.psi as PsiClass).namedClassSymbol as KaFirPsiJavaClassSymbol
+
+            assertIs<KaFirTypeParameterSymbol>(regularClassSymbol.typeParameters.single())
+            assertIs<KaFirPsiJavaTypeParameterSymbol>(psiBasedClassSymbol.typeParameters.single())
+
+            checkSubstitution(regularClassSymbol)
+            checkSubstitution(psiBasedClassSymbol)
         }
     }
 }
