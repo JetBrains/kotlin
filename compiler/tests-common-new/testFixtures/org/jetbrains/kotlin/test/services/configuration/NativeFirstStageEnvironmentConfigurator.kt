@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.services.configuration
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.konanFriendLibraries
+import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.konan.config.konanLibraries
 import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -28,7 +29,8 @@ class NativeFirstStageEnvironmentConfigurator(testServices: TestServices, privat
         if (!module.targetPlatform(testServices).isNative()) return
 
         customNativeHome?.let {
-            System.setProperty("kotlin.native.home", it.absolutePath)
+            configuration.konanHome = it.absolutePath
+            System.setProperty("kotlin.native.home", it.absolutePath) // TODO KT-84799: remove the line after dropping forward testing against 2.3 compiler
         }
         configuration.konanProducedArtifactKind = CompilerOutputKind.LIBRARY
         val klibService = testServices.klibEnvironmentConfigurator
