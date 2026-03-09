@@ -34,7 +34,7 @@ interface SingleColumnApproximation : ColumnsResolver, SingleColumn<Any?>, Colum
     val path: ColumnPath
 }
 
-class ResolvedDataColumn(private val col: ColumnWithPathApproximation) : SingleColumnApproximation {
+class ResolvedDataColumn(internal val col: ColumnWithPathApproximation) : SingleColumnApproximation {
 
     override fun name(): String {
         return col.column.name

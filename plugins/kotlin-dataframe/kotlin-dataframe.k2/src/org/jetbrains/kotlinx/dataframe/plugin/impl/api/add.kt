@@ -35,6 +35,15 @@ class Into : AbstractInterpreter<Unit>() {
     }
 }
 
+class AddDslReferencePlus : AbstractInterpreter<Unit>() {
+    val Arguments.dsl: AddDslApproximation by arg()
+    val Arguments.receiver: ResolvedDataColumn by arg()
+
+    override fun Arguments.interpret() {
+        dsl.columns += receiver.col.column
+    }
+}
+
 class AddDslApproximation(val columns: MutableList<SimpleCol>)
 
 class AddWithDsl : AbstractSchemaModificationInterpreter() {
