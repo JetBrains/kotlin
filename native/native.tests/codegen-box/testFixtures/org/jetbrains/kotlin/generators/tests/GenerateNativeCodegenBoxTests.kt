@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -29,25 +28,8 @@ fun main(args: Array<String>) {
                 model("box", excludeDirs = k1BoxTestDir)
                 model("boxInline")
             }
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeCodegenBoxTestNoPLGenerated",
-                annotations = listOf(
-                    provider<UseExtTestCaseGroupProvider>(),
-                    *noPartialLinkage(),
-                    codegenBox(),
-                )
-            ) {
-                model("box", excludeDirs = k1BoxTestDir)
-                model("boxInline")
-            }
         }
     }
 }
 
 private fun codegenBox() = annotation(Tag::class.java, "codegen-box")
-
-private fun noPartialLinkage() = arrayOf(
-    annotation(UsePartialLinkage::class.java, "mode" to UsePartialLinkage.Mode.DISABLED),
-    // This is a special tag to mark codegen box tests with disabled partial linkage that may be skipped in slow TC configurations:
-    annotation(Tag::class.java, "no-partial-linkage-may-be-skipped")
-)
