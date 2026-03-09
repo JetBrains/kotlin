@@ -83,6 +83,7 @@ class LegacyIT : KotlinMavenTestBase() {
                     extraMavenProperties = mapOf("kotlinCompilerJdk" to context.javaHomeProvider(TestVersions.Java.JDK_1_8).absolutePathString())
                 )
             ) {
+                assert(false)
                 assertBuildLogContains(
                     "[INFO] BUILD FAILURE",
                     "[INFO] Overriding JDK home path with",
