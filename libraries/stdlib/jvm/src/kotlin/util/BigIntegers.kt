@@ -127,8 +127,7 @@ public inline fun UInt.toBigInteger(): BigInteger = toLong().toBigInteger()
  * @sample samples.misc.BigIntegers.ulongToBigInteger
  */
 @SinceKotlin("2.4")
-@kotlin.internal.InlineOnly
-public inline fun ULong.toBigInteger(): BigInteger {
+public fun ULong.toBigInteger(): BigInteger {
     val signedLong = toLong()
     if (signedLong >= 0) return signedLong.toBigInteger()
     val evenPart = (this / 2uL).toLong().toBigInteger().shiftLeft(1)

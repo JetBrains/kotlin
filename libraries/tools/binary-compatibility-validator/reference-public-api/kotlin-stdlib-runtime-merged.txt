@@ -173,6 +173,7 @@ public final class kotlin/NumbersKt {
 	public static final fun rotateLeft (SI)S
 	public static final fun rotateRight (BI)B
 	public static final fun rotateRight (SI)S
+	public static final fun toBigInteger-VKZWuLQ (J)Ljava/math/BigInteger;
 }
 
 public abstract interface annotation class kotlin/OptIn : java/lang/annotation/Annotation {
