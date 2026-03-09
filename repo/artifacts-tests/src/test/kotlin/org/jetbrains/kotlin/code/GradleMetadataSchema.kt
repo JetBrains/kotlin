@@ -182,6 +182,7 @@ data class VariantAttributes(
     @SerialName("org.jetbrains.kotlin.klib.packaging") val orgJetbrainsKotlinKlibPackaging: String? = null,
     @SerialName("org.jetbrains.kotlin.js.compiler") val orgJetbrainsKotlinJsCompiler: String? = null,
     @SerialName("org.jetbrains.kotlin.wasm.target") val orgJetbrainsKotlinWasmTarget: String? = null,
+    @SerialName("org.jetbrains.kotlin.native.target") val orgJetbrainsKotlinNativeTarget: String? = null,
 ) : Comparable<VariantAttributes> {
     override fun compareTo(other: VariantAttributes): Int {
         return compareValuesBy(
@@ -197,7 +198,8 @@ data class VariantAttributes(
             { it.orgJetbrainsKotlinPlatformType },
             { it.orgJetbrainsKotlinKlibPackaging },
             { it.orgJetbrainsKotlinJsCompiler },
-            { it.orgJetbrainsKotlinWasmTarget }
+            { it.orgJetbrainsKotlinWasmTarget },
+            { it.orgJetbrainsKotlinNativeTarget },
         )
     }
 }
