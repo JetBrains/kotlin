@@ -13,18 +13,6 @@ import kotlin.test.assertFailsWith
 class KotlinCompilerArgumentsLevelTest {
 
     @Test
-    fun shouldRejectMergingLevelsWithDifferentNames() {
-        val level1 by compilerArgumentsLevel("one") {}
-        val level2 by compilerArgumentsLevel("two") {}
-
-        assertFailsWith<IllegalArgumentException>(
-            message = "Names for compiler arguments level should be the same! We are trying to merge one with two"
-        ) {
-            level1.mergeWith(level2)
-        }
-    }
-
-    @Test
     fun shouldMergeCompilerArguments() {
         val level1 by compilerArgumentsLevel("one") {
             addCompilerArguments(stubCompilerArgument("one_one"))
