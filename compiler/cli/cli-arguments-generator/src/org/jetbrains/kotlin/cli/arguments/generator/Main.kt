@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.Modifier
 import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
@@ -90,7 +91,7 @@ val levelToClassNameMap = listOf(
         levelIsFinal = false,
     ),
     ArgumentsInfo(
-        levelName = CompilerArgumentsLevelNames.wasmArguments,
+        levelName = CompilerArgumentsLevelNames.legacyWasmArguments,
         className = "K2WasmCompilerArguments",
         levelIsFinal = false,
         originFileName = "WasmCompilerArguments",
@@ -112,6 +113,18 @@ val levelToClassNameMap = listOf(
         className = "K2MetadataCompilerArguments",
         levelIsFinal = true,
         originFileName = "MetadataCompilerArguments",
+    ),
+    ArgumentsInfo(
+        levelName = CompilerArgumentsLevelNames.commonJsAndWasmArguments,
+        className = "CommonJsAndWasmCompilerArguments",
+        levelIsFinal = false,
+        originFileName = "CommonJsAndWasmCompilerArguments",
+    ),
+    ArgumentsInfo(
+        levelName = CompilerArgumentsLevelNames.wasmArguments,
+        className = "KotlinWasmCompilerArguments",
+        levelIsFinal = true,
+        originFileName = "KotlinWasmCompilerArguments",
     ),
 ).associateBy { it.levelName }
 
@@ -161,6 +174,12 @@ private fun SmartPrinter.generateArgumentsClass(
     println(GeneratorsFileUtil.GENERATED_MESSAGE_SUFFIX)
     println()
 
+    if (Modifier.DEPRECATED in level.modifiers) {
+        println("@Deprecated(\"This class was deprecated and will be removed soon.\", level = DeprecationLevel.WARNING)")
+    }
+    if (Modifier.DEPRECATED in (parent?.modifiers ?: emptySet())) {
+        println("@Suppress(\"DEPRECATION\")")
+    }
     if (!info.levelIsFinal) {
         print("abstract ")
     }

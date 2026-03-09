@@ -59,6 +59,8 @@ generatedSourcesTask(
             "jsArguments",
             "nativeArguments",
             "metadataArguments",
+            "commonJsAndWasmArguments",
+            "legacyWasmArguments",
         )
     }
 )
