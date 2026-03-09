@@ -14,18 +14,26 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirCompanionExtensionChecker : FirCallableDeclarationChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirCallableDeclaration) {
-        if (declaration.isCompanionExtension && LanguageFeature.CompanionBlocksAndExtensions.isDisabled()) {
+        if (!declaration.isCompanionExtension) return
+
+        if (LanguageFeature.CompanionBlocksAndExtensions.isDisabled()) {
             reporter.reportOn(
                 declaration.getModifier(KtTokens.COMPANION_KEYWORD)?.source,
                 FirErrors.UNSUPPORTED_FEATURE,
                 LanguageFeature.CompanionBlocksAndExtensions to context.languageVersionSettings
             )
+        }
+
+        if (declaration.isOperator && declaration.symbol.name != OperatorNameConventions.INVOKE) {
+            reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, "companion extension")
         }
     }
 }

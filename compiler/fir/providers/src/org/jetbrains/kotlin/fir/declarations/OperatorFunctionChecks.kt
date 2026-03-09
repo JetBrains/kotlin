@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
@@ -104,7 +105,7 @@ object OperatorFunctionChecks {
             Checks.isKProperty,
             Checks.nonSuspend,
         )
-        checkFor(OperatorNameConventions.INVOKE, Checks.memberOrExtension)
+        checkFor(OperatorNameConventions.INVOKE, Checks.memberOrExtensionOrCompanionBlockMember)
         checkFor(
             OperatorNameConventions.CONTAINS,
             Checks.memberOrExtension, Checks.ValueParametersCount.single,
@@ -201,6 +202,11 @@ private object Checks {
     val memberOrExtension = simple("must be a member or an extension function") { function, _ ->
         function.dispatchReceiverType != null || function.receiverParameter != null
     }
+
+    val memberOrExtensionOrCompanionBlockMember =
+        simple("must be a member, an extension function or companion block member") { function, _ ->
+            function.dispatchReceiverType != null || function.receiverParameter != null || function.isCompanionBlockMember
+        }
 
     val member = simple("must be a member function") { function, _ ->
         function.dispatchReceiverType != null
