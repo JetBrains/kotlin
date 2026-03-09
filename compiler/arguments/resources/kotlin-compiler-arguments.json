@@ -9392,8 +9392,14 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Use partial linkage mode.",
-                                    "valueInVersions": []
+                                    "current": "This option is deprecated and will be deleted in future versions.\nThe partial linkage engine is always turned on.\nIf you would like to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.",
+                                    "valueInVersions": [
+                                        {
+                                            "minReleaseVersion": "2.0.20",
+                                            "maxReleaseVersion": "2.3.20",
+                                            "value": "Use partial linkage mode."
+                                        }
+                                    ]
                                 },
                                 "delimiter": null,
                                 "valueType": {
@@ -9414,7 +9420,7 @@
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "2.0.20",
                                     "stabilizedVersion": null,
-                                    "deprecatedVersion": null,
+                                    "deprecatedVersion": "2.4.0",
                                     "removedVersion": null
                                 },
                                 "argumentType": {

@@ -17,6 +17,7 @@ fun copyCommonKlibBasedCompilerArguments(from: CommonKlibBasedCompilerArguments,
     to.klibZipFileAccessorCacheLimit = from.klibZipFileAccessorCacheLimit
     to.normalizeAbsolutePath = from.normalizeAbsolutePath
     to.partialLinkageLogLevel = from.partialLinkageLogLevel
+    @Suppress("DEPRECATION")
     to.partialLinkageMode = from.partialLinkageMode
     to.relativePathBases = from.relativePathBases.copyOf()
     to.skipLibrarySpecialCompatibilityChecks = from.skipLibrarySpecialCompatibilityChecks

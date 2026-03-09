@@ -93,7 +93,9 @@ where advanced options include:
   -Xklib-zip-file-accessor-cache-limit
                              Maximum number of klibs that can be cached during compilation. Default is 64.
   -Xpartial-linkage={enable|disable}
-                             Use partial linkage mode.
+                             This option is deprecated and will be deleted in future versions.
+                             The partial linkage engine is always turned on.
+                             If you would like to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
   -Xpartial-linkage-loglevel={silent|info|warning|error}
                              Define the compile-time log level for partial linkage.
   -Xskip-library-special-compatibility-checks
