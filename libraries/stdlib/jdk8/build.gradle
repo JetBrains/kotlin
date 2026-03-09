@@ -51,11 +51,6 @@ sourcesJar {
     from sourceSets.java9.allSource
 }
 
-artifacts {
-    archives sourcesJar
-    sources sourcesJar
-}
-
 compileKotlin {
     kotlinOptions.moduleName = project.name
 }

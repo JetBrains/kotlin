@@ -38,11 +38,6 @@ sourcesJar {
 }
 
 
-artifacts {
-    archives sourcesJar
-    sources sourcesJar
-}
-
 compileKotlin {
     kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_11_0))
     kotlinOptions.jvmTarget = "1.8"
