@@ -23,9 +23,9 @@ KtValueArgument(107,125): '"a type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      str: kotlin.String
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(116,124): 'constant'
   KtSimpleNameReference:
@@ -52,9 +52,9 @@ KtValueArgument(138,163): '"a nested type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      str: kotlin.String
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(154,162): 'constant'
   KtSimpleNameReference:
@@ -81,9 +81,9 @@ KtValueArgument(182,214): '"a nested nested type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      str: kotlin.String
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(205,213): 'constant'
   KtSimpleNameReference:
@@ -110,9 +110,9 @@ KtValueArgument(240,258): '"b type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      str: kotlin.String
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(249,257): 'constant'
   KtSimpleNameReference:
@@ -139,9 +139,9 @@ KtValueArgument(272,297): '"b nested type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      str: kotlin.String
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(288,296): 'constant'
   KtSimpleNameReference:
@@ -168,9 +168,9 @@ KtValueArgument(310,342): '"b nested nested type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      str: kotlin.String
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(333,341): 'constant'
   KtSimpleNameReference:
@@ -197,9 +197,9 @@ KtValueArgument(382,397): '"destr 1 $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      str: kotlin.String
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(392,396): 'prop'
   KtSimpleNameReference:
@@ -230,9 +230,9 @@ KtValueArgument(410,419): '"a $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      str: kotlin.String
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(414,418): 'prop'
   KtSimpleNameReference:
@@ -263,9 +263,9 @@ KtValueArgument(430,439): '"b $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      str: kotlin.String
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(434,438): 'prop'
   KtSimpleNameReference:
@@ -300,9 +300,9 @@ KtValueArgument(470,485): '"destr 1 $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      str: kotlin.String
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(480,484): 'prop'
   KtSimpleNameReference:
@@ -333,9 +333,9 @@ KtValueArgument(498,507): '"c $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      str: kotlin.String
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(502,506): 'prop'
   KtSimpleNameReference:
@@ -366,9 +366,9 @@ KtValueArgument(518,527): '"d $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      str: kotlin.String
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(522,526): 'prop'
   KtSimpleNameReference:

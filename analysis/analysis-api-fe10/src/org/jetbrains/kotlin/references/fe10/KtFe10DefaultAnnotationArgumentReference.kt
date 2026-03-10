@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.references.fe10
 
+import com.intellij.psi.PsiAnnotation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -25,7 +26,8 @@ internal class KtFe10DefaultAnnotationArgumentReference(
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val annotationEntry = element.getStrictParentOfType<KtAnnotationEntry>() ?: return emptyList()
         val resolvedCall = annotationEntry.getResolvedCall(context) ?: return emptyList()
-        return listOfNotNull(resolvedCall.resultingDescriptor.valueParameters.firstOrNull())
+        val parameterDescriptor = resolvedCall.resultingDescriptor.valueParameters.firstOrNull() ?: return emptyList()
+        return listOfNotNull(parameterDescriptor.takeIf { it.name.asString() == PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME })
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {

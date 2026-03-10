@@ -10,6 +10,6 @@ KtValueArgument(206,256): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      a: kotlin.Array<kotlin.reflect.KClass<*>>
+      Nothing (Unresolved reference)

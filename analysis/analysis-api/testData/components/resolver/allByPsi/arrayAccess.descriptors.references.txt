@@ -123,9 +123,9 @@ KtValueArgument(145,157): '"SOME_ERROR"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      vararg names: kotlin.String
+      Nothing (Unresolved reference)
 
 KtArrayAccessExpression(159,166): 'list[1]'
   KtArrayAccessReference:

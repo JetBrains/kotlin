@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolution.KtResolvable
 
 /**
- * A reference pointing to a single argument in annotation's constructor call.
+ * A reference pointing to a single argument in the annotation's constructor call.
  * It is created only when the following conditions hold:
  *
  * - Annotation's constructor call has a **single** argument
@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.resolution.KtResolvable
  * @Foo("bar", "baz") // no reference, there are two arguments
  * @Foo(name = "bar") // no reference, named argument is used
  * ```
+ *
+ * **Note**: the reference might be resolved only when the annotation parameter has [PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME] name.
  */
 @OptIn(KtExperimentalApi::class)
 @SubclassOptInRequired(KtImplementationDetail::class)
@@ -35,7 +37,7 @@ abstract class KtDefaultAnnotationArgumentReference(
     element: KtValueArgument,
 ) : AbstractKtReference<KtValueArgument>(element), KtResolvable {
     override val resolvesByNames: Collection<Name>
-        get() = emptyList()
+        get() = listOf(Name.identifier(PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME))
 
     override fun getRangeInElement(): TextRange = TextRange.EMPTY_RANGE
 
@@ -43,7 +45,13 @@ abstract class KtDefaultAnnotationArgumentReference(
 
     override fun isReferenceTo(candidateTarget: PsiElement): Boolean {
         val unwrapped = candidateTarget.unwrapped
-        return (unwrapped is PsiMethod || unwrapped is KtParameter) && unwrapped == resolve()
+        val name = when (unwrapped) {
+            is PsiMethod -> unwrapped.name
+            is KtParameter -> unwrapped.name
+            else -> return false
+        }
+
+        return name == PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME && unwrapped == resolve()
     }
 
     override fun canRename(): Boolean = true

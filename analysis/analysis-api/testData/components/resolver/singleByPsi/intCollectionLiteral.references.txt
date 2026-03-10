@@ -10,6 +10,6 @@ KtValueArgument(91,100): '[1, 2, 3]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      arr: kotlin.IntArray
+      Nothing (Unresolved reference)

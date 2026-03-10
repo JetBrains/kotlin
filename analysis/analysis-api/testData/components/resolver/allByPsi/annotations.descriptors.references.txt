@@ -107,9 +107,9 @@ KtValueArgument(438,447): '[1, 2, 3]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      arr: kotlin.IntArray
+      Nothing (Unresolved reference)
 
 KtCollectionLiteralExpression(438,447): '[1, 2, 3]'
   KtCollectionLiteralReference:
@@ -159,9 +159,9 @@ KtValueArgument(496,515): 'intArrayOf(7, 8, 9)'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      arr: kotlin.IntArray
+      Nothing (Unresolved reference)
 
 KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
   KtInvokeFunctionReference:
@@ -189,25 +189,25 @@ KtValueArgument(507,508): '7'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      arr: kotlin.IntArray
+      Nothing (Unresolved reference)
 
 KtValueArgument(510,511): '8'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      arr: kotlin.IntArray
+      Nothing (Unresolved reference)
 
 KtValueArgument(513,514): '9'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      arr: kotlin.IntArray
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(518,532): 'AnnoWithKClass'
   KtSimpleNameReference:
@@ -220,9 +220,9 @@ KtValueArgument(533,554): 'AnnoWithKClass::class'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      k: kotlin.reflect.KClass<*>
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(533,547): 'AnnoWithKClass'
   KtSimpleNameReference:
@@ -249,9 +249,9 @@ KtValueArgument(573,598): 'one.AnnoWithKClass::class'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      k: kotlin.reflect.KClass<*>
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(573,576): 'one'
   KtSimpleNameReference:
@@ -292,9 +292,9 @@ KtValueArgument(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      a: kotlin.Array<kotlin.reflect.KClass<*>>
+      Nothing (Unresolved reference)
 
 KtCollectionLiteralExpression(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   KtCollectionLiteralReference:
@@ -357,9 +357,9 @@ KtValueArgument(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArra
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      another: kotlin.Array<one.AnnoWithArray>
+      Nothing (Unresolved reference)
 
 KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15)))'
   KtInvokeFunctionReference:
@@ -387,9 +387,9 @@ KtValueArgument(711,742): 'one.AnnoWithArray([10, 11, 12])'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      another: kotlin.Array<one.AnnoWithArray>
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(711,714): 'one'
   KtSimpleNameReference:
@@ -431,9 +431,9 @@ KtValueArgument(729,741): '[10, 11, 12]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      another: kotlin.Array<one.AnnoWithArray>
+      Nothing (Unresolved reference)
 
 KtCollectionLiteralExpression(729,741): '[10, 11, 12]'
   KtCollectionLiteralReference:
@@ -447,9 +447,9 @@ KtValueArgument(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      another: kotlin.Array<one.AnnoWithArray>
+      Nothing (Unresolved reference)
 
 KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
   KtInvokeFunctionReference:
@@ -477,9 +477,9 @@ KtValueArgument(758,780): 'intArrayOf(13, 14, 15)'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      another: kotlin.Array<one.AnnoWithArray>
+      Nothing (Unresolved reference)
 
 KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
   KtInvokeFunctionReference:
@@ -507,25 +507,25 @@ KtValueArgument(769,771): '13'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      another: kotlin.Array<one.AnnoWithArray>
+      Nothing (Unresolved reference)
 
 KtValueArgument(773,775): '14'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      another: kotlin.Array<one.AnnoWithArray>
+      Nothing (Unresolved reference)
 
 KtValueArgument(777,779): '15'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      another: kotlin.Array<one.AnnoWithArray>
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(785,799): 'AnnoWithString'
   KtSimpleNameReference:
@@ -538,9 +538,9 @@ KtValueArgument(800,825): 'stringConstant + " 1.2.3"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      str: kotlin.String
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(800,814): 'stringConstant'
   KtSimpleNameReference:

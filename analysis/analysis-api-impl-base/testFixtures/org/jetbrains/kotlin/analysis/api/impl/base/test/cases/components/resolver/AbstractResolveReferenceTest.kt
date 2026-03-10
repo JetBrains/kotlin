@@ -36,7 +36,10 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendK
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
-import org.jetbrains.kotlin.idea.references.*
+import org.jetbrains.kotlin.idea.references.KDocReference
+import org.jetbrains.kotlin.idea.references.KtConstructorDelegationReference
+import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -239,7 +242,7 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
         // The stable order is required
         val providedNames = reference.resolvesByNames.map(Name::asString).toSet()
         val shouldNotPredictNames = when (reference) {
-            is KtDefaultAnnotationArgumentReference, is KtConstructorDelegationReference -> true
+            is KtConstructorDelegationReference -> true
             is KtSimpleNameReference -> when (val element = reference.element) {
                 is KtNameReferenceExpression -> element.parent is KtInstanceExpressionWithLabel
                 is KtLabelReferenceExpression -> true
