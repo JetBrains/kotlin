@@ -248,5 +248,5 @@ public annotation class ExperimentalJsNoRuntime
 @Target(CLASS)
 @MustBeDocumented
 @OptionalExpectation
-@SinceKotlin("2.3") // TODO(KT-84002): replace with 2.4
+@SinceKotlin("2.4")
 public expect annotation class JsNoRuntime()
