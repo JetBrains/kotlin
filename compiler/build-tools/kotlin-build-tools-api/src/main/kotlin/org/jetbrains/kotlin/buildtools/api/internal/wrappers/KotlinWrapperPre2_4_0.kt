@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.buildtools.api.internal.wrappers
 
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
@@ -110,6 +111,16 @@ internal class KotlinWrapperPre2_4_0(
         }
     }
 
+    private interface CommonArgumentAccessor {
+        operator fun <V> get(key: CommonCompilerArguments.CommonCompilerArgument<V>): V
+        operator fun <V> set(key: CommonCompilerArguments.CommonCompilerArgument<V>, value: V)
+    }
+
+    private interface JvmArgumentAccessor : CommonArgumentAccessor {
+        operator fun <V> get(key: JvmCompilerArguments.JvmCompilerArgument<V>): V
+        operator fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V)
+    }
+
     private class JvmCompilerArgumentsWrapper(
         private val base: JvmCompilerArguments,
     ) : JvmCompilerArguments by base {
@@ -117,6 +128,11 @@ internal class KotlinWrapperPre2_4_0(
         private val interceptor = JvmArgumentInterceptor(object : JvmArgumentAccessor {
             override fun <V> get(key: JvmCompilerArguments.JvmCompilerArgument<V>) = base[key]
             override fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V) {
+                base[key] = value
+            }
+
+            override fun <V> get(key: CommonCompilerArguments.CommonCompilerArgument<V>): V = base[key]
+            override fun <V> set(key: CommonCompilerArguments.CommonCompilerArgument<V>, value: V) {
                 base[key] = value
             }
         })
@@ -136,15 +152,15 @@ internal class KotlinWrapperPre2_4_0(
             override fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V) {
                 base[key] = value
             }
+
+            override fun <V> get(key: CommonCompilerArguments.CommonCompilerArgument<V>): V = base[key]
+            override fun <V> set(key: CommonCompilerArguments.CommonCompilerArgument<V>, value: V) {
+                base[key] = value
+            }
         })
 
         override fun <V> get(key: JvmCompilerArguments.JvmCompilerArgument<V>): V = interceptor[key]
         override fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V) = interceptor.set(key, value)
-    }
-
-    private interface JvmArgumentAccessor {
-        operator fun <V> get(key: JvmCompilerArguments.JvmCompilerArgument<V>): V
-        operator fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V)
     }
 
     @OptIn(ExperimentalCompilerArgument::class)
