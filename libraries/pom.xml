@@ -45,8 +45,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <kotlin.bootstrap.version>2.4.0-dev-3806</kotlin.bootstrap.version>
-        <junit-version>4.13.1</junit-version>
-        <surefire-version>2.16</surefire-version>
+        <surefire-version>3.5.5</surefire-version>
         <maven.version>3.9.12</maven.version>
         <maven-plugin-annotations.version>3.7.0</maven-plugin-annotations.version>
 
@@ -95,15 +94,6 @@
         <module>tools/kotlin-dist-for-jps-meta</module>
     </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit-version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
     <dependencyManagement>
       <dependencies>
         <dependency>
@@ -112,6 +102,13 @@
           <groupId>commons-io</groupId>
           <artifactId>commons-io</artifactId>
           <version>2.18.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.junit</groupId>
+          <artifactId>junit-bom</artifactId>
+          <version>6.0.1</version>
+          <type>pom</type>
+          <scope>import</scope>
         </dependency>
       </dependencies>
     </dependencyManagement>
@@ -171,8 +168,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire-version}</version>
                 <configuration>
-                    <forkMode>once</forkMode>
-                    <jvm>${jdk_1_8}/bin/java</jvm>
+                    <reuseForks>true</reuseForks>
+                    <jvm>${jdk_17_0}/bin/java</jvm>
                     <useSystemClassLoader>false</useSystemClassLoader>
                     <useManifestOnlyJar>false</useManifestOnlyJar>
                     <failIfNoTests>false</failIfNoTests>
