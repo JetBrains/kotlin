@@ -3946,6 +3946,13 @@ private fun KaDiagnosticConverterBuilder.addConversions89() {
             token,
         )
     }
+    add(FirErrors.ILLEGAL_COMPANION_BLOCK) { firDiagnostic ->
+        IllegalCompanionBlockImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION) { firDiagnostic ->
         SuspensionPointInsideCriticalSectionImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),

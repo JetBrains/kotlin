@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.firstCompanionBlock
 import org.jetbrains.kotlin.fir.isDisabled
@@ -24,11 +27,29 @@ object FirCompanionBlockChecker : FirClassChecker(MppCheckerKind.Common) {
         val firstCompanionBlock = declaration.firstCompanionBlock ?: return
         if (LanguageFeature.CompanionBlocksAndExtensions.isDisabled()) {
             reporter.reportOn(
-                firstCompanionBlock.getChild(KtNodeTypes.MODIFIER_LIST)?.getChild(KtTokens.COMPANION_KEYWORD),
+                firstCompanionBlock.companionModifierSource(),
                 FirErrors.UNSUPPORTED_FEATURE,
                 LanguageFeature.CompanionBlocksAndExtensions to context.languageVersionSettings
             )
         }
+
+        if (declaration.classKind == ClassKind.ENUM_ENTRY) {
+            reporter.reportOn(
+                firstCompanionBlock.companionModifierSource(),
+                FirErrors.ILLEGAL_COMPANION_BLOCK,
+                context.containingDeclarations.last(),
+            )
+        } else if (declaration.classKind == ClassKind.OBJECT || declaration is FirAnonymousObject) {
+            reporter.reportOn(
+                firstCompanionBlock.companionModifierSource(),
+                FirErrors.ILLEGAL_COMPANION_BLOCK,
+                declaration.symbol,
+            )
+        }
+    }
+
+    private fun KtSourceElement.companionModifierSource(): KtSourceElement? {
+        return getChild(KtNodeTypes.MODIFIER_LIST)?.getChild(KtTokens.COMPANION_KEYWORD)
     }
 }
 

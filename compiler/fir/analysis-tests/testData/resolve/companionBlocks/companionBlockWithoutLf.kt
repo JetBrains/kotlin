@@ -18,14 +18,14 @@ class C3 {
 }
 
 val x = object {
-    <!UNSUPPORTED_FEATURE!>companion<!> {
+    <!ILLEGAL_COMPANION_BLOCK, UNSUPPORTED_FEATURE!>companion<!> {
         fun foo() {}
     }
 }
 
 enum class E {
     Entry {
-        <!UNSUPPORTED_FEATURE!>companion<!> {
+        <!ILLEGAL_COMPANION_BLOCK, UNSUPPORTED_FEATURE!>companion<!> {
             fun foo() {}
         }
     };

@@ -1114,6 +1114,7 @@ object FirErrors : KtDiagnosticsContainer() {
 
     // Companion Blocks & Extensions
     val COMPANION_BLOCK_MEMBER_EXTENSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_BLOCK_MEMBER_EXTENSION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val ILLEGAL_COMPANION_BLOCK: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("ILLEGAL_COMPANION_BLOCK", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages
 }

@@ -392,6 +392,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_COMPANION_BLOCK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_ESCAPE
@@ -3884,6 +3885,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             COMPANION_BLOCK_MEMBER_EXTENSION,
             "Companion block member cannot be an extension."
+        )
+        map.put(
+            ILLEGAL_COMPANION_BLOCK,
+            "Companion block inside {0} is prohibited.",
+            SYMBOL_KIND,
         )
     }
 }

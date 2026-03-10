@@ -100,3 +100,6 @@ inline val FirClassSymbol<*>.isEnumEntry: Boolean
 
 val FirCallableSymbol<*>.isCompanionExtension: Boolean
     get() = fir.isCompanionExtension
+
+val FirCallableSymbol<*>.isCompanionBlockMember: Boolean
+    get() = fir.isCompanionBlockMember
