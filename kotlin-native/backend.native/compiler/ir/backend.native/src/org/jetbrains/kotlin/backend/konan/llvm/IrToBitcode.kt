@@ -490,20 +490,6 @@ internal class CodeGeneratorVisitor(
                 }
 
                 appendingTo(bbGlobalDeinit) {
-                    state.topLevelFields
-                            // Only if a subject for memory management.
-                            .forEach { irField ->
-                                if (irField.type.binaryTypeIsReference() && irField.storageKind != FieldStorageKind.THREAD_LOCAL) {
-                                    val address = staticFieldPtr(irField, functionGenerationContext)
-                                    storeHeapRef(llvm.kNull, address)
-                                }
-                            }
-                    state.globalSharedObjects.forEach { address ->
-                        storeHeapRef(llvm.kNull, address)
-                    }
-                    state.globalInitState?.let {
-                        store(llvm.intptr(FILE_NOT_INITIALIZED), it)
-                    }
                     ret(null)
                 }
             }
