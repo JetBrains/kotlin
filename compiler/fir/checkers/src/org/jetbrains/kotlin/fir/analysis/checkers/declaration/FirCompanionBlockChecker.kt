@@ -17,14 +17,16 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.firstCompanionBlock
+import org.jetbrains.kotlin.fir.companionBlocks
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirCompanionBlockChecker : FirClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
-        val firstCompanionBlock = declaration.firstCompanionBlock ?: return
+        val companionBlocks = declaration.companionBlocks ?: return
+        val firstCompanionBlock = companionBlocks.validCompanionBlocks.first()
+
         if (LanguageFeature.CompanionBlocksAndExtensions.isDisabled()) {
             reporter.reportOn(
                 firstCompanionBlock.companionModifierSource(),
@@ -45,6 +47,10 @@ object FirCompanionBlockChecker : FirClassChecker(MppCheckerKind.Common) {
                 FirErrors.ILLEGAL_COMPANION_BLOCK,
                 declaration.symbol,
             )
+        }
+
+        companionBlocks.nestedCompanionBlocks.forEach {
+            reporter.reportOn(it.companionModifierSource(), FirErrors.COMPANION_BLOCK_NESTED)
         }
     }
 

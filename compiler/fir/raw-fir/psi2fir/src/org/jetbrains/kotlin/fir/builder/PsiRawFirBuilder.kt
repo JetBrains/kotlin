@@ -1836,6 +1836,7 @@ open class PsiRawFirBuilder(
                             buildAnonymousObjectExpression {
                                 val enumEntrySource = toFirSourceElement(KtFakeSourceElementKind.EnumInitializer)
                                 source = enumEntrySource
+                                val companionBlockCollector = CompanionBlockCollector()
                                 anonymousObject = buildAnonymousObject {
                                     source = enumEntrySource
                                     moduleData = baseModuleData
@@ -1879,7 +1880,8 @@ open class PsiRawFirBuilder(
                                             classBody = body,
                                             delegatedSuperType = correctedEnumSelfTypeRef,
                                             delegatedSelfType = delegatedEntrySelfType,
-                                            owner = ktEnumEntry
+                                            owner = ktEnumEntry,
+                                            companionBlockCollector,
                                         )
 
                                         for (danglingModifier in ktEnumEntry.body?.danglingModifierLists.orEmpty()) {
@@ -1889,10 +1891,7 @@ open class PsiRawFirBuilder(
                                         }
                                     }
                                 }.apply {
-                                    @OptIn(KtExperimentalApi::class)
-                                    companionBlocks.firstOrNull()?.let { companionBlock ->
-                                        firstCompanionBlock = companionBlock.toFirSourceElement()
-                                    }
+                                    companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
                                 }
                             }
                         }
@@ -1983,6 +1982,7 @@ open class PsiRawFirBuilder(
                         currentFirTypeParameters = firTypeParameters,
                     ) {
                         var delegatedFieldsMap: Map<Int, FirFieldSymbol>?
+                        val companionBlockCollector = CompanionBlockCollector()
                         buildRegularClass {
                             source = sourceElement
                             moduleData = baseModuleData
@@ -2022,7 +2022,13 @@ open class PsiRawFirBuilder(
                                 }
                             }
 
-                            addDeclarations(classOrObject.body, delegatedSuperType, delegatedSelfType, classOrObject)
+                            addDeclarations(
+                                classOrObject.body,
+                                delegatedSuperType,
+                                delegatedSelfType,
+                                classOrObject,
+                                companionBlockCollector,
+                            )
 
                             for (danglingModifier in classOrObject.body?.danglingModifierLists ?: emptyList()) {
                                 addDeclaration(
@@ -2073,12 +2079,9 @@ open class PsiRawFirBuilder(
                             initCompanionObjectSymbolAttr()
 
                             contextParameters.addContextParameters(classOrObject.modifierList?.contextParameterLists.orEmpty(), classSymbol)
-                        }.also {
-                            @OptIn(KtExperimentalApi::class)
-                            classOrObject.companionBlocks.firstOrNull()?.let { companionBlock ->
-                                it.firstCompanionBlock = companionBlock.toFirSourceElement()
-                            }
-                            it.delegateFieldsMap = delegatedFieldsMap
+                        }.apply {
+                            companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
+                            this.delegateFieldsMap = delegatedFieldsMap
                         }
                     }.also {
                         classOrObject.fillDanglingConstraintsTo(it)
@@ -2098,6 +2101,7 @@ open class PsiRawFirBuilder(
             delegatedSuperType: FirTypeRef,
             delegatedSelfType: FirResolvedTypeRef,
             owner: KtClassOrObject,
+            companionBlockCollector: CompanionBlockCollector,
         ) {
             classBody?.declarationsAndCompanionBlocks?.forEach {
                 when (it) {
@@ -2111,8 +2115,9 @@ open class PsiRawFirBuilder(
                         )
                     }
                     is KtCompanionBlock -> {
+                        companionBlockCollector.collect(it.toFirSourceElement(), isNested = isDirectlyInsideCompanionBlock)
                         withCompanionBlock {
-                            addDeclarations(it.body, delegatedSuperType, delegatedSelfType, owner)
+                            addDeclarations(it.body, delegatedSuperType, delegatedSelfType, owner, companionBlockCollector)
                         }
                     }
                 }
@@ -2124,6 +2129,7 @@ open class PsiRawFirBuilder(
                 var delegatedFieldsMap: Map<Int, FirFieldSymbol>?
                 buildAnonymousObjectExpression {
                     source = expression.toFirSourceElement()
+                    val companionBlockCollector = CompanionBlockCollector()
                     anonymousObject = buildAnonymousObject {
                         val objectDeclaration = expression.objectDeclaration
                         source = objectDeclaration.toFirSourceElement()
@@ -2151,7 +2157,8 @@ open class PsiRawFirBuilder(
                             classBody = objectDeclaration.body,
                             delegatedSuperType,
                             delegatedSelfType,
-                            owner = objectDeclaration
+                            owner = objectDeclaration,
+                            companionBlockCollector,
                         )
 
                         for (danglingModifier in objectDeclaration.body?.danglingModifierLists ?: emptyList()) {
@@ -2159,12 +2166,9 @@ open class PsiRawFirBuilder(
                                 containingClassAttr = currentDispatchReceiverType()?.lookupTag
                             }
                         }
-                    }.also {
-                        it.delegateFieldsMap = delegatedFieldsMap
-                        @OptIn(KtExperimentalApi::class)
-                        expression.objectDeclaration.companionBlocks.firstOrNull()?.let { companionBlock ->
-                            it.firstCompanionBlock = companionBlock.toFirSourceElement()
-                        }
+                    }.apply {
+                        this.delegateFieldsMap = delegatedFieldsMap
+                        companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
                     }
                 }
             }

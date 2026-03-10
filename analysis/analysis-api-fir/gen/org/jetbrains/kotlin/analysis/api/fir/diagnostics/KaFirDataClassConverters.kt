@@ -3575,6 +3575,12 @@ private fun KaDiagnosticConverterBuilder.addConversions80() {
             token,
         )
     }
+    add(FirErrors.COMPANION_BLOCK_NESTED) { firDiagnostic ->
+        CompanionBlockNestedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JVM_SYNTHETIC_ON_DELEGATE) { firDiagnostic ->
         JvmSyntheticOnDelegateImpl(
             firDiagnostic as KtPsiDiagnostic,

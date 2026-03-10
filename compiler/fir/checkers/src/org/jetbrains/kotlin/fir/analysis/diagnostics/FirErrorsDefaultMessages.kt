@@ -175,6 +175,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_LITERAL_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_BLOCK_MEMBER_EXTENSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_BLOCK_NESTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSION_RECEIVER_IS_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS
@@ -3893,6 +3894,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             ILLEGAL_COMPANION_BLOCK,
             "Companion block inside {0} is prohibited.",
             SYMBOL_KIND,
+        )
+        map.put(
+            COMPANION_BLOCK_NESTED,
+            "Companion blocks cannot be nested."
         )
         map.put(
             COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS,

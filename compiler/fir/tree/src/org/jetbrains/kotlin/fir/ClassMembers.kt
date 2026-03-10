@@ -291,5 +291,13 @@ private object LocalClassJvmTypeKey : FirDeclarationDataKey()
 var FirClass.localClassJvmType: FqName? by FirDeclarationDataRegistry.data(LocalClassJvmTypeKey)
 val FirClassSymbol<*>.localClassJvmType: FqName? get() = fir.localClassJvmType
 
-private object FirstCompanionBlockKey : FirDeclarationDataKey()
-var FirClass.firstCompanionBlock: KtSourceElement? by FirDeclarationDataRegistry.data(FirstCompanionBlockKey)
+private object FirCompanionBlockDataKey : FirDeclarationDataKey()
+
+class CompanionBlockInfo(
+    val validCompanionBlocks: List<KtSourceElement>,
+    val nestedCompanionBlocks: List<KtSourceElement>,
+) {
+    override fun toString(): String = "[valid=${validCompanionBlocks.size} nested=${nestedCompanionBlocks.size}]"
+}
+
+var FirClass.companionBlocks: CompanionBlockInfo? by FirDeclarationDataRegistry.data(FirCompanionBlockDataKey)

@@ -540,6 +540,7 @@ class LightTreeRawFirDeclarationBuilder(
                     currentFirTypeParameters = firTypeParameters,
                 ) {
                     var delegatedFieldsMap: Map<Int, FirFieldSymbol>? = null
+                    val companionBlockCollector = CompanionBlockCollector()
                     buildRegularClass {
                         source = classNode.toFirSourceElement()
                         moduleData = baseModuleData
@@ -603,7 +604,8 @@ class LightTreeRawFirDeclarationBuilder(
                             else secondaryConstructors.isEmpty() || secondaryConstructors.any { !it.hasValueParameters() },
                             delegatedSelfTypeRef = selfType,
                             delegatedSuperTypeRef = delegatedSuperTypeRef ?: FirImplicitTypeRefImplWithoutSource,
-                            delegatedSuperCalls = delegationSpecifiers?.superTypeCalls ?: emptyList()
+                            delegatedSuperCalls = delegationSpecifiers?.superTypeCalls ?: emptyList(),
+                            companionBlockCollector,
                         )
                         //parse primary constructor
                         val primaryConstructorWrapper = convertPrimaryConstructor(
@@ -691,12 +693,9 @@ class LightTreeRawFirDeclarationBuilder(
                         initCompanionObjectSymbolAttr()
 
                         contextParameters.addContextParameters(modifiers?.contextLists, classSymbol)
-                    }.also {
-                        it.delegateFieldsMap = delegatedFieldsMap
-
-                        classBody?.getChildNodeByType(COMPANION_BLOCK)?.toFirSourceElement()?.let { companionBlock ->
-                            it.firstCompanionBlock = companionBlock
-                        }
+                    }.apply {
+                        this.delegateFieldsMap = delegatedFieldsMap
+                        companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
                     }
                 }.also {
                     fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
@@ -748,6 +747,7 @@ class LightTreeRawFirDeclarationBuilder(
                         CLASS_BODY -> classBody = child
                     }
                 }
+                val companionBlockCollector = CompanionBlockCollector()
                 anonymousObject = buildAnonymousObject {
                     source = objectDeclaration.toFirSourceElement()
                     origin = FirDeclarationOrigin.Source
@@ -778,6 +778,7 @@ class LightTreeRawFirDeclarationBuilder(
                         delegatedSelfTypeRef = delegatedSelfType,
                         delegatedSuperTypeRef = delegatedSuperType,
                         delegatedSuperCalls = delegatedSuperCalls ?: emptyList(),
+                        companionBlockCollector,
                     )
                     //parse primary constructor
                     convertPrimaryConstructor(
@@ -793,11 +794,9 @@ class LightTreeRawFirDeclarationBuilder(
                     classBody?.let {
                         this.declarations += convertClassBody(it, classWrapper)
                     }
-                }.also {
-                    it.delegateFieldsMap = delegatedFieldsMap
-                    classBody?.getChildNodeByType(COMPANION_BLOCK)?.toFirSourceElement()?.let { companionBlock ->
-                        it.firstCompanionBlock = companionBlock
-                    }
+                }.apply {
+                    this.delegateFieldsMap = delegatedFieldsMap
+                    companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
                 }
             }
         }
@@ -856,6 +855,7 @@ class LightTreeRawFirDeclarationBuilder(
                     buildAnonymousObjectExpression {
                         val entrySource = enumEntry.toFirSourceElement(KtFakeSourceElementKind.EnumInitializer)
                         source = entrySource
+                        val companionBlockCollector = CompanionBlockCollector()
                         anonymousObject = buildAnonymousObject {
                             source = entrySource
                             moduleData = baseModuleData
@@ -885,7 +885,8 @@ class LightTreeRawFirDeclarationBuilder(
                                         enumSuperTypeCallEntry,
                                         superTypeCallEntry?.toFirSourceElement(),
                                     )
-                                )
+                                ),
+                                companionBlockCollector,
                             )
                             superTypeRefs += enumClassWrapper.delegatedSuperTypeRef
                             convertPrimaryConstructor(
@@ -903,9 +904,7 @@ class LightTreeRawFirDeclarationBuilder(
                                 }
                             }
                         }.apply {
-                            classBodyNode?.getChildNodeByType(COMPANION_BLOCK)?.toFirSourceElement()?.let { companionBlock ->
-                                firstCompanionBlock = companionBlock
-                            }
+                            companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
                         }
                     }
                 }
@@ -967,6 +966,7 @@ class LightTreeRawFirDeclarationBuilder(
                 container += buildErrorNonLocalDestructuringDeclaration(node.toFirSourceElement(), initializer)
             }
             COMPANION_BLOCK -> {
+                classWrapper?.companionBlockCollector?.collect(node.toFirSourceElement(), isNested = isDirectlyInsideCompanionBlock)
                 withCompanionBlock {
                     node.getChildNodeByType(CLASS_BODY)?.let { container.addAll(convertClassBody(it, classWrapper)) }
                 }

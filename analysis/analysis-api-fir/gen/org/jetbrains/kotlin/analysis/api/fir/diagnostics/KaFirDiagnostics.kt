@@ -4699,6 +4699,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val parent: KaSymbol
     }
 
+    interface CompanionBlockNested : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = CompanionBlockNested::class
+    }
+
     interface CompanionExtensionReceiverWithTypeArguments : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = CompanionExtensionReceiverWithTypeArguments::class
         val type: KaType
