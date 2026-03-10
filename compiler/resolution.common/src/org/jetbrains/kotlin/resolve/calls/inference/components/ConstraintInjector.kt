@@ -254,8 +254,7 @@ class ConstraintInjector(
         val position: IncorporationConstraintPosition
     ) : TypeCheckerStateForConstraintSystem(
         c,
-        baseState.kotlinTypePreparator,
-        baseState.kotlinTypeRefiner
+        baseState,
     ), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
         constructor(c: Context, position: IncorporationConstraintPosition) : this(
             c.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true),
