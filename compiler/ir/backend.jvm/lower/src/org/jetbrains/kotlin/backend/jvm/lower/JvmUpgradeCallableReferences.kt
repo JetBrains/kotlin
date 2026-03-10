@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.copyAttributes
+import org.jetbrains.kotlin.ir.declarations.copyAttributesWithoutOwnerId
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
@@ -46,18 +46,18 @@ internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : Upgrad
 
     // This copying shouldn't be needed after moving this lowering before InventNamesForLocalClasses
     override fun copyNecessaryAttributes(oldReference: IrFunctionExpression, newReference: IrRichFunctionReference) {
-        newReference.copyAttributes(oldReference)
+        newReference.copyAttributesWithoutOwnerId(oldReference)
     }
 
     override fun copyNecessaryAttributes(oldReference: IrFunctionReference, newReference: IrRichFunctionReference) {
-        newReference.copyAttributes(oldReference)
+        newReference.copyAttributesWithoutOwnerId(oldReference)
     }
 
     override fun copyNecessaryAttributes(oldReference: IrLocalDelegatedPropertyReference, newReference: IrRichPropertyReference) {
-        newReference.copyAttributes(oldReference)
+        newReference.copyAttributesWithoutOwnerId(oldReference)
     }
 
     override fun copyNecessaryAttributes(oldReference: IrPropertyReference, newReference: IrRichPropertyReference) {
-        newReference.copyAttributes(oldReference)
+        newReference.copyAttributesWithoutOwnerId(oldReference)
     }
 }
