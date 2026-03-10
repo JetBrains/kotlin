@@ -45,10 +45,20 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
  */
 @SinceKotlin("1.4")
 public actual fun CharArray.concatToString(): String {
-    var result = ""
-    for (char in this) {
-        result += char
+    if (this.size <= OPTIMAL_CHAR_CODE_CHUNK_SIZE) {
+        return js("String").fromCharCode.apply(null, this)
     }
+
+    var result = ""
+    var start = 0
+
+    while (start < this.size) {
+        val end = minOf(start + OPTIMAL_CHAR_CODE_CHUNK_SIZE, this.size)
+        val chunk = this.asDynamic().subarray(start, end)
+        result += js("String").fromCharCode.apply(null, chunk)
+        start = end
+    }
+
     return result
 }
 
@@ -65,10 +75,17 @@ public actual fun CharArray.concatToString(): String {
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
+
     var result = ""
-    for (index in startIndex until endIndex) {
-        result += this[index]
+    var start = startIndex
+
+    while (start < endIndex) {
+        val end = minOf(start + OPTIMAL_CHAR_CODE_CHUNK_SIZE, endIndex)
+        val chunk = this.asDynamic().subarray(start, end)
+        result += js("String").fromCharCode.apply(null, chunk)
+        start = end
     }
+
     return result
 }
 
