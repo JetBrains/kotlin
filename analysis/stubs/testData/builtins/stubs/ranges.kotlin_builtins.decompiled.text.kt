@@ -50,7 +50,7 @@ public final class CharRange public constructor(start: kotlin.Char, endInclusive
     public open val endInclusive: kotlin.Char /* compiled code */
         public open get() { /* compiled code */ }
 
-    @kotlin.Deprecated @kotlin.SinceKotlin @kotlin.WasExperimental public open val endExclusive: kotlin.Char /* compiled code */
+    @kotlin.Deprecated @kotlin.SinceKotlin public open val endExclusive: kotlin.Char /* compiled code */
         public open get() { /* compiled code */ }
 
     public open operator fun contains(value: kotlin.Char): kotlin.Boolean { /* compiled code */ }
@@ -121,7 +121,7 @@ public final class IntRange public constructor(start: kotlin.Int, endInclusive: 
     public open val endInclusive: kotlin.Int /* compiled code */
         public open get() { /* compiled code */ }
 
-    @kotlin.Deprecated @kotlin.SinceKotlin @kotlin.WasExperimental public open val endExclusive: kotlin.Int /* compiled code */
+    @kotlin.Deprecated @kotlin.SinceKotlin public open val endExclusive: kotlin.Int /* compiled code */
         public open get() { /* compiled code */ }
 
     public open operator fun contains(value: kotlin.Int): kotlin.Boolean { /* compiled code */ }
@@ -182,7 +182,7 @@ public final class LongRange public constructor(start: kotlin.Long, endInclusive
     public open val endInclusive: kotlin.Long /* compiled code */
         public open get() { /* compiled code */ }
 
-    @kotlin.Deprecated @kotlin.SinceKotlin @kotlin.WasExperimental public open val endExclusive: kotlin.Long /* compiled code */
+    @kotlin.Deprecated @kotlin.SinceKotlin public open val endExclusive: kotlin.Long /* compiled code */
         public open get() { /* compiled code */ }
 
     public open operator fun contains(value: kotlin.Long): kotlin.Boolean { /* compiled code */ }
@@ -196,7 +196,7 @@ public final class LongRange public constructor(start: kotlin.Long, endInclusive
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin @kotlin.WasExperimental public interface OpenEndRange<T : kotlin.Comparable<T>> {
+@kotlin.SinceKotlin public interface OpenEndRange<T : kotlin.Comparable<T>> {
     public abstract val start: T
 
     public abstract val endExclusive: T

@@ -329,14 +329,6 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=WasExperimental]
-            valueArguments: [ markerClass -> [NormalClass(value=kotlin/ExperimentalStdlibApi)] ]
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=WasExperimental]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -768,14 +760,6 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=WasExperimental]
-            valueArguments: [ markerClass -> [NormalClass(value=kotlin/ExperimentalStdlibApi)] ]
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=WasExperimental]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -1162,14 +1146,6 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=WasExperimental]
-            valueArguments: [ markerClass -> [NormalClass(value=kotlin/ExperimentalStdlibApi)] ]
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=WasExperimental]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -1241,14 +1217,6 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=WasExperimental]
-        valueArguments: [ markerClass -> [NormalClass(value=kotlin/ExperimentalStdlibApi)] ]
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=WasExperimental]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
         TYPE_REFERENCE

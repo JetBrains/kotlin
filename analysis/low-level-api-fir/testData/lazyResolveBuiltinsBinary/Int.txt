@@ -111,13 +111,13 @@ TARGET: public final [ResolvedTo(RAW_FIR)] class Int : kotlin.Number, kotlin.Com
 
     public final operator [ResolvedTo(RAW_FIR)] fun rangeTo([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final infix [ResolvedTo(RAW_FIR)] fun shl([ResolvedTo(RAW_FIR)] bitCount: kotlin.Int): kotlin.Int { LAZY_BLOCK }
 
@@ -266,13 +266,13 @@ TARGET: public final [ResolvedTo(RAW_FIR)] class Int : kotlin.Number, kotlin.Com
 
     public final operator [ResolvedTo(RAW_FIR)] fun rangeTo([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final infix [ResolvedTo(RAW_FIR)] fun shl([ResolvedTo(RAW_FIR)] bitCount: kotlin.Int): kotlin.Int { LAZY_BLOCK }
 
@@ -421,13 +421,13 @@ TARGET: public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Int : kot
 
     public final operator [ResolvedTo(RAW_FIR)] fun rangeTo([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final infix [ResolvedTo(RAW_FIR)] fun shl([ResolvedTo(RAW_FIR)] bitCount: kotlin.Int): kotlin.Int { LAZY_BLOCK }
 
@@ -576,13 +576,13 @@ TARGET: public final [ResolvedTo(COMPANION_GENERATION)] class Int : kotlin.Numbe
 
     public final operator [ResolvedTo(RAW_FIR)] fun rangeTo([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final infix [ResolvedTo(RAW_FIR)] fun shl([ResolvedTo(RAW_FIR)] bitCount: kotlin.Int): kotlin.Int { LAZY_BLOCK }
 
@@ -731,13 +731,13 @@ TARGET: public final [ResolvedTo(SUPER_TYPES)] class Int : R|kotlin/Number|, R|k
 
     public final operator [ResolvedTo(RAW_FIR)] fun rangeTo([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final infix [ResolvedTo(RAW_FIR)] fun shl([ResolvedTo(RAW_FIR)] bitCount: kotlin.Int): kotlin.Int { LAZY_BLOCK }
 
@@ -886,13 +886,13 @@ TARGET: public final [ResolvedTo(TYPES)] class Int : R|kotlin/Number|, R|kotlin/
 
     public final operator [ResolvedTo(RAW_FIR)] fun rangeTo([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final infix [ResolvedTo(RAW_FIR)] fun shl([ResolvedTo(RAW_FIR)] bitCount: kotlin.Int): kotlin.Int { LAZY_BLOCK }
 
@@ -1041,13 +1041,13 @@ TARGET: public final [ResolvedTo(STATUS)] class Int : R|kotlin/Number|, R|kotlin
 
     public final operator [ResolvedTo(RAW_FIR)] fun rangeTo([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final infix [ResolvedTo(RAW_FIR)] fun shl([ResolvedTo(RAW_FIR)] bitCount: kotlin.Int): kotlin.Int { LAZY_BLOCK }
 
@@ -1196,13 +1196,13 @@ TARGET: public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Int : R|kotlin/N
 
     public final operator [ResolvedTo(RAW_FIR)] fun rangeTo([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final infix [ResolvedTo(RAW_FIR)] fun shl([ResolvedTo(RAW_FIR)] bitCount: kotlin.Int): kotlin.Int { LAZY_BLOCK }
 
@@ -1351,13 +1351,13 @@ TARGET: public final [ResolvedTo(CONTRACTS)] class Int : R|kotlin/Number|, R|kot
 
     public final operator [ResolvedTo(RAW_FIR)] fun rangeTo([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final infix [ResolvedTo(RAW_FIR)] fun shl([ResolvedTo(RAW_FIR)] bitCount: kotlin.Int): kotlin.Int { LAZY_BLOCK }
 
@@ -1506,13 +1506,13 @@ TARGET: public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Int : R|kot
 
     public final operator [ResolvedTo(RAW_FIR)] fun rangeTo([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final infix [ResolvedTo(RAW_FIR)] fun shl([ResolvedTo(RAW_FIR)] bitCount: kotlin.Int): kotlin.Int { LAZY_BLOCK }
 
@@ -1661,13 +1661,13 @@ TARGET: public final [ResolvedTo(CONSTANT_EVALUATION)] class Int : R|kotlin/Numb
 
     public final operator [ResolvedTo(RAW_FIR)] fun rangeTo([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final infix [ResolvedTo(RAW_FIR)] fun shl([ResolvedTo(RAW_FIR)] bitCount: kotlin.Int): kotlin.Int { LAZY_BLOCK }
 
@@ -1816,13 +1816,13 @@ TARGET: public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Int : R|kotlin/Num
 
     public final operator [ResolvedTo(RAW_FIR)] fun rangeTo([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Byte): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Short): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Int): kotlin.ranges.IntRange { LAZY_BLOCK }
 
-    @kotlin.SinceKotlin[Unresolved]() @kotlin.WasExperimental[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
+    @kotlin.SinceKotlin[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rangeUntil([ResolvedTo(RAW_FIR)] other: kotlin.Long): kotlin.ranges.LongRange { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final infix [ResolvedTo(RAW_FIR)] fun shl([ResolvedTo(RAW_FIR)] bitCount: kotlin.Int): kotlin.Int { LAZY_BLOCK }
 
@@ -1971,13 +1971,13 @@ TARGET: public final [ResolvedTo(BODY_RESOLVE)] class Int : R|kotlin/Number|, R|
 
     public final operator [ResolvedTo(STATUS)] fun rangeTo([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Byte|): R|kotlin/ranges/IntRange| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Byte|): R|kotlin/ranges/IntRange| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Short|): R|kotlin/ranges/IntRange| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Short|): R|kotlin/ranges/IntRange| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/ranges/IntRange| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/ranges/IntRange| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| { LAZY_BLOCK }
 
     @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final infix [ResolvedTo(STATUS)] fun shl([ResolvedTo(STATUS)] bitCount: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
 
@@ -2293,16 +2293,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Byte|): R|kotlin/ranges/IntRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Byte|): R|kotlin/ranges/IntRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Short|): R|kotlin/ranges/IntRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Short|): R|kotlin/ranges/IntRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/ranges/IntRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/ranges/IntRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
@@ -2418,7 +2418,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Char|): R|kotlin/ranges/CharRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Char|): R|kotlin/ranges/CharRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Char|): R|kotlin/ranges/CharRange| {
         }
 
         @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
@@ -3172,16 +3172,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Byte|): R|kotlin/ranges/IntRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Byte|): R|kotlin/ranges/IntRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Short|): R|kotlin/ranges/IntRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Short|): R|kotlin/ranges/IntRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/ranges/IntRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/ranges/IntRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final infix [ResolvedTo(BODY_RESOLVE)] fun shl([ResolvedTo(BODY_RESOLVE)] bitCount: R|kotlin/Int|): R|kotlin/Int| {
@@ -3411,16 +3411,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Byte|): R|kotlin/ranges/LongRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Byte|): R|kotlin/ranges/LongRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Short|): R|kotlin/ranges/LongRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Short|): R|kotlin/ranges/LongRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/ranges/LongRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/ranges/LongRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final infix [ResolvedTo(BODY_RESOLVE)] fun shl([ResolvedTo(BODY_RESOLVE)] bitCount: R|kotlin/Int|): R|kotlin/Long| {
@@ -3749,16 +3749,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Byte|): R|kotlin/ranges/IntRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Byte|): R|kotlin/ranges/IntRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Short|): R|kotlin/ranges/IntRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Short|): R|kotlin/ranges/IntRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/ranges/IntRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/ranges/IntRange| {
         }
 
-        @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
+        @R|kotlin/SinceKotlin|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {

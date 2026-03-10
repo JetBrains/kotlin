@@ -188,13 +188,13 @@ public final class Byte private constructor() : kotlin.Number, kotlin.Comparable
 
     public final operator fun rangeTo(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
     @kotlin.internal.IntrinsicConstEvaluation public open fun toByte(): kotlin.Byte { /* compiled code */ }
 
@@ -264,7 +264,7 @@ public final class Char private constructor() : kotlin.Comparable<kotlin.Char> {
 
     public final operator fun rangeTo(other: kotlin.Char): kotlin.ranges.CharRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Char): kotlin.ranges.CharRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Char): kotlin.ranges.CharRange { /* compiled code */ }
 
     @kotlin.Deprecated @kotlin.DeprecatedSinceKotlin @kotlin.internal.IntrinsicConstEvaluation public final fun toByte(): kotlin.Byte { /* compiled code */ }
 
@@ -731,13 +731,13 @@ public final class Int private constructor() : kotlin.Number, kotlin.Comparable<
 
     public final operator fun rangeTo(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
     @kotlin.internal.IntrinsicConstEvaluation public final infix fun shl(bitCount: kotlin.Int): kotlin.Int { /* compiled code */ }
 
@@ -883,13 +883,13 @@ public final class Long private constructor() : kotlin.Number, kotlin.Comparable
 
     public final operator fun rangeTo(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
     @kotlin.internal.IntrinsicConstEvaluation public final infix fun shl(bitCount: kotlin.Int): kotlin.Long { /* compiled code */ }
 
@@ -1086,13 +1086,13 @@ public final class Short private constructor() : kotlin.Number, kotlin.Comparabl
 
     public final operator fun rangeTo(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin @kotlin.WasExperimental public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
     @kotlin.internal.IntrinsicConstEvaluation public open fun toByte(): kotlin.Byte { /* compiled code */ }
 

@@ -3384,8 +3384,6 @@ KaNamedFunctionSymbol:
   annotations: [
     kotlin/SinceKotlin(version = "1.9")
       psi: null
-    kotlin/WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
-      psi: null
   ]
   callableId: kotlin/Int.rangeUntil
   compilerVisibility: Public
@@ -3465,8 +3463,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: [
     kotlin/SinceKotlin(version = "1.9")
-      psi: null
-    kotlin/WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
       psi: null
   ]
   callableId: kotlin/Int.rangeUntil
@@ -3548,8 +3544,6 @@ KaNamedFunctionSymbol:
   annotations: [
     kotlin/SinceKotlin(version = "1.9")
       psi: null
-    kotlin/WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
-      psi: null
   ]
   callableId: kotlin/Int.rangeUntil
   compilerVisibility: Public
@@ -3629,8 +3623,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: [
     kotlin/SinceKotlin(version = "1.9")
-      psi: null
-    kotlin/WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
       psi: null
   ]
   callableId: kotlin/Int.rangeUntil
