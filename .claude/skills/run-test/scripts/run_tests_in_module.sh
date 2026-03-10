@@ -8,7 +8,8 @@ set +e
 export JAVA_HOME=$JDK_17
 MODULE=$1
 shift
-/Users/Simon.Ogorodnik/Workspace/KotlinRepo/work3/gradlew --init-script /Users/Simon.Ogorodnik/Workspace/KotlinRepo/work3/gradle/init-scripts/junit-xml-reports.gradle cleanTest "$MODULE":test "$@" --continue
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+"$PROJECT_ROOT"/gradlew --init-script "$PROJECT_ROOT"/gradle/init-scripts/junit-xml-reports.gradle cleanTest "$MODULE":test "$@" --continue
 
 echo "Test result reports found:"
 find . -type d -name "test-results" -exec find {} -type f -name "*.xml" \;
