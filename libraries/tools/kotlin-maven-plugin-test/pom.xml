@@ -13,6 +13,9 @@
     <artifactId>kotlin-maven-plugin-test</artifactId>
 
     <properties>
+        <!-- By default use the current java home as the default JDK for the tests. It gets changed by profile if needed. -->
+        <kotlinTestBuildJdk>${java.home}</kotlinTestBuildJdk>
+
         <jdk8Home>${env.JDK_1_8}</jdk8Home>
         <jdk11Home>${env.JDK_11_0}</jdk11Home>
         <jdk17Home>${env.JDK_17_0}</jdk17Home>
@@ -126,7 +129,7 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <jdkHome>${jdk17Home}</jdkHome>
+                            <jdkHome>${kotlinTestBuildJdk}</jdkHome>
                             <sourceDirs>
                                 <sourceDir>src/main/kotlin</sourceDir>
                                 <sourceDir>src/main/java</sourceDir>
@@ -140,7 +143,7 @@
                             <goal>test-compile</goal>
                         </goals>
                         <configuration>
-                            <jdkHome>${jdk17Home}</jdkHome>
+                            <jdkHome>${kotlinTestBuildJdk}</jdkHome>
                             <sourceDirs>
                                 <sourceDir>src/test/kotlin</sourceDir>
                                 <sourceDir>src/test/java</sourceDir>
@@ -173,6 +176,18 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>autoConfigureKotlinTestBuildJdkFromEnv</id>
+            <activation>
+                <property>
+                    <name>env.JDK_17_0</name>
+                </property>
+            </activation>
+            <properties>
+                <kotlinTestBuildJdk>${env.JDK_17_0}</kotlinTestBuildJdk>
+            </properties>
+        </profile>
+
         <!--
         moved the integration test into a profile so we can disable this
         for example this integration test doesn't work if offline
@@ -194,7 +209,7 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <jvm>${jdk17Home}/bin/java</jvm>
+                                    <jvm>${kotlinTestBuildJdk}/bin/java</jvm>
                                     <systemPropertyVariables>
                                         <maven.home>${maven.home}</maven.home>
                                         <kotlin.version>${project.version}</kotlin.version>
