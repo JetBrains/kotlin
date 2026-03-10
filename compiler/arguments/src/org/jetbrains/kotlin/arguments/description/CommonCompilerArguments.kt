@@ -43,11 +43,13 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "kotlin-home"
         description = "Path to the Kotlin compiler home directory used for the discovery of runtime libraries.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_50,
@@ -968,7 +970,8 @@ The argument should be used only if the new compilation scheme is enabled with -
     compilerArgument {
         name = "Xseparate-kmp-compilation"
         compilerName = "separateKmpCompilationScheme"
-        description = "Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies".asReleaseDependent()
+        description =
+            "Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         lifecycle(

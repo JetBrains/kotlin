@@ -16,6 +16,7 @@ import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
+import kotlin.io.path.Path
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.API_VERSION
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
@@ -234,7 +235,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { if (X_WARNING_LEVEL in this) { arguments.warningLevels = get(X_WARNING_LEVEL) ?: emptyArray()} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_WARNING_LEVEL. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     try { if (X_WHEN_GUARDS in this) { arguments.whenGuards = get(X_WHEN_GUARDS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_WHEN_GUARDS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
     if (API_VERSION in this) { arguments.apiVersion = get(API_VERSION)?.stringValue}
-    if (KOTLIN_HOME in this) { arguments.kotlinHome = get(KOTLIN_HOME)}
+    if (KOTLIN_HOME in this) { arguments.kotlinHome = get(KOTLIN_HOME)?.absolutePathStringOrThrow()}
     if (LANGUAGE_VERSION in this) { arguments.languageVersion = get(LANGUAGE_VERSION)?.stringValue}
     if (OPT_IN in this) { arguments.optIn = get(OPT_IN) ?: emptyArray()}
     if (PROGRESSIVE in this) { arguments.progressiveMode = get(PROGRESSIVE)}
@@ -326,7 +327,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_WARNING_LEVEL] = arguments.warningLevels } catch (_: NoSuchMethodError) {  }
     try { this[X_WHEN_GUARDS] = arguments.whenGuards } catch (_: NoSuchMethodError) {  }
     try { this[API_VERSION] = arguments.apiVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -api-version value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[KOTLIN_HOME] = arguments.kotlinHome } catch (_: NoSuchMethodError) {  }
+    try { this[KOTLIN_HOME] = arguments.kotlinHome?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[LANGUAGE_VERSION] = arguments.languageVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -language-version value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[OPT_IN] = arguments.optIn } catch (_: NoSuchMethodError) {  }
     try { this[PROGRESSIVE] = arguments.progressiveMode } catch (_: NoSuchMethodError) {  }
@@ -581,7 +582,8 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val API_VERSION: CommonCompilerArgument<KotlinVersion?> =
         CommonCompilerArgument("API_VERSION")
 
-    public val KOTLIN_HOME: CommonCompilerArgument<String?> = CommonCompilerArgument("KOTLIN_HOME")
+    public val KOTLIN_HOME: CommonCompilerArgument<java.nio.`file`.Path?> =
+        CommonCompilerArgument("KOTLIN_HOME")
 
     public val LANGUAGE_VERSION: CommonCompilerArgument<KotlinVersion?> =
         CommonCompilerArgument("LANGUAGE_VERSION")

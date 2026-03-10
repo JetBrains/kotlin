@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
+import org.jetbrains.kotlin.arguments.description.actualCommonCompilerArguments
 import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
@@ -29,6 +30,7 @@ abstract class BaseArgumentTest<T>(val argumentName: String) : BaseCompilationTe
     protected fun getDefaultValueString(): String? {
         val argument =
             actualJvmCompilerArguments.arguments.firstOrNull { it.name == argumentName }
+                ?: actualCommonCompilerArguments.arguments.firstOrNull { it.name == argumentName }
                 ?: error("Argument '$argumentName' not found.")
 
         return argument.defaultValueString()

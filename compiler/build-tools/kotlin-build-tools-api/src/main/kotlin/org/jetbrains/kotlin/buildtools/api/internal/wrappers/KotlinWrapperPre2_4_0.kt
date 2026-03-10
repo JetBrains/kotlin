@@ -138,9 +138,12 @@ internal class KotlinWrapperPre2_4_0(
         })
 
         override fun <V> get(key: JvmCompilerArguments.JvmCompilerArgument<V>): V = interceptor[key]
-
         @Deprecated("Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
         override fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V) = interceptor.set(key, value)
+
+        override fun <V> get(key: CommonCompilerArguments.CommonCompilerArgument<V>): V = interceptor[key]
+        @Deprecated("Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
+        override fun <V> set(key: CommonCompilerArguments.CommonCompilerArgument<V>, value: V) = interceptor.set(key, value)
     }
 
     internal class JvmCompilerArgumentsBuilderWrapper(
@@ -161,12 +164,48 @@ internal class KotlinWrapperPre2_4_0(
 
         override fun <V> get(key: JvmCompilerArguments.JvmCompilerArgument<V>): V = interceptor[key]
         override fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V) = interceptor.set(key, value)
+
+        override fun <V> get(key: CommonCompilerArguments.CommonCompilerArgument<V>): V = interceptor[key]
+        override fun <V> set(key: CommonCompilerArguments.CommonCompilerArgument<V>, value: V) = interceptor.set(key, value)
     }
 
     @OptIn(ExperimentalCompilerArgument::class)
     private class JvmArgumentInterceptor(
         private val delegate: JvmArgumentAccessor,
     ) : JvmArgumentAccessor by delegate {
+
+        @Suppress("UNCHECKED_CAST", "CAST_NEVER_SUCCEEDS")
+        override fun <V> get(key: CommonCompilerArguments.CommonCompilerArgument<V>): V {
+            return when (key) {
+                CommonCompilerArguments.KOTLIN_HOME -> {
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
+                    Path(stringValue) as V
+                }
+
+                else -> delegate[key]
+            }
+        }
+
+        override fun <V> set(
+            key: CommonCompilerArguments.CommonCompilerArgument<V>,
+            value: V,
+        ) {
+            when (key) {
+                CommonCompilerArguments.KOTLIN_HOME -> {
+                    val pathValue = value as Path?
+                    val stringValue = pathValue?.toFile()?.absolutePath
+                    val stringKey = CommonCompilerArguments.CommonCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                    delegate[stringKey] = stringValue
+                }
+
+                else -> {
+                    delegate[key] = value
+                }
+            }
+        }
 
         @Suppress("CAST_NEVER_SUCCEEDS", "UNCHECKED_CAST")
         override fun <V> get(key: JvmCompilerArguments.JvmCompilerArgument<V>): V {

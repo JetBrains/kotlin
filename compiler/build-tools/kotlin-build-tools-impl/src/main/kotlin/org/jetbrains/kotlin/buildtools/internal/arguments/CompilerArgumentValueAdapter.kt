@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.CommonCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -68,11 +69,33 @@ private abstract class CommonToolArgumentPre2_4_0ValueAdapter : CommonToolArgume
 private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolArgumentPre2_4_0ValueAdapter(),
     CommonCompilerArgumentValueAdapter {
     override fun <V, T> mapFrom(value: T, key: CommonCompilerArgument<V>): V {
-        return value as V
+        if (value == null) return null as V
+
+        return when (key) {
+            CommonCompilerArguments.KOTLIN_HOME -> {
+                val pathValue = value as Path
+                pathValue.absolutePathStringOrThrow() as V
+            }
+
+            else -> {
+                value as V
+            }
+        }
     }
 
     override fun <T, V> mapTo(value: V, key: CommonCompilerArgument<V>): T {
-        return value as T
+        if (value == null) return null as T
+
+        return when (key) {
+            CommonCompilerArguments.KOTLIN_HOME -> {
+                val stringValue = value as String
+                Path(stringValue) as T
+            }
+
+            else -> {
+                value as T
+            }
+        }
     }
 }
 

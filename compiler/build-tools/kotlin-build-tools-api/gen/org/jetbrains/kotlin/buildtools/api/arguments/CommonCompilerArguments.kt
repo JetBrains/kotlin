@@ -3,6 +3,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
+import java.nio.`file`.Path
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.Deprecated
@@ -817,7 +818,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Path to the Kotlin compiler home directory used for the discovery of runtime libraries.
      */
     @JvmField
-    public val KOTLIN_HOME: CommonCompilerArgument<String?> =
+    public val KOTLIN_HOME: CommonCompilerArgument<Path?> =
         CommonCompilerArgument("KOTLIN_HOME", KotlinReleaseVersion(1, 1, 50))
 
     /**

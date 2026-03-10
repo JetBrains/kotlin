@@ -5563,7 +5563,7 @@
                             "removedVersion": null
                         },
                         "argumentType": {
-                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.PathType",
                             "isNullable": {
                                 "current": true,
                                 "valueInVersions": []
