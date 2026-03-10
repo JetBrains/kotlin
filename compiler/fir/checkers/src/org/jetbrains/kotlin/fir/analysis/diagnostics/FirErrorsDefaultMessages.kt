@@ -777,6 +777,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SINGLETON_IN_SUPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SINGLE_ANONYMOUS_FUNCTION_WITH_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSIBLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSIBLE_ON_IMPLICIT_INVOKE_RECEIVER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_RELYING_ON_CALLS_IN_PLACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SPREAD_OF_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUBCLASS_OPT_IN_ARGUMENT_IS_NOT_MARKER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE
@@ -975,6 +976,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(UNSUPPORTED_FEATURE, "{0}", LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED))
         map.put(UNSUPPORTED_SUSPEND_TEST, "'suspend' functions annotated with '@kotlin.test.Test' are unsupported.")
         map.put(NEW_INFERENCE_ERROR, "New inference error [{0}].", STRING)
+        map.put(SMARTCAST_RELYING_ON_CALLS_IN_PLACE, "{0}", STRING)
 
         // Miscellaneous
         map.put(OTHER_ERROR, "Unknown error.")

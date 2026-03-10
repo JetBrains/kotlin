@@ -895,6 +895,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val SETTER_PROJECTED_OUT: KtDiagnosticFactory3<ConeKotlinType, String, FirPropertySymbol> = KtDiagnosticFactory3("SETTER_PROJECTED_OUT", ERROR, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, KtBinaryExpression::class, getRendererFactory())
     val WRONG_INVOCATION_KIND: KtDiagnosticFactory3<FirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange> = KtDiagnosticFactory3("WRONG_INVOCATION_KIND", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val LEAKED_IN_PLACE_LAMBDA: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("LEAKED_IN_PLACE_LAMBDA", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val VAR_OVERWRITTEN_BEFORE_CAPTURED_LAMBDA: KtDiagnosticFactory1<FirPropertySymbol> = KtDiagnosticFactory1("VAR_OVERWRITTEN_BEFORE_CAPTURED_LAMBDA", WARNING, SourceElementPositioningStrategies.DEFAULT, KtBinaryExpression::class, getRendererFactory())
     val VARIABLE_WITH_NO_TYPE_NO_INITIALIZER: KtDiagnosticFactory0 = KtDiagnosticFactory0("VARIABLE_WITH_NO_TYPE_NO_INITIALIZER", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtVariableDeclaration::class, getRendererFactory())
     val INITIALIZATION_BEFORE_DECLARATION: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("INITIALIZATION_BEFORE_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
     val INITIALIZATION_BEFORE_DECLARATION_WARNING: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("INITIALIZATION_BEFORE_DECLARATION_WARNING", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
@@ -964,6 +965,7 @@ object FirErrors : KtDiagnosticsContainer() {
     // Function contracts
     val ERROR_IN_CONTRACT_DESCRIPTION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("ERROR_IN_CONTRACT_DESCRIPTION", ERROR, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, KtElement::class, getRendererFactory())
     val CONTRACT_NOT_ALLOWED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("CONTRACT_NOT_ALLOWED", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, KtElement::class, getRendererFactory())
+    val SMARTCAST_RELYING_ON_CALLS_IN_PLACE: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("SMARTCAST_RELYING_ON_CALLS_IN_PLACE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
 
     // Conventions
     val NO_GET_METHOD: KtDiagnosticFactory0 = KtDiagnosticFactory0("NO_GET_METHOD", ERROR, SourceElementPositioningStrategies.ARRAY_ACCESS, KtArrayAccessExpression::class, getRendererFactory())

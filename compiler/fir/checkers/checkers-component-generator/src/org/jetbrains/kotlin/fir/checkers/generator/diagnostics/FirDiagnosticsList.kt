@@ -1844,6 +1844,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val LEAKED_IN_PLACE_LAMBDA by warning<PsiElement> {
             parameter<Symbol>("lambda")
         }
+        val VAR_OVERWRITTEN_BEFORE_CAPTURED_LAMBDA by warning<KtBinaryExpression> {
+            parameter<FirPropertySymbol>("variable")
+        }
         val VARIABLE_WITH_NO_TYPE_NO_INITIALIZER by error<KtVariableDeclaration>(PositioningStrategy.DECLARATION_NAME)
 
         val INITIALIZATION_BEFORE_DECLARATION by error<KtExpression> {
@@ -1998,6 +2001,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val CONTRACT_NOT_ALLOWED by error<KtElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<String>("reason")
+        }
+        val SMARTCAST_RELYING_ON_CALLS_IN_PLACE by warning<KtExpression> {
+            parameter<String>("info")
         }
     }
 

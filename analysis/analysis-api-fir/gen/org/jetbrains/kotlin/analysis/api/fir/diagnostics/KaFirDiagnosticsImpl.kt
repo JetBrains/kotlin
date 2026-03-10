@@ -4501,6 +4501,12 @@ internal class LeakedInPlaceLambdaImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.LeakedInPlaceLambda
 
+internal class VarOverwrittenBeforeCapturedLambdaImpl(
+    override val variable: KaVariableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtBinaryExpression>(firDiagnostic, token), KaFirDiagnostic.VarOverwrittenBeforeCapturedLambda
+
 internal class VariableWithNoTypeNoInitializerImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -4858,6 +4864,12 @@ internal class ContractNotAllowedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ContractNotAllowed
+
+internal class SmartcastRelyingOnCallsInPlaceImpl(
+    override val info: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.SmartcastRelyingOnCallsInPlace
 
 internal class NoGetMethodImpl(
     firDiagnostic: KtPsiDiagnostic,
