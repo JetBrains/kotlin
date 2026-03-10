@@ -1,0 +1,28 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.decompiler.konan
+
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinLabelProviderService
+import org.jetbrains.kotlin.library.KlibConstants
+
+object KlibFileType : FileType {
+    override fun getName() = "Klib"
+
+    override fun getDescription(): String {
+        return KotlinLabelProviderService.getService()?.getLabelForKlibFileType()
+            ?: DEFAULT_DESCRIPTION
+    }
+
+    override fun getDefaultExtension() = KlibConstants.KLIB_FILE_EXTENSION
+    override fun getIcon(): Nothing? = null
+    override fun isBinary() = true
+    override fun isReadOnly() = true
+    override fun getCharset(file: VirtualFile, content: ByteArray): Nothing? = null
+
+    private const val DEFAULT_DESCRIPTION = "Kotlin Library"
+}

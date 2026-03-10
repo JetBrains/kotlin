@@ -38,12 +38,12 @@
   <extensions defaultExtensionNs="com.intellij">
     <stubElementTypeHolder externalIdPrefix="kotlin." class="org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes"/>
 
-    <fileType name="ARCHIVE" extensions="klib"/>
-
     <fileType name="Kotlin" fieldName="INSTANCE" language="kotlin" extensions="kt;kts"
               implementationClass="org.jetbrains.kotlin.idea.KotlinFileType"/>
     <fileType name="KNM" fieldName="INSTANCE" extensions="knm"
               implementationClass="org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType"/>
+    <fileType name="Klib" fieldName="INSTANCE" extensions="klib"
+              implementationClass="org.jetbrains.kotlin.analysis.decompiler.konan.KlibFileType"/>
     <fileType name="KJSM" fieldName="INSTANCE" extensions="kjsm"
               implementationClass="org.jetbrains.kotlin.analysis.decompiler.js.KotlinJavaScriptMetaFileType"/>
     <fileType name="kotlin_builtins" fieldName="INSTANCE" extensions="kotlin_builtins;kotlin_metadata"
