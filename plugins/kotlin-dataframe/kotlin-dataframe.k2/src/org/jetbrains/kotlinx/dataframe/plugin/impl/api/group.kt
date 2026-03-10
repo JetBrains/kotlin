@@ -21,9 +21,7 @@ class Into0 : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df
-            .asDataFrame(impliedColumnsResolver = receiver.columns)
-            .group { receiver.columns }.into(column)
-            .toPluginDataFrameSchema()
+            .modify(impliedColumnsResolver = receiver.columns) { group { receiver.columns }.into(column) }
     }
 }
 
@@ -33,8 +31,6 @@ class IntoStringLambda : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df
-            .asDataFrame(impliedColumnsResolver = receiver.columns)
-            .group { receiver.columns }.into(column)
-            .toPluginDataFrameSchema()
+            .modify(impliedColumnsResolver = receiver.columns) { group { receiver.columns }.into(column) }
     }
 }

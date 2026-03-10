@@ -69,7 +69,7 @@ class RenameMapping : AbstractSchemaModificationInterpreter() {
                 }
             }
         }
-        return receiver.asDataFrame(impliedColumnsResolver = expectedColumns).rename(*mappings.toTypedArray()).toPluginDataFrameSchema()
+        return receiver.modify(impliedColumnsResolver = expectedColumns) { rename(*mappings.toTypedArray()) }
     }
 }
 
@@ -137,9 +137,7 @@ class RenameToCamelCase : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver by dataFrame()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        receiver.asDataFrame(/*operation has no selector*/)
-            .renameToCamelCase()
-            .toPluginDataFrameSchema()
+        receiver.modify(/*operation has no selector*/) { renameToCamelCase() }
 }
 
 class RenameToCamelCaseClause : AbstractSchemaModificationInterpreter() {
@@ -147,8 +145,6 @@ class RenameToCamelCaseClause : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val selectedPaths = receiver.columns.resolve(receiver.schema).map { it.path }
-        return receiver.schema.asDataFrame(impliedColumnsResolver = receiver.columns)
-            .rename { selectedPaths.toColumnSet() }.toCamelCase()
-            .toPluginDataFrameSchema()
+        return receiver.schema.modify(impliedColumnsResolver = receiver.columns) { rename { selectedPaths.toColumnSet() }.toCamelCase() }
     }
 }

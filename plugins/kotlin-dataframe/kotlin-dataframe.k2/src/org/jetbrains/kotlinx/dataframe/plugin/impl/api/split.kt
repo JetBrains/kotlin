@@ -260,10 +260,10 @@ class SplitAnyFrameIntoColumns : AbstractSchemaModificationInterpreter() {
             .columns()
             .map { implode(it) }
 
-        return receiver.df.asDataFrame()
-            .convert { receiver.columns.single() }
-            .asColumn { SimpleColumnGroup(it.name(), columns).asDataColumn() }
-            .toPluginDataFrameSchema()
+        return receiver.df.modify {
+            convert { receiver.columns.single() }
+                .asColumn { SimpleColumnGroup(it.name(), columns).asDataColumn() }
+        }
     }
 }
 

@@ -44,7 +44,7 @@ class AsGroupBy : AbstractInterpreter<GroupBy>() {
     override fun Arguments.interpret(): GroupBy {
         val column = selector.resolve(receiver).singleOrNull()?.column
         return if (column is SimpleFrameColumn) {
-            GroupBy(receiver.asDataFrame().remove { selector }.toPluginDataFrameSchema(), PluginDataFrameSchema(column.columns()))
+            GroupBy(receiver.modify { remove { selector } }, PluginDataFrameSchema(column.columns()))
         } else {
             GroupBy.EMPTY
         }
@@ -57,7 +57,7 @@ class AsGroupByDefault : AbstractInterpreter<GroupBy>() {
     override fun Arguments.interpret(): GroupBy {
         val groups = receiver.columns().singleOrNull { it is SimpleFrameColumn } as? SimpleFrameColumn
         return if (groups != null) {
-            GroupBy(receiver.asDataFrame().remove(groups.name).toPluginDataFrameSchema(), PluginDataFrameSchema(groups.columns()))
+            GroupBy(receiver.modify { remove(groups.name) }, PluginDataFrameSchema(groups.columns()))
         } else {
             GroupBy.EMPTY
         }
