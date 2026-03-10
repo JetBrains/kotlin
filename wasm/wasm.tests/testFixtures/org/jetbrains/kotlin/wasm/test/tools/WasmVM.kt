@@ -101,6 +101,26 @@ internal sealed class WasmVM(
             )
     }
 
+    object ReferenceInterpreter : WasmVM("Ref", property = "wasm.engine.path.ReferenceInterpreter", entryPointIsJsFile = false) {
+        override fun run(
+            entryFile: String,
+            jsFiles: List<String>,
+            workingDirectory: File?,
+            useNewExceptionHandling: Boolean,
+            toolArgs: List<String>,
+        ): String {
+            require(jsFiles.isEmpty())
+            require(useNewExceptionHandling)
+            return tool.run(
+                *toolArgs.toTypedArray(),
+                entryFile,
+                "-e",
+                "(invoke \"startTest\")",
+                workingDirectory = workingDirectory,
+            )
+        }
+    }
+
     object Wasmtime : WasmVM(shortName = "Wasmtime", property = "wasm.engine.path.Wasmtime", entryPointIsJsFile = false) {
         override fun run(
             entryFile: String,

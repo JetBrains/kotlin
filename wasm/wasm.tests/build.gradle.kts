@@ -39,6 +39,7 @@ repositories {
     }
     githubRelease("WasmEdge", "WasmEdge", groupAlias = "org.wasmedge", revisionPrefix = "")
     githubRelease("bytecodealliance", "wasmtime", groupAlias = "dev.wasmtime")
+    githubRelease("alex28sh", "stack-switching", groupAlias = "io.github.alex28sh")
 }
 
 enum class OsName { WINDOWS, MAC, LINUX, UNKNOWN }
@@ -194,6 +195,20 @@ val wasmtime by configurations.creating {
     isCanBeConsumed = false
 }
 
+val wasmRefInterpVersion = libs.versions.wasmReferenceInterpreter
+val wasmRefInterpPlatformSuffix = when (currentOsType) {
+    OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
+//    OsType(OsName.MAC, OsArch.X86_64) -> "macos-x86_64"
+    OsType(OsName.MAC, OsArch.ARM64) -> "macos-aarch64"
+    else -> error("unsupported os type $currentOsType")
+}
+val wasmRefInterpSuffix = "$wasmRefInterpPlatformSuffix@tar.gz"
+
+val wasmReferenceInterpreter by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+
 dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
@@ -232,6 +247,12 @@ dependencies {
     implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-windows@zip")
     implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-linux@tar.xz")
     implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:aarch64-macos@tar.xz")
+
+    wasmReferenceInterpreter("io.github.alex28sh:stack-switching:${wasmRefInterpVersion.get()}:$wasmRefInterpSuffix")
+
+    implicitDependencies("io.github.alex28sh:stack-switching:${wasmRefInterpVersion.get()}:linux-x86_64@tar.gz")
+//    implicitDependencies("io.github.alex28sh:stack-switching:${wasmRefInterpVersion.get()}:macos-x86_64@tar.gz")
+    implicitDependencies("io.github.alex28sh:stack-switching:${wasmRefInterpVersion.get()}:macos-aarch64@tar.gz")
 }
 
 optInToExperimentalCompilerApi()
@@ -351,6 +372,14 @@ val unzipWasmtime by task<UnzipWasmtime> {
     )
 }
 
+val unzipWasmReferenceInterpreter by task<Copy> {
+    dependsOn(wasmReferenceInterpreter)
+    from {
+        tarTree(resources.gzip(wasmReferenceInterpreter.singleFile))
+    }
+    into(toolsDirectory.map { it.dir("WasmReferenceInterpreter").asFile })
+}
+
 fun Test.setupSpiderMonkey() {
     val jsShellExecutablePath = unzipJsShell
         .map { it.destinationDir }
@@ -395,6 +424,17 @@ fun Test.setupWasmtime() {
     }
 }
 
+fun Test.setupWasmReferenceInterpreter() {
+    val wasmRefInterp = unzipWasmReferenceInterpreter
+        .map { it.destinationDir }
+        .map { it.resolve("wasm") }
+
+    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(wasmRefInterp)
+        property.set("wasm.engine.path.ReferenceInterpreter")
+    }
+}
+
 testsJar {}
 
 projectTests {
@@ -424,6 +464,7 @@ projectTests {
             setupWasmEdge()
             setupJsc()
             setupWasmtime()
+            setupWasmReferenceInterpreter()
             useJUnitPlatform()
             setupGradlePropertiesForwarding()
             jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
