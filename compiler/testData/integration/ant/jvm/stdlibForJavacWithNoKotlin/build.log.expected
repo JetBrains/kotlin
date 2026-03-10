@@ -1,0 +1,12 @@
+OUT:
+Buildfile: [TestData]/build.xml
+
+build:
+    [mkdir] Created dir: [Temp]/classes
+    [javac] Compiling 1 source file to [Temp]/classes
+    [javac] Running javac...
+
+BUILD SUCCESSFUL
+Total time: [time]
+
+Return code: 0

@@ -20,6 +20,8 @@
 /analysis/analysis-api-fir/gen/ @JetBrains/kotlin-frontend
 
 
+/ant/ @JetBrains/kotlin-build-tools
+
 /benchmarks/ @JetBrains/kotlin-frontend
 
 /build-common/ @JetBrains/kotlin-build-tools

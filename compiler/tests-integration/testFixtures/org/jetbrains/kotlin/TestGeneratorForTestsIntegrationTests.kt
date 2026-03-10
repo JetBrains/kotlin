@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.AbstractIrCustomScriptCodegenTest
 import org.jetbrains.kotlin.generators.dsl.junit4.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
 import org.jetbrains.kotlin.test.TargetBackend
@@ -55,6 +56,10 @@ fun main(args: Array<String>) {
                 model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
                 model("cli/wasm", extension = "args", testMethod = "doJsTest", recursive = false)
                 model("cli/metadata", extension = "args", testMethod = "doMetadataTest", recursive = false)
+            }
+
+            testClass<AbstractAntTaskTest> {
+                model("integration/ant/jvm", extension = null, recursive = false)
             }
         }
     }

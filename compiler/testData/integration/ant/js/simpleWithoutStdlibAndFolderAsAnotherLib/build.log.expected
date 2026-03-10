@@ -1,0 +1,13 @@
+OUT:
+Buildfile: [TestData]/build.xml
+
+build:
+    [mkdir] Created dir: [Temp]/lib
+[kotlin2js] Compiling [[TestData]/jslib-example] => [[Temp]/lib/jslib-example.js]
+[kotlin2js] Compiling [[TestData]/root1] => [[Temp]/out.js]
+     [copy] Copying 2 files to [Temp]
+
+BUILD SUCCESSFUL
+Total time: [time]
+
+Return code: 0
