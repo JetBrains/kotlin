@@ -165,6 +165,7 @@ internal fun WasmVM.runWithCaughtExceptions(
     entryFile: String?,
     jsFilePaths: List<String>,
     workingDirectory: File,
+    outputCollector: ((String) -> Unit)? = null,
 ): Throwable? {
     val vmName = javaClass.simpleName
 
@@ -179,6 +180,7 @@ internal fun WasmVM.runWithCaughtExceptions(
             useNewExceptionHandling = useNewExceptionHandling,
             wasmCoroutinesStackSwitching = wasmCoroutinesStackSwitching,
         )
+        outputCollector?.invoke(str)
         if (shortName in failsIn) {
             return AssertionError("The test expected to fail in ${vmName}. Please update the testdata.")
         }
