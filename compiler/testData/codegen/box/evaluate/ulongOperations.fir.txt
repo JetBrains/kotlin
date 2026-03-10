@@ -56,7 +56,7 @@ FILE: ulongOperations.kt
         public get(): R|kotlin/ULong|
     public final const [EvaluatedValue=ULong(4)] val plus6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/ULong.plus|(R|/uintVal|)
         public get(): R|kotlin/ULong|
-    public final const [EvaluatedValue=ULong(18446744073709551615)] val minus1: R|kotlin/ULong| = R|/oneVal|.R|kotlin/ULong.minus|(R|/twoVal|)
+    public final const [EvaluatedValue=ULong(-1)] val minus1: R|kotlin/ULong| = R|/oneVal|.R|kotlin/ULong.minus|(R|/twoVal|)
         public get(): R|kotlin/ULong|
     public final const [EvaluatedValue=ULong(0)] val minus2: R|kotlin/ULong| = R|/twoVal|.R|kotlin/ULong.minus|(R|/twoVal|)
         public get(): R|kotlin/ULong|
@@ -152,9 +152,9 @@ FILE: ulongOperations.kt
         public get(): R|kotlin/ULong|
     public final const [EvaluatedValue=ULong(6)] val xor4: R|kotlin/ULong| = ULong(12).R|kotlin/ULong.xor|(ULong(10))
         public get(): R|kotlin/ULong|
-    public final const [EvaluatedValue=ULong(18446744073709551615)] val inv1: R|kotlin/ULong| = R|/zeroVal|.R|kotlin/ULong.inv|()
+    public final const [EvaluatedValue=ULong(-1)] val inv1: R|kotlin/ULong| = R|/zeroVal|.R|kotlin/ULong.inv|()
         public get(): R|kotlin/ULong|
-    public final const [EvaluatedValue=ULong(18446744073709551614)] val inv2: R|kotlin/ULong| = R|/oneVal|.R|kotlin/ULong.inv|()
+    public final const [EvaluatedValue=ULong(-2)] val inv2: R|kotlin/ULong| = R|/oneVal|.R|kotlin/ULong.inv|()
         public get(): R|kotlin/ULong|
     public final const [EvaluatedValue=ULong(2)] val shl1: R|kotlin/ULong| = R|/oneVal|.R|kotlin/ULong.shl|(Int(1))
         public get(): R|kotlin/ULong|
@@ -162,11 +162,11 @@ FILE: ulongOperations.kt
         public get(): R|kotlin/ULong|
     public final const [EvaluatedValue=ULong(12)] val shl3: R|kotlin/ULong| = R|/threeVal|.R|kotlin/ULong.shl|(Int(2))
         public get(): R|kotlin/ULong|
-    public final const [EvaluatedValue=ULong(9223372036854775808)] val shl4: R|kotlin/ULong| = R|/oneVal|.R|kotlin/ULong.shl|(Int(63))
+    public final const [EvaluatedValue=ULong(-9223372036854775808)] val shl4: R|kotlin/ULong| = R|/oneVal|.R|kotlin/ULong.shl|(Int(63))
         public get(): R|kotlin/ULong|
     public final const [EvaluatedValue=ULong(1)] val shl5: R|kotlin/ULong| = R|/oneVal|.R|kotlin/ULong.shl|(Int(64))
         public get(): R|kotlin/ULong|
-    public final const [EvaluatedValue=ULong(9223372036854775808)] val shl6: R|kotlin/ULong| = R|/oneVal|.R|kotlin/ULong.shl|(Int(127))
+    public final const [EvaluatedValue=ULong(-9223372036854775808)] val shl6: R|kotlin/ULong| = R|/oneVal|.R|kotlin/ULong.shl|(Int(127))
         public get(): R|kotlin/ULong|
     public final const [EvaluatedValue=ULong(0)] val shr1: R|kotlin/ULong| = R|/oneVal|.R|kotlin/ULong.shr|(Int(1))
         public get(): R|kotlin/ULong|
@@ -224,11 +224,11 @@ FILE: ulongOperations.kt
         public get(): R|kotlin/String|
     public final const [EvaluatedValue=String(2)] val toString2: R|kotlin/String| = R|/twoVal|.R|kotlin/ULong.toString|()
         public get(): R|kotlin/String|
-    public final const [EvaluatedValue=ULong(18446744073709551615)] val limits1: R|kotlin/ULong| = ULong(-2).R|kotlin/ULong.plus|(R|/oneVal|)
+    public final const [EvaluatedValue=ULong(-1)] val limits1: R|kotlin/ULong| = ULong(-2).R|kotlin/ULong.plus|(R|/oneVal|)
         public get(): R|kotlin/ULong|
     public final const [EvaluatedValue=ULong(0)] val limits2: R|kotlin/ULong| = ULong(-1).R|kotlin/ULong.plus|(R|/oneVal|)
         public get(): R|kotlin/ULong|
-    public final const [EvaluatedValue=ULong(18446744073709551615)] val limits3: R|kotlin/ULong| = R|/zeroVal|.R|kotlin/ULong.minus|(R|/oneVal|)
+    public final const [EvaluatedValue=ULong(-1)] val limits3: R|kotlin/ULong| = R|/zeroVal|.R|kotlin/ULong.minus|(R|/oneVal|)
         public get(): R|kotlin/ULong|
     public final fun box(): R|kotlin/String| {
         when () {

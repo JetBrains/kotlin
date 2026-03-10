@@ -56,7 +56,7 @@ FILE: ushortOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=ULong(4)] val plus6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UShort.plus|(R|/ulongVal|)
         public get(): R|kotlin/ULong|
-    public final const [EvaluatedValue=UInt(4294967295)] val minus1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UShort.minus|(R|/twoVal|)
+    public final const [EvaluatedValue=UInt(-1)] val minus1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UShort.minus|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(0)] val minus2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UShort.minus|(R|/twoVal|)
         public get(): R|kotlin/UInt|
@@ -152,9 +152,9 @@ FILE: ushortOperations.kt
         public get(): R|kotlin/UShort|
     public final const [EvaluatedValue=UShort(6)] val xor4: R|kotlin/UShort| = UInt(12).R|kotlin/UInt.toUShort|().R|kotlin/UShort.xor|(UInt(10).R|kotlin/UInt.toUShort|())
         public get(): R|kotlin/UShort|
-    public final const [EvaluatedValue=UShort(65535)] val inv1: R|kotlin/UShort| = R|/zeroVal|.R|kotlin/UShort.toUShort|().R|kotlin/UShort.inv|()
+    public final const [EvaluatedValue=UShort(-1)] val inv1: R|kotlin/UShort| = R|/zeroVal|.R|kotlin/UShort.toUShort|().R|kotlin/UShort.inv|()
         public get(): R|kotlin/UShort|
-    public final const [EvaluatedValue=UShort(65534)] val inv2: R|kotlin/UShort| = R|/oneVal|.R|kotlin/UShort.inv|()
+    public final const [EvaluatedValue=UShort(-2)] val inv2: R|kotlin/UShort| = R|/oneVal|.R|kotlin/UShort.inv|()
         public get(): R|kotlin/UShort|
     public final const [EvaluatedValue=UByte(1)] val convert1: R|kotlin/UByte| = R|/oneVal|.R|kotlin/UShort.toUByte|()
         public get(): R|kotlin/UByte|
@@ -200,7 +200,7 @@ FILE: ushortOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(65536)] val limits2: R|kotlin/UInt| = UInt(65535).R|kotlin/UInt.toUShort|().R|kotlin/UShort.plus|(R|/oneVal|)
         public get(): R|kotlin/UInt|
-    public final const [EvaluatedValue=UInt(4294967295)] val limits3: R|kotlin/UInt| = R|/zeroVal|.R|kotlin/UShort.minus|(R|/oneVal|)
+    public final const [EvaluatedValue=UInt(-1)] val limits3: R|kotlin/UInt| = R|/zeroVal|.R|kotlin/UShort.minus|(R|/oneVal|)
         public get(): R|kotlin/UInt|
     public final fun box(): R|kotlin/String| {
         when () {
