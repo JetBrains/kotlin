@@ -7,7 +7,7 @@ val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY
 if (checkCacheability && buildCacheEnabled()) {
     @Suppress("DEPRECATION")
     gradle.taskGraph.afterTask {
-        if (isCacheable()) {
+        if (isCacheable() && !hasOsDependentInputs()) {
             if (isTeamcityBuild)
                 testStarted(path)
 
@@ -28,6 +28,11 @@ fun Task.reportCacheMiss() {
 }
 
 fun Project.buildCacheEnabled() = gradle.startParameter.isBuildCacheEnabled
+
+fun Task.hasOsDependentInputs(): Boolean {
+    this as TaskInternal
+    return GeneratedSubclasses.unpackType(this).name == "com.google.protobuf.gradle.GenerateProtoTask"
+}
 
 fun Task.isCacheable(): Boolean {
     this as TaskInternal
