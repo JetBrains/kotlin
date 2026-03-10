@@ -193,14 +193,15 @@ class SimpleBridgeGeneratorImpl(
         kotlinLines.add("private fun $kotlinFunctionName($joinedKotlinParameters): $kotlinReturnType {")
 
         buildKotlinCodeLines(topLevelKotlinScope) {
-            var kotlinExpr = block(kotlinParameters.map { (name, _) -> name })
-            if (returnType == BridgedType.OBJC_POINTER) {
-                // The Kotlin code may lose the ownership on this pointer after returning from the bridge,
-                // so retain the pointer and autorelease it:
-                kotlinExpr = "Kotlin_objc_retainAutoreleaseReturnValue_inNative($kotlinExpr)"
-                // (Objective-C does the same for returned pointers).
-            }
-            returnResult(kotlinExpr)
+            error("Should not reach here")
+//            var kotlinExpr = block(kotlinParameters.map { (name, _) -> name })
+//            if (returnType == BridgedType.OBJC_POINTER) {
+//                // The Kotlin code may lose the ownership on this pointer after returning from the bridge,
+//                // so retain the pointer and autorelease it:
+//                kotlinExpr = "Kotlin_objc_retainAutoreleaseReturnValue_inNative($kotlinExpr)"
+//                // (Objective-C does the same for returned pointers).
+//            }
+//            returnResult(kotlinExpr)
         }.forEach {
             kotlinLines.add("    $it")
         }
