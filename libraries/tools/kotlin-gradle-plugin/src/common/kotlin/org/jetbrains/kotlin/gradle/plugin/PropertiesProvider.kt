@@ -634,6 +634,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(PropertyNames.KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC) ?: true
 
     /**
+     * Disable logic related to SwiftPM import
+     */
+    val disableSwiftPMImport: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_DISABLE_SWIFTPM_IMPORT) ?: false
+
+    /**
+     * Suppress Xcode integration checks that SwiftPM does during the embedAndSign integration
+     */
+    val suppressXcodeIntegrationCheck: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_SUPPRESS_XCODE_INTEGRATION_CHECK) ?: false
+
+    /**
      * Enable workaround for KT-64115, where both main compilation exploded klib and the same compressed klib
      * could end up in the test compilation leading to the compiler warning.
      *
@@ -790,6 +802,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.eagerUnresolvedDependenciesDiagnostic")
         val KOTLIN_DISPLAY_DIAGNOSTICS_IN_IDE_BUILD_LOG = property("kotlin.displayDiagnosticsInIdeBuildLog")
         val KOTLIN_KMP_SEPARATE_COMPILATION = property("kotlin.kmp.separateCompilation")
+        val KOTLIN_SUPPRESS_XCODE_INTEGRATION_CHECK = property("kotlin.suppressSwiftPMXcodeIntegrationCheck")
+        val KOTLIN_DISABLE_SWIFTPM_IMPORT = property("kotlin.disableSwiftPMImport")
 
         val KOTLIN_WASM_PER_MODULE = property("$KOTLIN_INTERNAL_NAMESPACE.wasm.perModule")
 
