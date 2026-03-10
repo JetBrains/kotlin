@@ -50,7 +50,7 @@ public interface KaTypeParametersRenderer {
     }
 
     @KaExperimentalApi
-    public object WIHTOUT_BOUNDS : KaTypeParametersRenderer {
+    public object WITHOUT_BOUNDS : KaTypeParametersRenderer {
         override fun renderTypeParameters(
             analysisSession: KaSession,
             symbol: KaDeclarationSymbol,
@@ -75,6 +75,28 @@ public interface KaTypeParametersRenderer {
             declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
+        }
+    }
+
+    @KaExperimentalApi
+    @Deprecated("Use 'WITHOUT_BOUNDS' instead.")
+    public object WIHTOUT_BOUNDS : KaTypeParametersRenderer {
+        override fun renderTypeParameters(
+            analysisSession: KaSession,
+            symbol: KaDeclarationSymbol,
+            declarationRenderer: KaDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            WITHOUT_BOUNDS.renderTypeParameters(analysisSession, symbol, declarationRenderer, printer)
+        }
+
+        override fun renderWhereClause(
+            analysisSession: KaSession,
+            symbol: KaDeclarationSymbol,
+            declarationRenderer: KaDeclarationRenderer,
+            printer: PrettyPrinter,
+        ) {
+            WITHOUT_BOUNDS.renderWhereClause(analysisSession, symbol, declarationRenderer, printer)
         }
     }
 

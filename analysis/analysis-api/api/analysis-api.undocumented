@@ -372,6 +372,7 @@ org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParamete
 org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParametersRenderer
 org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParametersRenderer.NO_TYPE_PARAMETERS
 org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParametersRenderer.WIHTOUT_BOUNDS
+org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParametersRenderer.WITHOUT_BOUNDS
 org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParametersRenderer.WITH_BOUNDS_IN_WHERE_CLAUSE
 org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParametersRenderer.renderTypeParameters(KaSession, KaDeclarationSymbol, KaDeclarationRenderer, PrettyPrinter)
 org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParametersRenderer.renderWhereClause(KaSession, KaDeclarationSymbol, KaDeclarationRenderer, PrettyPrinter)
