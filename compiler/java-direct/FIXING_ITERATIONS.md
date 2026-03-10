@@ -5,7 +5,7 @@
 This document contains iteration plans for the `java-direct` module.
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration  
-**Status**: Iteration 18 complete — 1100/1166 box tests passing (94.3%)  
+**Status**: Iteration 19 complete — 1105/1166 box tests passing (94.8%)  
 **Last Updated**: 2026-03-06
 
 ---
@@ -447,123 +447,62 @@ private fun findClassId(fqn: String, session: FirSession): ClassId? {
 
 ## Iteration 19: TYPE_USE Annotations on Type Arguments
 
-**Status**: 🔲 Planned  
-**Expected Impact**: ~5 tests  
+**Status**: ✅ Completed  
+**Actual Impact**: +5 tests (66 → 61 failing)  
 **Priority**: MEDIUM  
-**Complexity**: HIGH
+**Complexity**: LOW (simpler than expected)
 
-### Problem Statement
+### What Was Done
 
-TYPE_USE annotations on generic type arguments (e.g., `List<@NotNull Integer>`) are not being parsed and attached to the type arguments.
+Fixed parsing of TYPE_USE annotations on generic type arguments (e.g., `List<@NotNull Integer>`).
 
-### Symptoms
+### Root Cause
 
+The AST structure for annotated type arguments is:
 ```
-expected: <OK> but was: <Fail: should throw on get()>
+TYPE: '@NotNull Integer'
+  ANNOTATION: '@NotNull'
+  WHITE_SPACE: ' '
+  JAVA_CODE_REFERENCE: 'Integer'
 ```
 
-The test expects a `NullPointerException` due to `@NotNull` enforcement, but it doesn't throw because the annotation isn't recognized.
+In `createJavaType`, when creating a `JavaClassifierTypeOverAst`, we passed the `JAVA_CODE_REFERENCE` node (not the `TYPE` node). But the `ANNOTATION` is a sibling of `JAVA_CODE_REFERENCE`, directly under the `TYPE` node. The existing code only looked for annotations in `MODIFIER_LIST`, missing annotations directly on the TYPE node.
 
-### Affected Tests
+### Fix
+
+In `createJavaType()`, when we have a `JAVA_CODE_REFERENCE` under a TYPE node, extract any `ANNOTATION` children from the TYPE node and pass them as `extraAnnotations`:
+
+```kotlin
+val referenceNode = typeNode.findChildByType("JAVA_CODE_REFERENCE")
+if (referenceNode != null) {
+    // TYPE_USE annotations on type arguments appear directly under the TYPE node
+    val typeNodeAnnotations = typeNode.getChildrenByType("ANNOTATION")
+        .map { JavaAnnotationOverAst(it, resolutionContext) }
+    val allAnnotations = extraAnnotations + typeNodeAnnotations
+    return JavaClassifierTypeOverAst(referenceNode, resolutionContext, allAnnotations)
+}
+```
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `JavaTypeOverAst.kt` | Modified `createJavaType()` to extract `ANNOTATION` children from TYPE nodes and pass as `extraAnnotations` to `JavaClassifierTypeOverAst`. |
+
+### Tests Added to JavaParsingTest.kt
+
+- `testAnnotatedTypeArguments` — Single `@NotNull` on type argument
+- `testAnnotatedTypeArgumentsMultiple` — `@NotNull` and `@Nullable` on Map key/value
+- `testAnnotatedTypeArgumentInMethodReturn` — Annotation in method return type
+- `testAnnotatedTypeArgumentInMethodParameter` — Annotation in method parameter type
+- `testUnannotatedTypeArgument` — Verifies no spurious annotations
+
+### Tests Fixed
 
 - `testJavaCollectionOfNotNullToTypedArrayFailFast`
 - `testJavaIteratorOfNotNullFailFast`
 - `testJavaCollectionOfExplicitNotNullFailFast`
-
-### Test Pattern
-
-```java
-// FILE: J.java
-public class J {
-    public static List<@NotNull Integer> listOfNotNull() {
-        return Collections.singletonList(null);
-    }
-}
-```
-
-### Phase 1: Analysis
-
-**Goal**: Understand AST structure for annotated type arguments
-
-1. Debug the test:
-   ```bash
-   ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Ranges\$JavaInterop.testJavaCollectionOfNotNullToTypedArrayFailFast" -q
-   ```
-
-2. Add AST dump in type argument parsing:
-   ```kotlin
-   // In JavaClassifierTypeOverAst.typeArguments
-   override val typeArguments: List<JavaType?>
-       get() {
-           val typeArgList = node.findChildByType("TYPE_ARGUMENT_LIST") ?: return emptyList()
-           throw IllegalStateException("DEBUG: typeArgList.dump=\n${typeArgList.dump()}")
-       }
-   ```
-
-3. Look for annotation nodes within type arguments
-
-### Phase 2: Implementation
-
-**File to modify**: `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`
-
-1. **Parse annotations on type arguments**:
-   ```kotlin
-   override val typeArguments: List<JavaType?>
-       get() {
-           val typeArgList = node.findChildByType("TYPE_ARGUMENT_LIST") ?: return emptyList()
-           return typeArgList.getChildrenByType("TYPE").map { typeNode ->
-               // Check for annotations on this type argument
-               val annotations = typeNode.getChildrenByType("ANNOTATION").map { annoNode ->
-                   JavaAnnotationOverAst(annoNode, resolutionContext)
-               }
-               createTypeWithAnnotations(typeNode, annotations)
-           }
-       }
-   
-   private fun createTypeWithAnnotations(
-       typeNode: JavaSyntaxNode, 
-       annotations: List<JavaAnnotation>
-   ): JavaType {
-       val baseType = JavaTypeOverAst.create(typeNode, resolutionContext)
-       // Attach annotations to the type
-       return if (annotations.isEmpty()) baseType
-              else JavaAnnotatedTypeOverAst(baseType, annotations)
-   }
-   ```
-
-2. **Create wrapper for annotated types** (if needed):
-   ```kotlin
-   class JavaAnnotatedTypeOverAst(
-       private val delegate: JavaType,
-       override val annotations: List<JavaAnnotation>
-   ) : JavaType by delegate, JavaAnnotatedType {
-       // Delegate all JavaType methods but override annotations
-   }
-   ```
-
-3. **Alternative approach**: Modify existing type classes to accept annotations in constructor:
-   ```kotlin
-   class JavaClassifierTypeOverAst(
-       node: JavaSyntaxNode,
-       private val resolutionContext: JavaResolutionContext,
-       private val additionalAnnotations: List<JavaAnnotation> = emptyList()
-   ) : JavaTypeOverAst(node), JavaClassifierType {
-       override val annotations: List<JavaAnnotation>
-           get() = additionalAnnotations + parseAnnotationsFromNode()
-   }
-   ```
-
-### Phase 3: Validation
-
-```bash
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Ranges\$JavaInterop.testJavaCollectionOfNotNullToTypedArrayFailFast" -q
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Ranges\$JavaInterop.testJavaIteratorOfNotNullFailFast" -q
-```
-
-### Success Criteria
-
-- Nullability checks trigger as expected
-- ~3-5 test improvements expected
+- +2 more nullability-related tests
 
 ---
 
@@ -781,7 +720,7 @@ fun Base<Any>.confirmOrFail(): String {
 
 ## Remaining Work
 
-### Current Status After Iteration 17b: 1092/1166 box tests (93.7%)
+### Current Status After Iteration 19: 1105/1166 box tests (94.8%)
 
 | Category | Count | Example Tests |
 |----------|-------|---------------|
@@ -794,12 +733,12 @@ fun Base<Any>.confirmOrFail(): String {
 | Reflection/Metadata | ~5 | `testDelegatedMembers`, `testCallableReferenceToJavaField` |
 | Other Edge Cases | ~35 | Various |
 
-### Realistic Expectations for Iterations 18-21
+### Realistic Expectations for Iterations 20-21
 
 | Iteration | Target | Expected Tests Fixed |
 |-----------|--------|---------------------|
-| 18 | Nested Class Resolution | ~8-10 |
-| 19 | TYPE_USE on Type Args | ~5 |
+| 18 | Nested Class Resolution | ✅ +8 (completed) |
+| 19 | TYPE_USE on Type Args | ✅ +5 (completed) |
 | 20 | Wildcard Edge Cases | ~3-5 |
 | 21 | Visibility Issues | ~3 |
 

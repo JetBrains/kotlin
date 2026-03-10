@@ -897,6 +897,179 @@ class JavaParsingTest {
     }
 
     @Test
+    fun testAnnotatedTypeArguments() {
+        // Test TYPE_USE annotations on type arguments like List<@NotNull Integer>
+        val source = """
+            import java.util.List;
+            import org.jetbrains.annotations.NotNull;
+            
+            public class MyClass {
+                public List<@NotNull Integer> items;
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        val field = javaClass.fields.first { it.name.asString() == "items" }
+        val fieldType = field.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        
+        assert(fieldType.classifierQualifiedName == "java.util.List") { 
+            "Expected 'java.util.List', got ${fieldType.classifierQualifiedName}" 
+        }
+        assert(fieldType.typeArguments.size == 1) { 
+            "Expected 1 type argument, got ${fieldType.typeArguments.size}" 
+        }
+        
+        val typeArg = fieldType.typeArguments[0] as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(typeArg.classifierQualifiedName == "Integer") { 
+            "Expected 'Integer', got ${typeArg.classifierQualifiedName}" 
+        }
+        
+        // TYPE_USE annotation @NotNull should be on the type argument
+        assert(typeArg.annotations.size == 1) { 
+            "Expected 1 annotation on type argument, got ${typeArg.annotations.size}: ${typeArg.annotations.map { it.classId }}" 
+        }
+        val annotation = typeArg.annotations.first()
+        assert(annotation.classId?.shortClassName?.asString() == "NotNull") { 
+            "Expected @NotNull annotation, got ${annotation.classId}" 
+        }
+    }
+
+    @Test
+    fun testAnnotatedTypeArgumentsMultiple() {
+        // Test multiple TYPE_USE annotations on type arguments like Map<@NotNull String, @Nullable Integer>
+        val source = """
+            import java.util.Map;
+            import org.jetbrains.annotations.NotNull;
+            import org.jetbrains.annotations.Nullable;
+            
+            public class MyClass {
+                public Map<@NotNull String, @Nullable Integer> map;
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        val field = javaClass.fields.first { it.name.asString() == "map" }
+        val fieldType = field.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        
+        assert(fieldType.classifierQualifiedName == "java.util.Map") { 
+            "Expected 'java.util.Map', got ${fieldType.classifierQualifiedName}" 
+        }
+        assert(fieldType.typeArguments.size == 2) { 
+            "Expected 2 type arguments, got ${fieldType.typeArguments.size}" 
+        }
+        
+        // First type argument: @NotNull String
+        val keyArg = fieldType.typeArguments[0] as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(keyArg.classifierQualifiedName == "String") { 
+            "Expected 'String', got ${keyArg.classifierQualifiedName}" 
+        }
+        assert(keyArg.annotations.size == 1) { 
+            "Expected 1 annotation on key type argument, got ${keyArg.annotations.size}" 
+        }
+        assert(keyArg.annotations.first().classId?.shortClassName?.asString() == "NotNull") { 
+            "Expected @NotNull annotation on key" 
+        }
+        
+        // Second type argument: @Nullable Integer
+        val valueArg = fieldType.typeArguments[1] as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(valueArg.classifierQualifiedName == "Integer") { 
+            "Expected 'Integer', got ${valueArg.classifierQualifiedName}" 
+        }
+        assert(valueArg.annotations.size == 1) { 
+            "Expected 1 annotation on value type argument, got ${valueArg.annotations.size}" 
+        }
+        assert(valueArg.annotations.first().classId?.shortClassName?.asString() == "Nullable") { 
+            "Expected @Nullable annotation on value" 
+        }
+    }
+
+    @Test
+    fun testAnnotatedTypeArgumentInMethodReturn() {
+        // Test TYPE_USE annotation on method return type argument
+        val source = """
+            import java.util.List;
+            import org.jetbrains.annotations.NotNull;
+            
+            public class MyClass {
+                public List<@NotNull Integer> getItems() { return null; }
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        val method = javaClass.methods.first { it.name.asString() == "getItems" }
+        val returnType = method.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        
+        assert(returnType.classifierQualifiedName == "java.util.List") { 
+            "Expected 'java.util.List', got ${returnType.classifierQualifiedName}" 
+        }
+        assert(returnType.typeArguments.size == 1) { 
+            "Expected 1 type argument, got ${returnType.typeArguments.size}" 
+        }
+        
+        val typeArg = returnType.typeArguments[0] as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(typeArg.annotations.size == 1) { 
+            "Expected 1 annotation on type argument, got ${typeArg.annotations.size}" 
+        }
+        assert(typeArg.annotations.first().classId?.shortClassName?.asString() == "NotNull") { 
+            "Expected @NotNull annotation" 
+        }
+    }
+
+    @Test
+    fun testAnnotatedTypeArgumentInMethodParameter() {
+        // Test TYPE_USE annotation on method parameter type argument
+        val source = """
+            import java.util.List;
+            import org.jetbrains.annotations.NotNull;
+            
+            public class MyClass {
+                public void process(List<@NotNull String> items) { }
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        val method = javaClass.methods.first { it.name.asString() == "process" }
+        val param = method.valueParameters.first()
+        val paramType = param.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        
+        assert(paramType.classifierQualifiedName == "java.util.List") { 
+            "Expected 'java.util.List', got ${paramType.classifierQualifiedName}" 
+        }
+        assert(paramType.typeArguments.size == 1) { 
+            "Expected 1 type argument, got ${paramType.typeArguments.size}" 
+        }
+        
+        val typeArg = paramType.typeArguments[0] as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(typeArg.annotations.size == 1) { 
+            "Expected 1 annotation on type argument, got ${typeArg.annotations.size}" 
+        }
+        assert(typeArg.annotations.first().classId?.shortClassName?.asString() == "NotNull") { 
+            "Expected @NotNull annotation" 
+        }
+    }
+
+    @Test
+    fun testUnannotatedTypeArgument() {
+        // Verify that type arguments without annotations have empty annotations
+        val source = """
+            import java.util.List;
+            
+            public class MyClass {
+                public List<String> items;
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        val field = javaClass.fields.first { it.name.asString() == "items" }
+        val fieldType = field.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        
+        val typeArg = fieldType.typeArguments[0] as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(typeArg.annotations.isEmpty()) { 
+            "Expected no annotations on type argument, got ${typeArg.annotations.size}" 
+        }
+    }
+
+    @Test
     fun testNestedInterfaceAndEnumImplicitlyStatic() {
         // Java nested interfaces and enums are implicitly static even without the keyword
         // This is critical for FIR to correctly set isInner=false for these types

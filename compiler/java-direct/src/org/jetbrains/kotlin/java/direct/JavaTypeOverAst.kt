@@ -56,12 +56,20 @@ abstract class JavaTypeOverAst(
 ) : JavaType, JavaAnnotationOwner {
     override val annotations: Collection<JavaAnnotation>
         get() {
-            val nodeAnnotations = node.findChildByType("MODIFIER_LIST")?.getChildrenByType("ANNOTATION")
+            // Annotations can appear in two places:
+            // 1. Inside MODIFIER_LIST (for method return types, field types)
+            // 2. Directly under TYPE node (for type arguments like List<@NotNull Integer>)
+            val modifierListAnnotations = node.findChildByType("MODIFIER_LIST")?.getChildrenByType("ANNOTATION")
                 ?.map { JavaAnnotationOverAst(it, resolutionContext) }
                 ?: emptyList()
+            
+            // Check for direct ANNOTATION children (TYPE_USE on type arguments)
+            val directAnnotations = node.getChildrenByType("ANNOTATION")
+                .map { JavaAnnotationOverAst(it, resolutionContext) }
+            
             // Filter extra annotations (from method modifier list) to exclude non-TYPE_USE annotations.
             // Node annotations are already TYPE_USE by definition (they appear directly on the type).
-            return extraAnnotations.filterTypeAnnotations() + nodeAnnotations
+            return extraAnnotations.filterTypeAnnotations() + modifierListAnnotations + directAnnotations
         }
 
     override val isDeprecatedInJavaDoc: Boolean get() = false
@@ -288,7 +296,12 @@ fun createJavaType(
 
     val referenceNode = typeNode.findChildByType("JAVA_CODE_REFERENCE")
     if (referenceNode != null) {
-        return JavaClassifierTypeOverAst(referenceNode, resolutionContext, extraAnnotations)
+        // TYPE_USE annotations on type arguments appear directly under the TYPE node (not in MODIFIER_LIST)
+        // Extract them here and pass as extraAnnotations since we're using JAVA_CODE_REFERENCE as the node
+        val typeNodeAnnotations = typeNode.getChildrenByType("ANNOTATION")
+            .map { JavaAnnotationOverAst(it, resolutionContext) }
+        val allAnnotations = extraAnnotations + typeNodeAnnotations
+        return JavaClassifierTypeOverAst(referenceNode, resolutionContext, allAnnotations)
     }
     return JavaClassifierTypeOverAst(typeNode, resolutionContext, extraAnnotations)
 }
