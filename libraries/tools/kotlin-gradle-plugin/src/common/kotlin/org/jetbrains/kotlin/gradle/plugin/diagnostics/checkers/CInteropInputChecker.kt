@@ -23,6 +23,8 @@ internal object CInteropInputChecker : KotlinGradleProjectChecker {
         KotlinPluginLifecycle.Stage.ReadyForExecution.await()
 
         project.tasks.withType(CInteropProcess::class.java).configureEach {
+            // For SwiftPM import we generate all the parameters of the cinterop at execution time
+            if (it.isGeneratedCinterop) return@configureEach
             if (!it.definitionFile.isPresent && it.packageName.isNullOrBlank()) {
                 collector.report(diagnosticsContext, KotlinToolingDiagnostics.CInteropRequiredParametersNotSpecifiedError())
             }

@@ -74,6 +74,7 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
 
     val interopProcessingTaskName get() = params.interopProcessingTaskName
 
+    internal var isGeneratedCinterop = false
 
     @Deprecated(
         "Deprecated. Please, use definitionFile. Scheduled for removal in Kotlin 2.3.",
