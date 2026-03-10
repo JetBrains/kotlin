@@ -2020,37 +2020,7 @@ open class PsiRawFirBuilder(
                                 }
                             }
 
-                            @OptIn(KtExperimentalApi::class)
-                            classOrObject.body?.declarationsAndCompanionBlocks?.forEach {
-                                when (it) {
-                                    is KtDeclaration -> {
-                                        addDeclaration(
-                                            it.toFirDeclaration(
-                                                delegatedSuperType,
-                                                delegatedSelfType,
-                                                classOrObject,
-                                                this,
-                                                typeParameters
-                                            )
-                                        )
-                                    }
-                                    is KtCompanionBlock -> {
-                                        withCompanionBlock {
-                                            for (declaration in it.declarations) {
-                                                addDeclaration(
-                                                    declaration.toFirDeclaration(
-                                                        delegatedSuperType,
-                                                        delegatedSelfType,
-                                                        classOrObject,
-                                                        this,
-                                                        emptyList()
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            addDeclarations(classOrObject.body, delegatedSuperType, delegatedSelfType, classOrObject)
 
                             for (danglingModifier in classOrObject.body?.danglingModifierLists ?: emptyList()) {
                                 addDeclaration(
@@ -2117,6 +2087,35 @@ open class PsiRawFirBuilder(
                     it.initContainingClassForLocalAttr()
                 }
                 it.initContainingScriptOrReplAttr()
+            }
+        }
+
+        @OptIn(KtExperimentalApi::class)
+        private fun FirRegularClassBuilder.addDeclarations(
+            classBody: KtClassBody?,
+            delegatedSuperType: FirTypeRef,
+            delegatedSelfType: FirResolvedTypeRef,
+            owner: KtClassOrObject,
+        ) {
+            classBody?.declarationsAndCompanionBlocks?.forEach {
+                when (it) {
+                    is KtDeclaration -> {
+                        addDeclaration(
+                            it.toFirDeclaration(
+                                delegatedSuperType,
+                                delegatedSelfType,
+                                owner,
+                                this,
+                                typeParameters
+                            )
+                        )
+                    }
+                    is KtCompanionBlock -> {
+                        withCompanionBlock {
+                            addDeclarations(it.body, delegatedSuperType, delegatedSelfType, owner)
+                        }
+                    }
+                }
             }
         }
 

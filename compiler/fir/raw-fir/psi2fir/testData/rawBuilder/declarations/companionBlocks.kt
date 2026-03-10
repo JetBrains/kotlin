@@ -33,5 +33,19 @@ class C {
         constructor() {}
 
         init {}
+
+        companion {
+            fun doubleNestedFun() {}
+
+            val doubleNestedProp = 1
+
+            class DoubleNestedNested
+
+            typealias DoubleNestedTA = Int
+
+            constructor(x: Int) {}
+
+            init {}
+        }
     }
 }

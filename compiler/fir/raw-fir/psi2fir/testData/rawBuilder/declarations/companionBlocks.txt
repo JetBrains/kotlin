@@ -63,4 +63,26 @@ FILE: companionBlocks.kt
         init {
         }
 
+        public? final? static [ContainingClassKey=C] fun doubleNestedFun(): R|kotlin/Unit| {
+        }
+
+        public? final? static [ContainingClassKey=C] val doubleNestedProp: <implicit> = IntegerLiteral(1)
+            public? static [ContainingClassKey=C] get(): <implicit>
+
+        public final? class DoubleNestedNested : R|kotlin/Any| {
+            public? [ContainingClassKey=DoubleNestedNested] constructor(): R|C.DoubleNestedNested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final typealias DoubleNestedTA = Int
+
+        public? [ContainingClassKey=C] constructor(x: Int): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        init {
+        }
+
     }

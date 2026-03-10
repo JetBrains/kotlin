@@ -41,4 +41,22 @@ FILE: companionBlocks.kt
 
         init { LAZY_BLOCK }
 
+        public? final? static [ContainingClassKey=C] fun doubleNestedFun(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? static [ContainingClassKey=C] val doubleNestedProp: <implicit> = LAZY_EXPRESSION
+            public? static [ContainingClassKey=C] get(): <implicit>
+
+        public final? class DoubleNestedNested : R|kotlin/Any| {
+            public? [ContainingClassKey=DoubleNestedNested] constructor(): R|C.DoubleNestedNested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final typealias DoubleNestedTA = Int
+
+        public? [ContainingClassKey=C] constructor(x: Int): R|C| { LAZY_BLOCK }
+
+        init { LAZY_BLOCK }
+
     }
