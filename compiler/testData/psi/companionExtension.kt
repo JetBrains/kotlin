@@ -1,5 +1,4 @@
-// COMPILATION_ERRORS
-// because of `WRONG_MODIFIER_TARGET` on `companion` modifer. Will be fixed in KT-84291.
+// LANGUAGE: +CompanionBlocksAndExtensions
 
 companion fun String.foo1() {}
 private companion fun String.foo2() {}

@@ -382,7 +382,10 @@ class AnnotationChecker(
                 is KtProperty -> {
                     when {
                         annotated.isLocal -> TargetLists.T_LOCAL_VARIABLE
-                        annotated.isMember -> TargetLists.T_MEMBER_PROPERTY(descriptor.hasBackingField(context), annotated.hasDelegate())
+                        annotated.isMember -> TargetLists.T_MEMBER_PROPERTY(
+                            descriptor.hasBackingField(context), annotated.hasDelegate(),
+                            isCompanionMember = false
+                        )
                         else -> TargetLists.T_TOP_LEVEL_PROPERTY(descriptor.hasBackingField(context), annotated.hasDelegate(), isCompanionExtension = false)
                     }
                 }

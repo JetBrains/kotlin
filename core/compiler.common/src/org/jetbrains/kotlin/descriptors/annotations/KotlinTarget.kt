@@ -46,10 +46,12 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
 
     LOCAL_FUNCTION("local function", false),
     MEMBER_FUNCTION("member function", false),
+    COMPANION_MEMBER_FUNCTION("companion member function", false),
     TOP_LEVEL_FUNCTION("top level function", false),
     COMPANION_EXTENSION_FUNCTION("companion extension function", false),
 
     MEMBER_PROPERTY("member property", false), // includes PROPERTY_PARAMETER, with and without field/delegate
+    COMPANION_MEMBER_PROPERTY("companion member property", false), // includes PROPERTY_PARAMETER, with and without field/delegate
     MEMBER_PROPERTY_WITH_BACKING_FIELD("member property with backing field", false),
     MEMBER_PROPERTY_WITH_DELEGATE("member property with delegate", false),
     MEMBER_PROPERTY_WITHOUT_FIELD_OR_DELEGATE("member property without backing field or delegate", false),

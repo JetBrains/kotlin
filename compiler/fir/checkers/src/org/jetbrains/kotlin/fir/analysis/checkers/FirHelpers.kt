@@ -715,8 +715,13 @@ fun getActualTargetList(container: FirAnnotationContainer, session: FirSession):
                     if (annotated.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) {
                         TargetLists.T_VALUE_PARAMETER_WITH_VAL
                     } else {
-                        TargetLists.T_MEMBER_PROPERTY(annotated.hasBackingField, annotated.delegate != null)
+                        TargetLists.T_MEMBER_PROPERTY(annotated.hasBackingField, annotated.delegate != null, isCompanionMember = false)
                     }
+                annotated.isCompanionBlockMember -> TargetLists.T_MEMBER_PROPERTY(
+                    backingField = annotated.hasBackingField,
+                    delegate = annotated.delegate != null,
+                    isCompanionMember = true
+                )
                 else ->
                     TargetLists.T_TOP_LEVEL_PROPERTY(annotated.hasBackingField, annotated.delegate != null, isCompanionExtension = annotated.isCompanionExtension)
             }
@@ -734,6 +739,7 @@ fun getActualTargetList(container: FirAnnotationContainer, session: FirSession):
         is FirNamedFunction -> {
             when {
                 annotated.status.visibility == Visibilities.Local -> TargetLists.T_LOCAL_FUNCTION
+                annotated.isCompanionBlockMember -> TargetLists.T_COMPANION_MEMBER_FUNCTION
                 annotated.isMember -> TargetLists.T_MEMBER_FUNCTION
                 annotated.isCompanionExtension -> TargetLists.T_COMPANION_EXTENSION_FUNCTION
                 else -> TargetLists.T_TOP_LEVEL_FUNCTION

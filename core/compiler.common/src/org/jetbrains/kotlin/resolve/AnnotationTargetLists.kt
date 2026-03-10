@@ -36,19 +36,19 @@ object AnnotationTargetLists {
         }
     }
 
-    fun T_MEMBER_PROPERTY(backingField: Boolean, delegate: Boolean) =
+    fun T_MEMBER_PROPERTY(backingField: Boolean, delegate: Boolean, isCompanionMember: Boolean) =
         targetList(
             when {
                 backingField -> MEMBER_PROPERTY_WITH_BACKING_FIELD
                 delegate -> MEMBER_PROPERTY_WITH_DELEGATE
                 else -> MEMBER_PROPERTY_WITHOUT_FIELD_OR_DELEGATE
-            }, MEMBER_PROPERTY, PROPERTY
+            }, if (isCompanionMember) COMPANION_MEMBER_PROPERTY else MEMBER_PROPERTY, PROPERTY
         ) {
             propertyTargets(backingField, delegate)
         }
 
     @AnnotationTargetListForDeprecation
-    val T_MEMBER_PROPERTY_IN_ANNOTATION = T_MEMBER_PROPERTY(backingField = false, delegate = false)
+    val T_MEMBER_PROPERTY_IN_ANNOTATION = T_MEMBER_PROPERTY(backingField = false, delegate = false, isCompanionMember = false)
 
     fun T_TOP_LEVEL_PROPERTY(backingField: Boolean, delegate: Boolean, isCompanionExtension: Boolean) =
         targetList(
@@ -83,6 +83,10 @@ object AnnotationTargetLists {
     }
 
     val T_MEMBER_FUNCTION = targetList(MEMBER_FUNCTION, FUNCTION) {
+        onlyWithUseSiteTarget(VALUE_PARAMETER)
+    }
+
+    val T_COMPANION_MEMBER_FUNCTION = targetList(COMPANION_MEMBER_FUNCTION, FUNCTION) {
         onlyWithUseSiteTarget(VALUE_PARAMETER)
     }
 
