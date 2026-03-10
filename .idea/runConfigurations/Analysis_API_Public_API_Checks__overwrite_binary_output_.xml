@@ -24,6 +24,9 @@
           <option value=":compiler:psi:psi-frontend-utils:test" />
           <option value=":analysis:analysis-api-platform-interface:updateKotlinAbi" />
           <option value=":analysis:analysis-api-standalone:updateKotlinAbi" />
+          <option value=":analysis:kt-references:testCodebase" />
+          <option value=":analysis:kt-references:updateKotlinAbi" />
+          <option value=":analysis:kt-references:checkForeignClassUsage" />
         </list>
       </option>
       <option name="vmOptions" />
