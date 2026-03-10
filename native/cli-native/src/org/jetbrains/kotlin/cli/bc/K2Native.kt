@@ -214,6 +214,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         spawnedConfiguration.put(BinaryOptions.checkStateAtExternalCalls, it)
                     }
                     spawnedConfiguration.setupConfiguration()
+
+                    if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(spawnedConfiguration)) {
+                        // Some errors during KotlinCoreEnvironment setup.
+                        throw CompilationErrorException()
+                    }
+
                     val spawnedEnvironment = prepareEnvironment(spawnedArguments, spawnedConfiguration, rootDisposable)
                     // KT-71976: Should empty `arguments` be provided, prepareEnvironment() resets the keys for 1st compilation stage
                     // In order to keep them, they should be re-initialized with the second invocation of `setupConfiguration()` lambda below.
