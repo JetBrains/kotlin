@@ -1,53 +1,44 @@
-description = 'Kotlin Standard Library JDK 7 extension'
+import org.gradle.api.tasks.SourceSet
+import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
-apply plugin: 'kotlin'
+description = "Kotlin Standard Library JDK 7 extension"
 
-JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
+plugins {
+    kotlin("jvm")
+}
 
-RepoArtifacts.publish(project)
-RepoArtifacts.sourcesJar(project)
-RepoArtifacts.javadocJar(project)
+configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
-sourceSets {
-    main {
-        kotlin {
-        }
-    }
-    test {
-        kotlin {
-        }
-    }
-    java9 {
-        java {
-            srcDir 'java9'
-        }
-    }
+publish()
+sourcesJar()
+javadocJar()
+
+val java9: SourceSet = sourceSets.create("java9") {
+    java.srcDir("java9")
 }
 
 dependencies {
-    api project(':kotlin-stdlib')
+    api(project(":kotlin-stdlib"))
 }
 
-jar {
-    LibrariesCommon.manifestAttributes(project, manifest, 'Main', true)
-    from sourceSets.java9.output
+tasks.named<Jar>("jar") {
+    project.manifestAttributes(manifest, "Main", true)
+    from(java9.output)
 }
 
-sourcesJar {
-    from sourceSets.java9.allSource
+tasks.named<Jar>("sourcesJar") {
+    from(java9.allSource)
 }
 
-
-compileKotlin {
-    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_11_0))
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.moduleName = project.name
-    kotlinOptions.freeCompilerArgs = [ "-Xjdk-release=7" ]
+tasks.named<KotlinJvmCompile>("compileKotlin") {
+    kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+    compilerOptions {
+        jvmTarget.set(JvmTarget.fromTarget(JdkMajorVersion.JDK_1_8.targetName))
+        moduleName.set(project.name)
+        freeCompilerArgs.set(listOf("-Xjdk-release=7"))
+    }
 }
 
-compileTestKotlin {
-}
-
-LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk7')
-
-
+configureJava9Compilation("kotlin.stdlib.jdk7")
