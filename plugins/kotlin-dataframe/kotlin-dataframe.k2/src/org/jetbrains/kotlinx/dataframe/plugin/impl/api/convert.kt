@@ -167,10 +167,10 @@ internal class ConvertAsColumn : AbstractSchemaModificationInterpreter() {
     val Arguments.type: ColumnType by type(name("columnConverter"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.schema.asDataFrame(impliedColumnsResolver = receiver.columns)
-            .convert { receiver.columns }
-            .asColumn { simpleColumnOf("", typeArg2.coneType).asDataColumn() }
-            .toPluginDataFrameSchema()
+        return receiver.schema.modify(impliedColumnsResolver = receiver.columns) {
+            convert { receiver.columns }
+                .asColumn { simpleColumnOf("", typeArg2.coneType).asDataColumn() }
+        }
     }
 }
 

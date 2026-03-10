@@ -8,7 +8,6 @@ import org.jetbrains.kotlinx.dataframe.api.asDataColumn
 import org.jetbrains.kotlinx.dataframe.api.cast
 import org.jetbrains.kotlinx.dataframe.api.convert
 import org.jetbrains.kotlinx.dataframe.api.dataFrameOf
-import org.jetbrains.kotlinx.dataframe.api.perRowCol
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 import org.jetbrains.kotlinx.dataframe.columns.FrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
@@ -20,7 +19,7 @@ fun PluginDataFrameSchema.asDataFrame(impliedColumnsResolver: ColumnsResolver): 
 }
 
 // with 2 separate functions, it's easier to find usages.
-// ideally, argument-less function should have a reason to be used, because proper usage indicated String API support
+// ideally, argument-less function should have a reason to be used, because proper usage indicates String API support
 fun PluginDataFrameSchema.asDataFrame(): DataFrame<ConeTypesAdapter> {
     val df = columns().map()
     return df
@@ -28,12 +27,23 @@ fun PluginDataFrameSchema.asDataFrame(): DataFrame<ConeTypesAdapter> {
 
 fun DataFrame<ConeTypesAdapter>.toPluginDataFrameSchema() = PluginDataFrameSchema(columns().mapBack())
 
+// with 2 separate functions, it's easier to find usages.
+// ideally, function without impliedColumnsResolver argument should have a reason to be used, because proper usage indicates String API support
+fun PluginDataFrameSchema.modify(f: DataFrame<ConeTypesAdapter>.() -> DataFrame<ConeTypesAdapter>): PluginDataFrameSchema {
+    return asDataFrame().f().toPluginDataFrameSchema()
+}
+
+fun PluginDataFrameSchema.modify(
+    impliedColumnsResolver: ColumnsResolver,
+    f: DataFrame<ConeTypesAdapter>.() -> DataFrame<ConeTypesAdapter>
+): PluginDataFrameSchema {
+    return asDataFrame(impliedColumnsResolver).f().toPluginDataFrameSchema()
+}
+
 interface ConeTypesAdapter
 
 fun PluginDataFrameSchema.convertAsColumn(columns: ColumnsResolver, converter: (SimpleCol) -> SimpleCol): PluginDataFrameSchema {
-    return asDataFrame(impliedColumnsResolver = columns)
-        .convert { columns }.asColumn { converter(it.asSimpleColumn()).asDataColumn() }
-        .toPluginDataFrameSchema()
+    return modify(impliedColumnsResolver = columns) { convert { columns }.asColumn { converter(it.asSimpleColumn()).asDataColumn() } }
 }
 
 private fun List<SimpleCol>.map(): DataFrame<ConeTypesAdapter> {

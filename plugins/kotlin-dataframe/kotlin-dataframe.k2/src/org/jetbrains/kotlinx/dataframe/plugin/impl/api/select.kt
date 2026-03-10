@@ -35,7 +35,7 @@ internal class SelectString : AbstractInterpreter<PluginDataFrameSchema>() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val df = receiver.insertImpliedColumns(columns)
-        return df.asDataFrame().select { columns.toColumnSet() }.toPluginDataFrameSchema()
+        return df.modify { select { columns.toColumnSet() } }
     }
 }
 
