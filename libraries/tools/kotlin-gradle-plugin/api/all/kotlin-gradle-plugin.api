@@ -1882,29 +1882,29 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/S
 	public final fun branch (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;
 	public final fun exact (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;
 	public final fun from (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;
-	public final fun getDiscoverModulesImplicitly ()Lorg/gradle/api/provider/Property;
-	public final fun getIosDeploymentVersion ()Lorg/gradle/api/provider/Property;
-	public final fun getMacosDeploymentVersion ()Lorg/gradle/api/provider/Property;
-	public final fun getTvosDeploymentVersion ()Lorg/gradle/api/provider/Property;
-	public final fun getWatchosDeploymentVersion ()Lorg/gradle/api/provider/Property;
+	public final fun getDiscoverClangModulesImplicitly ()Lorg/gradle/api/provider/Property;
+	public final fun getIosMinimumDeploymentTarget ()Lorg/gradle/api/provider/Property;
+	public final fun getMacosMinimumDeploymentTarget ()Lorg/gradle/api/provider/Property;
+	public final fun getTvosMinimumDeploymentTarget ()Lorg/gradle/api/provider/Property;
+	public final fun getWatchosMinimumDeploymentTarget ()Lorg/gradle/api/provider/Property;
 	public abstract fun getXcodeProjectPathForKmpIJPlugin ()Lorg/gradle/api/file/RegularFileProperty;
 	public final fun iOS ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Platform;
 	public final fun id (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Repository$Id;
-	public final fun localPackage (Lorg/gradle/api/file/Directory;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
-	public static synthetic fun localPackage$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension;Lorg/gradle/api/file/Directory;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;ILjava/lang/Object;)V
 	public final fun localPackageWithProducts (Lorg/gradle/api/file/Directory;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
 	public static synthetic fun localPackageWithProducts$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension;Lorg/gradle/api/file/Directory;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;ILjava/lang/Object;)V
+	public final fun localSwiftPackage (Lorg/gradle/api/file/Directory;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
+	public static synthetic fun localSwiftPackage$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension;Lorg/gradle/api/file/Directory;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;ILjava/lang/Object;)V
 	public final fun macOS ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Platform;
-	public final fun package (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
-	public final fun package (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Repository$Url;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
-	public final fun package (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Repository;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
-	public static synthetic fun package$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;ILjava/lang/Object;)V
-	public static synthetic fun package$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Repository$Url;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;ILjava/lang/Object;)V
-	public static synthetic fun package$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Repository;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;ILjava/lang/Object;)V
 	public final fun product (Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Product;
 	public static synthetic fun product$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension;Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Product;
 	public final fun range (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;
 	public final fun revision (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;
+	public final fun swiftPackage (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
+	public final fun swiftPackage (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Repository$Url;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
+	public final fun swiftPackage (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Repository;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
+	public static synthetic fun swiftPackage$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;ILjava/lang/Object;)V
+	public static synthetic fun swiftPackage$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Repository$Url;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;ILjava/lang/Object;)V
+	public static synthetic fun swiftPackage$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Repository;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;ILjava/lang/Object;)V
 	public final fun tvOS ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Platform;
 	public final fun url (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Repository$Url;
 	public final fun watchOS ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Platform;

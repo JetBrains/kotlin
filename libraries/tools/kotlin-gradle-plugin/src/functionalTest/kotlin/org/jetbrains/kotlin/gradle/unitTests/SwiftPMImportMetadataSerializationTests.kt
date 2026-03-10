@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependenc
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializeSwiftPMImportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesMetadataTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesMetadataTaskAndConsumableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.serializeSwiftPMImportMetadata
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -24,25 +24,25 @@ class SwiftPMImportMetadataSerializationTests {
     fun `smoke test swiftPM metadata serialization`() {
         buildProjectWithMPP {
             val extension = locateOrRegisterSwiftPMDependenciesExtension().apply {
-                iosDeploymentVersion.set("-1.0")
-                `package`(
+                iosMinimumDeploymentTarget.set("-1.0")
+                swiftPackage(
                     repository = SwiftPMDependency.Remote.Repository.Id("foo.bar/package1"),
                     version = exact("1.2.3"),
                     products = listOf(product("explicitProduct", platforms = setOf(SwiftPMDependency.Platform.iOS))),
                     packageName = "packageName",
                 )
-                `package`(
+                swiftPackage(
                     url = "https://foo.bar/package2.git",
                     version = "1.2.3",
                     products = listOf("product"),
                 )
-                localPackage(
+                localSwiftPackage(
                     directory = project.layout.projectDirectory.dir("package"),
                     products = listOf("localProduct"),
                 )
             }
 
-            val initialMetadata = locateOrRegisterSwiftPMDependenciesMetadataTask(extension)
+            val initialMetadata = locateOrRegisterSwiftPMDependenciesMetadataTaskAndConsumableConfiguration(extension)
                 .get().swiftPMImportMetadata()
             val serializedMetadata = ByteArrayOutputStream()
             initialMetadata.serializeSwiftPMImportMetadata(serializedMetadata)

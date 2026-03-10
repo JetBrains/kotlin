@@ -24,14 +24,14 @@ class SwiftPMImportExtensionTests {
             }
         ) {
             locateOrRegisterSwiftPMDependenciesExtension().apply {
-                `package`("https://foo.bar/package1", "1.2.3", listOf("product"))
-                `package`("https://foo.bar/package2.git", "1.2.3", listOf("product"))
-                localPackage(project.layout.projectDirectory.dir("."), listOf("product"))
-                localPackage(project.layout.projectDirectory.dir("../relativePackage"), listOf("product"))
-                localPackage(project.layout.projectDirectory.dir("package"), listOf("product"))
-                localPackage(project.layout.projectDirectory.dir("sub/subpackage"), listOf("product"))
+                swiftPackage("https://foo.bar/package1", "1.2.3", listOf("product"))
+                swiftPackage("https://foo.bar/package2.git", "1.2.3", listOf("product"))
+                localSwiftPackage(project.layout.projectDirectory.dir("."), listOf("product"))
+                localSwiftPackage(project.layout.projectDirectory.dir("../relativePackage"), listOf("product"))
+                localSwiftPackage(project.layout.projectDirectory.dir("package"), listOf("product"))
+                localSwiftPackage(project.layout.projectDirectory.dir("sub/subpackage"), listOf("product"))
             }
-        }.locateOrRegisterSwiftPMDependenciesExtension().spmDependencies.map {
+        }.locateOrRegisterSwiftPMDependenciesExtension().swiftPMDependencies.map {
             it.packageName
         }
 

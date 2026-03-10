@@ -20,7 +20,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 
-internal fun Project.locateOrRegisterSwiftPMDependenciesMetadataTask(
+internal fun Project.locateOrRegisterSwiftPMDependenciesMetadataTaskAndConsumableConfiguration(
     swiftPMImportExtension: SwiftPMImportExtension,
 ): TaskProvider<SerializeSwiftPMDependenciesMetadata> {
     val existingTask = project.locateTask<SerializeSwiftPMDependenciesMetadata>(SerializeSwiftPMDependenciesMetadata.TASK_NAME)
@@ -63,12 +63,12 @@ internal abstract class SerializeSwiftPMDependenciesMetadata : DefaultTask() {
     protected val metadataFile: Provider<RegularFile> = project.layout.buildDirectory.file("kotlin/swiftPMDependenciesMetadata")
 
     fun configureWithExtension(swiftPMImportExtension: SwiftPMImportExtension) {
-        iosDeploymentVersion.set(swiftPMImportExtension.iosDeploymentVersion)
-        macosDeploymentVersion.set(swiftPMImportExtension.macosDeploymentVersion)
-        watchosDeploymentVersion.set(swiftPMImportExtension.watchosDeploymentVersion)
-        tvosDeploymentVersion.set(swiftPMImportExtension.tvosDeploymentVersion)
-        discoverModulesImplicitly.set(swiftPMImportExtension.discoverModulesImplicitly)
-        importedSpmModules.set(swiftPMImportExtension.spmDependencies)
+        iosDeploymentVersion.set(swiftPMImportExtension.iosMinimumDeploymentTarget)
+        macosDeploymentVersion.set(swiftPMImportExtension.macosMinimumDeploymentTarget)
+        watchosDeploymentVersion.set(swiftPMImportExtension.watchosMinimumDeploymentTarget)
+        tvosDeploymentVersion.set(swiftPMImportExtension.tvosMinimumDeploymentTarget)
+        discoverModulesImplicitly.set(swiftPMImportExtension.discoverClangModulesImplicitly)
+        importedSpmModules.set(swiftPMImportExtension.swiftPMDependencies)
     }
 
     @TaskAction
