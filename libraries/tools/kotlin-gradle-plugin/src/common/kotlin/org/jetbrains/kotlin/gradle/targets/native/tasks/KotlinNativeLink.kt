@@ -235,9 +235,6 @@ constructor(
     val linkerOpts: List<String> by lazyConvention { binary.linkerOpts }
 
     @get:Input
-    internal val additionalLinkerOpts: MutableList<String> = mutableListOf()
-
-    @get:Input
     internal val additionalLinkerOptsProperty: ListProperty<String> = project.objects.listProperty(String::class.java)
 
     @get:Input
@@ -312,7 +309,7 @@ constructor(
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
             args.generateTestRunner = processTests
             args.mainPackage = entryPoint
-            args.singleLinkerArguments = (linkerOpts + additionalLinkerOpts + additionalLinkerOptsProperty.get()).toTypedArray()
+            args.singleLinkerArguments = (linkerOpts + additionalLinkerOptsProperty.get()).toTypedArray()
             args.binaryOptions = binaryOptions.map { (key, value) -> "$key=$value" }.toTypedArray()
             args.staticFramework = isStaticFramework
             args.konanDataDir = kotlinNativeProvider.get().konanDataDir.orNull

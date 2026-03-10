@@ -803,7 +803,6 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Input
     val baseKlibName: String = params.baseKlibName
 
-
     @get:Internal
     val outputFileName: String
         get() = with(LIBRARY) {
@@ -813,6 +812,9 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
     @get:Input
     val moduleName: String = project.klibModuleName(baseKlibName)
+
+    @get:Internal
+    internal var isGeneratedCinterop: Boolean = false
 
     @Deprecated(
         "Eager outputFile was replaced with lazy outputFileProvider",

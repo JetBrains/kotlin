@@ -13,13 +13,12 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadata
 import org.jetbrains.kotlin.gradle.uklibs.include
-import java.io.File
 import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.test.assertEquals
@@ -33,7 +32,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource
 import java.nio.file.Path
 import java.util.stream.Stream
 import kotlin.collections.mapOf
-import kotlin.io.path.absolutePathString
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
 import kotlin.io.path.exists
@@ -46,6 +44,7 @@ import kotlin.io.path.writeText
     enabledOnCI = [OS.MAC],
 )
 @NativeGradlePluginTests
+@SwiftPMImportGradlePluginTests
 class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
 
     @DisplayName("direct dependency on Firebase")
@@ -111,12 +110,12 @@ public open expect class swiftPMImport/emptyxcode/FIRAnalyticsMeta : platform/da
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/firebase/firebase-ios-sdk.git"),
             version = exact("12.5.0"),
             products = listOf(product("FirebaseAnalytics"), product("FirebaseFirestore")),
         )
-        `package`(
+        swiftPackage(
             url = url("https://github.com/apple/swift-protobuf.git"),
             version = exact("1.32.0"),
             products = listOf(),
@@ -167,8 +166,8 @@ public open expect class swiftPMImport/emptyxcode/FIRAnalyticsMeta : platform/da
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        iosDeploymentVersion.set("16.0")
-        `package`(
+        iosMinimumDeploymentTarget.set("16.0")
+        swiftPackage(
             url = url("https://github.com/googlemaps/ios-maps-sdk.git"),
             version = exact("10.6.0"),
             products = listOf(product("GoogleMaps")),
@@ -211,7 +210,7 @@ public open expect class swiftPMImport/emptyxcode/FIRAnalyticsMeta : platform/da
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/getsentry/sentry-cocoa.git"),
             version = exact("9.0.0-rc.1"), // use rc to get the fix: https://github.com/getsentry/sentry-cocoa/pull/6607
             products = listOf(product("Sentry")),
@@ -269,7 +268,7 @@ public final expect fun swiftPMImport/emptyxcode/RCPurchases.purchaseProduct(pro
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/RevenueCat/purchases-ios-spm.git"),
             version = exact("5.49.0"),
             products = listOf(product("RevenueCat")),
@@ -420,7 +419,7 @@ public open expect class swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTa
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/aws-amplify/aws-sdk-ios-spm.git"),
             version = exact("2.41.0"),
             products = listOf(product("AWSS3"), product("AWSEC2")),
@@ -482,7 +481,7 @@ public open expect class swiftPMImport/emptyxcode/MapViewMeta : platform/UIKit/U
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/mapbox/mapbox-maps-ios.git"),
             version = exact("11.16.6"),
             products = listOf(product("MapboxMaps")),
@@ -538,7 +537,7 @@ public final expect fun hev_socks5_tunnel_stats(tx_packets: kotlinx/cinterop/CVa
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/EbrahimTahernejad/Tun2SocksKit.git"),
             version = exact("5.14.1"),
             products = listOf(product("Tun2SocksKit"))
@@ -617,7 +616,7 @@ public open expect class swiftPMImport/emptyxcode/DDLogsMeta : platform/darwin/N
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/DataDog/dd-sdk-ios.git"),
             version = exact("3.3.0"),
             products = listOf(product("DatadogCore"), product("DatadogLogs")),
@@ -676,7 +675,7 @@ public open expect class swiftPMImport/emptyxcode/ADJConfigMeta : platform/darwi
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/adjust/ios_sdk.git"),
             version = exact("5.4.6"),
             products = listOf(product("AdjustWebBridge"))
@@ -733,7 +732,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
         """.trimIndent(),
         isStatic = isStatic
     ) { _ ->
-        `package`(
+        swiftPackage(
             url = url("https://github.com/openid/AppAuth-iOS.git"),
             version = exact("2.0.0"),
             products = listOf(product("AppAuth"))
@@ -780,15 +779,15 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                 // swift-tools-version: 5.9
                 import PackageDescription
                 let package = Package(
-                  name: "_internal_linkage_SwiftPMImport",
+                  name: "KotlinMultiplatformLinkedPackage",
                   platforms: [
                     .iOS("15.0"),
                   ],
                   products: [
                       .library(
-                          name: "_internal_linkage_SwiftPMImport",
+                          name: "KotlinMultiplatformLinkedPackage",
                           type: .none,
-                          targets: ["_internal_linkage_SwiftPMImport"]
+                          targets: ["KotlinMultiplatformLinkedPackage"]
                       ),
                   ],
                   dependencies: [
@@ -798,7 +797,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                   ],
                   targets: [
                     .target(
-                      name: "_internal_linkage_SwiftPMImport",
+                      name: "KotlinMultiplatformLinkedPackage",
                       dependencies: [
                         .product(
                           name: "LocalSwiftPackage",
@@ -846,7 +845,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
             )
         }
     ) { layout ->
-        localPackage(
+        localSwiftPackage(
             directory = layout.projectDirectory.dir("../localSwiftPackage"),
             products = listOf("LocalSwiftPackage"),
         )
@@ -988,7 +987,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                         )
 
                         swiftPMDependencies {
-                            localPackage(
+                            localSwiftPackage(
                                 directory = project.layout.projectDirectory.dir("localSwiftPackage"),
                                 products = listOf("LocalSwiftPackage"),
                             )
@@ -1051,15 +1050,15 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                             // swift-tools-version: 5.9
                             import PackageDescription
                             let package = Package(
-                              name: "_internal_linkage_SwiftPMImport",
+                              name: "KotlinMultiplatformLinkedPackage",
                               platforms: [
                                 .iOS("15.0"),
                               ],
                               products: [
                                   .library(
-                                      name: "_internal_linkage_SwiftPMImport",
+                                      name: "KotlinMultiplatformLinkedPackage",
                                       type: .none,
-                                      targets: ["_internal_linkage_SwiftPMImport"]
+                                      targets: ["KotlinMultiplatformLinkedPackage"]
                                   ),
                               ],
                               dependencies: [
@@ -1067,7 +1066,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                               ],
                               targets: [
                                 .target(
-                                  name: "_internal_linkage_SwiftPMImport",
+                                  name: "KotlinMultiplatformLinkedPackage",
                                   dependencies: [
                                     .product(name: "_producer", package: "_producer"),
                                   ]
@@ -1114,7 +1113,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                               ]
                             )
                         """.trimIndent() + "\n",
-                    manifestRelativePath = "iosApp/_internal_linkage_SwiftPMImport/subpackages/_producer/Package.swift"
+                    manifestRelativePath = "iosApp/KotlinMultiplatformLinkedPackage/subpackages/_producer/Package.swift"
                 )
             }
         }
@@ -1128,7 +1127,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
         isStatic: Boolean,
         expectedPackageManifest: String? = null,
         beforeBuild: (TestProject.() -> Unit)? = null,
-        configure: SwiftImportExtension.(ProjectLayout) -> Unit,
+        configure: SwiftPMImportExtension.(ProjectLayout) -> Unit,
     ) {
         if (!isTeamCityRun) {
             Assumptions.assumeTrue(version >= GradleVersion.version("8.0"))
@@ -1242,7 +1241,7 @@ private fun TestProject.testVisibleSignatures(
 private fun TestProject.testPackageManifest(
     expectedContent: String,
     swiftImportBasePath: Path = projectPath,
-    manifestRelativePath: String = "iosApp/_internal_linkage_SwiftPMImport/Package.swift",
+    manifestRelativePath: String = "iosApp/KotlinMultiplatformLinkedPackage/Package.swift",
 ) {
     val packageSwift = swiftImportBasePath.resolve(manifestRelativePath)
 
@@ -1253,8 +1252,8 @@ private fun TestProject.testPackageManifest(
     assertEquals(expectedContent, actualContent, "Package.swift content mismatch")
 }
 
-internal fun KotlinMultiplatformExtension.swiftPMDependencies(configure: SwiftImportExtension.() -> Unit) {
-    (this.extensions.getByName(SwiftImportExtension.EXTENSION_NAME) as SwiftImportExtension).configure()
+internal fun KotlinMultiplatformExtension.swiftPMDependencies(configure: SwiftPMImportExtension.() -> Unit) {
+    (this.extensions.getByName(SwiftPMImportExtension.EXTENSION_NAME) as SwiftPMImportExtension).configure()
 }
 
 private fun addEmbedAndSignPhaseForSpmLibrary(pbxprojFile: Path) {
@@ -1276,8 +1275,8 @@ private fun addEmbedAndSignPhaseForSpmLibrary(pbxprojFile: Path) {
 
     // 1. Replace PBXBuildFile section with PBXBuildFile and PBXCopyFilesBuildPhase
     val newBuildFileSection = """/* Begin PBXBuildFile section */
-		$buildFileId /* _internal_linkage_SwiftPMImport in Frameworks */ = {isa = PBXBuildFile; productRef = $productRefId /* _internal_linkage_SwiftPMImport */; };
-		$embedFrameworksBuildFileId /* _internal_linkage_SwiftPMImport in Embed Frameworks */ = {isa = PBXBuildFile; productRef = $productRefId /* _internal_linkage_SwiftPMImport */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		$buildFileId /* KotlinMultiplatformLinkedPackage in Frameworks */ = {isa = PBXBuildFile; productRef = $productRefId /* KotlinMultiplatformLinkedPackage */; };
+		$embedFrameworksBuildFileId /* KotlinMultiplatformLinkedPackage in Embed Frameworks */ = {isa = PBXBuildFile; productRef = $productRefId /* KotlinMultiplatformLinkedPackage */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1287,7 +1286,7 @@ private fun addEmbedAndSignPhaseForSpmLibrary(pbxprojFile: Path) {
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				$embedFrameworksBuildFileId /* _internal_linkage_SwiftPMImport in Embed Frameworks */,
+				$embedFrameworksBuildFileId /* KotlinMultiplatformLinkedPackage in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;

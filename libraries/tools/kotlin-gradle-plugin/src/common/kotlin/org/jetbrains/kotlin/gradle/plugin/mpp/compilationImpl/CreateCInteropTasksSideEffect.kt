@@ -51,6 +51,7 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
             it.enabled = enabledOnCurrentHost
             it.definitionFile.set(params.settings.definitionFile)
             it.kotlinNativeProvider.set(it.chooseKotlinNativeProvider(enabledOnCurrentHost, it.konanTarget, project))
+            it.isGeneratedCinterop = interop.isGeneratedCinterop
 
             it.kotlinCompilerArgumentsLogLevel
                 .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)

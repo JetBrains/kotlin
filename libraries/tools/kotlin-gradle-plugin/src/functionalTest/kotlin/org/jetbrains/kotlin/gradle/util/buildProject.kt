@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupportDeprecated
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionImpl
@@ -163,8 +163,8 @@ fun KotlinMultiplatformExtension.swiftExport(code: SwiftExportExtension.() -> Un
     requireNotNull(getExtension<SwiftExportExtension>("swiftExport")).apply(code)
 }
 
-fun KotlinMultiplatformExtension.swiftImport(code: SwiftImportExtension.() -> Unit) {
-    requireNotNull(getExtension<SwiftImportExtension>("swiftPMDependencies")).apply(code)
+fun KotlinMultiplatformExtension.swiftPMDependencies(code: SwiftPMImportExtension.() -> Unit) {
+    requireNotNull(getExtension<SwiftPMImportExtension>("swiftPMDependencies")).apply(code)
 }
 
 val Project.propertiesExtension: ExtraPropertiesExtension

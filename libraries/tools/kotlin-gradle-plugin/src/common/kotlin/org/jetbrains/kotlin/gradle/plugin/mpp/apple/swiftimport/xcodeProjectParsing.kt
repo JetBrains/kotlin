@@ -127,6 +127,7 @@ internal class PbxObjectEntitySerializer : JsonContentPolymorphicSerializer<PbxO
             "PBXNativeTarget" -> PbxNativeTarget.serializer()
             "PBXShellScriptBuildPhase" -> PbxShellScriptBuildPhase.serializer()
             "PBXFrameworksBuildPhase" -> PbxFrameworksBuildPhase.serializer()
+            "PBXCopyFilesBuildPhase" -> PbxCopyFilesBuildPhase.serializer()
             "PBXBuildFile" -> PbxBuildFile.serializer()
             "XCSwiftPackageProductDependency" -> XCSwiftPackageProductDependency.serializer()
             "XCLocalSwiftPackageReference" -> XCLocalSwiftPackageReference.serializer()
@@ -156,6 +157,12 @@ internal class PbxBuildFile(
 
 @Serializable
 internal class PbxFrameworksBuildPhase(
+    val isa: String,
+    var files: MutableList<String>?,
+) : PbxObject()
+
+@Serializable
+internal class PbxCopyFilesBuildPhase(
     val isa: String,
     var files: MutableList<String>?,
 ) : PbxObject()

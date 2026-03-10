@@ -380,11 +380,11 @@ object XcodeProjectSerializationFixtures {
             },
             "060E5E5CC791EDC4E478279F": {
               "isa": "XCLocalSwiftPackageReference",
-              "relativePath": "_internal_linkage_SwiftPMImport"
+              "relativePath": "KotlinMultiplatformLinkedPackage"
             },
             "1F767540D0F8DD22D9D40770": {
               "isa": "XCSwiftPackageProductDependency",
-              "productName": "_internal_linkage_SwiftPMImport"
+              "productName": "KotlinMultiplatformLinkedPackage"
             },
             "8504E73408E0DC9CC68C54AD": {
               "isa": "XCConfigurationList",

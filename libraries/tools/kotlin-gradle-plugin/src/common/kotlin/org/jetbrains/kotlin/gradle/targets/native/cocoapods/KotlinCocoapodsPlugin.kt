@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.CheckCocoaPodsHasNoSwiftPMDependencies
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PROJECT_FILE_PATH_ENV
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.callingProjectPathProvider
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.KotlinArtifactsPodspecExtension
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.kotlinArtifactsPodspecExtension
@@ -44,8 +42,8 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMDependenciesExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMDependenciesMetadataClasspath
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMDependenciesProvider
 import java.io.File
 
 
@@ -173,13 +171,13 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     private fun Project.checkHasNoSwiftPMDependencies(): TaskProvider<*> {
         val existingTask = locateTask<DefaultTask>(CHECK_SWIFT_PM_DEPENDENCIES_TASK_NAME)
         if (existingTask != null) return existingTask
-        val swiftPMImportExtension = swiftPMDependenciesExtension()
-        val directSwiftPMDependencies = provider { swiftPMImportExtension.spmDependencies }
-        val transitiveSwiftPMDependencies = swiftPMDependenciesMetadataClasspath()
+        val swiftPMImportExtension = locateOrRegisterSwiftPMDependenciesExtension()
+        val directSwiftPMDependencies = provider { swiftPMImportExtension.swiftPMDependencies }
+        val transitiveSwiftPMDependencies = transitiveSwiftPMDependenciesProvider()
 
         return registerTask<CheckCocoaPodsHasNoSwiftPMDependencies>(CHECK_SWIFT_PM_DEPENDENCIES_TASK_NAME) { task ->
             task.group = TASK_GROUP
-            task.description = "Check for SwiftPM dependencies and fail the build if these are present"
+            task.description = "Check for SwiftPM dependencies and fail the build if these are present during syncFramework integration"
             task.directSwiftPMDependencies.set(directSwiftPMDependencies)
             task.transitiveSwiftPMDependencies.set(transitiveSwiftPMDependencies)
             task.workspacePath.set(project.providers.environmentVariable("WORKSPACE_DIR"))
@@ -665,15 +663,13 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     val frameworkFileName = pod.moduleName + ".framework"
                     val frameworkSearchPaths = podBuildSettings.frameworkSearchPaths
 
-                    val linkerOpts = task.additionalLinkerOpts
-
                     if (isExecutable || isDynamicFramework.get()) {
                         val frameworkFileExists = frameworkSearchPaths.any { dir -> File(dir, frameworkFileName).exists() }
-                        if (frameworkFileExists) linkerOpts.addArg("-framework", pod.moduleName)
-                        linkerOpts.addAll(frameworkSearchPaths.map { "-F$it" })
+                        if (frameworkFileExists) task.additionalLinkerOptsProperty.addAll("-framework", pod.moduleName)
+                        task.additionalLinkerOptsProperty.addAll(frameworkSearchPaths.map { "-F$it" })
                     }
 
-                    if (isExecutable) linkerOpts.addArgs("-rpath", frameworkSearchPaths)
+                    if (isExecutable) task.additionalLinkerOptsProperty.addAll(frameworkSearchPaths.flatMap { listOf("-rpath", it) })
                 }
             }
         }

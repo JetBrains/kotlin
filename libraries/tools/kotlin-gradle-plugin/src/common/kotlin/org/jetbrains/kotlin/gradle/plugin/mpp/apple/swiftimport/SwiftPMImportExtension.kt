@@ -1,32 +1,63 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.json.encodeToStream
 import org.gradle.api.DomainObjectSet
+import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Remote.Repository
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Remote.Version
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import java.io.Serializable
 import javax.inject.Inject
 
-abstract class SwiftImportExtension @Inject constructor(
-    private val objects: ObjectFactory,
-) {
-    // FIXME: Maybe tests against CI RECOMMENDED_ version to keep up to date?
-    val iosDeploymentVersion: Property<String> = objects.property(String::class.java)
-    val macosDeploymentVersion: Property<String> = objects.property(String::class.java)
-    val watchosDeploymentVersion: Property<String> = objects.property(String::class.java)
-    val tvosDeploymentVersion: Property<String> = objects.property(String::class.java)
+internal fun Project.locateOrRegisterSwiftPMDependenciesExtension(): SwiftPMImportExtension {
+    val existingExtension = kotlinExtension.extensions.findByName(SwiftPMImportExtension.EXTENSION_NAME)
+    if (existingExtension != null) {
+        return existingExtension as SwiftPMImportExtension
+    }
+    kotlinExtension.extensions.create(
+        SwiftPMImportExtension.EXTENSION_NAME,
+        SwiftPMImportExtension::class.java
+    )
+    return kotlinExtension.getExtension<SwiftPMImportExtension>(
+        SwiftPMImportExtension.EXTENSION_NAME
+    )!!
+}
 
-    val discoverModulesImplicitly: Property<Boolean> = objects.property(Boolean::class.java)
+@ExperimentalKotlinGradlePluginApi
+abstract class SwiftPMImportExtension @Inject constructor(
+    objects: ObjectFactory,
+) {
+    val iosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
+    val macosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
+    val watchosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
+    val tvosMinimumDeploymentTarget: Property<String> = objects.property(String::class.java)
+
+    val discoverClangModulesImplicitly: Property<Boolean> = objects.property(Boolean::class.java)
         .convention(true)
 
     abstract val xcodeProjectPathForKmpIJPlugin: RegularFileProperty
 
-    internal abstract val spmDependencies: DomainObjectSet<SwiftPMDependency>
+    internal abstract val swiftPMDependencies: DomainObjectSet<SwiftPMDependency>
 
     fun url(value: String): Repository.Url = Repository.Url(value)
     fun id(value: String): Repository.Id = Repository.Id(value)
@@ -40,10 +71,10 @@ abstract class SwiftImportExtension @Inject constructor(
     fun product(
         name: String,
         platforms: Set<SwiftPMDependency.Platform>? = null,
-        importedModules: Set<String> = if (platforms != null) setOf(name) else emptySet(),
+        importedClangModules: Set<String> = if (platforms != null) setOf(name) else emptySet(),
     ): SwiftPMDependency.Product = SwiftPMDependency.Product(
         name,
-        importedModules,
+        importedClangModules,
         platforms
     )
     fun iOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.iOS
@@ -51,21 +82,21 @@ abstract class SwiftImportExtension @Inject constructor(
     fun watchOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.watchOS
     fun tvOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.tvOS
 
-    fun `package`(
+    fun swiftPackage(
         url: String,
         version: String,
         products: List<String>,
         packageName: String = inferPackageName(url),
-        importedModules: List<String> = products,
+        importedClangModules: List<String> = products,
         traits: Set<String> = setOf(),
     ) {
-        spmDependencies.add(
+        swiftPMDependencies.add(
             SwiftPMDependency.Remote(
                 repository = Repository.Url(url),
                 version = Version.From(version),
                 packageName = packageName,
                 products = products.map { SwiftPMDependency.Product(it) },
-                cinteropClangModules = importedModules.map {
+                cinteropClangModules = importedClangModules.map {
                     SwiftPMDependency.CinteropClangModule(it)
                 },
                 traits = traits
@@ -73,23 +104,23 @@ abstract class SwiftImportExtension @Inject constructor(
         )
     }
 
-    fun `package`(
+    fun swiftPackage(
         url: Repository.Url,
         version: Version,
         products: List<SwiftPMDependency.Product>,
         packageName: String = inferPackageName(url.value),
-        importedModules: List<String> = products.filter {
+        importedClangModules: List<String> = products.filter {
             it.platformConstraints == null && it.cinteropClangModules.isEmpty()
         }.map { it.name },
         traits: Set<String> = setOf(),
     ) {
-        spmDependencies.add(
+        swiftPMDependencies.add(
             SwiftPMDependency.Remote(
                 repository = url,
                 version = version,
                 packageName = packageName,
                 products = products,
-                cinteropClangModules = importedModules.map {
+                cinteropClangModules = importedClangModules.map {
                     SwiftPMDependency.CinteropClangModule(it)
                 } + products.flatMap { product ->
                     product.cinteropClangModules.map {
@@ -101,23 +132,23 @@ abstract class SwiftImportExtension @Inject constructor(
         )
     }
 
-    fun `package`(
+    fun swiftPackage(
         repository: Repository,
         version: Version,
         products: List<SwiftPMDependency.Product>,
         packageName: String,
-        importedModules: List<String> = products.filter {
+        importedClangModules: List<String> = products.filter {
             it.platformConstraints == null && it.cinteropClangModules.isEmpty()
         }.map { it.name },
         traits: Set<String> = setOf(),
     ) {
-        spmDependencies.add(
+        swiftPMDependencies.add(
             SwiftPMDependency.Remote(
                 repository = repository,
                 version = version,
                 packageName = packageName,
                 products = products,
-                cinteropClangModules = importedModules.map {
+                cinteropClangModules = importedClangModules.map {
                     SwiftPMDependency.CinteropClangModule(it)
                 } + products.flatMap { product ->
                     product.cinteropClangModules.map {
@@ -135,7 +166,7 @@ abstract class SwiftImportExtension @Inject constructor(
      * @param directory The directory containing the SwiftPM package (must contain Package.swift)
      * @param products List of SwiftPM product names to import
      * @param packageName Optional package name (inferred from directory name if not specified)
-     * @param importedModules List of modules to import (defaults to products list)
+     * @param importedClangModules List of modules to import (defaults to products list)
      * @param traits SwiftPM traits to enable
      *
      * Example:
@@ -146,21 +177,21 @@ abstract class SwiftImportExtension @Inject constructor(
      * )
      * ```
      */
-    fun localPackage(
+    fun localSwiftPackage(
         directory: Directory,
         products: List<String>,
         packageName: String = inferLocalPackageName(directory),
-        importedModules: List<String> = products,
+        importedClangModules: List<String> = products,
         traits: Set<String> = setOf(),
     ) {
         val absolutePath = directory.asFile.normalizedAbsoluteFile()
 
-        spmDependencies.add(
+        swiftPMDependencies.add(
             SwiftPMDependency.Local(
                 absolutePath = absolutePath,
                 packageName = packageName,
                 products = products.map { SwiftPMDependency.Product(it) },
-                cinteropClangModules = importedModules.map {
+                cinteropClangModules = importedClangModules.map {
                     SwiftPMDependency.CinteropClangModule(it)
                 },
                 traits = traits,
@@ -174,27 +205,28 @@ abstract class SwiftImportExtension @Inject constructor(
      * @param directory The directory containing the SwiftPM package (must contain Package.swift)
      * @param products List of SwiftPM products with platform constraints
      * @param packageName Optional package name (inferred from directory name if not specified)
-     * @param importedModules List of modules to import
+     * @param importedClangModules List of modules to import
      * @param traits SwiftPM traits to enable
      */
-    fun localPackage(
+    // Otherwise this overload clashes in jvm signature
+    @JvmName("localPackageWithProducts")
+    fun localSwiftPackage(
         directory: Directory,
         products: List<SwiftPMDependency.Product>,
         packageName: String = inferLocalPackageName(directory),
-        importedModules: List<String> = products.filter {
+        importedClangModules: List<String> = products.filter {
             it.platformConstraints == null && it.cinteropClangModules.isEmpty()
         }.map { it.name },
         traits: Set<String> = setOf(),
-        @Suppress("unused", "UNUSED_PARAMETER") javaOverloadsArePain: Boolean = true,
     ) {
         val absolutePath = directory.asFile.normalizedAbsoluteFile()
 
-        spmDependencies.add(
+        swiftPMDependencies.add(
             SwiftPMDependency.Local(
                 absolutePath = absolutePath,
                 packageName = packageName,
                 products = products,
-                cinteropClangModules = importedModules.map {
+                cinteropClangModules = importedClangModules.map {
                     SwiftPMDependency.CinteropClangModule(it)
                 } + products.flatMap { product ->
                     product.cinteropClangModules.map {
@@ -206,7 +238,7 @@ abstract class SwiftImportExtension @Inject constructor(
         )
     }
 
-    // FIXME: check if this is actually correct
+    // FIXME: KT-84695 Check and test if this is actually correct
     private fun inferPackageName(url: String) = url.split("/").last().split(".git").first()
 
     private fun inferLocalPackageName(directory: Directory): String {
@@ -219,32 +251,28 @@ abstract class SwiftImportExtension @Inject constructor(
     }
 }
 
-class SwiftPMImport(
-    val iosDeploymentVersion: String?,
-    val macosDeploymentVersion: String?,
-    val watchosDeploymentVersion: String?,
-    val tvosDeploymentVersion: String?,
-    val dependencies: Set<SwiftPMDependency>
-) : Serializable
+@kotlinx.serialization.Serializable
+sealed class SwiftPMDependency : Serializable {
+    internal abstract val packageName: String
+    internal abstract val products: List<Product>
+    internal abstract val cinteropClangModules: List<CinteropClangModule>
+    internal abstract val traits: Set<String>
 
-sealed class SwiftPMDependency(
-    val packageName: String,
-    val products: List<Product>,
-    val cinteropClangModules: List<CinteropClangModule>,
-    val traits: Set<String>,
-) : Serializable {
-    class Product internal constructor(
-        val name: String,
+    @kotlinx.serialization.Serializable
+    data class Product internal constructor(
+        internal val name: String,
         // this is not actually used for translation
-        val cinteropClangModules: Set<String> = setOf(),
-        val platformConstraints: Set<Platform>? = null,
+        internal val cinteropClangModules: Set<String> = setOf(),
+        internal val platformConstraints: Set<Platform>? = null,
     ) : Serializable
 
-    class CinteropClangModule internal constructor(
-        val name: String,
-        val platformConstraints: Set<Platform>? = null,
+    @kotlinx.serialization.Serializable
+    data class CinteropClangModule internal constructor(
+        internal val name: String,
+        internal val platformConstraints: Set<Platform>? = null,
     ) : Serializable
 
+    @kotlinx.serialization.Serializable
     enum class Platform {
         iOS,
         macOS,
@@ -259,31 +287,43 @@ sealed class SwiftPMDependency(
             }
     }
 
-    class Remote internal constructor(
-        val repository: Repository,
-        val version: Version,
-        // FIXME: This can actually be inferred from the repository URL
-        products: List<Product>,
-        cinteropClangModules: List<CinteropClangModule>,
-        packageName: String,
-        traits: Set<String>,
-    ) : SwiftPMDependency(
-        products = products,
-        cinteropClangModules = cinteropClangModules,
-        packageName = packageName,
-        traits = traits,
-    ) {
+    @kotlinx.serialization.Serializable
+    data class Remote internal constructor(
+        internal val repository: Repository,
+        internal val version: Version,
+        override val products: List<Product>,
+        override val cinteropClangModules: List<CinteropClangModule>,
+        override val packageName: String,
+        override val traits: Set<String>,
+    ) : SwiftPMDependency() {
+        @kotlinx.serialization.Serializable
         sealed class Version : Serializable {
-            data class Exact internal constructor(val value: String) : Version()
-            data class From internal constructor(val value: String) : Version()
-            data class Range internal constructor(val from: String, val through: String) : Version()
-            data class Branch internal constructor(val value: String) : Version()
-            data class Revision internal constructor(val value: String) : Version()
+            @kotlinx.serialization.Serializable
+            data class Exact internal constructor(internal val value: String) : Version()
+
+            @kotlinx.serialization.Serializable
+            data class From internal constructor(internal val value: String) : Version()
+
+            @kotlinx.serialization.Serializable
+            data class Range internal constructor(internal val from: String, val through: String) : Version()
+
+            @kotlinx.serialization.Serializable
+            data class Branch internal constructor(internal val value: String) : Version()
+
+            @kotlinx.serialization.Serializable
+            data class Revision internal constructor(internal val value: String) : Version()
         }
 
+        @kotlinx.serialization.Serializable
         sealed class Repository : Serializable {
-            data class Id internal constructor(val value: String) : Repository()
-            data class Url internal constructor(val value: String) : Repository()
+            @kotlinx.serialization.Serializable
+            data class Id internal constructor(internal val value: String) : Repository()
+
+            @kotlinx.serialization.Serializable
+            data class Url internal constructor(internal val value: String) : Repository()
+        }
+
+        companion object {
         }
     }
 
@@ -292,16 +332,46 @@ sealed class SwiftPMDependency(
      *
      * @property absolutePath Absolute path to the SwiftPM package directory
      */
-    class Local internal constructor(
-        val absolutePath: File,
-        products: List<Product>,
-        cinteropClangModules: List<CinteropClangModule>,
-        packageName: String,
-        traits: Set<String>,
-    ) : SwiftPMDependency(
-        products = products,
-        cinteropClangModules = cinteropClangModules,
-        packageName = packageName,
-        traits = traits,
-    )
+    @kotlinx.serialization.Serializable
+    data class Local internal constructor(
+        @kotlinx.serialization.Serializable(with = LocalFileSerializer::class)
+        internal val absolutePath: File,
+        override val products: List<Product>,
+        override val cinteropClangModules: List<CinteropClangModule>,
+        override val packageName: String,
+        override val traits: Set<String>,
+    ) : SwiftPMDependency() {
+
+        companion object {
+        }
+
+        internal class LocalFileSerializer : KSerializer<File> {
+            override val descriptor: SerialDescriptor get() = JsonElement.serializer().descriptor
+            override fun serialize(encoder: Encoder, value: File) = encoder.encodeString(value.path)
+            override fun deserialize(decoder: Decoder): File = File(decoder.decodeString())
+        }
+    }
 }
+
+// This is the structure that we serialize into
+@kotlinx.serialization.Serializable
+internal data class SwiftPMImportMetadata(
+    val iosDeploymentVersion: String?,
+    val macosDeploymentVersion: String?,
+    val watchosDeploymentVersion: String?,
+    val tvosDeploymentVersion: String?,
+    @Suppress("unused")
+    val isModulesDiscoveryEnabled: Boolean,
+    val dependencies: Set<SwiftPMDependency>
+) : Serializable
+
+private val swiftPMMetadataJson = Json {
+    ignoreUnknownKeys = true
+    encodeDefaults = true
+}
+
+internal fun deserializeSwiftPMImportMetadata(inputStream: InputStream) =
+    swiftPMMetadataJson.decodeFromStream<SwiftPMImportMetadata>(inputStream)
+
+internal fun SwiftPMImportMetadata.serializeSwiftPMImportMetadata(outputStream: OutputStream) =
+    swiftPMMetadataJson.encodeToStream(this, outputStream)
