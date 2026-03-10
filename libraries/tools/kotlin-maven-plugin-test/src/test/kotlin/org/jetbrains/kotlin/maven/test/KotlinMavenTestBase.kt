@@ -7,19 +7,15 @@ package org.jetbrains.kotlin.maven.test
 
 import org.jetbrains.kotlin.maven.plugin.test.MavenTestExecutionContext
 import org.jetbrains.kotlin.maven.plugin.test.MavenTestProject
-import org.jetbrains.kotlin.maven.plugin.test.createMavenTestExecutionContextFromEnvironment
-import org.junit.jupiter.api.AfterEach
+import org.jetbrains.kotlin.maven.plugin.test.createMavenTestExecutionContext
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.copyTo
 import kotlin.io.path.copyToRecursively
 import kotlin.io.path.createDirectories
-import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
@@ -33,7 +29,7 @@ abstract class KotlinMavenTestBase {
 
     @BeforeEach
     fun setup() {
-        context = createMavenTestExecutionContextFromEnvironment(tmpDir)
+        context = createMavenTestExecutionContext(tmpDir)
     }
 
     fun testProject(
@@ -70,7 +66,11 @@ abstract class KotlinMavenTestBase {
         copyTo.createDirectories()
 
         @OptIn(ExperimentalPathApi::class)
-        originalProjectDir.copyToRecursively(copyTo, overwrite = false, followLinks = true)
+        originalProjectDir.copyToRecursively(
+            copyTo,
+            overwrite = false, // let it fail in case something is wrong and it tries to write to the same dir
+            followLinks = true
+        )
 
         return copyTo
     }

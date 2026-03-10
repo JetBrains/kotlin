@@ -80,7 +80,7 @@ class LegacyIT : KotlinMavenTestBase() {
                 expectedToFail = true,
                 buildOptions = buildOptions.copy(
                     javaVersion = TestVersions.Java.JDK_1_8,
-                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.javaHomeProvider(TestVersions.Java.JDK_1_8).absolutePathString())
+                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
                 )
             ) {
                 assertBuildLogContains(
@@ -100,7 +100,7 @@ class LegacyIT : KotlinMavenTestBase() {
                 expectedToFail = false,
                 buildOptions = buildOptions.copy(
                     javaVersion = TestVersions.Java.JDK_17,
-                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.javaHomeProvider(TestVersions.Java.JDK_17).absolutePathString())
+                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_17))
                 )
             ) {
                 assertBuildLogContains("[INFO] BUILD SUCCESS")

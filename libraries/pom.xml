@@ -61,7 +61,8 @@
     </properties>
 
     <prerequisites>
-        <maven>3.0.2</maven>
+        <!-- Make sure MIN_SUPPORTED version in `kotlin-maven-plugin-test` matches this -->
+        <maven>3.6.3</maven>
     </prerequisites>
 
     <distributionManagement>

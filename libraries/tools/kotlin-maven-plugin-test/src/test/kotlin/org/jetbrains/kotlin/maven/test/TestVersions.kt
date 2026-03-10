@@ -26,8 +26,15 @@ interface TestVersions {
             const val MAVEN_3_6_3 = "3.6.3"
             const val MAVEN_4_0_0_RC4 = "4.0.0-rc-4"
 
+            /**
+             * Make sure it matches with`kotlin-project/pom.xml` -> `prerequisites` -> `maven`
+             */
             const val MIN_SUPPORTED = MAVEN_3_6_3
             const val MAX_SUPPORTED = MAVEN_3_9_12
         }
+    }
+
+    companion object {
+        val javaMapByNumericVersion: Map<Int, Java> = Java.entries.associateBy { it.numericVersion }
     }
 }

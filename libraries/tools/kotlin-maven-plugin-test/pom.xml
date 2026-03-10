@@ -211,9 +211,12 @@
                                 <configuration>
                                     <jvm>${kotlinTestBuildJdk}/bin/java</jvm>
                                     <systemPropertyVariables>
-                                        <maven.home>${maven.home}</maven.home>
+                                        <!-- Properties required for integration tests run -->
+                                        <!-- Path to maven repo with kotlin artifacts (i.e. kotlin-maven-plugin)
+                                        Can be provisioned with ./gradlew mvnPublish -->
+                                        <kotlin.build.repo>${settings.localRepository}</kotlin.build.repo>
                                         <kotlin.version>${project.version}</kotlin.version>
-                                        <kotlin.maven.local.repo.for.tests>${project.basedir}/local-repo</kotlin.maven.local.repo.for.tests>
+                                        <kotlin.it.localRepo>${project.basedir}/local-repo</kotlin.it.localRepo>
                                         <kotlin.it.testDirs>${project.basedir}/src/it</kotlin.it.testDirs>
                                         <!-- ./libraries/tools/kotlin-maven-plugin-test/pom.xml -->
                                         <kotlin.build.repo>${settings.localRepository}</kotlin.build.repo>

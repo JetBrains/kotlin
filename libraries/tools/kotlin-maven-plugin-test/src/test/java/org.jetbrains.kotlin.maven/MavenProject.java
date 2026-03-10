@@ -5,6 +5,7 @@ import kotlin.text.StringsKt;
 import org.apache.commons.io.file.PathUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.maven.plugin.test.EnvironmentConfigProvider;
 import org.jetbrains.kotlin.maven.plugin.test.MavenTestExecutionContext;
 
 import java.io.*;
@@ -13,7 +14,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static org.jetbrains.kotlin.maven.MavenTestUtils.getNotNullSystemProperty;
-import static org.jetbrains.kotlin.maven.plugin.test.MavenTestExecutionContextKt.createMavenTestExecutionContextFromEnvironment;
+import static org.jetbrains.kotlin.maven.plugin.test.MavenTestExecutionContextKt.createMavenTestExecutionContext;
 import static org.jetbrains.kotlin.maven.test.MavenSettingsXmlBuilderKt.checkOrWriteKotlinMavenTestSettingsXml;
 
 class MavenProject {
@@ -46,9 +47,10 @@ class MavenProject {
             }
         }
 
-        mavenTestExecutionContext = createMavenTestExecutionContextFromEnvironment(
+        mavenTestExecutionContext = createMavenTestExecutionContext(
                 // this argument is required but is not used later in the test, so I set it to a random value
-                Paths.get(workingDir.getAbsolutePath(), "tmp")
+                Paths.get(workingDir.getAbsolutePath(), "tmp"),
+                new EnvironmentConfigProvider()
         );
         mavenSettingsXml = new File(workingDir, "maven-settings.xml");
         checkOrWriteKotlinMavenTestSettingsXml(
