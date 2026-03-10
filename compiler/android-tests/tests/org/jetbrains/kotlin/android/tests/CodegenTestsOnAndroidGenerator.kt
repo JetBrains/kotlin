@@ -158,6 +158,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
         val folders = arrayOf(
             File("compiler/testData/codegen/box"),
+            File("compiler/testData/codegen/boxJvm"),
             File("compiler/testData/codegen/boxInline")
         )
 

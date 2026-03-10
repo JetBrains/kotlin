@@ -17,7 +17,7 @@ fun TestConfigurationBuilder.commonCodegenConfiguration() {
  * Enables FIR dump for tests inside `compiler/testData/codegen/box/evaluate`
  */
  fun TestConfigurationBuilder.configureEvaluateTests() {
-    forTestsMatching("compiler/testData/codegen/box/evaluate/*") {
+    forTestsMatching("compiler/testData/codegen/box(?:Jvm)?/evaluate/*") {
         defaultDirectives {
             +FIR_DUMP
             +RENDER_FIR_DECLARATION_ATTRIBUTES

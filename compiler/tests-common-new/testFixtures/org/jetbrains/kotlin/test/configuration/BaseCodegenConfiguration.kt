@@ -250,6 +250,7 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
 
     forTestsNotMatching(
         "compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*" or
+                "compiler/testData/codegen/boxJvm/diagnostics/functions/tailRecursion/*" or
                 "compiler/testData/diagnostics/*" or
                 "compiler/fir/analysis-tests/testData/*"
     ) {
@@ -260,13 +261,13 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
 
     configureModernJavaWhenNeeded()
 
-    forTestsMatching("compiler/testData/codegen/box/coroutines/varSpilling/debugMode/*") {
+    forTestsMatching("compiler/testData/codegen/box(?:Jvm)?/coroutines/varSpilling/debugMode/*") {
         defaultDirectives {
             +ENABLE_DEBUG_MODE
         }
     }
 
-    forTestsMatching("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests/*") {
+    forTestsMatching("compiler/testData/codegen/box(?:Jvm)?/javaInterop/foreignAnnotationsTests/tests/*") {
         defaultDirectives {
             +ENABLE_FOREIGN_ANNOTATIONS
             ForeignAnnotationsDirectives.ANNOTATIONS_PATH with JavaForeignAnnotationType.Annotations

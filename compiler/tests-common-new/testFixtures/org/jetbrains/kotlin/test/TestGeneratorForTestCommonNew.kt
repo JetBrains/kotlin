@@ -30,6 +30,23 @@ fun main(args: Array<String>) {
     val inlineScopesNewFormatToOld = listOf("inlineScopes/newFormatToOld")
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
+        testGroup(testsRoot, testDataRoot = "compiler/testData/codegen") {
+            testClass<AbstractIrBlackBoxCodegenTest> {
+                model("box", excludeDirs = k2BoxTestDir)
+                model("boxJvm", excludeDirs = k2BoxTestDir)
+            }
+
+            testClass<AbstractDirectivesValidatorTest> {
+                model("box")
+                model("boxJvm")
+            }
+
+            testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes> {
+                model("box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+                model("boxJvm", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+            }
+        }
+
         testGroup(testsRoot, testDataRoot = "compiler/testData") {
             testClass<AbstractDiagnosticTest> {
                 model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
@@ -85,14 +102,6 @@ fun main(args: Array<String>) {
                 model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractIrBlackBoxCodegenTest> {
-                model("codegen/box", excludeDirs = k2BoxTestDir)
-            }
-
-            testClass<AbstractDirectivesValidatorTest> {
-                model("codegen/box")
-            }
-
             testClass<AbstractIrSteppingTest> {
                 model("debug/stepping")
             }
@@ -142,10 +151,6 @@ fun main(args: Array<String>) {
             }
 
             // ------------- Inline scopes tests duplication -------------
-
-            testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes> {
-                model("codegen/box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
-            }
 
             testClass<AbstractFirBytecodeTextTestWithInlineScopes> {
                 model("codegen/bytecodeText")
