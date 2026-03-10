@@ -228,8 +228,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
 
     inline fun withCompanionBlock(block: () -> Unit) {
         val oldValue = context.currentCompanionBlockOwnerOrNull
-        context.currentCompanionBlockOwnerOrNull = context.containerSymbolIfAny as? FirClassSymbol<*>
-            ?: error("containerSymbolIfAny is not a FirClassSymbol")
+        context.currentCompanionBlockOwnerOrNull = context.containerSymbolIfAny
         try {
             block()
         } finally {

@@ -292,4 +292,4 @@ var FirClass.localClassJvmType: FqName? by FirDeclarationDataRegistry.data(Local
 val FirClassSymbol<*>.localClassJvmType: FqName? get() = fir.localClassJvmType
 
 private object FirstCompanionBlockKey : FirDeclarationDataKey()
-var FirRegularClass.firstCompanionBlock: KtSourceElement? by FirDeclarationDataRegistry.data(FirstCompanionBlockKey)
+var FirClass.firstCompanionBlock: KtSourceElement? by FirDeclarationDataRegistry.data(FirstCompanionBlockKey)

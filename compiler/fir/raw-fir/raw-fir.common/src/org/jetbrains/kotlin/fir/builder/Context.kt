@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.builder
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirLoopTarget
@@ -65,7 +66,7 @@ class Context<T> {
     var containingScriptSymbol: FirScriptSymbol? = null
     var containingReplSymbol: FirReplSnippetSymbol? = null
 
-    var currentCompanionBlockOwnerOrNull: FirClassSymbol<*>? = null
+    var currentCompanionBlockOwnerOrNull: FirBasedSymbol<*>? = null
 
     fun pushFirTypeParameters(isInnerOrLocal: Boolean, parameters: List<FirTypeParameterRef>) {
         capturedTypeParameters.add(StatusFirTypeParameterSymbolList(isInnerOrLocal, parameters.map { it.symbol }))

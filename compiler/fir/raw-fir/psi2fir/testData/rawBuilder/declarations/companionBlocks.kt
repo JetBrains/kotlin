@@ -49,3 +49,19 @@ class C {
         }
     }
 }
+
+enum class E {
+    Entry {
+        companion {
+            fun foo() {}
+            val bar = 1
+        }
+    }
+}
+
+val o = object {
+    companion {
+        fun foo() {}
+        val bar = 1
+    }
+}

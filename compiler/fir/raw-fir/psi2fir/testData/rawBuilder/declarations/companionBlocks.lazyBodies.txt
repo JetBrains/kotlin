@@ -60,3 +60,21 @@ FILE: companionBlocks.kt
         init { LAZY_BLOCK }
 
     }
+    public final? enum class E : R|kotlin/Enum<E>| {
+        private [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<R|kotlin/Enum<E>|>
+        }
+
+        public final static [ContainingClassKey=E] enum entry Entry: R|E| = LAZY_EXPRESSION
+        public final static [ContainingClassKey=E] fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static [ContainingClassKey=E] fun valueOf(value: R|kotlin/String|): R|E| {
+        }
+
+        public final static [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<E>|
+            public static get(): R|kotlin/enums/EnumEntries<E>|
+
+    }
+    public? final? val o: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>

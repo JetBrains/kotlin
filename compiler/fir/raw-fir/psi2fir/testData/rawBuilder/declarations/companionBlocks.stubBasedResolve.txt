@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] companionBlocks.kt
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] companionBlocks.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirstCompanionBlockKey=KtSourceElement] class C : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()
@@ -60,3 +60,21 @@ FILE: [ResolvedTo(BODY_RESOLVE)] companionBlocks.kt
         [ResolvedTo(ANNOTATION_ARGUMENTS)] init { LAZY_BLOCK }
 
     }
+    public final [ResolvedTo(BODY_RESOLVE)] enum class E : R|kotlin/Enum<E>| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] constructor(): R|E| {
+            super<R|kotlin/Enum<E>|>()
+        }
+
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=E] enum entry Entry: R|E| = LAZY_EXPRESSION
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|E| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<E>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<E>|
+
+    }
+    public final [ResolvedTo(CONTRACTS)] val o: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): <implicit>

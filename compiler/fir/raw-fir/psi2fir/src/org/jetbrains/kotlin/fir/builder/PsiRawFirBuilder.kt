@@ -1875,21 +1875,23 @@ open class PsiRawFirBuilder(
                                     )
                                     // Use ANONYMOUS_OBJECT_NAME for the owner class id for enum entry declarations (see KT-42351)
                                     withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {
-                                        for (declaration in ktEnumEntry.declarations) {
-                                            declarations += declaration.toFirDeclaration(
-                                                correctedEnumSelfTypeRef,
-                                                delegatedSelfType = delegatedEntrySelfType,
-                                                ktEnumEntry,
-                                                ownerClassBuilder = this,
-                                                ownerTypeParameters = emptyList()
-                                            )
-                                        }
+                                        addDeclarations(
+                                            classBody = body,
+                                            delegatedSuperType = correctedEnumSelfTypeRef,
+                                            delegatedSelfType = delegatedEntrySelfType,
+                                            owner = ktEnumEntry
+                                        )
 
                                         for (danglingModifier in ktEnumEntry.body?.danglingModifierLists.orEmpty()) {
                                             declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier).apply {
                                                 containingClassAttr = currentDispatchReceiverType()?.lookupTag
                                             }
                                         }
+                                    }
+                                }.apply {
+                                    @OptIn(KtExperimentalApi::class)
+                                    companionBlocks.firstOrNull()?.let { companionBlock ->
+                                        firstCompanionBlock = companionBlock.toFirSourceElement()
                                     }
                                 }
                             }
@@ -2091,7 +2093,7 @@ open class PsiRawFirBuilder(
         }
 
         @OptIn(KtExperimentalApi::class)
-        private fun FirRegularClassBuilder.addDeclarations(
+        private fun FirClassBuilder.addDeclarations(
             classBody: KtClassBody?,
             delegatedSuperType: FirTypeRef,
             delegatedSelfType: FirResolvedTypeRef,
@@ -2100,14 +2102,12 @@ open class PsiRawFirBuilder(
             classBody?.declarationsAndCompanionBlocks?.forEach {
                 when (it) {
                     is KtDeclaration -> {
-                        addDeclaration(
-                            it.toFirDeclaration(
-                                delegatedSuperType,
-                                delegatedSelfType,
-                                owner,
-                                this,
-                                typeParameters
-                            )
+                        declarations += it.toFirDeclaration(
+                            delegatedSuperType,
+                            delegatedSelfType,
+                            owner,
+                            this,
+                            typeParameters
                         )
                     }
                     is KtCompanionBlock -> {
@@ -2147,15 +2147,12 @@ open class PsiRawFirBuilder(
                         )
                         delegatedFieldsMap = extractedDelegatedFieldsMap
 
-                        for (declaration in objectDeclaration.declarations) {
-                            declarations += declaration.toFirDeclaration(
-                                delegatedSuperType,
-                                delegatedSelfType,
-                                owner = objectDeclaration,
-                                ownerClassBuilder = this,
-                                ownerTypeParameters = emptyList()
-                            )
-                        }
+                        addDeclarations(
+                            classBody = objectDeclaration.body,
+                            delegatedSuperType,
+                            delegatedSelfType,
+                            owner = objectDeclaration
+                        )
 
                         for (danglingModifier in objectDeclaration.body?.danglingModifierLists ?: emptyList()) {
                             declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier).apply {
@@ -2164,6 +2161,10 @@ open class PsiRawFirBuilder(
                         }
                     }.also {
                         it.delegateFieldsMap = delegatedFieldsMap
+                        @OptIn(KtExperimentalApi::class)
+                        expression.objectDeclaration.companionBlocks.firstOrNull()?.let { companionBlock ->
+                            it.firstCompanionBlock = companionBlock.toFirSourceElement()
+                        }
                     }
                 }
             }
