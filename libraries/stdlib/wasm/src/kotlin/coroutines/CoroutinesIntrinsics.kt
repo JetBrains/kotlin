@@ -45,7 +45,6 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
     this, receiver, createSimpleCoroutineFromSuspendFunction(completion)
 )
 
-// TODO: try to return if
 @kotlin.internal.InlineOnly
 internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
