@@ -157,10 +157,39 @@ class JavaClassifierTypeOverAst(
     }
 
     override val typeArguments: List<JavaType> by lazy {
-        val parameterList = node.findChildByType("REFERENCE_PARAMETER_LIST") ?: return@lazy emptyList()
-        parameterList.children
-            .filter { it.type.toString() == "TYPE" }
-            .map { typeNode -> createJavaType(typeNode, resolutionContext) }
+        val explicitArgs = node.findChildByType("REFERENCE_PARAMETER_LIST")?.children
+            ?.filter { it.type.toString() == "TYPE" }
+            ?.map { typeNode -> createJavaType(typeNode, resolutionContext) }
+            ?: emptyList()
+
+        // For non-static inner classes, we need to include implicit type arguments from outer classes.
+        // This matches the behavior of TreeBasedClassifierType in javac-wrapper.
+        // For example, if Outer<T> has inner class Inner<U>, then Outer<String>.Inner<Int>
+        // should have typeArguments = [String, Int], not just [Int].
+        val javaClass = classifier as? JavaClass
+        if (javaClass == null || javaClass.isStatic) {
+            return@lazy explicitArgs
+        }
+
+        // Collect type parameters from all non-static outer classes
+        val outerTypeParams = mutableListOf<JavaTypeParameter>()
+        var outer = javaClass.outerClass
+        while (outer != null && !outer.isStatic) {
+            outerTypeParams.addAll(outer.typeParameters)
+            outer = outer.outerClass
+        }
+
+        if (outerTypeParams.isEmpty()) {
+            return@lazy explicitArgs
+        }
+
+        // Create type references for outer class type parameters
+        // These are implicit type arguments that FIR expects
+        val implicitArgs = outerTypeParams.map { typeParam ->
+            JavaTypeParameterTypeOverAst(typeParam)
+        }
+
+        explicitArgs + implicitArgs
     }
 
     override val isResolved: Boolean
@@ -245,6 +274,27 @@ class JavaWildcardTypeOverAst(
     extraAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaTypeOverAst(node, resolutionContext, extraAnnotations), JavaWildcardType
 
+/**
+ * A JavaClassifierType that represents a type parameter reference.
+ * Used for implicit type arguments from outer classes of inner class types.
+ * This matches TreeBasedTypeParameterType in javac-wrapper.
+ */
+class JavaTypeParameterTypeOverAst(
+    override val classifier: JavaTypeParameter
+) : JavaClassifierType {
+    override val typeArguments: List<JavaType> get() = emptyList()
+    override val isRaw: Boolean get() = false
+    override val classifierQualifiedName: String get() = classifier.name.asString()
+    override val presentableText: String get() = classifierQualifiedName
+    override val annotations: Collection<JavaAnnotation> get() = classifier.annotations
+    override val isDeprecatedInJavaDoc: Boolean get() = false
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
+
+    // Type parameter references are always resolved
+    override val isResolved: Boolean get() = true
+    override fun resolve(tryResolve: (String) -> Boolean): String? = classifierQualifiedName
+}
+
 fun createJavaType(
     node: JavaSyntaxNode,
     resolutionContext: JavaResolutionContext,
@@ -262,18 +312,28 @@ fun createJavaType(
                 return JavaArrayTypeOverAst(node, resolutionContext, componentType, extraAnnotations)
             }
         }
+        
+        // Wildcard type: TYPE contains QUEST (the '?'), optionally with EXTENDS_KEYWORD or SUPER_KEYWORD
+        // AST structure: TYPE -> [QUEST, (EXTENDS_KEYWORD|SUPER_KEYWORD)?, TYPE?]
+        // Must check on the input TYPE node BEFORE looking for nested TYPE (which would be the bound type)
+        if (node.findChildByType("QUEST") != null) {
+            val hasSuper = node.findChildByType("SUPER_KEYWORD") != null
+            val boundTypeNode = node.findChildByType("TYPE")
+            val bound = boundTypeNode?.let { createJavaType(it, resolutionContext) }
+            // isExtends = true for "? extends X" or unbounded "?"
+            // isExtends = false for "? super X"
+            val isExtends = !hasSuper
+            return JavaWildcardTypeOverAst(node, resolutionContext, bound, isExtends, extraAnnotations)
+        }
     }
 
     val typeNode = node.findChildByType("TYPE") ?: node
 
-    // Wildcard type: TYPE contains QUEST (the '?'), optionally with EXTENDS_KEYWORD or SUPER_KEYWORD
-    // AST structure: TYPE -> [QUEST, (EXTENDS_KEYWORD|SUPER_KEYWORD)?, TYPE?]
+    // Also check for wildcard on the derived typeNode (for non-TYPE input nodes)
     if (typeNode.findChildByType("QUEST") != null) {
         val hasSuper = typeNode.findChildByType("SUPER_KEYWORD") != null
         val boundTypeNode = typeNode.findChildByType("TYPE")
-        val bound = boundTypeNode?.let { createJavaType(it, resolutionContext) as? JavaClassifierType }
-        // isExtends = true for "? extends X" or unbounded "?"
-        // isExtends = false for "? super X"
+        val bound = boundTypeNode?.let { createJavaType(it, resolutionContext) }
         val isExtends = !hasSuper
         return JavaWildcardTypeOverAst(typeNode, resolutionContext, bound, isExtends, extraAnnotations)
     }

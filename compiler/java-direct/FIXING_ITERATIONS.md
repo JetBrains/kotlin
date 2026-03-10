@@ -5,8 +5,8 @@
 This document contains iteration plans for the `java-direct` module.
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration  
-**Status**: Iteration 19 complete — 1105/1166 box tests passing (94.8%)  
-**Last Updated**: 2026-03-06
+**Status**: Iteration 20 complete — 1112/1166 box tests passing (95.4%)  
+**Last Updated**: 2026-03-10
 
 ---
 
@@ -508,121 +508,79 @@ if (referenceNode != null) {
 
 ## Iteration 20: Wildcard/Projection Edge Cases
 
-**Status**: 🔲 Planned  
-**Expected Impact**: ~5 tests  
+**Status**: ✅ Completed (partial)  
+**Actual Impact**: +7 tests (61 → 54 failing)  
 **Priority**: MEDIUM  
 **Complexity**: HIGH
 
-### Problem Statement
+### What Was Done
 
-Complex wildcard scenarios fail due to:
-1. Incorrect fake override generation with covariant wildcard returns
-2. Star projections not properly handled after capture conversion
-3. Wildcards not preserved in reflection/delegation scenarios
+Fixed two separate issues with wildcard/generic type handling:
 
-### Symptoms
+1. **Wildcard type arguments not parsed correctly** — TYPE nodes containing `?` were being incorrectly processed because the code looked for a nested TYPE before checking for QUEST.
 
-```
-java.lang.NoSuchMethodError: 'Y D.foo()'
-```
+2. **Inner class types missing implicit type arguments** — Non-static inner class types need implicit type arguments from their enclosing classes for FIR to process them correctly.
 
-```
-java.lang.IllegalArgumentException: There should left no projections after capture conversion
-```
+### Root Causes Found
 
-```
-Expected <[..., ? extends java.util.Set<...>]>, actual <[..., java.util.Set<...>]>
-```
+**Issue 1: Wildcard Parsing**
 
-### Affected Tests
-
-- `testInheritanceWithWildcard` — NoSuchMethodError
-- `testJavaGenericSynthProperty` — Star projection crash
-- `testDelegatedMembers` — Wildcard not preserved
-
-### Phase 1: Analysis — testInheritanceWithWildcard
-
-**Test structure**:
-```java
-interface A { X<? extends A> foo(); }
-interface B extends A { 
-    @Override Y<? extends B> foo();  // Covariant override
-}
-class BImpl implements B { ... }
-```
-
+The `createJavaType()` function had this logic:
 ```kotlin
-private class D : A, BImpl()  // Multiple inheritance
-fun box() = D().foo()  // NoSuchMethodError
+val typeNode = node.findChildByType("TYPE") ?: node
+if (typeNode.findChildByType("QUEST") != null) { ... }
 ```
 
-**Debug approach**:
-1. Examine how the method signature is being constructed
-2. Check if fake override is generated correctly
-3. May require FIR-level investigation
+For a TYPE node like `? extends A`:
+```
+TYPE: '? extends A'
+  QUEST: '?'
+  EXTENDS_KEYWORD: 'extends'
+  TYPE: 'A'
+```
 
+The code would find the nested `TYPE: 'A'` first, assign it to `typeNode`, then check for QUEST on that node (not found). Fixed by checking for QUEST on the input TYPE node BEFORE looking for nested TYPE.
+
+**Issue 2: Inner Class Type Arguments**
+
+Java-direct's `typeArguments` only returned explicit type arguments from `REFERENCE_PARAMETER_LIST`. But for non-static inner classes, FIR expects implicit type arguments from outer classes.
+
+For example, `Outer<T>.Inner<U>` should have `typeArguments = [T, U]`, not just `[U]`.
+
+The javac-wrapper's `TreeBasedClassifierType.typeArguments` (lines 141-166) has this logic:
 ```kotlin
-// Add debug in method resolution
-throw IllegalStateException("DEBUG: method=${method.name}, returnType=${method.returnType}")
+// For non-static inner classes, collect type parameters from outer classes
+return arrayListOf<JavaClass>().apply {
+    var outer = classifier.outerClass
+    while (outer != null && !outer.isStatic) {
+        add(outer)
+        outer = outer.outerClass
+    }
+}.flatMap { it.typeParameters.map(::TreeBasedTypeParameterType) }
 ```
 
-### Phase 2: Analysis — testJavaGenericSynthProperty
+### Changes Made
 
-**Test structure**:
-```java
-public class JOuter<O1, O2> {
-    public JInner<Box<O1>, ?> instance(O1 s1, O2 s2) { ... }
-}
-```
+| File | Change |
+|------|--------|
+| `JavaTypeOverAst.kt` | Fixed `createJavaType()` to check for QUEST on input TYPE node before looking for nested TYPE. |
+| `JavaTypeOverAst.kt` | Added implicit outer class type arguments to `JavaClassifierTypeOverAst.typeArguments` for non-static inner classes. |
+| `JavaTypeOverAst.kt` | Added `JavaTypeParameterTypeOverAst` class to represent type parameter references as implicit type arguments. |
 
-The `?` wildcard in `JInner<Box<O1>, ?>` is causing capture conversion issues.
+### Tests Added to JavaParsingTest.kt
 
-**Debug approach**:
-1. Check how wildcards are represented in `JavaWildcardTypeOverAst`
-2. Verify FIR type conversion handles nested wildcards correctly
+- `testCovariantWildcardReturnType` — Verifies wildcard type arguments in method return types
+- `testUnboundedWildcard` — Tests unbounded `?`, `? extends Object`, and `? super String`
 
-### Phase 3: Implementation
+### Tests Fixed
 
-This iteration may require changes in multiple places:
+- `testJavaGenericSynthProperty` — Star projection crash (inner class type args)
+- `testDelegatedMembers` — Wildcard preserved (inner class type args)
+- +5 more wildcard/generic related tests
 
-1. **Review `JavaWildcardTypeOverAst`** construction:
-   ```kotlin
-   class JavaWildcardTypeOverAst(
-       node: JavaSyntaxNode,
-       private val resolutionContext: JavaResolutionContext
-   ) : JavaTypeOverAst(node), JavaWildcardType {
-       override val bound: JavaType?
-           get() = // Ensure bound is correctly parsed
-       
-       override val isExtends: Boolean
-           get() = // Check for "extends" keyword or default (unbounded = extends Object)
-   }
-   ```
+### Remaining Issue
 
-2. **Check FIR conversion** in `JavaTypeConversion.kt`:
-   - How are wildcards converted to `ConeKotlinTypeProjection`?
-   - Is `ConeStarProjection` used correctly for `?`?
-
-3. **Review delegation handling** in FIR:
-   - Wildcards should be preserved in delegated member signatures
-   - May need special handling for reflection metadata
-
-### Phase 4: Validation
-
-```bash
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$JavaInterop.testInheritanceWithWildcard" -q
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Properties.testJavaGenericSynthProperty" -q
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$GenericJvmSignature.testDelegatedMembers" -q
-```
-
-### Success Criteria
-
-- All 3 wildcard tests pass
-- No regressions in other generic tests
-
-### Notes
-
-This iteration may reveal FIR-level issues rather than java-direct issues. If so, document findings and potentially file issues for FIR team.
+`testInheritanceWithWildcard` still fails with `NoSuchMethodError: 'Y D.foo()'`. This appears to be a FIR-level issue with fake override generation for covariant wildcard returns across Java inheritance hierarchies. The java-direct parsing is correct (classifiers resolve properly), but FIR doesn't generate the expected bridge method.
 
 ---
 
@@ -720,36 +678,33 @@ fun Base<Any>.confirmOrFail(): String {
 
 ## Remaining Work
 
-### Current Status After Iteration 19: 1105/1166 box tests (94.8%)
+### Current Status After Iteration 20: 1112/1166 box tests (95.4%)
 
 | Category | Count | Example Tests |
 |----------|-------|---------------|
-| Inner/Nested Classes | ~8 | `testBoundInnerConstructorRef`, `testInheritedInnerAndNested` |
-| TYPE_USE on Type Args | 5 | `testJavaCollectionOfNotNullToTypedArrayFailFast` |
-| Wildcards/Projections | 3 | `testInheritanceWithWildcard`, `testJavaGenericSynthProperty` |
-| Visibility Issues | 2 | `testContractAndRawField` |
+| FIR-level Issues | ~1 | `testInheritanceWithWildcard` (covariant override bridge) |
+| Visibility Issues | ~2 | `testContractAndRawField` |
 | Annotation Edge Cases | ~10 | `testJavaAnnotation`, `testConstValAsAnnotationArgumentInJava` |
 | Enum Handling | ~6 | `testJavaEnumValues`, `testEnumEntriesFromJava` |
-| Reflection/Metadata | ~5 | `testDelegatedMembers`, `testCallableReferenceToJavaField` |
-| Other Edge Cases | ~35 | Various |
+| Reflection/Metadata | ~5 | `testCallableReferenceToJavaField` |
+| Other Edge Cases | ~30 | Various |
 
-### Realistic Expectations for Iterations 20-21
+### Completed Iterations Summary
 
-| Iteration | Target | Expected Tests Fixed |
-|-----------|--------|---------------------|
-| 18 | Nested Class Resolution | ✅ +8 (completed) |
-| 19 | TYPE_USE on Type Args | ✅ +5 (completed) |
-| 20 | Wildcard Edge Cases | ~3-5 |
+| Iteration | Target | Tests Fixed |
+|-----------|--------|-------------|
+| 18 | Nested Class Resolution | ✅ +8 |
+| 19 | TYPE_USE on Type Args | ✅ +5 |
+| 20 | Wildcard Edge Cases | ✅ +7 |
 | 21 | Visibility Issues | ~3 |
 
-**Projected Status**: ~1115/1166 (~95.6%)
+### Key Insight: Remaining Failures
 
-### Key Insight: Baseline Diffs Dominate
-
-104 of 172 failures (60%) are baseline/content diffs. These require individual investigation to determine:
-- Is the output incorrect? → Fix the code
-- Is the output correct but different? → Update the baseline
-- Is it an acceptable variation? → Mark as expected
+54 tests still failing. Categories include:
+- FIR-level issues (fake override generation, capture conversion edge cases)
+- Annotation edge cases (const val references, annotation instantiation)
+- Visibility/access issues
+- Baseline content diffs
 
 ### Potential Future Iterations
 
@@ -758,21 +713,19 @@ fun Base<Any>.confirmOrFail(): String {
 - Distinguish from enum constant references
 - May need FIR-level resolution
 
-**Iteration 23: Baseline Diff Triage**
+**Iteration 23: testInheritanceWithWildcard Investigation**
+- Debug FIR fake override generation for covariant wildcard returns
+- May require FIR team consultation
+
+**Iteration 24: Baseline Diff Triage**
 - Review each baseline diff individually
 - Categorize: bug, acceptable, or needs baseline update
-
-**Iteration 24: Missing Dep Superclass**
-- Investigate supertype resolution failures
-- May overlap with nested class resolution
-
-**Iteration 25+: Modern Java Features** (if needed)
-- Records, sealed classes, pattern matching
 
 ---
 
 ## Document Change Log
 
+- 2026-03-10: **Iteration 20** - Fixed wildcard parsing and inner class type arguments (+7 tests)
 - 2026-03-06: **Major cleanup** - Archived iterations 7-16, condensed document
 - 2026-03-05: Iterations 11-16 completed (ad-hoc approach)
 - 2026-03-04: Iterations 7-10 completed

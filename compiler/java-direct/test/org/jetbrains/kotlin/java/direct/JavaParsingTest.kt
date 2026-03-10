@@ -1109,4 +1109,195 @@ class JavaParsingTest {
         assert(!innerClass.isEnum) { "InnerClass should not be an enum" }
         assert(!innerClass.isStatic) { "Inner class without 'static' keyword should NOT be static" }
     }
+
+    @Test
+    fun testCovariantWildcardReturnType() {
+        // Test for the inheritanceWithWildcard pattern:
+        // Interface A with method returning X<? extends A>
+        // Interface B extends A with covariant override returning Y<? extends B>
+        val source = """
+            interface A {
+                X<? extends A> foo();
+                interface X<T extends A> {}
+            }
+            
+            interface B extends A {
+                @Override
+                Y<? extends B> foo();
+                interface Y<U extends B> extends A.X<U> {}
+            }
+            
+            class BImpl implements B {
+                @Override
+                public B.Y<? extends B> foo() { return null; }
+            }
+        """.trimIndent()
+        val (root, context) = parseSource(source)
+
+        val classes = root.children.filter { it.type.toString() == "CLASS" }
+        assert(classes.size == 3) { "Expected 3 classes (A, B, BImpl), got ${classes.size}" }
+
+        // Find interface A
+        val interfaceANode = classes.first { it.findChildByType("IDENTIFIER")?.text == "A" }
+        val interfaceA = JavaClassOverAst(interfaceANode, context)
+        assert(interfaceA.isInterface) { "A should be an interface" }
+        
+        // Check A.foo() return type
+        val aFoo = interfaceA.methods.first { it.name.asString() == "foo" }
+        val aFooReturnType = aFoo.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(aFooReturnType.classifierQualifiedName == "A.X") { 
+            "A.foo() should return A.X, got ${aFooReturnType.classifierQualifiedName}" 
+        }
+        assert(aFooReturnType.typeArguments.size == 1) { 
+            "A.X should have 1 type argument, got ${aFooReturnType.typeArguments.size}" 
+        }
+        
+        // Check the wildcard type argument
+        val aWildcard = aFooReturnType.typeArguments[0]
+        assert(aWildcard is org.jetbrains.kotlin.load.java.structure.JavaWildcardType) { 
+            "Expected JavaWildcardType, got ${aWildcard?.javaClass}" 
+        }
+        val aWildcardType = aWildcard as org.jetbrains.kotlin.load.java.structure.JavaWildcardType
+        assert(aWildcardType.isExtends) { "Should be '? extends'" }
+        assert(aWildcardType.bound != null) { "Wildcard should have a bound" }
+        val aBound = aWildcardType.bound as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(aBound.classifierQualifiedName == "A") { 
+            "Wildcard bound should be A, got ${aBound.classifierQualifiedName}" 
+        }
+        
+        // Find interface B
+        val interfaceBNode = classes.first { it.findChildByType("IDENTIFIER")?.text == "B" }
+        val interfaceB = JavaClassOverAst(interfaceBNode, context)
+        assert(interfaceB.isInterface) { "B should be an interface" }
+        
+        // Check B.foo() return type
+        val bFoo = interfaceB.methods.first { it.name.asString() == "foo" }
+        val bFooReturnType = bFoo.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(bFooReturnType.classifierQualifiedName == "B.Y") { 
+            "B.foo() should return B.Y, got ${bFooReturnType.classifierQualifiedName}" 
+        }
+        assert(bFooReturnType.typeArguments.size == 1) { 
+            "B.Y should have 1 type argument, got ${bFooReturnType.typeArguments.size}" 
+        }
+        
+        // Check the wildcard type argument
+        val bWildcard = bFooReturnType.typeArguments[0]
+        assert(bWildcard is org.jetbrains.kotlin.load.java.structure.JavaWildcardType) { 
+            "Expected JavaWildcardType, got ${bWildcard?.javaClass}" 
+        }
+        val bWildcardType = bWildcard as org.jetbrains.kotlin.load.java.structure.JavaWildcardType
+        assert(bWildcardType.isExtends) { "Should be '? extends'" }
+        assert(bWildcardType.bound != null) { "Wildcard should have a bound" }
+        val bBound = bWildcardType.bound as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(bBound.classifierQualifiedName == "B") { 
+            "Wildcard bound should be B, got ${bBound.classifierQualifiedName}" 
+        }
+
+        // Find class BImpl
+        val bImplNode = classes.first { it.findChildByType("IDENTIFIER")?.text == "BImpl" }
+        val bImpl = JavaClassOverAst(bImplNode, context)
+        assert(!bImpl.isInterface) { "BImpl should be a class" }
+        
+        // Check BImpl.foo() return type
+        val bImplFoo = bImpl.methods.first { it.name.asString() == "foo" }
+        val bImplFooReturnType = bImplFoo.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(bImplFooReturnType.classifierQualifiedName == "B.Y") { 
+            "BImpl.foo() should return B.Y, got ${bImplFooReturnType.classifierQualifiedName}" 
+        }
+        assert(bImplFooReturnType.typeArguments.size == 1) { 
+            "B.Y should have 1 type argument, got ${bImplFooReturnType.typeArguments.size}" 
+        }
+        
+        // Check the wildcard type argument
+        val bImplWildcard = bImplFooReturnType.typeArguments[0]
+        assert(bImplWildcard is org.jetbrains.kotlin.load.java.structure.JavaWildcardType) { 
+            "Expected JavaWildcardType, got ${bImplWildcard?.javaClass}" 
+        }
+        val bImplWildcardType = bImplWildcard as org.jetbrains.kotlin.load.java.structure.JavaWildcardType
+        assert(bImplWildcardType.isExtends) { "Should be '? extends'" }
+        assert(bImplWildcardType.bound != null) { "Wildcard should have a bound" }
+        val bImplBound = bImplWildcardType.bound as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(bImplBound.classifierQualifiedName == "B") { 
+            "Wildcard bound should be B, got ${bImplBound.classifierQualifiedName}" 
+        }
+        
+        // Check that nested interface B.Y properly extends A.X
+        val nestedY = interfaceB.findInnerClass(org.jetbrains.kotlin.name.Name.identifier("Y"))
+        assert(nestedY != null) { "Should find nested interface Y in B" }
+        assert(nestedY!!.isInterface) { "Y should be an interface" }
+        assert(nestedY.supertypes.size == 1) { "Y should have 1 supertype (A.X), got ${nestedY.supertypes.size}" }
+
+        val ySupertype = nestedY.supertypes.first()
+        // Y extends A.X<U>, so supertype should be A.X with type argument U
+        assert(ySupertype.classifierQualifiedName == "A.X") {
+            "Y's supertype should be A.X, got ${ySupertype.classifierQualifiedName}"
+        }
+
+        // Check that classifier is resolved for the return types
+        // This is important for FIR to properly match method signatures
+        assert(aFooReturnType.classifier != null) { "A.foo() return type classifier should be resolved" }
+        assert(aFooReturnType.classifier == interfaceA.findInnerClass(org.jetbrains.kotlin.name.Name.identifier("X"))) {
+            "A.foo() return type should resolve to A.X"
+        }
+
+        assert(bFooReturnType.classifier != null) { "B.foo() return type classifier should be resolved" }
+        assert(bFooReturnType.classifier == nestedY) {
+            "B.foo() return type should resolve to B.Y"
+        }
+
+        assert(bImplFooReturnType.classifier != null) { "BImpl.foo() return type classifier should be resolved" }
+        assert(bImplFooReturnType.classifier == nestedY) {
+            "BImpl.foo() return type should resolve to B.Y"
+        }
+    }
+
+    @Test
+    fun testUnboundedWildcard() {
+        // Test unbounded wildcard (?) which should have isExtends=true and bound=null
+        val source = """
+            import java.util.List;
+            
+            public class MyClass {
+                public List<?> items;
+                public List<? extends Object> explicitExtends;
+                public List<? super String> superWildcard;
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        // Test unbounded wildcard: List<?>
+        val itemsField = javaClass.fields.first { it.name.asString() == "items" }
+        val itemsType = itemsField.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(itemsType.typeArguments.size == 1) { "List should have 1 type argument" }
+
+        val unboundedWildcard = itemsType.typeArguments[0]
+        assert(unboundedWildcard is org.jetbrains.kotlin.load.java.structure.JavaWildcardType) {
+            "Expected JavaWildcardType for ?, got ${unboundedWildcard?.javaClass}"
+        }
+        val unboundedType = unboundedWildcard as org.jetbrains.kotlin.load.java.structure.JavaWildcardType
+        assert(unboundedType.isExtends) { "Unbounded wildcard should have isExtends=true" }
+        assert(unboundedType.bound == null) { "Unbounded wildcard should have bound=null, got ${unboundedType.bound}" }
+
+        // Test explicit extends Object: List<? extends Object>
+        val extendsField = javaClass.fields.first { it.name.asString() == "explicitExtends" }
+        val extendsType = extendsField.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val extendsWildcard = extendsType.typeArguments[0] as org.jetbrains.kotlin.load.java.structure.JavaWildcardType
+        assert(extendsWildcard.isExtends) { "? extends Object should have isExtends=true" }
+        assert(extendsWildcard.bound != null) { "? extends Object should have a bound" }
+        val extendsBound = extendsWildcard.bound as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(extendsBound.classifierQualifiedName == "Object") {
+            "Bound should be Object, got ${extendsBound.classifierQualifiedName}"
+        }
+
+        // Test super wildcard: List<? super String>
+        val superField = javaClass.fields.first { it.name.asString() == "superWildcard" }
+        val superType = superField.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val superWildcard = superType.typeArguments[0] as org.jetbrains.kotlin.load.java.structure.JavaWildcardType
+        assert(!superWildcard.isExtends) { "? super String should have isExtends=false" }
+        assert(superWildcard.bound != null) { "? super String should have a bound" }
+        val superBound = superWildcard.bound as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(superBound.classifierQualifiedName == "String") {
+            "Bound should be String, got ${superBound.classifierQualifiedName}"
+        }
+    }
 }

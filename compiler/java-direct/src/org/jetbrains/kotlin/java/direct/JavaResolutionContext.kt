@@ -142,7 +142,56 @@ class JavaResolutionContext private constructor(
                 foundFqn = candidateFqn
             }
         }
+        if (foundFqn != null) return foundFqn
+        
+        // 4. Nested classes of supertypes (JLS 6.5.2 - inherited member types)
+        // In Java, nested classes of supertypes are in scope. For example, if class C implements
+        // interface I, and I has nested class I.X, then X can be referenced as just "X" inside C.
+        val containingClass = containingClassProvider?.invoke()
+        if (containingClass != null) {
+            foundFqn = resolveFromSupertypes(simpleName, containingClass, tryResolve)
+        }
+        
         return foundFqn
+    }
+    
+    /**
+     * Try to resolve a simple name as a nested class of one of the supertypes.
+     * This implements JLS 6.5.2 - inherited member types are in scope.
+     */
+    private fun resolveFromSupertypes(simpleName: String, containingClass: JavaClass, tryResolve: (String) -> Boolean): String? {
+        val visited = mutableSetOf<String>()
+        return resolveFromSupertypesRecursive(simpleName, containingClass, tryResolve, visited)
+    }
+    
+    private fun resolveFromSupertypesRecursive(
+        simpleName: String, 
+        javaClass: JavaClass, 
+        tryResolve: (String) -> Boolean,
+        visited: MutableSet<String>
+    ): String? {
+        for (supertype in javaClass.supertypes) {
+            val supertypeName = supertype.classifierQualifiedName
+            if (supertypeName in visited) continue
+            visited.add(supertypeName)
+            
+            // Try the simple name as a nested class of this supertype
+            // e.g., if supertype is "B" and simpleName is "Y", try "B.Y"
+            val nestedCandidate = "$supertypeName.$simpleName"
+            if (tryResolve(nestedCandidate)) {
+                return nestedCandidate
+            }
+            
+            // Also recursively check supertypes of this supertype
+            // This requires resolving the supertype to a JavaClass, which we can only do
+            // if it's in the local scope
+            val supertypeClass = supertype.classifier as? JavaClass
+            if (supertypeClass != null) {
+                val found = resolveFromSupertypesRecursive(simpleName, supertypeClass, tryResolve, visited)
+                if (found != null) return found
+            }
+        }
+        return null
     }
 
     companion object {

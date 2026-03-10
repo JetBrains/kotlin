@@ -4,7 +4,7 @@
 
 This file captures key findings, decisions, and learnings from each iteration.
 
-**Last Updated**: 2026-03-06 (Iteration 17b complete)
+**Last Updated**: 2026-03-10 (Iteration 20 complete)
 
 ---
 
@@ -17,10 +17,12 @@ This file captures key findings, decisions, and learnings from each iteration.
 | 11-16 | 2026-03-05 | External types, raw types | 117/138 | 532/601 (88.5%) |
 | 17 | 2026-03-06 | Annotation arguments | — | +16 tests |
 | 17b | 2026-03-06 | Annotation method defaults | — | 1092/1166 (93.7%) |
+| 18-19 | 2026-03-07 | Various fixes | — | 1105/1166 (94.8%) |
+| 20 | 2026-03-10 | Wildcard/Projection + Supertype Nested Classes | 1105/1166 | 1114/1166 (95.5%) |
 
-**Current Status**: 1092/1166 box tests passing (93.7%)
-- Box tests (`JavaUsingAstBoxTestGenerated`): 1092/1166 (93.7%)
-- 74 box tests failing
+**Current Status**: 1114/1166 box tests passing (95.5%)
+- Box tests (`JavaUsingAstBoxTestGenerated`): 1114/1166 (95.5%)
+- 52 box tests failing
 
 ---
 
@@ -93,6 +95,178 @@ Key accomplishments:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 20: Wildcard/Projection Edge Cases + Supertype Nested Class Resolution - 2026-03-10
+
+### Status
+- ✅ Completed - +9 tests (61 → 52 failing)
+
+### Summary
+Fixed two issues: (1) wildcard type argument parsing and inner class implicit type arguments, and (2) supertype nested class resolution. Wildcard types like `? extends A` were being incorrectly parsed as classifier types because `createJavaType()` looked for nested TYPE first instead of checking for QUEST. Non-static inner classes were missing implicit type arguments from outer classes. Finally, nested classes from supertypes weren't being resolved according to JLS 6.5.2 (inherited member types are in scope).
+
+### Key Findings
+
+**Part 1: Wildcard and Inner Class Type Arguments**
+
+1. **Wildcard Type AST Structure**: For `? extends A`, the AST is:
+   ```
+   TYPE: '? extends A'
+     QUEST: '?'
+     EXTENDS_KEYWORD: 'extends'
+     TYPE: 'A'
+       JAVA_CODE_REFERENCE: 'A'
+   ```
+   The previous code did `node.findChildByType("TYPE")` first, which found the inner `TYPE: 'A'`, then checked for QUEST on that inner node (finding none), so wildcards were parsed as regular classifier types.
+
+2. **Fix: Check QUEST First**: Must check for QUEST on the input TYPE node BEFORE looking for nested TYPE. The QUEST indicates a wildcard, and the nested TYPE (if present) is the bound.
+
+3. **Inner Class Type Arguments**: For non-static inner classes like `JOuter<X>.JInner<Y>`, FIR expects type arguments to include implicit outer class type parameters. The javac-wrapper's `TreeBasedClassifierType.typeArguments` collects these from enclosing non-static classes.
+
+4. **JavaTypeParameterTypeOverAst**: Created new class to represent type parameter references as implicit type arguments. When `JOuter<X>` has inner class `JInner`, and `JInner` is referenced, the returned type arguments should include a reference to `X`.
+
+**Part 2: Supertype Nested Class Resolution**
+
+5. **Root Cause**: When parsing `BImpl.foo()` return type `Y`, java-direct couldn't resolve `Y` to `B.Y` because supertype nested classes weren't being searched during name resolution. This caused `testInheritanceWithWildcard` to fail with `NoSuchMethodError: 'Y D.foo()'`.
+
+6. **JLS 6.5.2 - Inherited Member Types**: Java allows nested classes of supertypes to be referenced by simple name. When class `C implements I`, and `I` has nested type `I.X`, then `X` is in scope inside `C`.
+
+7. **Resolution Order**: Added supertype nested class resolution as step 4 in `resolveSimpleName()`:
+   1. Same package
+   2. java.lang package
+   3. Star imports
+   4. **Nested classes of supertypes** (NEW)
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `JavaTypeOverAst.kt` | Fixed `createJavaType()` to check for QUEST before nested TYPE lookup. Added `JavaTypeParameterTypeOverAst` class. Updated `JavaClassifierTypeOverAst.typeArguments` to include implicit outer class type parameters. |
+| `JavaResolutionContext.kt` | Added `resolveFromSupertypes()` and `resolveFromSupertypesRecursive()` methods. Updated `resolveSimpleName()` to call `resolveFromSupertypes()` after trying same package, java.lang, and star imports. |
+| `JavaParsingTest.kt` | Added `testCovariantWildcardReturnType()` and `testUnboundedWildcard()` tests. |
+
+### Code Changes
+
+**Part 1: Wildcard parsing fix** (`createJavaType()`):
+```kotlin
+if (node.type.toString() == "TYPE") {
+    // Check for wildcard FIRST, before looking for nested TYPE
+    if (node.findChildByType("QUEST") != null) {
+        val hasSuper = node.findChildByType("SUPER_KEYWORD") != null
+        val boundTypeNode = node.findChildByType("TYPE")
+        val bound = boundTypeNode?.let { createJavaType(it, resolutionContext) }
+        val isExtends = !hasSuper
+        return JavaWildcardTypeOverAst(node, resolutionContext, bound, isExtends, extraAnnotations)
+    }
+    // Then check for array or nested TYPE...
+}
+```
+
+**Part 1: Inner class type arguments** (`JavaClassifierTypeOverAst.typeArguments`):
+```kotlin
+override val typeArguments: List<JavaType> by lazy {
+    val explicitArgs = node.findChildByType("REFERENCE_PARAMETER_LIST")?.children
+        ?.filter { it.type.toString() == "TYPE" }
+        ?.map { typeNode -> createJavaType(typeNode, resolutionContext) }
+        ?: emptyList()
+    
+    val javaClass = classifier as? JavaClass
+    if (javaClass == null || javaClass.isStatic) {
+        return@lazy explicitArgs
+    }
+    
+    // Collect type parameters from enclosing non-static classes
+    val outerTypeParams = mutableListOf<JavaTypeParameter>()
+    var outer = javaClass.outerClass
+    while (outer != null && !outer.isStatic) {
+        outerTypeParams.addAll(outer.typeParameters)
+        outer = outer.outerClass
+    }
+    
+    if (outerTypeParams.isEmpty()) {
+        return@lazy explicitArgs
+    }
+    
+    val implicitArgs = outerTypeParams.map { typeParam ->
+        JavaTypeParameterTypeOverAst(typeParam)
+    }
+    
+    explicitArgs + implicitArgs
+}
+```
+
+**Part 2: Supertype nested class resolution** (`JavaResolutionContext.kt`):
+```kotlin
+/**
+ * Try to resolve a simple name as a nested class of one of the supertypes.
+ * This implements JLS 6.5.2 - inherited member types are in scope.
+ */
+private fun resolveFromSupertypes(simpleName: String, containingClass: JavaClass, tryResolve: (String) -> Boolean): String? {
+    val visited = mutableSetOf<String>()
+    return resolveFromSupertypesRecursive(simpleName, containingClass, tryResolve, visited)
+}
+
+private fun resolveFromSupertypesRecursive(
+    simpleName: String, 
+    javaClass: JavaClass, 
+    tryResolve: (String) -> Boolean,
+    visited: MutableSet<String>
+): String? {
+    for (supertype in javaClass.supertypes) {
+        val supertypeName = supertype.classifierQualifiedName
+        if (supertypeName in visited) continue
+        visited.add(supertypeName)
+        
+        // Try the simple name as a nested class of this supertype
+        val nestedCandidate = "$supertypeName.$simpleName"
+        if (tryResolve(nestedCandidate)) {
+            return nestedCandidate
+        }
+        
+        // Recursively check supertypes
+        val supertypeClass = supertype.classifier as? JavaClass
+        if (supertypeClass != null) {
+            val found = resolveFromSupertypesRecursive(simpleName, supertypeClass, tryResolve, visited)
+            if (found != null) return found
+        }
+    }
+    return null
+}
+```
+
+In `resolveSimpleName()`:
+```kotlin
+// 4. Nested classes of supertypes (JLS 6.5.2)
+val containingClass = containingClassProvider?.invoke()
+if (containingClass != null) {
+    foundFqn = resolveFromSupertypes(simpleName, containingClass, tryResolve)
+}
+```
+
+### Test Results
+- Box tests: **1114/1166 passing (95.5%)** - UP from 1105/1166 (94.8%) - **+9 tests**
+- 52 box tests still failing
+
+### Tests Fixed
+| Test | Issue Fixed |
+|------|-------------|
+| `testInheritanceWithWildcard` | Supertype nested class resolution (Y → B.Y) |
+| `testJavaGenericSynthProperty` | Inner class implicit type arguments |
+| `testDelegatedMembers` | Wildcard type argument parsing |
+| + 6 others | Various wildcard, inner class, and supertype scenarios |
+
+### Key Learnings
+
+1. **AST Node Order Matters**: When parsing compound structures like wildcards, check for distinctive markers (QUEST) on the outer node before looking for nested nodes. The nested TYPE is the bound, not the main type.
+
+2. **Implicit Type Arguments Pattern**: Non-static inner classes inherit type parameters from enclosing classes. The javac-wrapper handles this in `TreeBasedClassifierType.typeArguments` - java-direct must do the same.
+
+3. **JLS 6.5.2 Scope Rules**: Java's scoping rules for inherited member types are critical for correct name resolution. Nested classes of supertypes are in scope without qualification.
+
+4. **Recursive Supertype Search**: The supertype hierarchy must be searched recursively since nested classes from any ancestor supertype are in scope. Use a visited set to prevent cycles.
+
+5. **Resolution Context Pattern**: The `containingClassProvider` lambda allows access to the containing class for resolution purposes without requiring it upfront.
+
+---
 
 ## Iteration 17b: Annotation Method Default Values - 2026-03-06
 
