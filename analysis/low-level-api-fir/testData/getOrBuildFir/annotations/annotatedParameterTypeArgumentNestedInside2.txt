@@ -53,7 +53,7 @@ FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-[ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/String| = R|<local>/foo|.R|SubstitutionOverride</Foo.wrapper: R|Wrapper<kotlin/String>|>|.R|SubstitutionOverride</Wrapper.value: R|kotlin/String|>|
+[ResolvedTo(BODY_RESOLVE)] lval x: R|@R|Anno|()  kotlin/String| = R|<local>/foo|.R|SubstitutionOverride</Foo.wrapper: R|Wrapper<@R|Anno|()  kotlin/String>|>|.R|SubstitutionOverride</Wrapper.value: R|@R|Anno|()  kotlin/String|>|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] anno.kt
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] first.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] foo: R|Foo<@R|Anno|()  kotlin/String>|): R|kotlin/Unit| {
-        [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/String| = R|<local>/foo|.R|SubstitutionOverride</Foo.wrapper: R|Wrapper<kotlin/String>|>|.R|SubstitutionOverride</Wrapper.value: R|kotlin/String|>|
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|@R|Anno|()  kotlin/String| = R|<local>/foo|.R|SubstitutionOverride</Foo.wrapper: R|Wrapper<@R|Anno|()  kotlin/String>|>|.R|SubstitutionOverride</Wrapper.value: R|@R|Anno|()  kotlin/String|>|
     }
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] second.kt

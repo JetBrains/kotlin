@@ -38,12 +38,12 @@ FIR element: FirImplicitInvokeCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-R|/called|().R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+R|/called|().R|SubstitutionOverride<kotlin/Function0.invoke: R|@R|org/jetbrains/annotations/Nls|()  kotlin/String|>|()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] first.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        R|/called|().R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+        R|/called|().R|SubstitutionOverride<kotlin/Function0.invoke: R|@R|org/jetbrains/annotations/Nls|()  kotlin/String|>|()
     }
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] second.kt
