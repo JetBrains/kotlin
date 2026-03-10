@@ -99,7 +99,7 @@ public actual annotation class JsFileName(actual val name: String)
 @ExperimentalJsNoRuntime
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS)
-@SinceKotlin("2.3") // TODO: replace with 2.4
+@SinceKotlin("2.4")
 @MustBeDocumented
 public actual annotation class JsNoRuntime
 
