@@ -37,13 +37,6 @@ public class UIntRange(start: UInt, endInclusive: UInt) : UIntProgression(start,
      */
     override fun isEmpty(): Boolean = first > last
 
-    override fun equals(other: Any?): Boolean =
-        other is UIntRange && (isEmpty() && other.isEmpty() ||
-                first == other.first && last == other.last)
-
-    override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * first.toInt() + last.toInt())
-
     override fun toString(): String = "$first..$last"
 
     public companion object {

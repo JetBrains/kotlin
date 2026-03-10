@@ -63,12 +63,6 @@ public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInc
      */
     override fun isEmpty(): Boolean = first > last
 
-    override fun equals(other: Any?): Boolean =
-        other is $range && (isEmpty() && other.isEmpty() ||
-        ${compare("first")} && ${compare("last")})
-
-    override fun hashCode(): Int $hashCode
-
     override fun toString(): String = $toString
 
     public companion object {
