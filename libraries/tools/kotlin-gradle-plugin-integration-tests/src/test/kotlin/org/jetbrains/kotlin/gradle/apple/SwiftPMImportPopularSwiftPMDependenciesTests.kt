@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
 package org.jetbrains.kotlin.gradle.apple
 
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.condition.OS
 import org.gradle.api.file.ProjectLayout
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -37,7 +40,6 @@ import kotlin.io.path.createFile
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
-
 
 @OsCondition(
     supportedOn = [OS.MAC],
