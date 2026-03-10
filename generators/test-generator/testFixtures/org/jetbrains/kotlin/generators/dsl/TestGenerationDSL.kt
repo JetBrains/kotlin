@@ -141,7 +141,7 @@ class TestGroup(
             }
             testModels.add(
                 SimpleTestClassModel(
-                    testInfraRevision, rootFile, recursive, excludeParentDirs,
+                    testInfraRevision, File(testDataRoot), rootFile, recursive, excludeParentDirs,
                     compiledPattern, compiledExcludedPattern, testMethod, className,
                     targetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, annotations,
                     extractTagsFromDirectory(rootFile), methodModels, skipTestAllFilesCheck

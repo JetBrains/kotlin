@@ -31,6 +31,7 @@ import java.util.regex.Pattern
  */
 class SimpleTestClassModel(
     val testInfraRevision: TestInfraRevision,
+    val testDataRoot: File,
     val rootFile: File,
     val recursive: Boolean,
     private val excludeParentDirs: Boolean,
@@ -63,6 +64,7 @@ class SimpleTestClassModel(
 
             SimpleTestClassModel(
                 testInfraRevision,
+                testDataRoot,
                 rootFile = file,
                 recursive = true,
                 excludeParentDirs,

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.generators.AbstractTestGenerator
 import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.generators.util.getFilePath
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.Printer
 import org.junit.jupiter.api.Nested
@@ -153,9 +155,10 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
                         get() = suiteClassName
                 }
             } else {
+                val hasModelNameClashes = testClassModels.mapTo(mutableSetOf()) { it.name }.size < testClassModels.size
+                val models = if (hasModelNameClashes) testClassModels.map { it.unfold() } else testClassModels
                 model = object : TestClassModel() {
-                    override val innerTestClasses: Collection<TestClassModel>
-                        get() = testClassModels
+                    override val innerTestClasses: Collection<TestClassModel> = models
 
                     override val methods: Collection<MethodModel<*>>
                         get() = emptyList()
@@ -184,6 +187,61 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
 
             generateTestClass(p, model, isNested = false)
             return out.toString()
+        }
+
+        /**
+         * For test root `a/b` and model root `a/b/c/d` converts model with relative path `c/d`
+         * into models with separate classes for each directory on the way from the root.
+         *
+         * ```
+         * // original model
+         * @TestMetadata("a/b/c/d")
+         * public class D { ... }
+         *
+         * // unfolded model
+         * @TestMetadata("a/b/c")
+         * public class C {
+         *     @TestMetadata("a/b/c/d")
+         *     public class D { ... }
+         * }
+         * ```
+         */
+        private fun TestClassModel.unfold(): TestClassModel {
+            if (this !is SimpleTestClassModel) return this
+            var result = this
+            var rootFile = rootFile
+            val testDataRoot = testDataRoot
+            while (rootFile.parentFile != testDataRoot) {
+                rootFile = rootFile.parentFile
+                val fileForModel = rootFile
+                result = object : TestClassModel() {
+                    override val innerTestClasses: Collection<TestClassModel> = listOf(result)
+
+                    override val methods: Collection<MethodModel<*>>
+                        get() = emptyList()
+
+                    override val isEmpty: Boolean
+                        get() = false
+
+                    override val name: String
+                        get() = TestGeneratorUtil.fileNameToJavaIdentifier(fileForModel)
+
+                    override val dataString: String
+                        get() = fileForModel.getFilePath()
+
+                    override val dataPathRoot: String?
+                        get() = null
+
+                    override val annotations: Collection<AnnotationModel>
+                        // models have same annotations, so either distinct() or intersect() yield same result
+                        get() = emptyList()
+
+                    override val tags: List<String>
+                        // models have same tags, so either distinct() or intersect() yield same result
+                        get() = emptyList()
+                }
+            }
+            return result
         }
 
         private fun generateTestClass(
