@@ -207,6 +207,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
 
         target.binaries.all { binary ->
             binary.linkTaskProvider.configure { linkTask ->
+                // FIXME: KT-84809 Wire this only when we will call ld
                 val ldArgDumpPath = defFilesAndLdDumpGenerationTask.map {
                     it.ldFilePath(target.konanTarget.appleArchitecture)
                 }
