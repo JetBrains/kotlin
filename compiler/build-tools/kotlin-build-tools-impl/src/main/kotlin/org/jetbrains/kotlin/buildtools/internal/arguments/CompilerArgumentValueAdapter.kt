@@ -152,6 +152,11 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
                 listValue.map { it.absolutePathStringOrThrow() }.toTypedArray() as T
             }
 
+            JvmCompilerArguments.SCRIPT_TEMPLATES -> {
+                val listValue = value as List<String>
+                listValue.toTypedArray() as T
+            }
+
             else -> value as T
         }
     }
@@ -275,6 +280,11 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
             JvmCompilerArguments.X_JAVA_SOURCE_ROOTS -> {
                 val arrayValue = value as Array<String>
                 arrayValue.map { Path(it) } as T
+            }
+
+            JvmCompilerArguments.SCRIPT_TEMPLATES -> {
+                val arrayValue = value as Array<String>
+                arrayValue.toList() as T
             }
 
             else -> value as T

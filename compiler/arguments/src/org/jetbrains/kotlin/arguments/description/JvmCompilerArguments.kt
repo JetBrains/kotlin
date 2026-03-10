@@ -113,11 +113,13 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "script-templates"
         description = "Script definition template classes.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<fully qualified class name[,]>".asReleaseDependent()
+        argumentType = StringListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_0,

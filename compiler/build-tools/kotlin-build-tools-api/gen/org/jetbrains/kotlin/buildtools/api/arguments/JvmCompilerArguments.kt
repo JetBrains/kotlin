@@ -872,7 +872,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Script definition template classes.
      */
     @JvmField
-    public val SCRIPT_TEMPLATES: JvmCompilerArgument<Array<String>?> =
+    public val SCRIPT_TEMPLATES: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("SCRIPT_TEMPLATES", KotlinReleaseVersion(1, 1, 0))
   }
 }

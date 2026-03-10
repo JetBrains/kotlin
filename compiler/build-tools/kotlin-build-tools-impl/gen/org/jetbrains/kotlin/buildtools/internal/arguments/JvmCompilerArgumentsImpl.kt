@@ -254,7 +254,7 @@ internal class JvmCompilerArgumentsImpl(
     if (NO_JDK in this) { arguments.noJdk = get(NO_JDK)}
     if (NO_REFLECT in this) { arguments.noReflect = get(NO_REFLECT)}
     if (NO_STDLIB in this) { arguments.noStdlib = get(NO_STDLIB)}
-    if (SCRIPT_TEMPLATES in this) { arguments.scriptTemplates = get(SCRIPT_TEMPLATES) ?: emptyArray()}
+    if (SCRIPT_TEMPLATES in this) { arguments.scriptTemplates = get(SCRIPT_TEMPLATES).toTypedArray()}
     arguments.internalArguments = parseCommandLineArguments<K2JVMCompilerArguments>(internalArguments.toList()).internalArguments
     return arguments
   }
@@ -340,7 +340,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[NO_JDK] = arguments.noJdk } catch (_: NoSuchMethodError) {  }
     try { this[NO_REFLECT] = arguments.noReflect } catch (_: NoSuchMethodError) {  }
     try { this[NO_STDLIB] = arguments.noStdlib } catch (_: NoSuchMethodError) {  }
-    try { this[SCRIPT_TEMPLATES] = arguments.scriptTemplates } catch (_: NoSuchMethodError) {  }
+    try { this[SCRIPT_TEMPLATES] = arguments.scriptTemplates.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
@@ -582,7 +582,7 @@ internal class JvmCompilerArgumentsImpl(
 
     public val NO_STDLIB: JvmCompilerArgument<Boolean> = JvmCompilerArgument("NO_STDLIB")
 
-    public val SCRIPT_TEMPLATES: JvmCompilerArgument<Array<String>?> =
+    public val SCRIPT_TEMPLATES: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("SCRIPT_TEMPLATES")
   }
 }
