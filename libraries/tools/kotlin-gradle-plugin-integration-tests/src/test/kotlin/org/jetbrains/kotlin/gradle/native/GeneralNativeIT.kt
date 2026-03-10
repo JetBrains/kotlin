@@ -715,6 +715,55 @@ class GeneralNativeIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Does not leak native stderr output into Gradle log")
+    @GradleTest
+    @TestMetadata("native-tests")
+    fun testNativeStderrOutputStaysInTestLog(gradleVersion: GradleVersion) {
+        nativeProject("native-tests", gradleVersion) {
+            val marker = "KT_69896_MARKER"
+            projectPath.resolve("src/commonTest/kotlin/test.kt")
+                .appendText(
+                    """
+
+                    @Test
+                    fun stderrOutputShouldStayInTestReport() {
+                        repeat(200) { i ->
+                            IllegalStateException("$marker-${'$'}i").printStackTrace()
+                        }
+                    }
+                    """.trimIndent()
+                )
+
+            build(
+                "hostTest",
+                // Use QUIET log level to suppress Gradle's own logging and isolate test output.
+                // This ensures assertOutputDoesNotContain(marker) tests only our TC message handling,
+                // not Gradle's default logging infrastructure.
+                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.QUIET),
+            ) {
+                assertTasksExecuted(":hostTest")
+                assertOutputDoesNotContain(marker)
+            }
+
+            val hostTestReports = projectPath.resolve("build/test-results/hostTest")
+                .listDirectoryEntries("*.xml")
+            assertTrue(hostTestReports.isNotEmpty(), "No hostTest XML reports found")
+
+            val targetCaseName = "stderrOutputShouldStayInTestReport"
+            val markerInSystemErr = hostTestReports.any { report ->
+                val reportElement = JDOMUtil.load(report)
+                val targetCase = reportElement.getChildren("testcase")
+                    .firstOrNull { it.getAttributeValue("name")?.startsWith(targetCaseName) == true }
+                    ?: return@any false
+
+                val testCaseSystemErr = targetCase.getChild("system-err")?.text.orEmpty()
+                val suiteSystemErr = reportElement.getChild("system-err")?.text.orEmpty()
+                testCaseSystemErr.contains(marker) || suiteSystemErr.contains(marker)
+            }
+            assertTrue(markerInSystemErr, "Expected marker in hostTest system-err output")
+        }
+    }
+
     @DisplayName("Checks that build fails if a test executable crashes")
     @GradleTest
     @TestMetadata("native-tests")

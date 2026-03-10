@@ -36,17 +36,32 @@ internal open class TCServiceMessagesClient(
     val settings: TCServiceMessagesClientSettings,
     val log: Logger,
 ) : ServiceMessageParserCallback {
-    var afterMessage = false
+    private var afterMessage = false
 
-    inline fun <T> root(actions: () -> T): T {
+    private data class PendingTestFinish(val ts: Long, val testName: String)
+    private data class PendingSuiteFinish(val ts: Long, val suiteName: String)
+
+    private var pendingTestFinish: PendingTestFinish? = null
+    private val pendingSuiteFinishes = ArrayDeque<PendingSuiteFinish>()
+
+    // Guarded by this instance monitor; all accesses happen from @Synchronized methods.
+    private val pendingNonTestOutput = StringBuilder()
+
+    fun <T> root(actions: () -> T): T {
         val tsStart = System.currentTimeMillis()
         val root = RootNode()
-        open(tsStart, root)
-        val result = actions()
-        ensureNodesClosed(root)
-        return result
+        synchronized(this) {
+            open(tsStart, root)
+        }
+
+        return try {
+            actions()
+        } finally {
+            ensureNodesClosed(root)
+        }
     }
 
+    @Synchronized
     override fun parseException(e: ParseException, text: String) {
         log.error("Failed to parse test process messages: \"$text\"", e)
     }
@@ -54,6 +69,7 @@ internal open class TCServiceMessagesClient(
     internal open fun testFailedMessage(execHandle: ExecAsyncHandle, exitValue: Int): String =
         "${execHandle.displayName} exited with errors (exit code: $exitValue)"
 
+    @Synchronized
     override fun serviceMessage(message: ServiceMessage) {
 
         log.kotlinDebug {
@@ -65,13 +81,20 @@ internal open class TCServiceMessagesClient(
         }
 
         when (message) {
-            is TestSuiteStarted -> open(message.ts, SuiteNode(requireLeafGroup(), getSuiteName(message)))
-            is TestStarted -> beginTest(message.ts, message.testName)
+            is TestSuiteStarted -> {
+                flushPendingClosures()
+                open(message.ts, SuiteNode(requireLeafGroup(), getSuiteName(message)))
+            }
+            is TestStarted -> {
+                flushPendingClosures()
+                beginTest(message.ts, message.testName)
+            }
             is TestStdOut -> requireLeafTest().output(StdOut, message.stdOut)
             is TestStdErr -> requireLeafTest().output(StdErr, message.stdErr)
             is TestFailed -> requireLeafTest().failure(message)
             is TestFinished -> endTest(message.ts, message.testName)
             is TestIgnored -> {
+                flushPendingClosures()
                 if (message.attributes["suite"] == "true") {
                     // non standard property for dealing with ignored test suites without visiting all inner tests
                     SuiteNode(requireLeafGroup(), message.testName).open(message.ts) { message.ts }
@@ -80,7 +103,9 @@ internal open class TCServiceMessagesClient(
                     endTest(message.ts, message.testName)
                 }
             }
-            is TestSuiteFinished -> close(message.ts, getSuiteName(message))
+            is TestSuiteFinished -> {
+                pendingSuiteFinishes.addLast(PendingSuiteFinish(message.ts, getSuiteName(message)))
+            }
             is Message -> printNonTestOutput(message.text, LogType.byValueOrNull(message.attributes["type"]))
             else -> Unit
         }
@@ -90,6 +115,7 @@ internal open class TCServiceMessagesClient(
 
     protected open fun getSuiteName(message: BaseTestSuiteMessage) = message.suiteName
 
+    @Synchronized
     override fun regularText(text: String) {
         val actualText = if (afterMessage && settings.ignoreLineEndingAfterMessage)
             when {
@@ -103,12 +129,24 @@ internal open class TCServiceMessagesClient(
 
             val test = leaf as? TestNode
             if (test != null) {
-                test.output(StdOut, actualText)
+                val destination = if (pendingTestFinish != null) StdErr else StdOut
+                test.output(destination, actualText)
             } else {
-                printNonTestOutput(actualText)
+                handleRegularTextOutsideTest(actualText)
             }
         }
         afterMessage = false
+    }
+
+    /**
+     * Handles plain process output when there is no active [TestNode] to attach it to.
+     *
+     * Default behavior buffers the text and flushes it later to test stderr (on next test start)
+     * or to root stderr (when the tree closes). Subclasses may override this to preserve
+     * target-specific behavior.
+     */
+    protected open fun handleRegularTextOutsideTest(text: String) {
+        pendingNonTestOutput.append(text)
     }
 
     protected open fun printNonTestOutput(text: String, type: LogType? = null) {
@@ -134,7 +172,7 @@ internal open class TCServiceMessagesClient(
         val fullTestName = if (testNameSuffix == null) parsedName.methodName
         else "${parsedName.methodName}[$testNameSuffix]"
 
-        open(
+        val node = open(
             ts, TestNode(
                 parent, parsedName.className, parsedName.classDisplayName, parsedName.methodName,
                 displayName = fullTestName,
@@ -142,10 +180,38 @@ internal open class TCServiceMessagesClient(
                 ignored = isIgnored
             )
         )
+        flushPendingOutputTo(node)
     }
 
     private fun endTest(ts: Long, testName: String) {
-        close(ts, testName)
+        check(pendingTestFinish == null) { "Previous test finish is not flushed yet" }
+        val test = requireLeafTest()
+        check(test.localId == testName) {
+            "Bad TCSM: unexpected test to finish `$testName`, expected `${test.localId}`"
+        }
+
+        pendingTestFinish = PendingTestFinish(ts, testName)
+    }
+
+    private fun flushPendingTestFinish() {
+        val pending = pendingTestFinish ?: return
+        pendingTestFinish = null
+        close(pending.ts, pending.testName)
+    }
+
+    private fun flushPendingClosures() {
+        flushPendingTestFinish()
+        while (pendingSuiteFinishes.isNotEmpty()) {
+            val pending = pendingSuiteFinishes.removeFirst()
+            close(pending.ts, pending.suiteName)
+        }
+    }
+
+    private fun flushPendingOutputTo(test: TestNode) {
+        if (pendingNonTestOutput.isEmpty()) return
+
+        test.output(StdErr, pendingNonTestOutput.toString())
+        pendingNonTestOutput.setLength(0)
     }
 
     private fun TestNode.failure(
@@ -504,20 +570,48 @@ internal open class TCServiceMessagesClient(
         get() = creationTimestamp?.timestamp?.time ?: System.currentTimeMillis()
 
     private fun push(node: Node) = node.also { leaf = node }
-    private fun pop() = leaf!!.also { leaf = it.parent }
+    private fun pop() = requireNotNull(leaf).also { leaf = it.parent }
 
+    @Synchronized
     fun ensureNodesClosed(root: RootNode? = null, cause: Throwable? = null, throwError: Boolean = true): Error? {
         val ts = System.currentTimeMillis()
 
+        flushPendingClosures()
+
         when (leaf) {
-            null -> return null
-            root -> close(ts, leaf!!.localId)
+            null -> {
+                if (pendingNonTestOutput.isNotEmpty()) {
+                    log.kotlinDebug {
+                        "Dropping non-test output because the test tree is already closed: $pendingNonTestOutput"
+                    }
+                    pendingNonTestOutput.setLength(0)
+                }
+                return null
+            }
+            root -> {
+                if (pendingNonTestOutput.isNotEmpty()) {
+                    // K2 smart-casts `root` to non-null in this branch, but K1 does not.
+                    // Keep requireNotNull for K1 compatibility.
+                    @Suppress("RedundantRequireNotNullCall")
+                    val rootNode = requireNotNull(root)
+                    results.output(rootNode.descriptor.id, DefaultTestOutputEventCompat(StdErr, pendingNonTestOutput.toString()))
+                    pendingNonTestOutput.setLength(0)
+                }
+                close(ts, requireNotNull(leaf).localId)
+            }
             else -> {
                 val output = StringBuilder()
                 var currentTest: TestNode? = null
 
+                if (pendingNonTestOutput.isNotEmpty()) {
+                    // The process exited with still-open nodes; include buffered non-test output into
+                    // the synthesized crash message so diagnostics are not lost.
+                    output.append(pendingNonTestOutput)
+                    pendingNonTestOutput.setLength(0)
+                }
+
                 while (leaf != null) {
-                    val currentLeaf = leaf!!
+                    val currentLeaf = requireNotNull(leaf)
 
                     if (currentLeaf is TestNode) {
                         currentTest = currentLeaf
@@ -528,7 +622,6 @@ internal open class TCServiceMessagesClient(
                     close(ts, currentLeaf.localId)
                 }
 
-                @Suppress("ThrowableNotThrown")
                 val error = Error(
                     buildString {
                         append("Test running process exited unexpectedly.\n")

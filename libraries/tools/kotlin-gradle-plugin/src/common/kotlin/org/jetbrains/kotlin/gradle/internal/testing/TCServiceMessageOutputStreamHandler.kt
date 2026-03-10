@@ -22,6 +22,8 @@ import java.io.OutputStream
  * TeamCity server messages should ends with new line.
  * Only messages shorter than [MESSAGE_LIMIT_BYTES] supported.
  */
+// Lock ordering: TCServiceMessageOutputStreamHandler -> TCServiceMessagesClient callback methods.
+// Never call handler methods while holding a client lock.
 internal class TCServiceMessageOutputStreamHandler(
     private val client: ServiceMessageParserCallback,
     private val onException: () -> Unit,
@@ -33,13 +35,24 @@ internal class TCServiceMessageOutputStreamHandler(
     private val buffer = ByteArrayOutputStream()
     private var overflowInsideMessage: Boolean = false
 
+    private fun assertNotHoldingClientLock() {
+        // This assertion is intentionally debug-only and requires JVM assertions (-ea).
+        assert(!Thread.holdsLock(client)) {
+            "Lock ordering violation: TCServiceMessageOutputStreamHandler methods must not be called while holding the client lock"
+        }
+    }
+
+    @Synchronized
     @Throws(IOException::class)
     override fun close() {
+        assertNotHoldingClientLock()
         closed = true
         flushLine()
     }
 
+    @Synchronized
     override fun write(b: ByteArray, off: Int, len: Int) {
+        assertNotHoldingClientLock()
         if (closed) throw IOException("The stream has been closed.")
         var i = off
         var last = off
@@ -68,8 +81,10 @@ internal class TCServiceMessageOutputStreamHandler(
         append()
     }
 
+    @Synchronized
     @Throws(IOException::class)
     override fun write(b: Int) {
+        assertNotHoldingClientLock()
         // helpfully will be inlined at runtime
         write(byteArrayOf(b.toByte()), 0, 1)
     }

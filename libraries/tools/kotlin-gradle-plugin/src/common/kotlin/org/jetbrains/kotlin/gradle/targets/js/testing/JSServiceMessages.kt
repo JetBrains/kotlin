@@ -39,6 +39,12 @@ internal open class JSServiceMessagesClient(
     settings: TCServiceMessagesClientSettings,
     log: Logger,
 ) : TCServiceMessagesClient(results, settings, log) {
+    // JS keeps the historical behavior: output outside tests is sent to debug log,
+    // not buffered and re-attached to test/root stderr.
+    override fun handleRegularTextOutsideTest(text: String) {
+        printNonTestOutput(text)
+    }
+
     override fun printNonTestOutput(text: String, type: LogType?) {
         if (log.isDebugEnabled) {
             log.debug(text)

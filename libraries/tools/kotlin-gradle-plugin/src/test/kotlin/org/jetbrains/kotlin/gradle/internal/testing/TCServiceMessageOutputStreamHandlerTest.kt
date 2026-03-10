@@ -15,6 +15,7 @@ import org.slf4j.helpers.SubstituteLogger
 import java.text.ParseException
 import java.util.concurrent.ArrayBlockingQueue
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class TCServiceMessageOutputStreamHandlerTest {
     private val client = Mock()
@@ -164,6 +165,20 @@ class TCServiceMessageOutputStreamHandlerTest {
                     "MESSAGE: `overflow-message`\n" +
                     "TEXT: `]\n`\n",
             clientCalls
+        )
+    }
+
+    @Test
+    fun testLockOrderingAssertion() {
+        val error = assertFailsWith<AssertionError> {
+            synchronized(client) {
+                handler.write("x".toByteArray())
+            }
+        }
+
+        assertEquals(
+            "Lock ordering violation: TCServiceMessageOutputStreamHandler methods must not be called while holding the client lock",
+            error.message
         )
     }
 
