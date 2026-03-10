@@ -37,13 +37,6 @@ public class ULongRange(start: ULong, endInclusive: ULong) : ULongProgression(st
      */
     override fun isEmpty(): Boolean = first > last
 
-    override fun equals(other: Any?): Boolean =
-        other is ULongRange && (isEmpty() && other.isEmpty() ||
-                first == other.first && last == other.last)
-
-    override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (first xor (first shr 32)).toInt() + (last xor (last shr 32)).toInt())
-
     override fun toString(): String = "$first..$last"
 
     public companion object {

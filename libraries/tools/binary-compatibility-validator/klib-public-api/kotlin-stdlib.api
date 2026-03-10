@@ -1712,8 +1712,6 @@ final class kotlin.ranges/CharRange : kotlin.ranges/CharProgression, kotlin.rang
         final fun <get-start>(): kotlin/Char // kotlin.ranges/CharRange.start.<get-start>|<get-start>(){}[0]
 
     final fun contains(kotlin/Char): kotlin/Boolean // kotlin.ranges/CharRange.contains|contains(kotlin.Char){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.ranges/CharRange.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // kotlin.ranges/CharRange.hashCode|hashCode(){}[0]
     final fun isEmpty(): kotlin/Boolean // kotlin.ranges/CharRange.isEmpty|isEmpty(){}[0]
     final fun toString(): kotlin/String // kotlin.ranges/CharRange.toString|toString(){}[0]
 
@@ -1734,8 +1732,6 @@ final class kotlin.ranges/IntRange : kotlin.ranges/ClosedRange<kotlin/Int>, kotl
         final fun <get-start>(): kotlin/Int // kotlin.ranges/IntRange.start.<get-start>|<get-start>(){}[0]
 
     final fun contains(kotlin/Int): kotlin/Boolean // kotlin.ranges/IntRange.contains|contains(kotlin.Int){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.ranges/IntRange.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // kotlin.ranges/IntRange.hashCode|hashCode(){}[0]
     final fun isEmpty(): kotlin/Boolean // kotlin.ranges/IntRange.isEmpty|isEmpty(){}[0]
     final fun toString(): kotlin/String // kotlin.ranges/IntRange.toString|toString(){}[0]
 
@@ -1756,8 +1752,6 @@ final class kotlin.ranges/LongRange : kotlin.ranges/ClosedRange<kotlin/Long>, ko
         final fun <get-start>(): kotlin/Long // kotlin.ranges/LongRange.start.<get-start>|<get-start>(){}[0]
 
     final fun contains(kotlin/Long): kotlin/Boolean // kotlin.ranges/LongRange.contains|contains(kotlin.Long){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.ranges/LongRange.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // kotlin.ranges/LongRange.hashCode|hashCode(){}[0]
     final fun isEmpty(): kotlin/Boolean // kotlin.ranges/LongRange.isEmpty|isEmpty(){}[0]
     final fun toString(): kotlin/String // kotlin.ranges/LongRange.toString|toString(){}[0]
 
@@ -1778,8 +1772,6 @@ final class kotlin.ranges/UIntRange : kotlin.ranges/ClosedRange<kotlin/UInt>, ko
         final fun <get-start>(): kotlin/UInt // kotlin.ranges/UIntRange.start.<get-start>|<get-start>(){}[0]
 
     final fun contains(kotlin/UInt): kotlin/Boolean // kotlin.ranges/UIntRange.contains|contains(kotlin.UInt){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.ranges/UIntRange.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // kotlin.ranges/UIntRange.hashCode|hashCode(){}[0]
     final fun isEmpty(): kotlin/Boolean // kotlin.ranges/UIntRange.isEmpty|isEmpty(){}[0]
     final fun toString(): kotlin/String // kotlin.ranges/UIntRange.toString|toString(){}[0]
 
@@ -1800,8 +1792,6 @@ final class kotlin.ranges/ULongRange : kotlin.ranges/ClosedRange<kotlin/ULong>, 
         final fun <get-start>(): kotlin/ULong // kotlin.ranges/ULongRange.start.<get-start>|<get-start>(){}[0]
 
     final fun contains(kotlin/ULong): kotlin/Boolean // kotlin.ranges/ULongRange.contains|contains(kotlin.ULong){}[0]
-    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.ranges/ULongRange.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // kotlin.ranges/ULongRange.hashCode|hashCode(){}[0]
     final fun isEmpty(): kotlin/Boolean // kotlin.ranges/ULongRange.isEmpty|isEmpty(){}[0]
     final fun toString(): kotlin/String // kotlin.ranges/ULongRange.toString|toString(){}[0]
 

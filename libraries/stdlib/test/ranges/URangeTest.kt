@@ -196,48 +196,34 @@ public class URangeTest {
         assertFalse((2uL downTo 0uL).isEmpty())
     }
 
-    @Suppress("ReplaceAssertBooleanWithAssertEquality", "EmptyRange")
-    @Test
-    fun emptyEquals() {
-        assertTrue(UIntRange.EMPTY == UIntRange.EMPTY)
-        assertEquals(UIntRange.EMPTY, UIntRange.EMPTY)
-        assertEquals(0uL..42uL, 0uL..42uL)
-        assertEquals(0uL..4200000042000000uL, 0uL..4200000042000000uL)
-        assertEquals(3u downTo 0u, 3u downTo 0u)
-
-        assertEquals(2u..1u, 1u..0u)
-        assertEquals(2uL..1uL, 1uL..0uL)
-        assertEquals(2u.toUShort()..1u.toUShort(), 1u.toUShort()..0u.toUShort())
-        assertEquals(2u.toUByte()..1u.toUByte(), 1u.toUByte()..0u.toUByte())
-
-        assertTrue(1u downTo 2u == 2u downTo 3u)
-        assertTrue(0uL downTo (-1).toULong() == (-2).toULong() downTo (-1).toULong())
-
-        assertFalse(0u..1u == UIntRange.EMPTY)
-        assertTrue(0u..<0u == UIntRange.EMPTY)
+    private fun <T> assertAllEqual(vararg elements: T) {
+        for (i in 0..<elements.size) {
+            assertEquals(elements[i], elements[i])
+            for (j in i + 1..<elements.size) {
+                assertEquals(elements[i], elements[j])
+                assertEquals(elements[j], elements[i])
+                assertEquals(elements[i].hashCode(), elements[j].hashCode())
+            }
+        }
     }
 
     @Suppress("EmptyRange")
     @Test
-    fun emptyHashCode() {
-        assertEquals((0u..42u).hashCode(), (0u..42u).hashCode())
+    fun emptyEqualsHashCode() {
+        assertAllEqual(UIntRange.EMPTY, 2u..1u, 3u..<3u, 1u..<1u, 5u..4u step 1, 5u..4u step 5, 0u downTo 3u step 2)
+        assertAllEqual(ULongRange.EMPTY, 2uL..1uL, 3uL..<3uL, 1uL..<1uL, 5uL..4uL step 1, 5uL..4uL step 5, 0uL downTo 3uL step 2)
 
-        assertEquals(((-1).toUInt()..0u).hashCode(), UIntRange.EMPTY.hashCode())
-        assertEquals((2uL..1uL).hashCode(), (1uL..0uL).hashCode())
-        assertEquals(((-1).toUShort()..(-2).toUShort()).hashCode(), (42.toUShort()..0.toUShort()).hashCode())
-        assertEquals(((-1).toUByte()..(-2).toUByte()).hashCode(), (42.toUByte()..0.toUByte()).hashCode())
-
-        assertEquals((1u downTo 2u).hashCode(), (2u downTo 3U).hashCode())
-        assertEquals((1UL downTo 2uL).hashCode(), (2UL downTo 3UL).hashCode())
+        assertNotEquals(0u..1u, UIntRange.EMPTY)
+        assertNotEquals(0uL..1uL, ULongRange.EMPTY)
     }
 
     @Test
     fun nonEmptyRangeHashCode() {
-        fun <N : Comparable<N>> checkHashCode(range: ClosedRange<N>) {
-            assertEquals(31 * range.start.hashCode() + range.endInclusive.hashCode(), range.hashCode())
+        fun <N : Comparable<N>, R> checkIterableRangeHashCode(range: R) where R : ClosedRange<N>, R : Iterable<N> {
+            assertEquals(31 * 31 * range.start.hashCode() + 31 * range.endInclusive.hashCode() + 1, range.hashCode())
         }
-        checkHashCode(1u..10u)
-        checkHashCode(1uL..10uL)
+        checkIterableRangeHashCode(1u..10u)
+        checkIterableRangeHashCode(1uL..10uL)
     }
 
     @Test
