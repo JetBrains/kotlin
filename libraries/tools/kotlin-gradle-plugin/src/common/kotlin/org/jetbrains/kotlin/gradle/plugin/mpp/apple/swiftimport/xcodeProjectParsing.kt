@@ -11,7 +11,10 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
+import org.gradle.process.ExecOperations
 import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.OutputStream
 
 internal open class JsonElementBacked {
@@ -59,6 +62,54 @@ private fun JsonElement.deepMergePreferOther(other: JsonElement): JsonElement =
         else -> other
     }
 
+@Serializable(with = StringOrStringList.StringValueOrStringListSerializer::class)
+internal sealed class StringOrStringList {
+    abstract val stringValue: String
+
+    @Serializable
+    data class StringValue(val value: String) : StringOrStringList() {
+        override val stringValue: String
+            get() = value
+    }
+
+    @Serializable
+    data class StringList(val values: List<String>) : StringOrStringList() {
+        override val stringValue: String
+            get() = values.joinToString("\n")
+    }
+
+    object StringValueOrStringListSerializer : KSerializer<StringOrStringList> {
+        // We just reuse JsonElement’s descriptor for simplicity.
+        override val descriptor: SerialDescriptor = JsonElement.serializer().descriptor
+
+        override fun deserialize(decoder: Decoder): StringOrStringList {
+            decoder as JsonDecoder
+
+            return when (val element = decoder.decodeJsonElement()) {
+                is JsonPrimitive -> {
+                    StringValue(
+                        decoder.json.decodeFromJsonElement<String>(element)
+                    )
+                }
+                is JsonArray -> {
+                    StringList(
+                        decoder.json.decodeFromJsonElement<List<String>>(element)
+                    )
+                }
+                else -> throw SerializationException("Expected string or array, got $element")
+            }
+        }
+
+        override fun serialize(encoder: Encoder, value: StringOrStringList) {
+            encoder as JsonEncoder
+            when (value) {
+                is StringValue -> encoder.encodeJsonElement(encoder.json.encodeToJsonElement(value.value))
+                is StringList -> encoder.encodeJsonElement(encoder.json.encodeToJsonElement(value.values))
+            }
+        }
+    }
+}
+
 private val json = Json {
     ignoreUnknownKeys = true
     encodeDefaults = true
@@ -73,6 +124,11 @@ internal class PbxObjectEntitySerializer : JsonContentPolymorphicSerializer<PbxO
         val isa = element.jsonObject["isa"]?.jsonPrimitive?.content ?: error("Missing isa")
         return when (isa) {
             "PBXProject" -> PbxProject.serializer()
+            "PBXNativeTarget" -> PbxNativeTarget.serializer()
+            "PBXShellScriptBuildPhase" -> PbxShellScriptBuildPhase.serializer()
+            "PBXFrameworksBuildPhase" -> PbxFrameworksBuildPhase.serializer()
+            "PBXCopyFilesBuildPhase" -> PbxCopyFilesBuildPhase.serializer()
+            "PBXBuildFile" -> PbxBuildFile.serializer()
             "XCSwiftPackageProductDependency" -> XCSwiftPackageProductDependency.serializer()
             "XCLocalSwiftPackageReference" -> XCLocalSwiftPackageReference.serializer()
             else -> Opaque.serializer()
@@ -83,12 +139,55 @@ internal class PbxObjectEntitySerializer : JsonContentPolymorphicSerializer<PbxO
 @Serializable
 internal class PbxProject(
     val isa: String,
-    val buildPhases: MutableList<String>?,
+    var packageReferences: MutableList<String>?,
 ) : PbxObject()
+
+@Serializable
+internal class PbxNativeTarget(
+    val isa: String,
+    var buildPhases: MutableList<String>?,
+    var packageProductDependencies: MutableList<String>?,
+) : PbxObject()
+
+@Serializable
+internal class PbxBuildFile(
+    val isa: String = "PBXBuildFile",
+    val productRef: String?,
+) : PbxObject()
+
+@Serializable
+internal class PbxFrameworksBuildPhase(
+    val isa: String,
+    var files: MutableList<String>?,
+) : PbxObject()
+
+@Serializable
+internal class PbxCopyFilesBuildPhase(
+    val isa: String,
+    var files: MutableList<String>?,
+) : PbxObject()
+
+@Serializable
+internal class PbxShellScriptBuildPhase(
+    val isa: String = "PBXShellScriptBuildPhase",
+    val name: String?,
+    val alwaysOutOfDate: String?,
+    val runOnlyForDeploymentPostprocessing: String?,
+    val buildActionMask: String?,
+    val shellPath: String?,
+    val shellScript: StringOrStringList?,
+    val files: List<String>? = emptyList(),
+    val inputFileListPaths: List<String>? = emptyList(),
+    val inputPaths: List<String>? = emptyList(),
+    val outputFileListPaths: List<String>? = emptyList(),
+    val outputPaths: List<String>? = emptyList(),
+) : PbxObject()
+
 
 @Serializable
 internal class XCSwiftPackageProductDependency(
     val isa: String = "XCSwiftPackageProductDependency",
+    val productName: String?,
 ) : PbxObject()
 
 @Serializable
@@ -106,7 +205,25 @@ internal class Opaque(
 @Serializable
 internal class XcodeProject(
     val objects: MutableMap<String, PbxObject>,
+    val rootObject: String,
 ) : JsonElementBacked()
+
+internal fun deserializeXcodeProject(
+    pbxprojPath: File,
+    execOps: ExecOperations,
+): XcodeProject {
+    val output = ByteArrayOutputStream()
+    execOps.exec {
+        it.standardOutput = output
+        it.commandLine(
+            "/usr/bin/plutil",
+            "-convert", "json",
+            pbxprojPath,
+            "-o", "-"
+        )
+    }
+    return deserializeXcodeProject(output.toByteArray())
+}
 
 internal fun deserializeXcodeProject(byteArray: ByteArray) =
     json.decodeFromStream(
