@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
@@ -223,6 +224,7 @@ class NewConstraintSystemImpl(
         constraintInjector.addInitialEqualityConstraint(a, b, position)
     }
 
+    @K1Deprecation
     override fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker> {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         val variableWithConstraints = notFixedTypeVariables[type.typeConstructor()] ?: return listOf(type.typeConstructor())

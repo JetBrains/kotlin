@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
+@OptIn(K1Deprecation::class)
 fun resolveKtPrimitive(
     csBuilder: ConstraintSystemBuilder,
     argument: KotlinCallArgument,
@@ -250,6 +252,7 @@ fun ResolvedLambdaAtom.transformToResolvedLambda(
     } as ResolvedLambdaAtom
 }
 
+@K1Deprecation
 private fun preprocessCallableReference(
     csBuilder: ConstraintSystemBuilder,
     argument: CallableReferenceKotlinCallArgument,
