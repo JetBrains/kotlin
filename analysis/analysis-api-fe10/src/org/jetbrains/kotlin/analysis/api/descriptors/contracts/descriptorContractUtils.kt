@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseC
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsNotNullEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSpecificValueEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSuccessfullyEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.toKaContractInvocationKind
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.contracts.description.*
@@ -66,8 +67,13 @@ private class ContractDescriptionElementToAnalysisApi(val analysisContext: Fe10A
             else -> error("Can't convert $returnsEffect to the Analysis API")
         }
 
-    override fun visitCallsEffectDeclaration(callsEffect: CallsEffectDeclaration, data: Unit): Any =
-        KaBaseContractCallsInPlaceContractEffectDeclaration(callsEffect.variableReference.accept(), callsEffect.kind)
+    override fun visitCallsEffectDeclaration(callsEffect: CallsEffectDeclaration, data: Unit): Any {
+        return KaBaseContractCallsInPlaceContractEffectDeclaration(
+            backingValueParameterReference = callsEffect.variableReference.accept(),
+            backingOccurrencesRange = callsEffect.kind,
+            backingInvocationKind = callsEffect.kind.toKaContractInvocationKind()
+        )
+    }
 
     override fun visitReturnsResultOfEffectDeclaration(returnsResultOfEffect: ReturnsResultOfEffectDeclaration, data: Unit): Any =
         KaBaseContractReturnsResultOfEffectDeclaration(returnsResultOfEffect.variableReference.accept())

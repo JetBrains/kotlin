@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.*
+import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.toKaContractInvocationKind
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsNotNullEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSpecificValueEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSuccessfullyEffectDeclaration
@@ -72,8 +73,9 @@ private class ConeContractDescriptionElementToAnalysisApi(
 
     override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Unit): KaContractCallsInPlaceContractEffectDeclaration =
         KaBaseContractCallsInPlaceContractEffectDeclaration(
-            callsEffect.valueParameterReference.accept(),
-            callsEffect.kind,
+            backingValueParameterReference = callsEffect.valueParameterReference.accept(),
+            backingOccurrencesRange = callsEffect.kind,
+            backingInvocationKind = callsEffect.kind.toKaContractInvocationKind(),
         )
 
     override fun visitReturnsResultOfEffectDeclaration(
