@@ -19,10 +19,11 @@ This file captures key findings, decisions, and learnings from each iteration.
 | 17b | 2026-03-06 | Annotation method defaults | — | 1092/1166 (93.7%) |
 | 18-19 | 2026-03-07 | Various fixes | — | 1105/1166 (94.8%) |
 | 20 | 2026-03-10 | Wildcard/Projection + Supertype Nested Classes | 1105/1166 | 1114/1166 (95.5%) |
+| 21 | 2026-03-10 | Implicit Supertypes (Enum, Annotation, Object) | 1114/1166 | 1129/1166 (96.8%) |
 
-**Current Status**: 1114/1166 box tests passing (95.5%)
-- Box tests (`JavaUsingAstBoxTestGenerated`): 1114/1166 (95.5%)
-- 52 box tests failing
+**Current Status**: 1129/1166 box tests passing (96.8%)
+- Box tests (`JavaUsingAstBoxTestGenerated`): 1129/1166 (96.8%)
+- 37 box tests failing
 
 ---
 
@@ -95,6 +96,120 @@ Key accomplishments:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 21: Implicit Supertypes (Enum, Annotation, Object) - 2026-03-10
+
+### Status
+- ✅ Completed - +15 tests (52 → 37 failing)
+
+### Summary
+Added implicit supertypes for special Java class kinds. In Java, enums implicitly extend `java.lang.Enum<E>`, annotation types implicitly implement `java.lang.annotation.Annotation`, and classes without explicit `extends` clause implicitly extend `java.lang.Object`. The javac-wrapper has this logic in `TreeBasedClass.supertypes`, but java-direct was missing it, causing enum-related lowering passes to fail when looking for the `ordinal` property from `java.lang.Enum`.
+
+### Key Findings
+
+1. **Root Cause**: `EnumWhenLowering.mapRuntimeEnumEntry()` was failing with assertion error at `AdditionalIrUtils.kt:297` when trying to get `getPropertyGetter("ordinal")` on enum classes. The `ordinal` property comes from `java.lang.Enum`, which must be in the supertypes.
+
+2. **javac-wrapper Pattern**: In `TreeBasedClass.supertypes`:
+   ```kotlin
+   if (isEnum) {
+       list.add(EnumSupertype(this, javac))
+   } else if (isAnnotationType) {
+       javac.JAVA_LANG_ANNOTATION_ANNOTATION?.let { list.add(it) }
+   }
+   // ...
+   if (list.isEmpty() && !isInterface) {
+       javac.JAVA_LANG_OBJECT?.let { list.add(it) }
+   }
+   ```
+
+3. **EnumSupertype Structure**: The enum supertype is `java.lang.Enum<E>` where `E` is the enum class itself. This is a recursive type parameter pattern.
+
+4. **Impact**: Without these implicit supertypes, FIR couldn't find inherited members like `ordinal`, `name`, `values()`, etc. for enums, and couldn't properly resolve annotation interface inheritance.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `JavaClassOverAst.kt` | Updated `supertypes` to add implicit supertypes for enums (`java.lang.Enum<E>`), annotation types (`java.lang.annotation.Annotation`), and classes without explicit extends (`java.lang.Object`). |
+| `JavaTypeOverAst.kt` | Added `EnumSupertypeForJavaDirect` class (with inner `EnumSelfTypeArgument`) and `SimpleClassifierType` class for representing implicit supertypes. |
+
+### Code Changes
+
+**JavaClassOverAst.supertypes**:
+```kotlin
+override val supertypes: Collection<JavaClassifierType>
+    get() {
+        val result = mutableListOf<JavaClassifierType>()
+        
+        // Add implicit supertypes for special class kinds
+        if (isEnum) {
+            // Enums implicitly extend java.lang.Enum<E>
+            result.add(EnumSupertypeForJavaDirect(this))
+        } else if (isAnnotationType) {
+            // Annotation types implicitly implement java.lang.annotation.Annotation
+            result.add(SimpleClassifierType("java.lang.annotation.Annotation"))
+        }
+        
+        // Explicit supertypes
+        node.findChildByType("EXTENDS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
+            result.add(JavaClassifierTypeOverAst(it, memberResolutionContext))
+        }
+        
+        // Add implicit java.lang.Object for classes without explicit extends
+        if (result.isEmpty() && !isInterface) {
+            result.add(SimpleClassifierType("java.lang.Object"))
+        }
+        
+        node.findChildByType("IMPLEMENTS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
+            result.add(JavaClassifierTypeOverAst(it, memberResolutionContext))
+        }
+        return result
+    }
+```
+
+**EnumSupertypeForJavaDirect**:
+```kotlin
+class EnumSupertypeForJavaDirect(private val enumClass: JavaClass) : JavaClassifierType {
+    override val classifier: JavaClassifier? get() = null
+    override val classifierQualifiedName: String get() = "java.lang.Enum"
+    override val typeArguments: List<JavaType> get() = listOf(EnumSelfTypeArgument())
+    override val isRaw: Boolean get() = false
+    // ...
+    
+    private inner class EnumSelfTypeArgument : JavaClassifierType {
+        override val classifier: JavaClassifier? get() = enumClass
+        override val classifierQualifiedName: String get() = enumClass.fqName?.asString() ?: ""
+        // ...
+    }
+}
+```
+
+### Test Results
+- Box tests: **1129/1166 passing (96.8%)** - UP from 1114/1166 (95.5%) - **+15 tests**
+- 37 box tests still failing
+
+### Tests Fixed
+| Test | Issue Fixed |
+|------|-------------|
+| `testJavaEnumValues` | Enum `ordinal` property now accessible via `java.lang.Enum` supertype |
+| `testJavaEnumValues2` | Same fix |
+| `testJavaEnumValues3` | Same fix |
+| `testMemberNameInJavaEnum` | Same fix |
+| `testEnumEntriesIntrinsicForJava` | Same fix |
+| + 10 others | Various enum, annotation, and Object-related inheritance issues |
+
+### Key Learnings
+
+1. **Implicit Supertypes Matter**: Java has several implicit inheritance rules that aren't written in source but are essential for correct compilation:
+   - `enum E` → `extends java.lang.Enum<E>`
+   - `@interface A` → `implements java.lang.annotation.Annotation`
+   - `class C` (no extends) → `extends java.lang.Object`
+
+2. **Recursive Type Parameters**: The enum supertype `Enum<E>` has a self-referential type argument where `E` is the enum class itself. This pattern is important for methods like `compareTo(E other)`.
+
+3. **IR Lowering Dependencies**: IR lowering passes like `EnumWhenLowering` depend on being able to find inherited members like `ordinal`. Without proper supertypes, these passes crash with assertion errors.
+
+---
 
 ## Iteration 20: Wildcard/Projection Edge Cases + Supertype Nested Class Resolution - 2026-03-10
 

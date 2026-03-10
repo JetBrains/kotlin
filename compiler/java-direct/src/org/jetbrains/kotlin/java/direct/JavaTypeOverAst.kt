@@ -45,7 +45,7 @@ private fun Collection<JavaAnnotation>.filterTypeAnnotations(): Collection<JavaA
         val fqName = classId.asSingleFqName()
         // Check both FQ name and simple name (for unqualified java.lang.* annotations)
         fqName !in NON_TYPE_USE_ANNOTATION_FQ_NAMES &&
-            fqName.shortName().asString() !in NON_TYPE_USE_ANNOTATION_SIMPLE_NAMES
+                fqName.shortName().asString() !in NON_TYPE_USE_ANNOTATION_SIMPLE_NAMES
     }
 }
 
@@ -62,11 +62,11 @@ abstract class JavaTypeOverAst(
             val modifierListAnnotations = node.findChildByType("MODIFIER_LIST")?.getChildrenByType("ANNOTATION")
                 ?.map { JavaAnnotationOverAst(it, resolutionContext) }
                 ?: emptyList()
-            
+
             // Check for direct ANNOTATION children (TYPE_USE on type arguments)
             val directAnnotations = node.getChildrenByType("ANNOTATION")
                 .map { JavaAnnotationOverAst(it, resolutionContext) }
-            
+
             // Filter extra annotations (from method modifier list) to exclude non-TYPE_USE annotations.
             // Node annotations are already TYPE_USE by definition (they appear directly on the type).
             return extraAnnotations.filterTypeAnnotations() + modifierListAnnotations + directAnnotations
@@ -196,15 +196,15 @@ class JavaClassifierTypeOverAst(
         get() {
             // Already resolved if we found a local classifier (including inner classes)
             if (classifier != null) return true
-            
+
             val parts = rawTypeName.split('.')
-            
+
             // Type parameter reference (single name only)
             if (parts.size == 1 && resolutionContext.findTypeParameter(rawTypeName) != null) return true
-            
+
             // Explicit simple import for the first part resolves it
             if (resolutionContext.getSimpleImport(parts[0]) != null) return true
-            
+
             // For unqualified names (no dots), we need resolution
             // For qualified names like "Map.Entry", we need to resolve the outer class
             // Only fully qualified names starting with a package are considered resolved
@@ -223,7 +223,7 @@ class JavaClassifierTypeOverAst(
  * The type of enum constant is the containing enum class itself.
  */
 class JavaClassifierTypeForEnumEntry(
-    private val enumClass: JavaClass
+    private val enumClass: JavaClass,
 ) : JavaClassifierType {
     override val classifier: JavaClassifier get() = enumClass
     override val classifierQualifiedName: String get() = enumClass.fqName?.asString() ?: enumClass.name.asString()
@@ -280,7 +280,7 @@ class JavaWildcardTypeOverAst(
  * This matches TreeBasedTypeParameterType in javac-wrapper.
  */
 class JavaTypeParameterTypeOverAst(
-    override val classifier: JavaTypeParameter
+    override val classifier: JavaTypeParameter,
 ) : JavaClassifierType {
     override val typeArguments: List<JavaType> get() = emptyList()
     override val isRaw: Boolean get() = false
@@ -312,7 +312,7 @@ fun createJavaType(
                 return JavaArrayTypeOverAst(node, resolutionContext, componentType, extraAnnotations)
             }
         }
-        
+
         // Wildcard type: TYPE contains QUEST (the '?'), optionally with EXTENDS_KEYWORD or SUPER_KEYWORD
         // AST structure: TYPE -> [QUEST, (EXTENDS_KEYWORD|SUPER_KEYWORD)?, TYPE?]
         // Must check on the input TYPE node BEFORE looking for nested TYPE (which would be the bound type)
@@ -413,4 +413,62 @@ class JavaTypeParameterOverAst(
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
     override val isFromSource: Boolean get() = true
+}
+
+/**
+ * Represents the implicit supertype java.lang.Enum<E> for enum classes.
+ * In Java, all enums implicitly extend java.lang.Enum parameterized with the enum type itself.
+ */
+class EnumSupertypeForJavaDirect(
+    private val enumClass: JavaClass,
+) : JavaClassifierType {
+    override val classifier: JavaClassifier? get() = null // External class, will be resolved by FIR
+    override val classifierQualifiedName: String get() = "java.lang.Enum"
+    override val typeArguments: List<JavaType> get() = listOf(EnumSelfTypeArgument())
+    override val isRaw: Boolean get() = false
+    override val annotations: Collection<JavaAnnotation> get() = emptyList()
+    override val presentableText: String get() = "java.lang.Enum<${enumClass.fqName}>"
+    override val isDeprecatedInJavaDoc: Boolean get() = false
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+
+    // java.lang.Enum is always resolved (it's a well-known class)
+    override val isResolved: Boolean get() = true
+    override fun resolve(tryResolve: (String) -> Boolean): String? = classifierQualifiedName
+
+    /**
+     * The type argument for Enum<E> - represents the enum class itself.
+     */
+    private inner class EnumSelfTypeArgument : JavaClassifierType {
+        override val classifier: JavaClassifier? get() = enumClass
+        override val classifierQualifiedName: String get() = enumClass.fqName?.asString() ?: ""
+        override val typeArguments: List<JavaType> get() = emptyList()
+        override val isRaw: Boolean get() = false
+        override val annotations: Collection<JavaAnnotation> get() = emptyList()
+        override val presentableText: String get() = classifierQualifiedName
+        override val isDeprecatedInJavaDoc: Boolean get() = false
+        override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+
+        override val isResolved: Boolean get() = true
+        override fun resolve(tryResolve: (String) -> Boolean): String? = classifierQualifiedName
+    }
+}
+
+/**
+ * A simple classifier type for well-known external classes like java.lang.Object
+ * and java.lang.annotation.Annotation. These don't have type arguments.
+ */
+class SimpleClassifierType(
+    override val classifierQualifiedName: String,
+) : JavaClassifierType {
+    override val classifier: JavaClassifier? get() = null // External class, will be resolved by FIR
+    override val typeArguments: List<JavaType> get() = emptyList()
+    override val isRaw: Boolean get() = false
+    override val annotations: Collection<JavaAnnotation> get() = emptyList()
+    override val presentableText: String get() = classifierQualifiedName
+    override val isDeprecatedInJavaDoc: Boolean get() = false
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+
+    // Well-known classes are always resolved
+    override val isResolved: Boolean get() = true
+    override fun resolve(tryResolve: (String) -> Boolean): String? = classifierQualifiedName
 }

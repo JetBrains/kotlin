@@ -56,6 +56,7 @@ class JavaClassOverAst(
     }
 
     override val isAbstract: Boolean get() = hasModifier("ABSTRACT_KEYWORD") || isInterface
+
     // Java nested interfaces and enums are implicitly static even without the keyword
     override val isStatic: Boolean get() = hasModifier("STATIC_KEYWORD") || (outerClass != null && (isInterface || isEnum))
     override val isFinal: Boolean get() = hasModifier("FINAL_KEYWORD")
@@ -75,10 +76,26 @@ class JavaClassOverAst(
     override val supertypes: Collection<JavaClassifierType>
         get() {
             val result = mutableListOf<JavaClassifierType>()
-            // Supertypes can reference class type parameters (e.g., class Foo<T> extends Bar<T>)
+
+            // Add implicit supertypes for special class kinds
+            if (isEnum) {
+                // Enums implicitly extend java.lang.Enum<E>
+                result.add(EnumSupertypeForJavaDirect(this))
+            } else if (isAnnotationType) {
+                // Annotation types implicitly implement java.lang.annotation.Annotation
+                result.add(SimpleClassifierType("java.lang.annotation.Annotation"))
+            }
+
+            // Explicit supertypes can reference class type parameters (e.g., class Foo<T> extends Bar<T>)
             node.findChildByType("EXTENDS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
                 result.add(JavaClassifierTypeOverAst(it, memberResolutionContext))
             }
+
+            // Add implicit java.lang.Object for classes without explicit extends (not interfaces)
+            if (result.isEmpty() && !isInterface) {
+                result.add(SimpleClassifierType("java.lang.Object"))
+            }
+
             node.findChildByType("IMPLEMENTS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach {
                 result.add(JavaClassifierTypeOverAst(it, memberResolutionContext))
             }
@@ -94,7 +111,7 @@ class JavaClassOverAst(
         val innerClassNode = node.children.find {
             it.type.toString() == "CLASS" && it.findChildByType("IDENTIFIER")?.text == name.asString()
         } ?: return null
-        
+
         // Check if the inner class is effectively static:
         // - Explicitly marked with 'static' keyword
         // - Is an interface (interfaces are implicitly static in Java)
@@ -104,7 +121,7 @@ class JavaClassOverAst(
         val isInterface = innerClassNode.findChildByType("INTERFACE_KEYWORD") != null
         val isEnum = innerClassNode.findChildByType("ENUM_KEYWORD") != null
         val innerIsEffectivelyStatic = hasStaticKeyword || isInterface || isEnum
-        
+
         // Non-static inner classes see outer class type parameters; static nested classes/interfaces don't
         val contextForInner = if (innerIsEffectivelyStatic) resolutionContext else memberResolutionContext
         return JavaClassOverAst(innerClassNode, contextForInner, outerClass = this)
