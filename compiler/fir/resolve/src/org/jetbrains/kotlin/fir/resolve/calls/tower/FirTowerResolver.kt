@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateFactory
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.delegatingConstructorScope
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -99,12 +99,12 @@ class FirTowerResolver(
     fun runResolverForDelegatingConstructor(
         info: CallInfo,
         constructedType: ConeClassLikeType,
-        derivedClassLookupTag: ConeClassLikeLookupTag,
+        derivedClass: FirClassSymbol<*>,
         context: ResolutionContext
     ): CandidateCollector {
         val outerType = components.outerClassManager.outerType(constructedType)
         val scope =
-            constructedType.delegatingConstructorScope(derivedClassLookupTag, outerType)
+            constructedType.delegatingConstructorScope(derivedClass, outerType)
                 ?: return collector
 
         val dispatchReceiver =

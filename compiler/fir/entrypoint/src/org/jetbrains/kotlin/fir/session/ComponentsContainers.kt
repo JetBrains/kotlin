@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
 import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSettingHolder
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirOverrideService
+import org.jetbrains.kotlin.fir.scopes.SubstitutionScopeKeyFactory
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.jvm.FirJvmDelegatedMembersFilter
 import org.jetbrains.kotlin.fir.scopes.jvm.JvmMappedScope.FirMappedSymbolStorage
@@ -132,6 +133,8 @@ fun FirSession.registerCliCompilerAndCommonComponents(languageVersionSettings: L
 
     @OptIn(FirImplementationDetail::class)
     register(FirJumpingPhaseComputationSessionForLocalClassesProvider::class, FirCliJumpingPhaseComputationSessionForLocalClassesProvider)
+
+    register(SubstitutionScopeKeyFactory::class, SubstitutionScopeKeyFactory.Default)
 }
 
 class FirSharableJavaComponents(

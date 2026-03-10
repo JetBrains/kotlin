@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.scopes.impl.dynamicMembersStorage
 import org.jetbrains.kotlin.fir.scopes.impl.getOrBuildScopeForIntegerConstantOperatorType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -52,7 +53,7 @@ fun FirSmartCastExpression.smartcastScope(
 
 context(c: SessionAndScopeSessionHolder)
 fun ConeClassLikeType.delegatingConstructorScope(
-    derivedClassLookupTag: ConeClassLikeLookupTag,
+    derivedClass: FirClassSymbol<*>,
     outerType: ConeClassLikeType?
 ): FirTypeScope? {
     val fir = fullyExpandedType().lookupTag.toClassSymbol()?.fir ?: return null
@@ -68,7 +69,7 @@ fun ConeClassLikeType.delegatingConstructorScope(
         else -> ConeSubstitutor.Empty
     }
 
-    return fir.scopeForClass(substitutor, derivedClassLookupTag, FirResolvePhase.DECLARATIONS)
+    return fir.scopeForClass(substitutor, derivedClass, FirResolvePhase.DECLARATIONS)
 }
 
 fun ConeKotlinType.scope(
@@ -96,7 +97,15 @@ private fun ConeKotlinType.scope(
     requiredMembersPhase: FirResolvePhase?,
 ): FirTypeScope? = when (this) {
     is ConeErrorType -> null
-    is ConeClassLikeType -> classScope(useSiteSession, scopeSession, requiredMembersPhase, lookupTag)
+    is ConeClassLikeType -> {
+        classScope(
+            useSiteSession,
+            scopeSession,
+            requiredMembersPhase,
+            memberOwnerLookupTag = lookupTag,
+            memberOwnerClass = null
+        )
+    }
     is ConeTypeParameterType -> {
         val symbol = lookupTag.symbol
         scopeSession.getOrBuild(symbol, TYPE_PARAMETER_SCOPE_KEY) {
@@ -137,7 +146,8 @@ private fun ConeClassLikeType.classScope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     requiredMembersPhase: FirResolvePhase?,
-    memberOwnerLookupTag: ConeClassLikeLookupTag
+    memberOwnerLookupTag: ConeClassLikeLookupTag,
+    memberOwnerClass: FirClassSymbol<*>?,
 ): FirTypeScope? {
     val fullyExpandedType = fullyExpandedType(useSiteSession)
     val fir = fullyExpandedType.lookupTag.toClassSymbol(useSiteSession)?.fir ?: return null
@@ -149,7 +159,7 @@ private fun ConeClassLikeType.classScope(
         )
     }
 
-    return fir.scopeForClass(substitutor, useSiteSession, scopeSession, memberOwnerLookupTag, requiredMembersPhase)
+    return fir.scopeForClass(substitutor, useSiteSession, scopeSession, memberOwnerClass, memberOwnerLookupTag, requiredMembersPhase)
 }
 
 fun FirClassLikeSymbol<*>.defaultType(): ConeClassLikeType = fir.defaultType()

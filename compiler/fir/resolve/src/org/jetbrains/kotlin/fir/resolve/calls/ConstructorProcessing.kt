@@ -137,7 +137,7 @@ private fun processConstructors(
                     ClassKind.INTERFACE -> null
                     else -> firClass.scopeForClass(
                         substitutor,
-                        firClass.symbol.toLookupTag(),
+                        memberOwnerClass = firClass.symbol,
                         memberRequiredPhase = FirResolvePhase.STATUS,
                     )
                 }

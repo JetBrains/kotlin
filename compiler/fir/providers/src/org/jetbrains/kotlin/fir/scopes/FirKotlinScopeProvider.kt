@@ -207,12 +207,12 @@ object FirPlatformDeclarationFilter {
     private val namesToCheck = listOf("getOrDefault", "remove", "first", "last").mapTo(hashSetOf(), Name::identifier)
 }
 
-data class ConeSubstitutionScopeKey(
-    val lookupTag: ConeClassLikeLookupTag,
-    val isFromExpectClass: Boolean,
-    val substitutor: ConeSubstitutor,
-    val derivedClassLookupTag: ConeClassLikeLookupTag?
-) : ScopeSessionKey<FirClass, FirClassSubstitutionScope>()
+abstract class ConeSubstitutionScopeKey : ScopeSessionKey<FirClass, FirClassSubstitutionScope>() {
+    protected abstract val lookupTag: ConeClassLikeLookupTag
+    protected abstract val isFromExpectClass: Boolean
+    protected abstract val substitutor: ConeSubstitutor
+    protected abstract val derivedClassLookupTag: ConeClassLikeLookupTag?
+}
 
 fun FirClass.unsubstitutedScope(
     useSiteSession: FirSession,
@@ -254,6 +254,7 @@ fun FirClass.scopeForClass(
     substitutor: ConeSubstitutor,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
+    memberOwnerClass: FirClassSymbol<*>?,
     memberOwnerLookupTag: ConeClassLikeLookupTag,
     memberRequiredPhase: FirResolvePhase?,
 ): FirTypeScope = scopeForClassImpl(
@@ -263,19 +264,21 @@ fun FirClass.scopeForClass(
     // TODO: why it's always false?
     isFromExpectClass = false,
     memberOwnerLookupTag = memberOwnerLookupTag,
+    memberOwnerClass = memberOwnerClass,
     memberRequiredPhase = memberRequiredPhase,
 )
 
 context(c: SessionAndScopeSessionHolder)
 fun FirClass.scopeForClass(
     substitutor: ConeSubstitutor,
-    memberOwnerLookupTag: ConeClassLikeLookupTag,
+    memberOwnerClass: FirClassSymbol<*>,
     memberRequiredPhase: FirResolvePhase?,
 ): FirTypeScope = scopeForClass(
     substitutor,
     c.session,
     c.scopeSession,
-    memberOwnerLookupTag,
+    memberOwnerClass,
+    memberOwnerClass.toLookupTag(),
     memberRequiredPhase,
 )
 
@@ -306,6 +309,7 @@ fun ConeKotlinType.scopeForSupertype(
         skipPrivateMembers = true,
         classFirDispatchReceiver = derivedClass,
         isFromExpectClass = (derivedClass as? FirRegularClass)?.isExpect == true,
+        memberOwnerClass = derivedClass.symbol,
         memberOwnerLookupTag = derivedClass.symbol.toLookupTag(),
         memberRequiredPhase = memberRequiredPhase,
     )
@@ -324,6 +328,13 @@ private fun substitutor(symbol: FirRegularClassSymbol, type: ConeClassLikeType, 
     return substitutorByMap(originalSubstitution, useSiteSession)
 }
 
+/**
+ * Returns the possibly cached substitution scope for a given class type.
+ *
+ * @param memberOwnerLookupTag Lookup tag of the class for which the scope is being requested.
+ * @param memberOwnerClass Symbol of the class for which the scope is being requested, if available. This parameter is purely a performance
+ * optimization; it is safe to pass `null` as an argument.
+ */
 private fun FirClass.scopeForClassImpl(
     substitutor: ConeSubstitutor,
     useSiteSession: FirSession,
@@ -331,17 +342,20 @@ private fun FirClass.scopeForClassImpl(
     skipPrivateMembers: Boolean,
     classFirDispatchReceiver: FirClass,
     isFromExpectClass: Boolean,
-    memberOwnerLookupTag: ConeClassLikeLookupTag?,
+    memberOwnerLookupTag: ConeClassLikeLookupTag,
+    memberOwnerClass: FirClassSymbol<*>?,
     memberRequiredPhase: FirResolvePhase?,
 ): FirTypeScope {
     val basicScope = unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase)
     if (substitutor == ConeSubstitutor.Empty) return basicScope
 
-    val key = ConeSubstitutionScopeKey(
-        classFirDispatchReceiver.symbol.toLookupTag(),
-        isFromExpectClass,
+    val substitutionScopeKeyFactory = moduleData.session.substitutionScopeKeyFactory
+    val key = substitutionScopeKeyFactory.createKey(
         substitutor,
-        memberOwnerLookupTag
+        classFirDispatchReceiver.symbol.toLookupTag(),
+        memberOwnerLookupTag,
+        memberOwnerClass,
+        isFromExpectClass,
     )
 
     return scopeSession.getOrBuild(this, key) {
@@ -352,7 +366,7 @@ private fun FirClass.scopeForClassImpl(
             substitutor.substituteOrSelf(classFirDispatchReceiver.defaultType()).lowerBoundIfFlexible() as ConeClassLikeType,
             skipPrivateMembers,
             makeExpect = isFromExpectClass,
-            memberOwnerLookupTag ?: classFirDispatchReceiver.symbol.toLookupTag(),
+            memberOwnerLookupTag,
             origin = if (classFirDispatchReceiver != this) {
                 FirDeclarationOrigin.SubstitutionOverride.DeclarationSite
             } else {
@@ -365,3 +379,39 @@ private fun FirClass.scopeForClassImpl(
 private val TYPEALIAS_CONSTRUCTOR: ScopeSessionKey<Pair<FirSession, FirTypeAliasSymbol>, FirScope> = scopeSessionKey()
 
 val FirSession.kotlinScopeProvider: FirKotlinScopeProvider by FirSession.sessionComponentAccessor()
+
+fun interface SubstitutionScopeKeyFactory : FirSessionComponent {
+    fun createKey(
+        substitutor: ConeSubstitutor,
+        dispatchReceiverLookupTag: ConeClassLikeLookupTag,
+        memberOwnerLookupTag: ConeClassLikeLookupTag,
+        memberOwnerClass: FirClassSymbol<*>?,
+        isFromExpectClass: Boolean,
+    ): ConeSubstitutionScopeKey
+
+    object Default : SubstitutionScopeKeyFactory {
+        override fun createKey(
+            substitutor: ConeSubstitutor,
+            dispatchReceiverLookupTag: ConeClassLikeLookupTag,
+            memberOwnerLookupTag: ConeClassLikeLookupTag,
+            memberOwnerClass: FirClassSymbol<*>?,
+            isFromExpectClass: Boolean,
+        ): ConeSubstitutionScopeKey {
+            return DefaultConeSubstitutionScopeKey(
+                dispatchReceiverLookupTag,
+                isFromExpectClass,
+                substitutor,
+                memberOwnerLookupTag,
+            )
+        }
+
+        private data class DefaultConeSubstitutionScopeKey(
+            override val lookupTag: ConeClassLikeLookupTag,
+            override val isFromExpectClass: Boolean,
+            override val substitutor: ConeSubstitutor,
+            override val derivedClassLookupTag: ConeClassLikeLookupTag?
+        ) : ConeSubstitutionScopeKey()
+    }
+}
+
+val FirSession.substitutionScopeKeyFactory: SubstitutionScopeKeyFactory by FirSession.sessionComponentAccessor()
