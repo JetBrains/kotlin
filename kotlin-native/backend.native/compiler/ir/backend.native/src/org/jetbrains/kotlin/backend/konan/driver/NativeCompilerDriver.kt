@@ -14,6 +14,7 @@ import llvm.LLVMOpaqueModule
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
+import org.jetbrains.kotlin.backend.konan.driver.utilities.HeapMonitor
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializerOutput
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
@@ -36,6 +37,8 @@ import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 internal class NativeCompilerDriver(private val performanceManager: PerformanceManager?) {
 
     fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
+        val heapMonitor = HeapMonitor()
+
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks {
                 PhaseEngine.startTopLevel(config) { engine ->
@@ -55,6 +58,8 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                 }
             }
         }
+
+        heapMonitor.stop()
     }
 
     /**
