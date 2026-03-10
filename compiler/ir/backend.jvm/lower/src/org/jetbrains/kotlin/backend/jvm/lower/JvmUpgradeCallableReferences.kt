@@ -37,18 +37,6 @@ internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : Upgrad
     castDispatchReceiver = false,
     generateFakeAccessorsForReflectionProperty = true,
 ) {
-
-    // this shouldn't be needed after moving the lowering outside of per-file part
-    override fun selectSAMOverriddenFunction(irClass: IrClass): IrSimpleFunction {
-        irClass.declarationsAtFunctionReferenceLowering?.filterIsInstance<IrSimpleFunction>()?.singleOrNull { it.modality == Modality.ABSTRACT }?.let { return it }
-        return super.selectSAMOverriddenFunction(irClass).suspendFunctionOriginal()
-    }
-
-    // This copying shouldn't be needed after moving this lowering before InventNamesForLocalClasses
-    override fun copyNecessaryAttributes(oldReference: IrFunctionExpression, newReference: IrRichFunctionReference) {
-        newReference.copyAttributesWithoutOwnerId(oldReference)
-    }
-
     override fun copyNecessaryAttributes(oldReference: IrFunctionReference, newReference: IrRichFunctionReference) {
         newReference.copyAttributesWithoutOwnerId(oldReference)
     }
