@@ -804,6 +804,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      */
     sealed class ScriptParameter : KtFakeSourceElementKind() {
         /**
+         * A receiver parameter generated from the base class configuration.
+         */
+        object BaseClassReceiverParameter : ScriptParameter()
+
+        /**
          * A parameter generated from a base class constructor value parameter.
          */
         class BaseClassConstructorParameter(val index: Int) : ScriptParameter() {
@@ -846,9 +851,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     }
 
     /**
-     * For script base class
+     * The result field of a script generated from the script's last expression.
      */
-    object ScriptBaseClass : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
+    object ScriptResultField : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     /**
      * For repl base class.
