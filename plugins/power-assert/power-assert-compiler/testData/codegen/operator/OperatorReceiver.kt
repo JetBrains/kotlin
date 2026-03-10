@@ -1,5 +1,4 @@
 // LANGUAGE: +ContextParameters
-// IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-73870, KT-73898
 
 fun box(): String {

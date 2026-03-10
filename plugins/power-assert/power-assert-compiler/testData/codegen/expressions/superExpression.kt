@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
 fun box(): String {
     with(A()) {
         return runAll(

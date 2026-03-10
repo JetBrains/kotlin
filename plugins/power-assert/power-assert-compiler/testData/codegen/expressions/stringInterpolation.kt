@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +MultiDollarInterpolation
 fun box(): String = runAll(
     "test1" to { test1("Joe") },

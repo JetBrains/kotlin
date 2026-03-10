@@ -1,5 +1,4 @@
 // LANGUAGE: +ContextParameters
-// IGNORE_BACKEND_K1: ANY
 // FUNCTION: context1Assert
 // FUNCTION: context2Assert
 // DUMP_KT_IR

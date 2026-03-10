@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
 // WITH_REFLECT
 fun box(): String = runAll(
     "test1" to { test1("test")  },

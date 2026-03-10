@@ -30,13 +30,6 @@ import java.io.File
 
 // ------------------------ codegen ------------------------
 
-open class AbstractIrBlackBoxCodegenTestForPowerAssert : AbstractIrBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configurePlugin()
-    }
-}
-
 open class AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
