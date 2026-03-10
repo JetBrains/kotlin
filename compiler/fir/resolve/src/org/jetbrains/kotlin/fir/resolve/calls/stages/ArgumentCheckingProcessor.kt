@@ -408,7 +408,7 @@ internal object ArgumentCheckingProcessor {
     private fun ArgumentContext.preprocessCollectionLiteral(atom: ConeResolutionAtomWithPostponedChild) {
         val expression = atom.collectionLiteralExpression
 
-        val insideAnnotation = context.bodyResolveComponents.callCompleter.isInsideAnnotationContext()
+        val insideAnnotation = context.bodyResolveContext.isInsideAnnotationContext
         if (insideAnnotation || !LanguageFeature.CollectionLiterals.isEnabled()) {
             atom.useFallbackForDisabledCollectionLiterals()
             resolveArgumentExpression(atom.subAtom!!)

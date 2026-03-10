@@ -70,7 +70,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
-    var enableArrayOfCallTransformation: Boolean = false
     var containingSafeCallExpression: FirSafeCallExpression? = null
 
     private val assignAltererExtensions = session.extensionService.assignAltererExtensions.takeIf { it.isNotEmpty() }
@@ -681,7 +680,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 withResolvedExplicitReceiver.also {
                     dataFlowAnalyzer.exitCallExplicitReceiver()
 
-                    if (enableArrayOfCallTransformation && data is ResolutionMode.WithExpectedType) {
+                    if (context.isInsideAnnotationContext && data is ResolutionMode.WithExpectedType) {
                         transformCallArgumentsInsideAnnotationContext(functionCall, data)
                     } else {
                         it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependent))
@@ -718,7 +717,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
             context.addReceiversFromExtensions(result, components)
 
-            if (enableArrayOfCallTransformation) {
+            if (context.isInsideAnnotationContext) {
                 return arrayOfCallTransformer.transformFunctionCall(result, session)
             }
             return result.addSmartcastIfNeeded(data)
@@ -1657,7 +1656,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         if (annotationCall.resolved) return annotationCall
         annotationCall.transformAnnotationTypeRef(transformer, ContextIndependent)
         annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
-        return withFirArrayOfCallTransformer {
+        return context.withAnnotationContext {
             dataFlowAnalyzer.enterAnnotation()
             val result = callResolver.resolveAnnotationCall(annotationCall)
             dataFlowAnalyzer.exitAnnotation()
@@ -1686,15 +1685,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     override fun transformErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: ResolutionMode): FirStatement {
         return transformAnnotationCall(errorAnnotationCall, data)
-    }
-
-    protected inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
-        enableArrayOfCallTransformation = true
-        return try {
-            block()
-        } finally {
-            enableArrayOfCallTransformation = false
-        }
     }
 
     override fun transformDelegatedConstructorCall(
@@ -2148,9 +2138,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         whileAnalysing(session, collectionLiteral) {
             when {
                 // if the feature is not supported, OR collection literal is in the annotation, use old resolution
-                !session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) ||
-                        enableArrayOfCallTransformation ->
+                !session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) || context.isInsideAnnotationContext -> {
                     transformCollectionLiteralInAnnotation(collectionLiteral, data)
+                }
                 else -> {
                     collectionLiteral.transformAnnotations(transformer, data)
                     collectionLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)

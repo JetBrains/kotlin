@@ -82,15 +82,6 @@ open class FirDeclarationsResolveTransformer(
         return visibilityForApproximation(container?.symbol)
     }
 
-    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
-        transformer.expressionsTransformer?.enableArrayOfCallTransformation = true
-        return try {
-            block()
-        } finally {
-            transformer.expressionsTransformer?.enableArrayOfCallTransformation = false
-        }
-    }
-
     protected fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
         return transformer.transformDeclarationContent(declaration, data)
     }
@@ -1137,7 +1128,7 @@ open class FirDeclarationsResolveTransformer(
             if (implicitTypeOnly) return constructor
             val container = context.containerIfAny as? FirRegularClass
             if (constructor.isPrimary && container?.classKind == ClassKind.ANNOTATION_CLASS) {
-                return withFirArrayOfCallTransformer {
+                return context.withAnnotationContext {
                     transformConstructorContent(constructor, data)
                 }
             }

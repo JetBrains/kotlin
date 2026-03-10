@@ -396,9 +396,7 @@ class FirCallCompletionResultsWriterTransformer(
         collectionLiteral: FirCollectionLiteral,
         data: ExpectedArgumentType?
     ): FirStatement {
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) ||
-            insideAnnotationContext
-        ) {
+        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) || insideAnnotationContext) {
             return transformArrayLiteralInAnnotation(collectionLiteral, data)
         }
 

@@ -108,6 +108,23 @@ class BodyResolveContext(
         }
     }
 
+    /**
+     * Inside an annotation call or in a default value of an annotation parameter.
+     */
+    @set:PrivateForInline
+    var isInsideAnnotationContext: Boolean = false
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withAnnotationContext(block: () -> R): R {
+        val oldMode = this.isInsideAnnotationContext
+        this.isInsideAnnotationContext = true
+        return try {
+            block()
+        } finally {
+            this.isInsideAnnotationContext = oldMode
+        }
+    }
+
     @OptIn(PrivateForInline::class)
     inline fun withClassHeader(clazz: FirRegularClass, action: () -> Unit) {
         withSwitchedTowerDataModeForStaticNestedClass(clazz) {
