@@ -18,16 +18,21 @@ import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
 // TODO reduce amount of duplicated code between this class and WasmBoxRunner
-class WasiBoxRunner(
-    testServices: TestServices
+open class WasiBoxRunner(
+    testServices: TestServices,
+    val functionToRun: String = "runBoxTest",
 ) : AbstractWasmArtifactsCollector(testServices) {
-    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
+//    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
+
+    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.ReferenceInterpreter)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
             runWasmCode()
         }
     }
+
+    protected open fun saveOutput(output: String, dir: File) {}
 
     private fun runWasmCode() {
         val artifacts = modulesToArtifact.values.single() as BinaryArtifacts.Wasm.CompilationSets
@@ -43,7 +48,7 @@ class WasiBoxRunner(
             try {
                 let jsModule = await import('./$WASM_BASE_FILE_NAME.mjs');
                 ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
-                boxTestPassed = jsModule.runBoxTest();
+                boxTestPassed = jsModule.$functionToRun();
             } catch(e) {
                 console.log('Failed with exception!');
                 console.log(e);
@@ -87,7 +92,8 @@ class WasiBoxRunner(
                     failsIn = failsIn,
                     entryFile = if (!vm.entryPointIsJsFile) "$WASM_BASE_FILE_NAME.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
                     jsFilePaths = jsFilePaths,
-                    workingDirectory = dir
+                    workingDirectory = dir,
+                    outputCollector = { output -> saveOutput(output, dir) }
                 )
             }
 

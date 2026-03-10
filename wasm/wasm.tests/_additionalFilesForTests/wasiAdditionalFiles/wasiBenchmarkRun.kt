@@ -49,7 +49,7 @@ fun runBenchmark(): Long {
     return median
 }
 
-@kotlin.wasm.WasmImport("ssw_util", "proc_exit")
+@kotlin.wasm.WasmImport("wasi_snapshot_preview1", "proc_exit")
 private external fun wasiProcExit(code: Int)
 
 @kotlin.wasm.WasmExport

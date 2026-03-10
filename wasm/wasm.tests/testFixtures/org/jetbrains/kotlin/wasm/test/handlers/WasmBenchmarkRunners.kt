@@ -6,7 +6,16 @@
 package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.test.services.TestServices
+import java.io.File
 
 class WasmJsBenchmarkRunner(
     testServices: TestServices
 ) : WasmBoxRunner(testServices, true, "runBenchmark")
+
+class WasmWasiBenchmarkRunner(
+    testServices: TestServices
+) : WasiBoxRunner(testServices, "runBenchmark") {
+    override fun saveOutput(output: String, dir: File) {
+        File(dir, "result.txt").writeText(output)
+    }
+}
