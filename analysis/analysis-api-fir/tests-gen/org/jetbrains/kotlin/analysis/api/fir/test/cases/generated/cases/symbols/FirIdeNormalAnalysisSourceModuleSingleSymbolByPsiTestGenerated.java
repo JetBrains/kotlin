@@ -904,6 +904,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
     }
 
     @Test
+    @TestMetadata("returnsResultOfContract.kt")
+    public void testReturnsResultOfContract() {
+      run("returnsResultOfContract.kt");
+    }
+
+    @Test
     @TestMetadata("returnsTrueContract.kt")
     public void testReturnsTrueContract() {
       run("returnsTrueContract.kt");

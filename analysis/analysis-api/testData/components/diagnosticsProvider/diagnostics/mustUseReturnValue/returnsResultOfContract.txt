@@ -1,0 +1,7 @@
+Diagnostics from file:
+  for PSI element of type KtDotQualifiedExpression at (32,5-13)
+    RETURN_VALUE_NOT_USED      text ranges: [(424,430)]
+      PSI: KtDotQualifiedExpression at (32,5-13)
+  for PSI element of type KtSafeQualifiedExpression at (25,5-36)
+    RETURN_VALUE_NOT_USED      text ranges: [(187,192)]
+      PSI: KtSafeQualifiedExpression at (25,5-36)

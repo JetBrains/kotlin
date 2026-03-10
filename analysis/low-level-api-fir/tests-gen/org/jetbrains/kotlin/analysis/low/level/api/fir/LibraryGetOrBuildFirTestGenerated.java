@@ -1108,6 +1108,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     }
 
     @Test
+    @TestMetadata("returnsResultOfContract.kt")
+    public void testReturnsResultOfContract() {
+      run("returnsResultOfContract.kt");
+    }
+
+    @Test
     @TestMetadata("unmarkedFullEnabled.kt")
     public void testUnmarkedFullEnabled() {
       run("unmarkedFullEnabled.kt");

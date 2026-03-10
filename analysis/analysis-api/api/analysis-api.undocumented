@@ -82,6 +82,7 @@ org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstantValue.
 org.jetbrains.kotlin.analysis.api.contracts.description.KaContractHoldsInEffectDeclaration.condition
 org.jetbrains.kotlin.analysis.api.contracts.description.KaContractHoldsInEffectDeclaration.valueParameterReference
 org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.KaContractReturnsSpecificValueEffectDeclaration.value
+org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsResultOfEffectDeclaration.valueParameterReference
 org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBinaryLogicExpression.KaLogicOperation
 org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBinaryLogicExpression.KaLogicOperation.AND
 org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBinaryLogicExpression.KaLogicOperation.OR

@@ -208,6 +208,7 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.IS_NULL
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.NOT
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.PARAMETER_REFERENCE
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.RETURNS
+org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.RETURNS_RESULT_OF
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.deserialize(StubInputStream)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractSerializationVisitor
 org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntryStubImpl

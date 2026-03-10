@@ -220,4 +220,14 @@ class KotlinContractRenderer(
     ) {
         printer.append("param(").append(valueParameterReference.parameterIndex.toString()).append(")")
     }
+
+
+    override fun visitReturnsResultOfEffectDeclaration(
+        returnsResultOfEffect: KtReturnsResultOfDeclaration<KotlinTypeBean, Nothing?>,
+        data: Nothing?,
+    ) {
+        printer.append("ReturnsResultOf(")
+        returnsResultOfEffect.valueParameterReference.accept(this, data)
+        printer.append(")")
+    }
 }
