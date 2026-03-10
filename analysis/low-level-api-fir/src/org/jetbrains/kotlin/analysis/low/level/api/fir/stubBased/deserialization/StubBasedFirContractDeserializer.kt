@@ -75,6 +75,18 @@ internal class StubBasedFirContractDeserializer(
             )
         }
 
+        override fun visitReturnsResultOfEffectDeclaration(
+            returnsResultOfEffect: KtReturnsResultOfDeclaration<KotlinTypeBean, Nothing?>,
+            data: Nothing?
+        ): ConeContractDescriptionElement {
+            return ConeReturnsResultOfDeclaration(
+                returnsResultOfEffect.valueParameterReference.accept(
+                    this,
+                    data
+                ) as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>
+            )
+        }
+
         override fun visitReturnsEffectDeclaration(
             returnsEffect: KtReturnsEffectDeclaration<KotlinTypeBean, Nothing?>,
             data: Nothing?

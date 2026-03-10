@@ -458,6 +458,12 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
     public void testMustUseReturnValueHalfEnabledFromLibrary() {
       run("mustUseReturnValueHalfEnabledFromLibrary.kt");
     }
+
+    @Test
+    @TestMetadata("returnsResultOfContract.kt")
+    public void testReturnsResultOfContract() {
+      run("returnsResultOfContract.kt");
+    }
   }
 
   @Nested
