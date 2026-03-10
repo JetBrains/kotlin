@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.firstCompanionBlock
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.lexer.KtTokens
 
-object FirCompanionBlockChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirCompanionBlockChecker : FirClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirRegularClass) {
+    override fun check(declaration: FirClass) {
         val firstCompanionBlock = declaration.firstCompanionBlock ?: return
         if (LanguageFeature.CompanionBlocksAndExtensions.isDisabled()) {
             reporter.reportOn(

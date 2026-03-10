@@ -17,4 +17,18 @@ class C3 {
     }
 }
 
+val x = object {
+    <!UNSUPPORTED_FEATURE!>companion<!> {
+        fun foo() {}
+    }
+}
+
+enum class E {
+    Entry {
+        <!UNSUPPORTED_FEATURE!>companion<!> {
+            fun foo() {}
+        }
+    };
+}
+
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration */

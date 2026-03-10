@@ -132,6 +132,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirMultipleDefaultsInheritedFromSupertypesChecker.Regular,
         FirMultipleDefaultsInheritedFromSupertypesChecker.ForExpectClass,
         FirPropertyInitializationChecker,
+        FirCompanionBlockChecker,
     )
 
     override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
@@ -160,7 +161,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirObjectConstructorChecker,
         FirInlineClassDeclarationChecker,
         FirEnumEntryInitializationChecker,
-        FirCompanionBlockChecker,
     )
 
     override val constructorCheckers: Set<FirConstructorChecker> = setOf(
