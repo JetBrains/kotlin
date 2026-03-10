@@ -1641,6 +1641,32 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveSymbolTestGenerated e
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/annotations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Annotations {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/annotations/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInAnnotations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "cloneable");
+    }
+
+    @Test
+    @TestMetadata("defaultAnnotationArgumentJava.kt")
+    public void testDefaultAnnotationArgumentJava() {
+      run("defaultAnnotationArgumentJava.kt");
+    }
+
+    @Test
+    @TestMetadata("defaultAnnotationArgumentKotlin.kt")
+    public void testDefaultAnnotationArgumentKotlin() {
+      run("defaultAnnotationArgumentKotlin.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/arrayAccess")
   @TestDataPath("$PROJECT_ROOT")
   public class ArrayAccess {

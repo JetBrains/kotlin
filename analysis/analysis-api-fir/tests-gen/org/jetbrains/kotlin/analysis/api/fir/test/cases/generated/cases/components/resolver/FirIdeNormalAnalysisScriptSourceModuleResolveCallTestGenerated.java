@@ -69,6 +69,20 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated exte
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/annotations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Annotations {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/annotations/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInAnnotations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/annotations"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/arrayAccess")
   @TestDataPath("$PROJECT_ROOT")
   public class ArrayAccess {
