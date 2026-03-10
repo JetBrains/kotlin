@@ -20,8 +20,8 @@ object O {
 }
 
 companion fun C.foo() {}
-companion fun C.Companion.bar() {}
-companion fun O.baz() {}
+companion fun <!COMPANION_EXTENSION_RECEIVER_IS_OBJECT!>C.Companion<!>.bar() {}
+companion fun <!COMPANION_EXTENSION_RECEIVER_IS_OBJECT!>O<!>.baz() {}
 
 fun test() {
     C.foo()

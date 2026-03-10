@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -16,6 +18,11 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.isDisabled
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -34,6 +41,28 @@ object FirCompanionExtensionChecker : FirCallableDeclarationChecker(MppCheckerKi
 
         if (declaration.isOperator && declaration.symbol.name != OperatorNameConventions.INVOKE) {
             reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, "companion extension")
+        }
+
+        checkReceiverType(declaration)
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkReceiverType(declaration: FirCallableDeclaration) {
+        val typeRef = declaration.receiverParameter?.typeRef
+        val receiverType = typeRef?.coneType?.abbreviatedTypeOrSelf ?: return
+
+        if (receiverType.typeArguments.isNotEmpty()) {
+            reporter.reportOn(typeRef.source, FirErrors.COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS, receiverType)
+        }
+
+        val symbol = receiverType.toSymbol() ?: return
+
+        when (symbol) {
+            is FirTypeParameterSymbol ->
+                reporter.reportOn(typeRef.source, FirErrors.COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER, receiverType)
+            is FirClassLikeSymbol if (symbol.classKind == ClassKind.OBJECT) ->
+                reporter.reportOn(typeRef.source, FirErrors.COMPANION_EXTENSION_RECEIVER_IS_OBJECT, receiverType)
+            else -> {}
         }
     }
 }

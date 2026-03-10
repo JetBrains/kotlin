@@ -175,6 +175,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_LITERAL_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_BLOCK_MEMBER_EXTENSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSION_RECEIVER_IS_OBJECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPARE_TO_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPILER_REQUIRED_ANNOTATION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_AMBIGUITY
@@ -3890,6 +3893,21 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             ILLEGAL_COMPANION_BLOCK,
             "Companion block inside {0} is prohibited.",
             SYMBOL_KIND,
+        )
+        map.put(
+            COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS,
+            "Companion extension receiver type ''{0}'' cannot have type arguments.",
+            RENDER_TYPE,
+        )
+        map.put(
+            COMPANION_EXTENSION_RECEIVER_IS_OBJECT,
+            "Companion extension receiver type ''{0}'' resolves to an object. Companion extensions can only be declared on classes and interfaces.",
+            RENDER_TYPE,
+        )
+        map.put(
+            COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER,
+            "Companion extension receiver type ''{0}'' resolves to a type parameter. Companion extensions can only be declared on classes and interfaces.",
+            RENDER_TYPE,
         )
     }
 }

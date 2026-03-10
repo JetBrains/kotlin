@@ -5642,6 +5642,24 @@ internal class IllegalCompanionBlockImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.IllegalCompanionBlock
 
+internal class CompanionExtensionReceiverWithTypeArgumentsImpl(
+    override val type: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionReceiverWithTypeArguments
+
+internal class CompanionExtensionReceiverIsObjectImpl(
+    override val type: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionReceiverIsObject
+
+internal class CompanionExtensionReceiverIsTypeParameterImpl(
+    override val type: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionReceiverIsTypeParameter
+
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
