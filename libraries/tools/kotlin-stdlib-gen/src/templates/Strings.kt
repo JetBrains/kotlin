@@ -17,7 +17,9 @@ object StringJoinOps : TemplateGroupBase() {
             """
             Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
 
-            If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+            If the collection has no elements, the function appends only [prefix] followed by [postfix] to [buffer] (both are empty by default).
+
+            If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
             elements will be appended, followed by the [truncated] string (which defaults to "...").
             
             @return the [buffer] argument with appended elements.
@@ -70,7 +72,9 @@ object StringJoinOps : TemplateGroupBase() {
             """
             Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
 
-            If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+            If the collection has no elements, the result consists of only [prefix] followed by [postfix] (both are empty by default).
+
+            If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
             elements will be appended, followed by the [truncated] string (which defaults to "...").
             """
         }

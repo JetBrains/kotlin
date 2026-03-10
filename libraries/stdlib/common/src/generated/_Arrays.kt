@@ -25051,7 +25051,9 @@ public inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char, b: Ch
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the function appends only [prefix] followed by [postfix] to [buffer] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @return the [buffer] argument with appended elements.
@@ -25076,7 +25078,9 @@ public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSeq
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the function appends only [prefix] followed by [postfix] to [buffer] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @return the [buffer] argument with appended elements.
@@ -25104,7 +25108,9 @@ public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: CharSequence 
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the function appends only [prefix] followed by [postfix] to [buffer] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @return the [buffer] argument with appended elements.
@@ -25132,7 +25138,9 @@ public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the function appends only [prefix] followed by [postfix] to [buffer] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @return the [buffer] argument with appended elements.
@@ -25160,7 +25168,9 @@ public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence =
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the function appends only [prefix] followed by [postfix] to [buffer] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @return the [buffer] argument with appended elements.
@@ -25188,7 +25198,9 @@ public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: CharSequence 
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the function appends only [prefix] followed by [postfix] to [buffer] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @return the [buffer] argument with appended elements.
@@ -25216,7 +25228,9 @@ public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: CharSequence
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the function appends only [prefix] followed by [postfix] to [buffer] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @return the [buffer] argument with appended elements.
@@ -25244,7 +25258,9 @@ public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: CharSequenc
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the function appends only [prefix] followed by [postfix] to [buffer] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @return the [buffer] argument with appended elements.
@@ -25272,7 +25288,9 @@ public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: CharSequen
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the function appends only [prefix] followed by [postfix] to [buffer] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @return the [buffer] argument with appended elements.
@@ -25300,7 +25318,9 @@ public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: CharSequence 
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the result consists of only [prefix] followed by [postfix] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @sample samples.collections.Collections.Transformations.joinToString
@@ -25312,7 +25332,9 @@ public fun <T> Array<out T>.joinToString(separator: CharSequence = ", ", prefix:
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the result consists of only [prefix] followed by [postfix] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @sample samples.collections.Collections.Transformations.joinToString
@@ -25324,7 +25346,9 @@ public fun ByteArray.joinToString(separator: CharSequence = ", ", prefix: CharSe
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the result consists of only [prefix] followed by [postfix] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @sample samples.collections.Collections.Transformations.joinToString
@@ -25336,7 +25360,9 @@ public fun ShortArray.joinToString(separator: CharSequence = ", ", prefix: CharS
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the result consists of only [prefix] followed by [postfix] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @sample samples.collections.Collections.Transformations.joinToString
@@ -25348,7 +25374,9 @@ public fun IntArray.joinToString(separator: CharSequence = ", ", prefix: CharSeq
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the result consists of only [prefix] followed by [postfix] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @sample samples.collections.Collections.Transformations.joinToString
@@ -25360,7 +25388,9 @@ public fun LongArray.joinToString(separator: CharSequence = ", ", prefix: CharSe
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the result consists of only [prefix] followed by [postfix] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @sample samples.collections.Collections.Transformations.joinToString
@@ -25372,7 +25402,9 @@ public fun FloatArray.joinToString(separator: CharSequence = ", ", prefix: CharS
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the result consists of only [prefix] followed by [postfix] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @sample samples.collections.Collections.Transformations.joinToString
@@ -25384,7 +25416,9 @@ public fun DoubleArray.joinToString(separator: CharSequence = ", ", prefix: Char
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the result consists of only [prefix] followed by [postfix] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @sample samples.collections.Collections.Transformations.joinToString
@@ -25396,7 +25430,9 @@ public fun BooleanArray.joinToString(separator: CharSequence = ", ", prefix: Cha
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * 
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * If the collection has no elements, the result consists of only [prefix] followed by [postfix] (both are empty by default).
+ * 
+ * If the collection is huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
  * @sample samples.collections.Collections.Transformations.joinToString
