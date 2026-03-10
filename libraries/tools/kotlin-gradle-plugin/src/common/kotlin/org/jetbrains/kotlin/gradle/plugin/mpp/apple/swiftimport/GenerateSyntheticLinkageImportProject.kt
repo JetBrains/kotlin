@@ -116,7 +116,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask() {
             dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.forEach { (dependencyIdentifier, swiftPMDependencies) ->
                 generatePackageManifest(
                     identifier = dependencyIdentifier.identifier,
-                    packageRoot = packageRoot.resolve("${SUBPACKAGES}/${dependencyIdentifier}"),
+                    packageRoot = packageRoot.resolve("${SUBPACKAGES}/${dependencyIdentifier.identifier}"),
                     /**
                      * FIXME: KT-83873 We probably always want inferred here, but figure out what is wrong with SwiftPM's linkage when 2 .dynamic products are involved
                      *

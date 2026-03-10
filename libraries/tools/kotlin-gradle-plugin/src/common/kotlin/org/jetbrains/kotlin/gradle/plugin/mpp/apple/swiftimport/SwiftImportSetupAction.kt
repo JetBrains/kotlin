@@ -215,8 +215,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 linkTask.additionalLinkerOptsProperty.set(
                     defFilesAndLdDumpGenerationTask.lazyMapWithCC {
                         val ldDumpFile = ldArgDumpPath.get().get().asFile
-                        if (!ldDumpFile.exists()) return@lazyMapWithCC emptyList()
-                        ldDumpFile.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR)
+                        ldDumpFile.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR).filter { it.isNotEmpty() }
                     }
                 )
             }
@@ -353,23 +352,17 @@ private fun Project.configureTestTaskDyldSearchPaths(
 
     task.processOptions.environment.put(
         if (task is KotlinNativeSimulatorTest) "SIMCTL_CHILD_DYLD_FALLBACK_FRAMEWORK_PATH" else "DYLD_FALLBACK_FRAMEWORK_PATH",
-        syntheticImportProjectGenerationTaskForCinteropsAndLdDump.flatMap {
-            // Fight eager CC provider: fetch dump path eagerly, but read the file only when the task has executed
-            it.outputs.files.elements
-        }.map {
+        syntheticImportProjectGenerationTaskForCinteropsAndLdDump.lazyMapWithCC {
             frameworkSearchPathsDump.get().asFile.readLines().single()
-                .split(DUMP_FILE_ARGS_SEPARATOR)
+                .split(DUMP_FILE_ARGS_SEPARATOR).filter { it.isNotEmpty() }
                 .joinToString(":")
         }
     )
     task.processOptions.environment.put(
         if (task is KotlinNativeSimulatorTest) "SIMCTL_CHILD_DYLD_FALLBACK_LIBRARY_PATH" else "DYLD_FALLBACK_LIBRARY_PATH",
-        syntheticImportProjectGenerationTaskForCinteropsAndLdDump.flatMap {
-            // Fight eager CC provider: fetch dump path eagerly, but read the file only when the task has executed
-            it.outputs.files.elements
-        }.map {
+        syntheticImportProjectGenerationTaskForCinteropsAndLdDump.lazyMapWithCC {
             librariesSearchPathsDump.get().asFile.readLines().single()
-                .split(DUMP_FILE_ARGS_SEPARATOR)
+                .split(DUMP_FILE_ARGS_SEPARATOR).filter { it.isNotEmpty() }
                 .joinToString(":")
         }
     )
