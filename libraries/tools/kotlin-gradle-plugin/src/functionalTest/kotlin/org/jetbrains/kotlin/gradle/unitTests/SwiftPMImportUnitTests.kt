@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExt
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Assume
-import org.junit.Test
+import kotlin.test.Test
 import java.nio.file.Files
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
+import org.junit.jupiter.api.Assumptions
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -36,7 +36,7 @@ class SwiftPMImportUnitTests {
 
     @BeforeTest
     fun runOnMacOSOnly() {
-        Assume.assumeTrue("macOS host required for this test", HostManager.hostIsMac)
+        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
     }
 
     @Test

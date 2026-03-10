@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegister
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SwiftPMImportExtensionTests {
