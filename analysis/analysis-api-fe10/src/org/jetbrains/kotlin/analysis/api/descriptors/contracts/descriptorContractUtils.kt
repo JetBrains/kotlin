@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractCallsInPlaceContractEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.toKaContractInvocationKind
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractConditionalContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractConstantValue
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractExplicitParameterValue
@@ -65,8 +66,13 @@ private class ContractDescriptionElementToAnalysisApi(val analysisContext: Fe10A
             else -> error("Can't convert $returnsEffect to the Analysis API")
         }
 
-    override fun visitCallsEffectDeclaration(callsEffect: CallsEffectDeclaration, data: Unit): Any =
-        KaBaseContractCallsInPlaceContractEffectDeclaration(callsEffect.variableReference.accept(), callsEffect.kind)
+    override fun visitCallsEffectDeclaration(callsEffect: CallsEffectDeclaration, data: Unit): Any {
+        return KaBaseContractCallsInPlaceContractEffectDeclaration(
+            backingValueParameterReference = callsEffect.variableReference.accept(),
+            backingOccurrencesRange = callsEffect.kind,
+            backingInvocationKind = callsEffect.kind.toKaContractInvocationKind()
+        )
+    }
 
     override fun visitLogicalOr(logicalOr: LogicalOr, data: Unit): Any = KaBaseContractBinaryLogicExpression(
         logicalOr.left.accept(),

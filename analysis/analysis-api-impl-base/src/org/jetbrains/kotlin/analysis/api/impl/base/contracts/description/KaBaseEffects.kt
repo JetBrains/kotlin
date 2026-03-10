@@ -18,19 +18,24 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 class KaBaseContractCallsInPlaceContractEffectDeclaration(
     private val backingValueParameterReference: KaContractParameterValue,
     private val backingOccurrencesRange: EventOccurrencesRange,
+    private val backingInvocationKind: KaContractInvocationKind,
 ) : KaContractCallsInPlaceContractEffectDeclaration {
     override val token: KaLifetimeToken get() = backingValueParameterReference.token
 
     override val valueParameterReference: KaContractParameterValue get() = withValidityAssertion { backingValueParameterReference }
+
+    @Deprecated("Use 'invocationKind' instead", level = DeprecationLevel.HIDDEN)
     override val occurrencesRange: EventOccurrencesRange get() = withValidityAssertion { backingOccurrencesRange }
 
-    override fun hashCode(): Int = Objects.hashCode(backingValueParameterReference, backingOccurrencesRange)
+    override val invocationKind: KaContractInvocationKind get() = withValidityAssertion { backingInvocationKind }
+
+    override fun hashCode(): Int = Objects.hashCode(backingValueParameterReference, backingInvocationKind)
 
     override fun equals(other: Any?): Boolean {
         return this === other ||
                 other is KaBaseContractCallsInPlaceContractEffectDeclaration &&
                 other.backingValueParameterReference == backingValueParameterReference &&
-                other.backingOccurrencesRange == backingOccurrencesRange
+                other.backingInvocationKind == backingInvocationKind
     }
 }
 
@@ -106,4 +111,14 @@ class KaBaseContractHoldsInEffectDeclaration(
             other.backingValueParameterReference == backingValueParameterReference
 
     override fun hashCode(): Int = Objects.hashCode(backingCondition, backingValueParameterReference)
+}
+
+@KaImplementationDetail
+fun EventOccurrencesRange.toKaContractInvocationKind(): KaContractInvocationKind = when (this) {
+    EventOccurrencesRange.ZERO -> KaContractInvocationKind.ZERO
+    EventOccurrencesRange.AT_MOST_ONCE -> KaContractInvocationKind.AT_MOST_ONCE
+    EventOccurrencesRange.EXACTLY_ONCE -> KaContractInvocationKind.EXACTLY_ONCE
+    EventOccurrencesRange.AT_LEAST_ONCE -> KaContractInvocationKind.AT_LEAST_ONCE
+    EventOccurrencesRange.MORE_THAN_ONCE -> KaContractInvocationKind.MORE_THAN_ONCE
+    EventOccurrencesRange.UNKNOWN -> KaContractInvocationKind.UNKNOWN
 }

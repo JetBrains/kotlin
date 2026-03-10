@@ -512,6 +512,18 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaV
 	public abstract fun isPublicApi (Lorg/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol;)Z
 }
 
+public final class org/jetbrains/kotlin/analysis/api/contracts/description/KaContractInvocationKind : java/lang/Enum {
+	public static final field AT_LEAST_ONCE Lorg/jetbrains/kotlin/analysis/api/contracts/description/KaContractInvocationKind;
+	public static final field AT_MOST_ONCE Lorg/jetbrains/kotlin/analysis/api/contracts/description/KaContractInvocationKind;
+	public static final field EXACTLY_ONCE Lorg/jetbrains/kotlin/analysis/api/contracts/description/KaContractInvocationKind;
+	public static final field MORE_THAN_ONCE Lorg/jetbrains/kotlin/analysis/api/contracts/description/KaContractInvocationKind;
+	public static final field UNKNOWN Lorg/jetbrains/kotlin/analysis/api/contracts/description/KaContractInvocationKind;
+	public static final field ZERO Lorg/jetbrains/kotlin/analysis/api/contracts/description/KaContractInvocationKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/contracts/description/KaContractInvocationKind;
+	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/contracts/description/KaContractInvocationKind;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnostic : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public abstract fun getDefaultMessage ()Ljava/lang/String;
 	public abstract fun getDiagnosticClass ()Lkotlin/reflect/KClass;

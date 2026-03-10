@@ -49,7 +49,7 @@ KaNamedFunctionSymbol:
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
               importableFqName: null
-      occurrencesRange: EXACTLY_ONCE
+      invocationKind: EXACTLY_ONCE
   ]
   hasStableParameterNames: true
   isActual: false
