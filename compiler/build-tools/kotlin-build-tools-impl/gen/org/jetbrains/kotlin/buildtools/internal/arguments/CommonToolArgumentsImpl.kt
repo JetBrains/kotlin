@@ -31,8 +31,7 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonToolArgumentsImpl(
-  private val adapter:
-      CompilerArgumentValueAdapter<ArgumentsCommonToolArguments.CommonToolArgument<*>>? = null,
+  private val adapter: CommonToolArgumentValueAdapter? = null,
 ) : ArgumentsCommonToolArguments,
     ArgumentsCommonToolArguments.Builder {
   protected val internalArguments: MutableSet<String> = mutableSetOf()

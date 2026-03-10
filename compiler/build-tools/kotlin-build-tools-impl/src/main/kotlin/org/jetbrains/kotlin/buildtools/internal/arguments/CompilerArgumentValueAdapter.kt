@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.CommonCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
@@ -14,7 +16,6 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
-import kotlin.reflect.KClass
 import kotlin.reflect.full.functions
 
 /**
@@ -23,11 +24,19 @@ import kotlin.reflect.full.functions
  * Converts between old API argument types (e.g., `String`) and new implementation types (e.g., `Path`)
  * to maintain compatibility when argument type definitions evolve between API and implementation.
  */
-@OptIn(ExperimentalCompilerArgument::class)
-internal interface CompilerArgumentValueAdapter<V> {
+internal interface CommonToolArgumentValueAdapter {
+    fun <V, T> mapFrom(value: T, key: CommonToolArguments.CommonToolArgument<V>): V
+    fun <T, V> mapTo(value: V, key: CommonToolArguments.CommonToolArgument<V>): T
+}
 
-    fun <T> mapFrom(value: Any?, key: V): T?
-    fun <T> mapTo(value: Any?, key: V): T?
+internal interface CommonCompilerArgumentValueAdapter : CommonToolArgumentValueAdapter {
+    fun <V, T> mapFrom(value: T, key: CommonCompilerArgument<V>): V
+    fun <T, V> mapTo(value: V, key: CommonCompilerArgument<V>): T
+}
+
+internal interface JvmCompilerArgumentValueAdapter : CommonCompilerArgumentValueAdapter {
+    fun <V, T> mapFrom(value: T, key: JvmCompilerArguments.JvmCompilerArgument<V>): V
+    fun <T, V> mapTo(value: V, key: JvmCompilerArguments.JvmCompilerArgument<V>): T
 
     companion object {
         //TODO(KT-84598): Expose API Version via Public Property
@@ -35,31 +44,51 @@ internal interface CompilerArgumentValueAdapter<V> {
             JvmPlatformToolchain::class.functions.none { it.name == "discoverScriptExtensionsOperationBuilder" }
 
         @Suppress("UNCHECKED_CAST")
-        fun <T : Any> getOrNull(keyClass: KClass<T>): CompilerArgumentValueAdapter<T>? {
-            return when (keyClass) {
-                JvmCompilerArguments.JvmCompilerArgument::class if requiresPre240ForwardCompatibility -> {
-                    JvmCompilerArgumentPre2_4_0ValueAdapter as CompilerArgumentValueAdapter<T>
-                }
-                else -> null
+        fun getOrNull(): JvmCompilerArgumentValueAdapter? =
+            if (requiresPre240ForwardCompatibility) {
+                JvmCompilerArgumentPre2_4_0ValueAdapter
+            } else {
+                null
             }
-        }
     }
 }
 
-@Suppress("ClassName")
-@OptIn(ExperimentalCompilerArgument::class)
-private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAdapter<JvmCompilerArguments.JvmCompilerArgument<*>> {
+@Suppress("ClassName", "UNCHECKED_CAST")
+private abstract class CommonToolArgumentPre2_4_0ValueAdapter : CommonToolArgumentValueAdapter {
+    override fun <V, T> mapFrom(value: T, key: CommonToolArguments.CommonToolArgument<V>): V {
+        return value as V
+    }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T> mapFrom(
-        value: Any?,
-        key: JvmCompilerArguments.JvmCompilerArgument<*>,
-    ): T? {
-        if (value == null) return null as T?
+    override fun <T, V> mapTo(value: V, key: CommonToolArguments.CommonToolArgument<V>): T {
+        return value as T
+    }
+}
+
+@Suppress("ClassName", "UNCHECKED_CAST")
+private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolArgumentPre2_4_0ValueAdapter(),
+    CommonCompilerArgumentValueAdapter {
+    override fun <V, T> mapFrom(value: T, key: CommonCompilerArgument<V>): V {
+        return value as V
+    }
+
+    override fun <T, V> mapTo(value: V, key: CommonCompilerArgument<V>): T {
+        return value as T
+    }
+}
+
+@Suppress("ClassName", "UNCHECKED_CAST")
+@OptIn(ExperimentalCompilerArgument::class)
+private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentPre2_4_0ValueAdapter(), JvmCompilerArgumentValueAdapter {
+
+    override fun <V, T> mapFrom(
+        value: T,
+        key: JvmCompilerArguments.JvmCompilerArgument<V>,
+    ): V {
+        if (value == null) return null as V
         return when (key) {
             JvmCompilerArguments.JDK_HOME -> {
                 val pathValue = value as Path
-                pathValue.absolutePathStringOrThrow() as T
+                pathValue.absolutePathStringOrThrow() as V
             }
 
             JvmCompilerArguments.X_PROFILE -> {
@@ -69,104 +98,103 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
                             "${File.pathSeparator}${command}" +
                             "${File.pathSeparator}" +
                             outputDir.absolutePathStringOrThrow()
-                } as T
+                } as V
             }
 
             JvmCompilerArguments.JVM_DEFAULT -> {
                 val mode = value as JvmDefaultMode
-                mode.stringValue as T
+                mode.stringValue as V
             }
 
             JvmCompilerArguments.X_ABI_STABILITY -> {
                 val mode = value as AbiStabilityMode
-                mode.stringValue as T
+                mode.stringValue as V
             }
 
             JvmCompilerArguments.X_ASSERTIONS -> {
                 val mode = value as AssertionsMode
-                mode.stringValue as T
+                mode.stringValue as V
             }
 
             JvmCompilerArguments.X_JSPECIFY_ANNOTATIONS -> {
                 val mode = value as JspecifyAnnotationsMode
-                mode.stringValue as T
+                mode.stringValue as V
             }
 
             JvmCompilerArguments.X_LAMBDAS -> {
                 val mode = value as LambdasMode
-                mode.stringValue as T
+                mode.stringValue as V
             }
 
             JvmCompilerArguments.X_SAM_CONVERSIONS -> {
                 val mode = value as SamConversionsMode
-                mode.stringValue as T
+                mode.stringValue as V
             }
 
             JvmCompilerArguments.X_STRING_CONCAT -> {
                 val mode = value as StringConcatMode
-                mode.stringValue as T
+                mode.stringValue as V
             }
 
             JvmCompilerArguments.X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS -> {
                 val mode = value as CompatqualAnnotationsMode
-                mode.stringValue as T
+                mode.stringValue as V
             }
 
             JvmCompilerArguments.X_WHEN_EXPRESSIONS -> {
                 val mode = value as WhenExpressionsMode
-                mode.stringValue as T
+                mode.stringValue as V
             }
 
             JvmCompilerArguments.X_JDK_RELEASE -> {
                 val mode = value as JdkRelease
-                mode.stringValue as T
+                mode.stringValue as V
             }
 
             JvmCompilerArguments.X_ADD_MODULES -> {
                 val listValue: List<String> = value as List<String>
-                listValue.toTypedArray() as T
+                listValue.toTypedArray() as V
             }
 
             JvmCompilerArguments.CLASSPATH -> {
                 val listValue = value as List<Path>
-                listValue.joinToString(File.pathSeparator) { it.absolutePathStringOrThrow() } as T
+                listValue.joinToString(File.pathSeparator) { it.absolutePathStringOrThrow() } as V
             }
 
             JvmCompilerArguments.X_KLIB -> {
                 val listValue = value as List<Path>
-                listValue.joinToString(File.pathSeparator) { it.absolutePathStringOrThrow() } as T
+                listValue.joinToString(File.pathSeparator) { it.absolutePathStringOrThrow() } as V
             }
 
             JvmCompilerArguments.X_MODULE_PATH -> {
                 val listValue = value as List<Path>
-                listValue.joinToString(File.pathSeparator) { it.absolutePathStringOrThrow() } as T
+                listValue.joinToString(File.pathSeparator) { it.absolutePathStringOrThrow() } as V
             }
 
             JvmCompilerArguments.X_FRIEND_PATHS -> {
                 val listValue = value as List<Path>
-                listValue.map { it.absolutePathStringOrThrow() }.toTypedArray() as T
+                listValue.map { it.absolutePathStringOrThrow() }.toTypedArray() as V
             }
 
             JvmCompilerArguments.X_JAVA_SOURCE_ROOTS -> {
                 val listValue = value as List<Path>
-                listValue.map { it.absolutePathStringOrThrow() }.toTypedArray() as T
+                listValue.map { it.absolutePathStringOrThrow() }.toTypedArray() as V
             }
 
             JvmCompilerArguments.SCRIPT_TEMPLATES -> {
                 val listValue = value as List<String>
-                listValue.toTypedArray() as T
+                listValue.toTypedArray() as V
             }
 
-            else -> value as T
+            else -> value as V
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T> mapTo(
-        value: Any?,
-        key: JvmCompilerArguments.JvmCompilerArgument<*>,
-    ): T? {
-        if (value == null) return null as T?
+    override fun <T, V> mapTo(
+        value: V,
+        key: JvmCompilerArguments.JvmCompilerArgument<V>,
+    ): T {
+        if (value == null) return null as T
 
         return when (key) {
             JvmCompilerArguments.JDK_HOME -> {

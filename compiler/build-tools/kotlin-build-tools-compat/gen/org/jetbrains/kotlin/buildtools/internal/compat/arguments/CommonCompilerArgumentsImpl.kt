@@ -115,9 +115,8 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonCompilerArgumentsImpl(
-  private val adapter:
-      CompilerArgumentValueAdapter<ArgumentsCommonCompilerArguments.CommonCompilerArgument<*>>? = null,
-) : CommonToolArgumentsImpl(),
+  private val adapter: CommonCompilerArgumentValueAdapter? = null,
+) : CommonToolArgumentsImpl(adapter),
     ArgumentsCommonCompilerArguments,
     ArgumentsCommonCompilerArguments.Builder {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()

@@ -46,6 +46,7 @@ internal class BtaImplGenerator(
                 }
                 if (parentClass != null) {
                     superclass(parentClass)
+                    addSuperclassConstructorParameter("adapter")
                 } else {
                     property(
                         "internalArguments",
@@ -67,7 +68,7 @@ internal class BtaImplGenerator(
                     generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
                 val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
                 val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
-                val constructorSpecBuilder = constructorSpecBuilder(argumentTypeName)
+                val constructorSpecBuilder = constructorSpecBuilder(argumentTypeNameString)
 
                 generateGetPutFunctions(argumentTypeName, argumentImplTypeName)
 
@@ -138,10 +139,9 @@ internal class BtaImplGenerator(
     }
 
     private fun TypeSpec.Builder.constructorSpecBuilder(
-        argumentTypeName: ClassName,
+        argumentTypeNameString: String,
     ): FunSpec.Builder = FunSpec.constructorBuilder().apply {
-        val adapterType = ClassName(targetPackage, "CompilerArgumentValueAdapter")
-            .parameterizedBy(argumentTypeName.parameterizedBy(STAR))
+        val adapterType = ClassName(targetPackage, "${argumentTypeNameString}ValueAdapter")
             .copy(nullable = true)
 
         addParameter(

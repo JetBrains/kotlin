@@ -127,9 +127,8 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class JvmCompilerArgumentsImpl(
-  private val adapter:
-      CompilerArgumentValueAdapter<JvmCompilerArguments.JvmCompilerArgument<*>>? = null,
-) : CommonCompilerArgumentsImpl(),
+  private val adapter: JvmCompilerArgumentValueAdapter? = null,
+) : CommonCompilerArgumentsImpl(adapter),
     JvmCompilerArguments,
     JvmCompilerArguments.Builder,
     DeepCopyable<JvmCompilerArgumentsImpl> {
