@@ -274,7 +274,6 @@ public final class org/jetbrains/kotlin/config/LanguageFeature : java/lang/Enum 
 	public static final field ForbidUselessTypeArgumentsIn25 Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field ForbidUsingExpressionTypesWithInaccessibleContent Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field ForbidUsingExtensionPropertyTypeParameterInDelegate Lorg/jetbrains/kotlin/config/LanguageFeature;
-	public static final field ForbidUsingSupertypesWithInaccessibleContentInTypeArguments Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field ForkIsNotSuccessfulWhenNoBranchIsSuccessful Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field FunctionReferenceWithDefaultValueAsOtherType Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field FunctionTypesWithBigArity Lorg/jetbrains/kotlin/config/LanguageFeature;

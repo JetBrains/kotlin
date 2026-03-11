@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -ForbidUsingSupertypesWithInaccessibleContentInTypeArguments
 
 // MODULE: start
 // FILE: start.kt
@@ -18,8 +17,8 @@ interface BoxedGenericType : Box<InaccessibleGenericSuperType<Nothing>>
 // MODULE: end(middle)
 // FILE: end.kt
 
-<!MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT!>interface BoxedConcreteTypeImplementation<!> : BoxedConcreteType
+interface BoxedConcreteTypeImplementation : BoxedConcreteType
 
-<!MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT!>interface BoxedGenericTypeImplementation<!> : BoxedGenericType
+interface BoxedGenericTypeImplementation : BoxedGenericType
 
 /* GENERATED_FIR_TAGS: interfaceDeclaration, nullableType, typeParameter */

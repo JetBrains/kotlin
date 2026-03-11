@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-74459
-// LANGUAGE: -ForbidUsingExpressionTypesWithInaccessibleContent -ForbidUsingSupertypesWithInaccessibleContentInTypeArguments -ForbidLambdaParameterWithMissingDependencyType -AllowEagerSupertypeAccessibilityChecks
+// LANGUAGE: -ForbidUsingExpressionTypesWithInaccessibleContent -ForbidLambdaParameterWithMissingDependencyType -AllowEagerSupertypeAccessibilityChecks
 // MODULE: base
 // FILE: base.kt
 

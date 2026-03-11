@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +ForbidUsingExpressionTypesWithInaccessibleContent +ForbidUsingSupertypesWithInaccessibleContentInTypeArguments +ForbidLambdaParameterWithMissingDependencyType -AllowEagerSupertypeAccessibilityChecks
+// LANGUAGE: +ForbidUsingExpressionTypesWithInaccessibleContent +ForbidLambdaParameterWithMissingDependencyType -AllowEagerSupertypeAccessibilityChecks
 
 // MODULE: missing
 // FILE: Base.java

@@ -27,7 +27,7 @@ fun main() {
     dependencyInheritor
 
     <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>DependencyInheritor<!>()
-    <!MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT!>BoxedDependencyInheritor<!>()
+    BoxedDependencyInheritor()
 
     dependencyInheritor.<!MISSING_DEPENDENCY_SUPERCLASS, UNRESOLVED_REFERENCE!>foo<!>()
     dependencyInheritor.<!MISSING_DEPENDENCY_SUPERCLASS!>bar<!>()

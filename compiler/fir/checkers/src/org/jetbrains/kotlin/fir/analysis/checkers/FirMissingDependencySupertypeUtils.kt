@@ -32,12 +32,9 @@ fun checkMissingDependencySuperTypes(
 
     val missingSuperTypes = context.session.missingDependencyStorage.getMissingSuperTypes(declaration)
     val languageVersionSettings = context.languageVersionSettings
-    for ((superType, origin) in missingSuperTypes) {
+    for (superType in missingSuperTypes) {
         val diagnostic =
             when {
-                origin == FirMissingDependencyStorage.SupertypeOrigin.TYPE_ARGUMENT && !languageVersionSettings.supportsFeature(
-                    LanguageFeature.ForbidUsingSupertypesWithInaccessibleContentInTypeArguments
-                ) -> FirErrors.MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT
                 isEagerCheck && !languageVersionSettings.supportsFeature(
                     LanguageFeature.AllowEagerSupertypeAccessibilityChecks
                 ) -> FirErrors.MISSING_DEPENDENCY_SUPERCLASS_WARNING
