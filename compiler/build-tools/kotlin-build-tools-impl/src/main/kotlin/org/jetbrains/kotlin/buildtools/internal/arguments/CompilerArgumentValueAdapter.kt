@@ -134,6 +134,13 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 listValue.toTypedArray() as V
             }
 
+            CommonCompilerArguments.X_SUPPRESS_WARNING -> {
+                if (value == null) return emptyArray<String>() as V
+
+                val listValue: List<String> = value as List<String>
+                listValue.toTypedArray() as V
+            }
+
             else -> {
                 value as V
             }
@@ -198,6 +205,13 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
             }
 
             CommonCompilerArguments.X_VERBOSE_PHASES -> {
+                if (value == null) return emptyList<String>() as T
+
+                val arrayValue = value as Array<String>
+                arrayValue.toList() as T
+            }
+
+            CommonCompilerArguments.X_SUPPRESS_WARNING -> {
                 if (value == null) return emptyList<String>() as T
 
                 val arrayValue = value as Array<String>

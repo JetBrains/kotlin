@@ -1062,6 +1062,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xsuppress-warning"
         compilerName = "suppressedDiagnostics"
@@ -1069,6 +1070,7 @@ The argument should be used only if the new compilation scheme is enabled with -
             "Suppress specified warning module-wide. This option is deprecated in favor of \"-Xwarning-level\" flag".asReleaseDependent()
         valueDescription = "<WARNING_NAME>".asReleaseDependent()
         valueType = StringArrayType.defaultNull
+        argumentType = StringListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
