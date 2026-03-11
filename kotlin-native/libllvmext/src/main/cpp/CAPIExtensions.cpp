@@ -10,7 +10,6 @@
 #include <llvm/Transforms/Utils/Cloning.h>
 
 #include "Hide.hpp"
-#include "OptimizeTLSLoads.hpp"
 #include "PassesProfileHandler.h"
 #include "RemoveRedundantSafepoints.hpp"
 #include "StackProtector.hpp"
@@ -86,10 +85,6 @@ extern "C" LLVMErrorRef LLVMKotlinRunPasses(
                   return true;
               }
               return false;
-          }
-          if (Name == "kotlin-optimize-tls") {
-              PM.addPass(kotlin::OptimizeTLSLoadsPass());
-              return true;
           }
           return false;
         });
