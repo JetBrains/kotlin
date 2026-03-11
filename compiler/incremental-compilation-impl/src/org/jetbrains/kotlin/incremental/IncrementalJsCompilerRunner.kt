@@ -6,20 +6,20 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.GeneratedFile
-import org.jetbrains.kotlin.build.report.BuildReporter
-import org.jetbrains.kotlin.build.report.DoNothingICReporter
-import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.build.report.info
+import org.jetbrains.kotlin.build.report.*
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
-import org.jetbrains.kotlin.build.report.reportPerformanceData
+import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -82,7 +82,7 @@ class IncrementalJsCompilerRunner(
     private val modulesApiHistory: ModulesApiHistory,
     private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
-) : IncrementalCompilerRunner<K2JSCompilerArguments, IncrementalJsCachesManager>(
+) : IncrementalCompilerRunner<CommonJsAndWasmCompilerArguments, IncrementalJsCachesManager>(
     workingDir,
     "caches-js",
     reporter,
@@ -96,17 +96,17 @@ class IncrementalJsCompilerRunner(
     override val shouldStoreFullFqNamesInLookupCache
         get() = icFeatures.withAbiSnapshot
 
-    override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JSCompilerArguments) =
+    override fun createCacheManager(icContext: IncrementalCompilationContext, args: CommonJsAndWasmCompilerArguments) =
         IncrementalJsCachesManager(icContext, KlibMetadataSerializerProtocol, cacheDirectory)
 
-    override fun destinationDir(args: K2JSCompilerArguments): File {
+    override fun destinationDir(args: CommonJsAndWasmCompilerArguments): File {
         return File(args.outputDir!!)
     }
 
     override fun calculateSourcesToCompile(
         caches: IncrementalJsCachesManager,
         changedFiles: ChangedFiles.DeterminableFiles.Known,
-        args: K2JSCompilerArguments,
+        args: CommonJsAndWasmCompilerArguments,
         messageCollector: MessageCollector,
         classpathAbiSnapshots: Map<String, AbiSnapshot> //Ignore for now
     ): CompilationMode {
@@ -151,7 +151,7 @@ class IncrementalJsCompilerRunner(
     }
 
     override fun makeServices(
-        args: K2JSCompilerArguments,
+        args: CommonJsAndWasmCompilerArguments,
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
         fileMappingTracker: ICFileMappingTracker,
@@ -198,7 +198,7 @@ class IncrementalJsCompilerRunner(
 
     override fun runCompiler(
         sourcesToCompile: List<File>,
-        args: K2JSCompilerArguments,
+        args: CommonJsAndWasmCompilerArguments,
         caches: IncrementalJsCachesManager,
         services: Services,
         messageCollector: MessageCollector,
@@ -206,14 +206,25 @@ class IncrementalJsCompilerRunner(
         isIncremental: Boolean
     ): Pair<ExitCode, Collection<File>> {
         val freeArgsBackup = args.freeArgs
-
-        val compiler = K2JSCompiler()
-        return try {
+        var compiler: CLICompiler<*>? = null
+        try {
             args.freeArgs += sourcesToCompile.map { it.absolutePath }
-            compiler.exec(messageCollector, services, args) to sourcesToCompile
+            return when (args) {
+                is KotlinWasmCompilerArguments -> {
+                    compiler = KotlinWasmCompiler()
+                    compiler.exec(messageCollector, services, args) to sourcesToCompile
+                }
+                is K2JSCompilerArguments -> {
+                    compiler = K2JSCompiler()
+                    compiler.exec(messageCollector, services, args) to sourcesToCompile
+                }
+                else -> {
+                    error("Unsupported compiler arguments type. Must be one of: ${K2JSCompilerArguments::class.simpleName}, ${KotlinWasmCompilerArguments::class.simpleName}, but was: ${args::class.simpleName}")
+                }
+            }
         } finally {
             args.freeArgs = freeArgsBackup
-            reporter.reportPerformanceData(compiler.defaultPerformanceManager.unitStats)
+            compiler?.let { reporter.reportPerformanceData(it.defaultPerformanceManager.unitStats) }
         }
     }
 
