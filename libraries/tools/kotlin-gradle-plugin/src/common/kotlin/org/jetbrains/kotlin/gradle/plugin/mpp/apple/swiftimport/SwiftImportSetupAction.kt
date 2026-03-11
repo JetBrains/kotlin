@@ -118,6 +118,25 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.syntheticProductType.set(SyntheticProductType.DYNAMIC)
     }
 
+    val syncPackageSwiftLockFileToSynthetic = project.locateOrRegisterTask<SyncPackageSwiftLockFileToSynthetic>(
+        SyncPackageSwiftLockFileToSynthetic.TASK_NAME,
+    ){ taskProvider ->
+        taskProvider.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
+        taskProvider.onlyIf("Project directory Package.resolved exists") {
+            taskProvider.projectDirLockFile.asFile.exists()
+        }
+    }
+
+    val syncPackageSwiftLockFileToProjectDirectory = project.locateOrRegisterTask<SyncPackageSwiftLockFileToProjectDirectory>(
+        SyncPackageSwiftLockFileToProjectDirectory.TASK_NAME,
+    ){ taskProvider ->
+        taskProvider.mustRunAfter(syntheticImportProjectGenerationTaskForCinteropsAndLdDump)
+        taskProvider.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
+        taskProvider.onlyIf("Synthetic Package.resolved exists") {
+            taskProvider.syntheticProjectLockFile.get().asFile.exists()
+        }
+    }
+
     val hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies()
     val fetchSyntheticImportProjectPackages = project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
         FetchSyntheticImportProjectPackages.TASK_NAME,
@@ -125,7 +144,9 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
         it.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
+        it.dependsOn(syncPackageSwiftLockFileToSynthetic)
         it.dependsOn(syntheticImportProjectGenerationTaskForCinteropsAndLdDump)
+        it.finalizedBy(syncPackageSwiftLockFileToProjectDirectory)
         it.localPackageManifests.from(
             transitiveLocalSwiftPMDependenciesProvider.map { localPackageDependencyProvider ->
                 localPackageDependencyProvider.map { localPackageDependency ->
@@ -417,7 +438,7 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
         it.dependsOn(computeLocalPackageDependencyInputFiles)
         it.resolvedPackagesState.from(
             fetchSyntheticImportProjectPackages.map { it.inputManifests },
-            fetchSyntheticImportProjectPackages.map { it.lockFile },
+            fetchSyntheticImportProjectPackages.map { it.syntheticLockFile },
         )
         it.xcodebuildPlatform.set(targetPlatform)
         it.xcodebuildSdk.set(targetSdk)
