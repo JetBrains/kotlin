@@ -47,20 +47,20 @@ FILE: companionBlocks.kt
 
         }
 
-        public final? class Nested : R|kotlin/Any| {
+        public final? [FirIllegalCompanionBlockMemberKey=true] class Nested : R|kotlin/Any| {
             public? [ContainingClassKey=Nested] constructor(): R|C.Nested| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final typealias TA = Int
+        public final [FirIllegalCompanionBlockMemberKey=true] typealias TA = Int
 
-        public? [ContainingClassKey=C] constructor(): R|C| {
+        public? [ContainingClassKey=C, FirIllegalCompanionBlockMemberKey=true] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }
 
-        init {
+        [FirIllegalCompanionBlockMemberKey=true] init {
         }
 
         public? final? static [ContainingClassKey=C] fun doubleNestedFun(): R|kotlin/Unit| {
@@ -69,20 +69,20 @@ FILE: companionBlocks.kt
         public? final? static [ContainingClassKey=C] val doubleNestedProp: <implicit> = IntegerLiteral(1)
             public? static [ContainingClassKey=C] get(): <implicit>
 
-        public final? class DoubleNestedNested : R|kotlin/Any| {
+        public final? [FirIllegalCompanionBlockMemberKey=true] class DoubleNestedNested : R|kotlin/Any| {
             public? [ContainingClassKey=DoubleNestedNested] constructor(): R|C.DoubleNestedNested| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final typealias DoubleNestedTA = Int
+        public final [FirIllegalCompanionBlockMemberKey=true] typealias DoubleNestedTA = Int
 
-        public? [ContainingClassKey=C] constructor(x: Int): R|C| {
+        public? [ContainingClassKey=C, FirIllegalCompanionBlockMemberKey=true] constructor(x: Int): R|C| {
             super<R|kotlin/Any|>()
         }
 
-        init {
+        [FirIllegalCompanionBlockMemberKey=true] init {
         }
 
     }

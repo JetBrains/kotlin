@@ -38,6 +38,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirContextParametersDeclarationChecker,
         FirUnusedReturnValueChecker,
         FirReturnValueAnnotationsChecker,
+        FirIllegalCompanionBlockMemberChecker,
     )
 
     override val classLikeCheckers: Set<FirClassLikeChecker> = setOf(

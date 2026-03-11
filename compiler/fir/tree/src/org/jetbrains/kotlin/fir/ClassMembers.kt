@@ -301,3 +301,7 @@ class CompanionBlockInfo(
 }
 
 var FirClass.companionBlocks: CompanionBlockInfo? by FirDeclarationDataRegistry.data(FirCompanionBlockDataKey)
+
+private object FirIllegalCompanionBlockMemberKey : FirDeclarationDataKey()
+
+var FirDeclaration.isIllegalCompanionBlockMember: Boolean? by FirDeclarationDataRegistry.data(FirIllegalCompanionBlockMemberKey)

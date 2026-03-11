@@ -2380,6 +2380,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirBasedSymbol<*>>("parent")
         }
         val COMPANION_BLOCK_NESTED by error<PsiElement>()
+        val ILLEGAL_COMPANION_BLOCK_MEMBER by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE) {
+            parameter<FirBasedSymbol<*>>("symbol")
+        }
 
         val COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS by error<PsiElement> {
             parameter<ConeKotlinType>("type")

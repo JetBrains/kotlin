@@ -430,7 +430,11 @@ open class PsiRawFirBuilder(
                         delegatedSelfType,
                         owner,
                         ownerTypeParameters,
-                    )
+                    ).apply {
+                        if (isDirectlyInsideCompanionBlock) {
+                            isIllegalCompanionBlockMember = true
+                        }
+                    }
                 }
                 is KtEnumEntry -> {
                     val primaryConstructor = owner.primaryConstructor
@@ -452,6 +456,11 @@ open class PsiRawFirBuilder(
                 }
                 is KtClassInitializer -> {
                     buildAnonymousInitializer(this, ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol)
+                        .apply {
+                            if (isDirectlyInsideCompanionBlock) {
+                                isIllegalCompanionBlockMember = true
+                            }
+                        }
                 }
                 else -> convert()
             }
@@ -2092,6 +2101,9 @@ open class PsiRawFirBuilder(
                     it.initContainingClassForLocalAttr()
                 }
                 it.initContainingScriptOrReplAttr()
+                if (isDirectlyInsideCompanionBlock) {
+                    it.isIllegalCompanionBlockMember = true
+                }
             }
         }
 
@@ -2207,6 +2219,9 @@ open class PsiRawFirBuilder(
             }.also {
                 if (typeAlias.parent is KtClassBody) {
                     it.initContainingClassForLocalAttr()
+                }
+                if (isDirectlyInsideCompanionBlock) {
+                    it.isIllegalCompanionBlockMember = true
                 }
             }
         }

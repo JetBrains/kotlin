@@ -28,36 +28,36 @@ FILE: companionBlocks.kt
 
         }
 
-        public final? class Nested : R|kotlin/Any| {
+        public final? [FirIllegalCompanionBlockMemberKey=true] class Nested : R|kotlin/Any| {
             public? [ContainingClassKey=Nested] constructor(): R|C.Nested| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final typealias TA = Int
+        public final [FirIllegalCompanionBlockMemberKey=true] typealias TA = Int
 
-        public? [ContainingClassKey=C] constructor(): R|C| { LAZY_BLOCK }
+        public? [ContainingClassKey=C, FirIllegalCompanionBlockMemberKey=true] constructor(): R|C| { LAZY_BLOCK }
 
-        init { LAZY_BLOCK }
+        [FirIllegalCompanionBlockMemberKey=true] init { LAZY_BLOCK }
 
         public? final? static [ContainingClassKey=C] fun doubleNestedFun(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? static [ContainingClassKey=C] val doubleNestedProp: <implicit> = LAZY_EXPRESSION
             public? static [ContainingClassKey=C] get(): <implicit>
 
-        public final? class DoubleNestedNested : R|kotlin/Any| {
+        public final? [FirIllegalCompanionBlockMemberKey=true] class DoubleNestedNested : R|kotlin/Any| {
             public? [ContainingClassKey=DoubleNestedNested] constructor(): R|C.DoubleNestedNested| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final typealias DoubleNestedTA = Int
+        public final [FirIllegalCompanionBlockMemberKey=true] typealias DoubleNestedTA = Int
 
-        public? [ContainingClassKey=C] constructor(x: Int): R|C| { LAZY_BLOCK }
+        public? [ContainingClassKey=C, FirIllegalCompanionBlockMemberKey=true] constructor(x: Int): R|C| { LAZY_BLOCK }
 
-        init { LAZY_BLOCK }
+        [FirIllegalCompanionBlockMemberKey=true] init { LAZY_BLOCK }
 
     }
     public final? enum class E : R|kotlin/Enum<E>| {

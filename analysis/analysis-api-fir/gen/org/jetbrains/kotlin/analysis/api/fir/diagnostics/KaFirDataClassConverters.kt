@@ -7054,6 +7054,13 @@ private fun KaDiagnosticConverterBuilder.addConversions161() {
             token,
         )
     }
+    add(FirErrors.ILLEGAL_COMPANION_BLOCK_MEMBER) { firDiagnostic ->
+        IllegalCompanionBlockMemberImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.JS_ACTUAL_EXTERNAL_INTERFACE_WHILE_EXPECT_WITHOUT_JS_NO_RUNTIME) { firDiagnostic ->
         JsActualExternalInterfaceWhileExpectWithoutJsNoRuntimeImpl(
             firDiagnostic as KtPsiDiagnostic,

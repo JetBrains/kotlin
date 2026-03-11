@@ -706,6 +706,9 @@ class LightTreeRawFirDeclarationBuilder(
                 it.initContainingClassForLocalAttr()
             }
             it.initContainingScriptOrReplAttr()
+            if (isDirectlyInsideCompanionBlock) {
+                it.isIllegalCompanionBlockMember = true
+            }
         }
     }
 
@@ -1193,8 +1196,8 @@ class LightTreeRawFirDeclarationBuilder(
         buildBlock: (MutableList<FirAnnotation>) -> FirBlock?
     ): FirAnonymousInitializer {
         val initializerSymbol = FirAnonymousInitializerSymbol()
-        withContainerSymbol(initializerSymbol, isLocal) {
-            return buildAnonymousInitializer {
+        return withContainerSymbol(initializerSymbol, isLocal) {
+             buildAnonymousInitializer {
                 symbol = initializerSymbol
                 source = anonymousInitializer.toFirSourceElement()
                 moduleData = baseModuleData
@@ -1203,6 +1206,10 @@ class LightTreeRawFirDeclarationBuilder(
                     buildBlock(annotations) ?: buildEmptyExpressionBlock()
                 }
                 this.containingDeclarationSymbol = containingDeclarationSymbol
+            }
+        }.apply {
+            if (isDirectlyInsideCompanionBlock) {
+                isIllegalCompanionBlockMember = true
             }
         }
     }
@@ -1217,7 +1224,7 @@ class LightTreeRawFirDeclarationBuilder(
         var block: LighterASTNode? = null
 
         val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
-        withContainerSymbol(constructorSymbol) {
+        return withContainerSymbol(constructorSymbol) {
             var delegatedConstructorNode: LighterASTNode? = null
             secondaryConstructor.forEachChildren {
                 when (it.tokenType) {
@@ -1252,7 +1259,7 @@ class LightTreeRawFirDeclarationBuilder(
             }
 
             val target = FirFunctionTarget(labelName = null, isLambda = false)
-            return buildConstructor {
+            buildConstructor {
                 source = secondaryConstructor.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
@@ -1277,6 +1284,10 @@ class LightTreeRawFirDeclarationBuilder(
             }.also {
                 it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
                 target.bind(it)
+            }
+        }.apply {
+            if (isDirectlyInsideCompanionBlock) {
+                isIllegalCompanionBlockMember = true
             }
         }
     }
@@ -1393,6 +1404,9 @@ class LightTreeRawFirDeclarationBuilder(
         }.also {
             if (typeAlias.getParent()?.elementType == KtStubElementTypes.CLASS_BODY) {
                 it.initContainingClassForLocalAttr()
+            }
+            if (isDirectlyInsideCompanionBlock) {
+                it.isIllegalCompanionBlockMember = true
             }
         }
     }
