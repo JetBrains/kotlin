@@ -18,6 +18,7 @@ import kotlin.collections.MutableSet
 import kotlin.collections.emptyList
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
+import kotlin.collections.toTypedArray
 import kotlin.io.path.Path
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.API_VERSION
@@ -237,7 +238,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_NO_CHECK_ACTUAL in this) { arguments.noCheckActual = get(X_NO_CHECK_ACTUAL)}
     if (X_NO_INLINE in this) { arguments.noInline = get(X_NO_INLINE)}
     if (X_NON_LOCAL_BREAK_CONTINUE in this) { arguments.nonLocalBreakContinue = get(X_NON_LOCAL_BREAK_CONTINUE)}
-    if (X_PHASES_TO_DUMP in this) { arguments.phasesToDump = get(X_PHASES_TO_DUMP) ?: emptyArray()}
+    if (X_PHASES_TO_DUMP in this) { arguments.phasesToDump = get(X_PHASES_TO_DUMP).toTypedArray()}
     if (X_PHASES_TO_DUMP_AFTER in this) { arguments.phasesToDumpAfter = get(X_PHASES_TO_DUMP_AFTER) ?: emptyArray()}
     if (X_PHASES_TO_DUMP_BEFORE in this) { arguments.phasesToDumpBefore = get(X_PHASES_TO_DUMP_BEFORE) ?: emptyArray()}
     if (X_PHASES_TO_VALIDATE in this) { arguments.phasesToValidate = get(X_PHASES_TO_VALIDATE) ?: emptyArray()}
@@ -343,7 +344,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_NO_CHECK_ACTUAL] = arguments.noCheckActual } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_INLINE] = arguments.noInline } catch (_: NoSuchMethodError) {  }
     try { this[X_NON_LOCAL_BREAK_CONTINUE] = arguments.nonLocalBreakContinue } catch (_: NoSuchMethodError) {  }
-    try { this[X_PHASES_TO_DUMP] = arguments.phasesToDump } catch (_: NoSuchMethodError) {  }
+    try { this[X_PHASES_TO_DUMP] = arguments.phasesToDump.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_PHASES_TO_DUMP_AFTER] = arguments.phasesToDumpAfter } catch (_: NoSuchMethodError) {  }
     try { this[X_PHASES_TO_DUMP_BEFORE] = arguments.phasesToDumpBefore } catch (_: NoSuchMethodError) {  }
     try { this[X_PHASES_TO_VALIDATE] = arguments.phasesToValidate } catch (_: NoSuchMethodError) {  }
@@ -573,7 +574,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_NON_LOCAL_BREAK_CONTINUE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_NON_LOCAL_BREAK_CONTINUE")
 
-    public val X_PHASES_TO_DUMP: CommonCompilerArgument<Array<String>?> =
+    public val X_PHASES_TO_DUMP: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_PHASES_TO_DUMP")
 
     public val X_PHASES_TO_DUMP_AFTER: CommonCompilerArgument<Array<String>?> =

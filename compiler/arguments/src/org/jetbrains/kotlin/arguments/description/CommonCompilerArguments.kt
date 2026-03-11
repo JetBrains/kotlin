@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.arguments.description
 
 import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.defaultEmpty
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
@@ -423,10 +424,12 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     }
 
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xphases-to-dump"
         description = "Dump the backend's state both before and after these phases.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
+        argumentType = StringListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_3_20,

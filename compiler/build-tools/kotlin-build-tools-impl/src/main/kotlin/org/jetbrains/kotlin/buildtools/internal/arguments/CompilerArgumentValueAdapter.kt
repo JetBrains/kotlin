@@ -65,6 +65,7 @@ private abstract class CommonToolArgumentPre2_4_0ValueAdapter : CommonToolArgume
     }
 }
 
+@OptIn(ExperimentalCompilerArgument::class)
 @Suppress("ClassName", "UNCHECKED_CAST")
 private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolArgumentPre2_4_0ValueAdapter(),
     CommonCompilerArgumentValueAdapter {
@@ -75,6 +76,11 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
             CommonCompilerArguments.KOTLIN_HOME -> {
                 val pathValue = value as Path
                 pathValue.absolutePathStringOrThrow() as V
+            }
+
+            CommonCompilerArguments.X_PHASES_TO_DUMP -> {
+                val listValue: List<String> = value as List<String>
+                listValue.toTypedArray() as V
             }
 
             else -> {
@@ -90,6 +96,11 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
             CommonCompilerArguments.KOTLIN_HOME -> {
                 val stringValue = value as String
                 Path(stringValue) as T
+            }
+
+            CommonCompilerArguments.X_PHASES_TO_DUMP -> {
+                val arrayValue = value as Array<String>
+                arrayValue.toList() as T
             }
 
             else -> {
