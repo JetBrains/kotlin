@@ -1,0 +1,30 @@
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] invokeGeneratedCompanionObject.kt
+    @R|org/jetbrains/kotlin/plugin/sandbox/CompanionWithFoo|[Types]() public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] val bar: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): String
+
+    }
+    public? final? operator [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] Foo.Companion.invoke([ResolvedTo(RAW_FIR)] action: ( Foo.() -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
+        <Resolution to classifier>#(<L> = [ResolvedTo(BODY_RESOLVE)] Foo@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: bar> <inline=Unknown>  {
+            ^ <Unresolved name: bar>#
+        }
+        )
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] invokeGeneratedCompanionObject.kt
+    @R|org/jetbrains/kotlin/plugin/sandbox/CompanionWithFoo|[Types]() public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] val bar: R|kotlin/String|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/String|
+
+    }
+    public final operator [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|pack/Foo.Companion|.invoke([ResolvedTo(BODY_RESOLVE)] action: R|pack/Foo.() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
+        Q|pack/Foo|.R|pack/invoke|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=pack/Foo.() -> kotlin/Unit] Foo@fun [ResolvedTo(BODY_RESOLVE)] R|pack/Foo|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|pack/Foo.bar|
+        }
+        )
+    }
