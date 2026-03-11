@@ -180,7 +180,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { if (X_DATA_FLOW_BASED_EXHAUSTIVENESS in this) { arguments.dataFlowBasedExhaustiveness = get(X_DATA_FLOW_BASED_EXHAUSTIVENESS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_DATA_FLOW_BASED_EXHAUSTIVENESS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
     try { if (X_DIRECT_JAVA_ACTUALIZATION in this) { arguments.directJavaActualization = get(X_DIRECT_JAVA_ACTUALIZATION)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_DIRECT_JAVA_ACTUALIZATION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0""").initCause(e) }
     if (X_DISABLE_DEFAULT_SCRIPTING_PLUGIN in this) { arguments.disableDefaultScriptingPlugin = get(X_DISABLE_DEFAULT_SCRIPTING_PLUGIN)}
-    if (X_DISABLE_PHASES in this) { arguments.disablePhases = get(X_DISABLE_PHASES) ?: emptyArray()}
+    if (X_DISABLE_PHASES in this) { arguments.disablePhases = get(X_DISABLE_PHASES).toTypedArray()}
     try { if (X_DONT_WARN_ON_ERROR_SUPPRESSION in this) { arguments.dontWarnOnErrorSuppression = get(X_DONT_WARN_ON_ERROR_SUPPRESSION)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_DONT_WARN_ON_ERROR_SUPPRESSION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0""").initCause(e) }
     if (X_DUMP_DIRECTORY in this) { arguments.dumpDirectory = get(X_DUMP_DIRECTORY)}
     if (X_DUMP_FQNAME in this) { arguments.dumpOnlyFqName = get(X_DUMP_FQNAME)}
@@ -272,7 +272,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_DATA_FLOW_BASED_EXHAUSTIVENESS] = arguments.dataFlowBasedExhaustiveness } catch (_: NoSuchMethodError) {  }
     try { this[X_DIRECT_JAVA_ACTUALIZATION] = arguments.directJavaActualization } catch (_: NoSuchMethodError) {  }
     try { this[X_DISABLE_DEFAULT_SCRIPTING_PLUGIN] = arguments.disableDefaultScriptingPlugin } catch (_: NoSuchMethodError) {  }
-    try { this[X_DISABLE_PHASES] = arguments.disablePhases } catch (_: NoSuchMethodError) {  }
+    try { this[X_DISABLE_PHASES] = arguments.disablePhases.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_DONT_WARN_ON_ERROR_SUPPRESSION] = arguments.dontWarnOnErrorSuppression } catch (_: NoSuchMethodError) {  }
     try { this[X_DUMP_DIRECTORY] = arguments.dumpDirectory } catch (_: NoSuchMethodError) {  }
     try { this[X_DUMP_FQNAME] = arguments.dumpOnlyFqName } catch (_: NoSuchMethodError) {  }
@@ -418,7 +418,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_DISABLE_DEFAULT_SCRIPTING_PLUGIN: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_DISABLE_DEFAULT_SCRIPTING_PLUGIN")
 
-    public val X_DISABLE_PHASES: CommonCompilerArgument<Array<String>?> =
+    public val X_DISABLE_PHASES: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_DISABLE_PHASES")
 
     public val X_DONT_WARN_ON_ERROR_SUPPRESSION: CommonCompilerArgument<Boolean> =

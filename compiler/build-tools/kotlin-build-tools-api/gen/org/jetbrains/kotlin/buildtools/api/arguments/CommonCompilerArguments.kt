@@ -271,7 +271,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_DISABLE_PHASES: CommonCompilerArgument<Array<String>?> =
+    public val X_DISABLE_PHASES: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_DISABLE_PHASES", KotlinReleaseVersion(1, 3, 20))
 
     /**
