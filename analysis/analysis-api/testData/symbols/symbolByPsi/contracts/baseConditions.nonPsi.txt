@@ -1,7 +1,6 @@
 KaAnonymousFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
@@ -15,7 +14,6 @@ KaAnonymousFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -53,7 +51,6 @@ KaAnonymousFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /decode
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -68,7 +65,6 @@ KaNamedFunctionSymbol:
                 KaValueParameterSymbol:
                   annotations: []
                   callableId: null
-                  compilerVisibility: Public
                   contextReceivers: []
                   generatedPrimaryConstructorProperty: null
                   hasDeclaredDefaultValue: false
@@ -126,7 +122,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -168,7 +163,6 @@ KaNamedFunctionSymbol:
 KaAnonymousFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
@@ -182,7 +176,6 @@ KaAnonymousFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -220,7 +213,6 @@ KaAnonymousFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /decodeFake
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -235,7 +227,6 @@ KaNamedFunctionSymbol:
                 KaValueParameterSymbol:
                   annotations: []
                   callableId: null
-                  compilerVisibility: Public
                   contextReceivers: []
                   generatedPrimaryConstructorProperty: null
                   hasDeclaredDefaultValue: false
@@ -293,7 +284,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -335,7 +325,6 @@ KaNamedFunctionSymbol:
 KaAnonymousFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
@@ -349,7 +338,6 @@ KaAnonymousFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -387,7 +375,6 @@ KaAnonymousFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /decodeIfString
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -402,7 +389,6 @@ KaNamedFunctionSymbol:
                 KaValueParameterSymbol:
                   annotations: []
                   callableId: null
-                  compilerVisibility: Public
                   contextReceivers: []
                   generatedPrimaryConstructorProperty: null
                   hasDeclaredDefaultValue: false
@@ -465,7 +451,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -507,7 +492,6 @@ KaNamedFunctionSymbol:
 KaAnonymousFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   hasStableParameterNames: true
@@ -521,7 +505,6 @@ KaAnonymousFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -559,7 +542,6 @@ KaAnonymousFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /decodeNotNumber
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -574,7 +556,6 @@ KaNamedFunctionSymbol:
                 KaValueParameterSymbol:
                   annotations: []
                   callableId: null
-                  compilerVisibility: Public
                   contextReceivers: []
                   generatedPrimaryConstructorProperty: null
                   hasDeclaredDefaultValue: false
@@ -637,7 +618,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false

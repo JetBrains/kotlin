@@ -2,7 +2,6 @@ CONSTRUCTOR:
   KaSamConstructorSymbol:
   annotations: []
   callableId: /Predicate
-  compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -29,7 +28,6 @@ CONSTRUCTOR:
             name: A
             symbol: KaTypeParameterSymbol:
               annotations: []
-              compilerVisibility: Local
               isActual: false
               isExpect: false
               isExternal: false
@@ -58,7 +56,6 @@ CONSTRUCTOR:
         name: A
         symbol: KaTypeParameterSymbol:
           annotations: []
-          compilerVisibility: Local
           isActual: false
           isExpect: false
           isExternal: false
@@ -84,7 +81,6 @@ CONSTRUCTOR:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -105,7 +101,6 @@ CONSTRUCTOR:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -140,7 +135,6 @@ CONSTRUCTOR:
             name: A
             symbol: KaTypeParameterSymbol:
               annotations: []
-              compilerVisibility: Local
               isActual: false
               isExpect: false
               isExternal: false
@@ -174,7 +168,6 @@ CONSTRUCTOR:
                 name: A
                 symbol: KaTypeParameterSymbol:
                   annotations: []
-                  compilerVisibility: Local
                   isActual: false
                   isExpect: false
                   isExternal: false
@@ -234,7 +227,6 @@ CONSTRUCTOR:
             name: A
             symbol: KaTypeParameterSymbol:
               annotations: []
-              compilerVisibility: Local
               isActual: false
               isExpect: false
               isExternal: false
@@ -292,7 +284,6 @@ FUNCTIONAL INTERFACE:
   classId: Predicate
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -325,7 +316,6 @@ FUNCTIONAL INTERFACE:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false

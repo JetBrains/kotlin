@@ -2,7 +2,6 @@ CONSTRUCTOR:
   KaSamConstructorSymbol:
   annotations: []
   callableId: /IntPredicate
-  compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -34,7 +33,6 @@ CONSTRUCTOR:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -191,7 +189,6 @@ FUNCTIONAL INTERFACE:
   classId: IntPredicate
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

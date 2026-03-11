@@ -1,7 +1,6 @@
 KaJavaFieldSymbol:
   annotations: []
   callableId: /JavaClass.foo
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isExpect: false
@@ -28,7 +27,6 @@ KaJavaFieldSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /JavaClass.bar
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -67,7 +65,6 @@ KaNamedFunctionSymbol:
 KaJavaFieldSymbol:
   annotations: []
   callableId: /SuperClass.superFoo
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isExpect: false
@@ -94,7 +91,6 @@ KaJavaFieldSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /SuperClass.superBar
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -135,7 +131,6 @@ KaNamedClassSymbol:
   classId: JavaClass.NestedClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -167,7 +162,6 @@ KaNamedClassSymbol:
   classId: JavaClass.InnerClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

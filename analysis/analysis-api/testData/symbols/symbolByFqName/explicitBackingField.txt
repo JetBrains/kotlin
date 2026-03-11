@@ -1,7 +1,6 @@
 KaBackingFieldSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isExpect: false

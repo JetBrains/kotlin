@@ -1,7 +1,6 @@
 KaSamConstructorSymbol:
   annotations: []
   callableId: java/lang/Runnable
-  compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -22,7 +21,6 @@ KaSamConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false

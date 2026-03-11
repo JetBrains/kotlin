@@ -3,7 +3,6 @@ KtNameReferenceExpression(16,20): 'this'
     symbols = [
       KaScriptSymbol:
         annotations: []
-        compilerVisibility: Local
         isActual: false
         isExpect: false
         isExternal: false

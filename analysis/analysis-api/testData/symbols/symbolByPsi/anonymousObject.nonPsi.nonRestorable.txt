@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -35,7 +34,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -67,7 +65,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: OBJECT
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -99,7 +96,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -131,7 +127,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: ANNOTATION_CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -161,7 +156,6 @@ KaNamedClassSymbol:
 KaTypeAliasSymbol:
   annotations: []
   classId: null
-  compilerVisibility: Local
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: []

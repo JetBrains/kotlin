@@ -4,7 +4,6 @@ KaReceiverParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isExpect: false

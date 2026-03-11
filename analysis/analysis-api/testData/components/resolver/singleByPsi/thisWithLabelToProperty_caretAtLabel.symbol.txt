@@ -4,7 +4,6 @@ KtLabelReferenceExpression(68,72): '@foo'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isExpect: false

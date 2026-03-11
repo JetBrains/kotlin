@@ -1057,7 +1057,6 @@ KtCallExpression(625,630): 'foo()'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -1135,7 +1134,6 @@ KtNameReferenceExpression(625,628): 'foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -1708,7 +1706,6 @@ KtCallExpression(891,896): 'foo()'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -1786,7 +1783,6 @@ KtNameReferenceExpression(891,894): 'foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -2503,7 +2499,6 @@ KtCallExpression(1272,1282): 'body(this)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           isActual: false
           isExpect: false

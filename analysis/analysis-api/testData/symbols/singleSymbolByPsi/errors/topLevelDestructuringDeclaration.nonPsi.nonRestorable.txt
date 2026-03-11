@@ -1,6 +1,5 @@
 KaDestructuringDeclarationSymbol:
   annotations: []
-  compilerVisibility: Local
   entries: []
   isActual: false
   isExpect: false

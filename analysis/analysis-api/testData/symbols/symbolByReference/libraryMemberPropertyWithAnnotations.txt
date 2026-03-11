@@ -6,7 +6,6 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -35,7 +34,6 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
     importableFqName: null
   callableId: one/SimpleClass.memberPropertyWithAnnotations
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
@@ -44,7 +42,6 @@ KaKotlinPropertySymbol:
         psi: null
     ]
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false

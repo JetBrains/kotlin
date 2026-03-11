@@ -4,7 +4,6 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /booleanConstReferenceInImplies
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [

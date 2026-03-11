@@ -4,7 +4,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: /JavaC.func
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -48,7 +47,6 @@ KaSyntheticJavaPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /JavaC.prop
-  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: [
@@ -56,7 +54,6 @@ KaSyntheticJavaPropertySymbol:
         psi: null
     ]
     callableId: /JavaC.getProp
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -125,7 +122,6 @@ KaSyntheticJavaPropertySymbol:
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: JavaC
   contextReceivers: []
   hasStableParameterNames: false
@@ -147,7 +143,6 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false

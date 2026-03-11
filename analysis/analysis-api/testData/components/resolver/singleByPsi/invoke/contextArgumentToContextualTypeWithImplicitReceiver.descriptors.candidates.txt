@@ -11,7 +11,6 @@ KtCallExpression(78,85): 'block()'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           isActual: false
           isExpect: false

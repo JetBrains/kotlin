@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /JavaClass.count
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

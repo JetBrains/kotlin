@@ -1,7 +1,6 @@
 KaTypeAliasSymbol:
   annotations: []
   classId: Foo.TA
-  compilerVisibility: Public
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: []

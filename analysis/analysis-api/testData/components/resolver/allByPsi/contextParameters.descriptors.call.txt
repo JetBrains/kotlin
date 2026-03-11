@@ -762,7 +762,6 @@ KtCallExpression(488,499): 'funMember()'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -801,7 +800,6 @@ KtNameReferenceExpression(488,497): 'funMember'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -842,7 +840,6 @@ KtNameReferenceExpression(512,526): 'propertyMember'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -1051,7 +1048,6 @@ KtCallExpression(611,629): 'funMember(a = A())'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Local
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1093,7 +1089,6 @@ KtNameReferenceExpression(611,620): 'funMember'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Local
             contextReceivers: []
             isActual: false
             isExpect: false

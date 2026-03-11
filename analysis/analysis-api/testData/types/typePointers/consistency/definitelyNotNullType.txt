@@ -9,7 +9,6 @@ KaDefinitelyNotNullType:
     name: T1
     symbol: KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false

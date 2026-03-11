@@ -2,7 +2,6 @@ FUNCTION:
   KaNamedFunctionSymbol:
   annotations: []
   callableId: /A.plus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

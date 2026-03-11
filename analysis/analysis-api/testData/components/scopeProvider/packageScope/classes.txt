@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: test/A
   classKind: CLASS
   companionObject: KaNamedClassSymbol(test/A.Companion)
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -35,7 +34,6 @@ KaNamedClassSymbol:
   classId: test/InternalA
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Internal
   contextReceivers: []
   isActual: false
   isData: false
@@ -67,7 +65,6 @@ KaNamedClassSymbol:
   classId: test/PrivateA
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isData: false
@@ -99,7 +96,6 @@ KaNamedClassSymbol:
   classId: test/B
   classKind: CLASS
   companionObject: KaNamedClassSymbol(test/B.Companion)
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -131,7 +127,6 @@ KaNamedClassSymbol:
   classId: test/InternalB
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Internal
   contextReceivers: []
   isActual: false
   isData: false
@@ -163,7 +158,6 @@ KaNamedClassSymbol:
   classId: test/PrivateB
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isData: false

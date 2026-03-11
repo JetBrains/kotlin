@@ -6,7 +6,6 @@ KaNamedClassSymbol:
   classId: test/WithGeneratedCompanion
   classKind: CLASS
   companionObject: KaNamedClassSymbol(test/WithGeneratedCompanion.Companion)
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

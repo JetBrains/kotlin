@@ -8,7 +8,6 @@ KaValueParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Local
   contextReceivers: []
   generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
     annotations: [
@@ -23,7 +22,6 @@ KaValueParameterSymbol:
           psi: KtAnnotationEntry
       ]
       callableId: null
-      compilerVisibility: Private
       contextReceivers: []
       isActual: false
       isExpect: false
@@ -48,13 +46,11 @@ KaValueParameterSymbol:
       deprecationStatus: null
       importableFqName: null
     callableId: /MyClass.prop
-    compilerVisibility: Public
     contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
@@ -110,7 +106,6 @@ KaValueParameterSymbol:
     setter: KaPropertySetterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
@@ -126,7 +121,6 @@ KaValueParameterSymbol:
       parameter: KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -164,7 +158,6 @@ KaValueParameterSymbol:
         KaValueParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           generatedPrimaryConstructorProperty: null
           hasDeclaredDefaultValue: false

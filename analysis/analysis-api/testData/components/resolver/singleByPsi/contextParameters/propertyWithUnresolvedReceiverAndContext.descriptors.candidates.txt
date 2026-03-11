@@ -7,7 +7,6 @@ KtNameReferenceExpression(112,115): 'foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -44,7 +43,6 @@ KtNameReferenceExpression(112,115): 'foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           isActual: false
           isExpect: false

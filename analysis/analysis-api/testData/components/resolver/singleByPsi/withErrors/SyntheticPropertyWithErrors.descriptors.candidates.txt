@@ -7,7 +7,6 @@
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Local
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -48,7 +47,6 @@
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Local
             contextReceivers: []
             isActual: false
             isExpect: false

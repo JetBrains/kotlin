@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /MyClass.Companion.functionFromCompanion
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -32,7 +31,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -81,7 +79,6 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /MyClass.Companion.staticFunctionFromCompanion
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -127,7 +124,6 @@ KaNamedClassSymbol:
   classId: MyClass.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -159,7 +155,6 @@ KaNamedClassSymbol:
   classId: MyClass
   classKind: CLASS
   companionObject: KaNamedClassSymbol(MyClass.Companion)
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

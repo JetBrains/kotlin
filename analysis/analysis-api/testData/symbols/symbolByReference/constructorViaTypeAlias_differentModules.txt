@@ -1,7 +1,6 @@
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: two/SimpleTypeAlias
   contextReceivers: []
   hasStableParameterNames: true

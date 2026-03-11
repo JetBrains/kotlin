@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: test/KotlinClass.C2
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -35,7 +34,6 @@ KaNamedClassSymbol:
   classId: test/KotlinClass.O2
   classKind: OBJECT
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -67,7 +65,6 @@ KaNamedClassSymbol:
   classId: test/KotlinClass.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

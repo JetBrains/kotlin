@@ -4,7 +4,6 @@ KaLocalVariableSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isExpect: false

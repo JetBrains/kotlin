@@ -1,7 +1,6 @@
 KaReceiverParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isExpect: false
@@ -28,7 +27,6 @@ KaReceiverParameterSymbol:
 KaReceiverParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isExpect: false
@@ -55,7 +53,6 @@ KaReceiverParameterSymbol:
 KaReceiverParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isExpect: false
@@ -82,7 +79,6 @@ KaReceiverParameterSymbol:
 KaReceiverParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isExpect: false
