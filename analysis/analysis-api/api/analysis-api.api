@@ -879,6 +879,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaAnonymousObjec
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getName ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getVisibility ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolVisibility;
 	public final fun isActual ()Z
 	public final fun isExpect ()Z
 	public final fun isExternal ()Z
@@ -894,6 +895,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaBackingFieldSy
 	public fun getOrigin ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public abstract fun getOwningProperty ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaKotlinPropertySymbol;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
+	public final fun getVisibility ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolVisibility;
 	public final fun isActual ()Z
 	public final fun isExpect ()Z
 	public final fun isExtension ()Z
@@ -918,6 +920,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaClassInitializ
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
+	public final fun getVisibility ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolVisibility;
 	public final fun isActual ()Z
 	public final fun isExpect ()Z
 	public final fun isExternal ()Z
@@ -973,7 +976,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaConstructorSym
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaAnnotatedSymbol {
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public abstract fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
-	public fun getVisibility ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolVisibility;
+	public abstract fun getVisibility ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolVisibility;
 	public abstract fun isActual ()Z
 	public abstract fun isExpect ()Z
 	public abstract fun isExternal ()Z
@@ -985,6 +988,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaDestructuringD
 	public abstract fun getEntries ()Ljava/util/List;
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
+	public final fun getVisibility ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolVisibility;
 	public final fun isActual ()Z
 	public final fun isExpect ()Z
 	public final fun isExternal ()Z
@@ -1001,6 +1005,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaEnumEntrySymbo
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
+	public final fun getVisibility ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolVisibility;
 	public final fun isActual ()Z
 	public final fun isExtension ()Z
 	public final fun isVal ()Z
@@ -1045,6 +1050,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaLocalVariableS
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
+	public final fun getVisibility ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolVisibility;
 	public final fun isActual ()Z
 	public final fun isExpect ()Z
 	public final fun isExtension ()Z
@@ -1156,6 +1162,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaScriptSymbol :
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
+	public final fun getVisibility ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolVisibility;
 	public final fun isActual ()Z
 	public final fun isExpect ()Z
 	public final fun isExternal ()Z
@@ -1290,6 +1297,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaTypeParameterS
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public abstract fun getUpperBounds ()Ljava/util/List;
 	public abstract fun getVariance ()Lorg/jetbrains/kotlin/types/Variance;
+	public final fun getVisibility ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolVisibility;
 	public final fun isActual ()Z
 	public final fun isExpect ()Z
 	public final fun isExternal ()Z

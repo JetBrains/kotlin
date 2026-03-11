@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -46,6 +47,10 @@ internal class KaFe10PsiContextReceiverBasedContextParameterSymbol(
         descriptor?.contextReceiverParameters?.getOrNull(index)
     }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion { KaSymbolVisibility.PUBLIC }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { Visibilities.Public }
 

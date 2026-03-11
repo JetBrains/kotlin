@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -75,6 +76,10 @@ internal class KaFirPsiJavaClassSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { javaClass.modality.asKaSymbolModality }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion { javaClass.visibility.asKaSymbolVisibility }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { javaClass.visibility }
 

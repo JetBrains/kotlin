@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.kaSym
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.kaSymbolModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.invalidEnumEntryAsClassKind
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -117,6 +118,10 @@ internal class KaFe10PsiNamedClassSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { psi.kaSymbolModality ?: descriptor?.kaSymbolModality ?: KaSymbolModality.FINAL }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion { (psi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public).asKaSymbolVisibility }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { psi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 

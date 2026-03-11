@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParamete
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -72,6 +73,12 @@ internal class KaFirValueParameterSymbol private constructor(
     override val isCrossinline: Boolean
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.CROSSINLINE_KEYWORD) ?: firSymbol.isCrossinline }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion {
+            FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility.asKaSymbolVisibility
+        }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility }
 

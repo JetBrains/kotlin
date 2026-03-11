@@ -118,6 +118,7 @@ public enum class KaSymbolVisibility {
 /**
  * Converts the Kotlin compiler's [Visibility] to the Analysis API's [KaSymbolVisibility].
  */
+@Deprecated("Use 'KaDeclarationSymbol.visibility' directly", level = DeprecationLevel.HIDDEN)
 @KaExperimentalApi
 public val Visibility.asKaSymbolVisibility: KaSymbolVisibility
     get() = when (this) {

@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.analysis.api.impl.base.symbols
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 
 @KaImplementationDetail
 fun ClassKind.toKtClassKind(isCompanionObject: Boolean): KaClassKind = when (this) {
@@ -33,4 +37,20 @@ val Modality.asKaSymbolModality: KaSymbolModality
         Modality.SEALED -> KaSymbolModality.SEALED
         Modality.OPEN -> KaSymbolModality.OPEN
         Modality.ABSTRACT -> KaSymbolModality.ABSTRACT
+    }
+
+/**
+ * Converts the Kotlin compiler's [Visibility] to the Analysis API's [KaSymbolVisibility].
+ */
+@KaImplementationDetail
+val Visibility.asKaSymbolVisibility: KaSymbolVisibility
+    get() = when (this) {
+        Visibilities.Public -> KaSymbolVisibility.PUBLIC
+        Visibilities.Protected -> KaSymbolVisibility.PROTECTED
+        Visibilities.Internal -> KaSymbolVisibility.INTERNAL
+        JavaVisibilities.ProtectedAndPackage, JavaVisibilities.ProtectedStaticVisibility -> KaSymbolVisibility.PACKAGE_PROTECTED
+        JavaVisibilities.PackageVisibility -> KaSymbolVisibility.PACKAGE_PRIVATE
+        Visibilities.Private, Visibilities.PrivateToThis -> KaSymbolVisibility.PRIVATE
+        Visibilities.Local -> KaSymbolVisibility.LOCAL
+        else -> KaSymbolVisibility.UNKNOWN
     }
