@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.createErrorType
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
@@ -26,6 +28,10 @@ internal class KaFe10DescContextReceiverBasedContextParameterSymbol(
     override val descriptor: ReceiverParameterDescriptor,
     override val analysisContext: Fe10AnalysisContext,
 ) : KaContextParameterSymbol(), KaFe10DescSymbol<ReceiverParameterDescriptor> {
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion { descriptor.ktVisibility.asKaSymbolVisibility }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
 

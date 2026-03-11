@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.kaSym
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePropertySetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseValueParameterFromDefaultSetterSymbolPointer
@@ -100,6 +101,10 @@ internal class KaFe10PsiDefaultPropertySetterSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { propertyPsi.kaSymbolModality ?: descriptor?.kaSymbolModality ?: KaSymbolModality.FINAL }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion { (propertyPsi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public).asKaSymbolVisibility }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { propertyPsi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
@@ -148,6 +153,10 @@ internal class KaFe10PsiDefaultPropertySetterSymbol(
         override val isNoinline: Boolean
             get() = withValidityAssertion { false }
 
+        override val visibility: KaSymbolVisibility
+            get() = withValidityAssertion { (descriptor?.ktVisibility ?: Visibilities.Public).asKaSymbolVisibility }
+
+        @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
         override val compilerVisibility: Visibility
             get() = withValidityAssertion { descriptor?.ktVisibility ?: Visibilities.Public }
 

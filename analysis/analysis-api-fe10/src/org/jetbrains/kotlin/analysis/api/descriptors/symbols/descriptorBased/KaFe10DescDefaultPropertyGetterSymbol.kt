@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -68,6 +70,10 @@ internal class KaFe10DescDefaultPropertyGetterSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { propertyDescriptor.kaSymbolModality }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion { propertyDescriptor.ktVisibility.asKaSymbolVisibility }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { propertyDescriptor.ktVisibility }
 

@@ -19,11 +19,13 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.creat
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.kaSymbolModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
@@ -48,6 +50,12 @@ internal class KaFe10PsiPropertyGetterSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { psi.property.kaSymbolModality ?: descriptor?.kaSymbolModality ?: KaSymbolModality.FINAL }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion {
+            (psi.ktVisibility ?: descriptor?.ktVisibility ?: psi.property.ktVisibility ?: Visibilities.Public).asKaSymbolVisibility
+        }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { psi.ktVisibility ?: descriptor?.ktVisibility ?: psi.property.ktVisibility ?: Visibilities.Public }
 

@@ -16,9 +16,11 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.creat
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.kaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -48,6 +50,10 @@ internal class KaFe10PsiTypeAliasSymbol(
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { psi.typeParameters.map { KaFe10PsiTypeParameterSymbol(it, analysisContext) } }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion { (psi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public).asKaSymbolVisibility }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { psi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
