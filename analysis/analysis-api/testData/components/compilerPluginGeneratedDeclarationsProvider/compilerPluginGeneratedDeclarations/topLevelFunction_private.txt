@@ -4,7 +4,6 @@ callables: 1
   KaNamedFunctionSymbol:
     annotations: []
     callableId: test/testFun_generated
-    compilerVisibility: Private
     contextParameters: []
     contextReceivers: []
     contractEffects: []

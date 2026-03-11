@@ -241,7 +241,6 @@ KtNameReferenceExpression(217,220): 'baz'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -285,7 +284,6 @@ KtBinaryExpression(229,238): 'baz = baz'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -330,7 +328,6 @@ KtNameReferenceExpression(229,232): 'baz'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -375,7 +372,6 @@ KtOperationReferenceExpression(233,234): '='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -420,7 +416,6 @@ KtNameReferenceExpression(235,238): 'baz'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -465,7 +460,6 @@ KtCallExpression(247,252): 'baz()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -509,7 +503,6 @@ KtNameReferenceExpression(247,250): 'baz'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -690,7 +683,6 @@ KtNameReferenceExpression(333,336): 'baz'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -734,7 +726,6 @@ KtBinaryExpression(349,358): 'baz = baz'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -779,7 +770,6 @@ KtNameReferenceExpression(349,352): 'baz'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -824,7 +814,6 @@ KtOperationReferenceExpression(353,354): '='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -869,7 +858,6 @@ KtNameReferenceExpression(355,358): 'baz'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1015,7 +1003,6 @@ KtNameReferenceExpression(383,386): 'foo'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1059,7 +1046,6 @@ KtBinaryExpression(399,408): 'foo = foo'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1104,7 +1090,6 @@ KtNameReferenceExpression(399,402): 'foo'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1149,7 +1134,6 @@ KtOperationReferenceExpression(403,404): '='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1194,7 +1178,6 @@ KtNameReferenceExpression(405,408): 'foo'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1239,7 +1222,6 @@ KtCallExpression(422,427): 'foo()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -1283,7 +1265,6 @@ KtNameReferenceExpression(422,425): 'foo'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false

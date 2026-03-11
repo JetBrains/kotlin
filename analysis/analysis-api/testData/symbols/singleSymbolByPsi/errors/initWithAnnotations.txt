@@ -3,7 +3,6 @@ KaClassInitializerSymbol:
     low/Anno(position = "init annotation: 0")
       psi: KtAnnotationEntry
   ]
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false

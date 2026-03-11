@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /MyKotlinEnum.values
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

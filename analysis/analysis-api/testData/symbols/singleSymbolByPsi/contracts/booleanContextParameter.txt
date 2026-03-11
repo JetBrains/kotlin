@@ -4,12 +4,10 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /validate
-  compilerVisibility: Public
   contextParameters: [
     KaContextParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -54,7 +52,6 @@ KaNamedFunctionSymbol:
                 KaContextParameterSymbol:
                   annotations: []
                   callableId: null
-                  compilerVisibility: Public
                   contextReceivers: []
                   isActual: false
                   isCompanion: false
@@ -108,7 +105,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false

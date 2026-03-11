@@ -90,6 +90,7 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val isDelegated: Boolean get() = withValidityAssertion { false }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+    final override val visibility: KaSymbolVisibility get() = withValidityAssertion { KaSymbolVisibility.PRIVATE }
 
     // KT-70767: for the backing field expect/action is meaningless as it doesn't have such a semantic
 
@@ -101,6 +102,7 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
     final override val isCompanion: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Private }
 
     @KaExperimentalApi
@@ -153,8 +155,10 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
     final override val isVal: Boolean get() = withValidityAssertion { true }
     final override val isDelegated: Boolean get() = withValidityAssertion { false }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+    final override val visibility: KaSymbolVisibility get() = withValidityAssertion { KaSymbolVisibility.PUBLIC }
 
     @KaExperimentalApi
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Public }
 
     final override val isActual: Boolean get() = withValidityAssertion { false }
@@ -490,6 +494,7 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+    final override val visibility: KaSymbolVisibility get() = withValidityAssertion { KaSymbolVisibility.LOCAL }
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
     final override val isExternal: Boolean get() = withValidityAssertion { false }
@@ -503,6 +508,7 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
     public abstract val isLateInit: Boolean
 
     @KaExperimentalApi
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 
     abstract override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol>

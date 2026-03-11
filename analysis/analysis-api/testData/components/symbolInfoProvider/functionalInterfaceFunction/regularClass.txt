@@ -4,7 +4,6 @@ CLASS:
   classId: RegularClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

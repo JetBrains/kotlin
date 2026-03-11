@@ -19,7 +19,6 @@ scopes:
       KaLocalVariableSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -56,7 +55,6 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -78,13 +76,11 @@ scopes:
             type: kotlin/Int
           visibility: PRIVATE
         callableId: null
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -136,7 +132,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -169,7 +164,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -201,7 +195,6 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
@@ -232,7 +225,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -265,7 +257,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -299,7 +290,6 @@ scopes:
       KaConstructorSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         containingClassId: null
         contextReceivers: []
         hasStableParameterNames: true
@@ -329,7 +319,6 @@ scopes:
         classId: null
         classKind: CLASS
         companionObject: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isData: false
@@ -354,7 +343,6 @@ scopes:
       KaLocalVariableSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -419,7 +407,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /z
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []

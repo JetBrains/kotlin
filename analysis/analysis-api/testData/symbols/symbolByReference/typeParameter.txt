@@ -3,7 +3,6 @@ KaTypeParameterSymbol:
     A()
       psi: KtAnnotationEntry
   ]
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false

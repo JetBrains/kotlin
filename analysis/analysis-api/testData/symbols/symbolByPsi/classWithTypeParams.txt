@@ -3,7 +3,6 @@ KaTypeParameterSymbol:
     org/jetbrains/annotations/NotNull()
       psi: KtAnnotationEntry
   ]
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -22,7 +21,6 @@ KaTypeParameterSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -44,7 +42,6 @@ KaNamedClassSymbol:
   classId: A
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -69,7 +66,6 @@ KaNamedClassSymbol:
         org/jetbrains/annotations/NotNull()
           psi: KtAnnotationEntry
       ]
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -87,7 +83,6 @@ KaNamedClassSymbol:
       importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false

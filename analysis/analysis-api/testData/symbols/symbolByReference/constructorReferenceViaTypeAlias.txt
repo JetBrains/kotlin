@@ -1,7 +1,6 @@
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: test/MyAlias
   contextReceivers: []
   hasStableParameterNames: true
