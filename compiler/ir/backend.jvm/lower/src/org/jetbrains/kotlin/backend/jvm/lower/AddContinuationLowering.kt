@@ -63,15 +63,6 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                 return super.visitFunction(declaration).also { functionStack.pop() }
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-                val transformed = super.visitFunctionReference(expression) as IrFunctionReference
-                // The only references not yet transformed into objects are inline lambdas; the continuation
-                // for those will be taken from the inline functions they are passed to, not the enclosing scope.
-                return transformed.retargetToSuspendView(context, null) {
-                    IrFunctionReferenceImpl.fromSymbolOwner(startOffset, endOffset, type, it, typeArguments.size, reflectionTarget, origin)
-                }
-            }
-
             override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
                 val transformed = super.visitRawFunctionReference(expression) as IrRawFunctionReference
                 // The only references not yet transformed into objects are inline lambdas; the continuation

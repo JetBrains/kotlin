@@ -60,11 +60,6 @@ internal class FakeLocalVariablesForBytecodeInlinerLowering(
         declaration.addFakeLocalVariableForFun(declaration)
     }
 
-    override fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
-        val lambda = argument.symbol.owner
-        lambda.addFakeLocalVariableForLambda(argument, callee)
-    }
-
     override fun visitInlineLambda(argument: IrRichFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
         val lambda = argument.invokeFunction
         lambda.addFakeLocalVariableForLambda(argument, callee)

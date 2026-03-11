@@ -736,33 +736,6 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
         rootMfvcNode.mfvc.declarations.removeIf { it is IrAnonymousInitializer }
     }
 
-    private fun IrBlock.hasLambdaLikeOrigin() = origin == IrStatementOrigin.LAMBDA || origin == IrStatementOrigin.ANONYMOUS_FUNCTION
-
-    override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-        if (expression is IrBlock && expression.hasLambdaLikeOrigin() && expression.statements.any { it is IrFunctionReference }) {
-            return visitLambda(expression)
-        }
-        return super.visitContainerExpression(expression)
-    }
-
-    private fun visitLambda(irBlock: IrBlock): IrExpression {
-        require(irBlock.hasLambdaLikeOrigin() && irBlock.statements.size == 2) { "Illegal lambda: ${irBlock.dump()}" }
-        val (originalFunction, ref) = irBlock.statements
-        require(originalFunction is IrSimpleFunction && ref is IrFunctionReference && ref.symbol.owner == originalFunction) { "Illegal lambda: ${irBlock.dump()}" }
-        require(originalFunction == irBlock.statements.first()) { "Illegal lambda: ${irBlock.dump()}" }
-        val replacement = originalFunction.getReplacement()
-        if (replacement == null) {
-            irBlock.statements[0] = visitFunctionNew(originalFunction)
-            return irBlock
-        }
-        transformFunctionFlat(originalFunction).let { declarations ->
-            require(declarations == listOf(replacement)) {
-                "Expected ${replacement.render()}, got ${declarations?.map { it.render() }}"
-            }
-        }
-        return makeNewLambdaBlock(originalFunction, ref, makeBody = { wrapper -> makeLambdaBody(wrapper, replacement) })
-    }
-
     private fun makeLambdaBody(wrapper: IrSimpleFunction, replacement: IrFunction): IrBody {
         variablesToAdd[replacement]?.let {
             variablesToAdd[wrapper] = it
@@ -799,23 +772,6 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
         }
     }
 
-    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        val function = expression.symbol.owner
-        val replacement = function.getReplacement() ?: return super.visitFunctionReference(expression)
-        return context.createJvmIrBuilder(expression.symbol, expression).irBlock {
-            // Bridge call is added in BridgeLowering
-            buildReplacement(function, expression, replacement) {
-                IrFunctionReferenceImpl(
-                    expression.startOffset, expression.endOffset,
-                    expression.type, replacement.symbol, function.typeParameters.size,
-                    expression.reflectionTarget, expression.origin
-                ).apply {
-                    copyAttributes(expression)
-                }
-            }
-        }.unwrapBlock()
-    }
-
     override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
         val originalFunction = expression.invokeFunction
         val replacement = originalFunction.getReplacement()
@@ -835,30 +791,6 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
 
     private fun IrFunction.getReplacement(): IrFunction? = replacements.getReplacementFunction(this)
         ?: (this as? IrConstructor)?.let { replacements.getReplacementForRegularClassConstructor(it) }
-
-    private fun makeNewLambdaBlock(
-        originalFunction: IrFunction, expression: IrFunctionReference, makeBody: (wrapper: IrSimpleFunction) -> IrBody
-    ): IrContainerExpression {
-        val wrapper = makeNewLamdaFunction(originalFunction, makeBody)
-
-        val newReference = IrFunctionReferenceImpl(
-            startOffset = UNDEFINED_OFFSET,
-            endOffset = UNDEFINED_OFFSET,
-            type = expression.type,
-            symbol = wrapper.symbol,
-            typeArgumentsCount = expression.typeArguments.size,
-            reflectionTarget = expression.reflectionTarget,
-            origin = expression.origin,
-        ).apply {
-            copyTypeArgumentsFrom(expression)
-            arguments.assignFrom(expression.arguments) { it?.transform(this@JvmInlineMultiFieldValueClassLowering, null) }
-            copyAttributes(expression)
-        }
-        return context.createJvmIrBuilder(getCurrentScopeSymbol(), expression).irBlock(origin = IrStatementOrigin.LAMBDA) {
-            +wrapper
-            +newReference
-        }
-    }
 
     private fun makeNewLamdaFunction(
         originalFunction: IrFunction,

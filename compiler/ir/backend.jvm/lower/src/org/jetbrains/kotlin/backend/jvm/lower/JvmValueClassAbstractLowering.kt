@@ -313,10 +313,6 @@ internal abstract class JvmValueClassAbstractLowering(
 
     final override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = super.visitEnumConstructorCall(expression)
     final override fun visitGetClass(expression: IrGetClass) = super.visitGetClass(expression)
-    final override fun visitCallableReference(expression: IrCallableReference<*>) = super.visitCallableReference(expression)
-    final override fun visitPropertyReference(expression: IrPropertyReference) = super.visitPropertyReference(expression)
-    final override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) =
-        super.visitLocalDelegatedPropertyReference(expression)
 
     final override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
         if (expression.needsDummySignature) return super.visitRawFunctionReference(expression)

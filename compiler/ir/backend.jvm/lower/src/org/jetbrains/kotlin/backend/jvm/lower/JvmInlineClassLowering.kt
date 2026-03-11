@@ -238,24 +238,6 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         arguments.assignFrom(original.arguments) { it?.transform(this@JvmInlineClassLowering, null) }
     }
 
-    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        val function = expression.symbol.owner
-        val replacement = context.inlineClassReplacements.getReplacementFunction(function)
-            ?: return super.visitFunctionReference(expression)
-
-        // In case of callable reference to inline class constructor,
-        // type parameters of the replacement include class's type parameters,
-        // however, expression does not. Thus, we should not include them either.
-        return IrFunctionReferenceImpl(
-            expression.startOffset, expression.endOffset, expression.type,
-            replacement.symbol, function.typeParameters.size,
-            expression.reflectionTarget, expression.origin
-        ).apply {
-            buildReplacement(expression)
-            copyAttributes(expression)
-        }
-    }
-
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val function = expression.symbol.owner
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)

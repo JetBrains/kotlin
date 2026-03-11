@@ -274,26 +274,6 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
         )
     }
 
-    // TODO remove after KT-78719
-    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        val newFunction = removedFunctions[expression.symbol]?.owner
-        return super.visitFunctionReference(
-            if (newFunction != null) {
-                with(expression) {
-                    IrFunctionReferenceImpl(
-                        startOffset, endOffset, type, newFunction.symbol, newFunction.typeParameters.size,
-                        expression.reflectionTarget, origin
-                    ).apply {
-                        copyFromWithPlaceholderTypeArguments(expression, context.irBuiltIns)
-                        copyAttributes(expression)
-                    }
-                }
-            } else {
-                expression
-            }
-        )
-    }
-
     override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
         val newFunction = removedFunctions[expression.invokeFunction.symbol]?.owner
         if (newFunction != null) expression.invokeFunction = newFunction
