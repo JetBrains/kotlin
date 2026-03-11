@@ -44,7 +44,7 @@ tasks.withType<Test>().configureEach {
     inputs.property("os.name", org.gradle.internal.os.OperatingSystem.current().name)
 
     val rootDir = project.rootDir
-    outputs.cacheIf { workingDir != rootDir }
+    outputs.doNotCacheIf("`workingDir` shouldn't be set to `rootDir`") { workingDir == rootDir }
 
     develocity.testRetry {
         maxRetries.set(kotlinBuildProperties.intProperty("kotlin.build.testRetry.maxRetries")
