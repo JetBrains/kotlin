@@ -32,18 +32,14 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class IntegerLiteralAndOperatorApproximationTransformer(
     override val session: FirSession,
     override val scopeSession: ScopeSession
 ) : FirTransformer<ConeKotlinType?>(), SessionAndScopeSessionHolder {
-    companion object {
-        private val TO_LONG = Name.identifier("toLong")
-        private val TO_U_LONG = Name.identifier("toULong")
-    }
-
-    private val toLongSymbol by lazy { findConversionFunction(session.builtinTypes.intType, TO_LONG) }
-    private val toULongSymbol by lazy { findConversionFunction(session.builtinTypes.uIntType, TO_U_LONG) }
+    private val toLongSymbol by lazy { findConversionFunction(session.builtinTypes.intType, OperatorNameConventions.TO_LONG) }
+    private val toULongSymbol by lazy { findConversionFunction(session.builtinTypes.uIntType, OperatorNameConventions.TO_ULONG) }
 
     private fun findConversionFunction(receiverType: FirImplicitBuiltinTypeRef, name: Name): FirNamedFunctionSymbol {
         return receiverType.coneType.scope(
@@ -123,10 +119,10 @@ class IntegerLiteralAndOperatorApproximationTransformer(
             this.calleeReference = buildResolvedNamedReference {
                 source = fakeSource
                 if (operatorType.isUnsigned) {
-                    name = TO_U_LONG
+                    name = OperatorNameConventions.TO_ULONG
                     resolvedSymbol = toULongSymbol
                 } else {
-                    name = TO_LONG
+                    name = OperatorNameConventions.TO_LONG
                     resolvedSymbol = toLongSymbol
                 }
             }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 data class SpecialMethodWithDefaultInfo(
     val defaultValueGenerator: (IrSimpleFunction) -> IrExpression,
@@ -36,10 +37,13 @@ class BuiltInWithDifferentJvmName(
 class SpecialBridgeMethods(val context: CommonBackendContext) {
     private data class SpecialMethodDescription(val kotlinFqClassName: FqName?, val name: Name, val arity: Int)
 
-    private fun makeDescription(classFqName: FqName, funName: String, arity: Int = 0) =
+    private fun makeDescription(classFqName: FqName, funName: String, arity: Int = 0): SpecialMethodDescription =
+        makeDescription(classFqName, Name.identifier(funName), arity)
+
+    private fun makeDescription(classFqName: FqName, funName: Name, arity: Int = 0): SpecialMethodDescription =
         SpecialMethodDescription(
             classFqName,
-            Name.identifier(funName),
+            funName,
             arity
         )
 
@@ -97,12 +101,12 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
     )
 
     private val specialMethods = mapOf(
-        makeDescription(StandardNames.FqNames.number.toSafe(), "toByte") to BuiltInWithDifferentJvmName(),
-        makeDescription(StandardNames.FqNames.number.toSafe(), "toShort") to BuiltInWithDifferentJvmName(),
-        makeDescription(StandardNames.FqNames.number.toSafe(), "toInt") to BuiltInWithDifferentJvmName(),
-        makeDescription(StandardNames.FqNames.number.toSafe(), "toLong") to BuiltInWithDifferentJvmName(),
-        makeDescription(StandardNames.FqNames.number.toSafe(), "toFloat") to BuiltInWithDifferentJvmName(),
-        makeDescription(StandardNames.FqNames.number.toSafe(), "toDouble") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), OperatorNameConventions.TO_BYTE) to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), OperatorNameConventions.TO_SHORT) to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), OperatorNameConventions.TO_INT) to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), OperatorNameConventions.TO_LONG) to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), OperatorNameConventions.TO_FLOAT) to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), OperatorNameConventions.TO_DOUBLE) to BuiltInWithDifferentJvmName(),
         makeDescription(StandardNames.FqNames.charSequence.toSafe(), "get", 1) to BuiltInWithDifferentJvmName(),
         makeDescription(StandardNames.FqNames.mutableList, "removeAt", 1) to
                 BuiltInWithDifferentJvmName(needsGenericSignature = true, isOverriding = false)
@@ -137,7 +141,7 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
             val classFqName = irFunction.parentAsClass.fqNameWhenAvailable
                 ?: return null
 
-            return specialProperties[makeDescription(classFqName, it.owner.name.asString())]
+            return specialProperties[makeDescription(classFqName, it.owner.name)]
         }
 
         return specialMethods[irFunction.toDescription()]

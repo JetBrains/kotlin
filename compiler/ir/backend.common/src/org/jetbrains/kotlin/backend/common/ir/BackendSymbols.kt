@@ -168,12 +168,12 @@ private object ClassIds {
 }
 
 private object CallableIds {
-    private val String.baseCallableId get() = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(this))
-    val toUIntExtension = "toUInt".baseCallableId
-    val toULongExtension = "toULong".baseCallableId
+    private val Name.baseCallableId: CallableId get() = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, this)
+    val toUIntExtension: CallableId = OperatorNameConventions.TO_UINT.baseCallableId
+    val toULongExtension: CallableId = OperatorNameConventions.TO_ULONG.baseCallableId
 
-    val extensionToString = OperatorNameConventions.TO_STRING.toString().baseCallableId
-    val extensionStringPlus = OperatorNameConventions.PLUS.toString().baseCallableId
-    val memberToString = CallableId(StandardClassIds.Any, Name.identifier(OperatorNameConventions.TO_STRING.toString()))
-    val memberPlus = CallableId(StandardClassIds.String, Name.identifier(OperatorNameConventions.PLUS.toString()))
+    val extensionToString: CallableId = OperatorNameConventions.TO_STRING.baseCallableId
+    val extensionStringPlus: CallableId = OperatorNameConventions.PLUS.baseCallableId
+    val memberToString: CallableId = CallableId(StandardClassIds.Any, OperatorNameConventions.TO_STRING)
+    val memberPlus: CallableId = CallableId(StandardClassIds.String, OperatorNameConventions.PLUS)
 }

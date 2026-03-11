@@ -24,13 +24,13 @@ public class OperatorConventions {
     private OperatorConventions() {}
 
     // Names for primitive type conversion properties
-    public static final Name DOUBLE = Name.identifier("toDouble");
-    public static final Name FLOAT = Name.identifier("toFloat");
-    public static final Name LONG = Name.identifier("toLong");
-    public static final Name INT = Name.identifier("toInt");
-    public static final Name CHAR = Name.identifier("toChar");
-    public static final Name SHORT = Name.identifier("toShort");
-    public static final Name BYTE = Name.identifier("toByte");
+    public static final Name DOUBLE = TO_DOUBLE;
+    public static final Name FLOAT = TO_FLOAT;
+    public static final Name LONG = TO_LONG;
+    public static final Name INT = TO_INT;
+    public static final Name CHAR = TO_CHAR;
+    public static final Name SHORT = TO_SHORT;
+    public static final Name BYTE = TO_BYTE;
 
 
     public static final ImmutableSet<Name> NUMBER_CONVERSIONS = ImmutableSet.of(

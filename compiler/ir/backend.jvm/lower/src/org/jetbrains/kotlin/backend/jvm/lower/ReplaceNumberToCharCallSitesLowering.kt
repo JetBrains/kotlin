@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.types.isNumber
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 /**
@@ -48,12 +49,12 @@ internal class ReplaceNumberToCharCallSitesLowering(val context: JvmBackendConte
         val dispatchReceiver = expression.dispatchReceiver ?: return
         expression.dispatchReceiver = IrCallImpl(
             dispatchReceiver.startOffset, dispatchReceiver.endOffset,
-            context.irBuiltIns.intType, context.irBuiltIns.numberClass.functionByName("toInt"),
+            context.irBuiltIns.intType, context.irBuiltIns.numberClass.functionByName(OperatorNameConventions.TO_INT.asString()),
             typeArgumentsCount = 0,
         ).also { toInt ->
             toInt.dispatchReceiver = dispatchReceiver
         }
 
-        expression.symbol = context.irBuiltIns.intClass.functionByName("toChar")
+        expression.symbol = context.irBuiltIns.intClass.functionByName(OperatorNameConventions.TO_CHAR.asString())
     }
 }

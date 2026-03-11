@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object RedundantCallOfConversionMethodChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     private val unsafeNumberClassId = ClassId.fromString("kotlinx.cinterop/UnsafeNumber")
@@ -31,7 +33,7 @@ object RedundantCallOfConversionMethodChecker : FirFunctionCallChecker(MppChecke
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         if (expression.extensionReceiver != null) return
-        val functionName = expression.calleeReference.name.asString()
+        val functionName = expression.calleeReference.name
         val qualifiedTypeId = targetClassMap[functionName] ?: return
 
         if (expression.explicitReceiver?.isRedundant(qualifiedTypeId, context.session) == true) {
@@ -54,18 +56,18 @@ object RedundantCallOfConversionMethodChecker : FirFunctionCallChecker(MppChecke
         return thisTypeId == qualifiedClassId
     }
 
-    private val targetClassMap: HashMap<String, ClassId> = hashMapOf(
-        "toString" to StandardClassIds.String,
-        "toDouble" to StandardClassIds.Double,
-        "toFloat" to StandardClassIds.Float,
-        "toLong" to StandardClassIds.Long,
-        "toInt" to StandardClassIds.Int,
-        "toChar" to StandardClassIds.Char,
-        "toShort" to StandardClassIds.Short,
-        "toByte" to StandardClassIds.Byte,
-        "toULong" to StandardClassIds.ULong,
-        "toUInt" to StandardClassIds.UInt,
-        "toUShort" to StandardClassIds.UShort,
-        "toUByte" to StandardClassIds.UByte
+    private val targetClassMap: HashMap<Name, ClassId> = hashMapOf(
+        OperatorNameConventions.TO_STRING to StandardClassIds.String,
+        OperatorNameConventions.TO_DOUBLE to StandardClassIds.Double,
+        OperatorNameConventions.TO_FLOAT to StandardClassIds.Float,
+        OperatorNameConventions.TO_LONG to StandardClassIds.Long,
+        OperatorNameConventions.TO_INT to StandardClassIds.Int,
+        OperatorNameConventions.TO_CHAR to StandardClassIds.Char,
+        OperatorNameConventions.TO_SHORT to StandardClassIds.Short,
+        OperatorNameConventions.TO_BYTE to StandardClassIds.Byte,
+        OperatorNameConventions.TO_ULONG to StandardClassIds.ULong,
+        OperatorNameConventions.TO_UINT to StandardClassIds.UInt,
+        OperatorNameConventions.TO_USHORT to StandardClassIds.UShort,
+        OperatorNameConventions.TO_UBYTE to StandardClassIds.UByte
     )
 }
