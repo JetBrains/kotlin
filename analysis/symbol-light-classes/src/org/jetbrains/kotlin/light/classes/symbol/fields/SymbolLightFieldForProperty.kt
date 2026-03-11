@@ -119,7 +119,13 @@ internal class SymbolLightFieldForProperty private constructor(
                     classSymbol.declaredMemberScope
                         .callables(propertyName)
                         .filterIsInstance<KaPropertySymbol>()
-                        .any(KaPropertySymbol::isJvmField)
+                        .any(KaPropertySymbol::isJvmField) ||
+                            // Enum entries are always preferred to the companion fields
+                            (containingClass.isEnum &&
+                                    classSymbol.staticDeclaredMemberScope
+                                        .callables(propertyName)
+                                        .filterIsInstance<KaEnumEntrySymbol>()
+                                        .any())
                 } else {
                     // Companion object fields are preferred to the class ones
                     classSymbol.companionObject

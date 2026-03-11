@@ -4,7 +4,7 @@ public enum Foo /* fields.Foo*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() fields.Foo.Companion Companion;
 
-  private static final int entry;
+  private static final int entry$1;
 
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() fields.Foo @org.jetbrains.annotations.NotNull() [] values();//  values()
