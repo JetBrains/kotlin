@@ -158,6 +158,18 @@ internal open class GradleCompilerRunner(
      * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]
      */
+    fun runWasmCompilerAsync(
+        args: KotlinWasmCompilerArguments,
+        environment: GradleCompilerEnvironment,
+        taskOutputsBackup: TaskOutputsBackup?,
+    ): WorkQueue? {
+        return runCompilerAsync(KotlinCompilerClass.WASM, args, environment, taskOutputsBackup)
+    }
+
+    /**
+     * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
+     * @see [GradleKotlinCompilerWork]
+     */
     fun runMetadataCompilerAsync(
         args: K2MetadataCompilerArguments,
         environment: GradleCompilerEnvironment,

@@ -20,6 +20,8 @@ import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.copyK2JSCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.IncrementalCompilationEnvironment
@@ -367,12 +369,20 @@ abstract class Kotlin2JsCompile @Inject constructor(
             compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
         )
         processArgsBeforeCompile(args)
-
-        compilerRunner.runJsCompilerAsync(
-            args,
-            environment,
-            taskOutputsBackup
-        )
+        if (args.wasm) {
+            val wasmArgs = copyK2JSCompilerArguments(args, KotlinWasmCompilerArguments())
+            compilerRunner.runWasmCompilerAsync(
+                wasmArgs,
+                environment,
+                taskOutputsBackup
+            )
+        } else {
+            compilerRunner.runJsCompilerAsync(
+                args,
+                environment,
+                taskOutputsBackup
+            )
+        }
         compilerRunner.errorsFiles?.let { gradleMessageCollector.flush(it) }
 
     }

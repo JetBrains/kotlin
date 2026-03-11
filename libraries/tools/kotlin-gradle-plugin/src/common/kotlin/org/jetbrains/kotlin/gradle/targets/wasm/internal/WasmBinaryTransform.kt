@@ -14,7 +14,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyOf
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -47,7 +47,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
      */
     abstract class Parameters : TransformParameters {
         @get:Internal
-        abstract val compilerOptions: Property<K2JSCompilerArguments>
+        abstract val compilerOptions: Property<KotlinWasmCompilerArguments>
 
         @get:Internal
         abstract val currentJvmJdkToolsJar: Property<File>
@@ -192,7 +192,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
                 parameters.buildDir.get(),
             ),
             compilerFullClasspath = (parameters.defaultCompilerClasspath.files + parameters.currentJvmJdkToolsJar.orNull).filterNotNull(),
-            compilerClassName = KotlinCompilerClass.JS,
+            compilerClassName = KotlinCompilerClass.WASM,
             compilerArgs = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray(),
             isVerbose = false,
             incrementalCompilationEnvironment = null,
