@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.util.PerformanceManager
 
 internal class FileLowerState {
@@ -81,7 +82,10 @@ internal class NativeGenerationState(
     private val llvmDelegate = lazy { CodegenLlvmHelpers(this, LLVMModuleCreateWithNameInContext(llvmModuleName, llvmContext)!!) }
     private val debugInfoDelegate = lazy { DebugInfo(this) }
 
-    override val llvmContext = LLVMContextCreate()!!
+    override val llvmContext = run {
+        loadLLVMStubs(config.configuration.konanHome)
+        LLVMContextCreate()!!
+    }
     val runtime by runtimeDelegate
     override val llvm by llvmDelegate
     val debugInfo by debugInfoDelegate

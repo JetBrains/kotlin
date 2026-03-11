@@ -145,7 +145,12 @@ class StubIrTextEmitter(
             stubLines.forEach(out)
             nativeBridges.kotlinLines.forEach(out)
             if (context.platform == KotlinPlatform.JVM)
-                out("private val loadLibrary = loadKonanLibrary(\"${context.libName}\")")
+                when(context.libName) {
+                    // libllvmstubs.{so|dylib} is LLVM-version-specific, so it's different among compiler versions,
+                    // It must be loaded from konan home specified by compiler configuration, not by system property, etc
+                    "llvmstubs" -> out("""fun loadLLVMStubs(konanHome: String?) = loadKonanLibrary("llvmstubs", konanHome)""")
+                    else -> out("private val loadLibrary = loadKonanLibrary(\"${context.libName}\")")
+                }
         }
     }
     private val printer = object : StubIrVisitor<StubContainer?, Unit> {

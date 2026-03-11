@@ -191,14 +191,15 @@ private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDae
     return true
 }
 
-fun loadKonanLibrary(name: String) {
+fun loadKonanLibrary(name: String, konanHome: String? = null) {
     val runFromDaemon = System.getProperty("kotlin.native.tool.runFromDaemon") == "true"
     val fullLibraryName = System.mapLibraryName(name)
     val paths = initializePath()
     for (dir in paths) {
         if (tryLoadKonanLibrary(dir, fullLibraryName, runFromDaemon)) return
     }
-    val defaultNativeLibsDir = "${KotlinNativePaths.homePath.absolutePath}/konan/nativelib"
+    val homePath = konanHome ?: KotlinNativePaths.homePath.absolutePath
+    val defaultNativeLibsDir = "$homePath/konan/nativelib"
     if (tryLoadKonanLibrary(defaultNativeLibsDir, fullLibraryName, runFromDaemon))
         return
     error("Lib $fullLibraryName was not found in $defaultNativeLibsDir and ${paths.joinToString { it }}")

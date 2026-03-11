@@ -11,6 +11,7 @@ import llvm.LLVMContextCreate
 import llvm.LLVMContextDispose
 import llvm.LLVMDisposeModule
 import llvm.LLVMOpaqueModule
+import llvm.loadLLVMStubs
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
@@ -115,6 +116,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
     }
 
     private fun produceBinaryFromBitcode(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, bitcodeFilePath: String) {
+        loadLLVMStubs(config.configuration.konanHome)
         val llvmContext = LLVMContextCreate()!!
         var llvmModule: CPointer<LLVMOpaqueModule>? = null
         try {
