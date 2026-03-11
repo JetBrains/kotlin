@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -1013,6 +1014,7 @@ class CallAndReferenceGenerator(
             irAnnotation
                 .applyReceiversAndArguments(annotationCall, declarationSiteSymbol = firConstructorSymbol, explicitReceiverExpression = null)
                 .applyTypeArgumentsWithTypealiasConstructorRemapping(firConstructorSymbol?.fir, annotationCall?.typeArguments.orEmpty())
+                .filterOutErrorArgsInAnnotation()
         }
     }
 
@@ -1042,6 +1044,34 @@ class CallAndReferenceGenerator(
              */
             containingDeclarationSymbol = constructorSymbol
         }
+    }
+
+    private fun IrExpression.filterOutErrorArgsInAnnotation(): IrExpression {
+        if (!configuration.skipBodies || this !is IrAnnotation) return this
+
+        fun IrElement?.cleanUp(): Boolean {
+            return when (this) {
+                is IrErrorExpression -> true
+                is IrGetClass -> this.argument.type is IrErrorType
+                is IrConstructorCall -> {
+                    for ((i, expression) in this.arguments.withIndex()) {
+                        if (expression.cleanUp()) {
+                            this.arguments[i] = null
+                        }
+                    }
+                    false
+                }
+                is IrVararg -> {
+                    this.elements.removeAll { it.cleanUp() }
+                    false
+                }
+                else -> false
+            }
+        }
+
+        // This is needed for kapt. We must ignore error nodes in annotations completely.
+        this.cleanUp()
+        return this
     }
 
     internal fun convertToGetObject(qualifier: FirResolvedQualifier): IrExpression {
