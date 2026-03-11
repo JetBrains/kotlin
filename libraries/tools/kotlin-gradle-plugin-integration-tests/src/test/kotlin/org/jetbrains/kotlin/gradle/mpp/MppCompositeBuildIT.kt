@@ -206,6 +206,9 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 assertTasksExecuted(":jvmTest")
                 assertTasksExecuted(":jsTest")
             }
+
+            // Workaround for Junit 'Failed to delete temp directory' on Windows OS
+            build("clean")
         }
     }
 

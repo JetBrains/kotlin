@@ -39,15 +39,24 @@ internal class GenericCallsReturnTypeEraser(val context: Context) : BodyLowering
         val irBuilder = context.createIrBuilder(container.symbol)
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
-                if (expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT)
+                val argument = expression.argument
+                if (expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT && argument is IrCall) {
                     // Do not add cast if the return value isn't used.
-                    expression.argument.transformChildrenVoid(this)
-                else
+                    handleCall(argument, insertCast = false).also {
+                        check(it == argument) // Should just modify the return type of the call.
+                    }
+                } else {
                     expression.transformChildrenVoid(this)
+                }
+
                 return expression
             }
 
             override fun visitCall(expression: IrCall): IrExpression {
+                return handleCall(expression, insertCast = true)
+            }
+
+            fun handleCall(expression: IrCall, insertCast: Boolean): IrExpression {
                 expression.transformChildrenVoid(this)
 
                 val callee = expression.target
@@ -61,8 +70,8 @@ internal class GenericCallsReturnTypeEraser(val context: Context) : BodyLowering
                 if (actualType != expectedType) {
                     expression.type = actualType
                     return when {
+                        !insertCast || expectedType.isNothing() -> expression
                         expectedType.isUnit() -> irBuilder.at(expression).irImplicitCoercionToUnit(expression)
-                        expectedType.isNothing() -> expression
                         else -> irBuilder.at(expression).irImplicitCast(expression, expectedType)
                     }
                 }

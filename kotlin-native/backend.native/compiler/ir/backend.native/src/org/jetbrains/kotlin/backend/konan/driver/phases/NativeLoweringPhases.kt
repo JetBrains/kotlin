@@ -488,6 +488,11 @@ private val constructorsLoweringPhase = createFileLoweringPhase(
     lowering = ::ConstructorsLowering,
 )
 
+private val lowerCastsPhase = createFileLoweringPhase(
+        name = "CastsLowering",
+        lowering = ::CastsLowering,
+)
+
 private val computeTypesPhase = createFileLoweringPhase(
         name = "ComputeTypes",
         lowering = { context: Context -> ComputeTypesPass(context) },
@@ -666,6 +671,7 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         eraseGenericCallsReturnTypesPhase,
         autoboxPhase,
         constructorsLoweringPhase,
+        lowerCastsPhase.takeUnless { this.optimizationsEnabled },
 )
 
 private fun createFileLoweringPhase(

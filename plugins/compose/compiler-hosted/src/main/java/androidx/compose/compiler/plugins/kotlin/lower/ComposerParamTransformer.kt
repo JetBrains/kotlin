@@ -177,6 +177,12 @@ class ComposerParamTransformer(
         }
     }
 
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        expression.overriddenFunctionSymbol = expression.overriddenFunctionSymbol.owner.withComposerParamIfNeeded().symbol
+
+        return super.visitRichFunctionReference(expression)
+    }
+
     private fun IrFunction.findCallInBody(): IrCall? {
         var call: IrCall? = null
         body?.acceptChildrenVoid(object : IrVisitorVoid() {

@@ -49,7 +49,8 @@ internal constructor(
         execOps = throw UnsupportedOperationException(),
     )
 
-    private val processOptions: ProcessLaunchOptions = this.objects.processLaunchOptions {
+    @get:Internal
+    internal val processOptions: ProcessLaunchOptions = this.objects.processLaunchOptions {
         environment.putAll(this@KotlinNativeTest.providers.getAllEnvironmentVariables())
     }
 

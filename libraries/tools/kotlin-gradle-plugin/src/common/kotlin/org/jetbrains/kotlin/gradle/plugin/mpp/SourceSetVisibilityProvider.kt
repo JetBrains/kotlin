@@ -63,6 +63,7 @@ internal class SourceSetVisibilityProvider {
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
         resolvedToOtherProject: Boolean,
         resolveWithLenientPSMResolutionScheme: Boolean,
+        allowMatchingByRequestedCoordinates: Boolean,
     ): SourceSetVisibilityResult {
         if (dependingPlatformCompilations.isEmpty())
             return SourceSetVisibilityResult(emptySet(), emptyMap())
@@ -76,7 +77,10 @@ internal class SourceSetVisibilityProvider {
                 val resolvedPlatformDependencies = platformCompilationData
                     .resolvedDependenciesConfiguration
                     .allResolvedDependencies
-                    .filter { it.selected.id.kmpMultiVariantModuleIdentifier() == resolvedRootMppDependencyKmpIdentifier }
+                    .filter {
+                        it.selected.id.kmpMultiVariantModuleIdentifier() == resolvedRootMppDependencyKmpIdentifier ||
+                                (allowMatchingByRequestedCoordinates && it.requested == resolvedRootMppDependency.requested)
+                    }
                     .filter {
                         // Pre lenient resolve logic
                         if (!resolveWithLenientPSMResolutionScheme) return@filter true

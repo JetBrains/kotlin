@@ -313,7 +313,7 @@ class Framework(
     compilation: KotlinNativeCompilation
 ) : AbstractNativeLibrary(name, baseName, buildType, compilation), HasAttributes {
 
-    private val attributeContainer = HierarchyAttributeContainer(parent = compilation.attributes)
+    private val attributeContainer = HierarchyAttributeContainer(parent = compilation.attributes, compilation.project.objects)
 
     override fun getAttributes() = attributeContainer
 

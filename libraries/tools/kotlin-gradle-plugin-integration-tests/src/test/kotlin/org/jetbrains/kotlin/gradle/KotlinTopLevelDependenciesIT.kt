@@ -139,6 +139,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
         val projectDependency = project(template, gradleVersion) {
             plugins {
                 kotlin("multiplatform")
+                id("org.gradle.maven-publish")
             }
             buildScriptInjection {
                 project.group = "foo"

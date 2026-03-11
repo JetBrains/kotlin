@@ -36,6 +36,12 @@ public class FirLoadK2CompiledWithPluginJvmKotlinTestGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("firAnnotationsOnParametersWithConstantValues.kt")
+  public void testFirAnnotationsOnParametersWithConstantValues() {
+    runTest("plugins/plugin-sandbox/testData/firLoadK2Compiled/firAnnotationsOnParametersWithConstantValues.kt");
+  }
+
+  @Test
   @TestMetadata("simple.kt")
   public void testSimple() {
     runTest("plugins/plugin-sandbox/testData/firLoadK2Compiled/simple.kt");

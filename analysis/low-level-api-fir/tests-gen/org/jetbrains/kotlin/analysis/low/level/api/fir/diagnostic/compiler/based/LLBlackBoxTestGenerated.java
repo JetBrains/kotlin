@@ -28308,6 +28308,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("coercionToUnitBoxing.kt")
+    public void testCoercionToUnitBoxing() {
+      runTest("compiler/testData/codegen/box/inline/coercionToUnitBoxing.kt");
+    }
+
+    @Test
     @TestMetadata("correctOrderFunctionReference.kt")
     public void testCorrectOrderFunctionReference() {
       runTest("compiler/testData/codegen/box/inline/correctOrderFunctionReference.kt");
@@ -41420,6 +41426,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     public void testLambda_kt80285() {
       runTest("compiler/testData/codegen/box/lambda/lambda_kt80285.kt");
     }
+
+    @Test
+    @TestMetadata("lambda_kt83995.kt")
+    public void testLambda_kt83995() {
+      runTest("compiler/testData/codegen/box/lambda/lambda_kt83995.kt");
+    }
   }
 
   @Nested
@@ -44313,6 +44325,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         @TestMetadata("javaPropertyTypealiasTwoLibs3-3.kt")
         public void testJavaPropertyTypealiasTwoLibs3_3() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/javaPropertyTypealiasTwoLibs3-3.kt");
+        }
+
+        @Test
+        @TestMetadata("kt83572.kt")
+        public void testKt83572() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/kt83572.kt");
         }
 
         @Test
@@ -66604,6 +66622,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("kt83740.kt")
+    public void testKt83740() {
+      runTest("compiler/testData/codegen/box/when/kt83740.kt");
+    }
+
+    @Test
     @TestMetadata("longCondition.kt")
     public void testLongCondition() {
       runTest("compiler/testData/codegen/box/when/longCondition.kt");
@@ -66625,6 +66649,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     @TestMetadata("multipleEntries.kt")
     public void testMultipleEntries() {
       runTest("compiler/testData/codegen/box/when/multipleEntries.kt");
+    }
+
+    @Test
+    @TestMetadata("noCachingFunctionCallBetweenIfBranches.kt")
+    public void testNoCachingFunctionCallBetweenIfBranches() {
+      runTest("compiler/testData/codegen/box/when/noCachingFunctionCallBetweenIfBranches.kt");
     }
 
     @Test

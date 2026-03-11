@@ -48,7 +48,7 @@ private var IrFunction.bridges: MutableMap<BridgeDirections, IrSimpleFunction>? 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun IrFunction.getDefaultValueForOverriddenBuiltinFunction() = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor)
 
-internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val irFactory: IrFactory) {
+internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val symbols: KonanSymbols, val irFactory: IrFactory) {
     fun getBridge(overriddenFunction: OverriddenFunctionInfo): IrSimpleFunction {
         val irFunction = overriddenFunction.function
         val directions = overriddenFunction.bridgeDirections
@@ -94,6 +94,9 @@ internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val irFactory: IrFacto
             typeParameters = function.typeParameters.map { parameter ->
                 parameter.copyToWithoutSuperTypes(bridge).also { it.superTypes += parameter.superTypes }
             }
+
+            // Enable transparent stepping for bridges.
+            annotations += buildSimpleAnnotation(irBuiltIns, startOffset, endOffset, symbols.transparentForDebugger.owner)
         }
     }
 }

@@ -55,7 +55,7 @@ internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
         }
     }
 
-    @TaskAction
+    override fun parallelWork() = copy()
     protected fun copy() {
         val metricReporter = metrics.get()
         addBuildMetricsForTaskAction(metricsReporter = metricReporter, languageVersion = null) {

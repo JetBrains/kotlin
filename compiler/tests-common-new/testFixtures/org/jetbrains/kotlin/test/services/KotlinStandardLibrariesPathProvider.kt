@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_REFLE
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_SCRIPT_RUNTIME_PATH
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_TEST_JAR_PATH
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_WEB_STDLIB_KLIB_PATH
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
@@ -56,67 +57,69 @@ interface KotlinStandardLibrariesPathProvider : TestService {
     /**
      * kotlin-stdlib.jar
      */
-    abstract fun runtimeJarForTests(): File
+    fun runtimeJarForTests(): File
 
     /**
      * kotlin-stdlib-jdk8.jar
      */
-    abstract fun runtimeJarForTestsWithJdk8(): File
+    fun runtimeJarForTestsWithJdk8(): File
 
     /**
      * Jar with minimal version of kotlin stdlib (may be same as runtimeJarForTests)
      */
-    abstract fun minimalRuntimeJarForTests(): File
+    fun minimalRuntimeJarForTests(): File
 
     /**
      * kotlin-reflect.jar
      */
-    abstract fun reflectJarForTests(): File
+    fun reflectJarForTests(): File
 
     /**
      * kotlin-test.jar
      */
-    abstract fun kotlinTestJarForTests(): File
+    fun kotlinTestJarForTests(): File
 
     /**
      * kotlin-script-runtime.jar
      */
-    abstract fun scriptRuntimeJarForTests(): File
+    fun scriptRuntimeJarForTests(): File
 
     /**
      * kotlin-annotations-jvm.jar
      */
-    abstract fun jvmAnnotationsForTests(): File
+    fun jvmAnnotationsForTests(): File
 
     /**
      * compiler/testData/mockJDK/jre/lib/annotations.jar
      */
-    abstract fun getAnnotationsJar(): File
+    fun getAnnotationsJar(): File
 
     /**
      * kotlin-stdlib-js.klib
      */
-    abstract fun fullJsStdlib(): File
+    fun fullJsStdlib(): File
 
     /**
      * Jar with minimal version of kotlin stdlib JS (may be same as fullJsStdlib)
      */
-    abstract fun defaultJsStdlib(): File
+    fun defaultJsStdlib(): File
 
     /**
      * kotlin-test-js.jar
      */
-    abstract fun kotlinTestJsKLib(): File
+    fun kotlinTestJsKLib(): File
+
+    fun webStdlibForTests(): File
 
     /**
      * kotlin-stdlib-common.klib
      */
-    abstract fun commonStdlibForTests(): File
+    fun commonStdlibForTests(): File
 
     /**
      * scriptingPlugin classpath jars
      */
-    abstract fun scriptingPluginFilesForTests(): Collection<File>
+    fun scriptingPluginFilesForTests(): Collection<File>
 
     fun getRuntimeJarClassLoader(): ClassLoader {
         runtimeJarClassLoader.get()?.let { return it }
@@ -249,6 +252,8 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
 
     override fun commonStdlibForTests(): File = extractFromPropertyFirst(KOTLIN_COMMON_STDLIB_PATH) { "kotlin-stdlib-common.klib".distCommon() }
 
+    override fun webStdlibForTests(): File = extractFromPropertyFirst(KOTLIN_WEB_STDLIB_KLIB_PATH) { "kotlin-stdlib-web.klib".distCommon() }
+
     private inline fun extractFromPropertyFirst(prop: String, onMissingProperty: () -> String): File {
         val path = System.getProperty(prop, null) ?: onMissingProperty()
         assert(File(path).exists()) { "$path not found; property: $prop" }
@@ -310,6 +315,7 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
     override fun defaultJsStdlib(): File = getFile(KOTLIN_STDLIB_JS_PROP)
     override fun kotlinTestJsKLib(): File = getFile(KOTLIN_TEST_JS_PROP)
     override fun commonStdlibForTests(): File = getFile(KOTLIN_COMMON_STDLIB_PATH)
+    override fun webStdlibForTests(): File = TODO("Not implemented")
     override fun scriptingPluginFilesForTests(): Collection<File> {
         TODO("KT-67573")
     }

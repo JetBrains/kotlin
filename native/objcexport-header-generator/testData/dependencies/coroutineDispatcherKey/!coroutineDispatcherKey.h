@@ -38,7 +38,7 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.ExperimentalStdlibApi
 */
 @interface KotlinAbstractCoroutineContextKey<B, E> : Base <KotlinCoroutineContextKey>
-- (instancetype)initWithBaseKey:(id<KotlinCoroutineContextKey>)baseKey safeCast:(E _Nullable (^)(id<KotlinCoroutineContextElement> element))safeCast __attribute__((swift_name("init(baseKey:safeCast:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithBaseKey:(id<KotlinCoroutineContextKey>)baseKey safeCast:(E _Nullable (^)(id<KotlinCoroutineContextElement>))safeCast __attribute__((swift_name("init(baseKey:safeCast:)"))) __attribute__((objc_designated_initializer));
 @end
 
 
@@ -51,7 +51,7 @@ __attribute__((swift_name("Kotlinx_coroutines_coreCoroutineDispatcher.Key")))
 @interface Kotlinx_coroutines_coreCoroutineDispatcherKey : KotlinAbstractCoroutineContextKey<id<KotlinContinuationInterceptor>, Kotlinx_coroutines_coreCoroutineDispatcher *>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-- (instancetype)initWithBaseKey:(id<KotlinCoroutineContextKey>)baseKey safeCast:(id<KotlinCoroutineContextElement> _Nullable (^)(id<KotlinCoroutineContextElement> element))safeCast __attribute__((swift_name("init(baseKey:safeCast:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithBaseKey:(id<KotlinCoroutineContextKey>)baseKey safeCast:(id<KotlinCoroutineContextElement> _Nullable (^)(id<KotlinCoroutineContextElement>))safeCast __attribute__((swift_name("init(baseKey:safeCast:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)key __attribute__((swift_name("init()")));
 @property (class, readonly, getter=shared) Kotlinx_coroutines_coreCoroutineDispatcherKey *shared __attribute__((swift_name("shared")));
 @end

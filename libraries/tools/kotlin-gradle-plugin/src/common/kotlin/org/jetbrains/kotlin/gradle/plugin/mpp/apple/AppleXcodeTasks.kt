@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 
+import com.google.gson.Gson
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -12,14 +13,13 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
@@ -32,8 +32,14 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.property
+import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 @Suppress("ConstPropertyName")
 internal object AppleXcodeTasks {
@@ -204,6 +210,9 @@ internal fun Project.registerEmbedSwiftExportTask(
     }
 
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
+//    val syntheticLinkageImportProjectCheck = checkSyntheticImportProjectIsCorrectlyIntegrated(
+//        false
+//    )
 
     val swiftExportTask = registerSwiftExportTask(
         swiftExportExtension,
@@ -213,6 +222,7 @@ internal fun Project.registerEmbedSwiftExportTask(
     )
 
     swiftExportTask.dependsOn(sandBoxTask)
+//    swiftExportTask.dependsOn(syntheticLinkageImportProjectCheck)
 
     val embedAndSignTask = locateOrRegisterTask<DefaultTask>(binaryTaskName) { task ->
         task.group = BasePlugin.BUILD_GROUP
@@ -239,6 +249,31 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     }
 
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
+    val regenerateSyntheticLinkageProject = regenerateLinkageImportProjectTask()
+
+    val xcodeProjectPathForKmpIJPlugin = swiftPMDependenciesExtension().xcodeProjectPathForKmpIJPlugin
+    val envProjectPath = project.providers.environmentVariable(PROJECT_FILE_PATH_ENV)
+
+    val projectPath = callingProjectPathProvider()
+    regenerateSyntheticLinkageProject.configure {
+        it.doFirst {
+            if (!envProjectPath.isPresent && !xcodeProjectPathForKmpIJPlugin.isPresent) {
+                error("Please specify Xcode project path in \"swiftPMDependencies { xcodeProjectPathForKmpIJPlugin.set(...) }\"")
+            }
+        }
+        it.syntheticImportProjectRoot.set(
+            projectPath.flatMap {
+                project.layout.dir(
+                    project.provider { File(it).parentFile.resolve(SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) }
+                )
+            }
+        )
+    }
+
+    val syntheticLinkageImportProjectCheck = checkSyntheticImportProjectIsCorrectlyIntegrated(
+        expectLinkagePackageProductInCopyingPhase = provider { !framework.isStatic }
+    )
+    regenerateSyntheticLinkageProject.dependsOn(syntheticLinkageImportProjectCheck)
     val assembleTask = registerAssembleAppleFrameworkTask(framework, environment) ?: return
 
     val builtProductsDir = builtProductsDir(frameworkTaskName, environment)
@@ -266,6 +301,9 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
 
     assembleTask.taskProvider.dependsOn(sandBoxTask)
     framework.linkTaskProvider.dependsOn(sandBoxTask)
+
+    assembleTask.taskProvider.dependsOn(regenerateSyntheticLinkageProject)
+    framework.linkTaskProvider.dependsOn(regenerateSyntheticLinkageProject)
 
     val embedAndSignTask = registerEmbedTask(framework, frameworkTaskName, environment) { !framework.isStatic } ?: return
     embedAndSignTask.dependsOn(assembleTask.taskProvider)
@@ -362,6 +400,101 @@ private fun Project.registerEmbedTask(
     return embedAndSignTask
 }
 
+fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
+    execOperations: ExecOperations,
+    gradleProjectPath: String,
+    xcodeProjectThatCalledEmbedAndSign: File,
+    rootProjectDir: File,
+    expectLinkagePackageProductInCopyingPhase: Boolean,
+) {
+    val pbxprojPath = xcodeProjectThatCalledEmbedAndSign.resolve("project.pbxproj")
+    val output = ByteArrayOutputStream()
+    execOperations.exec {
+        it.standardOutput = output
+        it.commandLine(
+            "/usr/bin/plutil",
+            "-convert", "json",
+            pbxprojPath,
+            "-o", "-"
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST") val json = Gson().fromJson(output.toString(), Map::class.java) as Map<String, Any>
+    val linkageProducts = linkageProductsReferencedInPBXObjects(json)
+    val hasSyntheticImportProjectReference = linkageProducts.isNotEmpty()
+    if (!hasSyntheticImportProjectReference) {
+        // FIXME: Find a proper way to get to wrapper
+        val taskCall = if (gradleProjectPath == ":") {
+            ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"
+        } else "${gradleProjectPath}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"
+
+        val gradlew = searchForGradlew(xcodeProjectThatCalledEmbedAndSign)
+        val messageLines = listOf(
+            "You have SwiftPM dependencies with embedAndSign integration.",
+            "Please integrate with synthetic import linkage project by",
+            "running the following command:",
+            "${PROJECT_PATH_ENV}='${xcodeProjectThatCalledEmbedAndSign.path}' '${gradlew?.path}' -p '${rootProjectDir}' '${taskCall}' -i"
+        )
+        messageLines.forEach {
+            println("error: $it")
+        }
+        error(messageLines.joinToString("\n"))
+    }
+
+    val objects = json.property<Map<String, Any>>("objects")
+    // FIXME: Check if the product is correctly integrated into the build phase
+    val productReferencesToPackageProducts = objects.entries.mapNotNull { (id, pbxObject) ->
+        @Suppress("UNCHECKED_CAST")
+        pbxObject as Map<String, Any>
+        val type = pbxObject.property<String>("isa")
+        if (type == "PBXBuildFile") {
+            val packageProductRef = pbxObject.get("productRef") as? String
+            if (packageProductRef != null && packageProductRef in linkageProducts) {
+                id
+            } else null
+        } else null
+    }.toSet()
+
+    val hasCopyPhaseReferencingSyntheticProject = objects.entries.any { (_, pbxObject) ->
+        @Suppress("UNCHECKED_CAST")
+        pbxObject as Map<String, Any>
+        val type = pbxObject.property<String>("isa")
+        // Assume this is frameworks copying phase
+        if (type == "PBXCopyFilesBuildPhase") {
+            val files = pbxObject.property<List<String>>("files")
+            files.any {
+                it in productReferencesToPackageProducts
+            }
+        } else false
+    }
+
+    if (expectLinkagePackageProductInCopyingPhase && !hasCopyPhaseReferencingSyntheticProject) {
+        val messageLines = listOf(
+            "Please specify \"Embed & Sign\" under \"Embed\"",
+            "for library named \"${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}\"",
+            "in the \"General -> Framework, Libraries, and Embedded Content\" tab",
+        )
+        messageLines.forEach {
+            println("error: $it")
+        }
+        error(messageLines.joinToString(" "))
+    }
+
+    if (!expectLinkagePackageProductInCopyingPhase && hasCopyPhaseReferencingSyntheticProject) {
+        val messageLines = listOf(
+            "Please specify \"Do Not Embed\" under \"Embed\"",
+            "for library named \"${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}\"",
+            "in the \"General -> Framework, Libraries, and Embedded Content\" tab",
+            // FIXME: It might not actually be falled "Embed Frameworks"
+            "and make sure the library is not present in \"Build Phases -> Embed Frameworks\" "
+        )
+        messageLines.forEach {
+            println("error: $it")
+        }
+        error(messageLines.joinToString(" "))
+    }
+}
+
 private fun Project.checkSandboxAndWriteProtectionTask(
     environment: XcodeEnvironment,
     userScriptSandboxingEnabled: Boolean,
@@ -373,6 +506,40 @@ private fun Project.checkSandboxAndWriteProtectionTask(
         task.builtProductsDir.set(environment.builtProductsDir)
         task.userScriptSandboxingEnabled.set(userScriptSandboxingEnabled)
     }
+
+private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(
+    expectLinkagePackageProductInCopyingPhase: Provider<Boolean>,
+): TaskProvider<*> {
+    val hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies()
+
+    val xcodeProjectPathForKmpIJPlugin = swiftPMDependenciesExtension().xcodeProjectPathForKmpIJPlugin
+    val envProjectPath = project.providers.environmentVariable(PROJECT_FILE_PATH_ENV)
+    val projectPath = callingProjectPathProvider()
+
+    return locateOrRegisterTask<DefaultTask>("checkSyntheticImportProjectIsCorrectlyIntegrated") { task ->
+        task.group = BasePlugin.BUILD_GROUP
+        task.description = "Check linkage project for embedAndSign is integrated correctly into the project"
+        val execOps = project.serviceOf<ExecOperations>()
+        val gradleProjectPath = project.path
+        val rootProjectDir = rootProject.projectDir
+        task.enabled = !kotlinPropertiesProvider.suppressXcodeIntegrationCheck
+        task.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
+        task.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
+        task.doFirst {
+            if (!envProjectPath.isPresent && !xcodeProjectPathForKmpIJPlugin.isPresent) {
+                error("Please specify Xcode project path in \"swiftPMDependencies { xcodeProjectPathForKmpIJPlugin.set(...) }\"")
+            }
+
+            checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
+                execOps,
+                gradleProjectPath,
+                File(projectPath.get()),
+                rootProjectDir,
+                expectLinkagePackageProductInCopyingPhase = expectLinkagePackageProductInCopyingPhase.get()
+            )
+        }
+    }
+}
 
 private fun Project.shouldRegisterEmbedTask(environment: XcodeEnvironment, frameworkTaskName: String): Boolean {
     val envBuildType = environment.buildType

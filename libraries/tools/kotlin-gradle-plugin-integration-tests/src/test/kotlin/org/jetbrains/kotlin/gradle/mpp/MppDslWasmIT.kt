@@ -58,7 +58,9 @@ class MppDslWasmIT : KGPBaseTest() {
                 assertTasksAreNotInTaskGraph(":compileTestDevelopmentExecutableKotlinWasmJsOptimize")
                 assertTasksFailed(":wasmJs${name}Test")
                 assertTestResults(
-                    projectPath.resolve("TEST-${engine}.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-${engine}.xml" else "Gradle93-TEST-${engine}.xml"
+                    ),
                     "wasmJs${name}Test"
                 )
             }

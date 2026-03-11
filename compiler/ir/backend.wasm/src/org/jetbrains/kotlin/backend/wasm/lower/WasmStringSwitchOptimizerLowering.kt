@@ -212,11 +212,11 @@ class WasmStringSwitchOptimizerLowering(
         return irWhen(transformedWhen.type, mainResultsBranches)
     }
 
-    private fun extractGetValue(condition: IrCall): IrGetValue {
+    private fun extractGetValue(condition: IrCall): IrGetValue? {
         val op1 = condition.arguments[0]!!
         val op2 = condition.arguments[1]!!
 
-        return op1 as? IrGetValue ?: op2 as IrGetValue
+        return op1 as? IrGetValue ?: op2 as? IrGetValue
     }
 
     override fun visitWhen(expression: IrWhen): IrExpression {
@@ -236,7 +236,7 @@ class WasmStringSwitchOptimizerLowering(
                     val matchedStringConstant = tryMatchCaseToNullableStringConstant(condition) ?: return visitedWhen
                     val matchedString = matchedStringConstant.value as? String
 
-                    val extractedSymbol = extractGetValue(condition)
+                    val extractedSymbol = extractGetValue(condition) ?: return visitedWhen
                     if (irGetValueSymbol != null && extractedSymbol.symbol != irGetValueSymbol.symbol) {
                         return visitedWhen
                     }

@@ -220,8 +220,8 @@ internal fun IrElement.toConstantValueOrNull(): ConstantValue<*>? {
         }
 
         val irClass = type.getClass() ?: return null
-        if (irClass.isLocal == true) {
-            return KClassValue(KClassValue.Value.LocalClass(irClass))
+        if (irClass.isLocal) {
+            return KClassValue(KClassValue.Value.LocalClass(firClassSymbol = (irClass.metadata as? MetadataSource.Class)?.asFirSymbol()))
         }
         val classId = irClass.classId ?: return null
         return KClassValue(classId, arrayDimensions)

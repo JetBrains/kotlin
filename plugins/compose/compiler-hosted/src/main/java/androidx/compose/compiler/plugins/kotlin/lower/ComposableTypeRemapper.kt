@@ -296,6 +296,13 @@ internal class ComposableTypeTransformer(
         return super.visitClassReference(expression)
     }
 
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        if (expression.overriddenFunctionSymbol.owner.needsComposableRemapping()) {
+            expression.overriddenFunctionSymbol.owner.transform(this, null)
+        }
+        return super.visitRichFunctionReference(expression)
+    }
+
     private fun IrType.remapType() = typeRemapper.remapType(this)
 }
 

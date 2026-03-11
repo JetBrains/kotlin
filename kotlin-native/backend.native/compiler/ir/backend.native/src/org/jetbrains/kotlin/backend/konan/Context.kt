@@ -51,7 +51,7 @@ internal class Context(
     override val optimizeLoopsOverUnsignedArrays = true
 
     override val innerClassesSupport: NativeInnerClassesSupport by lazy { NativeInnerClassesSupport(irFactory) }
-    val bridgesSupport by lazy { BridgesSupport(irBuiltIns, irFactory) }
+    val bridgesSupport by lazy { BridgesSupport(irBuiltIns, symbols, irFactory) }
     val enumsSupport by lazy { EnumsSupport(irBuiltIns, irFactory) }
     val cachesAbiSupport by lazy { CachesAbiSupport(irFactory) }
 

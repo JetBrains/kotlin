@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
+import org.jetbrains.kotlin.metadata.js.JsProtoBuf.registerAllExtensions
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 object JsSerializerProtocol : SerializerExtensionProtocol(
-    ExtensionRegistryLite.newInstance().apply(JsProtoBuf::registerAllExtensions),
+    ExtensionRegistryLite.newInstance().apply {
+        registerAllExtensions(this)
+        SerializationPluginMetadataExtensions.registerAllExtensions(this)
+    },
     JsProtoBuf.packageFqName,
     JsProtoBuf.constructorAnnotation,
     JsProtoBuf.classAnnotation,

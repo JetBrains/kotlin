@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,6 +26,7 @@ import TestCompilePaths.KOTLIN_WASM_JS_KOTLIN_TEST_KLIB_PATH
 import TestCompilePaths.KOTLIN_WASM_JS_STDLIB_KLIB_PATH
 import TestCompilePaths.KOTLIN_WASM_WASI_KOTLIN_TEST_KLIB_PATH
 import TestCompilePaths.KOTLIN_WASM_WASI_STDLIB_KLIB_PATH
+import TestCompilePaths.KOTLIN_WEB_STDLIB_KLIB_PATH
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -67,6 +68,10 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
     @get:InputFiles
     @get:Classpath
     abstract val scriptingPluginForTests: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val stdlibWebRuntimeForTests: ConfigurableFileCollection
 
     @get:InputFiles
     @get:Classpath
@@ -160,6 +165,7 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
             ifNotEmpty(KOTLIN_TEST_JAR_PATH, kotlinTestJarForTests),
             ifNotEmpty(KOTLIN_ANNOTATIONS_PATH, kotlinAnnotationsForTests),
             ifNotEmpty(KOTLIN_SCRIPTING_PLUGIN_CLASSPATH, scriptingPluginForTests),
+            ifNotEmpty(KOTLIN_WEB_STDLIB_KLIB_PATH, stdlibWebRuntimeForTests),
 
             // JS libs
             ifNotEmpty(KOTLIN_JS_STDLIB_KLIB_PATH, stdlibJsRuntimeForTests),

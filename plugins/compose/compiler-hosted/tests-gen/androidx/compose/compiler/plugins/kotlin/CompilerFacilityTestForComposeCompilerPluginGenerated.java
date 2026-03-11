@@ -90,6 +90,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("inlinedLambda.kt")
+  public void testInlinedLambda() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/inlinedLambda.kt");
+  }
+
+  @Test
   @TestMetadata("interface.kt")
   public void testInterface() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/interface.kt");

@@ -60,10 +60,8 @@ fun serializeSingleFirFile(
         }
     }
 
-    serializerExtension.processFile(file) {
-        for (declaration in file.declarations) {
-            (declaration as? FirClass)?.makeClassProtoWithNested()
-        }
+    for (declaration in file.declarations) {
+        (declaration as? FirClass)?.makeClassProtoWithNested()
     }
 
     return buildKlibPackageFragment(

@@ -784,7 +784,7 @@ internal class ExternalDependenciesBuilder(
 
 @DisableCachingByDefault(because = "CInterop task uses custom Up-To-Date check for content of headers instead of Gradle mechanisms.")
 abstract class CInteropProcess @Inject internal constructor(params: Params) :
-    DefaultTask(),
+    ParallelTask(),
     UsesBuildMetricsService,
     UsesKotlinNativeBundleBuildService,
     UsesClassLoadersCachingBuildService,
@@ -980,7 +980,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     }
 
     // Task action.
-    @TaskAction
+    override fun parallelWork() = processInterop()
     fun processInterop() {
         val buildMetrics = metrics.get()
 

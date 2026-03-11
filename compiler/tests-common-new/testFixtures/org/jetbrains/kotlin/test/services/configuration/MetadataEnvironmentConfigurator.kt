@@ -1,19 +1,17 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.services.configuration
 
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.metadataDestinationDirectory
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
+import org.jetbrains.kotlin.platform.isMultiplatformWeb
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.DependencyRelation.*
@@ -31,10 +29,10 @@ class MetadataEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         module: TestModule,
     ) {
         if (WITH_STDLIB in module.directives) {
-            configuration.add(
-                CLIConfigurationKeys.CONTENT_ROOTS,
-                JvmClasspathRoot(ForTestCompileRuntime.stdlibCommonForTests())
-            )
+            configuration.addJvmClasspathRoot(testServices.standardLibrariesPathProvider.commonStdlibForTests())
+            if (module.targetPlatform(testServices, allowMultiplatform = true).isMultiplatformWeb()) {
+                configuration.addJvmClasspathRoot(testServices.standardLibrariesPathProvider.webStdlibForTests())
+            }
         }
 
         configuration.moduleName = module.name

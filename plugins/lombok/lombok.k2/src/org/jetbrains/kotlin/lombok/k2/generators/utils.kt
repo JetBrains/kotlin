@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
@@ -103,6 +104,8 @@ fun FirClassSymbol<*>.createJavaMethod(
     modality: Modality,
     dispatchReceiverType: ConeSimpleKotlinType? = this.defaultType(),
     isStatic: Boolean = false,
+    methodSymbol: FirNamedFunctionSymbol? = null,
+    methodTypeParameters: Collection<FirTypeParameter> = emptyList(),
 ): FirJavaMethod {
     return buildJavaMethod {
         containingClassSymbol = this@createJavaMethod
@@ -110,11 +113,13 @@ fun FirClassSymbol<*>.createJavaMethod(
         this.returnTypeRef = returnTypeRef
         this.dispatchReceiverType = dispatchReceiverType
         this.name = name
-        symbol = FirNamedFunctionSymbol(CallableId(classId, name))
+        symbol = methodSymbol ?: FirNamedFunctionSymbol(CallableId(classId, name))
         status = FirResolvedDeclarationStatusImpl(visibility, modality, visibility.toEffectiveVisibility(this@createJavaMethod)).apply {
             this.isStatic = isStatic
         }
         isFromSource = true
+        typeParameters += methodTypeParameters
+
         for (valueParameter in valueParameters) {
             this.valueParameters += buildJavaValueParameter {
                 moduleData = this@createJavaMethod.moduleData

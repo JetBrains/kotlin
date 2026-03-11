@@ -164,6 +164,9 @@ tasks.register("distNativeSources", Zip) {
     into('nativeWasmMain') {
         from(project(":kotlin-stdlib").file('native-wasm/src/'))
     }
+    into('nativeWasmWasiMain') {
+        from(project(":kotlin-stdlib").file('native-wasm/wasi/'))
+    }
     into('nativeMain') {
         from(project(':kotlin-native:runtime').file('src/main/kotlin'))
         from(project(':kotlin-native:Interop:Runtime').file('src/main/kotlin'))

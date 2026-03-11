@@ -216,7 +216,7 @@ internal class KotlinCompilationImpl(
 
     //region Attributes
 
-    private val attributes by lazy { HierarchyAttributeContainer(target.attributes) }
+    private val attributes by lazy { HierarchyAttributeContainer(target.attributes, target.project.objects) }
 
     override fun getAttributes(): AttributeContainer = attributes
 

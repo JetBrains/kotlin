@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtensionBase
 import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
-import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
@@ -268,8 +267,6 @@ abstract class MetadataLegacySerializerPhaseBase(
         override val scopeSession: ScopeSession,
         override val metadataVersion: BinaryVersion
     ) : FirSerializerExtensionBase(BuiltInSerializerProtocol) {
-        override val constValueProvider: ConstValueProvider?
-            get() = null
         override val additionalMetadataProvider: FirAdditionalMetadataProvider?
             get() = null
 

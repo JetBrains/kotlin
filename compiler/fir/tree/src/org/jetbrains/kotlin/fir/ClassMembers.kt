@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 fun FirCallableSymbol<*>.dispatchReceiverClassTypeOrNull(): ConeClassLikeType? =
@@ -262,3 +263,13 @@ private object UnnamedContextParameterNameKey : FirDeclarationDataKey()
 var FirValueParameter.generatedContextParameterName: Name? by FirDeclarationDataRegistry.data(UnnamedContextParameterNameKey)
 
 val FirValueParameterSymbol.generatedContextParameterName: Name? get() = fir.generatedContextParameterName
+
+
+private object LocalClassJvmTypeKey : FirDeclarationDataKey()
+
+/**
+ * Stores the FqName of the actual class produced by JVM backend for local classes (see `JvmInventNamesForLocalClasses`).
+ * Used for proper serialization of references to local classes in constant values (like annotation arguments).
+ */
+var FirClass.localClassJvmType: FqName? by FirDeclarationDataRegistry.data(LocalClassJvmTypeKey)
+val FirClassSymbol<*>.localClassJvmType: FqName? get() = fir.localClassJvmType

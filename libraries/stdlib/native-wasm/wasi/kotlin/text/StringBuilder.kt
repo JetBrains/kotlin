@@ -679,8 +679,8 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
     @SinceKotlin("1.4")
     @IgnorableReturnValue
     public fun insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
-        AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
         AbstractList.checkPositionIndex(index, _length)
+        AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
         val extraLength = endIndex - startIndex
         ensureExtraCapacity(extraLength)
 

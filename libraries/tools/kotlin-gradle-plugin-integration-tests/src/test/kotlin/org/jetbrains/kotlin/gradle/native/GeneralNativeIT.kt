@@ -635,7 +635,18 @@ class GeneralNativeIT : KGPBaseTest() {
 
 
             fun assertStacktrace(taskName: String, targetName: String) {
-                val testReport = projectPath.resolve("build/test-results/$taskName/TEST-org.foo.test.TestKt.xml").toFile()
+                val testReportDir = projectPath.resolve("build/test-results/$taskName")
+                assertDirectoryExists(testReportDir, "Directory $testReportDir does not exist")
+                val testReport = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+                    testReportDir.resolve("TEST-org.foo.test.TestKt.xml")
+                } else {
+                    testReportDir.resolve("TEST-$taskName.org.foo.test.TestKt.xml")
+                }
+                assertFileExists(
+                    testReport,
+                    "Test report file $testReport does not exist, current files in directory:\n" +
+                            (testReportDir.listDirectoryEntries().joinToString(", ") ?: "empty")
+                )
                 val stacktrace = JDOMUtil.load(testReport)
                     .getChildren("testcase")
                     .single { it.getAttribute("name").value == "fail" || it.getAttribute("name").value == "fail[$targetName]" }
@@ -644,7 +655,11 @@ class GeneralNativeIT : KGPBaseTest() {
                 assertTrue(stacktrace.contains("""at org\.foo\.test#fail\(.*test\.kt:29\)""".toRegex()))
             }
 
-            val expectedHostTestResult = "TEST-TestKt.xml"
+            val expectedHostTestResult = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+                "TEST-TestKt.xml"
+            } else {
+                "Gradle93-TEST-TestKt.xml"
+            }
             assertTestResults(projectPath.resolve(expectedHostTestResult), hostTestTask)
 
             // K/N doesn't report line numbers correctly on Linux (see KT-35408).
@@ -659,7 +674,12 @@ class GeneralNativeIT : KGPBaseTest() {
                 val testTask = "${testTarget}Test"
 
                 val expectedXmlPath = projectPath.resolve("TEST-TestKt-iOSsim.xml")
-                projectPath.resolve("TEST-TestKt-iOSsim-template.xml").copyTo(expectedXmlPath)
+                val template = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+                    projectPath.resolve("TEST-TestKt-iOSsim-template.xml")
+                } else {
+                    projectPath.resolve("Gradle93-TEST-TestKt-iOSsim-template.xml")
+                }
+                template.copyTo(expectedXmlPath)
                 expectedXmlPath.replaceText("<target>", testTarget)
                 assertTestResults(
                     expectedXmlPath,

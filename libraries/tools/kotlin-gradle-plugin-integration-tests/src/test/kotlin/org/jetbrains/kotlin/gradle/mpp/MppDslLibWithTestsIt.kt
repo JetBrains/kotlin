@@ -64,7 +64,11 @@ class MppDslLibWithTestsIt : KGPBaseTest() {
 
             expectedKotlinOutputFiles.forEach { assertFileExists(it) }
 
-            val expectedTestResults = projectPath.resolve("TEST-all.xml")
+            val expectedTestResults = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+                projectPath.resolve("TEST-all.xml")
+            } else {
+                projectPath.resolve("Gradle93-TEST-all.xml")
+            }
 
             val currentTarget = MPPNativeTargets.current
             expectedTestResults.replaceText("<target>", currentTarget)

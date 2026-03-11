@@ -5,6 +5,7 @@
 
 package kotlinx.cinterop
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.GCUnsafeCall
 
@@ -22,5 +23,6 @@ public class ForeignException internal constructor(public val nativeException: A
 @ExportForCppRuntime
 @BetaInteropApi
 @ExperimentalForeignApi
+@UsedFromCompilerGeneratedCode
 internal fun CreateForeignException(payload: NativePtr): Throwable
         = ForeignException(interpretObjCPointerOrNull<Any?>(payload))

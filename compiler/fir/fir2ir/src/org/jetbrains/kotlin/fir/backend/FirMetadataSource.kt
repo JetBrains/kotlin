@@ -10,8 +10,12 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
+import org.jetbrains.kotlin.fir.localClassJvmType
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -39,6 +43,15 @@ sealed class FirMetadataSource : MetadataSource {
 
     class Class(override val fir: FirClass) : FirMetadataSource(), MetadataSource.Class {
         override var serializedIr: ByteArray? = null
+
+        override fun recordLocalClassType(type: FqName) {
+            require(fir.isLocal) {
+                "Local class type should be recorded only for local classes, but got ${fir.render()}"
+            }
+            fir.localClassJvmType = type
+        }
+
+        override fun asFirSymbol(): FirClassSymbol<*> = fir.symbol
     }
 
     class Function(override val fir: FirFunction) : FirMetadataSource(), MetadataSource.Function

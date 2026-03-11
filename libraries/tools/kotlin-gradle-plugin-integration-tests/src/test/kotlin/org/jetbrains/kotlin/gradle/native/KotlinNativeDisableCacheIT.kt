@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.net.URI
+import kotlin.io.path.appendText
 
 @DisplayName("Kotlin/Native disable cache tests")
 @NativeGradlePluginTests
@@ -60,6 +62,66 @@ internal class KotlinNativeDisableCacheIT : KGPBaseTest() {
             build(taskName) {
                 assertNoDiagnostic(KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic)
                 assertHasDiagnostic(KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic)
+            }
+        }
+    }
+
+    @OptIn(KotlinNativeCacheApi::class)
+    @GradleTest
+    @OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.LINUX])
+    // KT-83353 DisableNativeCache breaks up-to-date checks for non-cacheable K/N targets
+    fun testDisableNativeCacheDoesNotBreakUpToDateCheckForNonCacheableTargets(
+        gradleVersion: GradleVersion
+    ) {
+        nativeProject("native-simple-project", gradleVersion) {
+            gradleProperties.modify {
+                """
+                |$it
+                |org.gradle.caching=true 
+                """.trimMargin()
+            }
+
+            val target = """
+                |kotlin {
+                |    mingwX64 {
+                |        binaries.staticLib()
+                |    }
+                |}
+                """.trimMargin()
+
+            buildGradleKts.append(target)
+
+            val taskName = ":linkDebugStaticMingwX64"
+
+            build(taskName) {
+                assertTasksExecuted(taskName)
+            }
+
+            build(taskName) {
+                assertTasksUpToDate(taskName)
+            }
+
+            // Now disable caching for the target
+            buildGradleKts.replaceText(
+                target,
+                """
+                |kotlin {
+                |    mingwX64 {
+                |        binaries.staticLib {
+                |            @Suppress("DEPRECATION")
+                |            @OptIn(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi::class)
+                |            disableNativeCache(
+                |              org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion.`2_3_20`,
+                |              "Disabled for integration testing"
+                |            )
+                |        }
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            build(taskName) {
+                assertTasksUpToDate(taskName)
             }
         }
     }

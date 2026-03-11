@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.FirEvaluatorResult.*
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -74,12 +76,35 @@ object FirExpressionEvaluator {
             return null
         }
 
-        val type = property.returnTypeRef.coneTypeOrNull?.fullyExpandedType(session)
-        if (type == null || type is ConeErrorType || !type.canBeUsedForConstVal()) {
+        return evaluateVariableValue(
+            property,
+            session,
+            isAllowedType = { canBeUsedForConstVal() },
+            value = { initializer }
+        )
+    }
+
+    fun evaluateParameterDefaultValue(parameter: FirValueParameter, session: FirSession): FirEvaluatorResult? {
+        return evaluateVariableValue(
+            parameter,
+            session,
+            { true },
+            { defaultValue }
+        )
+    }
+
+    private inline fun <T : FirVariable> evaluateVariableValue(
+        variable: T,
+        session: FirSession,
+        isAllowedType: ConeKotlinType.() -> Boolean,
+        value: T.() -> FirExpression?,
+    ): FirEvaluatorResult? {
+        val type = variable.returnTypeRef.coneTypeOrNull?.fullyExpandedType(session)
+        if (type == null || type is ConeErrorType || !type.isAllowedType()) {
             return null
         }
 
-        val initializer = property.initializer
+        val initializer = variable.value()
         if (initializer == null || !initializer.canBeEvaluated(session)) {
             return null
         }
@@ -89,10 +114,6 @@ object FirExpressionEvaluator {
 
     fun evaluateAnnotationArguments(annotation: FirAnnotation, session: FirSession): Map<Name, FirEvaluatorResult>? {
         val argumentMapping = annotation.argumentMapping.mapping
-
-        if (argumentMapping.values.any { expr -> !expr.canBeEvaluated(session) }) {
-            return null
-        }
 
         return argumentMapping.mapValues { (_, expression) -> expression.evaluate(session) }
     }

@@ -28,13 +28,10 @@ import org.gradle.kotlin.dsl.getByType
  * isCanBeDeclared = true
  * ```
  */
-internal fun Configuration.declarable(
-    visible: Boolean = false,
-) {
+internal fun Configuration.declarable() {
     isCanBeResolved = false
     isCanBeConsumed = false
     isCanBeDeclared = true
-    isVisible = visible
 }
 
 
@@ -47,13 +44,10 @@ internal fun Configuration.declarable(
  * isCanBeDeclared = false
  * ```
  */
-internal fun Configuration.consumable(
-    visible: Boolean = false,
-) {
+internal fun Configuration.consumable() {
     isCanBeResolved = false
     isCanBeConsumed = true
     isCanBeDeclared = false
-    isVisible = visible
 }
 
 
@@ -66,13 +60,10 @@ internal fun Configuration.consumable(
  * isCanBeDeclared = false
  * ```
  */
-internal fun Configuration.resolvable(
-    visible: Boolean = false,
-) {
+internal fun Configuration.resolvable() {
     isCanBeResolved = true
     isCanBeConsumed = false
     isCanBeDeclared = false
-    isVisible = visible
 }
 
 

@@ -130,7 +130,6 @@ constructor(
         return project.configurations.register(RUNTIME_CLASSPATH_RESOLVER_CONFIGURATION_NAME) {
             description = "Resolve the runtime classpath for running binary-compatibility-validator."
             resolvable()
-            isVisible = false
             extendsFrom(bcvGenerateClasspath.get())
         }
     }

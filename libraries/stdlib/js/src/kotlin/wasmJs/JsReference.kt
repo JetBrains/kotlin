@@ -18,3 +18,9 @@ public actual inline fun <T : Any> T.toJsReference(): JsReference<T> = unsafeCas
 @ExperimentalWasmJsInterop
 @Suppress("NOTHING_TO_INLINE")
 public actual inline fun <T : Any> JsReference<T>.get(): T = unsafeCast<T>()
+
+@SinceKotlin("2.2")
+@ExperimentalWasmJsInterop
+@Suppress("NOTHING_TO_INLINE")
+@Deprecated("Provided for binary compatibility. JsReference<T>.get() overload should be used instead.", level = DeprecationLevel.HIDDEN)
+public inline fun <T : Any> Any.get(): T = unsafeCast<T>()

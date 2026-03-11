@@ -49,6 +49,12 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
   }
 
   @Test
+  @TestMetadata("builderWithGenerics.kt")
+  public void testBuilderWithGenerics() {
+    runTest("plugins/lombok/testData/diagnostics/builderWithGenerics.kt");
+  }
+
+  @Test
   @TestMetadata("bulderOnRecord.kt")
   public void testBulderOnRecord() {
     runTest("plugins/lombok/testData/diagnostics/bulderOnRecord.kt");

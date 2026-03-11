@@ -42,21 +42,3 @@ public actual inline fun StringBuilder.appendLine(value: Float): StringBuilder =
 @SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.appendLine(value: Double): StringBuilder = append(value).appendLine()
-
-internal actual fun insertString(array: CharArray, destinationIndex: Int, value: String, sourceIndex: Int, count: Int): Int {
-    copyWasmArray(value.getChars(), array.storage, sourceIndex, destinationIndex, count)
-    return count
-}
-
-internal actual fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int): String {
-    val copy = WasmCharArray(size)
-    copyWasmArray(array.storage, copy, start, 0, size)
-    return copy.createString()
-}
-
-internal actual fun insertInt(array: CharArray, start: Int, value: Int): Int {
-    val valueString = value.toString()
-    val length = valueString.length
-    val _ = insertString(array, start, valueString, 0, length)
-    return length
-}
