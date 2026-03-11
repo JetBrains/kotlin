@@ -410,7 +410,9 @@ private inline fun KotlinTypeMarker.anyNestedArgument(predicate: (TypeArgumentMa
     when (this) {
         is FlexibleTypeMarker -> {
             stack.push(c.createTypeArgument(this.lowerBound(), TypeVariance.INV))
-            stack.push(c.createTypeArgument(this.upperBound(), TypeVariance.INV))
+            if (!c.isTriviallyFlexible(this)) {
+                stack.push(c.createTypeArgument(this.upperBound(), TypeVariance.INV))
+            }
         }
         else -> stack.push(c.createTypeArgument(this, TypeVariance.INV))
     }
@@ -432,7 +434,9 @@ private inline fun KotlinTypeMarker.anyNestedArgument(predicate: (TypeArgumentMa
         when (typeProjectionType) {
             is FlexibleTypeMarker -> {
                 addArgumentsToStack(typeProjectionType.lowerBound())
-                addArgumentsToStack(typeProjectionType.upperBound())
+                if (!c.isTriviallyFlexible(typeProjectionType)) {
+                    addArgumentsToStack(typeProjectionType.upperBound())
+                }
             }
             else -> addArgumentsToStack(typeProjectionType)
         }
