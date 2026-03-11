@@ -81,6 +81,18 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.syntheticProductType.set(syntheticImportProjectProductType)
     }
 
+    val projectPathProvider = project.providers.environmentVariable(PROJECT_PATH_ENV)
+    val syntheticImportProjectGenerationTaskForLinkageForCli = registerXcodeIntegrationLinkagePackageGeneration(
+        swiftPMImportExtension = swiftPMImportExtension,
+        projectPathProvider = projectPathProvider,
+        syntheticImportProjectProductType = syntheticImportProjectProductType,
+        transitiveSwiftPMDependenciesProvider = transitiveSwiftPMDependenciesProvider,
+    )
+    registerXcodeIntegrationTasks(
+        projectPathProvider = projectPathProvider,
+        syntheticImportProjectGenerationTaskForLinkageForCli = syntheticImportProjectGenerationTaskForLinkageForCli,
+    )
+
     val computeLocalPackageDependencyInputFiles = project.locateOrRegisterTask<ComputeLocalPackageDependencyInputFiles>(
         ComputeLocalPackageDependencyInputFiles.TASK_NAME,
     ) {
@@ -127,6 +139,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     val syntheticImportTasks = listOf(
         syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
         syntheticImportProjectGenerationTaskForEmbedAndSignLinkage,
+        syntheticImportProjectGenerationTaskForLinkageForCli,
     )
     syntheticImportTasks.forEach {
         it.configure {
@@ -427,5 +440,47 @@ internal fun Project.hasDirectOrTransitiveSwiftPMDependencies(): Provider<Boolea
     val hasDirectSwiftPMDependencies = provider { swiftPMImportExtension.swiftPMDependencies.isNotEmpty() }
     return transitiveSwiftPMDependenciesProvider().map { transitiveDependencies ->
         hasDirectSwiftPMDependencies.get() || transitiveDependencies.metadataByDependencyIdentifier.values.any { it.dependencies.isNotEmpty() }
+    }
+}
+
+private fun Project.registerXcodeIntegrationLinkagePackageGeneration(
+    swiftPMImportExtension: SwiftPMImportExtension,
+    projectPathProvider: Provider<String>,
+    syntheticImportProjectProductType: Provider<SyntheticProductType>,
+    transitiveSwiftPMDependenciesProvider: Provider<TransitiveSwiftPMDependencies>,
+): TaskProvider<GenerateSyntheticLinkageImportProject> {
+    return registerTask<GenerateSyntheticLinkageImportProject>(
+        lowerCamelCaseName(
+            GenerateSyntheticLinkageImportProject.TASK_NAME,
+            "forLinkageForCli",
+        ),
+    ) {
+        it.dependencyIdentifierToImportedSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
+        it.configureWithExtension(swiftPMImportExtension)
+        it.syntheticImportProjectRoot.set(
+            projectPathProvider.flatMap {
+                project.layout.dir(
+                    project.provider { File(it).parentFile.resolve(SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) }
+                )
+            }
+        )
+        it.syntheticProductType.set(syntheticImportProjectProductType)
+    }
+}
+
+private fun Project.registerXcodeIntegrationTasks(
+    syntheticImportProjectGenerationTaskForLinkageForCli: TaskProvider<GenerateSyntheticLinkageImportProject>,
+    projectPathProvider: Provider<String>,
+) {
+    val embedAndSignIntegration = project.registerTask<IntegrateEmbedAndSignIntoXcodeProject>(IntegrateEmbedAndSignIntoXcodeProject.TASK_NAME) {
+        it.dependsOn(syntheticImportProjectGenerationTaskForLinkageForCli)
+        it.currentDir.set(gradle.startParameter.currentDir)
+        it.xcodeprojPath.set(projectPathProvider)
+    }
+    project.registerTask<IntegrateLinkagePackageIntoXcodeProject>(IntegrateLinkagePackageIntoXcodeProject.TASK_NAME) {
+        it.dependsOn(syntheticImportProjectGenerationTaskForLinkageForCli)
+        it.currentDir.set(gradle.startParameter.currentDir)
+        it.xcodeprojPath.set(projectPathProvider)
+        it.mustRunAfter(embedAndSignIntegration)
     }
 }

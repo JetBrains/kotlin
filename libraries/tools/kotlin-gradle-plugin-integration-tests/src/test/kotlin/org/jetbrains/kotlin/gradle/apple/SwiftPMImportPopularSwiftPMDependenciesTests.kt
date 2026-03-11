@@ -1037,6 +1037,84 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
 
             // Full Kotlin linkage (both release and debug)
             testKotlinLinkage()
+
+            // Xcode linkage
+            testXcodeLinkage(isStatic)
+
+            // Verify Package.swift in root project with exact content
+            // Uses synthetic subpackage reference for the producer dependency
+            if (isStatic) {
+                testPackageManifest(
+                    expectedContent = """
+                            // swift-tools-version: 5.9
+                            import PackageDescription
+                            let package = Package(
+                              name: "KotlinMultiplatformLinkedPackage",
+                              platforms: [
+                                .iOS("15.0")
+                              ],
+                              products: [
+                                .library(
+                                  name: "KotlinMultiplatformLinkedPackage",
+                                  type: .none,
+                                  targets: ["KotlinMultiplatformLinkedPackage"]
+                                )
+                              ],
+                              dependencies: [
+                                .package(path: "subpackages/_producer")
+                              ],
+                              targets: [
+                                .target(
+                                  name: "KotlinMultiplatformLinkedPackage",
+                                  dependencies: [
+                                    .product(name: "_producer", package: "_producer")
+                                  ]
+                                )
+                              ]
+                            )
+                        """.trimIndent() + "\n"
+                )
+                // With useSymlink=false, the producer project is copied into the root project at:
+                //   projectPath/producer
+                // The local Swift package lives under:
+                //   projectPath/producer/localSwiftPackage
+                testPackageManifest(
+                    expectedContent = """
+                            // swift-tools-version: 5.9
+                            import PackageDescription
+                            let package = Package(
+                              name: "_producer",
+                              platforms: [
+                                .iOS("15.0")
+                              ],
+                              products: [
+                                .library(
+                                  name: "_producer",
+                                  type: .none,
+                                  targets: ["_producer"]
+                                )
+                              ],
+                              dependencies: [
+                                .package(
+                                  path: "../../../../producer/localSwiftPackage",
+                                )
+                              ],
+                              targets: [
+                                .target(
+                                  name: "_producer",
+                                  dependencies: [
+                                    .product(
+                                      name: "LocalSwiftPackage",
+                                      package: "localSwiftPackage",
+                                    )
+                                  ]
+                                )
+                              ]
+                            )
+                        """.trimIndent() + "\n",
+                    manifestRelativePath = "iosApp/KotlinMultiplatformLinkedPackage/subpackages/_producer/Package.swift"
+                )
+            }
         }
     }
 
@@ -1082,6 +1160,10 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
 
             testVisibleSignatures(expectedCinteropAPIs)
             testKotlinLinkage()
+            testXcodeLinkage(isStatic)
+            if (expectedPackageManifest != null) {
+                testPackageManifest(expectedPackageManifest)
+            }
         }
     }
 
@@ -1100,6 +1182,22 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
 private fun TestProject.testKotlinLinkage() {
     build(":linkReleaseFrameworkIosArm64")
     build(":linkDebugFrameworkIosSimulatorArm64")
+}
+
+@OptIn(EnvironmentalVariablesOverride::class)
+private fun TestProject.testXcodeLinkage(isStatic: Boolean) {
+    build(
+        "integrateLinkagePackage",
+        environmentVariables = EnvironmentalVariables(
+            "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj"
+        )
+    )
+    if (!isStatic) {
+        addEmbedAndSignPhaseForSpmLibrary(projectPath.resolve("iosApp/iosApp.xcodeproj/project.pbxproj"))
+    }
+    buildXcodeProject(
+        xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
+    )
 }
 
 private fun TestProject.testVisibleSignatures(
@@ -1152,4 +1250,55 @@ private fun TestProject.testPackageManifest(
 
 internal fun KotlinMultiplatformExtension.swiftPMDependencies(configure: SwiftPMImportExtension.() -> Unit) {
     (this.extensions.getByName(SwiftPMImportExtension.EXTENSION_NAME) as SwiftPMImportExtension).configure()
+}
+
+private fun addEmbedAndSignPhaseForSpmLibrary(pbxprojFile: Path) {
+    var pbxprojFileContent = pbxprojFile.readText()
+    val buildFileRegex = Regex(
+        """/\* Begin PBXBuildFile section \*/\s+(\w+) = \{\s+isa = PBXBuildFile;\s+productRef = (\w+);\s+\};\s+/\* End PBXBuildFile section \*/"""
+    )
+
+    val match =
+        buildFileRegex.find(pbxprojFileContent) ?: throw IllegalStateException("PBXBuildFile section not found or has unexpected format")
+
+    val buildFileId = match.groupValues[1]
+    val productRefId = match.groupValues[2]
+    val embedFrameworksBuildFileId = "B638C8582EE09DAA00A788A3"
+    val copyFilesBuildPhaseId = "B638C8592EE09DAA00A788A3"
+
+    println("Found buildFileId: $buildFileId")
+    println("Found productRefId: $productRefId")
+
+    // 1. Replace PBXBuildFile section with PBXBuildFile and PBXCopyFilesBuildPhase
+    val newBuildFileSection = """/* Begin PBXBuildFile section */
+		$buildFileId /* KotlinMultiplatformLinkedPackage in Frameworks */ = {isa = PBXBuildFile; productRef = $productRefId /* KotlinMultiplatformLinkedPackage */; };
+		$embedFrameworksBuildFileId /* KotlinMultiplatformLinkedPackage in Embed Frameworks */ = {isa = PBXBuildFile; productRef = $productRefId /* KotlinMultiplatformLinkedPackage */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		$copyFilesBuildPhaseId /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				$embedFrameworksBuildFileId /* KotlinMultiplatformLinkedPackage in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */"""
+
+    pbxprojFileContent = buildFileRegex.replace(pbxprojFileContent, newBuildFileSection)
+
+    // 2. Add the new build phase to the target's buildPhases array
+    val buildPhasesRegex = Regex(
+        """(buildPhases = \(\s+(?:\w+,\s+)+)(\);)\s+(buildRules)"""
+    )
+
+    pbxprojFileContent = buildPhasesRegex.replace(pbxprojFileContent) { matchResult ->
+        "${matchResult.groupValues[1]}$copyFilesBuildPhaseId,\n\t\t\t${matchResult.groupValues[2]}\n\t\t\t${matchResult.groupValues[3]}"
+    }
+
+    pbxprojFile.writeText(pbxprojFileContent)
 }
