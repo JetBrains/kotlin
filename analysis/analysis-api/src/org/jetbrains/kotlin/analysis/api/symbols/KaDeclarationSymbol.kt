@@ -52,10 +52,9 @@ public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
      * see [KaUseSiteVisibilityChecker.isVisible][org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker.isVisible].
      */
     public val visibility: KaSymbolVisibility
-        @OptIn(KaExperimentalApi::class)
-        get() = compilerVisibility.asKaSymbolVisibility
 
     @KaExperimentalApi
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     public val compilerVisibility: Visibility
 
     /**
