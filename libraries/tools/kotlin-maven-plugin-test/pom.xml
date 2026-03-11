@@ -202,35 +202,31 @@
                     <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <version>3.5.4</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                                <configuration>
-                                    <jvm>${kotlinTestBuildJdk}/bin/java</jvm>
-                                    <systemPropertyVariables>
-                                        <!-- Properties required for integration tests run -->
-                                        <!-- Path to maven repo with kotlin artifacts (i.e. kotlin-maven-plugin)
-                                        Can be provisioned with ./gradlew mvnPublish -->
-                                        <kotlin.build.repo>${settings.localRepository}</kotlin.build.repo>
-                                        <kotlin.version>${project.version}</kotlin.version>
-                                        <kotlin.it.localRepo>${project.basedir}/local-repo</kotlin.it.localRepo>
-                                        <kotlin.it.testDirs>${project.basedir}/src/it</kotlin.it.testDirs>
-                                        <!-- ./libraries/tools/kotlin-maven-plugin-test/pom.xml -->
-                                        <kotlin.build.repo>${settings.localRepository}</kotlin.build.repo>
-                                        <kotlin.it.verify-common.bsh>${project.basedir}/verify-common.bsh</kotlin.it.verify-common.bsh>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <jvm>${kotlinTestBuildJdk}/bin/java</jvm>
+                            <systemPropertyVariables>
+                                <!-- Properties required for integration tests run -->
+                                <!-- Path to maven repo with kotlin artifacts (i.e. kotlin-maven-plugin)
+                                Can be provisioned with ./gradlew mvnPublish -->
+                                <kotlin.build.repo>${settings.localRepository}</kotlin.build.repo>
+                                <kotlin.version>${project.version}</kotlin.version>
+                                <kotlin.it.localRepo>${project.basedir}/local-repo</kotlin.it.localRepo>
+                                <kotlin.it.testDirs>${project.basedir}/src/it</kotlin.it.testDirs>
+                                <!-- ./libraries/tools/kotlin-maven-plugin-test/pom.xml -->
+                                <kotlin.build.repo>${settings.localRepository}</kotlin.build.repo>
+                                <kotlin.it.verify-common.bsh>${project.basedir}/verify-common.bsh</kotlin.it.verify-common.bsh>
 
-                                        <!-- JDK configuration must follow this rule jdk\d+Home -->
-                                        <jdk8Home>${jdk8Home}</jdk8Home>
-                                        <jdk11Home>${jdk11Home}</jdk11Home>
-                                        <jdk17Home>${jdk17Home}</jdk17Home>
-                                        <jdk21Home>${jdk21Home}</jdk21Home>
-                                    </systemPropertyVariables>
-                                </configuration>
-                            </execution>
-                        </executions>
+                                <!-- JDK configuration must follow this rule jdk\d+Home -->
+                                <jdk8Home>${jdk8Home}</jdk8Home>
+                                <jdk11Home>${jdk11Home}</jdk11Home>
+                                <jdk17Home>${jdk17Home}</jdk17Home>
+                                <jdk21Home>${jdk21Home}</jdk21Home>
+                            </systemPropertyVariables>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
