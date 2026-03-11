@@ -575,7 +575,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_PHASES_TO_VALIDATE_BEFORE: CommonCompilerArgument<Array<String>?> =
+    public val X_PHASES_TO_VALIDATE_BEFORE: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_PHASES_TO_VALIDATE_BEFORE", KotlinReleaseVersion(1, 3, 40))
 
     /**
