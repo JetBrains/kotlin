@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: test/KotlinClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -35,7 +34,6 @@ KaNamedClassSymbol:
   classId: test/SuperClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -71,7 +69,6 @@ KaNamedClassSymbol:
   classId: test/JavaClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

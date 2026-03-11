@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /MergePoint.value
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

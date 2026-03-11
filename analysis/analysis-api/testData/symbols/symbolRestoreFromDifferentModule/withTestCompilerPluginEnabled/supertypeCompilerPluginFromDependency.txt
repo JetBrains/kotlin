@@ -7,7 +7,6 @@ KaNamedClassSymbol:
   classId: foo/Foo
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -42,7 +41,6 @@ KaNamedClassSymbol:
   classId: foo/Foo
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

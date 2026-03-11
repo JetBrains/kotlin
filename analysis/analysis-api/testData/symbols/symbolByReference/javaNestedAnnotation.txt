@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: JavaClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: PackageVisibility
   contextReceivers: []
   isActual: false
   isData: false

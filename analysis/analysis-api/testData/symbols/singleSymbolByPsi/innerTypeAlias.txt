@@ -1,7 +1,6 @@
 KaTypeAliasSymbol:
   annotations: []
   classId: Outer.MyAlias
-  compilerVisibility: Public
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: [
@@ -39,7 +38,6 @@ KaTypeAliasSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -57,7 +55,6 @@ KaTypeAliasSymbol:
       importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false

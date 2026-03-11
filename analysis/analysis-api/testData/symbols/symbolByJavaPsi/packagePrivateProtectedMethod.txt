@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /JavaClass.foo
-  compilerVisibility: ProtectedAndPackage
   contextParameters: []
   contextReceivers: []
   contractEffects: []

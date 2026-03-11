@@ -347,7 +347,6 @@ KtCallExpression(295,303): 'yield(m)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -410,7 +409,6 @@ KtNameReferenceExpression(295,300): 'yield'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -497,7 +495,6 @@ KtCallExpression(312,320): 'yield(X)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -560,7 +557,6 @@ KtNameReferenceExpression(312,317): 'yield'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -740,7 +736,6 @@ KtCallExpression(351,359): 'yield(X)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -803,7 +798,6 @@ KtNameReferenceExpression(351,356): 'yield'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -893,7 +887,6 @@ KtCallExpression(368,376): 'yield(m)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -956,7 +949,6 @@ KtNameReferenceExpression(368,373): 'yield'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1143,7 +1135,6 @@ KtCallExpression(423,431): 'yield(X)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1206,7 +1197,6 @@ KtNameReferenceExpression(423,428): 'yield'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1386,7 +1376,6 @@ KtCallExpression(462,470): 'yield(X)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -1448,7 +1437,6 @@ KtNameReferenceExpression(462,467): 'yield'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
