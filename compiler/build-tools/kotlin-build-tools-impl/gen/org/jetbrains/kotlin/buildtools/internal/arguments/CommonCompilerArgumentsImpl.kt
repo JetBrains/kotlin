@@ -274,7 +274,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (API_VERSION in this) { arguments.apiVersion = get(API_VERSION)?.stringValue}
     if (KOTLIN_HOME in this) { arguments.kotlinHome = get(KOTLIN_HOME)?.absolutePathStringOrThrow()}
     if (LANGUAGE_VERSION in this) { arguments.languageVersion = get(LANGUAGE_VERSION)?.stringValue}
-    if (OPT_IN in this) { arguments.optIn = get(OPT_IN) ?: emptyArray()}
+    if (OPT_IN in this) { arguments.optIn = get(OPT_IN).toTypedArray()}
     if (PROGRESSIVE in this) { arguments.progressiveMode = get(PROGRESSIVE)}
     if (SCRIPT in this) { arguments.script = get(SCRIPT)}
     if (COMPILER_PLUGINS in this) { arguments.applyCompilerPlugins(get(COMPILER_PLUGINS))}
@@ -380,7 +380,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[API_VERSION] = arguments.apiVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -api-version value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[KOTLIN_HOME] = arguments.kotlinHome?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[LANGUAGE_VERSION] = arguments.languageVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -language-version value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[OPT_IN] = arguments.optIn } catch (_: NoSuchMethodError) {  }
+    try { this[OPT_IN] = arguments.optIn.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[PROGRESSIVE] = arguments.progressiveMode } catch (_: NoSuchMethodError) {  }
     try { this[SCRIPT] = arguments.script } catch (_: NoSuchMethodError) {  }
     try { this[COMPILER_PLUGINS] = applyCompilerPlugins(this[COMPILER_PLUGINS], arguments) } catch (_: NoSuchMethodError) {  }
@@ -679,7 +679,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val LANGUAGE_VERSION: CommonCompilerArgument<KotlinVersion?> =
         CommonCompilerArgument("LANGUAGE_VERSION")
 
-    public val OPT_IN: CommonCompilerArgument<Array<String>?> = CommonCompilerArgument("OPT_IN")
+    public val OPT_IN: CommonCompilerArgument<List<String>> = CommonCompilerArgument("OPT_IN")
 
     public val PROGRESSIVE: CommonCompilerArgument<Boolean> = CommonCompilerArgument("PROGRESSIVE")
 

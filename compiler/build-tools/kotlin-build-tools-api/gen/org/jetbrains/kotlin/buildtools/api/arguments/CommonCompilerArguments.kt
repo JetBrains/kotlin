@@ -832,7 +832,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.
      */
     @JvmField
-    public val OPT_IN: CommonCompilerArgument<Array<String>?> =
+    public val OPT_IN: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("OPT_IN", KotlinReleaseVersion(1, 4, 0))
 
     /**

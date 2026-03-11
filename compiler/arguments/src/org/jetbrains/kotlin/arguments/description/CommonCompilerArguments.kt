@@ -99,6 +99,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "opt-in"
         deprecatedName = "Xopt-in"
@@ -106,6 +107,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             "Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<fq.name>".asReleaseDependent()
+        argumentType = StringListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
