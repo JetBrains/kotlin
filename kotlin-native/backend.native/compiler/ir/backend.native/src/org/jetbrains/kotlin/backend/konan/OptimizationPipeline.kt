@@ -53,6 +53,8 @@ data class LlvmPipelineConfig(
         val sspMode: StackProtectorMode = StackProtectorMode.NO,
         val sanitizer: SanitizerKind? = null,
         val shouldInlineSafepoints: Boolean = false,
+        val saveIrAfterPasses: List<String> = emptyList(),
+        val saveIrDirectory: java.io.File? = null,
 )
 
 private fun getCpuModel(context: NativeBackendPhaseContext): String {
@@ -164,6 +166,13 @@ internal fun createLTOFinalPipelineConfig(
         context.shouldContainDebugInfo() -> null
         else -> null
     }
+    val saveIrAfterPasses = context.config.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR).mapNotNull {
+        if (it.startsWith("llvm:")) {
+            it.removePrefix("llvm:")
+        } else {
+            null
+        }
+    }
 
     return LlvmPipelineConfig(
             targetTriple,
@@ -185,6 +194,8 @@ internal fun createLTOFinalPipelineConfig(
             sspMode = config.stackProtectorMode,
             sanitizer = config.sanitizer,
             shouldInlineSafepoints = context.shouldInlineSafepoints(),
+            saveIrAfterPasses = saveIrAfterPasses,
+            saveIrDirectory = if (saveIrAfterPasses.isNotEmpty()) context.config.saveLlvmIrDirectory else null,
     )
 }
 
@@ -245,6 +256,8 @@ abstract class LlvmOptimizationPipeline(
                     targetMachine,
                     InlinerThreshold = config.inlineThreshold ?: -1,
                     Profile = it,
+                    SaveIRAfter = config.saveIrAfterPasses.joinToString(","),
+                    SaveIRAfterDirectory = config.saveIrDirectory?.absolutePath,
             )
         }
         require(errorCode == null) {

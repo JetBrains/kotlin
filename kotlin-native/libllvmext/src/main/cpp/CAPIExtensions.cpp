@@ -11,6 +11,7 @@
 
 #include "Hide.hpp"
 #include "PassesProfileHandler.h"
+#include "PrintBitcode.h"
 #include "RemoveRedundantSafepoints.hpp"
 #include "StackProtector.hpp"
 #include "ThreadSanitizer.hpp"
@@ -47,7 +48,9 @@ extern "C" LLVMErrorRef LLVMKotlinRunPasses(
         const char *Passes,
         LLVMTargetMachineRef TM,
         int InlinerThreshold,
-        LLVMKotlinPassesProfileRef* Profile
+        LLVMKotlinPassesProfileRef* Profile,
+        const char *SaveIRAfter,
+        const char *SaveIRAfterDirectory
 ) {
     // Implementation is taken from https://github.com/Kotlin/llvm-project/blob/0fa53d5183ec3c0654631d719dd6dfa7a270ca98/llvm/lib/Passes/PassBuilderBindings.cpp#L47
     TargetMachine *Machine = unwrap(TM);
@@ -101,6 +104,12 @@ extern "C" LLVMErrorRef LLVMKotlinRunPasses(
 
     StandardInstrumentations SI(Mod->getContext(), false, false);
     SI.registerCallbacks(PIC, &MAM);
+
+    kotlin::PrintBitcodeInstrumentation PBI;
+    if (SaveIRAfter != nullptr && SaveIRAfterDirectory != nullptr) {
+        PBI.setup(SaveIRAfter, SaveIRAfterDirectory);
+    }
+    PBI.registerCallbacks(PIC);
 
     PassesProfileHandler PPH(Profile != nullptr);
     // Putting last to make this the last callback for before* events;

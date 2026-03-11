@@ -27,7 +27,9 @@ LLVMErrorRef LLVMKotlinRunPasses(
         const char *Passes,
         LLVMTargetMachineRef TM,
         int InlinerThreshold,
-        LLVMKotlinPassesProfileRef* Profile
+        LLVMKotlinPassesProfileRef* Profile,
+        const char *SaveIRAfter,
+        const char *SaveIRAfterDirectory
 );
 
 # ifdef __cplusplus
