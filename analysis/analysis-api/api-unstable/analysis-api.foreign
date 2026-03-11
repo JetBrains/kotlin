@@ -15,7 +15,6 @@ org/jetbrains/kotlin/builtins/functions/FunctionTypeKind
 org/jetbrains/kotlin/config/CompilerConfiguration
 org/jetbrains/kotlin/config/CompilerConfigurationKey
 org/jetbrains/kotlin/config/LanguageVersionSettings
-org/jetbrains/kotlin/descriptors/Visibility
 org/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget
 org/jetbrains/kotlin/descriptors/annotations/KotlinTarget
 org/jetbrains/kotlin/idea/references/KtArrayAccessReference
