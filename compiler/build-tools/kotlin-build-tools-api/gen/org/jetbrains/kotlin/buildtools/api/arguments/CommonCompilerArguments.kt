@@ -751,7 +751,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_VERBOSE_PHASES: CommonCompilerArgument<Array<String>?> =
+    public val X_VERBOSE_PHASES: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_VERBOSE_PHASES", KotlinReleaseVersion(1, 3, 20))
 
     /**

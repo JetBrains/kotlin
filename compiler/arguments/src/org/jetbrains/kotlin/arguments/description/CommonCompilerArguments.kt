@@ -391,10 +391,12 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     }
 
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xverbose-phases"
         description = "Be verbose while performing the given backend phases.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
+        argumentType = StringListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_3_20,

@@ -231,7 +231,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_USE_FIR_IC in this) { arguments.useFirIC = get(X_USE_FIR_IC)}
     if (X_USE_FIR_LT in this) { arguments.useFirLT = get(X_USE_FIR_LT)}
     try { if (X_USE_K2 in this) { arguments.setUsingReflection("useK2", get(X_USE_K2))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_K2. Current compiler version is: $KC_VERSION, but the argument was removed in 2.2.0""").initCause(e) }
-    if (X_VERBOSE_PHASES in this) { arguments.verbosePhases = get(X_VERBOSE_PHASES) ?: emptyArray()}
+    if (X_VERBOSE_PHASES in this) { arguments.verbosePhases = get(X_VERBOSE_PHASES).toTypedArray()}
     try { if (X_VERIFY_IR in this) { arguments.verifyIr = get(X_VERIFY_IR)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_VERIFY_IR. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
     try { if (X_VERIFY_IR_VISIBILITY in this) { arguments.verifyIrVisibility = get(X_VERIFY_IR_VISIBILITY)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_VERIFY_IR_VISIBILITY. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
     try { if (X_WARNING_LEVEL in this) { arguments.warningLevels = get(X_WARNING_LEVEL) ?: emptyArray()} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_WARNING_LEVEL. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
@@ -323,7 +323,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_USE_FIR_IC] = arguments.useFirIC } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_FIR_LT] = arguments.useFirLT } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_K2] = arguments.getUsingReflection("useK2") } catch (_: NoSuchMethodError) {  }
-    try { this[X_VERBOSE_PHASES] = arguments.verbosePhases } catch (_: NoSuchMethodError) {  }
+    try { this[X_VERBOSE_PHASES] = arguments.verbosePhases.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_VERIFY_IR] = arguments.verifyIr } catch (_: NoSuchMethodError) {  }
     try { this[X_VERIFY_IR_VISIBILITY] = arguments.verifyIrVisibility } catch (_: NoSuchMethodError) {  }
     try { this[X_WARNING_LEVEL] = arguments.warningLevels } catch (_: NoSuchMethodError) {  }
@@ -567,7 +567,7 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_USE_K2: CommonCompilerArgument<Boolean> = CommonCompilerArgument("X_USE_K2")
 
-    public val X_VERBOSE_PHASES: CommonCompilerArgument<Array<String>?> =
+    public val X_VERBOSE_PHASES: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_VERBOSE_PHASES")
 
     public val X_VERIFY_IR: CommonCompilerArgument<String?> = CommonCompilerArgument("X_VERIFY_IR")

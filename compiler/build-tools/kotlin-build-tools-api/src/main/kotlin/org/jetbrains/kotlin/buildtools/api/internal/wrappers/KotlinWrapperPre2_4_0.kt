@@ -234,6 +234,14 @@ internal class KotlinWrapperPre2_4_0(
                     arrayValue.toList() as V
                 }
 
+                CommonCompilerArguments.X_VERBOSE_PHASES -> {
+                    @Suppress("SENSELESS_COMPARISON")
+                    if (delegate[key] == null) return emptyList<String>() as V
+
+                    val arrayValue = delegate[key] as Array<String>
+                    arrayValue.toList() as V
+                }
+
                 else -> delegate[key]
             }
         }
@@ -297,6 +305,15 @@ internal class KotlinWrapperPre2_4_0(
                 }
 
                 CommonCompilerArguments.X_PHASES_TO_VALIDATE_AFTER -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<String>? = (value as? List<*>)?.takeIf { it.all { item -> item is String } } as List<String>?
+                    val arrayValue = listValue?.toTypedArray()
+                    val arrayKey = CommonCompilerArguments.CommonCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
+
+                    delegate[arrayKey] = arrayValue
+                }
+
+                CommonCompilerArguments.X_VERBOSE_PHASES -> {
                     @Suppress("UNCHECKED_CAST")
                     val listValue: List<String>? = (value as? List<*>)?.takeIf { it.all { item -> item is String } } as List<String>?
                     val arrayValue = listValue?.toTypedArray()
