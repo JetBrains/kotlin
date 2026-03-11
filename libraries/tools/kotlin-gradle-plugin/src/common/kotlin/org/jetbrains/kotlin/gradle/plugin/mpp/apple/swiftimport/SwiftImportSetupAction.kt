@@ -375,7 +375,7 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
     targetSdk: String,
     targetPlatform: String,
 ): TaskProvider<ConvertSyntheticSwiftPMImportProjectIntoDefFile> {
-    return project.registerTask<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(
+    return project.locateOrRegisterTask<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(
         lowerCamelCaseName(
             ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME,
             targetSdk,
