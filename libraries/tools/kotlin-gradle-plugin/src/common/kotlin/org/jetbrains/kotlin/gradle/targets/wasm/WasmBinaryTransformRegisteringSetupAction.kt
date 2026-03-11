@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.gradle.targets.wasm
 
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
-import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
-import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin
@@ -88,7 +86,7 @@ internal val WasmBinaryTransformRegisteringSetupAction = KotlinCompilationSideEf
 
                 parameters.compilerOptions.set(
                     linkTaskProvider.map {
-                        val args = K2JSCompilerArguments()
+                        val args = KotlinWasmCompilerArguments()
                         KotlinCommonCompilerOptionsHelper.fillCompilerArguments(it.compilerOptions, args)
                         args
                     }
