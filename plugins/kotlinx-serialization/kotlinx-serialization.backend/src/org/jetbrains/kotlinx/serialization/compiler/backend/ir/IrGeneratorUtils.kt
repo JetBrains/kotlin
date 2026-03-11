@@ -6,11 +6,15 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.jvm.lower.getSingletonOrConstantForOptimizableDelegatedProperty
+import org.jetbrains.kotlin.backend.jvm.lower.returnsResultOfStdlibCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
@@ -135,4 +139,29 @@ internal fun IrTypeArgument.indexInClass(serializableClass: IrClass): Int? {
 
     return rootTypeParameter?.index
 }
+
+/**
+ * Criteria for delegate optimizations on the JVM.
+ *
+ * TODO: use [org.jetbrains.kotlin.backend.jvm.lower.getRichPropertyReferenceForOptimizableDelegatedProperty] instead once
+ * FIR2IR emits rich property references (OSIP-247)
+ *
+ * Before that, keep two implementations consistent.
+ */
+internal fun IrProperty.getPropertyReferenceForOptimizableDelegatedProperty(): IrPropertyReference? {
+    if (!isDelegated || isFakeOverride || backingField == null) return null
+
+    val delegate = backingField?.initializer?.expression
+    if (delegate !is IrPropertyReference ||
+        getter?.returnsResultOfStdlibCall == false ||
+        setter?.returnsResultOfStdlibCall == false
+    ) return null
+
+    return delegate
+}
+
+/** Returns true if a delegate is optimizable on the JVM, omitting a `$delegate` auxiliary property */
+internal fun IrProperty.isJvmOptimizableDelegate(): Boolean =
+    isDelegated && !isFakeOverride && backingField != null && // fast path
+            (getPropertyReferenceForOptimizableDelegatedProperty() != null || getSingletonOrConstantForOptimizableDelegatedProperty() != null)
 

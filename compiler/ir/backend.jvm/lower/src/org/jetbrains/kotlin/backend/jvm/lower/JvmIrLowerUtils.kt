@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.util.shallowCopyOrNull
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.org.objectweb.asm.Handle
 
-internal val IrSimpleFunction.returnsResultOfStdlibCall: Boolean
+val IrSimpleFunction.returnsResultOfStdlibCall: Boolean
     get() {
         fun IrStatement.isStdlibCall() =
             this is IrCall && symbol.owner.getPackageFragment().packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
@@ -39,22 +39,11 @@ internal val IrSimpleFunction.returnsResultOfStdlibCall: Boolean
         }
     }
 
-// Criteria for delegate optimizations on the JVM.
-// All cases must be reflected in isJvmOptimizableDelegate() to inform the kotlinx-serialization plugin.
-internal fun IrProperty.getPropertyReferenceForOptimizableDelegatedProperty(): IrPropertyReference? {
-    if (!isDelegated || isFakeOverride || backingField == null) return null
-
-    val delegate = backingField?.initializer?.expression
-    if (delegate !is IrPropertyReference ||
-        getter?.returnsResultOfStdlibCall == false ||
-        setter?.returnsResultOfStdlibCall == false
-    ) return null
-
-    return delegate
-}
-
-// Criteria for delegate optimizations on the JVM.
-// All cases must be reflected in isJvmOptimizableDelegate() to inform the kotlinx-serialization plugin.
+/** Criteria for delegate optimizations on the JVM.
+ *
+ * Keep it consistent with `org.jetbrains.kotlinx.serialization.compiler.backend.ir.getPropertyReferenceForOptimizableDelegatedProperty`
+ * until it's replaced with this implementation.
+ */
 internal fun IrProperty.getRichPropertyReferenceForOptimizableDelegatedProperty(): IrRichPropertyReference? {
     if (!isDelegated || isFakeOverride || backingField == null) return null
 
@@ -67,7 +56,7 @@ internal fun IrProperty.getRichPropertyReferenceForOptimizableDelegatedProperty(
     return delegate
 }
 
-internal fun IrProperty.getSingletonOrConstantForOptimizableDelegatedProperty(): IrExpression? {
+fun IrProperty.getSingletonOrConstantForOptimizableDelegatedProperty(): IrExpression? {
     fun IrExpression.isInlineable(): Boolean =
         when (this) {
             is IrConst, is IrGetSingletonValue -> true
@@ -86,11 +75,6 @@ internal fun IrProperty.getSingletonOrConstantForOptimizableDelegatedProperty():
     if (!isDelegated || isFakeOverride || backingField == null) return null
     return backingField?.initializer?.expression?.takeIf { it.isInlineable() }
 }
-
-/** Returns true if a delegate is optimizable on the JVM, omitting a `$delegate` auxiliary property */
-fun IrProperty.isJvmOptimizableDelegate(): Boolean =
-    isDelegated && !isFakeOverride && backingField != null && // fast path
-            (getPropertyReferenceForOptimizableDelegatedProperty() != null || getSingletonOrConstantForOptimizableDelegatedProperty() != null)
 
 internal val IrRichPropertyReference.constInitializer: IrExpression?
     get() {
