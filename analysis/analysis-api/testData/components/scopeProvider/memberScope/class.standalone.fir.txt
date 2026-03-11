@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: test/C.foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -47,7 +46,6 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -76,13 +74,11 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
     importableFqName: null
   callableId: test/C.bar
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -154,7 +150,6 @@ KaKotlinPropertySymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: test/A.perform
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -200,7 +195,6 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -229,13 +223,11 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
     importableFqName: null
   callableId: test/A.x
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -307,7 +299,6 @@ KaKotlinPropertySymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.equals
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -338,7 +329,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -384,7 +374,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.hashCode
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -428,7 +417,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.toString
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -474,7 +462,6 @@ KaNamedClassSymbol:
   classId: test/C.C2
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -506,7 +493,6 @@ KaNamedClassSymbol:
   classId: test/C.O2
   classKind: OBJECT
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -538,7 +524,6 @@ KaNamedClassSymbol:
   classId: test/C.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -570,7 +555,6 @@ KaNamedClassSymbol:
   classId: test/A.C1
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -602,7 +586,6 @@ KaNamedClassSymbol:
   classId: test/A.O1
   classKind: OBJECT
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -632,7 +615,6 @@ KaNamedClassSymbol:
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: test/C
   contextReceivers: []
   hasStableParameterNames: true

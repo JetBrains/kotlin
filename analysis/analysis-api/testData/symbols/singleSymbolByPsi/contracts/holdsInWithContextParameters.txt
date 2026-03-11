@@ -1,12 +1,10 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /conditionInContext
-  compilerVisibility: Public
   contextParameters: [
     KaContextParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       isActual: false
       isExpect: false
@@ -47,7 +45,6 @@ KaNamedFunctionSymbol:
                 KaContextParameterSymbol:
                   annotations: []
                   callableId: null
-                  compilerVisibility: Public
                   contextReceivers: []
                   isActual: false
                   isExpect: false
@@ -75,7 +72,6 @@ KaNamedFunctionSymbol:
             KaValueParameterSymbol:
               annotations: []
               callableId: null
-              compilerVisibility: Public
               contextReceivers: []
               generatedPrimaryConstructorProperty: null
               hasDeclaredDefaultValue: false
@@ -137,7 +133,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false

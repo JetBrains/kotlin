@@ -3,7 +3,6 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -32,13 +31,11 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
     importableFqName: null
   callableId: /I.p
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -110,7 +107,6 @@ KaKotlinPropertySymbol:
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: I
   contextReceivers: []
   hasStableParameterNames: true
@@ -132,14 +128,12 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
         annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -168,13 +162,11 @@ KaConstructorSymbol:
           deprecationStatus: null
           importableFqName: null
         callableId: /I.p
-        compilerVisibility: Private
         contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Private
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false

@@ -7,7 +7,6 @@ KtCallExpression(168,182): 'foo(1L, "str")'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -30,7 +29,6 @@ KtCallExpression(168,182): 'foo(1L, "str")'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false

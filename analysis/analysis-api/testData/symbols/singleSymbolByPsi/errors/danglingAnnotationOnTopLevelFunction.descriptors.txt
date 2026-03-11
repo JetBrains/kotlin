@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

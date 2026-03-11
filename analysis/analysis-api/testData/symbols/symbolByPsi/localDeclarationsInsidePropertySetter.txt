@@ -1,7 +1,6 @@
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isExpect: false
@@ -28,7 +27,6 @@ KaLocalVariableSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Local
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -70,7 +68,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -100,7 +97,6 @@ KaNamedClassSymbol:
 KaTypeAliasSymbol:
   annotations: []
   classId: null
-  compilerVisibility: Local
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -124,7 +120,6 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -149,13 +144,11 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
     importableFqName: null
   callableId: /x
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -207,7 +200,6 @@ KaKotlinPropertySymbol:
   setter: KaPropertySetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -223,7 +215,6 @@ KaKotlinPropertySymbol:
     parameter: KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -261,7 +252,6 @@ KaKotlinPropertySymbol:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false

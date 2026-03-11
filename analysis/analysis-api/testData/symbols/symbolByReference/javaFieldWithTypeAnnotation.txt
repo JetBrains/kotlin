@@ -4,7 +4,6 @@ KaJavaFieldSymbol:
       psi: null
   ]
   callableId: /JavaClass.field
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isExpect: false

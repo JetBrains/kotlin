@@ -1,7 +1,6 @@
 KaJavaFieldSymbol:
   annotations: []
   callableId: /BaseClass.bar
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isExpect: false

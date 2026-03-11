@@ -1,14 +1,12 @@
 KaValueParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
     annotations: []
     backingFieldSymbol: KaBackingFieldSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Private
       contextReceivers: []
       isActual: false
       isExpect: false
@@ -37,13 +35,11 @@ KaValueParameterSymbol:
       deprecationStatus: null
       importableFqName: null
     callableId: pack/Anno.value
-    compilerVisibility: Public
     contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false

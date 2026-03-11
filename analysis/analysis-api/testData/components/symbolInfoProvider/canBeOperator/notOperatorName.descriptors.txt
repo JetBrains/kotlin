@@ -2,7 +2,6 @@ FUNCTION:
   KaNamedFunctionSymbol:
   annotations: []
   callableId: /A.something
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -44,7 +43,6 @@ FUNCTION:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false

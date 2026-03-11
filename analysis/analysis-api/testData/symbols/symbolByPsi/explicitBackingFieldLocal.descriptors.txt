@@ -3,7 +3,6 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -37,13 +36,11 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
     importableFqName: null
   callableId: null
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -127,7 +124,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -157,7 +153,6 @@ KaNamedClassSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /test
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

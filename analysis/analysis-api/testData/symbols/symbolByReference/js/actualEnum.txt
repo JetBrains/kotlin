@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Cloneable.clone
-  compilerVisibility: Protected
   contextParameters: []
   contextReceivers: []
   contractEffects: []

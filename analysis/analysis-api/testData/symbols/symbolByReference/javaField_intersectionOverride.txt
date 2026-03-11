@@ -1,7 +1,6 @@
 KaJavaFieldSymbol:
   annotations: []
   callableId: /Config.minValue
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isExpect: false

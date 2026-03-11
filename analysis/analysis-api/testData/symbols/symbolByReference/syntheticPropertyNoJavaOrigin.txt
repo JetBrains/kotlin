@@ -2,12 +2,10 @@ KaSyntheticJavaPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /Base.foo
-  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: /Base.getFoo
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false

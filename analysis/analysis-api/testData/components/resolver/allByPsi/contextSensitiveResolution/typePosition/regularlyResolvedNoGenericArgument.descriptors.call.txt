@@ -160,7 +160,6 @@ KtNameReferenceExpression(287,288): 'z'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Local
             contextReceivers: []
             isActual: false
             isExpect: false

@@ -1,7 +1,6 @@
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isExpect: false

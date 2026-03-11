@@ -55,7 +55,6 @@ KtThisExpression(51,55): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -82,7 +81,6 @@ KtNameReferenceExpression(51,55): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -190,7 +188,6 @@ KtThisExpression(143,147): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -217,7 +214,6 @@ KtNameReferenceExpression(143,147): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -325,7 +321,6 @@ KtThisExpression(234,238): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -352,7 +347,6 @@ KtNameReferenceExpression(234,238): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -460,7 +454,6 @@ KtThisExpression(325,329): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -487,7 +480,6 @@ KtNameReferenceExpression(325,329): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -595,7 +587,6 @@ KtThisExpression(416,420): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -622,7 +613,6 @@ KtNameReferenceExpression(416,420): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false

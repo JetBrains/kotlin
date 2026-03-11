@@ -4,7 +4,6 @@ KtNameReferenceExpression(64,68): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isExpect: false

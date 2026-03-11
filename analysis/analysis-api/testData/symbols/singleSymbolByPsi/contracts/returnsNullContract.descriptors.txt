@@ -4,7 +4,6 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /returnsNullContract
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -22,7 +21,6 @@ KaNamedFunctionSymbol:
                 KaValueParameterSymbol:
                   annotations: []
                   callableId: null
-                  compilerVisibility: Local
                   contextReceivers: []
                   generatedPrimaryConstructorProperty: null
                   hasDeclaredDefaultValue: false
@@ -80,7 +78,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false

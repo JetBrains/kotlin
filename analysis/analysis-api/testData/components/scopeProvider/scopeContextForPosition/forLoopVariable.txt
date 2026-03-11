@@ -14,7 +14,6 @@ scopes:
       KaLocalVariableSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -52,7 +51,6 @@ scopes:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -96,7 +94,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: test/usage
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -127,7 +124,6 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false

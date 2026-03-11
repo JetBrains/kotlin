@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: kotlin/io/FileWalkDirection
   classKind: ENUM_CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false

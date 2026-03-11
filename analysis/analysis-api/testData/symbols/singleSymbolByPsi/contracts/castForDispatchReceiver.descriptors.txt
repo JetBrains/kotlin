@@ -4,7 +4,6 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /Result.isFailure
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -19,7 +18,6 @@ KaNamedFunctionSymbol:
                 KaReceiverParameterSymbol:
                   annotations: []
                   callableId: null
-                  compilerVisibility: Local
                   contextReceivers: []
                   isActual: false
                   isExpect: false

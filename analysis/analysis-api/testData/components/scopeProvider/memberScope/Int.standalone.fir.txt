@@ -4,7 +4,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.compareTo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -35,7 +34,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -84,7 +82,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.compareTo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -115,7 +112,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -164,7 +160,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.compareTo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -195,7 +190,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -244,7 +238,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.compareTo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -275,7 +268,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -324,7 +316,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.compareTo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -355,7 +346,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -404,7 +394,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.compareTo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -435,7 +424,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -484,7 +472,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.plus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -515,7 +502,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -564,7 +550,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.plus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -595,7 +580,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -644,7 +628,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.plus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -675,7 +658,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -724,7 +706,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.plus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -755,7 +736,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -804,7 +784,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.plus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -835,7 +814,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -884,7 +862,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.plus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -915,7 +892,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -964,7 +940,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.minus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -995,7 +970,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1044,7 +1018,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.minus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1075,7 +1048,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1124,7 +1096,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.minus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1155,7 +1126,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1204,7 +1174,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.minus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1235,7 +1204,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1284,7 +1252,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.minus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1315,7 +1282,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1364,7 +1330,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.minus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1395,7 +1360,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1444,7 +1408,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.times
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1475,7 +1438,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1524,7 +1486,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.times
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1555,7 +1516,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1604,7 +1564,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.times
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1635,7 +1594,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1684,7 +1642,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.times
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1715,7 +1672,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1764,7 +1720,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.times
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1795,7 +1750,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1844,7 +1798,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.times
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1875,7 +1828,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1924,7 +1876,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.div
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1955,7 +1906,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -2004,7 +1954,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.div
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2035,7 +1984,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -2084,7 +2032,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.div
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2115,7 +2062,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -2164,7 +2110,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.div
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2195,7 +2140,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -2244,7 +2188,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.div
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2275,7 +2218,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -2324,7 +2266,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.div
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2355,7 +2296,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -2406,7 +2346,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.rem
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2437,7 +2376,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -2488,7 +2426,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.rem
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2519,7 +2456,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -2570,7 +2506,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.rem
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2601,7 +2536,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -2652,7 +2586,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.rem
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2683,7 +2616,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -2734,7 +2666,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.rem
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2765,7 +2696,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -2816,7 +2746,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.rem
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2847,7 +2776,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -2893,7 +2821,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Int.inc
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2937,7 +2864,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Int.dec
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -2984,7 +2910,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.unaryPlus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3031,7 +2956,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.unaryMinus
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3075,7 +2999,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Int.rangeTo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3106,7 +3029,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -3152,7 +3074,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Int.rangeTo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3183,7 +3104,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -3229,7 +3149,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Int.rangeTo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3260,7 +3179,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -3306,7 +3224,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Int.rangeTo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3337,7 +3254,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -3388,7 +3304,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.rangeUntil
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3419,7 +3334,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -3470,7 +3384,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.rangeUntil
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3501,7 +3414,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -3552,7 +3464,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.rangeUntil
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3583,7 +3494,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -3634,7 +3544,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.rangeUntil
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3665,7 +3574,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -3714,7 +3622,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.shl
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3745,7 +3652,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -3794,7 +3700,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.shr
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3825,7 +3730,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -3874,7 +3778,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.ushr
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3905,7 +3808,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -3954,7 +3856,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.and
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -3985,7 +3886,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -4034,7 +3934,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.or
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4065,7 +3964,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -4114,7 +4012,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.xor
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4145,7 +4042,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -4194,7 +4090,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.inv
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4241,7 +4136,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.toByte
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4288,7 +4182,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.toChar
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4335,7 +4228,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.toShort
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4382,7 +4274,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.toInt
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4429,7 +4320,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.toLong
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4476,7 +4366,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.toFloat
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4523,7 +4412,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.toDouble
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4570,7 +4458,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.toString
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4617,7 +4504,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/Int.equals
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4648,7 +4534,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -4694,7 +4579,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.hashCode
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -4740,7 +4624,6 @@ KaNamedClassSymbol:
   classId: kotlin/Int.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -4770,7 +4653,6 @@ KaNamedClassSymbol:
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Private
   containingClassId: kotlin/Int
   contextReceivers: []
   hasStableParameterNames: true

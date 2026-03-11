@@ -9,7 +9,6 @@ scopes:
         classId: pkg/A
         classKind: CLASS
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -69,7 +68,6 @@ scopes:
         classId: B
         classKind: CLASS
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false

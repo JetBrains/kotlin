@@ -4,7 +4,6 @@ KtNameReferenceExpression(71,76): 'super'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         isActual: false
         isExpect: false

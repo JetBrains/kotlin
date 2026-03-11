@@ -1,7 +1,6 @@
 KaEnumEntrySymbol:
   annotations: []
   callableId: test/E.A
-  compilerVisibility: Public
   contextReceivers: []
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
@@ -28,7 +27,6 @@ KaEnumEntrySymbol:
 KaEnumEntrySymbol:
   annotations: []
   callableId: test/E.B
-  compilerVisibility: Public
   contextReceivers: []
   enumEntryInitializer: null
   isActual: false
@@ -55,7 +53,6 @@ KaEnumEntrySymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: test/E.values
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -100,7 +97,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: test/E.valueOf
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -131,7 +127,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -174,13 +169,11 @@ KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: test/E.entries
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false

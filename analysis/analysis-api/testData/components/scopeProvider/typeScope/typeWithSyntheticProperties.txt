@@ -51,7 +51,6 @@ Declaration Scope:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /JavaClass.getValue
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -82,7 +81,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.equals
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -113,7 +111,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -142,7 +139,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.hashCode
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -174,7 +170,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.toString
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -207,12 +202,10 @@ KaSyntheticJavaPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /JavaClass.value
-  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: /JavaClass.getValue
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false

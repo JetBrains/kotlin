@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/List.getFirst
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

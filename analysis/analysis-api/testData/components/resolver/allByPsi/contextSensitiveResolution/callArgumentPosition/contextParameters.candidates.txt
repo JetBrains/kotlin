@@ -331,7 +331,6 @@ KtCallExpression(339,344): 'foo()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -407,7 +406,6 @@ KtNameReferenceExpression(339,342): 'foo'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -656,7 +654,6 @@ KtCallExpression(403,408): 'foo()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -732,7 +729,6 @@ KtNameReferenceExpression(403,406): 'foo'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1039,7 +1035,6 @@ KtDotQualifiedExpression(548,552): '"".a'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1095,7 +1090,6 @@ KtNameReferenceExpression(551,552): 'a'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false

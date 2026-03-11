@@ -2,12 +2,10 @@ KaSyntheticJavaPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /JavaClass.count
-  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: /JavaClass.getCount
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -23,7 +21,6 @@ KaSyntheticJavaPropertySymbol:
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Local
       contextReceivers: []
       isActual: false
       isExpect: false
@@ -83,7 +80,6 @@ KaSyntheticJavaPropertySymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Local
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -115,7 +111,6 @@ KaSyntheticJavaPropertySymbol:
   setter: KaPropertySetterSymbol:
     annotations: []
     callableId: /JavaClass.setCount
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -131,7 +126,6 @@ KaSyntheticJavaPropertySymbol:
     parameter: KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -165,7 +159,6 @@ KaSyntheticJavaPropertySymbol:
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Local
       contextReceivers: []
       isActual: false
       isExpect: false
@@ -198,7 +191,6 @@ KaSyntheticJavaPropertySymbol:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false

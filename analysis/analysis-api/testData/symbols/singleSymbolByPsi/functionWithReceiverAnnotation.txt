@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -28,7 +27,6 @@ KaNamedFunctionSymbol:
         psi: KtAnnotationEntry
     ]
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isExpect: false

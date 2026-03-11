@@ -4,7 +4,6 @@ CLASS:
   classId: GenericPredicate
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -37,7 +36,6 @@ CLASS:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -65,7 +63,6 @@ FUNCTIONAL INTERFACE FUNCTION:
   KaNamedFunctionSymbol:
   annotations: []
   callableId: /GenericPredicate.test
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -107,7 +104,6 @@ FUNCTIONAL INTERFACE FUNCTION:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -132,7 +128,6 @@ FUNCTIONAL INTERFACE FUNCTION:
         name: T
         symbol: KaTypeParameterSymbol:
           annotations: []
-          compilerVisibility: Local
           isActual: false
           isExpect: false
           isExternal: false
@@ -174,7 +169,6 @@ FUNCTIONAL INTERFACE FUNCTION:
             name: T
             symbol: KaTypeParameterSymbol:
               annotations: []
-              compilerVisibility: Local
               isActual: false
               isExpect: false
               isExternal: false
@@ -203,7 +197,6 @@ FUNCTIONAL INTERFACE FUNCTION:
         name: T
         symbol: KaTypeParameterSymbol:
           annotations: []
-          compilerVisibility: Local
           isActual: false
           isExpect: false
           isExternal: false

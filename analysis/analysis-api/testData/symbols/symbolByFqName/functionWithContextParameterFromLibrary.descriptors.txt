@@ -1,12 +1,10 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: one/foo
-  compilerVisibility: Public
   contextParameters: [
     KaContextParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Local
       contextReceivers: []
       isActual: false
       isExpect: false
@@ -33,7 +31,6 @@ KaNamedFunctionSymbol:
     KaContextParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Local
       contextReceivers: []
       isActual: false
       isExpect: false

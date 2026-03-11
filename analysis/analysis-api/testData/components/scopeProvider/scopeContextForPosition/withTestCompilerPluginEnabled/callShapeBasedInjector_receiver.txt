@@ -19,7 +19,6 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -39,13 +38,11 @@ scopes:
             type: kotlin/Int
           visibility: PRIVATE
         callableId: null
-        compilerVisibility: Local
         contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -61,7 +58,6 @@ scopes:
           receiverParameter: KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -112,7 +108,6 @@ scopes:
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -145,7 +140,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -176,7 +170,6 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
@@ -205,7 +198,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -237,7 +229,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -270,7 +261,6 @@ scopes:
       KaConstructorSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Local
         containingClassId: null
         contextReceivers: []
         hasStableParameterNames: true
@@ -304,7 +294,6 @@ scopes:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -370,7 +359,6 @@ scopes:
         classId: DataFrame
         classKind: INTERFACE
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -392,7 +380,6 @@ scopes:
         typeParameters: [
           KaTypeParameterSymbol:
             annotations: []
-            compilerVisibility: Local
             isActual: false
             isExpect: false
             isExternal: false
@@ -411,7 +398,6 @@ scopes:
         classId: Refine
         classKind: ANNOTATION_CLASS
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -439,7 +425,6 @@ scopes:
             psi: KtAnnotationEntry
         ]
         callableId: /add
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -463,7 +448,6 @@ scopes:
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -497,7 +481,6 @@ scopes:
         typeParameters: [
           KaTypeParameterSymbol:
             annotations: []
-            compilerVisibility: Local
             isActual: false
             isExpect: false
             isExternal: false
@@ -511,7 +494,6 @@ scopes:
             visibility: LOCAL
           KaTypeParameterSymbol:
             annotations: []
-            compilerVisibility: Local
             isActual: false
             isExpect: false
             isExternal: false
@@ -528,7 +510,6 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
@@ -555,7 +536,6 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
@@ -588,7 +568,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /test_1
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -619,7 +598,6 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false

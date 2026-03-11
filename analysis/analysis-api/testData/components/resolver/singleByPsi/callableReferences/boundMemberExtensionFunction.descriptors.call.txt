@@ -7,7 +7,6 @@ KtCallableReferenceExpression(230,238): 'Bar::foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
           contextReceivers: []
           isActual: false
           isExpect: false

@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: A
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -32,7 +31,6 @@ KaNamedClassSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -57,7 +55,6 @@ KaTypeParameterSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -85,7 +82,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -111,7 +107,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -151,7 +146,6 @@ KaNamedFunctionSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -171,7 +165,6 @@ KaTypeParameterSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -199,7 +192,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -220,7 +212,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false

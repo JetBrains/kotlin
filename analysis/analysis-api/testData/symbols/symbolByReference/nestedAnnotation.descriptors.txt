@@ -4,7 +4,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: lib/foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

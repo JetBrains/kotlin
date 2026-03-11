@@ -51,7 +51,6 @@ scopes:
         classId: Context
         classKind: CLASS
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -76,12 +75,10 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /test
-        compilerVisibility: Public
         contextParameters: [
           KaContextParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false

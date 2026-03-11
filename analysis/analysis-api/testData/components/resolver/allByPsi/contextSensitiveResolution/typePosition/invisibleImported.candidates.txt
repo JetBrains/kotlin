@@ -142,7 +142,6 @@ KtNameReferenceExpression(205,206): 'x'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -199,7 +198,6 @@ KtNameReferenceExpression(223,224): 'y'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false

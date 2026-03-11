@@ -2,7 +2,6 @@ Resolved constructor:
   KaConstructorSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     containingClassId: test/MyTypeAlias
     contextReceivers: []
     hasStableParameterNames: true
@@ -32,7 +31,6 @@ Original constructor if type aliased:
   KaConstructorSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     containingClassId: test/MyClass
     contextReceivers: []
     hasStableParameterNames: true

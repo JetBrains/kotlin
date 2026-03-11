@@ -4,7 +4,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: /JavaClass.foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

@@ -4,7 +4,6 @@ callables: 1
   KaNamedFunctionSymbol:
     annotations: []
     callableId: test/nested/dummyTest
-    compilerVisibility: Public
     contextParameters: []
     contextReceivers: []
     contractEffects: []
@@ -35,7 +34,6 @@ callables: 1
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false

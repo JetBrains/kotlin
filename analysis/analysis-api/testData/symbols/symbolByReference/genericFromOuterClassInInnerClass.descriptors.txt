@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: test/TopLevel.Base.withOuter
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

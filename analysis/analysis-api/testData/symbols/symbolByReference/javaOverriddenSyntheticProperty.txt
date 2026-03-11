@@ -2,7 +2,6 @@ KaSyntheticJavaPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /JavaClass.foo
-  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: [
@@ -10,7 +9,6 @@ KaSyntheticJavaPropertySymbol:
         psi: null
     ]
     callableId: /JavaClass.getFoo
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -26,7 +24,6 @@ KaSyntheticJavaPropertySymbol:
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       isActual: false
       isExpect: false
@@ -86,7 +83,6 @@ KaSyntheticJavaPropertySymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isExpect: false

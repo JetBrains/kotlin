@@ -127,7 +127,6 @@ KtCallExpression(251,263): 'InnerClass()'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -167,7 +166,6 @@ KtNameReferenceExpression(251,261): 'InnerClass'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isExpect: false

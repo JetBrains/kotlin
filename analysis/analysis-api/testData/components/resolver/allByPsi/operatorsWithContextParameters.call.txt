@@ -929,7 +929,6 @@ KtPrefixExpression(890,899): '+thisProp'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -981,7 +980,6 @@ KtOperationReferenceExpression(890,891): '+'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1050,7 +1048,6 @@ KtPrefixExpression(908,910): '+a'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1102,7 +1099,6 @@ KtOperationReferenceExpression(908,909): '+'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1171,7 +1167,6 @@ KtBinaryExpression(919,931): 'thisProp + 1'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1256,7 +1251,6 @@ KtOperationReferenceExpression(928,929): '+'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1327,7 +1321,6 @@ KtBinaryExpression(940,945): 'a + 1'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1412,7 +1405,6 @@ KtOperationReferenceExpression(942,943): '+'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1483,7 +1475,6 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1574,7 +1565,6 @@ KtArrayAccessExpression(974,978): 'a[1]'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1665,7 +1655,6 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1747,7 +1736,6 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1852,7 +1840,6 @@ KtOperationReferenceExpression(999,1000): '='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -1971,7 +1958,6 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -2053,7 +2039,6 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -2158,7 +2143,6 @@ KtOperationReferenceExpression(1018,1019): '='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -2277,7 +2261,6 @@ KtCallExpression(1032,1042): 'thisProp()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -2349,7 +2332,6 @@ KtCallExpression(1051,1054): 'a()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -2421,7 +2403,6 @@ KtBinaryExpression(1063,1076): 'thisProp += 1'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -2506,7 +2487,6 @@ KtOperationReferenceExpression(1072,1074): '+='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -2577,7 +2557,6 @@ KtBinaryExpression(1085,1091): 'a += 1'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -2662,7 +2641,6 @@ KtOperationReferenceExpression(1087,1089): '+='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -2736,7 +2714,6 @@ KtPostfixExpression(1100,1110): 'thisProp++'
               symbol = KaReceiverParameterSymbol:
                 annotations: []
                 callableId: null
-                compilerVisibility: Public
                 contextReceivers: []
                 isActual: false
                 isExpect: false
@@ -2823,7 +2800,6 @@ KtOperationReferenceExpression(1108,1110): '++'
               symbol = KaReceiverParameterSymbol:
                 annotations: []
                 callableId: null
-                compilerVisibility: Public
                 contextReceivers: []
                 isActual: false
                 isExpect: false
@@ -2947,7 +2923,6 @@ KtPostfixExpression(1123,1126): 'a++'
               symbol = KaReceiverParameterSymbol:
                 annotations: []
                 callableId: null
-                compilerVisibility: Public
                 contextReceivers: []
                 isActual: false
                 isExpect: false
@@ -3034,7 +3009,6 @@ KtOperationReferenceExpression(1124,1126): '++'
               symbol = KaReceiverParameterSymbol:
                 annotations: []
                 callableId: null
-                compilerVisibility: Public
                 contextReceivers: []
                 isActual: false
                 isExpect: false
@@ -3101,7 +3075,6 @@ KtBinaryExpression(1136,1141): 'b + 1'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -3186,7 +3159,6 @@ KtOperationReferenceExpression(1138,1139): '+'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -3257,7 +3229,6 @@ KtPrefixExpression(1150,1152): '+b'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -3309,7 +3280,6 @@ KtOperationReferenceExpression(1150,1151): '+'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -3378,7 +3348,6 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -3469,7 +3438,6 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -3551,7 +3519,6 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -3656,7 +3623,6 @@ KtOperationReferenceExpression(1179,1180): '='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -3775,7 +3741,6 @@ KtCallExpression(1193,1196): 'b()'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -3847,7 +3812,6 @@ KtBinaryExpression(1205,1211): 'b += 1'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -3932,7 +3896,6 @@ KtOperationReferenceExpression(1207,1209): '+='
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -4006,7 +3969,6 @@ KtPostfixExpression(1220,1223): 'b++'
               symbol = KaReceiverParameterSymbol:
                 annotations: []
                 callableId: null
-                compilerVisibility: Public
                 contextReceivers: []
                 isActual: false
                 isExpect: false
@@ -4093,7 +4055,6 @@ KtOperationReferenceExpression(1221,1223): '++'
               symbol = KaReceiverParameterSymbol:
                 annotations: []
                 callableId: null
-                compilerVisibility: Public
                 contextReceivers: []
                 isActual: false
                 isExpect: false

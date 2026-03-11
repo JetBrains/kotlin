@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /I2.bar
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

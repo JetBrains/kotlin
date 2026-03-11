@@ -1,7 +1,6 @@
 KaJavaFieldSymbol:
   annotations: []
   callableId: /JavaClass.field
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isExpect: false
@@ -32,7 +31,6 @@ KaJavaFieldSymbol:
 KaJavaFieldSymbol:
   annotations: []
   callableId: /JavaClass.field2
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isExpect: false
@@ -62,7 +60,6 @@ KaJavaFieldSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /JavaClass.foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -105,7 +102,6 @@ KaNamedFunctionSymbol:
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: JavaClass
   contextReceivers: []
   hasStableParameterNames: false

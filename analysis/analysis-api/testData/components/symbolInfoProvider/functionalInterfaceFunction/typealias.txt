@@ -4,7 +4,6 @@ CLASS:
   classId: IntPredicate
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -46,7 +45,6 @@ FUNCTIONAL INTERFACE FUNCTION:
   KaNamedFunctionSymbol:
   annotations: []
   callableId: /IntPredicate.accept
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -88,7 +86,6 @@ FUNCTIONAL INTERFACE FUNCTION:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false

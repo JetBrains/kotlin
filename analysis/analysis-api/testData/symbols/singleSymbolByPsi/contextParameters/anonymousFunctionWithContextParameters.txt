@@ -1,12 +1,10 @@
 KaAnonymousFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextParameters: [
     KaContextParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       isActual: false
       isExpect: false
@@ -34,7 +32,6 @@ KaAnonymousFunctionSymbol:
     KaContextParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       isActual: false
       isExpect: false
@@ -107,7 +104,6 @@ KaAnonymousFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false

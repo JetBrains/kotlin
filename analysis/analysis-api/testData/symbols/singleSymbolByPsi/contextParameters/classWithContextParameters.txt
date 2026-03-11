@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: Foo
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: [
     KaContextReceiver:
       label: parameter1

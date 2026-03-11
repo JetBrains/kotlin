@@ -115,7 +115,6 @@ KtThisExpression(147,160): 'this@iterator'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -141,7 +140,6 @@ KtNameReferenceExpression(147,151): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -170,7 +168,6 @@ KtLabelReferenceExpression(151,160): '@iterator'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -235,7 +232,6 @@ KtThisExpression(207,220): 'this@iterator'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -261,7 +257,6 @@ KtNameReferenceExpression(207,211): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isExpect: false
@@ -290,7 +285,6 @@ KtLabelReferenceExpression(211,220): '@iterator'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isExpect: false

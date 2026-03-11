@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -45,7 +44,6 @@ KaNamedFunctionSymbol:
 KaEnumEntrySymbol:
   annotations: []
   callableId: /MyEnumClass.FirstEntry
-  compilerVisibility: Public
   contextReceivers: []
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
@@ -72,7 +70,6 @@ KaEnumEntrySymbol:
 KaEnumEntrySymbol:
   annotations: []
   callableId: /MyEnumClass.SecondEntry
-  compilerVisibility: Public
   contextReceivers: []
   enumEntryInitializer: null
   isActual: false
@@ -99,7 +96,6 @@ KaEnumEntrySymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -143,7 +139,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -174,7 +169,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -220,7 +214,6 @@ KaNamedFunctionSymbol:
 KaEnumEntrySymbol:
   annotations: []
   callableId: /MyEnumClass.ThirdEntry
-  compilerVisibility: Public
   contextReceivers: []
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
@@ -249,7 +242,6 @@ KaNamedClassSymbol:
   classId: MyEnumClass
   classKind: ENUM_CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
