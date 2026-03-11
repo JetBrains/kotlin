@@ -67,17 +67,23 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         arguments: K2NativeCompilerArguments,
         services: Services,
         basicMessageCollector: MessageCollector,
-        isOneStageCompilation: Boolean
+        isOneStageCompilation: Boolean,
     ): ExitCode {
         // TODO (KT-84069)
         arguments.disableDefaultScriptingPlugin = true
-        return NativeKlibCliPipeline(defaultPerformanceManager, isNativeOneStage = isOneStageCompilation).execute(arguments, services, basicMessageCollector)
+        return NativeKlibCliPipeline(defaultPerformanceManager, isNativeOneStage = isOneStageCompilation).execute(
+            arguments,
+            services,
+            basicMessageCollector
+        )
     }
 
-    override fun doExecute(@NotNull arguments: K2NativeCompilerArguments,
-                           @NotNull configuration: CompilerConfiguration,
-                           @NotNull rootDisposable: Disposable,
-                           @Nullable paths: KotlinPaths?): ExitCode {
+    override fun doExecute(
+        @NotNull arguments: K2NativeCompilerArguments,
+        @NotNull configuration: CompilerConfiguration,
+        @NotNull rootDisposable: Disposable,
+        @Nullable paths: KotlinPaths?,
+    ): ExitCode {
 
         if (arguments.version) {
             println("Kotlin/Native: ${KotlinCompilerVersion.getVersion() ?: "SNAPSHOT"}")
@@ -134,14 +140,16 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 return ExitCode.COMPILATION_ERROR
             }
 
-            configuration.report(ERROR, """
+            configuration.report(
+                ERROR, """
                 |Compilation failed: ${e.message}
 
                 | * Source files: ${environment.getSourceFiles().joinToString(transform = KtFile::getName)}
                 | * Compiler version: ${KotlinCompilerVersion.getVersion()}
                 | * Output kind: ${configuration.konanProducedArtifactKind}
 
-                """.trimMargin())
+                """.trimMargin()
+            )
             throw e
         } finally {
             CheckDiagnosticCollector.reportToMessageCollector(configuration)
@@ -153,10 +161,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     private fun prepareEnvironment(
         arguments: K2NativeCompilerArguments,
         configuration: CompilerConfiguration,
-        rootDisposable: Disposable
+        rootDisposable: Disposable,
     ): KotlinCoreEnvironment {
-        val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,
-                                                                    configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES)
+        val environment = KotlinCoreEnvironment.createForProduction(
+            rootDisposable,
+            configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES
+        )
 
         configuration.phaseConfig = createPhaseConfig(arguments)
 
@@ -259,7 +269,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override fun setupPlatformSpecificArgumentsAndServices(
         configuration: CompilerConfiguration,
         arguments: K2NativeCompilerArguments,
-        services: Services
+        services: Services,
     ) {
         configuration.setupFromArguments(arguments)
     }
@@ -269,13 +279,15 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override fun executableScriptFileName() = "kotlinc-native"
 
     companion object {
-        @JvmStatic fun main(args: Array<String>) {
+        @JvmStatic
+        fun main(args: Array<String>) {
             profile("Total compiler main()") {
                 doMain(K2Native(), args)
             }
         }
 
-        @JvmStatic fun mainNoExit(args: Array<String>) {
+        @JvmStatic
+        fun mainNoExit(args: Array<String>) {
             profile("Total compiler main()") {
                 if (doMainNoExit(K2Native(), args) != ExitCode.OK) {
                     throw KonanCompilationException("Compilation finished with errors")
@@ -283,7 +295,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             }
         }
 
-        @JvmStatic fun mainNoExitWithRenderer(args: Array<String>, messageRenderer: MessageRenderer) {
+        @JvmStatic
+        fun mainNoExitWithRenderer(args: Array<String>, messageRenderer: MessageRenderer) {
             profile("Total compiler main()") {
                 if (doMainNoExit(K2Native(), args, messageRenderer) != ExitCode.OK) {
                     throw KonanCompilationException("Compilation finished with errors")
