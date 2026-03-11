@@ -25,7 +25,7 @@ fun main(s: String?, sb: StringBuilder) {
     s?.myLet { sb.toString() + it }
 }
 
-// Test K1 bug: when serialized effect is unknown to K1, it ignores all other valid effects.
+// Check that adding a contract does not break existing callsInPlace: there should be no CAPTURED_VAL_INITIALIZATION.
 fun foobar(s: String?, ss: String?) {
     val a: String
     s.myLet { a = ss!! }
