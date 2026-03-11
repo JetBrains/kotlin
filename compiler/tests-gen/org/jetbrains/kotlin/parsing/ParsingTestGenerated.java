@@ -901,6 +901,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/Reserved.kt");
     }
 
+    @TestMetadata("returnsResultOfContract.kt")
+    public void testReturnsResultOfContract() {
+      runTest("compiler/testData/psi/returnsResultOfContract.kt");
+    }
+
     @TestMetadata("sealed.kt")
     public void testSealed() {
       runTest("compiler/testData/psi/sealed.kt");

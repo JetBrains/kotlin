@@ -1073,6 +1073,12 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
   }
 
   @Test
+  @TestMetadata("returnsResultOfContract.kt")
+  public void testReturnsResultOfContract() {
+    run("returnsResultOfContract.kt");
+  }
+
+  @Test
   @TestMetadata("sealed.kt")
   public void testSealed() {
     run("sealed.kt");
