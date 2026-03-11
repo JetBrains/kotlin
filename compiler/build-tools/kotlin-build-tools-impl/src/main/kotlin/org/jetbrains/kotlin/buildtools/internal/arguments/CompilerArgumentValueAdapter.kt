@@ -83,6 +83,11 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 listValue.toTypedArray() as V
             }
 
+            CommonCompilerArguments.X_PHASES_TO_DUMP_BEFORE -> {
+                val listValue: List<String> = value as List<String>
+                listValue.toTypedArray() as V
+            }
+
             else -> {
                 value as V
             }
@@ -99,6 +104,11 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
             }
 
             CommonCompilerArguments.X_PHASES_TO_DUMP -> {
+                val arrayValue = value as Array<String>
+                arrayValue.toList() as T
+            }
+
+            CommonCompilerArguments.X_PHASES_TO_DUMP_BEFORE -> {
                 val arrayValue = value as Array<String>
                 arrayValue.toList() as T
             }
