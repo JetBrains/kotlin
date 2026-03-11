@@ -18,7 +18,29 @@ package org.jetbrains.kotlin.load.java.structure
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 
-interface JavaType : ListBasedJavaAnnotationOwner
+interface JavaType : ListBasedJavaAnnotationOwner {
+    /**
+     * Filters annotations to only include TYPE_USE annotations.
+     * 
+     * This is used when converting Java types to FIR - only annotations with 
+     * `@Target(ElementType.TYPE_USE)` should appear on types.
+     * 
+     * The default implementation returns all annotations unchanged, assuming that
+     * the implementation has already filtered them (as javac-wrapper does at the
+     * Java structure level).
+     * 
+     * Implementations that don't pre-filter (like java-direct) should override this
+     * to use the callback for filtering.
+     * 
+     * @param isTypeUseAnnotation callback that checks if a given annotation class has TYPE_USE target.
+     *        The callback receives the fully qualified annotation class name and returns true if it's TYPE_USE.
+     * @return collection of annotations that are TYPE_USE annotations
+     */
+    fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
+        // Default: return annotations as-is (javac-wrapper already filters at Java structure level)
+        return annotations
+    }
+}
 
 interface JavaArrayType : JavaType {
     val componentType: JavaType

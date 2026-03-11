@@ -584,95 +584,327 @@ return arrayListOf<JavaClass>().apply {
 
 ---
 
-## Iteration 21: Raw Type Visibility
+## Iteration 22: FIR-Level TYPE_USE Annotation Filtering
+
+**Status**: ✅ Completed  
+**Actual Impact**: +1 box test, +3 phased tests (37→36 box, 31→28 phased)  
+**Priority**: HIGH  
+**Complexity**: MEDIUM
+
+### What Was Done
+
+Implemented FIR-level filtering of type annotations to only include annotations that have `@Target(TYPE_USE)`. This matches javac-wrapper's behavior where annotations are only applied to types if they explicitly declare TYPE_USE as a target.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `JavaTypeConversion.kt` | Added `isTypeUseAnnotation()` function that resolves annotation class and checks for `@Target(TYPE_USE)` |
+| `JavaTypeConversion.kt` | Added `hasTypeUseTarget()` and `isTypeUseElement()` helper functions |
+| `JavaTypeConversion.kt` | Modified `toConeTypeProjection()` to filter annotations before converting to FIR |
+
+### Key Implementation
+
+```kotlin
+private fun JavaAnnotation.isTypeUseAnnotation(session: FirSession): Boolean {
+    val annotationClassId = classId ?: return false
+    val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId)?.fir
+        as? FirRegularClass ?: return false
+    
+    val targetAnnotation = annotationClass.annotations.find { firAnnotation ->
+        val targetClassId = firAnnotation.annotationTypeRef.coneType.classId
+        targetClassId == JvmStandardClassIds.Annotations.Java.Target ||
+                targetClassId == StandardClassIds.Annotations.Target
+    } ?: return false
+    
+    return hasTypeUseTarget(targetAnnotation)
+}
+```
+
+### Tests Fixed
+
+- `testSyntheticSmartCast` - No longer has spurious `@Nullable` on types
+- `testBasicWithAnnotatedJava` - TYPE_USE annotations filtered correctly
+- +2 more phased tests
+
+### Why Fewer Tests Fixed Than Expected
+
+The original estimate of ~15 tests was based on all annotation-related diffs. However, many remaining failures have other root causes:
+1. Some annotations ARE TYPE_USE and should appear (correct behavior)
+2. Some tests have unrelated issues (nested class resolution, etc.)
+3. Some tests involve annotation argument parsing, not type annotations
+
+### Previous Analysis (Archived)
+
+**Root Cause Analysis**:
+
+**javac-wrapper** (`filterTypeAnnotations()` in `utils.kt`):
+- Resolves annotation class via `annotation.resolve()`
+- Checks if `@Target` annotation contains `TYPE_USE`
+- If resolution fails or no `@Target` found → annotation is **skipped**
+
+**java-direct** (before fix):
+- Cannot resolve annotations (`resolve()` returns null)
+- Uses blocklist approach instead
+- If annotation not in blocklist → annotation **passes through**
+
+**Why syntactic approach won't work**: PSI/KMP parser places ALL annotations in `MODIFIER_LIST` regardless of their position relative to other modifiers. There's no equivalent to javac's `JCAnnotatedType` to distinguish type annotations from declaration annotations syntactically.
+
+---
+
+## Iteration 23: Sibling Nested Class Resolution in Supertypes
 
 **Status**: 🔲 Planned  
-**Expected Impact**: ~3 tests  
-**Priority**: LOW  
-**Complexity**: LOW
+**Expected Impact**: ~5 tests  
+**Priority**: MEDIUM  
+**Complexity**: MEDIUM
 
 ### Problem Statement
 
-Protected field access through raw type inheritance incorrectly reports visibility errors.
+Nested classes within the same outer class aren't being resolved when used as supertypes.
 
 ### Symptoms
 
 ```
-INVISIBLE_REFERENCE: Cannot access 'field instance': it is protected in 'Derived'.
+MISSING_DEPENDENCY_SUPERCLASS: Cannot access 'Base' which is a supertype of 'Test.Derived'
+MISSING_DEPENDENCY_SUPERCLASS: Cannot access 'KotlinInner' which is a supertype of 'K2.K3'
+MISSING_DEPENDENCY_CLASS: Cannot access class 'A'
 ```
 
 ### Affected Tests
 
-- `testContractAndRawField`
-- `testJavaAnnotationConstructorTypes`
-- `testWeirdCharBuffers`
-
-### Test Pattern
-
-```java
-public abstract class Base<T> {
-    protected T instance;  // Protected field in generic class
-}
-public class Derived extends Base<String> {
-    // Inherits protected field
-}
-```
-
-```kotlin
-fun Base<Any>.confirmOrFail(): String {
-    require(this is Derived)
-    return instance  // Should be accessible, but reports INVISIBLE
-}
-```
-
-### Phase 1: Analysis
-
-1. Debug visibility calculation:
-   ```kotlin
-   // In JavaFieldOverAst.visibility or related
-   throw IllegalStateException("DEBUG: field=${name}, visibility=${visibility}, containingClass=${containingClass}")
-   ```
-
-2. Check if the issue is:
-   - Wrong visibility being parsed
-   - Raw type affecting visibility lookup
-   - Smart cast not considered for protected access
-
-### Phase 2: Implementation
-
-**File to modify**: `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt`
-
-1. **Verify visibility parsing**:
-   ```kotlin
-   class JavaFieldOverAst(...) : JavaField {
-       override val visibility: Visibility
-           get() {
-               // Check modifiers
-               val modifiers = node.findChildByType("MODIFIER_LIST")
-               return when {
-                   modifiers?.hasChildWithType("PROTECTED") == true -> Visibilities.Protected
-                   modifiers?.hasChildWithType("PRIVATE") == true -> Visibilities.Private
-                   modifiers?.hasChildWithType("PUBLIC") == true -> Visibilities.Public
-                   else -> JavaVisibilities.PackageVisibility
-               }
-           }
+1. **testOffOrderMultiBoundGenericOverride**
+   ```java
+   public class Test {
+       public static class Base { ... }
+       public static class Derived extends Base { ... }  // Base not resolved
    }
    ```
 
-2. **Check inheritance chain handling**:
-   - Protected members should be accessible in subclasses
-   - Raw type erasure shouldn't affect this
+2. **testOuterInnerClasses**
+   ```java
+   public class J1 extends KotlinOuter {
+       public class J2 extends KotlinInner { ... }  // KotlinInner not resolved
+   }
+   ```
+
+3. **testHugeMixedCapturedType**
+   ```java
+   public class JavaClass {
+       public interface A<...> { ... }
+       public interface B<...> { ... }
+       // Methods using A, B - nested interfaces not resolved
+   }
+   ```
+
+4. **testSmartcastToStarProjectedSubclass**
+   ```java
+   public interface Option<T> {
+       public final class Some<T> implements Option<T> { ... }
+   }
+   ```
+
+### Root Cause
+
+When resolving supertype `Base` in `class Derived extends Base`:
+1. Current resolution searches: same package, java.lang, star imports
+2. **Missing**: sibling nested classes within the same outer class
+
+In `Test.Derived extends Base`:
+- `Base` is actually `Test.Base` (sibling nested class)
+- Resolution doesn't try `OuterClass.SimpleName` for siblings
+
+### Phase 1: Analysis
+
+1. Debug resolution context:
+   ```kotlin
+   // In JavaResolutionContext.resolveWithCallback
+   println("DEBUG: resolving '$name' in context of ${containingClassFqName}")
+   ```
+
+2. Trace supertype resolution path:
+   ```kotlin
+   // In JavaClassOverAst.supertypes
+   println("DEBUG: supertype name='${typeNode.text}', resolved=${resolvedFqn}")
+   ```
+
+### Phase 2: Implementation
+
+**File to modify**: `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResolutionContext.kt`
+
+1. **Add sibling nested class resolution in `resolveSimpleName()`**:
+   ```kotlin
+   private fun resolveSimpleName(name: String, tryResolve: (String) -> Boolean): String? {
+       // ... existing steps (explicit imports, same package, java.lang, star imports)
+       
+       // Step N: Sibling nested classes (same outer class)
+       val containingClass = containingClassProvider?.invoke()
+       if (containingClass != null) {
+           val outerClass = containingClass.outerClass
+           if (outerClass != null) {
+               val outerFqn = outerClass.fqName?.asString()
+               if (outerFqn != null) {
+                   val siblingCandidate = "$outerFqn.$name"
+                   if (tryResolve(siblingCandidate)) {
+                       return siblingCandidate
+                   }
+               }
+           }
+       }
+       
+       // ... rest of resolution
+   }
+   ```
+
+2. **Ensure containing class is available during supertype resolution**:
+   - Check that `JavaResolutionContext` receives the containing class reference
+   - May need to pass it through supertype resolution chain
 
 ### Phase 3: Validation
 
-```bash
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated\$Contracts.testContractAndRawField" -q
-```
+1. Run affected tests:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "*testOffOrderMultiBoundGenericOverride*" -q
+   ./gradlew :compiler:java-direct:test --tests "*testOuterInnerClasses*" -q
+   ./gradlew :compiler:java-direct:test --tests "*testSmartcastToStarProjectedSubclass*" -q
+   ```
+
+2. Run full test suite to check for regressions
 
 ### Success Criteria
 
-- Protected field access works correctly
-- ~3 test improvements expected
+- Sibling nested classes resolve correctly in supertypes
+- ~5 test improvements expected
+- No regressions
+
+---
+
+## Iteration 24: Cyclic Type Parameter Bounds Detection
+
+**Status**: 🔲 Planned  
+**Expected Impact**: 1 test  
+**Priority**: LOW  
+**Complexity**: HIGH
+
+### Problem Statement
+
+Infinite recursion when resolving mutually recursive type parameter bounds causes StackOverflowError.
+
+### Symptoms
+
+```
+java.lang.StackOverflowError
+    at JavaClassifierTypeOverAst.getClassifierQualifiedName(JavaTypeOverAst.kt:121)
+    at JavaTypeConversionKt.toConeKotlinTypeForFlexibleBound
+    ...
+    at FirSignatureEnhancement.enhanceTypeParameterBounds
+```
+
+### Affected Test
+
+**testSignatureEnhancementCycleTypeBound**
+```java
+public class JavaA<T extends JavaB> { }
+public class JavaB<T extends JavaA> { }
+```
+
+### Root Cause
+
+When FIR enhances type parameter bounds:
+1. `JavaA<T extends JavaB>` → resolve `JavaB`
+2. `JavaB<T extends JavaA>` → resolve `JavaA`
+3. `JavaA<T extends JavaB>` → resolve `JavaB` (infinite loop!)
+
+The `classifierQualifiedName` getter triggers type resolution, which triggers signature enhancement, which reads type parameter bounds, calling `classifierQualifiedName` again.
+
+### Phase 1: Analysis
+
+1. Add stack trace logging to identify the recursion entry point:
+   ```kotlin
+   // In JavaClassifierTypeOverAst.classifierQualifiedName
+   if (Thread.currentThread().stackTrace.count { it.methodName == "getClassifierQualifiedName" } > 5) {
+       throw IllegalStateException("DEBUG: Potential cycle detected\n" + 
+           Thread.currentThread().stackTrace.take(50).joinToString("\n"))
+   }
+   ```
+
+2. Compare with javac-wrapper's behavior - how does it avoid this cycle?
+
+### Phase 2: Implementation Options
+
+**Option A: Thread-local cycle detection**
+
+**File to modify**: `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`
+
+```kotlin
+class JavaClassifierTypeOverAst(...) {
+    companion object {
+        private val resolvingTypes = ThreadLocal<MutableSet<String>>()
+    }
+    
+    override val classifierQualifiedName: String
+        get() {
+            val resolving = resolvingTypes.get() ?: mutableSetOf<String>().also { resolvingTypes.set(it) }
+            val key = "${System.identityHashCode(this)}"
+            
+            if (key in resolving) {
+                // Cycle detected - return raw type name without resolution
+                return rawTypeName
+            }
+            
+            resolving.add(key)
+            try {
+                // existing resolution logic
+            } finally {
+                resolving.remove(key)
+            }
+        }
+}
+```
+
+**Option B: Lazy initialization with sentinel value**
+
+```kotlin
+private var cachedQualifiedName: String? = null
+private var isResolving = false
+
+override val classifierQualifiedName: String
+    get() {
+        cachedQualifiedName?.let { return it }
+        
+        if (isResolving) {
+            // Cycle - return unresolved name
+            return rawTypeName
+        }
+        
+        isResolving = true
+        try {
+            val resolved = /* resolution logic */
+            cachedQualifiedName = resolved
+            return resolved
+        } finally {
+            isResolving = false
+        }
+    }
+```
+
+### Phase 3: Validation
+
+1. Run the failing test:
+   ```bash
+   ./gradlew :compiler:java-direct:test --tests "*testSignatureEnhancementCycleTypeBound*" -q
+   ```
+
+2. Verify no infinite loops or StackOverflowErrors
+
+3. Run full test suite - cycle detection should be invisible to non-cyclic cases
+
+### Success Criteria
+
+- No StackOverflowError on cyclic type bounds
+- Cyclic references resolve to raw/unqualified names (breaking the cycle)
+- 1 test improvement expected
+- No regressions
 
 ---
 

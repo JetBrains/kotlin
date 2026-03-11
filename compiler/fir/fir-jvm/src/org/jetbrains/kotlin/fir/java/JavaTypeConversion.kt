@@ -8,9 +8,17 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
+import org.jetbrains.kotlin.fir.expressions.FirEnumEntryDeserializedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -23,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -65,7 +74,11 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
         ?: ConeErrorType(ConeSimpleDiagnostic("Type reference in Java not resolved: ${this::class.java}", DiagnosticKind.Java))
 
 internal fun JavaType.toFirJavaTypeRef(session: FirSession, source: KtSourceElement?): FirJavaTypeRef = buildJavaTypeRef {
-    annotationBuilder = { convertAnnotationsToFir(session, source) }
+    annotationBuilder = {
+        // Filter to only TYPE_USE annotations using the callback-based approach
+        val typeUseAnnotations = filterTypeUseAnnotations { fqName -> isTypeUseAnnotationClass(fqName, session) }
+        typeUseAnnotations.convertAnnotationsToFir(session, source)
+    }
     type = this@toFirJavaTypeRef
     this.source = source
 }
@@ -98,17 +111,31 @@ private fun JavaType?.toConeTypeProjection(
     additionalAnnotations: Collection<JavaAnnotation>? = null
 ): ConeTypeProjection {
     val attributes = if (this != null && (annotations.isNotEmpty() || additionalAnnotations != null)) {
+        // Filter to only include TYPE_USE annotations using the callback-based approach.
+        // This allows java-direct to resolve annotation classes via FIR's symbol provider.
+        val isTypeUseAnnotation: (String) -> Boolean = { fqName -> isTypeUseAnnotationClass(fqName, session) }
+        
+        val typeUseAnnotations = filterTypeUseAnnotations(isTypeUseAnnotation)
+        val additionalTypeUseAnnotations = additionalAnnotations?.filter { annotation ->
+            val fqName = annotation.classId?.asSingleFqName()?.asString() ?: return@filter false
+            isTypeUseAnnotation(fqName)
+        }
+        
         val convertedAnnotations = buildList {
-            if (annotations.isNotEmpty()) {
-                addAll(this@toConeTypeProjection.convertAnnotationsToFir(session, source))
+            if (typeUseAnnotations.isNotEmpty()) {
+                addAll(typeUseAnnotations.convertAnnotationsToFir(session, source))
             }
 
-            if (additionalAnnotations != null) {
-                addAll(additionalAnnotations.convertAnnotationsToFir(session, source))
+            if (additionalTypeUseAnnotations != null && additionalTypeUseAnnotations.isNotEmpty()) {
+                addAll(additionalTypeUseAnnotations.convertAnnotationsToFir(session, source))
             }
         }
 
-        ConeAttributes.create(listOf(CustomAnnotationTypeAttribute(convertedAnnotations)))
+        if (convertedAnnotations.isNotEmpty()) {
+            ConeAttributes.create(listOf(CustomAnnotationTypeAttribute(convertedAnnotations)))
+        } else {
+            ConeAttributes.Empty
+        }
     } else {
         ConeAttributes.Empty
     }
@@ -394,4 +421,72 @@ private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
             ?: return false
 
     return mutableLastParameterVariance != Variance.OUT_VARIANCE
+}
+
+/**
+ * Checks if an annotation class has TYPE_USE in its @Target annotation.
+ * 
+ * This is used to filter type annotations - only annotations with @Target(ElementType.TYPE_USE)
+ * should appear on types. This matches the behavior of javac-wrapper's filterTypeAnnotations().
+ * 
+ * @param fqName fully qualified name of the annotation class
+ * @param session FIR session for resolving the annotation class
+ * @return true if the annotation has TYPE_USE target, false otherwise
+ */
+private fun isTypeUseAnnotationClass(fqName: String, session: FirSession): Boolean {
+    val classId = findClassId(fqName, session) ?: ClassId.topLevel(FqName(fqName))
+    
+    // Resolve the annotation class
+    val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
+        as? FirRegularClass ?: return false
+    
+    // Find @Target annotation on the annotation class
+    // It could be java.lang.annotation.Target or kotlin.annotation.Target (mapped)
+    val targetAnnotation = annotationClass.annotations.find { firAnnotation ->
+        val targetClassId = firAnnotation.annotationTypeRef.coneType.classId
+        targetClassId == JvmStandardClassIds.Annotations.Java.Target ||
+                targetClassId == StandardClassIds.Annotations.Target
+    } ?: return false
+    
+    // Check if TYPE_USE is in the target values
+    return hasTypeUseTarget(targetAnnotation)
+}
+
+/**
+ * Checks if a @Target annotation contains TYPE_USE (or TYPE for Kotlin's @Target).
+ */
+private fun hasTypeUseTarget(targetAnnotation: FirAnnotation): Boolean {
+    val argumentMapping = targetAnnotation.argumentMapping.mapping
+    if (argumentMapping.isEmpty()) return false
+    
+    // The argument could be named "value" (Java) or "allowedTargets" (Kotlin)
+    val argument = argumentMapping.values.firstOrNull() ?: return false
+    
+    return when (argument) {
+        is FirVarargArgumentsExpression -> argument.arguments.any { isTypeUseElement(it) }
+        is FirCollectionLiteral -> argument.argumentList.arguments.any { isTypeUseElement(it) }
+        else -> isTypeUseElement(argument)
+    }
+}
+
+/**
+ * Checks if an expression represents ElementType.TYPE_USE (Java) or AnnotationTarget.TYPE (Kotlin).
+ */
+private fun isTypeUseElement(expr: FirExpression): Boolean {
+    return when (expr) {
+        is FirEnumEntryDeserializedAccessExpression -> {
+            // For Java: ElementType.TYPE_USE
+            // For Kotlin: AnnotationTarget.TYPE
+            val entryName = expr.enumEntryName.asString()
+            entryName == "TYPE_USE" || entryName == "TYPE"
+        }
+        is FirPropertyAccessExpression -> {
+            val calleeReference = expr.calleeReference
+            if (calleeReference is FirResolvedNamedReference) {
+                val name = calleeReference.name.asString()
+                name == "TYPE_USE" || name == "TYPE"
+            } else false
+        }
+        else -> false
+    }
 }

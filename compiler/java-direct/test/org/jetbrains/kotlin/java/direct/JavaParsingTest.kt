@@ -1300,4 +1300,57 @@ class JavaParsingTest {
             "Bound should be String, got ${superBound.classifierQualifiedName}"
         }
     }
+
+    @Test
+    fun testAnnotationPositionOnMethodReturnType() {
+        // Test 1: Annotation before modifiers (method annotation position)
+        val source1 = """
+            import org.jetbrains.annotations.Nullable;
+            class A {
+                @Nullable public String method1() { return null; }
+            }
+        """.trimIndent()
+
+        // Test 2: Annotation after modifiers (type annotation position)
+        val source2 = """
+            import org.jetbrains.annotations.Nullable;
+            class A {
+                public @Nullable String method2() { return null; }
+            }
+        """.trimIndent()
+
+        fun printTree(node: JavaSyntaxNode, indent: String = "") {
+            println("$indent${node.type}: '${node.text.take(60).replace("\n", "\\n")}'")
+            for (child in node.children) {
+                printTree(child, "$indent  ")
+            }
+        }
+
+        println("\n=== Test 1: @Nullable public String method1() ===")
+        val (root1, _) = parseSource(source1)
+        val classNode1 = root1.children.first { it.type.toString() == "CLASS" }
+        val methodNode1 = classNode1.findChildByType("METHOD")!!
+        println("METHOD structure:")
+        printTree(methodNode1)
+
+        println("\n=== Test 2: public @Nullable String method2() ===")
+        val (root2, _) = parseSource(source2)
+        val classNode2 = root2.children.first { it.type.toString() == "CLASS" }
+        val methodNode2 = classNode2.findChildByType("METHOD")!!
+        println("METHOD structure:")
+        printTree(methodNode2)
+
+        // Now check where annotations end up in the JavaType
+        val javaClass1 = parseFirstClass(source1)
+        val method1 = javaClass1.methods.first()
+        val returnType1 = method1.returnType
+        println("\n=== method1 return type annotations: ${returnType1.annotations.map { it.classId }} ===")
+        println("=== method1 (member) annotations: ${method1.annotations.map { it.classId }} ===")
+
+        val javaClass2 = parseFirstClass(source2)
+        val method2 = javaClass2.methods.first()
+        val returnType2 = method2.returnType
+        println("\n=== method2 return type annotations: ${returnType2.annotations.map { it.classId }} ===")
+        println("=== method2 (member) annotations: ${method2.annotations.map { it.classId }} ===")
+    }
 }
