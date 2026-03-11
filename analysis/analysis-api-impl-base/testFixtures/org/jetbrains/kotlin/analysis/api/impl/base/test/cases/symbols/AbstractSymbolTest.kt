@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingM
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaFunctionalTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
@@ -46,7 +47,6 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
-import org.opentest4j.AssertionFailedError
 import java.util.concurrent.ExecutionException
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.javaField
@@ -169,7 +169,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             }
         }
 
-        compareResults(pointersWithRendered, testServices, disablePsiBasedLogic)
+        compareResults(pointersWithRendered, disablePsiBasedLogic)
 
         configurator.doGlobalModuleStateModification(mainFile.project)
 
@@ -234,50 +234,26 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     private fun RegisteredDirectives.doNotCheckNonPsiSymbolRestoreDirective(): Directive? =
         DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE.takeIf { it in this }
 
-    private fun compareResults(
-        data: SymbolPointersData,
-        testServices: TestServices,
-        disablePsiBasedLogic: Boolean,
-    ) {
+    private fun compareResults(data: SymbolPointersData, disablePsiBasedLogic: Boolean) {
         val actual = data.pointers.renderDeclarations()
-        compareResults(actual, testServices, disablePsiBasedLogic, extension = "txt")
+        compareResults(actual, disablePsiBasedLogic, extension = "txt")
 
         val actualPretty = data.pointersForPrettyRendering.renderDeclarations()
-        compareResults(actualPretty, testServices, disablePsiBasedLogic, extension = "pretty.txt")
+        compareResults(actualPretty, disablePsiBasedLogic, extension = "pretty.txt")
     }
 
-    private fun compareResults(actual: String, testServices: TestServices, disablePsiBasedLogic: Boolean, extension: String) {
-        val assertions = testServices.assertions
-        if (!disablePsiBasedLogic) {
-            assertions.assertEqualsToTestOutputFile(actual = actual, extension = extension)
+    private fun compareResults(actual: String, disablePsiBasedLogic: Boolean, extension: String) {
+        val variantChain = if (disablePsiBasedLogic) {
+            configurator.testPrefixes.withAdditionalVariant("nonPsi")
         } else {
-            val expectedFile = getTestOutputFile(extension).toFile()
-            val nonPsiExpectedFile = getTestOutputFile("nonPsi.$extension").toFile()
-            when {
-                assertions.doesEqualToFile(expectedFile, actual) -> {
-                    if (nonPsiExpectedFile.exists()) {
-                        throw AssertionError("'${nonPsiExpectedFile.path}' should be removed as the actual output is the same as '${expectedFile.path}'")
-                    }
-                }
-
-                else -> {
-                    if (nonPsiExpectedFile.exists()) {
-                        assertions.assertEqualsToFile(nonPsiExpectedFile, actual)
-                        return
-                    }
-
-                    val message = """
-                        Non-PSI version doesn't equal to the PSI-based variation.
-                        If you want to commit both results, please add a separate file "${expectedFile.nameWithoutExtension}.nonPsi.txt".
-                        """.trimIndent()
-                    throw AssertionFailedError(
-                        /* message = */ message,
-                        /* expected = */ expectedFile.readText(),
-                        /* actual = */ actual,
-                    )
-                }
-            }
+            configurator.testPrefixes
         }
+
+        assertEqualsToTestOutputFile(
+            actual = actual,
+            extension = extension,
+            variantChain = variantChain,
+        )
     }
 
     private fun List<PointerWithRenderedSymbol>.renderDeclarations(): String =
