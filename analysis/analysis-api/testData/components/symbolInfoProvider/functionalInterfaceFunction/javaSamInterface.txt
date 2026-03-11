@@ -4,7 +4,6 @@ CLASS:
   classId: JavaRunnable
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -46,7 +45,6 @@ FUNCTIONAL INTERFACE FUNCTION:
   KaNamedFunctionSymbol:
   annotations: []
   callableId: /JavaRunnable.run
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

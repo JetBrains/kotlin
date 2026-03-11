@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/fooApi3
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -42,7 +41,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/internalFooApi3
-  compilerVisibility: Internal
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -83,7 +81,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/privateFooApi3
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -124,7 +121,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/barApi3
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -149,7 +145,6 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -191,7 +186,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/internalBarApi3
-  compilerVisibility: Internal
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -216,7 +210,6 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -258,7 +251,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/privateBarApi3
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -283,7 +275,6 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -325,7 +316,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/fooApi2
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -366,7 +356,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/internalFooApi2
-  compilerVisibility: Internal
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -407,7 +396,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/privateFooApi2
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -448,7 +436,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/barApi2
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -473,7 +460,6 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -515,7 +501,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/internalBarApi2
-  compilerVisibility: Internal
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -540,7 +525,6 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -582,7 +566,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/privateBarApi2
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -607,7 +590,6 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -649,7 +631,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/fooApi1
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -690,7 +671,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/internalFooApi1
-  compilerVisibility: Internal
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -731,7 +711,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/privateFooApi1
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -772,7 +751,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/barApi1
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -797,7 +775,6 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -839,7 +816,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/internalBarApi1
-  compilerVisibility: Internal
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -864,7 +840,6 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -906,7 +881,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: library/api/privateBarApi1
-  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -931,7 +905,6 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -975,7 +948,6 @@ KaNamedClassSymbol:
   classId: library/api/FakeI
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -1007,7 +979,6 @@ KaNamedClassSymbol:
   classId: library/api/InternalFakeI
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Internal
   contextReceivers: []
   isActual: false
   isData: false
@@ -1039,7 +1010,6 @@ KaNamedClassSymbol:
   classId: library/api/PrivateFakeI
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isData: false
@@ -1071,7 +1041,6 @@ KaNamedClassSymbol:
   classId: library/api/PrivateI
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isData: false
@@ -1103,7 +1072,6 @@ KaNamedClassSymbol:
   classId: library/api/InternalI
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Internal
   contextReceivers: []
   isActual: false
   isData: false
@@ -1135,7 +1103,6 @@ KaNamedClassSymbol:
   classId: library/api/I
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -1167,7 +1134,6 @@ KaNamedClassSymbol:
   classId: library/api/C1
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -1199,7 +1165,6 @@ KaNamedClassSymbol:
   classId: library/api/InternalC1
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Internal
   contextReceivers: []
   isActual: false
   isData: false
@@ -1231,7 +1196,6 @@ KaNamedClassSymbol:
   classId: library/api/PrivateC1
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isData: false

@@ -2,7 +2,6 @@ KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: null
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: null

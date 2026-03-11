@@ -1,7 +1,6 @@
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: P
   contextReceivers: []
   hasStableParameterNames: true
@@ -24,14 +23,12 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
         annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -61,13 +58,11 @@ KaConstructorSymbol:
           deprecationStatus: null
           importableFqName: null
         callableId: /P.x
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -167,14 +162,12 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
         annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -204,13 +197,11 @@ KaConstructorSymbol:
           deprecationStatus: null
           importableFqName: null
         callableId: /P.y
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -320,7 +311,6 @@ KaNamedClassSymbol:
   classId: P
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: true
@@ -350,7 +340,6 @@ KaNamedClassSymbol:
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -378,7 +367,6 @@ KaLocalVariableSymbol:
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -406,7 +394,6 @@ KaLocalVariableSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /destruct
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

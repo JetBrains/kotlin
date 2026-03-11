@@ -1,6 +1,5 @@
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -25,7 +24,6 @@ KaTypeParameterSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /topLevelFunction
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -55,7 +53,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -89,7 +86,6 @@ KaNamedFunctionSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -111,7 +107,6 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -136,13 +131,11 @@ KaKotlinPropertySymbol:
     deprecationStatus: null
     importableFqName: null
   callableId: /topLevelProperty
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -159,7 +152,6 @@ KaKotlinPropertySymbol:
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       isActual: false
       isCompanion: false
@@ -215,7 +207,6 @@ KaKotlinPropertySymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isCompanion: false
@@ -245,7 +236,6 @@ KaKotlinPropertySymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -274,7 +264,6 @@ KaKotlinPropertySymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -293,7 +282,6 @@ KaTypeParameterSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -317,7 +305,6 @@ KaTypeParameterSymbol:
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: TopLevelClass
   contextReceivers: []
   hasStableParameterNames: true
@@ -345,7 +332,6 @@ KaConstructorSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -363,7 +349,6 @@ KaConstructorSymbol:
       importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -388,7 +373,6 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -427,7 +411,6 @@ KaConstructorSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -446,7 +429,6 @@ KaTypeParameterSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -465,7 +447,6 @@ KaTypeParameterSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -484,7 +465,6 @@ KaTypeParameterSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -503,7 +483,6 @@ KaTypeParameterSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -523,7 +502,6 @@ KaTypeParameterSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -553,7 +531,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -590,7 +567,6 @@ KaNamedFunctionSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -612,7 +588,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -634,7 +609,6 @@ KaNamedClassSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -663,7 +637,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -685,7 +658,6 @@ KaNamedClassSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -712,7 +684,6 @@ KaNamedClassSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Local
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -742,7 +713,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -772,7 +742,6 @@ KaNamedFunctionSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /TopLevelClass.NestedClass.nestedFunction
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -802,7 +771,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -842,7 +810,6 @@ KaNamedClassSymbol:
   classId: TopLevelClass.NestedClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -864,7 +831,6 @@ KaNamedClassSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -890,7 +856,6 @@ KaNamedClassSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -909,7 +874,6 @@ KaTypeParameterSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -928,7 +892,6 @@ KaTypeParameterSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -947,7 +910,6 @@ KaTypeParameterSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -966,7 +928,6 @@ KaTypeParameterSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -986,7 +947,6 @@ KaTypeParameterSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1016,7 +976,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -1053,7 +1012,6 @@ KaNamedFunctionSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -1075,7 +1033,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -1097,7 +1054,6 @@ KaNamedClassSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -1126,7 +1082,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -1148,7 +1103,6 @@ KaNamedClassSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -1175,7 +1129,6 @@ KaNamedClassSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Local
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1205,7 +1158,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -1235,7 +1187,6 @@ KaNamedFunctionSymbol:
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -1263,7 +1214,6 @@ KaLocalVariableSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /TopLevelClass.InnerClass.nestedFunction
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -1293,7 +1243,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -1333,7 +1282,6 @@ KaNamedClassSymbol:
   classId: TopLevelClass.InnerClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -1355,7 +1303,6 @@ KaNamedClassSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -1384,7 +1331,6 @@ KaNamedClassSymbol:
   classId: TopLevelClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -1406,7 +1352,6 @@ KaNamedClassSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -1424,7 +1369,6 @@ KaNamedClassSymbol:
       importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -1454,7 +1398,6 @@ KaNamedClassSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -1474,7 +1417,6 @@ KaTypeParameterSymbol:
 KaTypeAliasSymbol:
   annotations: []
   classId: TopLevelTypeAlias
-  compilerVisibility: Public
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -1489,7 +1431,6 @@ KaTypeAliasSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false

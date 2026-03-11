@@ -23,7 +23,6 @@ scopes:
       KaContextParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isCompanion: false
@@ -80,12 +79,10 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /bar
-        compilerVisibility: Public
         contextParameters: [
           KaContextParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -142,7 +139,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /bar
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -177,7 +173,6 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -198,12 +193,10 @@ scopes:
             type: kotlin/Unit
           visibility: PRIVATE
         callableId: /foo
-        compilerVisibility: Public
         contextParameters: [
           KaContextParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
@@ -233,7 +226,6 @@ scopes:
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false

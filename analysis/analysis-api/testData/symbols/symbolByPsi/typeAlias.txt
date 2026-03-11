@@ -1,6 +1,5 @@
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -22,7 +21,6 @@ KaNamedClassSymbol:
   classId: X
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -44,7 +42,6 @@ KaNamedClassSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -70,7 +67,6 @@ KaNamedClassSymbol:
 
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -90,7 +86,6 @@ KaTypeParameterSymbol:
 KaTypeAliasSymbol:
   annotations: []
   classId: Y
-  compilerVisibility: Private
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: [
@@ -109,7 +104,6 @@ KaTypeAliasSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false

@@ -1,7 +1,6 @@
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -29,7 +28,6 @@ KaLocalVariableSymbol:
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /usage
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []

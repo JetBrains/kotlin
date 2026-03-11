@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -33,7 +32,6 @@ KaNamedClassSymbol:
 KaTypeAliasSymbol:
   annotations: []
   classId: null
-  compilerVisibility: Local
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: []

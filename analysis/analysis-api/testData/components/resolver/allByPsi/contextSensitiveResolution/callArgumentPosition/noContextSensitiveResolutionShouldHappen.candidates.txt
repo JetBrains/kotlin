@@ -535,7 +535,6 @@ KtCallExpression(350,356): 'foo(X)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -611,7 +610,6 @@ KtNameReferenceExpression(350,353): 'foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
@@ -692,7 +690,6 @@ KtNameReferenceExpression(354,355): 'X'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false

@@ -4,7 +4,6 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /Result.isFailure
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -21,7 +20,6 @@ KaNamedFunctionSymbol:
                   classId: Result
                   classKind: CLASS
                   companionObject: null
-                  compilerVisibility: Public
                   contextReceivers: []
                   isActual: false
                   isData: false

@@ -587,7 +587,6 @@ KtNameReferenceExpression(354,355): 'X'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false

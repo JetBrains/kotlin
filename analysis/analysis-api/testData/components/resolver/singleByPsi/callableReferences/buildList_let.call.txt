@@ -6,7 +6,6 @@ KtCallableReferenceExpression(246,251): '::add'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false

@@ -4,7 +4,6 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -33,7 +32,6 @@ KaContextParameterSymbol:
 KaContextParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -70,7 +68,6 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -99,7 +96,6 @@ KaContextParameterSymbol:
 KaContextParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -135,7 +131,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -168,7 +163,6 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
@@ -197,7 +191,6 @@ KaContextParameterSymbol:
 KaContextParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false

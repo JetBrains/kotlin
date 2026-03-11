@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: one/DataClass.component1
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
