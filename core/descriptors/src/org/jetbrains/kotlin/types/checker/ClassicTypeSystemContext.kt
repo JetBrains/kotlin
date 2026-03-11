@@ -434,11 +434,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
 
     override fun newTypeCheckerState(
+        typeSystemContext: TypeSystemContext,
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean,
         dnnTypesEqualToFlexible: Boolean,
     ): TypeCheckerState {
-        return createClassicTypeCheckerState(errorTypesEqualToAnything, stubTypesEqualToAnything, typeSystemContext = this)
+        return createClassicTypeCheckerState(errorTypesEqualToAnything, stubTypesEqualToAnything, typeSystemContext)
     }
 
     override fun nullableNothingType(): SimpleTypeMarker {

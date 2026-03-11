@@ -162,6 +162,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun newTypeCheckerState(
+        typeSystemContext: TypeSystemContext,
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean,
         dnnTypesEqualToFlexible: Boolean,
@@ -170,7 +171,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         stubTypesEqualToAnything,
         dnnTypesEqualToFlexible,
         allowedTypeVariable = true,
-        typeSystemContext = this,
+        typeSystemContext,
         kotlinTypePreparator = ConeTypePreparator(session),
         kotlinTypeRefiner = AbstractTypeRefiner.Default
     )

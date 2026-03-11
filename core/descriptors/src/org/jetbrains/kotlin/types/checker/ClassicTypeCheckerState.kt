@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.types.model.TypeSystemContext
 
 @RequiresOptIn
 annotation class ClassicTypeCheckerStateInternals
@@ -49,7 +50,7 @@ open class ClassicTypeCheckerState(
 fun createClassicTypeCheckerState(
     isErrorTypeEqualsToAnything: Boolean,
     isStubTypeEqualsToAnything: Boolean = true,
-    typeSystemContext: ClassicTypeSystemContext = SimpleClassicTypeSystemContext,
+    typeSystemContext: TypeSystemContext = SimpleClassicTypeSystemContext,
     kotlinTypePreparator: KotlinTypePreparator = KotlinTypePreparator.Default,
     kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default
 ): TypeCheckerState {

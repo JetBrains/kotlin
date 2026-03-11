@@ -116,11 +116,31 @@ interface TypeSystemTypeFactoryContext : TypeSystemContext, TypeSystemBuiltInsCo
  * Implementation is recommended to be [TypeSystemContext]
  */
 interface TypeCheckerProviderContext {
+    /**
+     * This one is expected to be the actual factory method implementation
+     */
     fun newTypeCheckerState(
+        typeSystemContext: TypeSystemContext,
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean,
         dnnTypesEqualToFlexible: Boolean = false,
     ): TypeCheckerState
+
+    // TODO: This method is likely to be moved as a helper into TypeSystemContext (KT-84895)
+    fun newTypeCheckerState(
+        errorTypesEqualToAnything: Boolean,
+        stubTypesEqualToAnything: Boolean,
+        dnnTypesEqualToFlexible: Boolean = false,
+    ): TypeCheckerState {
+        check(this is TypeSystemContext) {
+            "All current implementations are expected to be TypeSystemContext, but ${this::class.qualifiedName} found"
+        }
+
+        return newTypeCheckerState(
+            typeSystemContext = this,
+            errorTypesEqualToAnything, stubTypesEqualToAnything, dnnTypesEqualToFlexible,
+        )
+    }
 }
 
 /**

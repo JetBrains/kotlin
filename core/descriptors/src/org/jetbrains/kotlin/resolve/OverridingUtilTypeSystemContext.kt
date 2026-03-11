@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.model.CustomSubtypingCallback
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeSystemContext
 
 class OverridingUtilTypeSystemContext(
     val matchingTypeConstructors: Map<TypeConstructor, TypeConstructor>?,
@@ -26,6 +27,7 @@ class OverridingUtilTypeSystemContext(
     }
 
     override fun newTypeCheckerState(
+        typeSystemContext: TypeSystemContext,
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean,
         dnnTypesEqualToFlexible: Boolean,
@@ -33,7 +35,7 @@ class OverridingUtilTypeSystemContext(
         createClassicTypeCheckerState(
             errorTypesEqualToAnything,
             stubTypesEqualToAnything,
-            typeSystemContext = this,
+            typeSystemContext,
             kotlinTypeRefiner = kotlinTypeRefiner,
             kotlinTypePreparator = kotlinTypePreparator,
         )
