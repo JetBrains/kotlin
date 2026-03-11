@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypePreparator;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
@@ -401,9 +402,13 @@ public class OverridingUtil {
         assert firstParameters.size() == secondParameters.size() :
                 "Should be the same number of type parameters: " + firstParameters + " vs " + secondParameters;
 
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        Function2<KotlinTypeMarker, KotlinTypeMarker, Boolean> customSubtypingCallback =
+                (Function2) customSubtype;
+
         if (firstParameters.isEmpty()) {
             return new OverridingUtilTypeSystemContext(
-                    null, equalityAxioms, kotlinTypeRefiner, kotlinTypePreparator, customSubtype
+                    null, equalityAxioms, kotlinTypeRefiner, kotlinTypePreparator, customSubtypingCallback
             ).newTypeCheckerState(true, true, false);
         }
 
@@ -413,7 +418,7 @@ public class OverridingUtil {
         }
 
         return new OverridingUtilTypeSystemContext(
-                matchingTypeConstructors, equalityAxioms, kotlinTypeRefiner, kotlinTypePreparator, customSubtype
+                matchingTypeConstructors, equalityAxioms, kotlinTypeRefiner, kotlinTypePreparator, customSubtypingCallback
         ).newTypeCheckerState(true, true, false);
     }
 

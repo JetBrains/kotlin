@@ -639,7 +639,18 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
      * @returns substituted type or [type] if there were no substitution
      */
     fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker
+
+    /** See [CustomSubtypingCallback] */
+    val customSubtypingCallback: CustomSubtypingCallback? get() = null
 }
+
+/**
+ * A callback which is being called on each subtyping to override the regular algorithm.
+ * Being called also for recursive subtyping, e.g., when comparing type arguments.
+ *
+ * `null` returned means that the regular algorithm should be used.
+ */
+typealias CustomSubtypingCallback = (subType: KotlinTypeMarker, superType: KotlinTypeMarker) -> Boolean?
 
 enum class CaptureStatus {
     FOR_SUBTYPING,

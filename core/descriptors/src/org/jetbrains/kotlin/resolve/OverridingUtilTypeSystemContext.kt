@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.*
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.CustomSubtypingCallback
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 class OverridingUtilTypeSystemContext(
@@ -17,7 +16,7 @@ class OverridingUtilTypeSystemContext(
     private val equalityAxioms: KotlinTypeChecker.TypeConstructorEquality,
     private val kotlinTypeRefiner: KotlinTypeRefiner,
     private val kotlinTypePreparator: KotlinTypePreparator,
-    private val customSubtype: ((KotlinType, KotlinType) -> Boolean)? = null,
+    override val customSubtypingCallback: CustomSubtypingCallback? = null,
 ) : ClassicTypeSystemContext {
 
     override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
@@ -30,33 +29,14 @@ class OverridingUtilTypeSystemContext(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean,
         dnnTypesEqualToFlexible: Boolean,
-    ): TypeCheckerState {
-        if (customSubtype == null) {
-            return createClassicTypeCheckerState(
-                errorTypesEqualToAnything,
-                stubTypesEqualToAnything,
-                typeSystemContext = this,
-                kotlinTypeRefiner = kotlinTypeRefiner,
-                kotlinTypePreparator = kotlinTypePreparator,
-            )
-        }
-
-        return object : TypeCheckerState(
+    ): TypeCheckerState =
+        createClassicTypeCheckerState(
             errorTypesEqualToAnything,
             stubTypesEqualToAnything,
-            dnnTypesEqualToFlexible,
-            allowedTypeVariable = true,
             typeSystemContext = this,
-            kotlinTypePreparator,
-            kotlinTypeRefiner,
-        ) {
-            override fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
-                require(subType is KotlinType)
-                require(superType is KotlinType)
-                return customSubtype.invoke(subType, superType)
-            }
-        }
-    }
+            kotlinTypeRefiner = kotlinTypeRefiner,
+            kotlinTypePreparator = kotlinTypePreparator,
+        )
 
     private fun areEqualTypeConstructorsByAxioms(a: TypeConstructor, b: TypeConstructor): Boolean {
         if (equalityAxioms.equals(a, b)) return true

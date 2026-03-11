@@ -44,9 +44,12 @@ object JavaOverrideWithWrongNullabilityOverrideChecker : DeclarationChecker {
             val overridingUtilWithEnhancementUnwrapped =
                 OverridingUtil
                     .createWithTypePreparatorAndCustomSubtype(typePreparatorUnwrappingEnhancement) { subtype, supertype ->
-                        !JavaNullabilityChecker.isNullableTypeAgainstNotNullTypeParameter(subtype, supertype).also {
-                            if (it) {
+                        JavaNullabilityChecker.isNullableTypeAgainstNotNullTypeParameter(subtype, supertype).let { isNullabilityViolation ->
+                            if (isNullabilityViolation) {
                                 relatedTypeParameters.addIfNotNull(subtype.constructor.declarationDescriptor as? TypeParameterDescriptor)
+                                false
+                            } else {
+                                null // returning null means that we should proceed with the usual subtyping
                             }
                         }
                     }
