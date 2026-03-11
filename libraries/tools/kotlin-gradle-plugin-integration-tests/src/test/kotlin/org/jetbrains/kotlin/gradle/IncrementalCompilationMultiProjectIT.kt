@@ -732,7 +732,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     @DisplayName("Test compilation when incremental state is missing")
     @GradleTest
     open fun testMissingIncrementalState(gradleVersion: GradleVersion) {
-        defaultProject(gradleVersion) {
+        defaultProject(gradleVersion, buildOptions = defaultBuildOptions.copy(runViaBuildToolsApi = false)) {
             // Perform the first non-incremental build without using Kotlin daemon so that incremental state is not produced
             build(
                 ":lib:$compileKotlinTaskName",
