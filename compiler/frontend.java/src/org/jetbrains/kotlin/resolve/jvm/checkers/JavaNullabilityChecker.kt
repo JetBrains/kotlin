@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
+import org.jetbrains.kotlin.types.model.CustomSubtypingCallback
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
@@ -166,25 +167,29 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
 
         var foundSubtypeTypeParameter: TypeParameterDescriptor? = null
 
-        @OptIn(ClassicTypeCheckerStateInternals::class)
-        val typeState: TypeCheckerState = object : ClassicTypeCheckerState(isErrorTypeEqualsToAnything = true) {
-            private var expectsTypeArgument = false
-            override fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
-
-                if (isNullableTypeAgainstNotNullTypeParameter(subType as KotlinType, superType as KotlinType)) {
-                    // data flow value is only checked for top-level types
-                    if (expectsTypeArgument || c.dataFlowInfo.getStableNullability(dataFlowValueForWholeExpression()) != Nullability.NOT_NULL) {
-                        foundSubtypeTypeParameter = subType.constructor.declarationDescriptor as? TypeParameterDescriptor
-                        return false
-                    }
+        var expectsTypeArgument = false
+        fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? {
+            if (isNullableTypeAgainstNotNullTypeParameter(subType as KotlinType, superType as KotlinType)) {
+                // data flow value is only checked for top-level types
+                if (expectsTypeArgument || c.dataFlowInfo.getStableNullability(dataFlowValueForWholeExpression()) != Nullability.NOT_NULL) {
+                    foundSubtypeTypeParameter = subType.constructor.declarationDescriptor as? TypeParameterDescriptor
+                    return false
                 }
-
-                if (!expectsTypeArgument) {
-                    expectsTypeArgument = true
-                }
-                return true
             }
+
+            if (!expectsTypeArgument) {
+                expectsTypeArgument = true
+            }
+            return null // returning null means that we should proceed with the usual subtyping
         }
+
+        @OptIn(ClassicTypeCheckerStateInternals::class)
+        val typeState: TypeCheckerState = ClassicTypeCheckerState(
+            isErrorTypeEqualsToAnything = true,
+            typeSystemContext = object : ClassicTypeSystemContext {
+                override val customSubtypingCallback: CustomSubtypingCallback = ::customIsSubtypeOf
+            },
+        )
 
         AbstractTypeChecker.isSubtypeOf(typeState, expressionType, c.expectedType)
 
