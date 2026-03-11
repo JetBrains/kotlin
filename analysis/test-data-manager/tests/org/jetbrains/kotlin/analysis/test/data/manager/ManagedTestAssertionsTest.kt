@@ -144,15 +144,12 @@ class ManagedTestAssertionsTest {
     }
 
     @Test
-    fun `UPDATE mode - secondary test fails when no file exists`() {
+    fun `UPDATE mode - secondary missing creates file silently`() {
         setupFiles()  // No expected files
 
-        val ex = assertThrows<IllegalStateException> {
-            runAssertion(variantChain = listOf("js"), actual = "content", mode = TestDataManagerMode.UPDATE)
-        }
+        runAssertion(variantChain = listOf("js"), actual = "content", mode = TestDataManagerMode.UPDATE)
 
-        assertTrue(ex.message!!.contains("No expected file found"))
-        assertTrue(ex.message!!.contains("[js]"))
+        assertFileState("test.js.txt: content")
     }
 
     // ========== CHECK mode tests ==========
@@ -165,8 +162,22 @@ class ManagedTestAssertionsTest {
             runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.CHECK)
         }
 
-        assertFileState("test.txt: content")  // File was created
+        assertFileState("test.txt: content")
         assertTrue(ex.message!!.startsWith("Expected data file did not exist, created: "))
+    }
+
+    @Test
+    fun `CHECK mode - secondary missing throws without creating`() {
+        setupFiles()  // No expected files
+
+        val ex = assertThrows<AssertionFailedError> {
+            runAssertion(variantChain = listOf("js"), actual = "content", mode = TestDataManagerMode.CHECK)
+        }
+
+        assertFileState("")
+        assertTrue(ex.message!!.contains("No expected file found for secondary test with variant chain [js]."))
+        assertTrue(ex.message!!.contains("Searched: test.js.txt, test.txt"))
+        assertFalse(ex.message!!.contains("created"))
     }
 
     @Test
@@ -236,14 +247,18 @@ class ManagedTestAssertionsTest {
     }
 
     @Test
-    fun `CHECK mode - secondary test fails when no file exists`() {
+    fun `CHECK mode (TeamCity) - secondary missing throws without creating`() {
+        TestDataManagerMode.isUnderTeamCityOverride = true
         setupFiles()  // No expected files
 
-        val ex = assertThrows<IllegalStateException> {
+        val ex = assertThrows<AssertionFailedError> {
             runAssertion(variantChain = listOf("js"), actual = "content", mode = TestDataManagerMode.CHECK)
         }
 
-        assertTrue(ex.message!!.contains("No expected file found"))
+        assertFileState("")
+        assertTrue(ex.message!!.contains("No expected file found for secondary test with variant chain [js]."))
+        assertTrue(ex.message!!.contains("Searched: test.js.txt, test.txt"))
+        assertFalse(ex.message!!.contains("created"))
     }
 
     // ========== Shared behavior tests ==========
@@ -409,6 +424,24 @@ class ManagedTestAssertionsTest {
             expected = "test.pretty.txt: content"
         )
         assertTrue(ex.message!!.contains("did not exist"))
+        assertTrue(ex.message!!.contains("created"))
+    }
+
+    @Test
+    fun `CHECK mode - compound extension - secondary missing throws without creating`() {
+        setupFiles()  // No expected files
+
+        val ex = assertThrows<AssertionFailedError> {
+            runAssertion(variantChain = listOf("js"), actual = "content", extension = ".pretty.txt", mode = TestDataManagerMode.CHECK)
+        }
+
+        assertFileState(
+            fileNames = listOf("test.pretty.txt", "test.js.pretty.txt"),
+            expected = ""
+        )
+        assertTrue(ex.message!!.contains("No expected file found for secondary test with variant chain [js]."))
+        assertTrue(ex.message!!.contains("Searched: test.js.pretty.txt, test.pretty.txt"))
+        assertFalse(ex.message!!.contains("created"))
     }
 
     @Test
@@ -623,6 +656,19 @@ class ManagedTestAssertionsTest {
     }
 
     @Test
+    fun `UPDATE mode - tracking records path on secondary file create`() {
+        setupFiles()  // No expected files
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(variantChain = listOf("js"), actual = "new content", mode = TestDataManagerMode.UPDATE)
+
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "test.kt",
+            expectedFileState = "test.js.txt: new content",
+        )
+    }
+
+    @Test
     fun `UPDATE mode - tracking records path on mismatch update`() {
         setupFiles("test.txt" to "old")
         ManagedTestAssertions.trackUpdatedPaths = true
@@ -746,7 +792,9 @@ class ManagedTestAssertionsTest {
         assertTrackedPaths("test.kt")
 
         // Second drain is expected to have nothing
-        assertTrackedPaths("")
-        assertFileState("test.txt: content")
+        assertTrackedPathsAndFileState(
+            expectedTrackedPaths = "",
+            expectedFileState = "test.txt: content",
+        )
     }
 }

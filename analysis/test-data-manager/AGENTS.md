@@ -234,7 +234,7 @@ ManagedTestAssertions.assertEqualsToTestDataFile(
 | Scenario                 | UPDATE mode | CHECK mode (local) | CHECK mode (CI) |
 |--------------------------|-------------|--------------------|-----------------|
 | File missing (golden)    | Create      | Create + throw     | Throw           |
-| File missing (secondary) | Throw       | Throw              | Throw           |
+| File missing (secondary) | Create      | Throw              | Throw           |
 | Content matches          | Pass        | Pass               | Pass            |
 | Write-target redundant   | Delete      | Delete + throw     | Throw           |
 | Content mismatch         | Update      | Throw              | Throw           |
@@ -250,4 +250,3 @@ ManagedTestAssertions.assertEqualsToTestDataFile(
 | `ManagedTestFilter`      | testFixtures/filters | JUnit filter for ManagedTest implementations |
 | `TestMetadataFilter`     | testFixtures/filters | JUnit filter by @TestMetadata paths          |
 | `VariantChainComparator` | testFixtures         | Orders variant chains by depth               |
-

@@ -19,8 +19,8 @@ import kotlin.io.path.*
 /**
  * Assertions for managed test data files.
  *
- * Provides a single entry point for comparing test outputs with expected files,
- * enforcing the golden-only auto-generation constraint.
+ * Provides a single entry point for comparing test outputs with expected files
+ * and applying the managed test data behavior matrix.
  */
 object ManagedTestAssertions {
 
@@ -70,7 +70,7 @@ object ManagedTestAssertions {
      * | Scenario                 | UPDATE        | CHECK (local)   | CHECK (TeamCity) |
      * |--------------------------|---------------|-----------------|------------------|
      * | File missing (golden)    | Create        | Create + throw  | Throw            |
-     * | File missing (secondary) | Throw         | Throw           | Throw            |
+     * | File missing (secondary) | Create        | Throw           | Throw            |
      * | Content matches          | Pass          | Pass            | Pass             |
      * | Write-target redundant   | Delete        | Delete + throw  | Throw            |
      * | Content mismatch         | Update        | Throw           | Throw            |
@@ -81,7 +81,6 @@ object ManagedTestAssertions {
      * @param extension file extension for expected files (e.g., ".txt")
      * @param mode test data manager mode (defaults to [TestDataManagerMode.currentMode])
      * @throws AssertionFailedError on mismatch, missing file, or redundant file
-     * @throws IllegalStateException if no readable file found for secondary test
      */
     fun assertEqualsToTestDataFile(
         testDataPath: Path,
@@ -133,47 +132,31 @@ object ManagedTestAssertions {
         mode: TestDataManagerMode,
         variantChain: TestVariantChain,
     ) {
-        val writeTargetFile = testDataFiles.writeTargetFile
-
-        if (isGoldenTest) {
-            when (mode) {
-                TestDataManagerMode.UPDATE -> testDataFiles.update {
-                    writeTargetFile.createParentDirectories()
-                    writeTargetFile.writeText(normalizedActual)
-                }
-
-                TestDataManagerMode.CHECK -> when {
-                    TestDataManagerMode.isUnderTeamCity -> throw AssertionFailedError(
-                        "Expected data file did not exist: $writeTargetFile",
-                        FileInfo(writeTargetFile.absolutePathString(), byteArrayOf()),
-                        normalizedActual,
-                    )
-
-                    else -> testDataFiles.update {
-                        writeTargetFile.createParentDirectories()
-                        writeTargetFile.writeText(normalizedActual)
-                        throw AssertionFailedError(
-                            "Expected data file did not exist, created: $writeTargetFile",
-                            FileInfo(writeTargetFile.absolutePathString(), byteArrayOf()),
-                            normalizedActual,
-                        )
-                    }
-                }
-            }
-        } else {
-            // Secondary test: always fail
-            throw IllegalStateException(
-                "No expected file found for secondary test with variant chain $variantChain. " +
-                        "Searched: ${testDataFiles.readableFiles.joinToString { it.name }}. " +
-                        "Run golden test first to generate base file."
+        when (mode) {
+            TestDataManagerMode.UPDATE -> writeFile(
+                testDataFiles = testDataFiles,
+                content = normalizedActual,
             )
+
+            TestDataManagerMode.CHECK -> {
+                val modificationAllowed = isGoldenTest && !TestDataManagerMode.isUnderTeamCity
+                if (modificationAllowed) writeFile(
+                    testDataFiles = testDataFiles,
+                    content = normalizedActual,
+                )
+
+                throw createMissingFileAssertion(
+                    testDataFiles = testDataFiles,
+                    normalizedActual = normalizedActual,
+                    isGoldenTest = isGoldenTest,
+                    variantChain = variantChain,
+                    fileWasCreated = modificationAllowed,
+                )
+            }
         }
     }
 
-    private fun checkAndHandleRedundantFile(
-        testDataFiles: TestDataFiles,
-        mode: TestDataManagerMode,
-    ) {
+    private fun checkAndHandleRedundantFile(testDataFiles: TestDataFiles, mode: TestDataManagerMode) {
         val writeTargetFile = testDataFiles.writeTargetFile
         if (!writeTargetFile.exists()) return
 
@@ -184,25 +167,17 @@ object ManagedTestAssertions {
         val nextContent = normalizeContent(nextExistingFile.readText())
 
         if (writeTargetContent == nextContent) {
-            when (mode) {
-                TestDataManagerMode.UPDATE -> testDataFiles.update {
-                    writeTargetFile.deleteIfExists()
-                }
+            val modificationAllowed = mode == TestDataManagerMode.UPDATE || !TestDataManagerMode.isUnderTeamCity
+            if (modificationAllowed) testDataFiles.update {
+                writeTargetFile.deleteIfExists()
+            }
 
-                TestDataManagerMode.CHECK -> when {
-                    TestDataManagerMode.isUnderTeamCity -> throw AssertionFailedError(
-                        "\"${writeTargetFile.name}\" has the same content as \"${nextExistingFile.name}\". " +
-                                "Delete the prefixed file."
-                    )
-
-                    else -> testDataFiles.update {
-                        writeTargetFile.deleteIfExists()
-                        throw AssertionFailedError(
-                            "\"${writeTargetFile.name}\" had the same content as \"${nextExistingFile.name}\". " +
-                                    "Deleted the redundant prefixed file."
-                        )
-                    }
-                }
+            if (mode == TestDataManagerMode.CHECK) {
+                throw createRedundantFileAssertion(
+                    writeTargetFile = writeTargetFile,
+                    nextExistingFile = nextExistingFile,
+                    fileWasDeleted = modificationAllowed,
+                )
             }
         }
     }
@@ -213,24 +188,79 @@ object ManagedTestAssertions {
         expectedContent: String,
         mode: TestDataManagerMode,
     ) {
-        val writeTargetFile = testDataFiles.writeTargetFile
         val contentToWrite = preserveEofNewline(normalizedActual, expectedContent)
-
         when (mode) {
-            TestDataManagerMode.UPDATE -> testDataFiles.update {
-                writeTargetFile.createParentDirectories()
-                writeTargetFile.writeText(contentToWrite)
-            }
+            TestDataManagerMode.UPDATE -> writeFile(
+                testDataFiles = testDataFiles,
+                content = contentToWrite,
+            )
 
-            TestDataManagerMode.CHECK -> throw AssertionFailedError(
-                "Actual data differs from file content: ${writeTargetFile.name}",
-                FileInfo(
-                    writeTargetFile.absolutePathString(),
-                    contentToWrite.toByteArray(StandardCharsets.UTF_8),
-                ),
-                normalizedActual,
+            TestDataManagerMode.CHECK -> throw createMismatchAssertion(
+                testDataFiles = testDataFiles,
+                expectedContent = expectedContent,
+                normalizedActual = contentToWrite,
             )
         }
+    }
+
+    private fun writeFile(testDataFiles: TestDataFiles, content: String): Unit = testDataFiles.update {
+        val path = testDataFiles.writeTargetFile
+        path.createParentDirectories()
+        path.writeText(content)
+    }
+
+    private fun createMissingFileAssertion(
+        testDataFiles: TestDataFiles,
+        normalizedActual: String,
+        isGoldenTest: Boolean,
+        variantChain: TestVariantChain,
+        fileWasCreated: Boolean,
+    ): AssertionFailedError {
+        val writeTargetFile = testDataFiles.writeTargetFile
+        val message = if (isGoldenTest) {
+            "Expected data file did not exist${if (fileWasCreated) ", created" else ""}: $writeTargetFile"
+        } else {
+            "No expected file found for secondary test with variant chain $variantChain. " +
+                    "Searched: ${testDataFiles.readableFiles.joinToString { it.name }}. " +
+                    "Run golden test first to generate base file, or run 'manageTestDataGlobally --mode=update' to auto-generate."
+        }
+
+        return AssertionFailedError(
+            message,
+            FileInfo(writeTargetFile.absolutePathString(), byteArrayOf()),
+            normalizedActual,
+        )
+    }
+
+    private fun createRedundantFileAssertion(
+        writeTargetFile: Path,
+        nextExistingFile: Path,
+        fileWasDeleted: Boolean,
+    ): AssertionFailedError {
+        val prefix = "\"${writeTargetFile.name}\" had the same content as \"${nextExistingFile.name}\". "
+        val postfix = if (fileWasDeleted) {
+            "Deleted the redundant prefixed file."
+        } else {
+            "Delete the prefixed file."
+        }
+
+        return AssertionFailedError(prefix + postfix)
+    }
+
+    private fun createMismatchAssertion(
+        testDataFiles: TestDataFiles,
+        expectedContent: String,
+        normalizedActual: String,
+    ): AssertionFailedError {
+        val writeTargetFile = testDataFiles.writeTargetFile
+        return AssertionFailedError(
+            "Actual data differs from file content: ${writeTargetFile.name}",
+            FileInfo(
+                writeTargetFile.absolutePathString(),
+                expectedContent.toByteArray(StandardCharsets.UTF_8),
+            ),
+            normalizedActual,
+        )
     }
 
     /**
