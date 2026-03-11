@@ -1,5 +1,4 @@
 // LANGUAGE: +AnnotationAllUseSiteTarget
-// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
 
 @all:Param
 @all:Property

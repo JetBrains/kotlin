@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseIllegalPsiEx
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer.Companion.isCacheable
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K1
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K2
@@ -76,7 +74,9 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             filter = Throwable::isIllegalPsiException,
         ) {
             doTestByMainFile(mainFile, mainModule, testServices, disablePsiBasedLogic = false)
-            doTestByMainFile(mainFile, mainModule, testServices, disablePsiBasedLogic = true)
+            if (configurator.frontendKind == FrontendKind.Fir && configurator.analysisApiMode == AnalysisApiMode.Ide) {
+                doTestByMainFile(mainFile, mainModule, testServices, disablePsiBasedLogic = true)
+            }
         }
     }
 
@@ -231,11 +231,8 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         k2Directive = DO_NOT_CHECK_SYMBOL_RESTORE_K2,
     )
 
-    private fun RegisteredDirectives.doNotCheckNonPsiSymbolRestoreDirective(): Directive? = findSpecificDirective(
-        commonDirective = DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE,
-        k1Directive = DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1,
-        k2Directive = DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2,
-    )
+    private fun RegisteredDirectives.doNotCheckNonPsiSymbolRestoreDirective(): Directive? =
+        DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE.takeIf { it in this }
 
     private fun compareResults(
         data: SymbolPointersData,
@@ -258,16 +255,13 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             val nonPsiExpectedFile = getTestOutputFile("nonPsi.$extension").toFile()
             when {
                 assertions.doesEqualToFile(expectedFile, actual) -> {
-                    if (nonPsiExpectedFile.exists() &&
-                        configurator.frontendKind == FrontendKind.Fir &&
-                        configurator.analysisApiMode == AnalysisApiMode.Ide
-                    ) {
+                    if (nonPsiExpectedFile.exists()) {
                         throw AssertionError("'${nonPsiExpectedFile.path}' should be removed as the actual output is the same as '${expectedFile.path}'")
                     }
                 }
 
                 else -> {
-                    if (nonPsiExpectedFile.exists() && configurator.frontendKind == FrontendKind.Fir) {
+                    if (nonPsiExpectedFile.exists()) {
                         assertions.assertEqualsToFile(nonPsiExpectedFile, actual)
                         return
                     }
@@ -429,14 +423,6 @@ object SymbolTestDirectives : SimpleDirectivesContainer() {
 
     val DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE by directive(
         description = "Symbol restoring w/o psi for some symbols in current test is not supported yet",
-    )
-
-    val DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1 by directive(
-        description = "Symbol restoring w/o psi for some symbols in current test is not supported yet in K1",
-    )
-
-    val DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2 by directive(
-        description = "Symbol restoring w/o psi for some symbols in current test is not supported yet in K2",
     )
 
     val PRETTY_RENDERER_OPTION by enumDirective(description = "Explicit rendering mode") { PrettyRendererOption.valueOf(it) }
