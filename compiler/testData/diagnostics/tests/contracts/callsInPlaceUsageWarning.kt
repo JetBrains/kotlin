@@ -100,13 +100,24 @@ fun regularFunction(block: () -> Int) {
     block()
 }
 
+inline fun inlineFunction(block: () -> Int) {
+    block()
+}
+
 fun useCaseWithoutContractWithStable() {
     var x: String? = "hello"
     if (x != null) {
         regularFunction {
             <!DEBUG_INFO_SMARTCAST!>x<!>.length
         }
+        inlineFunction {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        }
     }
+}
+
+fun funNegativeUseCase() {
+
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, andExpression, assignment, comparisonExpression, contractCallsEffect,

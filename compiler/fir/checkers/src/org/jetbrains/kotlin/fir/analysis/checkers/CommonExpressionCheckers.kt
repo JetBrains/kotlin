@@ -157,7 +157,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val smartCastExpressionCheckers: Set<FirSmartCastExpressionChecker> = setOf(
         FirDeprecatedSmartCastChecker,
-        FirSmartCastRelyingOnCallsInPlaceChecker,
     )
 
     override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker> = setOf(

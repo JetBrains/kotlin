@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv.FirReturnValue
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv.FirReturnValueOverrideChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv.FirUnusedReturnValueChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.FirUnusedExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirSmartCastRelyingOnCallsInPlaceChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.*
 
 object CommonDeclarationCheckers : DeclarationCheckers() {
@@ -72,6 +73,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirOperatorModifierChecker,
         FirTailrecFunctionChecker,
         FirVersionOverloadsChecker,
+        FirSmartCastRelyingOnCallsInPlaceChecker,
     )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = setOf(

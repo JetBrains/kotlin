@@ -11,50 +11,122 @@ import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
+import org.jetbrains.kotlin.fir.analysis.collectors.components.ControlFlowAnalysisDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.InlineStatus
-import org.jetbrains.kotlin.fir.declarations.isEffectivelyLocal
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.references.toResolvedSymbol
+import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.ConeDynamicType
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import kotlin.reflect.full.memberProperties
 
-object FirSmartCastRelyingOnCallsInPlaceChecker : FirSmartCastExpressionChecker(MppCheckerKind.Common) {
+object FirSmartCastRelyingOnCallsInPlaceChecker : FirFunctionChecker(MppCheckerKind.Common) {
     @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(expression: FirSmartCastExpression) {
-        if (!expression.isStable) return
+    override fun check(declaration: FirFunction) {
+        if (context.containingElements.any { it is FirFunction && it != declaration }) return
 
-        val source = expression.source ?: return
-
-        val originalExpression = expression.originalExpression as? FirQualifiedAccessExpression ?: return
-        val propertySymbol = originalExpression.calleeReference.toResolvedSymbol<FirPropertySymbol>() ?: return
-        val property = propertySymbol.fir
-
-        if (!property.isEffectivelyLocal) return
-
-        val containingLambda =
-            context.containingElements.asReversed().firstOrNull { it is FirAnonymousFunction } as? FirAnonymousFunction ?: return
-        val callsInPlaceType = containingLambda.invocationKind
-        if (callsInPlaceType == null || !callsInPlaceType.isInPlace) return
-        val report = IEReporter(source, context, reporter, FirErrors.SMARTCAST_RELYING_ON_CALLS_IN_PLACE)
-        report(
-            IEData(
-                info = "",
-                variableName = property.name.asString(),
-                resolvedType = expression.resolvedType.toString(),
-                callsInPlaceType = callsInPlaceType.toString(),
-                isInline = (containingLambda.inlineStatus == InlineStatus.Inline).toString()
+        val visitor = FirFunctionDeepVisitorWithData2()
+        visitor.visitFunction(
+            declaration,
+            CapturedVariableCheckerData(
+                context,
+                reporter,
             )
         )
     }
+
+    data class CapturedVariableCheckerData(
+        val context: CheckerContext,
+        val reporter: DiagnosticReporter,
+        val propertiesStack: MutableList<Pair<Set<FirPropertySymbol>, FirAnonymousFunction>> = mutableListOf(),
+    )
+
+
+    private class FirFunctionDeepVisitorWithData2 : FirDefaultVisitor<Unit, CapturedVariableCheckerData>() {
+        override fun visitElement(element: FirElement, data: CapturedVariableCheckerData) {
+            element.acceptChildren(this, data)
+        }
+
+        override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CapturedVariableCheckerData) {
+            val invocationKind = anonymousFunction.invocationKind
+            val hasCallInPlaceContract = invocationKind != null && invocationKind.isInPlace
+
+            val graph = (anonymousFunction as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return
+
+            val collector = ControlFlowAnalysisDiagnosticComponent.LocalPropertyCollector().apply {
+                anonymousFunction.acceptChildren(this, graph.subGraphs.toSet())
+            }
+
+            if (hasCallInPlaceContract) {
+                println("Node: ${anonymousFunction.render()} invocationKind: ${invocationKind}")
+                data.propertiesStack.add(Pair(collector.properties, anonymousFunction))
+            }
+            super.visitAnonymousFunction(anonymousFunction, data)
+            if (hasCallInPlaceContract) {
+                data.propertiesStack.removeLast()
+            }
+        }
+
+        override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: CapturedVariableCheckerData) {
+            if (!smartCastExpression.isStable) return
+            smartCastExpression.originalExpression.checkExpressionCapturedVariable(data)
+        }
+
+        private fun FirExpression.checkExpressionCapturedVariable(data: CapturedVariableCheckerData) {
+            if (this is FirQualifiedAccessExpression) {
+                val symbol = this.calleeReference.toResolvedVariableSymbol() ?: return
+                checkCapturedVariable(symbol, data, this.source)
+                val receiver = this.explicitReceiver?.unwrapErrorExpression()?.unwrapArgument()
+                receiver?.checkExpressionCapturedVariable(data)
+            }
+            if (this is FirCheckNotNullCall) {
+                this.argument.checkExpressionCapturedVariable(data)
+            }
+            if (this is FirSafeCallExpression) {
+                this.receiver.checkExpressionCapturedVariable(data)
+            }
+        }
+
+
+        @OptIn(SymbolInternals::class)
+        private fun checkCapturedVariable(
+            variableSymbol: FirVariableSymbol<*>,
+            data: CapturedVariableCheckerData,
+            source: KtSourceElement?,
+        ) {
+            if (data.propertiesStack.isEmpty()) return
+            val functionLocals = data.propertiesStack.last().first
+            val anonymousFunction = data.propertiesStack.last().second
+            if (variableSymbol in functionLocals) return
+            if (variableSymbol.resolvedReturnType is ConeDynamicType) return
+            if (!variableSymbol.isLocal) return
+            val report = IEReporter(source, data.context, data.reporter, FirErrors.SMARTCAST_RELYING_ON_CALLS_IN_PLACE)
+            report(
+                IEData(
+                    info = "",
+                    variableName = variableSymbol.name.asString(),
+                    resolvedType = variableSymbol.resolvedReturnType.toString(),
+                    callsInPlaceType = anonymousFunction.invocationKind?.name.toString(),
+                    inlineStatus = anonymousFunction.inlineStatus.toString(),
+                    isInlineAndUnknown = (anonymousFunction.isInline && anonymousFunction.invocationKind == EventOccurrencesRange.UNKNOWN).toString()
+                )
+            )
+        }
+    }
+
 }
 
 
@@ -86,5 +158,6 @@ data class IEData(
     val variableName: String? = null,
     val resolvedType: String? = null,
     val callsInPlaceType: String? = null,
-    val isInline: String? = null,
+    val inlineStatus: String? = null,
+    val isInlineAndUnknown: String? = null,
 )
