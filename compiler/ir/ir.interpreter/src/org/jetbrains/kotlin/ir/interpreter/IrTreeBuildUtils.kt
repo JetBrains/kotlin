@@ -199,7 +199,7 @@ internal fun IrConst.toConstantValue(): ConstantValue<*> {
     }
 }
 
-internal fun IrElement.toConstantValue(): ConstantValue<*> {
+fun IrElement.toConstantValue(): ConstantValue<*> {
     return this.toConstantValueOrNull() ?: errorWithAttachment("Cannot convert IrExpression to ConstantValue") {
         withEntry("IrExpression", this@toConstantValue.render())
     }

@@ -270,6 +270,8 @@ private class Fir2IrPipeline(
 
         checkUnboundSymbols()
 
+        inlineConstants()
+
         val actualizationResult = irActualizer?.runChecksAndFinalize(expectActualMap)
 
         fakeOverrideResolver.cacheFakeOverridesOfAllClasses(mainIrFragment)
@@ -366,6 +368,15 @@ private class Fir2IrPipeline(
             fir2IrConfiguration.messageCollector,
             IrVerificationMode.ERROR,
         )
+    }
+
+    private fun Fir2IrConversionResult.inlineConstants() {
+        val inlineConstTracker = componentsStorage.configuration.inlineConstTracker
+        val evaluatedConstTracker = componentsStorage.configuration.evaluatedConstTracker
+
+        mainIrFragment.files.forEach { irFile ->
+            irFile.transform(ConstInliner(irFile, inlineConstTracker, evaluatedConstTracker), null)
+        }
     }
 
     // ------------------------------------------------------ f/o building helpers ------------------------------------------------------
