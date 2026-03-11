@@ -35,7 +35,7 @@ FILE: mod.kt
         public get(): R|kotlin/Double|
     public final val prop6: R|kotlin/Float| = Float(100.0).R|kotlin/mod|(Float(0.33))
         public get(): R|kotlin/Float|
-    @R|Ann|(p1 = Int(10).R|kotlin/mod|(Int(2)) [evaluated = Int(0)], p2 = Int(10).R|kotlin/mod|(Int(-3)) [evaluated = Int(-2)], p3 = Int(-10).R|kotlin/mod|(Int(4)) [evaluated = Int(2)], p4 = Int(-10).R|kotlin/mod|(Int(5)) [evaluated = Int(0)], p5 = Double(0.25).R|kotlin/mod|(Double(100.0).R|kotlin/Double.unaryMinus|()) [evaluated = Double(-99.75)], p6 = Float(100.0).R|kotlin/mod|(Float(0.33)) [evaluated = Float(0.009996027)]) public final class MyClass : R|kotlin/Any| {
+    @R|Ann|(p1 = Int(10).R|kotlin/mod|(Int(2)) [evaluated = Byte(0)], p2 = Int(10).R|kotlin/mod|(Int(-3)) [evaluated = Short(-2)], p3 = Int(-10).R|kotlin/mod|(Int(4)) [evaluated = Int(2)], p4 = Int(-10).R|kotlin/mod|(Int(5)) [evaluated = Long(0)], p5 = Double(0.25).R|kotlin/mod|(Double(100.0).R|kotlin/Double.unaryMinus|()) [evaluated = Double(-99.75)], p6 = Float(100.0).R|kotlin/mod|(Float(0.33)) [evaluated = Float(0.009996027)]) public final class MyClass : R|kotlin/Any| {
         public [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }

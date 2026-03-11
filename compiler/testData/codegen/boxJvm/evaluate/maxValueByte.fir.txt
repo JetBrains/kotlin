@@ -17,7 +17,7 @@ FILE: maxValueByte.kt
             public [ContainingClassKey=Ann] get(): R|kotlin/Int|
 
     }
-    @R|Ann|(p1 = Q|java/lang/Byte|.R|java/lang/Byte.MAX_VALUE*s|.R|kotlin/Byte.plus|(Int(1)) [evaluated = Int(128)], p2 = Int(1).R|kotlin/Int.plus|(Int(1)) [evaluated = Int(2)], p4 = Int(1).R|kotlin/Int.plus|(Int(1)) [evaluated = Int(2)], p5 = Int(1).R|kotlin/Int.toByte|().R|kotlin/Byte.plus|(Int(1)) [evaluated = Int(2)]) public final class MyClass : R|kotlin/Any| {
+    @R|Ann|(p1 = Q|java/lang/Byte|.R|java/lang/Byte.MAX_VALUE*s|.R|kotlin/Byte.plus|(Int(1)) [evaluated = Int(128)], p2 = Int(1).R|kotlin/Int.plus|(Int(1)) [evaluated = Byte(2)], p4 = Int(1).R|kotlin/Int.plus|(Int(1)) [evaluated = Int(2)], p5 = Int(1).R|kotlin/Int.toByte|().R|kotlin/Byte.plus|(Int(1)) [evaluated = Int(2)]) public final class MyClass : R|kotlin/Any| {
         public [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }

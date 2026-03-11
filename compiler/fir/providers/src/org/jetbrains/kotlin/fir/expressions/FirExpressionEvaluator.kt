@@ -113,13 +113,16 @@ object FirExpressionEvaluator {
             return null
         }
 
-        return initializer.evaluate(session, firFile)
+        return initializer.evaluateAndAdjustType(session, firFile, variable)
     }
 
     fun evaluateAnnotationArguments(annotation: FirAnnotation, session: FirSession, firFile: FirFile? = null): Map<Name, FirEvaluatorResult> {
         val argumentMapping = annotation.argumentMapping.mapping
+        val parameters = (annotation as? FirAnnotationCall)?.resolvedArgumentMapping?.values?.associate { it.name to it } ?: emptyMap()
 
-        return argumentMapping.mapValues { (_, expression) -> expression.evaluate(session, firFile) }
+        return argumentMapping.mapValues { (name, expression) ->
+            expression.evaluateAndAdjustType(session, firFile, parameters[name])
+        }
     }
 
     @PrivateConstantEvaluatorAPI
@@ -136,6 +139,17 @@ object FirExpressionEvaluator {
     private fun FirExpression.evaluate(session: FirSession, firFile: FirFile? = null): FirEvaluatorResult {
         val visitor = EvaluationVisitor(session, firFile)
         return visitor.evaluate(this)
+    }
+
+    private fun FirExpression.evaluateAndAdjustType(
+        session: FirSession, firFile: FirFile? = null, variable: FirVariable?
+    ): FirEvaluatorResult {
+        val evaluated = this.evaluate(session, firFile)
+        val expression = evaluated.unwrapOr<FirLiteralExpression> { return evaluated }
+
+        // Convert literal expression to the variable's type
+        val expectedType = variable?.returnTypeRef?.coneType ?: return evaluated
+        return expression?.value?.adjustTypeAndConvertToLiteral(expression, expectedType)?.wrap() ?: evaluated
     }
 
     private inline fun <T> FirCallableSymbol<*>.visit(block: () -> T): T {
@@ -560,10 +574,13 @@ private fun evaluateBinary(
 private fun Any?.adjustTypeAndConvertToLiteral(original: FirExpression): FirEvaluatorResult {
     if (this == null) return NotEvaluated
     if (this is FirEvaluatorResult) return this
-    val expectedType = original.resolvedType
-    val expectedKind = expectedType.toConstantValueKind() ?: return NotEvaluated
-    val typeAdjustedValue = expectedKind.convertToGivenKind(this) ?: return NotEvaluated
-    return typeAdjustedValue.toConstExpression(expectedKind, original).wrap()
+    return adjustTypeAndConvertToLiteral(original, original.resolvedType)?.wrap() ?: NotEvaluated
+}
+
+private fun Any.adjustTypeAndConvertToLiteral(original: FirExpression, expectedType: ConeKotlinType): FirLiteralExpression? {
+    val expectedKind = expectedType.toConstantValueKind() ?: return null
+    val typeAdjustedValue = expectedKind.convertToGivenKind(this) ?: return null
+    return typeAdjustedValue.toConstExpression(expectedKind, original)
 }
 
 private val CallableId.isStringLength: Boolean
@@ -617,36 +634,36 @@ private fun ConstantValueKind.convertToGivenKind(value: Any?): Any? {
         return null
     }
     return when (this) {
-        ConstantValueKind.Boolean -> value as Boolean
-        ConstantValueKind.Char -> value as Char
-        ConstantValueKind.String -> value as String
-        ConstantValueKind.Byte -> (value as Number).toByte()
-        ConstantValueKind.Double -> (value as Number).toDouble()
-        ConstantValueKind.Float -> (value as Number).toFloat()
-        ConstantValueKind.Int -> (value as Number).toInt()
-        ConstantValueKind.Long -> (value as Number).toLong()
-        ConstantValueKind.Short -> (value as Number).toShort()
+        ConstantValueKind.Boolean -> value as? Boolean
+        ConstantValueKind.Char -> value as? Char
+        ConstantValueKind.String -> value as? String
+        ConstantValueKind.Byte -> (value as? Number)?.toByte()
+        ConstantValueKind.Double -> (value as? Number)?.toDouble()
+        ConstantValueKind.Float -> (value as? Number)?.toFloat()
+        ConstantValueKind.Int -> (value as? Number)?.toInt()
+        ConstantValueKind.Long -> (value as? Number)?.toLong()
+        ConstantValueKind.Short -> (value as? Number)?.toShort()
         ConstantValueKind.UnsignedByte -> {
             if (value is UByte) value
-            else (value as Number).toLong().toUByte()
+            else (value as? Number)?.toLong()?.toUByte()
         }
         ConstantValueKind.UnsignedShort -> {
             if (value is UShort) value
-            else (value as Number).toLong().toUShort()
+            else (value as? Number)?.toLong()?.toUShort()
         }
         ConstantValueKind.UnsignedInt -> {
             if (value is UInt) value
-            else (value as Number).toLong().toUInt()
+            else (value as? Number)?.toLong()?.toUInt()
         }
         ConstantValueKind.UnsignedLong -> {
             if (value is ULong) value
-            else (value as Number).toLong().toULong()
+            else (value as? Number)?.toLong()?.toULong()
         }
         ConstantValueKind.UnsignedIntegerLiteral -> {
             when (value) {
                 is UInt -> value.toULong()
                 is ULong -> value
-                else -> (value as Number).toLong().toULong()
+                else -> (value as? Number)?.toLong()?.toULong()
             }
         }
         else -> null
