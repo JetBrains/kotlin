@@ -151,6 +151,18 @@ interface JavaField : JavaMember {
     val type: JavaType
     val initializerValue: Any?
     val hasConstantNotNullInitializer: Boolean
+
+    /**
+     * Resolves the initializer value using a callback that can resolve external references.
+     * This is used for cross-language constant evaluation where Java fields reference Kotlin constants.
+     *
+     * @param resolveReference callback that resolves a qualified reference (e.g., "OtherClass.FIELD")
+     *        to its constant value. Returns null if the reference cannot be resolved.
+     * @return the evaluated constant value, or null if evaluation fails
+     */
+    fun resolveInitializerValue(resolveReference: (classQualifier: String?, fieldName: String) -> Any?): Any? {
+        return initializerValue
+    }
 }
 
 interface JavaConstructor : JavaMember, JavaTypeParameterListOwner {

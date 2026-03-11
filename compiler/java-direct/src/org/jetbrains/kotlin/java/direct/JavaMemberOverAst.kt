@@ -69,8 +69,51 @@ class JavaFieldOverAst(
             }
             return createJavaType(node, resolutionContext)
         }
-    override val initializerValue: Any? get() = null
-    override val hasConstantNotNullInitializer: Boolean get() = false
+
+    /**
+     * The initializer expression node, if present.
+     * For a field like `static final int X = 1 + 2`, this is the `1 + 2` expression.
+     */
+    private val initializerNode: JavaSyntaxNode?
+        get() {
+            // Find EQ token and get the expression after it
+            val children = node.children
+            val eqIndex = children.indexOfFirst { it.type.toString() == "EQ" }
+            if (eqIndex < 0) return null
+            // The initializer is the next non-whitespace child after EQ
+            return children.drop(eqIndex + 1).firstOrNull {
+                it.type.toString() !in listOf("WHITE_SPACE", "SEMICOLON")
+            }
+        }
+
+    override val hasConstantNotNullInitializer: Boolean
+        get() {
+            val init = initializerNode ?: return false
+            // Check for null literal
+            if (init.type.toString() == "LITERAL_EXPRESSION") {
+                val literalChild = init.children.firstOrNull()
+                if (literalChild?.type.toString() == "NULL_LITERAL") return false
+            }
+            // Must be final and have a primitive or String type
+            if (!isFinal) return false
+            val fieldType = type
+            return fieldType is JavaPrimitiveType ||
+                   (fieldType is JavaClassifierType && fieldType.classifierQualifiedName == "java.lang.String")
+        }
+
+    override val initializerValue: Any?
+        get() {
+            if (!hasConstantNotNullInitializer) return null
+            val init = initializerNode ?: return null
+            return ConstantEvaluator(containingClass).evaluate(init)
+        }
+
+    override fun resolveInitializerValue(resolveReference: (classQualifier: String?, fieldName: String) -> Any?): Any? {
+        if (!hasConstantNotNullInitializer) return null
+        val init = initializerNode ?: return null
+        return ConstantEvaluator(containingClass, resolveReference).evaluate(init)
+    }
+
     override val isFromSource: Boolean get() = true
 
     // Interface fields are implicitly public static final

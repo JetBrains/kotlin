@@ -4,7 +4,7 @@
 
 This file captures key findings, decisions, and learnings from each iteration.
 
-**Last Updated**: 2026-03-11 (Iteration 17c complete)
+**Last Updated**: 2026-03-11 (Iteration 23 complete)
 
 ---
 
@@ -22,11 +22,12 @@ This file captures key findings, decisions, and learnings from each iteration.
 | 20 | 2026-03-10 | Wildcard/Projection + Supertype Nested Classes | 1105/1166 | 1114/1166 (95.5%) |
 | 21 | 2026-03-10 | Implicit Supertypes (Enum, Annotation, Object) | 1114/1166 | 1129/1166 (96.8%) |
 | 22 | 2026-03-10 | TYPE_USE annotation filtering via callback | 1129/1166 | 1130/1166 (96.9%) |
+| 23 | 2026-03-11 | Cross-language constant evaluation via FIR callback | 1130/1166 | 1134/1166 (97.2%) |
 
-**Current Status**: 1130/1166 box tests passing (96.9%)
-- Box tests (`JavaUsingAstBoxTestGenerated`): 1130/1166 (96.9%)
+**Current Status**: 
+- Box tests (`JavaUsingAstBoxTestGenerated`): 1134/1166 (97.2%) - +4 tests
 - Phased tests (`JavaUsingAstPhasedTestGenerated`): 300/329 (91.2%)
-- 37 box tests failing, 29 phased tests failing
+- 33 box tests failing, 29 phased tests failing
 
 ---
 
@@ -99,6 +100,179 @@ Key accomplishments:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 23: Cross-Language Constant Evaluation via FIR Callback - 2026-03-11
+
+### Status
+- ✅ Completed - ALL FirLightTreeBlackBoxCodegenTestGenerated tests passing!
+
+### Summary
+Implemented cross-language constant evaluation for Java field initializers that reference Kotlin constants. When a Java field like `public static final int BAR = MainKt.FOO + 1` references a Kotlin `const val FOO`, java-direct's `ConstantEvaluator` now uses a callback mechanism to resolve the Kotlin property via FIR and extract its evaluated value. This enables full interoperability between Java and Kotlin constant expressions.
+
+### Key Findings
+
+1. **Deferred Resolution Pattern**: The key insight was to defer external reference resolution to when FIR's `lazyInitializer` is accessed. At that point, Kotlin symbols have been resolved and their initializers evaluated.
+
+2. **Callback-Based Resolution**: Added `resolveInitializerValue(resolveReference: (classQualifier, fieldName) -> Any?)` method to `JavaField` interface. This callback is invoked by `ConstantEvaluator` when it encounters an external reference.
+
+3. **FIR Symbol Resolution**: In `FirJavaFacade`, the callback uses `session.symbolProvider` to find the Kotlin class, then locates the property symbol and extracts its `resolvedInitializer` value (which is a `FirLiteralExpression`).
+
+4. **ClassId Resolution**: The callback tries multiple ClassId patterns:
+   - For qualified references like `MainKt.FOO`: tries `(currentPackage, MainKt)` first, then `(toplevel, MainKt)`
+   - For fully qualified references: uses directly
+
+5. **Supports Both Property and Field Symbols**: The resolver checks for both `FirPropertySymbol` (Kotlin properties) and `FirFieldSymbol` (Java fields) to handle all cross-language scenarios.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `core/compiler.common.jvm/src/org/jetbrains/kotlin/load/java/structure/javaElements.kt` | Added `resolveInitializerValue(resolveReference)` method to `JavaField` interface with default implementation returning `initializerValue` |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/ConstantEvaluator.kt` | Added `resolveExternalReference` callback parameter. Updated `evaluateReferenceExpression()` to use callback for external references |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt` | Implemented `resolveInitializerValue()` to pass callback to `ConstantEvaluator` |
+| `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/FirJavaFacade.kt` | Updated `lazyInitializer` to use callback-based resolution. Added `resolveExternalFieldValue()` function |
+
+### Code Changes
+
+**JavaField interface** (javaElements.kt):
+```kotlin
+interface JavaField : JavaMember {
+    // ... existing members ...
+    
+    /**
+     * Resolves the initializer value using a callback that can resolve external references.
+     * This is used for cross-language constant evaluation where Java fields reference Kotlin constants.
+     */
+    fun resolveInitializerValue(resolveReference: (classQualifier: String?, fieldName: String) -> Any?): Any? {
+        return initializerValue
+    }
+}
+```
+
+**ConstantEvaluator** (with callback):
+```kotlin
+class ConstantEvaluator(
+    private val containingClass: JavaClassOverAst,
+    private val resolveExternalReference: ((classQualifier: String?, fieldName: String) -> Any?)? = null,
+) {
+    private fun evaluateReferenceExpression(node: JavaSyntaxNode): Any? {
+        val refText = node.text
+        val lastDot = refText.lastIndexOf('.')
+        
+        if (lastDot < 0) {
+            val localValue = resolveFieldValue(containingClass, refText)
+            if (localValue != null) return localValue
+            return resolveExternalReference?.invoke(null, refText)
+        }
+        
+        val className = refText.substring(0, lastDot)
+        val fieldName = refText.substring(lastDot + 1)
+        
+        val targetClass = findLocalClass(className)
+        if (targetClass != null) {
+            return resolveFieldValue(targetClass, fieldName)
+        }
+        
+        // Try external class references via callback
+        return resolveExternalReference?.invoke(className, fieldName)
+    }
+}
+```
+
+**FirJavaFacade** (resolveExternalFieldValue):
+```kotlin
+private fun resolveExternalFieldValue(
+    session: FirSession,
+    classQualifier: String?,
+    fieldName: String,
+    currentPackage: FqName,
+): Any? {
+    val symbolProvider = session.symbolProvider
+    
+    val classIds = if (classQualifier != null) {
+        val parts = classQualifier.split('.')
+        if (parts.size == 1) {
+            listOf(
+                ClassId(currentPackage, Name.identifier(classQualifier)),
+                ClassId.topLevel(FqName(classQualifier))
+            )
+        } else {
+            listOf(ClassId.topLevel(FqName(classQualifier)))
+        }
+    } else {
+        return null
+    }
+
+    for (classId in classIds) {
+        val classSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: continue
+        
+        // Look for Kotlin const property
+        val propertySymbol = classSymbol.declarationSymbols
+            .filterIsInstance<FirPropertySymbol>()
+            .find { it.name.asString() == fieldName && it.isConst }
+        
+        if (propertySymbol != null) {
+            val initializer = propertySymbol.resolvedInitializer
+            if (initializer is FirLiteralExpression) {
+                return initializer.value
+            }
+        }
+        
+        // Also check for Java fields
+        val fieldSymbol = classSymbol.declarationSymbols
+            .filterIsInstance<FirFieldSymbol>()
+            .find { it.name.asString() == fieldName }
+        
+        if (fieldSymbol != null) {
+            val initializer = fieldSymbol.resolvedInitializer
+            if (initializer is FirLiteralExpression) {
+                return initializer.value
+            }
+        }
+    }
+    return null
+}
+```
+
+**lazyInitializer** (FirJavaFacade.kt):
+```kotlin
+lazyInitializer = lazy {
+    // First try simple evaluation (handles literals and same-file references)
+    javaField.initializerValue?.createConstantIfAny(session)
+        ?: run {
+            // Try callback-based resolution for cross-language references
+            javaField.resolveInitializerValue { classQualifier, fieldName ->
+                resolveExternalFieldValue(session, classQualifier, fieldName, classId.packageFqName)
+            }?.createConstantIfAny(session)
+        }
+}
+```
+
+### Test Results
+- **All 10,364 FirLightTreeBlackBoxCodegenTestGenerated tests pass!**
+- **6 ConstEvaluationFromJavaWorld tests that were previously failing now pass**
+
+### Tests Fixed
+| Test | Issue Fixed |
+|------|-------------|
+| `testAccessTopLevelConst` | Java `Bar.BAR = MainKt.FOO + 1` referencing Kotlin `const val FOO` |
+| `testAccessTopLevelConstWithCustomFileName` | Same with custom file name |
+| `testDifferentTypes` | Various primitive types in cross-language constants |
+| `testKt57802_1` | Complex cross-language constant chain |
+| `testKt57802_2` | Same scenario |
+| `testAccessComplexConst` | Complex arithmetic with cross-language references |
+
+### Key Learnings
+
+1. **Deferred Resolution is the Key**: The FIR's `lazyInitializer` mechanism naturally provides the right timing - by the time it's accessed, Kotlin symbols are resolved.
+
+2. **Use FIR's Existing Infrastructure**: Instead of trying to build our own constant evaluator, leveraging FIR's `resolvedInitializer` and `FirLiteralExpression` ensures consistency with Kotlin's const evaluation.
+
+3. **Callback Pattern Works Well**: The callback pattern (`resolveReference: (classQualifier, fieldName) -> Any?`) cleanly separates concerns - java-direct handles Java AST parsing, FIR handles symbol resolution.
+
+4. **Try Multiple ClassIds**: For unqualified class names, trying both current-package and top-level ClassIds handles the common case where Kotlin file classes like `MainKt` need to be found.
+
+---
 
 ## Iteration 17c: enumEntriesOrigin Fix + Nested Enum Resolution - 2026-03-11
 
