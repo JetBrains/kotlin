@@ -263,6 +263,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
   }
 
   @Test
+  @TestMetadata("enumEntryAndCompanionProperty.kt")
+  public void testEnumEntryAndCompanionProperty() {
+    run("enumEntryAndCompanionProperty.kt");
+  }
+
+  @Test
   @TestMetadata("ExtendingInterfaceWithDefaultImpls.kt")
   public void testExtendingInterfaceWithDefaultImpls() {
     run("ExtendingInterfaceWithDefaultImpls.kt");

@@ -224,6 +224,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/EnumEntry.kt");
   }
 
+  @TestMetadata("enumEntryAndCompanionProperty.kt")
+  public void testEnumEntryAndCompanionProperty() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/enumEntryAndCompanionProperty.kt");
+  }
+
   @TestMetadata("ExtendingInterfaceWithDefaultImpls.kt")
   public void testExtendingInterfaceWithDefaultImpls() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ExtendingInterfaceWithDefaultImpls.kt");
