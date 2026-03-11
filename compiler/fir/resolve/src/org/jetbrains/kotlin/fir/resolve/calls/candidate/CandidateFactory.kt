@@ -226,7 +226,7 @@ class CandidateFactory private constructor(
         val referencedClass = (this as? FirClassLikeSymbol<*>)?.fullyExpandedClass(session) ?: return false
         if (referencedClass.classKind == ClassKind.OBJECT) return false
 
-        val companionObject = referencedClass.companionObjectSymbol ?: return true
+        val companionObject = referencedClass.resolvedCompanionObjectSymbol ?: return true
         return session.languageVersionSettings.supportsFeature(LanguageFeature.SkipHiddenObjectsInResolution)
                 && companionObject.isDeprecationLevelHidden(session)
     }
