@@ -2742,6 +2742,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("invokeGeneratedCompanionObject.kt")
+    public void testInvokeGeneratedCompanionObject() {
+      run("invokeGeneratedCompanionObject.kt");
+    }
+
+    @Test
     @TestMetadata("preresolvedAliasedAnnotation.kt")
     public void testPreresolvedAliasedAnnotation() {
       run("preresolvedAliasedAnnotation.kt");

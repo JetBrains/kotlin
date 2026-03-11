@@ -2742,6 +2742,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("invokeGeneratedCompanionObject.kt")
+    public void testInvokeGeneratedCompanionObject() {
+      run("invokeGeneratedCompanionObject.kt");
+    }
+
+    @Test
     @TestMetadata("preresolvedAliasedAnnotation.kt")
     public void testPreresolvedAliasedAnnotation() {
       run("preresolvedAliasedAnnotation.kt");
