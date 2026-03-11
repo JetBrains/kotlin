@@ -44,7 +44,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <kotlin.bootstrap.version>2.4.0-dev-3806</kotlin.bootstrap.version>
+        <kotlin.bootstrap.version>2.4.0-dev-5318</kotlin.bootstrap.version>
         <surefire-version>3.5.5</surefire-version>
         <maven.version>3.9.12</maven.version>
         <maven-plugin-annotations.version>3.7.0</maven-plugin-annotations.version>
