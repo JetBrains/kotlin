@@ -950,7 +950,14 @@ public fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
  */
 public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return fillFrom(this, ByteArray(newSize))
+    val size = this.size
+    return when {
+        newSize < 16 || size < 16 -> fillFrom(this, ByteArray(newSize))
+        newSize > size -> ByteArray(newSize).also { copy ->
+            copy.asDynamic().set(this)
+        }
+        else -> this.asDynamic().slice(0, newSize)
+    }
 }
 
 /**
@@ -964,7 +971,14 @@ public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
  */
 public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return fillFrom(this, ShortArray(newSize))
+    val size = this.size
+    return when {
+        newSize < 16 || size < 16 -> fillFrom(this, ShortArray(newSize))
+        newSize > size -> ShortArray(newSize).also { copy ->
+            copy.asDynamic().set(this)
+        }
+        else -> this.asDynamic().slice(0, newSize)
+    }
 }
 
 /**
@@ -978,7 +992,14 @@ public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
  */
 public actual fun IntArray.copyOf(newSize: Int): IntArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return fillFrom(this, IntArray(newSize))
+    val size = this.size
+    return when {
+        newSize < 16 || size < 16 -> fillFrom(this, IntArray(newSize))
+        newSize > size -> IntArray(newSize).also { copy ->
+            copy.asDynamic().set(this)
+        }
+        else -> this.asDynamic().slice(0, newSize)
+    }
 }
 
 /**
@@ -1006,7 +1027,14 @@ public actual fun LongArray.copyOf(newSize: Int): LongArray {
  */
 public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return fillFrom(this, FloatArray(newSize))
+    val size = this.size
+    return when {
+        newSize < 16 || size < 16 -> fillFrom(this, FloatArray(newSize))
+        newSize > size -> FloatArray(newSize).also { copy ->
+            copy.asDynamic().set(this)
+        }
+        else -> this.asDynamic().slice(0, newSize)
+    }
 }
 
 /**
@@ -1020,7 +1048,14 @@ public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
  */
 public actual fun DoubleArray.copyOf(newSize: Int): DoubleArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return fillFrom(this, DoubleArray(newSize))
+    val size = this.size
+    return when {
+        newSize < 16 || size < 16 -> fillFrom(this, DoubleArray(newSize))
+        newSize > size -> DoubleArray(newSize).also { copy ->
+            copy.asDynamic().set(this)
+        }
+        else -> this.asDynamic().slice(0, newSize)
+    }
 }
 
 /**
@@ -1048,7 +1083,15 @@ public actual fun BooleanArray.copyOf(newSize: Int): BooleanArray {
  */
 public actual fun CharArray.copyOf(newSize: Int): CharArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return withType("CharArray", fillFrom(this, CharArray(newSize)))
+    val size = this.size
+    val copy = when {
+        newSize < 16 || size < 16 -> fillFrom(this, CharArray(newSize))
+        newSize > size -> CharArray(newSize).also { copy ->
+            copy.asDynamic().set(this)
+        }
+        else -> this.asDynamic().slice(0, newSize)
+    }
+    return withType("CharArray", copy)
 }
 
 /**

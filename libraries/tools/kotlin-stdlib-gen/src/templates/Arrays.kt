@@ -1079,12 +1079,43 @@ object ArrayOps : TemplateGroupBase() {
                 returns("SELF")
                 on(Platform.JS) {
                     when (primitive!!) {
-                        PrimitiveType.Boolean ->
-                            body { "return withType(\"BooleanArray\", arrayCopyResize(this, newSize, false))" }
-                        PrimitiveType.Char ->
-                            body { "return withType(\"CharArray\", fillFrom(this, ${primitive}Array(newSize)))" }
-                        else ->
-                            body { "return fillFrom(this, ${primitive}Array(newSize))" }
+                        PrimitiveType.Boolean -> body {
+                            "return withType(\"BooleanArray\", arrayCopyResize(this, newSize, false))"
+                        }
+                        // We cannot apply TypedArray optimizations to LongArray, as it might still
+                        // be compiled to Array<Long> instead of BigInt64Array.
+                        PrimitiveType.Long -> body {
+                            "return fillFrom(this, ${primitive}Array(newSize))"
+                        }
+                        // Benchmarking showed that when copying a small number of elements (typically < 20),
+                        // a simple loop is consistently faster than calling TypedArray.set or TypedArray.slice
+                        // across JS engines. We chose 16 as an arbitrary threshold based on those results.
+                        PrimitiveType.Char -> body {
+                            """
+                            val size = this.size
+                            val copy = when {
+                                newSize < 16 || size < 16 -> fillFrom(this, CharArray(newSize))
+                                newSize > size -> CharArray(newSize).also { copy ->
+                                    copy.asDynamic().set(this)
+                                }
+                                else -> this.asDynamic().slice(0, newSize)
+                            }
+                            
+                            return withType("CharArray", copy)
+                            """.trimIndent()
+                        }
+                        else -> body {
+                            """
+                            val size = this.size
+                            return when {
+                                newSize < 16 || size < 16 -> fillFrom(this, ${primitive}Array(newSize))
+                                newSize > size -> ${primitive}Array(newSize).also { copy ->
+                                    copy.asDynamic().set(this)
+                                }
+                                else -> this.asDynamic().slice(0, newSize)
+                            }
+                            """.trimIndent()
+                        }
                     }
                     body { newSizeCheck + "\n" + body }
                 }
