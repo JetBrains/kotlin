@@ -103,10 +103,17 @@ internal val jvmCallbacksDisposeHelper = ThreadSafeDisposableHelper(
         }
 )
 
-inline fun <R> usingJvmCInteropCallbacks(block: () -> R) = jvmCallbacksDisposeHelper.usingDisposable(block)
+inline fun <R> usingJvmCInteropCallbacks(konanHome: String? = null, block: () -> R): R {
+    loadKonanLibrary("callbacks", konanHome)
+    return jvmCallbacksDisposeHelper.usingDisposable(block)
+}
 
 object JvmCInteropCallbacks {
-    fun init() = jvmCallbacksDisposeHelper.create()
+    fun init() {
+        loadKonanLibrary("callbacks")
+        jvmCallbacksDisposeHelper.create()
+    }
+
     fun dispose() = jvmCallbacksDisposeHelper.dispose()
 }
 
@@ -423,8 +430,6 @@ private class CEnumType(private val rawValueCType: CType<Any>) : CType<CEnum>(ra
 
 private typealias FfiClosureImpl = LongConsumer
 private typealias UserData = FfiClosureImpl
-
-private val topLevelInitializer = loadKonanLibrary("callbacks")
 
 
 /**
