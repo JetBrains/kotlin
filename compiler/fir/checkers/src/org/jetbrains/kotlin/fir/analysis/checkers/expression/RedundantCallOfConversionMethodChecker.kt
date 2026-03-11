@@ -30,6 +30,7 @@ object RedundantCallOfConversionMethodChecker : FirFunctionCallChecker(MppChecke
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
+        if (expression.extensionReceiver != null) return
         val functionName = expression.calleeReference.name.asString()
         val qualifiedTypeId = targetClassMap[functionName] ?: return
 

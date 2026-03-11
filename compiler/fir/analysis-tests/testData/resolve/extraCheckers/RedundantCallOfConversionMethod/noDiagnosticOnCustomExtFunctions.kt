@@ -17,19 +17,19 @@ fun UByte.toUByte(param: Boolean): UByte = if (param) 0u else this
 
 fun test(param: Boolean): Array<Any> {
     return arrayOf(
-        "string".<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString(param)<!>,
-        0.1.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toDouble(param)<!>,
-        0.2f.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toFloat(param)<!>,
-        3L.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toLong(param)<!>,
-        4.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt(param)<!>,
-        'c'.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toChar(param)<!>,
-        5.toShort().<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toShort(param)<!>,
-        6.toByte().<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toByte(param)<!>,
-        7UL.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toULong(param)<!>,
-        8U.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toUInt(param)<!>,
-        9.toShort().<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toShort(param)<!>,
-        10.toUShort().<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toUShort(param)<!>,
-        11.toByte().<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toByte(param)<!>,
+        "string".toString(param),
+        0.1.toDouble(param),
+        0.2f.toFloat(param),
+        3L.toLong(param),
+        4.toInt(param),
+        'c'.toChar(param),
+        5.toShort().toShort(param),
+        6.toByte().toByte(param),
+        7UL.toULong(param),
+        8U.toUInt(param),
+        9.toShort().toShort(param),
+        10.toUShort().toUShort(param),
+        11.toByte().toByte(param),
     )
 }
 
