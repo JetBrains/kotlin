@@ -1,5 +1,3 @@
-// DO_NOT_CHECK_SYMBOL_RESTORE_K1
-
 interface I {
     fun foo() = 4
     fun bar(): Int = 42

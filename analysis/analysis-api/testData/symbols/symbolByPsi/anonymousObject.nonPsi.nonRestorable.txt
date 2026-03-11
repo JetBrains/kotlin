@@ -1,0 +1,206 @@
+KaNamedClassSymbol:
+  annotations: []
+  classId: null
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: Local
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: CLASS
+  modality: FINAL
+  name: NestedClass
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+  importableFqName: null
+
+KaNamedClassSymbol:
+  annotations: []
+  classId: null
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: Local
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: true
+  location: CLASS
+  modality: FINAL
+  name: InnerClass
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+  importableFqName: null
+
+KaNamedClassSymbol:
+  annotations: []
+  classId: null
+  classKind: OBJECT
+  companionObject: null
+  compilerVisibility: Local
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: CLASS
+  modality: FINAL
+  name: NestedObject
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+  importableFqName: null
+
+KaNamedClassSymbol:
+  annotations: []
+  classId: null
+  classKind: INTERFACE
+  companionObject: null
+  compilerVisibility: Local
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: CLASS
+  modality: ABSTRACT
+  name: NestedInterface
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+  importableFqName: null
+
+KaNamedClassSymbol:
+  annotations: []
+  classId: null
+  classKind: ANNOTATION_CLASS
+  companionObject: null
+  compilerVisibility: Local
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: CLASS
+  modality: FINAL
+  name: NestedAnnotation
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Annotation
+  ]
+  typeParameters: []
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
+  deprecationStatus: null
+  importableFqName: null
+
+KaTypeAliasSymbol:
+  annotations: []
+  classId: null
+  compilerVisibility: Local
+  expandedType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/String
+  isActual: false
+  isExpect: false
+  isExternal: false
+  location: CLASS
+  modality: FINAL
+  name: NestedTypeAlias
+  origin: SOURCE
+  typeParameters: []
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+  importableFqName: null
+
+KaAnonymousObjectSymbol:
+  annotations: []
+  classId: null
+  classKind: ANONYMOUS_OBJECT
+  compilerVisibility: Local
+  isActual: false
+  isExpect: false
+  isExternal: false
+  location: LOCAL
+  modality: FINAL
+  name: null
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: java/lang/Runnable
+  ]
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+  importableFqName: null

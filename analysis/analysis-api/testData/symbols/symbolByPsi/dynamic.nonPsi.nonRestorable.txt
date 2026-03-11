@@ -1,0 +1,25 @@
+KaAnonymousFunctionSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Public
+  contextParameters: []
+  contextReceivers: []
+  hasStableParameterNames: true
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  location: LOCAL
+  modality: FINAL
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaDynamicType:
+    annotations: []
+    type: dynamic
+  valueParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(dynamic.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+  importableFqName: null

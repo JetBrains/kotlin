@@ -1,0 +1,31 @@
+KaNamedClassSymbol:
+  annotations: []
+  classId: null
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: Local
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: true
+  location: CLASS
+  modality: FINAL
+  name: InnerClass
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(enum.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+  importableFqName: null
