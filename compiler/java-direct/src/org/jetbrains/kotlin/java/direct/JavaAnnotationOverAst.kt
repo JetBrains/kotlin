@@ -308,17 +308,30 @@ class JavaEnumValueAnnotationArgumentOverAst(
     private val refNode: JavaSyntaxNode,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaEnumValueAnnotationArgument {
-    override val enumClassId: ClassId?
+    /**
+     * The class name part of the enum reference (everything before the last dot).
+     * For "NLS.Capitalization.NotSpecified", returns "NLS.Capitalization".
+     */
+    private val className: String?
         get() {
             val text = refNode.text
             val lastDot = text.lastIndexOf('.')
-            if (lastDot < 0) return null
-            val className = text.substring(0, lastDot)
+            return if (lastDot >= 0) text.substring(0, lastDot) else null
+        }
 
-            // If already qualified (contains dot), use as-is
-            if (className.contains('.')) {
-                return ClassId.topLevel(FqName(className))
-            }
+    override val isResolved: Boolean
+        get() {
+            val name = className ?: return true
+            // Resolved if explicitly imported
+            if (resolutionContext.getSimpleImport(name) != null) return true
+            // Not resolved if it contains dots (could be nested class)
+            // and is not a simple name
+            return false
+        }
+
+    override val enumClassId: ClassId?
+        get() {
+            val className = className ?: return null
 
             // Try to resolve via explicit imports first
             val imported = resolutionContext.getSimpleImport(className)
@@ -326,7 +339,8 @@ class JavaEnumValueAnnotationArgumentOverAst(
                 return ClassId.topLevel(imported)
             }
 
-            // Assume same package - FIR will verify during resolution
+            // For unresolved references, return a best-effort ClassId
+            // FIR should use resolveEnumClass for proper resolution
             val packageFqName = resolutionContext.packageFqName
             return if (packageFqName.isRoot) {
                 ClassId.topLevel(FqName(className))
@@ -334,6 +348,25 @@ class JavaEnumValueAnnotationArgumentOverAst(
                 ClassId.topLevel(FqName("${packageFqName.asString()}.$className"))
             }
         }
+
+    override fun resolveEnumClass(tryResolve: (String) -> Boolean): ClassId? {
+        val className = className ?: return null
+
+        // Try to resolve via explicit imports first
+        val imported = resolutionContext.getSimpleImport(className)
+        if (imported != null) {
+            return ClassId.topLevel(imported)
+        }
+
+        // Use the resolution context's callback-based resolution
+        // This handles nested classes like "NLS.Capitalization" correctly
+        val resolved = resolutionContext.resolveWithCallback(className, tryResolve)
+        if (resolved != null) {
+            return fqNameToClassId(resolved)
+        }
+
+        return null
+    }
 
     override val entryName: Name?
         get() {
@@ -377,3 +410,36 @@ class JavaAnnotationAsAnnotationArgumentOverAst(
 class JavaUnknownAnnotationArgumentOverAst(
     override val name: Name?,
 ) : JavaUnknownAnnotationArgument
+
+/**
+ * Converts a fully qualified name (which may contain nested classes) to a ClassId.
+ * For "org.example.Outer.Inner", creates ClassId with package "org.example" and
+ * relative class name "Outer.Inner".
+ *
+ * This is needed because the resolution callback returns FQNs where nested classes
+ * are separated by dots, but ClassId needs to know which part is the package
+ * and which is the class hierarchy.
+ *
+ * The heuristic used: the package is the longest prefix where all parts start with lowercase,
+ * and the class part starts with an uppercase letter.
+ */
+private fun fqNameToClassId(fqName: String): ClassId {
+    val parts = fqName.split('.')
+    
+    // Find where the class name starts (first part starting with uppercase)
+    var classStartIndex = 0
+    for (i in parts.indices) {
+        if (parts[i].firstOrNull()?.isUpperCase() == true) {
+            classStartIndex = i
+            break
+        }
+    }
+    
+    val packageParts = parts.subList(0, classStartIndex)
+    val classParts = parts.subList(classStartIndex, parts.size)
+    
+    val packageFqName = if (packageParts.isEmpty()) FqName.ROOT else FqName(packageParts.joinToString("."))
+    val relativeClassName = FqName(classParts.joinToString("."))
+    
+    return ClassId(packageFqName, relativeClassName, isLocal = false)
+}

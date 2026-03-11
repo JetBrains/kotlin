@@ -190,13 +190,22 @@ internal fun JavaAnnotationArgument.toFirExpression(
             }
         }
         is JavaEnumValueAnnotationArgument -> {
-            val classId = requireNotNull(enumClassId ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId)
+            // Resolve the enum class, using callback if not already resolved
+            val classId = if (!isResolved) {
+                // Use callback-based resolution for nested enum classes
+                resolveEnumClass { fqName ->
+                    findClassId(fqName, session) != null
+                }
+            } else {
+                enumClassId
+            } ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
+
             buildEnumEntryDeserializedAccessExpression {
                 // enumClassId can be null when a java annotation uses a Kotlin enum as parameter and declares the default value using
                 // a static import. In this case, the parameter default initializer will not have its type set, which isn't usually an
                 // issue except in edge cases like KT-47702 where we do need to evaluate the default values of annotations.
                 // As a fallback, we use the expected type which should be the type of the enum.
-                enumClassId = classId
+                enumClassId = requireNotNull(classId)
                 enumEntryName = entryName ?: SpecialNames.NO_NAME_PROVIDED
             }
         }

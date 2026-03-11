@@ -367,7 +367,7 @@ private fun resolveTypeName(
  * This function probes different package/class boundaries using the symbol provider
  * to find which split actually resolves to a class.
  */
-private fun findClassId(fqn: String, session: FirSession): ClassId? {
+internal fun findClassId(fqn: String, session: FirSession): ClassId? {
     val parts = fqn.split('.')
     if (parts.isEmpty()) return null
 

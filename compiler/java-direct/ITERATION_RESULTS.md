@@ -4,7 +4,7 @@
 
 This file captures key findings, decisions, and learnings from each iteration.
 
-**Last Updated**: 2026-03-10 (Iteration 20 complete)
+**Last Updated**: 2026-03-11 (Iteration 17c complete)
 
 ---
 
@@ -17,13 +17,16 @@ This file captures key findings, decisions, and learnings from each iteration.
 | 11-16 | 2026-03-05 | External types, raw types | 117/138 | 532/601 (88.5%) |
 | 17 | 2026-03-06 | Annotation arguments | — | +16 tests |
 | 17b | 2026-03-06 | Annotation method defaults | — | 1092/1166 (93.7%) |
+| 17c | 2026-03-11 | enumEntriesOrigin fix + nested enum resolution | — | No regression |
 | 18-19 | 2026-03-07 | Various fixes | — | 1105/1166 (94.8%) |
 | 20 | 2026-03-10 | Wildcard/Projection + Supertype Nested Classes | 1105/1166 | 1114/1166 (95.5%) |
 | 21 | 2026-03-10 | Implicit Supertypes (Enum, Annotation, Object) | 1114/1166 | 1129/1166 (96.8%) |
+| 22 | 2026-03-10 | TYPE_USE annotation filtering via callback | 1129/1166 | 1130/1166 (96.9%) |
 
-**Current Status**: 1129/1166 box tests passing (96.8%)
-- Box tests (`JavaUsingAstBoxTestGenerated`): 1129/1166 (96.8%)
-- 37 box tests failing
+**Current Status**: 1130/1166 box tests passing (96.9%)
+- Box tests (`JavaUsingAstBoxTestGenerated`): 1130/1166 (96.9%)
+- Phased tests (`JavaUsingAstPhasedTestGenerated`): 300/329 (91.2%)
+- 37 box tests failing, 29 phased tests failing
 
 ---
 
@@ -96,6 +99,103 @@ Key accomplishments:
 ## Future Iterations Start Below
 
 <!-- Add new iteration results here, newest at top -->
+
+## Iteration 17c: enumEntriesOrigin Fix + Nested Enum Resolution - 2026-03-11
+
+### Status
+- ✅ Completed - No PSI test regression
+
+### Summary
+Fixed the `enumEntriesOrigin` issue from iteration 17b that broke PSI-based Multiplatform tests when changed from `FirDeclarationOrigin.Source/Library` to `FirDeclarationOrigin.Java.Source/Library`. The problem was that `FirDeclarationOrigin.Source` requires a PSI source element, but java-direct classes don't have PSI. The fix distinguishes java-direct source classes (which need `Java.Source`) from PSI-based source classes (which need `Source`) and library classes (which need `Library`). Also added callback-based enum class resolution for nested enum classes in annotation arguments.
+
+### Key Findings
+
+1. **Root Cause of PSI Regression**: `FirDeclarationOrigin.Source` requires a source element (PSI). When FIR creates the synthetic `entries` getter for Java enum classes, using `Source` origin for java-direct classes caused crashes because there's no PSI source.
+
+2. **Library Classes Also Have null classSource**: The initial fix checked `classSource == null` to detect java-direct classes, but this also matched library classes loaded from bytecode. This changed library enum classes from `Library` to `Java.Library` origin, breaking expect/actual matching in Multiplatform tests.
+
+3. **Correct Fix**: Check both `classSource == null` AND `origin.fromSource`:
+   - `classSource == null && fromSource` → java-direct source class → use `Java.Source`
+   - `classSource != null && fromSource` → PSI-based source class → use `Source`  
+   - `!fromSource` → library class → use `Library`
+
+4. **Nested Enum Class Resolution**: Annotation arguments like `@NLS(capitalization = NLS.Capitalization.Sentence)` failed because `enumClassId` incorrectly treated `NLS.Capitalization` as a top-level class. Added callback-based resolution via `resolveEnumClass(tryResolve)`.
+
+### Changes Made
+
+| File | Change |
+|------|--------|
+| `core/compiler.common.jvm/src/org/jetbrains/kotlin/load/java/structure/annotationArguments.kt` | Added `isResolved` property and `resolveEnumClass(tryResolve)` method to `JavaEnumValueAnnotationArgument` interface |
+| `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/FirJavaFacade.kt` | Fixed `enumEntriesOrigin` to use `Java.Source` only for java-direct source classes (`classSource == null && fromSource`) |
+| `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt` | Changed `findClassId` from `private` to `internal` |
+| `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/javaAnnotationsMapping.kt` | Updated enum annotation argument handling to use `resolveEnumClass` callback when `isResolved` is false |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaAnnotationOverAst.kt` | Implemented `isResolved` and `resolveEnumClass` for `JavaEnumValueAnnotationArgumentOverAst`. Added `fqNameToClassId` helper. |
+
+### Code Changes
+
+**FirJavaFacade.kt** (enumEntriesOrigin fix):
+```kotlin
+// FirDeclarationOrigin.Source requires a source element, but java-direct classes
+// don't have PSI source elements. Use Java.Source for java-direct source classes.
+// Keep Source/Library for PSI-based classes to maintain backward compatibility.
+val enumEntriesOrigin = when {
+    classSource == null && firJavaClass.origin.fromSource -> FirDeclarationOrigin.Java.Source
+    firJavaClass.origin.fromSource -> FirDeclarationOrigin.Source
+    else -> FirDeclarationOrigin.Library
+}
+```
+
+**annotationArguments.kt** (new interface methods):
+```kotlin
+interface JavaEnumValueAnnotationArgument : JavaAnnotationArgument {
+    val enumClassId: ClassId?
+    val entryName: Name?
+
+    val isResolved: Boolean get() = true
+
+    fun resolveEnumClass(tryResolve: (String) -> Boolean): ClassId? = enumClassId
+}
+```
+
+**JavaAnnotationOverAst.kt** (implementation):
+```kotlin
+override val isResolved: Boolean
+    get() {
+        val name = className ?: return true
+        if (resolutionContext.getSimpleImport(name) != null) return true
+        return false
+    }
+
+override fun resolveEnumClass(tryResolve: (String) -> Boolean): ClassId? {
+    val className = className ?: return null
+    val imported = resolutionContext.getSimpleImport(className)
+    if (imported != null) {
+        return ClassId.topLevel(imported)
+    }
+    val resolved = resolutionContext.resolveWithCallback(className, tryResolve)
+    if (resolved != null) {
+        return fqNameToClassId(resolved)
+    }
+    return null
+}
+```
+
+### Test Results
+- Box tests: 1130/1166 passing (96.9%) - no change
+- Phased tests: 300/329 passing (91.2%) - no change
+- PSI Multiplatform tests: All pass (no regression)
+
+### Key Learnings
+
+1. **Origin Semantics Matter**: `FirDeclarationOrigin.Source` vs `Java.Source` have different requirements. `Source` expects PSI, `Java.Source` doesn't.
+
+2. **Library Classes Edge Case**: When checking for "no PSI source", must also verify it's actually a source class, not a library class loaded from bytecode.
+
+3. **Callback Pattern for Resolution**: The `resolveEnumClass(tryResolve)` callback pattern allows FIR to resolve nested classes that java-direct can't fully qualify on its own.
+
+4. **ClassId for Nested Classes**: Nested class ClassIds use `FqName` with dots for the relative class name (e.g., `ClassId(FqName("org.jetbrains"), FqName("NLS.Capitalization"), false)`).
+
+---
 
 ## Iteration 21: Implicit Supertypes (Enum, Annotation, Object) - 2026-03-10
 
