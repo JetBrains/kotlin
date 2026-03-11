@@ -203,7 +203,7 @@ internal class SymbolLightConstructor private constructor(
             primaryConstructor: KaConstructorSymbol,
             isJvmExposedBoxed: Boolean,
         ): KtLightMethod = noArgConstructor(
-            visibility = primaryConstructor.compilerVisibility.externalDisplayName,
+            visibility = primaryConstructor.visibility.asJavaVisibilityModifier(),
             declaration = primaryConstructor.sourcePsiSafe(),
             methodIndex = METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR,
             isJvmExposedBoxed = isJvmExposedBoxed,
@@ -229,5 +229,14 @@ internal class SymbolLightConstructor private constructor(
             isJvmExposedBoxed = isJvmExposedBoxed,
             functionSymbolPointer = functionSymbolPointer,
         )
+    }
+}
+
+private fun KaSymbolVisibility.asJavaVisibilityModifier(): String {
+    return when (this) {
+        KaSymbolVisibility.PUBLIC -> PsiModifier.PUBLIC
+        KaSymbolVisibility.PROTECTED -> PsiModifier.PROTECTED
+        KaSymbolVisibility.PRIVATE -> PsiModifier.PRIVATE
+        else -> PsiModifier.PACKAGE_LOCAL
     }
 }

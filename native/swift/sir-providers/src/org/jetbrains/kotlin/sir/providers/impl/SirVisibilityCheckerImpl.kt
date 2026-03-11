@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirAvailability
@@ -75,7 +74,7 @@ public class SirVisibilityCheckerImpl(
         }
 
         // We care only about public API.
-        if (!ktSymbol.compilerVisibility.isPublicAPI || ktSymbol.compilerVisibility == Visibilities.Protected) {
+        if (!ktSymbol.visibility.isExposedToSwift) {
             visibility.value = SirVisibility.PRIVATE
         }
         // Hidden declarations are, well, hidden.
@@ -221,6 +220,12 @@ public class SirVisibilityCheckerImpl(
         return@withSessions (containingSymbol as? KaNamedClassSymbol)?.isExported() is SirAvailability.Available
     }
 }
+
+private val KaSymbolVisibility.isExposedToSwift: Boolean
+    get() = when (this) {
+        KaSymbolVisibility.PUBLIC, KaSymbolVisibility.PACKAGE_PROTECTED -> true
+        else -> false
+    }
 
 context(ka: KaSession)
 private fun containsHidesFromObjCAnnotation(symbol: KaAnnotatedSymbol): Boolean {
