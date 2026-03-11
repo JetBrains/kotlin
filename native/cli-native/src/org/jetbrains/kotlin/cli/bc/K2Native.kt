@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.native.pipeline.NativeKlibCliPipeline
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -34,9 +33,9 @@ import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
 import org.jetbrains.kotlin.konan.config.overrideKonanProperties
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.native.pipeline.NativeKlibCliPipeline
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -90,26 +89,26 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             return ExitCode.OK
         }
 
-        val pluginLoadResult = PluginCliParser.loadPluginsSafe(
-            arguments.pluginClasspaths,
-            arguments.pluginOptions,
-            arguments.pluginConfigurations,
-            arguments.pluginOrderConstraints,
-            configuration,
-            rootDisposable,
-        )
-        if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
-
-        val enoughArguments = arguments.freeArgs.isNotEmpty() || arguments.isUsefulWithoutFreeArgs
-        if (!enoughArguments) {
-            configuration.messageCollector.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
-        }
-        val environment = prepareEnvironment(arguments, configuration, rootDisposable)
-        if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
-            // Some errors during KotlinCoreEnvironment setup.
-            return ExitCode.COMPILATION_ERROR
-        }
         try {
+            val pluginLoadResult = PluginCliParser.loadPluginsSafe(
+                arguments.pluginClasspaths,
+                arguments.pluginOptions,
+                arguments.pluginConfigurations,
+                arguments.pluginOrderConstraints,
+                configuration,
+                rootDisposable,
+            )
+            if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
+
+            val enoughArguments = arguments.freeArgs.isNotEmpty() || arguments.isUsefulWithoutFreeArgs
+            if (!enoughArguments) {
+                configuration.messageCollector.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
+            }
+            val environment = prepareEnvironment(arguments, configuration, rootDisposable)
+            if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
+                // Some errors during KotlinCoreEnvironment setup.
+                return ExitCode.COMPILATION_ERROR
+            }
             // K2/Native backend cannot produce binary directly from FIR frontend output, since descriptors, deserialized from KLib, are needed
             // So, such compilation is split to two stages:
             // - source files are compiled to intermediate KLib by FIR frontend
@@ -144,7 +143,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 ERROR, """
                 |Compilation failed: ${e.message}
 
-                | * Source files: ${environment.getSourceFiles().joinToString(transform = KtFile::getName)}
                 | * Compiler version: ${KotlinCompilerVersion.getVersion()}
                 | * Output kind: ${configuration.konanProducedArtifactKind}
 
