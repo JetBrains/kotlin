@@ -2,12 +2,14 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
 package org.jetbrains.kotlin.gradle.apple
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.register
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.createKotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
