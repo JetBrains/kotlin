@@ -17,6 +17,7 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 
@@ -31,6 +32,10 @@ internal fun Project.locateOrRegisterSwiftPMDependenciesMetadataTaskAndConsumabl
     ) {
         it.configureWithExtension(swiftPMImportExtension)
     }
+    val swiftPMDependenciesMetadataApiElements = registerSwiftPMDependenciesMetadataApiElements(swiftPMDependenciesMetadata)
+    project.multiplatformExtension.publishing.adhocSoftwareComponent.addVariantsFromConfiguration(
+        swiftPMDependenciesMetadataApiElements
+    ) {}
     return swiftPMDependenciesMetadata
 }
 

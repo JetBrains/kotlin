@@ -20,6 +20,7 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @DisplayName("works with native tasks in complex project")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     fun testNativeTasks(gradleVersion: GradleVersion) {
         val expectedTasks = mutableListOf(
             ":lib:cinteropMyCinteropLinuxX64",
