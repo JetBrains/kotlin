@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.handlers
 
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunParameter
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRoots
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.computePackageName
@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 import kotlin.test.assertIs
-import kotlin.time.Duration.Companion.seconds
 
 class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(testServices) {
     private var artifact: BinaryArtifacts.Native? = null
@@ -59,7 +58,7 @@ class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(
     private fun createTestRun(executable: File): TestRun {
         val testKind = parseTestKind(testServices.moduleStructure.modules.first().directives) ?: testServices.testRunSettings.get<TestKind>()
         val checks = TestRunChecks(
-            executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(30.seconds),
+            executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(testServices.testRunSettings.get<Timeouts>().executionTimeout),
             testFiltering = TestRunCheck.TestFiltering(
                 if (testKind in listOf(TestKind.REGULAR, TestKind.STANDALONE)) TCTestOutputFilter
                 else TestOutputFilter.NO_FILTERING
