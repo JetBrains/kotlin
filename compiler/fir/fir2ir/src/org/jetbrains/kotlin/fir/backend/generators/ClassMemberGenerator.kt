@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapOr
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -404,7 +405,7 @@ internal class ClassMemberGenerator(
             return // TODO: Remove when KT-67381 is implemented
         }
 
-        val firDefaultValue = firValueParameter.defaultValue
+        val firDefaultValue = firValueParameter.evaluatedInitializer?.unwrapOr<FirExpression> {} ?: firValueParameter.defaultValue
         if (firDefaultValue != null) {
             this.defaultValue = when {
                 configuration.skipBodies && parent.isDataClassCopy ->
