@@ -183,8 +183,17 @@ internal class SteppingLLDBSessionSpec(
 
     override fun generateCLIArguments(prettyPrinters: File): List<String> = buildList {
         addAll(super.generateCLIArguments(prettyPrinters))
+        // TODO (KT-84864): Can't use `-r` here, because sometimes LLDB treats them wrong
+        //     Feel free to add you variant if the test data changes.
+        //     Revert to `-r` variant once the issue is resolved.
         this += "-o"
-        this += "b -r kfun:#box(#suspend)?\\((kotlin.coroutines.Continuation<kotlin.Unit>)?\\){}"
+        this += "b kfun:#box(){}"
+        this += "-o"
+        this += "b kfun:#box(){}kotlin.Int"
+        this += "-o"
+        this += "b kfun:#box(){}kotlin.String"
+        this += "-o"
+        this += "b kfun:#box#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any"
         this += "-o"
         this += "r"
         this += "-o"
