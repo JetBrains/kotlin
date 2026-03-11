@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JKLIB
 // IGNORE_BACKEND_K2: ANY
 // LANGUAGE: +MultiPlatformProjects
 

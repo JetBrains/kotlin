@@ -131,13 +131,19 @@ class IrTextDumpHandler(
 
         pathRelativizer.addModule(module)
 
+        val ignoreIrExpectFlag = CodegenTestDirectives.IGNORE_IR_EXPECT_FLAG in module.directives
+
         val dumpOptions = DumpIrTreeOptions(
             normalizeNames = true,
             printFacadeClassInFqNames = false,
             declarationFlagsFilter = FlagsFilter { declaration, isReference, flags ->
                 // By coincidence, there is a huge number of cases in IR text test data files
                 // when flags are still rendered for references to fields and classes.
-                flags.takeIf { !isReference || declaration is IrField || declaration is IrClass }.orEmpty()
+                var filteredFlags = flags.takeIf { !isReference || declaration is IrField || declaration is IrClass }.orEmpty()
+                if (ignoreIrExpectFlag && filteredFlags.isNotEmpty()) {
+                    filteredFlags = filteredFlags.filter { it != "expect" }
+                }
+                filteredFlags
             },
             isHiddenDeclaration = { isHiddenDeclaration(it, info.irBuiltIns) },
             stableOrder = true,

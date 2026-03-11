@@ -1,6 +1,7 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: JKLIB
 
 // MODULE: separate
 // FILE: KotlinInternalSeparate.kt

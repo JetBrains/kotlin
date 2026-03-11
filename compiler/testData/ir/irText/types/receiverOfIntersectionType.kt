@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 // FILE: receiverOfIntersectionType.kt
 

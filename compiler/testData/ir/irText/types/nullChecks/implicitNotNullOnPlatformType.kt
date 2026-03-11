@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JKLIB
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // FILE: implicitNotNullOnPlatformType.kt

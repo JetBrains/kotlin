@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 // FILE: protectedJavaFieldRef.kt

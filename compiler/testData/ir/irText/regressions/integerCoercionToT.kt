@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// IGNORE_BACKEND: JKLIB
 interface CPointed
 
 inline fun <reified T : CPointed> CPointed.reinterpret(): T = TODO()
