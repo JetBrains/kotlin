@@ -6,6 +6,11 @@
 package org.jetbrains.kotlin.library.abi
 
 import org.jetbrains.kotlin.library.abi.impl.LibraryAbiReaderImpl
+import org.jetbrains.kotlin.library.abi.impl.MetadataLibraryAbiReaderImpl
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 import java.io.File
 
 /** The default implementation of [LibraryAbi] reader. */
@@ -20,7 +25,19 @@ object LibraryAbiReader {
     fun readAbiInfo(library: File, vararg filters: AbiReadingFilter): LibraryAbi = readAbiInfo(library, filters.asList())
 
     /** @see [readAbiInfo] */
-    fun readAbiInfo(library: File, filters: List<AbiReadingFilter>): LibraryAbi = LibraryAbiReaderImpl(library, filters).readAbi()
+    fun readAbiInfo(library: File, filters: List<AbiReadingFilter>): LibraryAbi {
+        val klib = run {
+            val klibLoadingResult = KlibLoader { libraryPaths(library) }.load()
+            klibLoadingResult.reportLoadingProblemsIfAny { _, message -> error(message) }
+            klibLoadingResult.librariesStdlibFirst.single()
+        }
+
+        return if (klib.isCInteropLibrary() || klib.isCommonizedCInteropLibrary()) {
+            MetadataLibraryAbiReaderImpl(klib, filters).readAbi()
+        } else {
+            LibraryAbiReaderImpl(library, filters).readAbi()
+        }
+    }
 }
 
 /**

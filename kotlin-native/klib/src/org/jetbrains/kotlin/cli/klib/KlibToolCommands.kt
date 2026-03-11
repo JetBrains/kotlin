@@ -254,8 +254,6 @@ internal class DumpAbi(output: KlibToolOutput, args: KlibToolArguments) : KlibTo
     override fun execute() {
         val library = loadKlib(args.libraryPath, output) ?: return
 
-        if (!checkLibraryHasIr(library)) return
-
         val abiSignatureVersion = args.signatureVersion?.let { signatureVersion ->
             if (!signatureVersion.checkSupportedInLibrary(library)) return
 

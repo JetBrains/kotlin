@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.CLASS_SYMBOL
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignature.*
 import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
@@ -86,19 +85,7 @@ internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingF
         )
     }
 
-    private fun readManifest(): LibraryManifest {
-        val versions = library.versions
-        return LibraryManifest(
-            platform = library.builtInsPlatform?.name,
-            platformTargets = buildList {
-                library.nativeTargets.sorted().mapTo(this, LibraryTarget::Native)
-                library.wasmTargets.sorted().mapTo(this, LibraryTarget::WASM)
-            },
-            compilerVersion = versions.compilerVersion,
-            abiVersion = versions.abiVersion?.toString(),
-            irProviderName = library.irProviderName
-        )
-    }
+    private fun readManifest(): LibraryManifest = library.readAbiManifest()
 
     private fun readSupportedSignatureVersions(): Set<AbiSignatureVersion> {
         return library.versions.irSignatureVersions.mapTo(hashSetOf()) { AbiSignatureVersions.resolveByVersionNumber(it.number) }
@@ -565,7 +552,7 @@ private class LibraryDeserializer(
         fun computeNestedName(simpleName: String): AbiQualifiedName
 
         class Package(val packageName: AbiCompoundName) : ContainingEntity {
-            override fun computeNestedName(simpleName: String) = qualifiedName(packageName, simpleName)
+            override fun computeNestedName(simpleName: String) = qualifiedNameFromPackage(packageName, simpleName)
         }
 
         class Class(
@@ -575,7 +562,7 @@ private class LibraryDeserializer(
         ) : ContainingEntity {
             private val excludeFakeOverrides: Boolean by lazy(LazyThreadSafetyMode.NONE, lazyExcludeFakeOverrides)
 
-            override fun computeNestedName(simpleName: String) = qualifiedName(className, simpleName)
+            override fun computeNestedName(simpleName: String) = qualifiedNameFromParent(className, simpleName)
 
             companion object {
                 val Class?.excludeFakeOverrides: Boolean get() = this?.excludeFakeOverrides == true
@@ -587,18 +574,7 @@ private class LibraryDeserializer(
             val containingClass: Class?,
             val propertyVisibilityStatus: VisibilityStatus
         ) : ContainingEntity {
-            override fun computeNestedName(simpleName: String) = qualifiedName(propertyName, simpleName)
-        }
-
-        companion object {
-            private fun qualifiedName(packageName: AbiCompoundName, topLevelSimpleName: String) =
-                AbiQualifiedName(packageName, AbiCompoundName(topLevelSimpleName))
-
-            private fun qualifiedName(parentName: AbiQualifiedName, memberSimpleName: String) =
-                AbiQualifiedName(
-                    parentName.packageName,
-                    AbiCompoundName("${parentName.relativeName}${AbiCompoundName.SEPARATOR}$memberSimpleName")
-                )
+            override fun computeNestedName(simpleName: String) = qualifiedNameFromParent(propertyName, simpleName)
         }
     }
 
@@ -610,7 +586,7 @@ private class LibraryDeserializer(
         val level: Int = (parent?.let { it.level + 1 } ?: 0) + levelAdjustment
 
         fun computeTypeParameterTag(index: Int): String {
-            val tagPrefix = computeTagPrefix(index)
+            val tagPrefix = computeTypeParameterTagPrefix(index)
             return if (level > 0) "$tagPrefix$level" else tagPrefix
         }
 
@@ -620,24 +596,6 @@ private class LibraryDeserializer(
             else
                 parent?.resolveTypeParameterTag(declarationName, index)
                     ?: error("Type parameter with local index $index can not be resolved for $declarationName")
-        }
-
-        companion object {
-            private const val ALPHABET_SIZE: Int = 'Z' - 'A' + 1
-
-            private fun computeTagPrefix(index: Int): String {
-                val result = SmartList<Char>()
-
-                var quotient = index
-                var remainder = quotient % ALPHABET_SIZE
-                do {
-                    result += ('A' + remainder)
-                    quotient /= ALPHABET_SIZE
-                    remainder = (quotient - 1) % ALPHABET_SIZE
-                } while (quotient != 0)
-
-                return if (result.size == 1) result[0].toString() else result.asReversed().joinToString(separator = "")
-            }
         }
     }
 
@@ -798,37 +756,12 @@ private class LibraryDeserializer(
         return AbiTopLevelDeclarationsImpl(topLevels.compact())
     }
 
-    private enum class VisibilityStatus(val isPubliclyVisible: Boolean) {
-        PUBLIC(true), INTERNAL_PUBLISHED_API(true), NON_PUBLIC(false)
-    }
-
     companion object {
         private val INIT_SUFFIX = "." + SpecialNames.INIT.asString()
 
-        private val KOTLIN_COMPOUND_NAME = AbiCompoundName("kotlin")
         private val PUBLISHED_API_CONSTRUCTOR_QUALIFIED_NAME = AbiQualifiedName(KOTLIN_COMPOUND_NAME, AbiCompoundName("PublishedApi"))
-        private val KOTLIN_ANY_QUALIFIED_NAME = AbiQualifiedName(KOTLIN_COMPOUND_NAME, AbiCompoundName("Any"))
-        private val KOTLIN_UNIT_QUALIFIED_NAME = AbiQualifiedName(KOTLIN_COMPOUND_NAME, AbiCompoundName("Unit"))
-
-        private fun isKotlinBuiltInType(type: AbiType, className: AbiQualifiedName, nullability: AbiTypeNullability): Boolean {
-            if (type !is AbiType.Simple || type.nullability != nullability) return false
-            return (type.classifierReference as? ClassReference)?.className == className
-        }
 
         private inline fun CommonSignature.extractQualifiedName(transformRelativeName: (String) -> String = { it }): AbiQualifiedName =
             AbiQualifiedName(AbiCompoundName(packageFqName), AbiCompoundName(transformRelativeName(declarationFqName)))
-
-        private fun Modality.toAbiModality(containingClassModality: AbiModality?): AbiModality = when (this) {
-            Modality.FINAL -> AbiModality.FINAL
-            Modality.OPEN -> if (containingClassModality == AbiModality.FINAL) AbiModality.FINAL else AbiModality.OPEN
-            Modality.ABSTRACT -> AbiModality.ABSTRACT
-            Modality.SEALED -> AbiModality.SEALED
-        }
-
-        private fun Variance.toAbiVariance(): AbiVariance = when (this) {
-            Variance.INVARIANT -> AbiVariance.INVARIANT
-            Variance.IN_VARIANCE -> AbiVariance.IN
-            Variance.OUT_VARIANCE -> AbiVariance.OUT
-        }
     }
 }
