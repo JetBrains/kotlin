@@ -43,7 +43,6 @@ internal fun Project.locateOrRegisterSwiftPMDependenciesExtension(): SwiftPMImpo
     )!!
 }
 
-@ExperimentalKotlinGradlePluginApi
 abstract class SwiftPMImportExtension @Inject constructor(
     objects: ObjectFactory,
 ) {
@@ -82,6 +81,7 @@ abstract class SwiftPMImportExtension @Inject constructor(
     fun watchOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.watchOS
     fun tvOS(): SwiftPMDependency.Platform = SwiftPMDependency.Platform.tvOS
 
+    @ExperimentalKotlinGradlePluginApi
     fun swiftPackage(
         url: String,
         version: String,
@@ -104,6 +104,7 @@ abstract class SwiftPMImportExtension @Inject constructor(
         )
     }
 
+    @ExperimentalKotlinGradlePluginApi
     fun swiftPackage(
         url: Repository.Url,
         version: Version,
@@ -132,6 +133,7 @@ abstract class SwiftPMImportExtension @Inject constructor(
         )
     }
 
+    @ExperimentalKotlinGradlePluginApi
     fun swiftPackage(
         repository: Repository,
         version: Version,
@@ -177,6 +179,7 @@ abstract class SwiftPMImportExtension @Inject constructor(
      * )
      * ```
      */
+    @ExperimentalKotlinGradlePluginApi
     fun localSwiftPackage(
         directory: Directory,
         products: List<String>,
@@ -208,6 +211,7 @@ abstract class SwiftPMImportExtension @Inject constructor(
      * @param importedClangModules List of modules to import
      * @param traits SwiftPM traits to enable
      */
+    @ExperimentalKotlinGradlePluginApi
     // Otherwise this overload clashes in jvm signature
     @JvmName("localPackageWithProducts")
     fun localSwiftPackage(
