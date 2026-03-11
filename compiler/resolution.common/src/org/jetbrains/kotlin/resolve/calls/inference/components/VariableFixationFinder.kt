@@ -389,7 +389,9 @@ private fun KotlinTypeMarker.extractProjectionsForAllCapturedTypesInternal(resul
     if (isFlexible()) {
         val flexibleType = asFlexibleType()!!
         flexibleType.lowerBound().extractProjectionsForAllCapturedTypesInternal(result)
-        flexibleType.upperBound().extractProjectionsForAllCapturedTypesInternal(result)
+        if (!c.isTriviallyFlexible(flexibleType)) {
+            flexibleType.upperBound().extractProjectionsForAllCapturedTypesInternal(result)
+        }
         return
     }
     val simpleBaseType = asRigidType()?.asCapturedTypeUnwrappingDnn()
