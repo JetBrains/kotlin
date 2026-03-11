@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerC
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
-import org.jetbrains.kotlin.types.AbstractTypeApproximator
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
@@ -26,6 +23,7 @@ class NewConstraintSystemImpl(
     private val constraintInjector: ConstraintInjector,
     val typeSystemContext: TypeSystemInferenceExtensionContext,
     private val languageVersionSettings: LanguageVersionSettings,
+    override val customSubtypingCallback: CustomSubtypingCallback? = null,
 ) : ConstraintSystemCompletionContext(),
     TypeSystemInferenceExtensionContext by typeSystemContext,
     NewConstraintSystem,
@@ -882,5 +880,19 @@ class NewConstraintSystemImpl(
     ) {
         typeVariableDependencies.getOrPut(referencedVariable) { mutableSetOf() }
             .add(constraintOwner)
+    }
+
+    /**
+     * We have to override the delegated implementation because the latter uses its own `this` as a TypeSystemContext where
+     * [customSubtypingCallback] is not set.
+     */
+    override fun newTypeCheckerState(
+        errorTypesEqualToAnything: Boolean,
+        stubTypesEqualToAnything: Boolean,
+        dnnTypesEqualToFlexible: Boolean,
+    ): TypeCheckerState {
+        return newTypeCheckerState(
+            this, errorTypesEqualToAnything, stubTypesEqualToAnything, dnnTypesEqualToFlexible
+        )
     }
 }

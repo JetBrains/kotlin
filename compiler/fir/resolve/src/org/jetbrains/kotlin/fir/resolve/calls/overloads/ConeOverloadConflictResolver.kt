@@ -629,7 +629,31 @@ class ConeOverloadConflictResolver(
     }
 
     private fun createEmptyConstraintSystem(): SimpleConstraintSystem {
-        return ConeSimpleConstraintSystemImpl(inferenceComponents.createConstraintSystem(), inferenceComponents.session)
+        return ConeSimpleConstraintSystemImpl(
+            inferenceComponents.createConstraintSystem(
+                when {
+                    LanguageFeature.EagerLambdaAnalysis.isEnabled() -> ::customSubtypingForNumerics
+                    else -> null
+                }
+            ),
+            inferenceComponents.session
+        )
+    }
+
+    private fun customSubtypingForNumerics(subtype: KotlinTypeMarker, supertype: KotlinTypeMarker): Boolean? {
+        requireOrDescribe(subtype is ConeKotlinType, subtype)
+        requireOrDescribe(supertype is ConeKotlinType, supertype)
+
+        val specificClassId = subtype.lowerBoundIfFlexible().classId ?: return null
+        val generalClassId = supertype.upperBoundIfFlexible().classId ?: return null
+
+        // int >= long
+        if (specificClassId == Int && generalClassId == Long) return true
+
+        // uint >= ulong
+        if (specificClassId == UInt && generalClassId == ULong) return true
+
+        return null
     }
 }
 

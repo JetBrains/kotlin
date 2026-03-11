@@ -25,15 +25,15 @@ val intIn: In<Int> get() = TODO()
 fun main() {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>foo1(1)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Long")!>foo1(1L)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: foo2, [/foo2, /foo2]")!><!OVERLOAD_RESOLUTION_AMBIGUITY!>foo2<!>(listOf(1))<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>foo2(listOf(1))<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Long")!>foo2(listOf(1L))<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: foo3, [/foo3, /foo3]")!><!OVERLOAD_RESOLUTION_AMBIGUITY!>foo3<!> { 1 }<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>foo3 { 1 }<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Long")!>foo3 { 1L }<!>
 
     <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: foo4, [/foo4, /foo4]")!><!OVERLOAD_RESOLUTION_AMBIGUITY!>foo4<!>(mutableListOf(1))<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Long")!>foo4(mutableListOf(1L))<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: foo5, [/foo5, /foo5]")!><!OVERLOAD_RESOLUTION_AMBIGUITY!>foo5<!>(wildCardIn)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Long")!>foo5(wildCardIn)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Long")!>foo5(longIn)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>foo5(intIn)<!>
 }
