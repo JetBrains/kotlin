@@ -15,11 +15,6 @@ This is the Kotlin programming language repository containing:
 Note: The IntelliJ Kotlin plugin is in a separate repository (JetBrains/intellij-community).
 
 ## Build Commands
-
-```bash
-# Generate test sources (run after adding new test data files)
-./gradlew generateTests
-```
  
 ## Common Pitfalls
 
