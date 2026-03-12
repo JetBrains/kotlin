@@ -22,10 +22,15 @@ import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.toImplicitResolvedQualifierReceiver
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitStarImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 internal class TowerDataElementsForName(
     name: Name,
@@ -247,7 +252,10 @@ internal open class FirTowerResolveTask(
         val explicitReceiverValue = ExpressionReceiverValue(resolvedQualifier)
         for ((depth, lexical) in towerDataElementsForName.nonLocalTowerDataElements.withIndex()) {
             val scope = lexical.scope
-            if (!lexical.isLocal && scope != null && emptyScopes?.contains(scope) != true) {
+
+            if (!scope.canContainCompanionExtensions()) continue
+
+            if (!lexical.isLocal && emptyScopes?.contains(scope) != true) {
                 processScopeForExplicitReceiver(
                     scope,
                     explicitReceiverValue,
@@ -258,6 +266,22 @@ internal open class FirTowerResolveTask(
                     onEmptyLevel = { emptyScopes?.add(scope) }
                 )
             }
+        }
+    }
+
+    /**
+     * Optimization: companion extensions can only be top-level, AND we know there are no companion extensions in the stdlib.
+     */
+    @OptIn(ExperimentalContracts::class)
+    private fun FirScope?.canContainCompanionExtensions(): Boolean {
+        contract { returns(true) implies (this@canContainCompanionExtensions != null) }
+        return when (this) {
+            is FirPackageMemberScope,
+                // TODO(KT-84994) allow default importing scopes and optimize resolution differently.
+            is FirExplicitSimpleImportingScope,
+            is FirExplicitStarImportingScope,
+                -> true
+            else -> false
         }
     }
 
