@@ -126,6 +126,21 @@ internal class CompatqualAnnotationsModeConversionTest :
         assertEquals("Unknown -Xsupport-compatqual-checker-framework-annotations value: non-existent-value", exception.message)
     }
 
+    @DisplayName("CompatqualAnnotationsMode of null value is converted to '-Xsupport-compatqual-checker-framework-annotations' argument")
+    @BtaVersionsOnlyCompilationTest
+    fun testNullCompatqualAnnotationsMode(toolchain: KotlinToolchains) {
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS] = null
+        }.build()
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null), toolchain.getCompilerVersion()),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

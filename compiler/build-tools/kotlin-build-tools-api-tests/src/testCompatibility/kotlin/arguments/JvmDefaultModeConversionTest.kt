@@ -137,6 +137,22 @@ internal class JvmDefaultModeConversionTest : BaseArgumentTest<JvmDefaultMode>("
         assertEquals("Unknown -jvm-default value: non-existent-value", exception.message)
     }
 
+    @DisplayName("JvmDefaultMode of null value is converted to '-jvm-default' argument")
+    @BtaVersionsOnlyCompilationTest
+    fun testNullJvmDefaultMode(toolchain: KotlinToolchains) {
+        assumeJvmDefaultSupported(toolchain.getCompilerVersion())
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+            compilerArguments[JVM_DEFAULT] = null
+        }.build()
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null), toolchain.getCompilerVersion()),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName", value)
     }

@@ -112,6 +112,21 @@ internal class FriendPathsConversionTest : BaseArgumentTest<Array<String>>("Xfri
         )
     }
 
+    @DisplayName("FriendPaths of null value is converted to '-Xfriend-paths' argument")
+    @Test
+    fun testNullFriendPaths() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_FRIEND_PATHS] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

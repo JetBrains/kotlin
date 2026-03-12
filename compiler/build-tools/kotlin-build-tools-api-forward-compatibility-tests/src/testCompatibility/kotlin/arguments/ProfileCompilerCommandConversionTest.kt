@@ -112,6 +112,21 @@ internal class ProfileCompilerCommandConversionTest : BaseArgumentTest<String>("
         )
     }
 
+    @DisplayName("ProfileCompilerCommand of null value is converted to '-Xprofile' argument")
+    @Test
+    fun testNullProfileCompilerCommand() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_PROFILE] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

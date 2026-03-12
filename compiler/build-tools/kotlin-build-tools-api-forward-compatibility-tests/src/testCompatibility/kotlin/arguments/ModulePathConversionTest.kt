@@ -122,6 +122,21 @@ internal class ModulePathConversionTest : BaseArgumentTest<String>("Xmodule-path
         )
     }
 
+    @DisplayName("ModulePath of null value is converted to '-Xmodule-path' argument")
+    @Test
+    fun testNullModulePath() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_MODULE_PATH] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

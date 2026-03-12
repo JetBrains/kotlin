@@ -99,6 +99,21 @@ internal class PhasesToDumpConversionTest : BaseArgumentTest<Array<String>>("Xph
         )
     }
 
+    @DisplayName("PhasesToDump of null value is converted to '-Xphases-to-dump' argument")
+    @Test
+    fun testNullPhasesToDump() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_PHASES_TO_DUMP] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

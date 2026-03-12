@@ -125,6 +125,21 @@ internal class AbiStabilityModeConversionTest : BaseArgumentTest<AbiStabilityMod
         assertEquals("Unknown -Xabi-stability value: non-existent-value", exception.message)
     }
 
+    @DisplayName("AbiStabilityMode of null value is converted to '-Xabi-stability' argument")
+    @BtaVersionsOnlyCompilationTest
+    fun testNullAbiStabilityMode(toolchain: KotlinToolchains) {
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_ABI_STABILITY] = null
+        }.build()
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null), toolchain.getCompilerVersion()),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

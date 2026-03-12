@@ -119,6 +119,21 @@ internal class KlibConversionTest : BaseArgumentTest<String>("Xklib") {
         )
     }
 
+    @DisplayName("Klib of null value is converted to '-Xklib' argument")
+    @Test
+    fun testNullKlib() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_KLIB] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

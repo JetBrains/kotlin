@@ -99,6 +99,21 @@ internal class KotlinHomeConversionTest : BaseArgumentTest<String>("kotlin-home"
         )
     }
 
+    @DisplayName("KotlinHome of null value is converted to '-kotlin-home' argument")
+    @Test
+    fun testNullKotlinHome() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[KOTLIN_HOME] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName", value)
     }

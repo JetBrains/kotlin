@@ -135,6 +135,21 @@ internal class JspecifyAnnotationsModeConversionTest : BaseArgumentTest<String>(
         assertEquals("Unknown -Xjspecify-annotations value: non-existent-value", exception.message)
     }
 
+    @DisplayName("JspecifyAnnotationsMode of null value is converted to '-Xjspecify-annotations' argument")
+    @Test
+    fun testNullJspecifyAnnotationsMode() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_JSPECIFY_ANNOTATIONS] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

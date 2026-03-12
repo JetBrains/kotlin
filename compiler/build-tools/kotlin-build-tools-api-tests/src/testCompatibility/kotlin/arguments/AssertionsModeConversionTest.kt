@@ -125,6 +125,21 @@ internal class AssertionsModeConversionTest : BaseArgumentTest<AssertionsMode>("
         assertEquals("Unknown -Xassertions value: non-existent-value", exception.message)
     }
 
+    @DisplayName("AssertionsMode of null value is converted to '-Xassertions' argument")
+    @BtaVersionsOnlyCompilationTest
+    fun testNullAssertionsMode(toolchain: KotlinToolchains) {
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_ASSERTIONS] = null
+        }.build()
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null), toolchain.getCompilerVersion()),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

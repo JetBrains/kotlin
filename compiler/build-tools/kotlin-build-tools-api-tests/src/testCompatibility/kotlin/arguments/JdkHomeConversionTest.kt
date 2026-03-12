@@ -105,6 +105,21 @@ internal class JdkHomeConversionTest() : BaseArgumentTest<Path>("jdk-home") {
         )
     }
 
+    @DisplayName("JdkHome of null value is converted to '-jdk-home' argument")
+    @BtaVersionsOnlyCompilationTest
+    fun testNullJdkHome(toolchain: KotlinToolchains) {
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+            compilerArguments[JDK_HOME] = null
+        }.build()
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null), toolchain.getCompilerVersion()),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName", value)
     }

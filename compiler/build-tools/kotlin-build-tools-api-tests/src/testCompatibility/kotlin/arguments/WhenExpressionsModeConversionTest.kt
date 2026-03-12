@@ -133,6 +133,22 @@ internal class WhenExpressionsModeConversionTest : BaseArgumentTest<WhenExpressi
         assertEquals("Unknown -Xwhen-expressions value: non-existent-value", exception.message)
     }
 
+    @DisplayName("WhenExpressionsMode of null value is converted to '-Xwhen-expressions' argument")
+    @BtaVersionsOnlyCompilationTest
+    fun testNullWhenExpressionsMode(toolchain: KotlinToolchains) {
+        assumeArgumentSupported(toolchain.getCompilerVersion())
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_WHEN_EXPRESSIONS] = null
+        }.build()
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null), toolchain.getCompilerVersion()),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

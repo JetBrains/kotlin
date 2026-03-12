@@ -135,6 +135,21 @@ internal class LambdasModeConversionTest : BaseArgumentTest<String>("Xlambdas") 
         assertEquals("Unknown -Xlambdas value: non-existent-value", exception.message)
     }
 
+    @DisplayName("LambdasMode of null value is converted to '-Xlambdas' argument")
+    @Test
+    fun testNullLambdasMode() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_LAMBDAS] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

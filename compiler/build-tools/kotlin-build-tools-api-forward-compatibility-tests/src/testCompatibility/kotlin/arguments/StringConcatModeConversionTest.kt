@@ -135,6 +135,21 @@ internal class StringConcatModeConversionTest : BaseArgumentTest<String>("Xstrin
         assertEquals("Unknown -Xstring-concat value: non-existent-value", exception.message)
     }
 
+    @DisplayName("StringConcatMode of null value is converted to '-Xstring-concat' argument")
+    @Test
+    fun testNullStringConcatMode() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_STRING_CONCAT] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

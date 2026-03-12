@@ -112,6 +112,21 @@ internal class JavaSourceRootsConversionTest : BaseArgumentTest<Array<String>>("
         )
     }
 
+    @DisplayName("JavaSourceRoots of null value is converted to '-Xjava-source-roots' argument")
+    @Test
+    fun testNullJavaSourceRoots() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_JAVA_SOURCE_ROOTS] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

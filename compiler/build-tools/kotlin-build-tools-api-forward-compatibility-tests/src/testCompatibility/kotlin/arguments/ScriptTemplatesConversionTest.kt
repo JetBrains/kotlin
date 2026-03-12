@@ -97,6 +97,21 @@ internal class ScriptTemplatesConversionTest : BaseArgumentTest<Array<String>>("
         )
     }
 
+    @DisplayName("ScriptTemplates of null value is converted to '-script-templates' argument")
+    @Test
+    fun testNullScriptTemplates() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[SCRIPT_TEMPLATES] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName", value)
     }

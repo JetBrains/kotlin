@@ -99,6 +99,21 @@ internal class PhasesToValidateBeforeConversionTest : BaseArgumentTest<Array<Str
         )
     }
 
+    @DisplayName("PhasesToValidateBefore of null value is converted to '-Xphases-to-validate-before' argument")
+    @Test
+    fun testNullPhasesToValidateBefore() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_PHASES_TO_VALIDATE_BEFORE] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

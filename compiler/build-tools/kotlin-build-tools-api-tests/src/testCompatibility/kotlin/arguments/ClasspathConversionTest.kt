@@ -116,6 +116,21 @@ internal class ClasspathConversionTest : BaseArgumentTest<List<Path>>("classpath
         )
     }
 
+    @DisplayName("Classpath of null value is converted to '-classpath' argument")
+    @BtaVersionsOnlyCompilationTest
+    fun testNullClasspath(toolchain: KotlinToolchains) {
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+            compilerArguments[CLASSPATH] = null
+        }.build()
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null), toolchain.getCompilerVersion()),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName", value)
     }

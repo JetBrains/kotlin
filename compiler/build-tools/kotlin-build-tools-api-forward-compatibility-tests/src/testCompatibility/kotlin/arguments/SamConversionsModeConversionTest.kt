@@ -135,6 +135,21 @@ internal class SamConversionsModeConversionTest() : BaseArgumentTest<String>("Xs
         assertEquals("Unknown -Xsam-conversions value: non-existent-value", exception.message)
     }
 
+    @DisplayName("SamConversionsMode of null value is converted to '-Xsam-conversions' argument")
+    @Test
+    fun testNullSamConversionsMode() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_SAM_CONVERSIONS] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

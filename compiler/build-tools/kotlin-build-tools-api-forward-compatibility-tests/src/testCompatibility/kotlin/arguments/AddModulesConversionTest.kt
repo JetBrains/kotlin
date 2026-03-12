@@ -99,6 +99,21 @@ internal class AddModulesConversionTest : BaseArgumentTest<Array<String>>("Xadd-
         )
     }
 
+    @DisplayName("AddModules of null value is converted to '-Xadd-modules' argument")
+    @Test
+    fun testNullAddModules() {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_ADD_MODULES] = null
+        }
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null)),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }

@@ -125,6 +125,21 @@ internal class JdkReleaseConversionTest : BaseArgumentTest<JdkRelease>("Xjdk-rel
         assertEquals("Unknown -Xjdk-release value: non-existent-value", exception.message)
     }
 
+    @DisplayName("JdkRelease of null value is converted to '-Xjdk-release' argument")
+    @BtaVersionsOnlyCompilationTest
+    fun testNullJdkRelease(toolchain: KotlinToolchains) {
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+            compilerArguments[X_JDK_RELEASE] = null
+        }.build()
+
+        val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
+
+        assertEquals(
+            expectedArgumentStringsFor(getValueString(null), toolchain.getCompilerVersion()),
+            actualArgumentStrings,
+        )
+    }
+
     override fun expectedArgumentStringsFor(value: String): List<String> {
         return listOf("-$argumentName=$value")
     }
