@@ -10,5 +10,6 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 /**
  * Plugin-generated declarations refer to the "origin" (i.e. @DataSchema) declaration from another file.
  * "Origin" declaration visibility should allow this
+ * For example, private data schema would cause IR_VALIDATION_EXCEPTION
  */
 internal val ALLOWED_DECLARATION_VISIBILITY = setOf(EffectiveVisibility.Public, EffectiveVisibility.Internal)
