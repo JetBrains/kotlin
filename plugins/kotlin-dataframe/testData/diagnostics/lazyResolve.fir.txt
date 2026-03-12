@@ -1,0 +1,27 @@
+FILE: lazyResolve.kt
+    public final val pair: R|kotlin/Pair<kotlin/String, org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>>| = String(a).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/Int|>(vararg(Int(1))))
+        public get(): R|kotlin/Pair<kotlin/String, org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>>|
+    public final fun test(): R|kotlin/Unit| {
+        R|kotlin/run|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_86>|>(<L> = fun <anonymous>(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_86>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class DataFrameOf_86I : R|kotlin/Any| {
+                public constructor(): R|<local>/DataFrameOf_86I|
+
+            }
+
+            local final class Scope0 : R|kotlin/Any| {
+                public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class DataFrameOf_86 : R|<local>/DataFrameOf_86I| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
+
+                public constructor(): R|<local>/DataFrameOf_86|
+
+            }
+
+            ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(R|/pair|))
+        }
+        )
+    }

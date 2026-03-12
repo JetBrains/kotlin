@@ -48,13 +48,13 @@ class DataFrameOf3 : AbstractSchemaModificationInterpreter() {
 }
 
 abstract class SchemaConstructor : AbstractSchemaModificationInterpreter() {
-    val Arguments.columns: List<Interpreter.Success<Pair<*, *>>> by arg()
+    val Arguments.columns: List<Interpreter.Success<Pair<*, *>>?> by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val res = columns.map {
-            val it = it.value
-            val name = (it.first as? FirLiteralExpression)?.value as? String
-            val resolvedType = (it.second as? FirExpression)?.resolvedType
+            val it = it?.value
+            val name = (it?.first as? FirLiteralExpression)?.value as? String
+            val resolvedType = (it?.second as? FirExpression)?.resolvedType
             val type: ConeKotlinType? = extractBaseColumnValuesType(resolvedType)
             if (name == null || type == null) return PluginDataFrameSchema(emptyList())
             simpleColumnOf(name, type)

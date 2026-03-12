@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.frontend.fir.DisableLazyResolveChecksAfterAnalysisChecker
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 
 abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
@@ -32,9 +32,9 @@ abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
         builder.useConfigurators(
             ::DataFrameEnvironmentConfigurator
         )
-        builder.useAfterAnalysisCheckers(
-            ::DisableLazyResolveChecksAfterAnalysisChecker,
-        )
+        builder.forTestsNotMatching("schemaInfo.kt|structuralCast.kt") {
+            enableLazyResolvePhaseChecking()
+        }
         builder.useAdditionalSourceProviders(::TestUtilsSourceProvider)
     }
 }
