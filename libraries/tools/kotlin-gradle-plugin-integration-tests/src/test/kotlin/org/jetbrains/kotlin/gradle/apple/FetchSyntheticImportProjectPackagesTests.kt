@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.GradleTestVersions
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.NativeGradlePluginTests
+import org.jetbrains.kotlin.gradle.testbase.OsCondition
 import org.jetbrains.kotlin.gradle.testbase.SwiftPMImportGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
@@ -35,8 +36,12 @@ import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.junit.jupiter.api.condition.OS
 
-@NativeGradlePluginTests
+@OsCondition(
+    supportedOn = [OS.MAC],
+    enabledOnCI = [OS.MAC],
+)
 @SwiftPMImportGradlePluginTests
 class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
 
