@@ -77,7 +77,10 @@ class TowerElementsForClass(
     val companionStaticScope: FirScope?,
     // Ordered from inner scopes to outer scopes.
     val superClassesStaticsAndCompanionReceivers: List<FirTowerDataElement>,
-)
+) {
+    val hasStaticScopeOrOwnerSymbol: Boolean
+        get() = staticScope != null || staticScopeOwnerSymbol != null
+}
 
 @ConsistentCopyVisibility
 data class FirTowerDataContext private constructor(
@@ -188,23 +191,30 @@ data class FirTowerDataContext private constructor(
 
     fun addCompanionAndStaticScopes(towerElementsForClass: TowerElementsForClass): FirTowerDataContext {
         return if (towerElementsForClass.companionStaticScope != null) {
-            if (towerElementsForClass.staticScope != null) {
+            if (towerElementsForClass.hasStaticScopeOrOwnerSymbol) {
                 addNonLocalScopeElements(
                     listOf(
                         towerElementsForClass.companionStaticScope.asTowerDataElement(isLocal = false),
-                        towerElementsForClass.staticScope.asTowerDataElementForStaticScope(
-                            towerElementsForClass.staticScopeOwnerSymbol
-                        )
+                        towerDataElementForStaticScope(towerElementsForClass)
                     )
                 )
             } else {
                 addNonLocalScope(towerElementsForClass.companionStaticScope)
             }
-        } else if (towerElementsForClass.staticScope != null) {
-            addStaticScope(towerElementsForClass.staticScope, towerElementsForClass.staticScopeOwnerSymbol)
+        } else if (towerElementsForClass.hasStaticScopeOrOwnerSymbol) {
+            addNonLocalScopeElement(towerDataElementForStaticScope(towerElementsForClass))
         } else {
             this
         }
+    }
+
+    private fun towerDataElementForStaticScope(towerElementsForClass: TowerElementsForClass): FirTowerDataElement {
+        return FirTowerDataElement(
+            scope = towerElementsForClass.staticScope,
+            implicitReceiver = null,
+            isLocal = false,
+            staticScopeOwnerSymbol = towerElementsForClass.staticScopeOwnerSymbol
+        )
     }
 
     fun addNonLocalScope(scope: FirScope): FirTowerDataContext {
@@ -215,8 +225,7 @@ data class FirTowerDataContext private constructor(
         )
     }
 
-    fun addStaticScope(scope: FirScope, staticScopeOwnerSymbol: FirRegularClassSymbol?): FirTowerDataContext {
-        val element = scope.asTowerDataElementForStaticScope(staticScopeOwnerSymbol)
+    private fun addNonLocalScopeElement(element: FirTowerDataElement): FirTowerDataContext {
         return copy(
             towerDataElements = towerDataElements.add(element),
             nonLocalTowerDataElements = nonLocalTowerDataElements.add(element)
@@ -260,7 +269,7 @@ data class FirTowerDataContext private constructor(
 }
 
 /**
- * Each FirTowerDataElement has exactly one non-null value among [scope] or [implicitReceiver].
+ * Each FirTowerDataElement has exactly one non-null value among ([scope] and/or [staticScopeOwnerSymbol]) or [implicitReceiver].
  */
 class FirTowerDataElement(
     val scope: FirScope?,
@@ -288,7 +297,7 @@ class FirTowerDataElement(
     ): List<FirScope> = when {
         scope != null -> listOf(scope)
         implicitReceiver != null -> listOf(implicitReceiver.getImplicitScope(processTypeScope))
-        contextParameterGroup != null -> emptyList()
+        contextParameterGroup != null || staticScopeOwnerSymbol != null -> emptyList()
         else -> error("Tower data element is expected to have either scope or implicit receivers.")
     }
 

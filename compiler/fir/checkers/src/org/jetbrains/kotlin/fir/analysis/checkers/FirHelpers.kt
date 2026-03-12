@@ -949,7 +949,7 @@ fun FirResolvedQualifier.isStandalone(
 ): Boolean {
     val lastQualifiedAccess = context.callsOrAssignments.lastOrNull() as? FirQualifiedAccessExpression
     // Note: qualifier isn't standalone when it's in receiver (SomeClass.foo) or getClass (SomeClass::class) position
-    if (lastQualifiedAccess?.explicitReceiver === this || lastQualifiedAccess?.dispatchReceiver === this) return false
+    if (lastQualifiedAccess?.explicitReceiver === this || lastQualifiedAccess?.dispatchReceiver === this || lastQualifiedAccess?.extensionReceiver == this) return false
     val lastGetClass = context.getClassCalls.lastOrNull()
     if (lastGetClass?.argument === this) return false
     if (isExplicitParentOfResolvedQualifier()) return false

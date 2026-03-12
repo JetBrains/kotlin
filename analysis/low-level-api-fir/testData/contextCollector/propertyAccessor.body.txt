@@ -12,10 +12,12 @@ Tower Data Context:
     Element 5
         Scope: FirExplicitSimpleImportingScope
     Element 6
+        Static scope owner symbol: FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+    Element 7
         Implicit receiver:
             FirRegularClassSymbol public final class Foo : R|kotlin/Any|
                 Type: Foo
-    Element 7
+    Element 8
         Scope: FirLocalScope
             Properties:
                 FirBackingFieldSymbol private final backing field field: R|kotlin/Int|

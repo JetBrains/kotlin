@@ -12,10 +12,13 @@ Tower Data Context:
     Element 5
         Scope: FirExplicitSimpleImportingScope
     Element 6
+        Static scope owner symbol: FirRegularClassSymbol context(R|test/ContextReceiver|)
+        public final class MyClass<T> : R|kotlin/Any|
+    Element 7
         Scope: FirMemberTypeParameterScope
             Classifiers:
                 FirTypeParameterSymbol T
-    Element 7
+    Element 8
         Implicit receiver:
             FirRegularClassSymbol context(R|test/ContextReceiver|)
             public final class MyClass<T> : R|kotlin/Any|

@@ -22,6 +22,8 @@ Tower Data Context:
             FirRegularClassSymbol public final class A : R|kotlin/Any|
                 Type: r.A
     Element 8
+        Static scope owner symbol: FirRegularClassSymbol public final inner class B : R|r/A.Base|
+    Element 9
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol x: R|kotlin/Int|

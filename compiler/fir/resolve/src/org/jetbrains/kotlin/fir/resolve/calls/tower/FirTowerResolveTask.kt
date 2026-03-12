@@ -129,19 +129,24 @@ internal abstract class FirBaseTowerResolveTask(
         parentGroup: TowerGroup = TowerGroup.EmptyRoot,
         onScope: (FirScope, FirRegularClassSymbol?, TowerGroup) -> Unit,
         onImplicitReceiver: (ImplicitReceiverValue<*>, TowerGroup) -> Unit,
+        onStaticScopeOwnerSymbol: (FirRegularClassSymbol, TowerGroup) -> Unit = { _, _ -> },
     ) {
         for ((index, localScope) in towerDataElementsForName.reversedFilteredLocalScopes) {
             onScope(localScope, null, parentGroup.Local(index))
         }
 
         for ((depth, lexical) in towerDataElementsForName.nonLocalTowerDataElements.withIndex()) {
-            val scope = lexical.scope
-            if (!lexical.isLocal && scope != null) {
-                onScope(
-                    scope,
-                    lexical.staticScopeOwnerSymbol,
-                    parentGroup.NonLocal(depth)
-                )
+            if (!lexical.isLocal) {
+                val scope = lexical.scope
+                val staticScopeOwnerSymbol = lexical.staticScopeOwnerSymbol
+
+                if (scope != null) {
+                    onScope(scope, staticScopeOwnerSymbol, parentGroup.NonLocal(depth))
+                }
+
+                if (staticScopeOwnerSymbol != null) {
+                    onStaticScopeOwnerSymbol(staticScopeOwnerSymbol, parentGroup.NonLocal(depth))
+                }
             }
 
             val receiver = lexical.implicitReceiver
@@ -349,21 +354,9 @@ internal open class FirTowerResolveTask(
                         }
                     )
                 }
-
-                if (staticScopeOwnerSymbol != null) {
-                    val receiver = staticScopeOwnerSymbol.toImplicitResolvedQualifierReceiver(
-                        components,
-                        info.callSite.source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
-                    )
-
-                    enumerateTowerLevelsForCompanionExtensions(
-                        info,
-                        receiver,
-                        group,
-                        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-                        emptyScopes
-                    )
-                }
+            },
+            onStaticScopeOwnerSymbol = { staticScopeOwnerSymbol, group ->
+                enumerateTowerLevelsForCompanionExtensionsForImplicitReceiver(info, staticScopeOwnerSymbol, group, emptyScopes)
             },
             onImplicitReceiver = { receiver, group ->
                 processCandidatesWithGivenImplicitReceiverAsValue(
@@ -375,6 +368,26 @@ internal open class FirTowerResolveTask(
                     skipSynthetics,
                 )
             },
+        )
+    }
+
+    private suspend fun enumerateTowerLevelsForCompanionExtensionsForImplicitReceiver(
+        info: CallInfo,
+        staticScopeOwnerSymbol: FirRegularClassSymbol,
+        group: TowerGroup,
+        emptyScopes: MutableSet<FirScope>,
+    ) {
+        val receiver = staticScopeOwnerSymbol.toImplicitResolvedQualifierReceiver(
+            components,
+            info.callSite.source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
+        )
+
+        enumerateTowerLevelsForCompanionExtensions(
+            info,
+            receiver,
+            group,
+            ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+            emptyScopes
         )
     }
 
