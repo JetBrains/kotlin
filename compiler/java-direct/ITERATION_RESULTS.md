@@ -14,9 +14,9 @@ This file captures key findings, decisions, and learnings from each iteration.
 |-------|------------|-----------|--------------|
 | Foundation | 1-6 | 90/138 (65.2%) | — |
 | Core Implementation | 7-16 | 139/142 → 1075/1166 (92.2%) | 242/327 (74.0%) |
-| Advanced Features | 17-24 | 1149/1167 (98.5%) | ~300/329 |
+| Advanced Features | 17-24b | 1150/1167 (98.5%) | 1323/1442 (91.7%) |
 
-**Current Status**: ~18 box test failures remaining
+**Current Status**: 17 box test failures, 119 phased test failures remaining
 
 ---
 
@@ -181,6 +181,45 @@ Categories:
 1. **Check reference implementations first** — PSI's `JavaElementUtil.getVisibility()` showed the correct visibility handling pattern
 2. **java.lang implicit import** — Java always has `java.lang.*` implicitly imported; handling well-known types locally avoids resolution round-trips
 3. **Inner class scoping** — Java allows referencing sibling inner classes by simple name; resolution must walk up the containment hierarchy
+
+---
+
+## Iteration 24b: Cyclic Type Bounds StackOverflowError Fix - 2026-03-12
+
+### Status
+✅ Completed
+
+### Overview
+Fixed StackOverflowError occurring with cyclic type parameter bounds like `class JavaA<T extends JavaB>` and `class JavaB<T extends JavaA>`.
+
+### Root Cause Analysis
+The test `testSignatureEnhancementCycleTypeBound` was failing with StackOverflowError. The cycle occurred because:
+
+1. During type parameter bounds resolution (`TYPE_PARAMETER_BOUND_FIRST_ROUND` mode), FIR converts bound types
+2. For java-direct classes with `classifier == null`, the code accessed `typeParameterSymbols` to detect raw types
+3. This triggered loading of the referenced class's type parameters
+4. Which triggered bounds resolution on that class, which referenced the original class
+5. Infinite recursion → StackOverflowError
+
+The issue was in `JavaTypeConversion.kt` where raw type detection was not guarded during first-round type parameter bounds resolution. The existing `JavaClass` branch had this safety check, but the `classifier == null` branch (used by java-direct) did not.
+
+### Fix
+Modified `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt` to skip raw type detection during `TYPE_PARAMETER_BOUND_FIRST_ROUND` in two places:
+
+1. **In `toConeTypeProjection`** (lines 150-159): Added early return for `TYPE_PARAMETER_BOUND_FIRST_ROUND` mode before accessing `typeParameterSymbols`
+2. **In `toConeKotlinTypeForFlexibleBound`** (line 318): Added `takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }` guard before accessing `typeParameterSymbols`
+
+This matches the existing safety pattern in the `JavaClass` branch (line 264).
+
+### Test Results
+- Box: 1150/1167 (98.5%) — 17 failures (was 18)
+- Phased: 1323/1442 (91.7%) — 119 failures (was ~124)
+- **Tests fixed**: ~6 (including `testSignatureEnhancementCycleTypeBound`)
+- PSI regression tests: Pass
+
+### Key Learnings
+1. **Always check both branches** — When there's a safety guard in one code branch (e.g., `JavaClass`), verify the parallel branch (`classifier == null`) has equivalent protection
+2. **Cyclic type bounds are tricky** — Java allows mutually-referencing type parameters across classes; FIR handles this with multi-round resolution, but we must not trigger class loading during first round
 
 ---
 

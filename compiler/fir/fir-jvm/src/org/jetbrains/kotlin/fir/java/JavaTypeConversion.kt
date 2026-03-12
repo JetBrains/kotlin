@@ -149,8 +149,11 @@ private fun JavaType?.toConeTypeProjection(
             
             // Detect raw types for external classes (classifier == null).
             // A type is raw if no type arguments are provided but the class has type parameters.
+            // During TYPE_PARAMETER_BOUND_FIRST_ROUND, skip raw type detection to avoid triggering
+            // enhancement cycles with cyclic type bounds (e.g., class A<T extends B> and class B<T extends A>).
             val isRawType = isRaw || run {
                 if (classifier != null || typeArguments.isNotEmpty()) false
+                else if (mode == FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND) false
                 else {
                     val classId = ClassId.topLevel(FqName(classifierQualifiedName))
                     val mappedClassId = JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName()) ?: classId
@@ -312,10 +315,13 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             // A type is raw if no type arguments are provided but the class has type parameters.
             // This can happen when java-direct parses Java code that references Kotlin or library classes.
             // 
-            // We always resolve typeParameterSymbols (regardless of lowerBound) to detect raw types,
-            // since java-direct may return isRaw=false for external types. Reading type parameter count
-            // is safe and doesn't trigger enhancement cycles.
-            val typeParameterSymbols = lookupTag.toRegularClassSymbol(session)?.typeParameterSymbols
+            // During TYPE_PARAMETER_BOUND_FIRST_ROUND, we must NOT load class symbols because this could
+            // trigger enhancement of type parameter bounds on other classes that depend on this one,
+            // causing infinite recursion with cyclic type bounds (e.g., class A<T extends B> and class B<T extends A>).
+            // This matches the safety check in the JavaClass branch above (line 264).
+            val typeParameterSymbols = lookupTag
+                .takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
+                ?.toRegularClassSymbol(session)?.typeParameterSymbols
             val isRawType = isRaw || (typeArguments.isEmpty() && typeParameterSymbols?.isNotEmpty() == true)
             
             val mappedTypeArguments = when {
