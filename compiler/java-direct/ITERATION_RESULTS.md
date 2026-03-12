@@ -14,9 +14,9 @@ This file captures key findings, decisions, and learnings from each iteration.
 |-------|------------|-----------|--------------|
 | Foundation | 1-6 | 90/138 (65.2%) | — |
 | Core Implementation | 7-16 | 139/142 → 1075/1166 (92.2%) | 242/327 (74.0%) |
-| Advanced Features | 17-25 | 1150/1167 (98.5%) | 1326/1442 (92.0%) |
+| Advanced Features | 17-25c | 1150/1167 (98.5%) | 1326/1442 (92.0%) |
 
-**Current Status**: 17 box test failures, 116 phased test failures remaining
+**Current Status**: ~134 total test failures (combined box + phased: 2649 tests, 2515 passing, 94.9%)
 
 ---
 
@@ -76,6 +76,8 @@ Established: Array parsing, type parameter scope, wildcards, annotations, interf
 | 22 | TYPE_USE annotation filtering via callback | +1 test |
 | 23 | Cross-language constant evaluation | +4 tests |
 | 24 | Three regression fixes | +13 tests |
+| 25 | Inherited inner class resolution | +2 tests |
+| 25c | Interface nested class static flag | +8 tests |
 
 ---
 
@@ -275,6 +277,62 @@ Modified `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResoluti
 1. **Avoid cycles in lazy resolution** — Accessing `classifier` or `classifierQualifiedName` during supertype search can cause infinite recursion. Use `localClassProvider` directly or `presentableText` for raw names.
 2. **Same-package types need qualification** — When resolving via callback, unqualified type names like `"x"` won't match; need to try `"pkg.x"` for same-package classes.
 3. **JLS 6.5.2 scope rules** — Inner classes of supertypes AND outer classes' supertypes are all in scope for nested inner classes.
+
+---
+
+## Iteration 25c: Interface Nested Class Static Flag - 2026-03-12
+
+### Status
+✅ Completed
+
+### Overview
+Fixed incorrect `isStatic` reporting for classes nested inside Java interfaces. Per JLS 9.5, all classes declared as members of an interface are implicitly static, but java-direct was not accounting for this.
+
+### Root Cause Analysis
+Test `testInheritedInnerAndNested` failed because java-direct incorrectly reported `isStatic = false` for classes nested in interfaces:
+
+```java
+public interface BaseInterface {
+    class Inner {  // This is implicitly static per JLS 9.5
+        public String box() { return "BaseInterface"; }
+    }
+}
+```
+
+The `isStatic` property in `JavaClassOverAst` only checked:
+```kotlin
+hasModifier("STATIC_KEYWORD") || (outerClass != null && (isInterface || isEnum))
+```
+
+This checks if the **inner class itself** is an interface or enum, but doesn't check if the **outer class** is an interface. In Java, any class nested inside an interface is implicitly static, regardless of whether it has the `static` keyword.
+
+### Fix
+Modified `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt` line 62:
+
+```kotlin
+// Before:
+override val isStatic: Boolean get() = hasModifier("STATIC_KEYWORD") || (outerClass != null && (isInterface || isEnum))
+
+// After:
+override val isStatic: Boolean get() = hasModifier("STATIC_KEYWORD") || (outerClass != null && (isInterface || isEnum)) || (outerClass?.isInterface == true)
+```
+
+This matches the javac-wrapper implementation in `TreeBasedClass.kt:55`:
+```kotlin
+override val isStatic: Boolean
+    get() = isEnum || isInterface || (outerClass?.isInterface ?: false) || tree.modifiers.isStatic
+```
+
+### Test Results
+- Total: 2649 tests
+- Before: 142 failures
+- After: 134 failures
+- **Tests fixed**: 8 (including `testInheritedInnerAndNested` phased and box tests)
+
+### Key Learnings
+1. **JLS 9.5 interface member rules** — All member classes of interfaces are implicitly `public static`, even without explicit modifiers
+2. **Check reference implementations** — The javac-wrapper (`TreeBasedClass.kt`) correctly implements this rule and serves as a good reference
+3. **Implicit modifiers matter** — Java has several cases of implicit modifiers (interface members, enum constructors, etc.) that must be correctly reported to FIR
 
 ---
 

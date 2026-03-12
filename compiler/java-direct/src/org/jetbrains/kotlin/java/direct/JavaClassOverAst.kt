@@ -58,7 +58,8 @@ class JavaClassOverAst(
     override val isAbstract: Boolean get() = hasModifier("ABSTRACT_KEYWORD") || isInterface
 
     // Java nested interfaces and enums are implicitly static even without the keyword
-    override val isStatic: Boolean get() = hasModifier("STATIC_KEYWORD") || (outerClass != null && (isInterface || isEnum))
+    // Classes nested inside interfaces are also implicitly static (JLS 9.5)
+    override val isStatic: Boolean get() = hasModifier("STATIC_KEYWORD") || (outerClass != null && (isInterface || isEnum)) || (outerClass?.isInterface == true)
     override val isFinal: Boolean get() = hasModifier("FINAL_KEYWORD")
 
     override val visibility: Visibility
