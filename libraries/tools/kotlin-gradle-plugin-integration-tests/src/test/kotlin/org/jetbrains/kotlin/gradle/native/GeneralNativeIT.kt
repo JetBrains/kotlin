@@ -488,7 +488,6 @@ class GeneralNativeIT : KGPBaseTest() {
     @OptIn(EnvironmentalVariablesOverride::class)
     @DisplayName("Checking native tests")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @TestMetadata("native-tests")
     fun testNativeTests(gradleVersion: GradleVersion) {
         nativeProject("native-tests", gradleVersion) {

@@ -5,6 +5,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -198,22 +199,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             // Expose declared SwiftPM dependencies in the outgoing variant on 1+ consumed SwiftPM dependencies
             locateOrRegisterSwiftPMDependenciesMetadataTaskAndConsumableConfiguration(swiftPMImportExtension)
 
-            when (swiftPMDependency) {
-                is SwiftPMDependency.Local -> {
-                    if (checkLocalSwiftDependencyIsValid(swiftPMDependency)) {
-                        computeLocalPackageDependencyInputFiles.configure {
-                            it.localPackages.add(swiftPMDependency.absolutePath)
-                        }
-                        fetchSyntheticImportProjectPackages.configure {
-                            it.localPackageManifests.from(
-                                swiftPMDependency.absolutePath.resolve("Package.swift")
-                            )
-                        }
-                    }
-                }
-                is SwiftPMDependency.Remote -> Unit
-            }
-
             val mainCompilationCinterops = target.compilations.getByName("main").cinterops
             // Create the cinterop and wire the def file into
             if (cinteropName !in mainCompilationCinterops.names) {
@@ -228,6 +213,22 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 }
                 swiftPMImportCinterop.definitionFile.set(defFile)
                 swiftPMImportCinterop.isGeneratedCinterop = true
+            }
+
+            when (swiftPMDependency) {
+                is SwiftPMDependency.Local -> {
+                    if (checkLocalSwiftDependencyIsValid(swiftPMDependency)) {
+                        computeLocalPackageDependencyInputFiles.configure {
+                            it.localPackages.add(swiftPMDependency.absolutePath)
+                        }
+                        fetchSyntheticImportProjectPackages.configure {
+                            it.localPackageManifests.from(
+                                swiftPMDependency.absolutePath.resolve("Package.swift")
+                            )
+                        }
+                    }
+                }
+                is SwiftPMDependency.Remote -> Unit
             }
 
             defFilesAndLdDumpGenerationTask.configure {
@@ -308,35 +309,52 @@ private fun Project.checkLocalSwiftDependencyIsValid(swiftPMDependency: SwiftPMD
 /**
  * For test tasks that depend on dynamic frameworks we pass the DYLD_ env search path
  */
-private fun Project.configureTestTaskDyldSearchPaths(
+private fun configureTestTaskDyldSearchPaths(
     task: KotlinNativeTest,
     target: KotlinNativeTarget,
     syntheticImportProjectGenerationTaskForCinteropsAndLdDump: TaskProvider<GenerateSyntheticLinkageImportProject>,
     defFilesAndLdDumpGenerationTask: TaskProvider<ConvertSyntheticSwiftPMImportProjectIntoDefFile>
 ) {
-    val frameworkSearchPathsDump = provider {
-        defFilesAndLdDumpGenerationTask.get().frameworkSearchpathFilePath(target.konanTarget.appleArchitecture)
-    }.get()
-    val librariesSearchPathsDump = provider {
-        defFilesAndLdDumpGenerationTask.get().librarySearchpathFilePath(target.konanTarget.appleArchitecture)
-    }.get()
+    val frameworkSearchPathsDump = defFilesAndLdDumpGenerationTask.get().frameworkSearchpathFilePath(target.konanTarget.appleArchitecture)
+    val librariesSearchPathsDump = defFilesAndLdDumpGenerationTask.get().librarySearchpathFilePath(target.konanTarget.appleArchitecture)
 
-    task.processOptions.environment.put(
-        if (task is KotlinNativeSimulatorTest) "SIMCTL_CHILD_DYLD_FALLBACK_FRAMEWORK_PATH" else "DYLD_FALLBACK_FRAMEWORK_PATH",
-        syntheticImportProjectGenerationTaskForCinteropsAndLdDump.lazyMapWithCC {
-            frameworkSearchPathsDump.get().asFile.readLines().single()
-                .split(DUMP_FILE_ARGS_SEPARATOR).filter { it.isNotEmpty() }
-                .joinToString(":")
+    val frameworksDyldEnv = if (task is KotlinNativeSimulatorTest) "SIMCTL_CHILD_DYLD_FALLBACK_FRAMEWORK_PATH" else "DYLD_FALLBACK_FRAMEWORK_PATH"
+    fun extractFrameworkSearchPaths() = frameworkSearchPathsDump.get().asFile.readLines().single()
+        .split(DUMP_FILE_ARGS_SEPARATOR).filter { it.isNotEmpty() }
+        .joinToString(":")
+
+    val librariesDyldEnv = if (task is KotlinNativeSimulatorTest) "SIMCTL_CHILD_DYLD_FALLBACK_LIBRARY_PATH" else "DYLD_FALLBACK_LIBRARY_PATH"
+    fun extractLibrariesSearchPaths() = librariesSearchPathsDump.get().asFile.readLines().single()
+        .split(DUMP_FILE_ARGS_SEPARATOR).filter { it.isNotEmpty() }
+        .joinToString(":")
+
+    // lazyMapWithCC fails with ClassNotFound exception in Gradle 7.6.3
+    if (GradleVersion.current().baseVersion < GradleVersion.version("8.0")) {
+        task.doFirst {
+            it as KotlinNativeTest
+            it.processOptions.environment.put(
+                frameworksDyldEnv,
+                extractFrameworkSearchPaths()
+            )
+            it.processOptions.environment.put(
+                librariesDyldEnv,
+                extractLibrariesSearchPaths()
+            )
         }
-    )
-    task.processOptions.environment.put(
-        if (task is KotlinNativeSimulatorTest) "SIMCTL_CHILD_DYLD_FALLBACK_LIBRARY_PATH" else "DYLD_FALLBACK_LIBRARY_PATH",
-        syntheticImportProjectGenerationTaskForCinteropsAndLdDump.lazyMapWithCC {
-            librariesSearchPathsDump.get().asFile.readLines().single()
-                .split(DUMP_FILE_ARGS_SEPARATOR).filter { it.isNotEmpty() }
-                .joinToString(":")
-        }
-    )
+    } else {
+        task.processOptions.environment.put(
+            frameworksDyldEnv,
+            syntheticImportProjectGenerationTaskForCinteropsAndLdDump.lazyMapWithCC {
+                extractFrameworkSearchPaths()
+            }
+        )
+        task.processOptions.environment.put(
+            librariesDyldEnv,
+            syntheticImportProjectGenerationTaskForCinteropsAndLdDump.lazyMapWithCC {
+                extractLibrariesSearchPaths()
+            }
+        )
+    }
 }
 
 internal fun Project.locateOrRegisterRegenerateLinkageImportProjectTask(): TaskProvider<GenerateSyntheticLinkageImportProject> {
