@@ -266,6 +266,14 @@ internal class KotlinWrapperPre2_4_0(
                     arrayValue.toList() as V
                 }
 
+                CommonCompilerArguments.X_ANNOTATION_DEFAULT_TARGET -> {
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
+                    AnnotationDefaultTargetMode.values().firstOrNull { it.stringValue == stringValue } as V
+                        ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $stringValue")
+                }
+
                 else -> delegate[key]
             }
         }
@@ -371,6 +379,14 @@ internal class KotlinWrapperPre2_4_0(
                     val arrayKey = CommonCompilerArguments.CommonCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
 
                     delegate[arrayKey] = arrayValue
+                }
+
+                CommonCompilerArguments.X_ANNOTATION_DEFAULT_TARGET -> {
+                    val mode = value as AnnotationDefaultTargetMode?
+                    val stringValue = mode?.stringValue
+                    val stringKey = CommonCompilerArguments.CommonCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                    delegate[stringKey] = stringValue
                 }
 
                 else -> {

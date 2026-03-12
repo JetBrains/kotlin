@@ -492,6 +492,15 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabil
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabilityMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/AnnotationDefaultTargetMode : java/lang/Enum {
+	public static final field FIRST_ONLY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AnnotationDefaultTargetMode;
+	public static final field FIRST_ONLY_WARN Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AnnotationDefaultTargetMode;
+	public static final field PARAM_PROPERTY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AnnotationDefaultTargetMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AnnotationDefaultTargetMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AnnotationDefaultTargetMode;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode : java/lang/Enum {
 	public static final field ALWAYS_DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
 	public static final field ALWAYS_ENABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;

@@ -336,6 +336,14 @@ class LiteralPathType(
     }
 }
 
+/**
+ * A value which accepts [AnnotationDefaultTargetMode] type.
+ */
+@Serializable
+class AnnotationDefaultTargetModeType : EnumType<AnnotationDefaultTargetMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<AnnotationDefaultTargetMode?> = ReleaseDependent(null)
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

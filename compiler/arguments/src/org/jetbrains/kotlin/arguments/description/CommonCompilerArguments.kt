@@ -1096,6 +1096,7 @@ The argument should be used only if the new compilation scheme is enabled with -
     }
 
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xannotation-default-target"
         description = """Change the default annotation targets for constructor properties:
@@ -1114,6 +1115,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
 
             Enables(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, "param-property"),
         )
+        argumentType = AnnotationDefaultTargetModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,

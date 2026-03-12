@@ -316,10 +316,25 @@ private fun validateLanguageFeaturesConsistency(argument: KotlinCompilerArgument
                 }
             }
         }
+        is AnnotationDefaultTargetModeType -> {
+            argumentType.defaultValue.current?.let {
+                error("Argument '${argument.name}' has AnnotationDefaultTargetMode type and changes language features. Expected default value is 'null', but actual is '$it'")
+            }
+            for (additionalAnn in argument.additionalAnnotations) {
+                val ifValueIs = when (additionalAnn) {
+                    is Enables -> additionalAnn.ifValueIs
+                    is Disables -> additionalAnn.ifValueIs
+                    else -> null
+                }
+                if (ifValueIs?.isEmpty() == true) {
+                    error("Argument '${argument.name}' has AnnotationDefaultTargetMode type and changes language features. It's expected that 'ifValueIs' isn't empty, but actually it's empty.")
+                }
+            }
+        }
         else -> {
             error(
                 "Unexpected type for argument '${argument.name}' that changes language features: ${argumentType::class.simpleName}. " +
-                        "Allowed types: ${BooleanType::class.simpleName}, ${StringType::class.simpleName}."
+                        "Allowed types: ${BooleanType::class.simpleName}, ${StringType::class.simpleName}, ${AnnotationDefaultTargetModeType::class.simpleName}."
             )
         }
     }

@@ -148,6 +148,13 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 listValue.toTypedArray() as V
             }
 
+            CommonCompilerArguments.X_ANNOTATION_DEFAULT_TARGET -> {
+                if (value == null) return null as V
+
+                val mode = value as AnnotationDefaultTargetMode
+                mode.stringValue as V
+            }
+
             else -> {
                 value as V
             }
@@ -230,6 +237,14 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
 
                 val arrayValue = value as Array<String>
                 arrayValue.toList() as T
+            }
+
+            CommonCompilerArguments.X_ANNOTATION_DEFAULT_TARGET -> {
+                if (value == null) return null as T
+
+                val stringValue = value as String
+                AnnotationDefaultTargetMode.entries.firstOrNull { it.stringValue == stringValue } as T
+                    ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $stringValue")
             }
 
             else -> {
