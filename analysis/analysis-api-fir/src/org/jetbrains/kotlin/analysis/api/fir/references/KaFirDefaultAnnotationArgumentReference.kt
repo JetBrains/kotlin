@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
-import com.intellij.psi.PsiAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
@@ -24,7 +23,7 @@ internal class KaFirDefaultAnnotationArgumentReference(
         val annotationEntry = element.getStrictParentOfType<KtAnnotationEntry>() ?: return emptyList()
         val constructorSymbol = annotationEntry.resolveSymbol() ?: return emptyList()
         val firstParam = constructorSymbol.valueParameters.firstOrNull() ?: return emptyList()
-        return listOfNotNull(firstParam.takeIf { it.name.asString() == PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME })
+        return listOfNotNull(firstParam.takeIf { it.psi?.isDefaultAnnotationMethod == true })
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {

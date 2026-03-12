@@ -16,9 +16,9 @@ KtValueArgument(161,162): 'X'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      value: MyEnum
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(161,162): 'X'
   KtSimpleNameReference:
@@ -87,9 +87,9 @@ KtValueArgument(263,270): '*[X, Y]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      vararg value: MyEnum
+      Nothing (Unresolved reference)
 
 KtCollectionLiteralExpression(264,270): '[X, Y]'
   KtCollectionLiteralReference:
@@ -153,9 +153,9 @@ KtValueArgument(346,349): '[X]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      value: kotlin.Array<MyEnum>
+      Nothing (Unresolved reference)
 
 KtCollectionLiteralExpression(346,349): '[X]'
   KtCollectionLiteralReference:
@@ -191,9 +191,9 @@ KtValueArgument(371,381): 'arrayOf(X)'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      value: kotlin.Array<MyEnum>
+      Nothing (Unresolved reference)
 
 KtCallExpression(371,381): 'arrayOf(X)'
   KtInvokeFunctionReference:
@@ -221,9 +221,9 @@ KtValueArgument(379,380): 'X'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      value: kotlin.Array<MyEnum>
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(379,380): 'X'
   KtSimpleNameReference:
@@ -257,9 +257,9 @@ KtValueArgument(447,456): 'MAX_VALUE'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      value: kotlin.Int
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(447,456): 'MAX_VALUE'
   KtSimpleNameReference:
@@ -286,9 +286,9 @@ KtValueArgument(484,491): 'RUNTIME'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      value: kotlin.annotation.AnnotationRetention
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(484,491): 'RUNTIME'
   KtSimpleNameReference:

@@ -10,6 +10,6 @@ KtValueArgument(51,55): '[1u]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      value: kotlin.UIntArray
+      Nothing (Unresolved reference)

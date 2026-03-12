@@ -9,9 +9,12 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.asJava.unwrapped
+import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtExperimentalApi
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolution.KtResolvable
 
@@ -43,15 +46,14 @@ abstract class KtDefaultAnnotationArgumentReference(
 
     override fun getCanonicalText(): String = PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME
 
-    override fun isReferenceTo(candidateTarget: PsiElement): Boolean {
-        val unwrapped = candidateTarget.unwrapped
-        val name = when (unwrapped) {
-            is PsiMethod -> unwrapped.name
-            is KtParameter -> unwrapped.name
-            else -> return false
-        }
+    protected val PsiElement.isDefaultAnnotationMethod: Boolean
+        get() = this is PsiMethod &&
+                PsiUtil.isAnnotationMethod(this) &&
+                name == PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME
+                && parameterList.parametersCount == 0
 
-        return name == PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME && unwrapped == resolve()
+    override fun isReferenceTo(candidateTarget: PsiElement): Boolean {
+        return candidateTarget.isDefaultAnnotationMethod && candidateTarget == resolve()
     }
 
     override fun canRename(): Boolean = true

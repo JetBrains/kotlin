@@ -9,6 +9,6 @@ KtValueArgument(131,143): 'Annotation()'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      value: Annotation
+      Nothing (Unresolved reference)

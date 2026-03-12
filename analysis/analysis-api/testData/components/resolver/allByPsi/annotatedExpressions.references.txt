@@ -38,9 +38,9 @@ KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
+    attempt: null
     symbols:
-      value: kotlin.annotation.AnnotationRetention
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(86,105): 'AnnotationRetention'
   KtSimpleNameReference:
