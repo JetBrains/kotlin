@@ -64,17 +64,17 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
         return annotations.mapNotNull { deserializeAnnotation(it, useSiteTargetFilter = useSiteTargetFilter) }
     }
 
-    fun loadConstant(property: KtProperty, isUnsigned: Boolean, isFromAnnotation: Boolean): FirExpression? {
+    fun loadConstant(property: KtProperty, type: ConeKotlinType, isFromAnnotation: Boolean): FirExpression? {
         // Default values for annotation properties have constant as a workaround for KT-58137 (ee30cc04ee810fcdd719085af3a0e0c1995a73ee)
         if (!property.hasModifier(KtTokens.CONST_KEYWORD) && !isFromAnnotation) return null
         val propertyStub: KotlinPropertyStubImpl = property.compiledStub
         val constantValue = propertyStub.constantInitializer ?: return null
         val resultValue = when {
-            !isUnsigned -> constantValue
-            constantValue is ByteValue -> UByteValue(constantValue.value)
-            constantValue is ShortValue -> UShortValue(constantValue.value)
-            constantValue is IntValue -> UIntValue(constantValue.value)
-            constantValue is LongValue -> ULongValue(constantValue.value)
+            !type.isUnsignedType -> constantValue
+            type.isUByte -> UByteValue((constantValue.value as Number).toByte())
+            type.isUShort -> UShortValue((constantValue.value as Number).toShort())
+            type.isUInt -> UIntValue((constantValue.value as Number).toInt())
+            type.isULong -> ULongValue((constantValue.value as Number).toLong())
             else -> constantValue
         }
 

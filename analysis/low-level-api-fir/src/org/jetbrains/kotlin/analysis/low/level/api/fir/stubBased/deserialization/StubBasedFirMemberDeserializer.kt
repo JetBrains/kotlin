@@ -436,7 +436,7 @@ internal class StubBasedFirMemberDeserializer(
             this.containerSource = c.containerSource
             this.initializer = c.annotationDeserializer.loadConstant(
                 property,
-                isUnsigned = returnTypeRef.coneType.isUnsignedType,
+                type = returnTypeRef.coneType,
                 isFromAnnotation,
             )
 
