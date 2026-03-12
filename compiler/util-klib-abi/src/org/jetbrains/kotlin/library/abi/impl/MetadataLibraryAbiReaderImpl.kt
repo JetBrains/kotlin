@@ -5,36 +5,31 @@
 
 package org.jetbrains.kotlin.library.abi.impl
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
+import kotlinx.metadata.klib.KlibMetadataVersion
+import kotlinx.metadata.klib.KlibModuleMetadata
+import kotlinx.metadata.klib.fqName
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.abi.AbiTypeNullability.*
-import org.jetbrains.kotlin.library.loader.KlibLoader
-import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.isValueClass
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.isDefinitelyNotNullType
-import org.jetbrains.kotlin.types.isError
-import org.jetbrains.kotlin.utils.KotlinNativePaths
+import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.types.Variance
+import java.util.*
+import kotlin.metadata.ExperimentalAnnotationsInMetadata
+import kotlin.metadata.KmAnnotation
 
+private const val PUBLISHED_API_CLASS_NAME = "kotlin/PublishedApi"
+
+@OptIn(UnsafeDuringIrConstructionAPI::class)
 @ExperimentalLibraryAbiReader
 internal class MetadataLibraryAbiReaderImpl(
     private val library: KotlinLibrary,
@@ -42,192 +37,191 @@ internal class MetadataLibraryAbiReaderImpl(
 ) {
     private val compositeFilter: AbiReadingFilter.Composite? = if (filters.isNotEmpty()) AbiReadingFilter.Composite(filters) else null
 
-    private val signaturer = KonanIdSignaturer(KonanManglerDesc)
-
     fun readAbi(): LibraryAbi {
         val supportedSignatureVersions = readSupportedSignatureVersions()
-        val module = loadModuleDescriptor()
+        val moduleMetadata = loadModuleMetadata()
+
+        // Convert metadata to IR stubs and create signature computer
+        val converter = MetadataToIrStubConverter(moduleMetadata)
+        converter.convert()
+        val signatureComputer = CInteropIdSignatureComputer()
 
         return LibraryAbi(
             manifest = readManifest(),
             uniqueName = library.uniqueName,
             signatureVersions = supportedSignatureVersions,
-            topLevelDeclarations = deserializeFromDescriptors(module, supportedSignatureVersions)
+            topLevelDeclarations = walkIrStubs(moduleMetadata, converter, signatureComputer, supportedSignatureVersions)
         )
     }
 
-    private fun loadModuleDescriptor(): ModuleDescriptorImpl {
-        val storageManager = LockBasedStorageManager("MetadataLibraryAbiReader")
-        val languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
+    private fun loadModuleMetadata(): KlibModuleMetadata {
+        val metadata = library.metadata
+        return KlibModuleMetadata.readLenient(object : KlibModuleMetadata.MetadataLibraryProvider {
+            override val moduleHeaderData get() = metadata.moduleHeaderData
+            override val metadataVersion = KlibMetadataVersion(
+                library.metadataVersion?.toArray() ?: error("No metadata version specified in ${library.location}")
+            )
 
-        val module = KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
-            library,
-            languageVersionSettings,
-            storageManager,
-        )
-
-        val defaultModules = mutableListOf<ModuleDescriptorImpl>()
-        if (!module.isNativeStdlib()) {
-            val stdlibPath = KotlinNativePaths.homePath.resolve("klib/common/stdlib").absolutePath
-            val stdlibLoadResult = KlibLoader { libraryPaths(stdlibPath) }.load()
-            if (!stdlibLoadResult.reportLoadingProblemsIfAny { _, _ -> }) {
-                val stdlib = stdlibLoadResult.librariesStdlibFirst.single()
-                defaultModules += KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptor(
-                    stdlib,
-                    languageVersionSettings,
-                    storageManager,
-                    module.builtIns,
-                )
-            }
-        }
-
-        (defaultModules + module).let { allModules ->
-            allModules.forEach { it.setDependencies(allModules) }
-        }
-
-        return module
+            override fun packageMetadataParts(fqName: String) = metadata.getPackageFragmentNames(fqName)
+            override fun packageMetadata(fqName: String, partName: String) = metadata.getPackageFragment(fqName, partName)
+        })
     }
 
-    private fun deserializeFromDescriptors(
-        module: ModuleDescriptorImpl,
+    private fun walkIrStubs(
+        module: KlibModuleMetadata,
+        converter: MetadataToIrStubConverter,
+        signatureComputer: CInteropIdSignatureComputer,
         supportedSignatureVersions: Set<AbiSignatureVersion>,
     ): AbiTopLevelDeclarations {
         val needV1Signatures = AbiSignatureVersions.Supported.V1 in supportedSignatureVersions
         val needV2Signatures = AbiSignatureVersions.Supported.V2 in supportedSignatureVersions
 
-        val walker = DescriptorAbiWalker(needV1Signatures, needV2Signatures)
+        val walker = IrStubAbiWalker(converter, signatureComputer, needV1Signatures, needV2Signatures)
         return walker.walk(module)
     }
 
-    private inner class DescriptorAbiWalker(
+    /**
+     * Walks the enriched IR stubs produced by [MetadataToIrStubConverter] and produces
+     * ABI declarations. This replaces the former [Km*]-walking approach with an IR-tree walk.
+     */
+    private inner class IrStubAbiWalker(
+        private val converter: MetadataToIrStubConverter,
+        private val signatureComputer: CInteropIdSignatureComputer,
         private val needV1Signatures: Boolean,
         private val needV2Signatures: Boolean,
     ) {
-        fun walk(module: ModuleDescriptorImpl): AbiTopLevelDeclarations {
+        fun walk(module: KlibModuleMetadata): AbiTopLevelDeclarations {
             val topLevels = ArrayList<AbiDeclaration>()
-            val packageFragments = collectPackageFragments(module)
 
-            for (fragment in packageFragments) {
-                val packageName = AbiCompoundName(fragment.fqName.asString())
+            for (fragment in module.fragments) {
+                val packageFqnStr = fragment.fqName?.replace('/', '.') ?: ""
+                val packageName = AbiCompoundName(packageFqnStr)
+
                 if (compositeFilter?.isPackageExcluded(packageName) == true)
                     continue
 
-                val containingEntity = ContainingEntity.Package(packageName)
-                for (descriptor in fragment.getMemberScope().getContributedDescriptors()) {
-                    deserializeDeclaration(descriptor, containingEntity, parentTypeParameterResolver = null)
+                // Process top-level classes — only top-level (no parent dot in name)
+                for (kmClass in fragment.classes) {
+                    if (kmClass.name.contains('.')) continue // nested; handled by parent
+                    val irClass = converter.classStubs[kmClass.name] ?: continue
+                    walkClass(irClass, containingClassModality = null, parentTypeParameterResolver = null)
+                        ?.takeUnless { compositeFilter?.isDeclarationExcluded(it) == true }
                         ?.let { topLevels.add(it) }
+                }
+
+                // Process top-level functions and properties from the package fragment
+                fragment.pkg?.let { _ ->
+                    val packageFragment = converter.getPackageFragment(packageFqnStr)
+                    for (decl in packageFragment?.declarations.orEmpty()) {
+                        when (decl) {
+                            is IrSimpleFunction -> walkFunction(
+                                decl,
+                                containingClassModality = null,
+                                parentPropertyVisibilityStatus = null,
+                                parentTypeParameterResolver = null,
+                            )
+                            is IrProperty -> walkProperty(
+                                decl,
+                                containingClassModality = null,
+                                parentTypeParameterResolver = null,
+                            )
+                            else -> null
+                        }?.takeUnless { compositeFilter?.isDeclarationExcluded(it) == true }
+                            ?.let { topLevels.add(it) }
+                    }
                 }
             }
 
             return AbiTopLevelDeclarationsImpl(topLevels)
         }
 
-        private fun collectPackageFragments(module: ModuleDescriptorImpl): List<PackageFragmentDescriptor> {
-            val result = mutableListOf<PackageFragmentDescriptor>()
-            val packagesFqNames = getPackagesFqNames(module)
-            for (fqName in packagesFqNames) {
-                val fragments = module.getPackage(fqName).fragments.filter { it.module == module }
-                result.addAll(fragments)
-            }
-            return result
-        }
+        // ---- Class walking ----
 
-        private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
-            val result = mutableSetOf<FqName>()
-            val packageFragmentProvider =
-                (module as? ModuleDescriptorImpl)?.packageFragmentProviderForModuleContentWithoutDependencies
-
-            fun getSubPackages(fqName: FqName) {
-                if (!result.add(fqName)) return
-                val subPackages = packageFragmentProvider?.getSubPackagesOf(fqName) { true }
-                    ?: module.getSubPackagesOf(fqName) { true }
-                subPackages.forEach { getSubPackages(it) }
-            }
-
-            getSubPackages(FqName.ROOT)
-            return result
-        }
-
-        private fun deserializeDeclaration(
-            descriptor: DeclarationDescriptor,
-            containingEntity: ContainingEntity,
-            parentTypeParameterResolver: TypeParameterResolver?,
-        ): AbiDeclaration? {
-            val result = when (descriptor) {
-                is ClassDescriptor -> deserializeClass(descriptor, containingEntity, parentTypeParameterResolver)
-                is FunctionDescriptor -> {
-                    if (descriptor is ConstructorDescriptor)
-                        deserializeConstructor(descriptor, containingEntity, parentTypeParameterResolver)
-                    else
-                        deserializeFunction(descriptor, containingEntity, parentTypeParameterResolver)
-                }
-                is PropertyDescriptor -> deserializeProperty(descriptor, containingEntity, parentTypeParameterResolver)
-                is TypeAliasDescriptor -> null // Skip type aliases, same as IR reader.
-                else -> null
-            }
-
-            return result?.takeUnless { compositeFilter?.isDeclarationExcluded(it) == true }
-        }
-
-        private fun deserializeClass(
-            descriptor: ClassDescriptor,
-            containingEntity: ContainingEntity,
-            parentTypeParameterResolver: TypeParameterResolver?,
+        private fun walkClass(
+            irClass: IrClass,
+            containingClassModality: AbiModality?,
+            parentTypeParameterResolver: IrTypeParameterResolver?,
         ): AbiClass? {
-            if (descriptor.kind == ClassKind.ENUM_ENTRY) {
-                // Enum entries are handled separately — they are discovered via getContributedDescriptors
-                // but should be represented as AbiEnumEntry.
-                return null
-            }
+            if (irClass.kind == ClassKind.ENUM_ENTRY) return null
 
-            val annotations = deserializeAnnotations(descriptor)
-            val containingClassModality = (containingEntity as? ContainingEntity.Class)?.modality
+            val annotations = deserializeAnnotations(converter.annotationsMap[irClass])
+            val visibility = irClass.visibility
 
-            if (!computeVisibilityStatus(descriptor, containingClassModality).isPubliclyVisible)
+            if (!visibility.toVisibilityStatus(containingClassModality, hasPublishedApiAnnotation = hasPublishedApi(irClass)).isPubliclyVisible)
                 return null
 
-            val modality = descriptor.modality.toAbiModality(
-                containingClassModality = null // Open nested classes in a final class remain open.
-            )
+            val modality = irClass.modality.toAbiModality(containingClassModality = null)
+            val qualifiedName = classNameToQualifiedName(findClassName(irClass) ?: return null)
+            val isInner = irClass.isInner
 
-            val qualifiedName = computeQualifiedName(descriptor.name.asString(), containingEntity)
-
-            val thisClassEntity = ContainingEntity.Class(qualifiedName, modality)
-
-            val isInner = descriptor.isInner
-
-            val thisClassTypeParameterResolver = TypeParameterResolver(
-                declarationName = qualifiedName,
+            val thisClassTypeParameterResolver = IrTypeParameterResolver(
                 parent = if (isInner) parentTypeParameterResolver else null,
-                levelAdjustment = if (!isInner && parentTypeParameterResolver != null) parentTypeParameterResolver.level + 1 else 0
+                levelAdjustment = if (!isInner && parentTypeParameterResolver != null) parentTypeParameterResolver.level + 1 else 0,
+                typeParameters = irClass.typeParameters,
             )
 
             val memberDeclarations = ArrayList<AbiDeclaration>()
 
-            // Process constructors.
-            for (constructor in descriptor.constructors) {
-                deserializeDeclaration(constructor, thisClassEntity, thisClassTypeParameterResolver)?.let {
-                    memberDeclarations.add(it)
+            // Walk declarations in the order: constructors, enum entries, functions, properties, nested classes
+            val constructors = ArrayList<IrConstructor>()
+            val enumEntries = ArrayList<IrEnumEntry>()
+            val functions = ArrayList<IrSimpleFunction>()
+            val properties = ArrayList<IrProperty>()
+            val nestedClasses = ArrayList<IrClass>()
+
+            for (decl in irClass.declarations) {
+                when (decl) {
+                    is IrConstructor -> constructors.add(decl)
+                    is IrEnumEntry -> enumEntries.add(decl)
+                    is IrSimpleFunction -> {
+                        // Skip property accessors, they are handled through their property
+                        if (decl.correspondingPropertySymbol == null) functions.add(decl)
+                    }
+                    is IrProperty -> properties.add(decl)
+                    is IrClass -> nestedClasses.add(decl)
+                    else -> {}
                 }
             }
 
-            // Process member scope.
-            for (member in descriptor.unsubstitutedMemberScope.getContributedDescriptors()) {
-                if (member is ClassDescriptor && member.kind == ClassKind.ENUM_ENTRY) {
-                    deserializeEnumEntry(member, thisClassEntity)?.let { memberDeclarations.add(it) }
-                } else {
-                    deserializeDeclaration(member, thisClassEntity, thisClassTypeParameterResolver)?.let {
-                        memberDeclarations.add(it)
-                    }
+            for (ctor in constructors) {
+                walkConstructor(ctor, modality, thisClassTypeParameterResolver)
+                    ?.takeUnless { compositeFilter?.isDeclarationExcluded(it) == true }
+                    ?.let { memberDeclarations.add(it) }
+            }
+
+            for (entry in enumEntries) {
+                val abiEntry = walkEnumEntry(entry, qualifiedName)
+                if (compositeFilter?.isDeclarationExcluded(abiEntry) != true) {
+                    memberDeclarations.add(abiEntry)
                 }
             }
+
+            for (func in functions) {
+                walkFunction(func, containingClassModality = modality, parentPropertyVisibilityStatus = null, parentTypeParameterResolver = thisClassTypeParameterResolver)
+                    ?.takeUnless { compositeFilter?.isDeclarationExcluded(it) == true }
+                    ?.let { memberDeclarations.add(it) }
+            }
+
+            for (prop in properties) {
+                walkProperty(prop, containingClassModality = modality, parentTypeParameterResolver = thisClassTypeParameterResolver)
+                    ?.takeUnless { compositeFilter?.isDeclarationExcluded(it) == true }
+                    ?.let { memberDeclarations.add(it) }
+            }
+
+            for (nested in nestedClasses) {
+                walkClass(nested, containingClassModality = modality, parentTypeParameterResolver = thisClassTypeParameterResolver)
+                    ?.takeUnless { compositeFilter?.isDeclarationExcluded(it) == true }
+                    ?.let { memberDeclarations.add(it) }
+            }
+
+            val classSignatures = computeSignatures(signatureComputer.computeSignature(irClass))
 
             return AbiClassImpl(
                 qualifiedName = qualifiedName,
-                signatures = computeSignatures(descriptor),
+                signatures = classSignatures,
                 annotations = annotations,
                 modality = modality,
-                kind = when (descriptor.kind) {
+                kind = when (irClass.kind) {
                     ClassKind.CLASS -> AbiClassKind.CLASS
                     ClassKind.INTERFACE -> AbiClassKind.INTERFACE
                     ClassKind.OBJECT -> AbiClassKind.OBJECT
@@ -236,381 +230,369 @@ internal class MetadataLibraryAbiReaderImpl(
                     ClassKind.ENUM_ENTRY -> error("Unexpected class kind: ENUM_ENTRY")
                 },
                 isInner = isInner,
-                isValue = descriptor.isValueClass(),
-                isFunction = descriptor.isFun,
-                superTypes = descriptor.typeConstructor.supertypes.mapNotNull { type ->
-                    val abiType = convertType(type, thisClassTypeParameterResolver)
-                    // Filter out kotlin.Any and non-publicly-visible supertypes.
+                isValue = irClass.isValue,
+                isFunction = irClass.isFun,
+                superTypes = irClass.superTypes.mapNotNull { superType ->
+                    val abiType = convertIrType(superType, thisClassTypeParameterResolver)
                     if (isKotlinAnyType(abiType)) null else abiType
                 },
                 declarations = memberDeclarations,
-                typeParameters = deserializeTypeParameters(descriptor.declaredTypeParameters, thisClassTypeParameterResolver)
+                typeParameters = convertTypeParameters(irClass.typeParameters, thisClassTypeParameterResolver),
             )
         }
 
-        private fun deserializeEnumEntry(
-            descriptor: ClassDescriptor,
-            containingEntity: ContainingEntity,
-        ): AbiEnumEntry? {
-            val annotations = deserializeAnnotations(descriptor)
-            val qualifiedName = computeQualifiedName(descriptor.name.asString(), containingEntity)
+        // ---- Function walking ----
 
-            val signature = signaturer.composeEnumEntrySignature(descriptor) ?: return null
-
-            return AbiEnumEntryImpl(
-                qualifiedName = qualifiedName,
-                signatures = signature.toAbiSignatures(),
-                annotations = annotations
-            ).takeUnless { compositeFilter?.isDeclarationExcluded(it) == true }
-        }
-
-        private fun deserializeFunction(
-            descriptor: FunctionDescriptor,
-            containingEntity: ContainingEntity,
-            parentTypeParameterResolver: TypeParameterResolver?,
+        private fun walkFunction(
+            irFunction: IrSimpleFunction,
+            containingClassModality: AbiModality?,
+            parentPropertyVisibilityStatus: VisibilityStatus?,
+            parentTypeParameterResolver: IrTypeParameterResolver?,
         ): AbiFunction? {
-            val annotations = deserializeAnnotations(descriptor)
+            val annotations = deserializeAnnotations(converter.annotationsMap[irFunction])
 
-            val containingProperty: ContainingEntity.Property?
-            val effectiveContainingClass: ContainingEntity.Class?
-
-            when (containingEntity) {
-                is ContainingEntity.Class -> {
-                    containingProperty = null
-                    effectiveContainingClass = containingEntity
-                }
-                is ContainingEntity.Property -> {
-                    containingProperty = containingEntity
-                    effectiveContainingClass = containingEntity.containingClass
-                }
-                else -> {
-                    containingProperty = null
-                    effectiveContainingClass = null
-                }
-            }
-
-            val parentPropertyVisibilityStatus = containingProperty?.propertyVisibilityStatus
-            if (!computeVisibilityStatus(
-                    descriptor,
-                    effectiveContainingClass?.modality,
-                    parentPropertyVisibilityStatus
+            if (!irFunction.visibility.toVisibilityStatus(
+                    containingClassModality,
+                    parentPropertyVisibilityStatus,
+                    hasPublishedApi(irFunction),
                 ).isPubliclyVisible
             ) {
                 return null
             }
 
             // Always skip fake overrides for cinterop libraries.
-            if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
+            if (irFunction.origin == IrDeclarationOrigin.FAKE_OVERRIDE)
                 return null
 
-            val functionName = computeQualifiedName(descriptor.name.asString(), containingEntity)
+            val qualifiedName = computeQualifiedNameForDeclaration(irFunction)
 
-            val thisFunctionTypeParameterResolver = when {
-                containingProperty != null -> {
-                    TypeParameterResolver(containingProperty.propertyName, parentTypeParameterResolver, levelAdjustment = 1)
-                }
-                else -> TypeParameterResolver(functionName, parentTypeParameterResolver)
+            val isAccessor = irFunction.correspondingPropertySymbol != null
+            val funcTypeParameterResolver = if (isAccessor) {
+                IrTypeParameterResolver(parentTypeParameterResolver, levelAdjustment = 1, typeParameters = irFunction.typeParameters)
+            } else {
+                IrTypeParameterResolver(parentTypeParameterResolver, typeParameters = irFunction.typeParameters)
             }
 
             val allValueParameters = ArrayList<AbiValueParameter>()
 
-            // Context receivers.
-            descriptor.contextReceiverParameters.mapTo(allValueParameters) { contextParam ->
-                AbiValueParameterImpl(
-                    kind = AbiValueParameterKind.CONTEXT,
-                    type = convertType(contextParam.type, thisFunctionTypeParameterResolver),
-                    isVararg = false,
-                    hasDefaultArg = false,
-                    isNoinline = false,
-                    isCrossinline = false
-                )
+            for (param in irFunction.parameters) {
+                when (param.kind) {
+                    IrParameterKind.DispatchReceiver -> {} // skip
+                    IrParameterKind.Context -> {
+                        allValueParameters.add(
+                            AbiValueParameterImpl(
+                                kind = AbiValueParameterKind.CONTEXT,
+                                type = convertIrType(param.type, funcTypeParameterResolver),
+                                isVararg = false,
+                                hasDefaultArg = false,
+                                isNoinline = false,
+                                isCrossinline = false,
+                            )
+                        )
+                    }
+                    IrParameterKind.ExtensionReceiver -> {
+                        allValueParameters.add(
+                            AbiValueParameterImpl(
+                                kind = AbiValueParameterKind.EXTENSION_RECEIVER,
+                                type = convertIrType(param.type, funcTypeParameterResolver),
+                                isVararg = false,
+                                hasDefaultArg = false,
+                                isNoinline = false,
+                                isCrossinline = false,
+                            )
+                        )
+                    }
+                    IrParameterKind.Regular -> {
+                        allValueParameters.add(
+                            AbiValueParameterImpl(
+                                kind = AbiValueParameterKind.REGULAR,
+                                type = convertIrType(param.type, funcTypeParameterResolver),
+                                isVararg = param.varargElementType != null,
+                                hasDefaultArg = param.defaultValue != null,
+                                isNoinline = param.isNoinline,
+                                isCrossinline = param.isCrossinline,
+                            )
+                        )
+                    }
+                }
             }
 
-            // Extension receiver.
-            descriptor.extensionReceiverParameter?.let { extensionReceiver ->
+            val returnType = run {
+                val abiType = convertIrType(irFunction.returnType, funcTypeParameterResolver)
+                if (isKotlinUnitType(abiType)) null else abiType
+            }
+
+            val modality = irFunction.modality.toAbiModality(containingClassModality)
+            val funcSignatures = computeSignatures(signatureComputer.computeSignature(irFunction))
+
+            return AbiFunctionImpl(
+                qualifiedName = qualifiedName,
+                signatures = funcSignatures,
+                annotations = annotations,
+                modality = modality,
+                isInline = irFunction.isInline,
+                isSuspend = irFunction.isSuspend,
+                typeParameters = convertTypeParameters(irFunction.typeParameters, funcTypeParameterResolver),
+                valueParameters = allValueParameters,
+                returnType = returnType,
+            )
+        }
+
+        // ---- Constructor walking ----
+
+        private fun walkConstructor(
+            irConstructor: IrConstructor,
+            containingClassModality: AbiModality,
+            classTypeParameterResolver: IrTypeParameterResolver,
+        ): AbiFunction? {
+            val annotations = deserializeAnnotations(converter.annotationsMap[irConstructor])
+
+            if (!irConstructor.visibility.toVisibilityStatus(
+                    containingClassModality,
+                    hasPublishedApiAnnotation = hasPublishedApi(irConstructor),
+                ).isPubliclyVisible
+            ) {
+                return null
+            }
+
+            // Exclude constructors of sealed classes from ABI dump.
+            if (containingClassModality == AbiModality.SEALED)
+                return null
+
+            val qualifiedName = computeQualifiedNameForDeclaration(irConstructor)
+
+            val allValueParameters = ArrayList<AbiValueParameter>()
+            for (param in irConstructor.parameters) {
+                if (param.kind != IrParameterKind.Regular) continue
                 allValueParameters.add(
                     AbiValueParameterImpl(
-                        kind = AbiValueParameterKind.EXTENSION_RECEIVER,
-                        type = convertType(extensionReceiver.type, thisFunctionTypeParameterResolver),
-                        isVararg = false,
-                        hasDefaultArg = false,
-                        isNoinline = false,
-                        isCrossinline = false
+                        kind = AbiValueParameterKind.REGULAR,
+                        type = convertIrType(param.type, classTypeParameterResolver),
+                        isVararg = param.varargElementType != null,
+                        hasDefaultArg = param.defaultValue != null,
+                        isNoinline = param.isNoinline,
+                        isCrossinline = param.isCrossinline,
                     )
                 )
             }
 
-            // Regular value parameters.
-            descriptor.valueParameters.mapTo(allValueParameters) { param ->
-                AbiValueParameterImpl(
-                    kind = AbiValueParameterKind.REGULAR,
-                    type = convertType(param.type, thisFunctionTypeParameterResolver),
-                    isVararg = param.varargElementType != null,
-                    hasDefaultArg = param.declaresDefaultValue(),
-                    isNoinline = param.isNoinline,
-                    isCrossinline = param.isCrossinline
-                )
-            }
-
-            val returnType = descriptor.returnType?.let { rt ->
-                val abiType = convertType(rt, thisFunctionTypeParameterResolver)
-                // Don't show trivial return type (kotlin.Unit).
-                if (isKotlinUnitType(abiType)) null else abiType
-            }
-
-            val modality = descriptor.modality.toAbiModality(effectiveContainingClass?.modality)
-
-            return AbiFunctionImpl(
-                qualifiedName = functionName,
-                signatures = computeSignatures(descriptor),
-                annotations = annotations,
-                modality = modality,
-                isInline = descriptor.isInline,
-                isSuspend = descriptor.isSuspend,
-                typeParameters = deserializeTypeParameters(descriptor.typeParameters, thisFunctionTypeParameterResolver),
-                valueParameters = allValueParameters,
-                returnType = returnType
-            )
-        }
-
-        private fun deserializeConstructor(
-            descriptor: ConstructorDescriptor,
-            containingEntity: ContainingEntity,
-            parentTypeParameterResolver: TypeParameterResolver?,
-        ): AbiFunction? {
-            val annotations = deserializeAnnotations(descriptor)
-            val containingClass = containingEntity as? ContainingEntity.Class
-
-            if (!computeVisibilityStatus(descriptor, containingClass?.modality).isPubliclyVisible)
-                return null
-
-            // Exclude constructors of sealed classes from ABI dump.
-            if (containingClass?.modality == AbiModality.SEALED)
-                return null
-
-            val constructorName = computeQualifiedName(descriptor.name.asString(), containingEntity)
-
-            val allValueParameters = ArrayList<AbiValueParameter>()
-
-            // Context receivers.
-            descriptor.contextReceiverParameters.mapTo(allValueParameters) { contextParam ->
-                AbiValueParameterImpl(
-                    kind = AbiValueParameterKind.CONTEXT,
-                    type = convertType(contextParam.type, parentTypeParameterResolver ?: TypeParameterResolver(constructorName, null)),
-                    isVararg = false,
-                    hasDefaultArg = false,
-                    isNoinline = false,
-                    isCrossinline = false
-                )
-            }
-
-            // Regular value parameters.
-            descriptor.valueParameters.mapTo(allValueParameters) { param ->
-                AbiValueParameterImpl(
-                    kind = AbiValueParameterKind.REGULAR,
-                    type = convertType(param.type, parentTypeParameterResolver ?: TypeParameterResolver(constructorName, null)),
-                    isVararg = param.varargElementType != null,
-                    hasDefaultArg = param.declaresDefaultValue(),
-                    isNoinline = param.isNoinline,
-                    isCrossinline = param.isCrossinline
-                )
-            }
+            val ctorSignatures = computeSignatures(signatureComputer.computeSignature(irConstructor))
 
             return AbiConstructorImpl(
-                qualifiedName = constructorName,
-                signatures = computeSignatures(descriptor),
+                qualifiedName = qualifiedName,
+                signatures = ctorSignatures,
                 annotations = annotations,
-                isInline = descriptor.isInline,
-                valueParameters = allValueParameters
+                isInline = false,
+                valueParameters = allValueParameters,
             )
         }
 
-        private fun deserializeProperty(
-            descriptor: PropertyDescriptor,
-            containingEntity: ContainingEntity,
-            parentTypeParameterResolver: TypeParameterResolver?,
-        ): AbiProperty? {
-            val annotations = deserializeAnnotations(descriptor)
-            val containingClass = containingEntity as? ContainingEntity.Class
+        // ---- Enum entry walking ----
 
-            val visibilityStatus = computeVisibilityStatus(descriptor, containingClass?.modality)
+        private fun walkEnumEntry(
+            irEnumEntry: IrEnumEntry,
+            containingClassName: AbiQualifiedName,
+        ): AbiEnumEntry {
+            val annotations = deserializeAnnotations(converter.annotationsMap[irEnumEntry])
+            val qualifiedName = qualifiedNameFromParent(containingClassName, irEnumEntry.name.asString())
+            val signature = signatureComputer.computeSignature(irEnumEntry)
+
+            return AbiEnumEntryImpl(
+                qualifiedName = qualifiedName,
+                signatures = computeSignatures(signature),
+                annotations = annotations,
+            )
+        }
+
+        // ---- Property walking ----
+
+        private fun walkProperty(
+            irProperty: IrProperty,
+            containingClassModality: AbiModality?,
+            parentTypeParameterResolver: IrTypeParameterResolver?,
+        ): AbiProperty? {
+            val annotations = deserializeAnnotations(converter.annotationsMap[irProperty])
+
+            val visibilityStatus = irProperty.visibility.toVisibilityStatus(
+                containingClassModality,
+                hasPublishedApiAnnotation = hasPublishedApi(irProperty),
+            )
             if (!visibilityStatus.isPubliclyVisible)
                 return null
 
             // Always skip fake overrides for cinterop libraries.
-            if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
+            if (irProperty.origin == IrDeclarationOrigin.FAKE_OVERRIDE)
                 return null
 
-            val qualifiedName = computeQualifiedName(descriptor.name.asString(), containingEntity)
-            val thisPropertyEntity = ContainingEntity.Property(qualifiedName, containingClass, visibilityStatus)
+            val qualifiedName = computeQualifiedNameForDeclaration(irProperty)
+            val propSignatures = computeSignatures(signatureComputer.computeSignature(irProperty))
+            val modality = irProperty.modality.toAbiModality(containingClassModality)
+
+            fun walkAccessor(accessor: IrSimpleFunction?): AbiFunction? {
+                if (accessor == null) return null
+                val accessorVisibility = accessor.visibility.toVisibilityStatus(
+                    containingClassModality,
+                    parentPropertyVisibilityStatus = visibilityStatus,
+                    hasPublishedApiAnnotation = hasPublishedApi(accessor),
+                )
+                if (!accessorVisibility.isPubliclyVisible) return null
+                return walkFunction(accessor, containingClassModality, visibilityStatus, parentTypeParameterResolver)
+                    ?.takeUnless { compositeFilter?.isDeclarationExcluded(it) == true }
+            }
+
+            val getter = walkAccessor(irProperty.getter)
+            val setter = walkAccessor(irProperty.setter)
 
             return AbiPropertyImpl(
                 qualifiedName = qualifiedName,
-                signatures = computeSignatures(descriptor),
+                signatures = propSignatures,
                 annotations = annotations,
-                modality = descriptor.modality.toAbiModality(containingClass?.modality),
+                modality = modality,
                 kind = when {
-                    descriptor.isConst -> AbiPropertyKind.CONST_VAL
-                    descriptor.isVar -> AbiPropertyKind.VAR
+                    irProperty.isConst -> AbiPropertyKind.CONST_VAL
+                    irProperty.isVar -> AbiPropertyKind.VAR
                     else -> AbiPropertyKind.VAL
                 },
-                getter = descriptor.getter?.let { getter ->
-                    deserializeFunction(
-                        getter,
-                        containingEntity = thisPropertyEntity,
-                        parentTypeParameterResolver = parentTypeParameterResolver,
-                    )?.takeUnless { compositeFilter?.isDeclarationExcluded(it) == true }
-                },
-                setter = descriptor.setter?.let { setter ->
-                    deserializeFunction(
-                        setter,
-                        containingEntity = thisPropertyEntity,
-                        parentTypeParameterResolver = parentTypeParameterResolver,
-                    )?.takeUnless { compositeFilter?.isDeclarationExcluded(it) == true }
-                },
-                backingField = descriptor.backingField?.let { field ->
-                    AbiFieldImpl(deserializeAnnotations(field))
-                }
+                getter = getter,
+                setter = setter,
+                backingField = null, // CInterop libraries typically don't have backing fields
             )
         }
 
-        private fun deserializeAnnotations(descriptor: DeclarationDescriptor): AbiAnnotationListImpl =
-            deserializeAnnotationsFromAnnotated(descriptor)
+        // ---- Type conversion (IrType → AbiType) ----
 
-        private fun deserializeAnnotations(descriptor: FieldDescriptor): AbiAnnotationListImpl =
-            deserializeAnnotationsFromAnnotated(descriptor)
+        private fun convertIrType(irType: IrType, resolver: IrTypeParameterResolver): AbiType {
+            if (irType !is IrSimpleType) return ErrorTypeImpl
 
-        private fun deserializeAnnotationsFromAnnotated(annotated: org.jetbrains.kotlin.descriptors.annotations.Annotated): AbiAnnotationListImpl {
-            val annotations = annotated.annotations
-            if (annotations.isEmpty()) return AbiAnnotationListImpl.EMPTY
+            val nullability = when (irType.nullability) {
+                SimpleTypeNullability.MARKED_NULLABLE -> MARKED_NULLABLE
+                SimpleTypeNullability.NOT_SPECIFIED -> NOT_SPECIFIED
+                SimpleTypeNullability.DEFINITELY_NOT_NULL -> DEFINITELY_NOT_NULL
+            }
 
-            return AbiAnnotationListImpl(annotations.mapNotNull { annotation ->
-                val fqName = annotation.fqName ?: return@mapNotNull null
-                val packageName = fqName.parent().asString()
-                val relativeName = fqName.shortName().asString()
-                AbiAnnotationImpl(AbiQualifiedName(AbiCompoundName(packageName), AbiCompoundName(relativeName)))
-            })
-        }
-
-        private fun deserializeTypeParameters(
-            typeParameters: List<TypeParameterDescriptor>,
-            typeParameterResolver: TypeParameterResolver,
-        ): List<AbiTypeParameter> = typeParameters.mapIndexed { index, tp ->
-            AbiTypeParameterImpl(
-                tag = typeParameterResolver.computeTypeParameterTag(index),
-                variance = tp.variance.toAbiVariance(),
-                isReified = tp.isReified,
-                upperBounds = tp.upperBounds.mapNotNull { bound ->
-                    val abiType = convertType(bound, typeParameterResolver)
-                    // Filter out trivial upper bound (nullable Any).
-                    if (isNullableAnyType(abiType)) null else abiType
-                }
-            )
-        }
-
-        private fun convertType(type: KotlinType, typeParameterResolver: TypeParameterResolver): AbiType {
-            if (type.isError) return ErrorTypeImpl
-
-            val classifier = type.constructor.declarationDescriptor
-
+            val classifier = irType.classifier
             return when (classifier) {
-                is ClassDescriptor -> {
-                    val className = qualifiedNameOf(classifier)
+                is IrClassSymbol -> {
+                    val className = classNameToQualifiedName(findClassName(classifier.owner) ?: return ErrorTypeImpl)
                     SimpleTypeImpl(
                         classifierReference = ClassReferenceImpl(className),
-                        arguments = type.arguments.map { arg ->
-                            if (arg.isStarProjection)
-                                StarProjectionImpl
-                            else
-                                TypeProjectionImpl(
-                                    type = convertType(arg.type, typeParameterResolver),
-                                    variance = arg.projectionKind.toAbiVariance()
-                                )
-                        },
-                        nullability = when {
-                            type.isDefinitelyNotNullType -> DEFINITELY_NOT_NULL
-                            type.isMarkedNullable -> MARKED_NULLABLE
-                            else -> NOT_SPECIFIED
-                        }
+                        arguments = irType.arguments.map { convertIrTypeArgument(it, resolver) },
+                        nullability = nullability,
                     )
                 }
-                is TypeParameterDescriptor -> {
-                    val tag = typeParameterResolver.resolveTypeParameterTag(classifier)
+                is IrTypeParameterSymbol -> {
+                    val tag = resolver.resolveTag(classifier)
                     SimpleTypeImpl(
                         classifierReference = TypeParameterReferenceImpl(tag),
                         arguments = emptyList(),
-                        nullability = when {
-                            type.isDefinitelyNotNullType -> DEFINITELY_NOT_NULL
-                            type.isMarkedNullable -> MARKED_NULLABLE
-                            else -> NOT_SPECIFIED
-                        }
+                        nullability = nullability,
                     )
                 }
                 else -> ErrorTypeImpl
             }
         }
 
-        private fun qualifiedNameOf(classDescriptor: ClassDescriptor): AbiQualifiedName {
-            val fqName = classDescriptor.fqNameSafe
-            val packageFqName = findPackageFqName(classDescriptor)
-            val relativeName = fqName.asString().removePrefix(packageFqName.asString()).removePrefix(".")
-            return AbiQualifiedName(AbiCompoundName(packageFqName.asString()), AbiCompoundName(relativeName))
-        }
-
-        private fun findPackageFqName(descriptor: DeclarationDescriptor): FqName {
-            var current: DeclarationDescriptor? = descriptor
-            while (current != null) {
-                if (current is PackageFragmentDescriptor) return current.fqName
-                current = current.containingDeclaration
+        private fun convertIrTypeArgument(arg: IrTypeArgument, resolver: IrTypeParameterResolver): AbiTypeArgument {
+            if (arg is IrStarProjectionImpl) return StarProjectionImpl
+            if (arg is IrTypeProjection) {
+                val abiType = convertIrType(arg.type, resolver)
+                return when (arg.variance) {
+                    Variance.INVARIANT -> TypeProjectionImpl(abiType, AbiVariance.INVARIANT)
+                    Variance.IN_VARIANCE -> TypeProjectionImpl(abiType, AbiVariance.IN)
+                    Variance.OUT_VARIANCE -> TypeProjectionImpl(abiType, AbiVariance.OUT)
+                }
             }
-            return FqName.ROOT
+            return StarProjectionImpl
         }
 
-        private fun computeQualifiedName(simpleName: String, containingEntity: ContainingEntity): AbiQualifiedName {
-            return containingEntity.computeNestedName(simpleName)
-        }
+        // ---- Type parameters ----
 
-        private fun computeSignatures(descriptor: DeclarationDescriptor): AbiSignatures {
-            val idSignature = if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY) {
-                signaturer.composeEnumEntrySignature(descriptor)
-            } else {
-                signaturer.composeSignature(descriptor)
-            }
-
-            return AbiSignaturesImpl(
-                signatureV1 = if (needV1Signatures) idSignature?.render(IdSignatureRenderer.LEGACY) else null,
-                signatureV2 = if (needV2Signatures) idSignature?.render(IdSignatureRenderer.DEFAULT) else null,
+        private fun convertTypeParameters(
+            typeParameters: List<IrTypeParameter>,
+            resolver: IrTypeParameterResolver,
+        ): List<AbiTypeParameter> = typeParameters.mapIndexed { index, irTp ->
+            AbiTypeParameterImpl(
+                tag = resolver.computeTag(index),
+                variance = irTp.variance.toAbiVariance(),
+                isReified = irTp.isReified,
+                upperBounds = irTp.superTypes.mapNotNull { bound ->
+                    val abiType = convertIrType(bound, resolver)
+                    if (isNullableAnyType(abiType)) null else abiType
+                },
             )
         }
 
-        private fun IdSignature.toAbiSignatures(): AbiSignatures = AbiSignaturesImpl(
-            signatureV1 = if (needV1Signatures) render(IdSignatureRenderer.LEGACY) else null,
-            signatureV2 = if (needV2Signatures) render(IdSignatureRenderer.DEFAULT) else null,
-        )
+        // ---- Annotations ----
 
-        private fun computeVisibilityStatus(
-            descriptor: DeclarationDescriptor,
-            containingClassModality: AbiModality?,
-            parentPropertyVisibilityStatus: VisibilityStatus? = null,
-        ): VisibilityStatus {
-            val visibility = (descriptor as? DeclarationDescriptorWithVisibility)?.visibility
-                ?: return VisibilityStatus.PUBLIC
+        @OptIn(ExperimentalAnnotationsInMetadata::class)
+        private fun deserializeAnnotations(annotations: List<KmAnnotation>?): AbiAnnotationListImpl {
+            if (annotations.isNullOrEmpty()) return AbiAnnotationListImpl.EMPTY
+            return AbiAnnotationListImpl(annotations.map { annotation ->
+                AbiAnnotationImpl(classNameToQualifiedName(annotation.className))
+            })
+        }
 
-            return when (visibility) {
-                DescriptorVisibilities.PUBLIC -> VisibilityStatus.PUBLIC
-                DescriptorVisibilities.PROTECTED -> {
-                    if (containingClassModality == AbiModality.FINAL)
-                        VisibilityStatus.NON_PUBLIC
-                    else
-                        VisibilityStatus.PUBLIC
+        @OptIn(ExperimentalAnnotationsInMetadata::class)
+        private fun hasPublishedApi(irDeclaration: IrDeclaration): Boolean {
+            val annotations = converter.annotationsMap[irDeclaration] ?: return false
+            return annotations.any { it.className == PUBLISHED_API_CLASS_NAME }
+        }
+
+        // ---- Helpers ----
+
+        private fun computeQualifiedNameForDeclaration(irDeclaration: IrDeclaration): AbiQualifiedName {
+            val parent = (irDeclaration as IrDeclarationWithName).parent
+            val simpleName = irDeclaration.name.asString()
+            return when (parent) {
+                is IrClass -> {
+                    val parentName = classNameToQualifiedName(findClassName(parent) ?: error("Cannot find class name for ${parent.name}"))
+                    qualifiedNameFromParent(parentName, simpleName)
                 }
-                DescriptorVisibilities.INTERNAL -> when {
-                    parentPropertyVisibilityStatus == VisibilityStatus.INTERNAL_PUBLISHED_API -> VisibilityStatus.INTERNAL_PUBLISHED_API
-                    descriptor.isPublishedApi() -> VisibilityStatus.INTERNAL_PUBLISHED_API
-                    else -> VisibilityStatus.NON_PUBLIC
+                is IrPackageFragment -> {
+                    val packageName = AbiCompoundName(parent.packageFqName.asString())
+                    qualifiedNameFromPackage(packageName, simpleName)
                 }
-                else -> VisibilityStatus.NON_PUBLIC
+                else -> error("Unexpected parent: $parent")
             }
+        }
+
+        private fun computeSignatures(idSignature: IdSignature?): AbiSignatures = AbiSignaturesImpl(
+            signatureV1 = if (needV1Signatures) idSignature?.render(IdSignatureRenderer.LEGACY) else null,
+            signatureV2 = if (needV2Signatures) idSignature?.render(IdSignatureRenderer.DEFAULT) else null,
+        )
+    }
+
+    /**
+     * Resolves type parameter tags by [IrTypeParameterSymbol] identity,
+     * instead of integer Km* IDs.
+     */
+    private class IrTypeParameterResolver(
+        val parent: IrTypeParameterResolver?,
+        levelAdjustment: Int = 0,
+        typeParameters: List<IrTypeParameter> = emptyList(),
+    ) {
+        val level: Int = (parent?.let { it.level + 1 } ?: 0) + levelAdjustment
+
+        private val symbolToIndex = IdentityHashMap<IrTypeParameterSymbol, Int>()
+
+        init {
+            for ((index, tp) in typeParameters.withIndex()) {
+                symbolToIndex[tp.symbol] = index
+            }
+        }
+
+        fun computeTag(index: Int): String {
+            val tagPrefix = computeTypeParameterTagPrefix(index)
+            return if (level > 0) "$tagPrefix$level" else tagPrefix
+        }
+
+        fun resolveTag(symbol: IrTypeParameterSymbol): String {
+            val localIndex = symbolToIndex[symbol]
+            return if (localIndex != null)
+                computeTag(localIndex)
+            else
+                parent?.resolveTag(symbol)
+                    ?: error("Cannot resolve type parameter ${symbol.owner.name}")
         }
     }
 
@@ -618,7 +600,7 @@ internal class MetadataLibraryAbiReaderImpl(
 
     private fun readSupportedSignatureVersions(): Set<AbiSignatureVersion> {
         // CInterop libraries may not have irSignatureVersions in their manifest.
-        // For cinterop libraries, we always support both V1 and V2 since they can be computed from descriptors.
+        // For cinterop libraries, we always support both V1 and V2 since they can be computed from metadata.
         val versionsFromManifest = library.versions.irSignatureVersions.mapTo(hashSetOf()) {
             AbiSignatureVersions.resolveByVersionNumber(it.number)
         }
@@ -630,71 +612,7 @@ internal class MetadataLibraryAbiReaderImpl(
         }
     }
 
-    private sealed interface ContainingEntity {
-        fun computeNestedName(simpleName: String): AbiQualifiedName
-
-        class Package(val packageName: AbiCompoundName) : ContainingEntity {
-            override fun computeNestedName(simpleName: String) = qualifiedNameFromPackage(packageName, simpleName)
-        }
-
-        class Class(
-            val className: AbiQualifiedName,
-            val modality: AbiModality,
-        ) : ContainingEntity {
-            override fun computeNestedName(simpleName: String) = qualifiedNameFromParent(className, simpleName)
-        }
-
-        class Property(
-            val propertyName: AbiQualifiedName,
-            val containingClass: Class?,
-            val propertyVisibilityStatus: VisibilityStatus,
-        ) : ContainingEntity {
-            override fun computeNestedName(simpleName: String) = qualifiedNameFromParent(propertyName, simpleName)
-        }
-    }
-
-    private class TypeParameterResolver(
-        private val declarationName: AbiQualifiedName,
-        val parent: TypeParameterResolver?,
-        levelAdjustment: Int = 0,
-    ) {
-        val level: Int = (parent?.let { it.level + 1 } ?: 0) + levelAdjustment
-
-        fun computeTypeParameterTag(index: Int): String {
-            val tagPrefix = computeTypeParameterTagPrefix(index)
-            return if (level > 0) "$tagPrefix$level" else tagPrefix
-        }
-
-        fun resolveTypeParameterTag(typeParameterDescriptor: TypeParameterDescriptor): String {
-            val ownerDescriptor = typeParameterDescriptor.containingDeclaration
-            val ownerName = computeOwnerQualifiedName(ownerDescriptor)
-            val index = typeParameterDescriptor.index
-
-            return if (ownerName == declarationName)
-                computeTypeParameterTag(index)
-            else
-                parent?.resolveTypeParameterTag(typeParameterDescriptor)
-                    ?: error("Type parameter with index $index can not be resolved for $ownerName")
-        }
-
-        private fun computeOwnerQualifiedName(descriptor: DeclarationDescriptor): AbiQualifiedName {
-            val fqName = (descriptor as? DeclarationDescriptorNonRoot)?.fqNameSafe ?: return AbiQualifiedName(AbiCompoundName(""), AbiCompoundName(descriptor.name.asString()))
-            var current: DeclarationDescriptor? = descriptor
-            while (current != null) {
-                if (current is PackageFragmentDescriptor) {
-                    val packageFqName = current.fqName.asString()
-                    val relativeName = fqName.asString().removePrefix(packageFqName).removePrefix(".")
-                    return AbiQualifiedName(AbiCompoundName(packageFqName), AbiCompoundName(relativeName))
-                }
-                current = current.containingDeclaration
-            }
-            return AbiQualifiedName(AbiCompoundName(""), AbiCompoundName(fqName.asString()))
-        }
-    }
-
     companion object {
-        private val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
-
         private fun isKotlinAnyType(type: AbiType): Boolean =
             isKotlinBuiltInType(type, KOTLIN_ANY_QUALIFIED_NAME, DEFINITELY_NOT_NULL)
 

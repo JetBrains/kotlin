@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.library.abi.impl
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.abi.*
@@ -58,6 +60,52 @@ internal fun Variance.toAbiVariance(): AbiVariance = when (this) {
     Variance.INVARIANT -> AbiVariance.INVARIANT
     Variance.IN_VARIANCE -> AbiVariance.IN
     Variance.OUT_VARIANCE -> AbiVariance.OUT
+}
+
+@ExperimentalLibraryAbiReader
+internal fun DescriptorVisibility.toVisibilityStatus(
+    containingClassModality: AbiModality?,
+    parentPropertyVisibilityStatus: VisibilityStatus? = null,
+    hasPublishedApiAnnotation: Boolean = false,
+): VisibilityStatus {
+    if (parentPropertyVisibilityStatus != null && parentPropertyVisibilityStatus != VisibilityStatus.PUBLIC)
+        return parentPropertyVisibilityStatus
+
+    return when (this) {
+        DescriptorVisibilities.PUBLIC -> VisibilityStatus.PUBLIC
+        DescriptorVisibilities.PROTECTED -> {
+            if (containingClassModality == AbiModality.FINAL)
+                VisibilityStatus.NON_PUBLIC
+            else
+                VisibilityStatus.PUBLIC
+        }
+        DescriptorVisibilities.INTERNAL -> {
+            if (hasPublishedApiAnnotation) VisibilityStatus.INTERNAL_PUBLISHED_API
+            else VisibilityStatus.NON_PUBLIC
+        }
+        else -> VisibilityStatus.NON_PUBLIC
+    }
+}
+
+/**
+ * Converts a [ClassName][kotlin.metadata.ClassName] (e.g., "org/foo/Bar.Nested") to [AbiQualifiedName].
+ * Package parts use `/` separators; nested class parts use `.` separators.
+ */
+@ExperimentalLibraryAbiReader
+internal fun classNameToQualifiedName(className: String): AbiQualifiedName {
+    // ClassName format: "org/foo/Bar" or "org/foo/Bar.Nested"
+    // First, separate the package from the relative class name
+    val dotIndex = className.indexOf('.')
+    val topLevelPart = if (dotIndex >= 0) className.substring(0, dotIndex) else className
+
+    val slashIndex = topLevelPart.lastIndexOf('/')
+    val packageFqn = if (slashIndex >= 0) topLevelPart.substring(0, slashIndex).replace('/', '.') else ""
+
+    // Relative name: "Bar" or "Bar.Nested"
+    val classSimplePart = if (slashIndex >= 0) topLevelPart.substring(slashIndex + 1) else topLevelPart
+    val relativeName = if (dotIndex >= 0) "$classSimplePart.${className.substring(dotIndex + 1)}" else classSimplePart
+
+    return AbiQualifiedName(AbiCompoundName(packageFqn), AbiCompoundName(relativeName))
 }
 
 // endregion
