@@ -4,8 +4,8 @@
 
 Replace IntelliJ platform-based Java parsing with a custom implementation using KMP Java Parser. Goal: eliminate platform dependency while maintaining Java-Kotlin bidirectional interoperability.
 
-**Status**: 1317/1493 tests passing (88.2%) after iteration 16  
-**Last Updated**: 2026-03-06
+**Status**: 1434/1495 tests passing (95.9%) after iteration 23  
+**Last Updated**: 2026-03-12
 
 **Related docs**:
 - `AGENT_INSTRUCTIONS.md` — Agent guidelines, learnings, debugging techniques
@@ -100,11 +100,20 @@ Star import resolution uses callback pattern: Java Model tries candidates, FIR v
 - Raw type detection
 - **1317/1493 tests passing (88.2%)**
 
-### 🔲 Milestone 4: Production Readiness
+### ✅ Milestone 4: Advanced Features (Complete)
+- Annotation argument subinterfaces (literal, array, enum, class, nested)
+- Annotation method default values
+- Nested class resolution via callback
+- TYPE_USE annotations on type arguments
+- Implicit supertypes (Enum, Annotation, Object)
+- Cross-language constant evaluation via FIR callback
+- **1434/1495 tests passing (95.9%)**
+
+### 🔲 Milestone 5: Production Readiness
 - Modern Java features (records, sealed classes)
 - Performance optimization
-- Remaining edge cases (91 box tests, 85 phased tests)
-- Target: >95% test pass rate
+- Remaining edge cases (~62 tests)
+- Target: >98% test pass rate
 
 ---
 
@@ -145,6 +154,7 @@ Star import resolution uses callback pattern: Java Model tries candidates, FIR v
 
 ## Change Log
 
+- 2026-03-12: Updated status after iteration 23 (95.9% pass rate), added Milestone 4
 - 2026-03-06: Updated status after iteration 16 (88.5% pass rate)
 - 2026-03-03: Condensed document after iteration 6; archived detailed sections
 - 2026-02-23: Added type resolution architecture (FIR layer, not Java Model)

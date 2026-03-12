@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Status** | Iteration 16 complete |
-| **Box Tests** | 1075/1166 passing (92.2%) |
-| **Phased Tests** | 242/327 passing (74.0%) |
-| **Total** | 1317/1493 passing (88.2%) |
+| **Status** | Iteration 23 complete |
+| **Box Tests** | 1134/1166 passing (97.2%) |
+| **Phased Tests** | 300/329 passing (91.2%) |
+| **Remaining** | ~62 failing tests |
 
 **Key files**: `JavaClassFinderOverAstImpl.kt`, `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaMemberOverAst.kt`, `JavaResolutionContext.kt`
 
@@ -20,12 +20,14 @@
 - **FIR terminology**: `simpleImports`/`starImports` (NOT singleType/onDemand)
 - **Update ITERATION_RESULTS.md** after each iteration
 - **Check files with `get_file_problems`** after changes
+- **Run PSI tests after FIR changes** — see "Shared vs Java-Direct Files" section
 
 ### Code Quality
 - **No obvious comments** — comment only "why", never "what"
 - **Minimal code** — solve the problem, don't over-engineer
 - **Every fix needs a test** — unit test or box test must pass
 - **Lazy evaluation** — avoid eager computation
+- **Prefer callbacks over hardcoded lists** — see "Callback Pattern" section
 
 ---
 
@@ -35,7 +37,22 @@
 Java Model provides names (`classifierQualifiedName`), FIR resolves them via `session.symbolProvider`. **No `FirSession` access in Java Model**.
 
 ### 2. Callback Pattern for Resolution
-`resolve(tryResolve: (String) -> Boolean)` in `JavaClassifierType` allows Java Model to implement Java resolution rules while FIR validates existence. Same pattern used for annotations via `resolveAnnotation()`.
+
+**CRITICAL**: Always prefer callback-based resolution over hardcoded lists.
+
+`resolve(tryResolve: (String) -> Boolean)` in `JavaClassifierType` allows Java Model to implement Java resolution rules while FIR validates existence.
+
+**Established callback patterns** (use these as templates for new features):
+
+| Feature | Interface Method | FIR Callback |
+|---------|-----------------|--------------|
+| Type resolution | `JavaClassifierType.resolve(tryResolve)` | `symbolProvider.getClassLikeSymbolByClassId` |
+| Annotation resolution | `JavaAnnotation.resolveAnnotation(tryResolve)` | `symbolProvider.getClassLikeSymbolByClassId` |
+| Enum class resolution | `JavaEnumValueAnnotationArgument.resolveEnumClass(tryResolve)` | `findClassId()` in `JavaTypeConversion.kt` |
+| TYPE_USE filtering | `JavaType.filterTypeUseAnnotations(isTypeUse)` | `isTypeUseAnnotationClass()` |
+| Constant evaluation | `JavaField.resolveInitializerValue(resolveReference)` | `resolveExternalFieldValue()` in `FirJavaFacade.kt` |
+
+**Why callbacks**: Allows java-direct to handle its own resolution without affecting PSI-based or javac-wrapper implementations.
 
 ### 3. Hybrid Class Finder
 `CombinedJavaClassFinder` tries source class finder first, falls back to binary class finder for JDK/library classes.
@@ -47,6 +64,35 @@ Java Model provides names (`classifierQualifiedName`), FIR resolves them via `se
 When type parameters can reference each other in bounds (e.g., `<E, S extends Element<E>>`):
 1. Create all instances first with basic context
 2. Update context with all siblings via `updateResolutionContext()`
+
+---
+
+## Shared vs Java-Direct Files
+
+**CRITICAL**: Some files are shared between java-direct and PSI-based class finders. Changes to these files may break PSI tests.
+
+### Java-Direct Specific (safe to modify)
+- `compiler/java-direct/src/**` — All java-direct implementation files
+- `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaMemberOverAst.kt`, etc.
+
+### Shared FIR Files (modify with caution)
+- `compiler/fir/fir-jvm/src/.../FirJavaFacade.kt` — Used by all Java class finders
+- `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt` — Type conversion for all Java sources
+- `compiler/fir/fir-jvm/src/.../javaAnnotationsMapping.kt` — Annotation handling
+- `core/compiler.common.jvm/src/.../load/java/structure/*.kt` — Java model interfaces
+
+### After Modifying Shared Files
+**Always run PSI regression tests**:
+```bash
+./gradlew :compiler:fir:fir-jvm:test --tests "PhasedJvmDiagnosticLightTreeTestGenerated.*" -q
+```
+
+### Discriminating Java-Direct from PSI
+When shared FIR code needs different behavior for java-direct:
+```kotlin
+// Java-direct classes have null source (no PSI)
+val isJavaDirectClass = classSource == null && origin.fromSource
+```
 
 ---
 
@@ -120,29 +166,44 @@ mcp__jetbrains__find_files_by_name_keyword("javaAnnotation", ...)
 | Nullability check fails | TYPE_USE annotations on type arguments need parsing |
 
 ### What NOT to Do
-- **Don't hardcode package lists** for annotation resolution - use callback pattern
-- **Don't modify FIR layer** unless java-direct model is correct but FIR handling is wrong
+- **Don't hardcode lists** for resolution/filtering - use callback pattern instead
+- **Don't modify shared FIR files** without running PSI regression tests
 - **Don't assume AST structure** - always dump and verify with exception debugging
 - **Don't skip empty ERROR_ELEMENT nodes** when scanning siblings
 - **Don't implement partial interfaces** - e.g., `JavaAnnotationArgument` requires value subinterfaces (`JavaLiteralAnnotationArgument`, etc.), not just `name`
+- **Don't estimate fix counts without debugging** - categorize by symptom first, verify root cause before estimating
 
 ---
 
 ## Iteration Workflow
 
-### 1. Run Tests
+### Recommended Approach: Ad-Hoc Debugging
+
+For complex/interconnected issues (like remaining ~62 failures), use the ad-hoc approach that proved effective in iterations 11-16:
+
+1. **Run tests and categorize** — Group by error message pattern
+2. **Debug representative test** — Pick 2-3 tests from largest category, add exception debugging
+3. **Verify root cause** — Ensure all tests in category have SAME root cause (not just same symptom)
+4. **Implement and verify** — Fix, run single test, run full suite
+5. **Look for similar cases** — Check if fix helps other categories
+6. **Document findings** — Update `ITERATION_RESULTS.md`
+
+### Run Tests
 ```bash
 # Run box tests (1166 tests)
 ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated" -q 2>&1 | tee test_output.txt
 
-# Run phased/diagnostic tests (327 tests)
+# Run phased/diagnostic tests (329 tests)
 ./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" -q 2>&1 | tee test_output.txt
 
 # Run a specific test
 ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated.testSpecificName" -q
+
+# IMPORTANT: After modifying shared FIR files, verify PSI tests
+./gradlew :compiler:fir:fir-jvm:test --tests "PhasedJvmDiagnosticLightTreeTestGenerated.Resolve.Multiplatform.*" -q
 ```
 
-### 2. Categorize Failures
+### Categorize Failures
 
 **Important**: Test results are in nested XML files. Use recursive glob:
 
@@ -197,15 +258,18 @@ for key in sorted(failures.keys(), key=lambda k: -len(failures[k])):
         print(f"  - {name}")
 ```
 
-### 3. Debug, Fix, Verify
-1. Add exception-based debugging
-2. Implement fix
-3. Verify single test passes
-4. Run full suite to measure progress
-5. Look through the test report and try to spot similar cases
-6. If found, try to modify the fix to accommodate the similar cases
+### Before Implementing: Root Cause Verification
 
-### 4. Document
+**CRITICAL**: Same error message does NOT mean same root cause.
+
+Example from Iteration 17: "UNRESOLVED_REFERENCE: 'value'" had THREE different root causes:
+1. Annotation argument values not parsed (fixed by annotation subinterfaces)
+2. Annotation method access (annotation interface methods not exposed)
+3. Const val references (REFERENCE_EXPRESSION incorrectly treated as enum)
+
+**Verify root cause by debugging 2-3 tests** before estimating fix impact.
+
+### Document
 Update `ITERATION_RESULTS.md` with findings, changes, and test counts.
 
 ---
@@ -222,11 +286,21 @@ Update `ITERATION_RESULTS.md` with findings, changes, and test counts.
 | `JavaAnnotationOverAst.kt` | Annotation parsing and resolution |
 | `JavaDirectComponentRegistrar.kt` | Plugin registration, hybrid finder setup |
 
-**Reference implementations** (for comparison when implementing new features):
-- `compiler/frontend.common.jvm/src/.../load/java/structure/impl/annotationArgumentsImpl.kt` — annotation argument handling
-- `compiler/frontend.common.jvm/src/.../load/java/structure/impl/JavaTypeImpl.kt` — type construction
+**Reference implementations** (check these BEFORE implementing new features):
 
-**FIR integration** (may need changes for external type handling):
+| Feature | javac-wrapper | PSI-based |
+|---------|---------------|-----------|
+| Type resolution | `TreeBasedClassifierType` | `JavaClassifierTypeImpl` |
+| Annotation args | `TreeBasedAnnotation` | `annotationArgumentsImpl.kt` |
+| Supertypes | `TreeBasedClass.supertypes` | `JavaClassImpl.supertypes` |
+| Type arguments | `TreeBasedClassifierType.typeArguments` | `JavaClassifierTypeImpl.typeArguments` |
+
+**Paths**:
+- javac-wrapper: `compiler/javac-wrapper/src/org/jetbrains/kotlin/javac/wrappers/`
+- PSI-based: `compiler/frontend.common.jvm/src/org/jetbrains/kotlin/load/java/structure/impl/`
+
+**FIR integration** (shared files - modify with caution):
+- `compiler/fir/fir-jvm/src/.../FirJavaFacade.kt` — Java class → FIR conversion
 - `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt` — type conversion, raw type detection
 - `compiler/fir/fir-jvm/src/.../javaAnnotationsMapping.kt` — annotation resolution
 
@@ -263,27 +337,37 @@ For precise coverage of a fix or feature, add tests to `JavaParsingTest` in `tes
 
 | Document | Purpose |
 |----------|---------|
-| `FIXING_ITERATIONS.md` | Current iteration plans and archive links |
+| `FIXING_ITERATIONS.md` | Future iteration plans |
 | `IMPLEMENTATION_PLAN.md` | Architecture overview |
 | `ITERATION_RESULTS.md` | Progress history, key findings |
-| `implDocs/INVESTIGATION_TECHNIQUES.md` | Detailed debugging techniques |
+| `PROCESS_ANALYSIS.md` | Development process analysis and recommendations |
 | `implDocs/archive/` | Archived iteration details and design documents |
 
 ---
 
-## Remaining Work (176 failing tests)
+## Remaining Work (~62 failing tests)
 
-| Category | Count | Priority | Notes |
-|----------|-------|----------|-------|
-| Annotation Arguments | ~30 | HIGH | Need to implement value subinterfaces |
-| Nested Class Resolution | ~10 | HIGH | `Outer.Inner` in binary classes |
-| TYPE_USE on Type Args | ~5 | MEDIUM | `List<@NotNull T>` parsing |
-| Wildcard Edge Cases | ~5 | MEDIUM | Complex generics, delegation |
-| Raw Type Visibility | ~3 | LOW | Protected field access |
-| Baseline Diffs | ~120 | VARIES | May auto-resolve with above fixes |
+After iteration 23, remaining failures fall into these categories:
 
-See `FIXING_ITERATIONS.md` for detailed iteration plans (17-21).
+| Category | Est. Count | Notes |
+|----------|-----------|-------|
+| Baseline diffs (may be correct) | ~20 | Need individual triage |
+| Annotation edge cases | ~10 | Const val refs, special types |
+| Visibility/access issues | ~5 | Protected field patterns |
+| Reflection/metadata | ~5 | May require FIR changes |
+| Modern Java features | ~5 | Records, sealed classes |
+| Other edge cases | ~17 | Need individual analysis |
+
+### Approach for Remaining Work
+
+Use **ad-hoc debugging approach** (proven effective in iterations 11-16):
+1. Run tests and categorize by error message
+2. Debug 2-3 representative tests to verify root cause
+3. Implement fix targeting verified root cause
+4. Run PSI regression tests if FIR files modified
+
+**Do NOT** create detailed upfront plans for complex issues - the remaining failures are interconnected and reveal themselves during debugging.
 
 ---
 
-*Last updated: 2026-03-06 (iteration 16 complete, iteration 17-21 planned)*
+*Last updated: 2026-03-12 (iteration 23 complete)*

@@ -1,10 +1,31 @@
 # Java-Direct: Planning Changelog (Archived)
 
-**Archive Date**: 2026-03-06
+**Archive Date**: 2026-03-12
 
-> This document tracked iteration plan changes during active development. Now archived as iterations 1-16 are complete.
+> This document tracked iteration plan changes during active development.
 
 ---
+
+## 2026-03-12: Process Analysis and Documentation Restructuring
+
+Following analysis of iterations 17-23, major documentation restructuring:
+
+**Analysis**:
+- Created `PROCESS_ANALYSIS.md` documenting development process issues
+- Identified key problems: estimation accuracy, incomplete root cause analysis, cross-cutting changes risk
+- Recommended ad-hoc debugging approach over detailed upfront planning
+
+**Archived**:
+- Created `implDocs/archive/ITERATIONS_17_23_DETAILS.md`
+- Moved `FAILURE_ANALYSIS_ITERATION_17.md` and `FAILURE_ANALYSIS_ITERATION_22.md` to archive
+
+**Updated Documents**:
+- `AGENT_INSTRUCTIONS.md`: Added "Shared vs Java-Direct Files" section, expanded callback pattern docs, added root cause verification guidance
+- `IMPLEMENTATION_PLAN.md`: Updated to Milestone 4 complete, added Milestone 5
+- `FIXING_ITERATIONS.md`: Simplified to focus on ad-hoc approach, removed detailed iteration plans
+- `ITERATION_RESULTS.md`: Condensed to key patterns and learnings
+
+**Current Status**: 1134/1166 box (97.2%), 300/329 phased (91.2%)
 
 ## 2026-03-06: Test Infrastructure Changes
 
@@ -37,4 +58,4 @@ After Iteration 7c (101/138 = 73.2%), restructured remaining iterations:
 
 ---
 
-*Archived: 2026-03-06*
+*Last Updated: 2026-03-12*
