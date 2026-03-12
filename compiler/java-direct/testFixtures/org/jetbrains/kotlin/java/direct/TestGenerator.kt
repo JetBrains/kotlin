@@ -19,6 +19,7 @@ fun main(args: Array<String>) {
                 { file -> file.useLines { lines -> lines.any { it.matches(javaFileRegex) } } }
             testClass<AbstractJavaUsingAstTest>("JavaUsingAstPhasedTestGenerated") {
                 listOf(
+                    "testData/diagnostics/tests",
                     "testData/diagnostics/testsWithAnyBackend",
                     "testData/diagnostics/testsWithStdLib",
                     "testData/diagnostics/jvmIntegration",
@@ -42,6 +43,11 @@ fun main(args: Array<String>) {
             testClass<AbstractJavaUsingAstBoxTest>("JavaUsingAstBoxTestGenerated") {
                 model(
                     "testData/codegen/box",
+                    excludeDirs = k1BoxTestDir + excludedScriptDirs,
+                    additionalFileFilter = additionalFileFilter,
+                )
+                model(
+                    "testData/codegen/boxJvm",
                     excludeDirs = k1BoxTestDir + excludedScriptDirs,
                     additionalFileFilter = additionalFileFilter,
                 )
