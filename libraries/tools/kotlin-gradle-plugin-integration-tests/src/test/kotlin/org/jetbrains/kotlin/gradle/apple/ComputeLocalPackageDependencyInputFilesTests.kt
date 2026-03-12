@@ -12,12 +12,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ComputeLocalPack
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 import kotlin.io.path.createDirectories
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
-@NativeGradlePluginTests
+@OsCondition(
+    supportedOn = [OS.MAC],
+    enabledOnCI = [OS.MAC],
+)
 @SwiftPMImportGradlePluginTests
 class ComputeLocalPackageDependencyInputFilesTests : KGPBaseTest() {
 
