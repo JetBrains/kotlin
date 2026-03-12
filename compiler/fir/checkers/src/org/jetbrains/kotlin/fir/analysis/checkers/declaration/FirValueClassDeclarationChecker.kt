@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
@@ -60,17 +62,24 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         private val cloneableFqName = FqName("Cloneable")
     }
 
+    @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         if (!declaration.symbol.isInlineOrValueClass()) {
             return
         }
 
+        val isExtendedValueClass = declaration.isExtendedValueClass(context)
+
         if (declaration.isInner || declaration.isLocal) {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_TOP_LEVEL)
         }
 
-        if (declaration.modality != Modality.FINAL) {
+        if (isExtendedValueClass) {
+            if (declaration.modality == Modality.OPEN) {
+                reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_OPEN)
+            }
+        } else if (declaration.modality != Modality.FINAL) {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_FINAL)
         }
 
@@ -81,8 +90,13 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry is FirImplicitAnyTypeRef || supertypeEntry is FirErrorTypeRef) continue
-            if (supertypeEntry.toRegularClassSymbol(context.session)?.isInterface == true) continue
-            reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES)
+            val supertypeSymbol = supertypeEntry.toRegularClassSymbol(context.session) ?: continue
+            if (supertypeSymbol.isInterface) continue
+            if (!isExtendedValueClass) {
+                reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES)
+            } else if (!supertypeSymbol.fir.isExtendedValueClass(context)) {
+                reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES)
+            }
         }
 
         if (declaration.isSubtypeOfCloneable(context.session)) {
@@ -107,7 +121,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         declaration.processAllDeclarations(context.session) { innerDeclaration ->
             when (innerDeclaration) {
                 is FirRegularClassSymbol -> {
-                    if (innerDeclaration.isInner) {
+                    if (innerDeclaration.isInner && !isExtendedValueClass) {
                         reporter.reportOn(innerDeclaration.source, FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS)
                     }
                 }
@@ -151,7 +165,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             )
         }
 
-        val reservedNames = boxAndUnboxNames + if (isCustomEqualsSupported) emptySet() else equalsAndHashCodeNames
+        val reservedNames = when {
+            isExtendedValueClass -> emptySet()
+            isCustomEqualsSupported -> boxAndUnboxNames
+            else -> boxAndUnboxNames + equalsAndHashCodeNames
+        }
         val classScope = declaration.unsubstitutedScope()
         for (reservedName in reservedNames) {
             classScope.processFunctionsByName(Name.identifier(reservedName)) {
@@ -177,7 +195,17 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             }
         }
 
-        if (primaryConstructor?.source?.kind !is KtRealSourceElementKind) {
+        if (primaryConstructor?.source?.kind is KtRealSourceElementKind) {
+            if (LanguageFeature.JvmInlineMultiFieldValueClasses.isEnabled() || isExtendedValueClass) {
+                if (primaryConstructorParametersByName.isEmpty()) {
+                    reporter.reportOn(primaryConstructor.source, FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR)
+                    return
+                }
+            } else if (primaryConstructorParametersByName.size != 1) {
+                reporter.reportOn(primaryConstructor.source, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE)
+                return
+            }
+        } else if (!isExtendedValueClass || declaration.isFinal) {
             if (!declaration.isExpect || LanguageFeature.AllowExpectValueClassesWithNoPrimaryConstructor.isDisabled()) {
                 reporter.reportOn(declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS)
             } else {
@@ -188,27 +216,16 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             return
         }
 
-        if (LanguageFeature.JvmInlineMultiFieldValueClasses.isEnabled()) {
-            if (primaryConstructorParametersByName.isEmpty()) {
-                reporter.reportOn(primaryConstructor.source, FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR)
-                return
-            }
-        } else if (primaryConstructorParametersByName.size != 1) {
-            reporter.reportOn(primaryConstructor.source, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE)
-            return
-        }
-
         for ([name, primaryConstructorParameter] in primaryConstructorParametersByName) {
             val parameterTypeRef = primaryConstructorParameter.resolvedReturnTypeRef
             val recursionType = parameterTypeRef.coneType.getValueClassTypeRecursionType(context.session)
             when {
-                primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
+                (declaration.isFinal || !isExtendedValueClass) && primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
                     reporter.reportOn(
-                        primaryConstructorParameter.source,
-                        FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER
+                        primaryConstructorParameter.source, FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER
                     )
 
-                parameterTypeRef.isInapplicableParameterType(context.session) -> {
+                !isExtendedValueClass && parameterTypeRef.isInapplicableParameterType(context.session) -> {
                     reporter.reportOn(
                         parameterTypeRef.source,
                         FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
@@ -216,7 +233,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     )
                 }
 
-                recursionType != null -> when (recursionType) {
+                !isExtendedValueClass && recursionType != null -> when (recursionType) {
                     Plain -> reporter.reportOn(parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE)
                     ViaTypeParameters -> reporter.reportOn(
                         parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS
@@ -271,6 +288,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             }
         }
     }
+
+    private fun FirRegularClass.isExtendedValueClass(context: CheckerContext): Boolean =
+        context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses) &&
+                hasModifier(KtTokens.VALUE_KEYWORD) &&
+                !hasAnnotation(JVM_INLINE_ANNOTATION_CLASS_ID, context.session)
 
     private fun FirPropertySymbol.isRelatedToParameter(parameter: FirValueParameterSymbol?) =
         name == parameter?.name && source?.kind is KtFakeSourceElementKind
