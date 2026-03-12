@@ -705,6 +705,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val VALUE_CLASSES by object : DiagnosticGroup("Value classes") {
         val VALUE_CLASS_NOT_TOP_LEVEL by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
         val VALUE_CLASS_NOT_FINAL by error<KtDeclaration>(PositioningStrategy.MODALITY_MODIFIER)
+        val VALUE_CLASS_OPEN by error<KtDeclaration>(PositioningStrategy.MODALITY_MODIFIER)
         val ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
         val EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY by error<KtDeclaration>()
         val INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE by error<KtElement>()
@@ -717,6 +718,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION by error<PsiElement>()
         val VALUE_CLASS_CANNOT_EXTEND_CLASSES by error<KtElement>()
+        val VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES by error<KtElement>()
         val VALUE_CLASS_CANNOT_BE_RECURSIVE by error<KtElement>()
         val VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS by deprecationError<KtElement>(
             LanguageFeature.ForbidValueClassRecursionViaTypeParameters

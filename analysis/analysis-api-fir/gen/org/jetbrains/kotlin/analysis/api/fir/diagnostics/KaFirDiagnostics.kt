@@ -1567,6 +1567,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ValueClassNotFinal::class
     }
 
+    interface ValueClassOpen : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = ValueClassOpen::class
+    }
+
     interface AbsenceOfPrimaryConstructorForValueClass : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = AbsenceOfPrimaryConstructorForValueClass::class
     }
@@ -1606,6 +1610,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ValueClassCannotExtendClasses : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ValueClassCannotExtendClasses::class
+    }
+
+    interface ValueClassCannotExtendIdentityClasses : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ValueClassCannotExtendIdentityClasses::class
     }
 
     interface ValueClassCannotBeRecursive : KaFirDiagnostic<KtElement> {
