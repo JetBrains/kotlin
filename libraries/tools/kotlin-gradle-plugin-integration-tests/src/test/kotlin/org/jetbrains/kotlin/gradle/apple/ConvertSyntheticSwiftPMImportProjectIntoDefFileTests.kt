@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegister
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.NativeGradlePluginTests
+import org.jetbrains.kotlin.gradle.testbase.OsCondition
 import org.jetbrains.kotlin.gradle.testbase.SwiftPMImportGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
@@ -41,7 +43,10 @@ import kotlin.io.path.readLines
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
-@NativeGradlePluginTests
+@OsCondition(
+    supportedOn = [OS.MAC],
+    enabledOnCI = [OS.MAC],
+)
 @SwiftPMImportGradlePluginTests
 class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
 
