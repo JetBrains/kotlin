@@ -26,12 +26,16 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.junit.jupiter.api.condition.OS
 import kotlin.String
 import kotlin.io.path.createDirectories
 import kotlin.io.path.pathString
 import kotlin.test.assertEquals
 
-@NativeGradlePluginTests
+@OsCondition(
+    supportedOn = [OS.MAC],
+    enabledOnCI = [OS.MAC],
+)
 @SwiftPMImportGradlePluginTests
 class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
 
