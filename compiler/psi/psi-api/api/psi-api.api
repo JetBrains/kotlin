@@ -749,8 +749,6 @@ public final class org/jetbrains/kotlin/psi/CreateByPatternKt {
 	public static synthetic fun createExpressionByPattern$default (Lorg/jetbrains/kotlin/psi/KtPsiFactory;Ljava/lang/String;[Ljava/lang/Object;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/psi/KtExpression;
 	public static final fun createValueArgumentListByPattern (Lorg/jetbrains/kotlin/psi/KtPsiFactory;Ljava/lang/String;[Ljava/lang/Object;Z)Lorg/jetbrains/kotlin/psi/KtValueArgumentList;
 	public static synthetic fun createValueArgumentListByPattern$default (Lorg/jetbrains/kotlin/psi/KtPsiFactory;Ljava/lang/String;[Ljava/lang/Object;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/psi/KtValueArgumentList;
-	public static final fun getCREATE_BY_PATTERN_MAY_NOT_REFORMAT ()Z
-	public static final fun setCREATE_BY_PATTERN_MAY_NOT_REFORMAT (Z)V
 }
 
 public final class org/jetbrains/kotlin/psi/EditCommaSeparatedListHelper {

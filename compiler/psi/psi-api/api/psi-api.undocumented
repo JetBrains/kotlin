@@ -273,7 +273,6 @@ org.jetbrains.kotlin.psi.BuilderByPattern.appendName(Name)
 org.jetbrains.kotlin.psi.BuilderByPattern.appendNonFormattedText(String)
 org.jetbrains.kotlin.psi.BuilderByPattern.appendTypeReference(KtTypeReference?)
 org.jetbrains.kotlin.psi.BuilderByPattern.create((String, Array<out Any>) -> TElement)
-org.jetbrains.kotlin.psi.CREATE_BY_PATTERN_MAY_NOT_REFORMAT
 org.jetbrains.kotlin.psi.EditCommaSeparatedListHelper
 org.jetbrains.kotlin.psi.EditCommaSeparatedListHelper.addItem(KtElement, List<TItem>, TItem, KtToken)
 org.jetbrains.kotlin.psi.EditCommaSeparatedListHelper.addItemAfter(KtElement, List<TItem>, TItem, TItem?, KtToken)
