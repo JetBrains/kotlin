@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,11 +11,11 @@ import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.references.KaFirReference
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.api.platform.caches.withStatsCounter
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionAttempt
-import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolBasedReference
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationTracker
@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.psi.KtElement
  *
  * For [KaSessionComponent] it is possible to have such a cache directly near the use site,
  * but for non-components it is impossible if they are not a part of the session.
- * For instance, [KaSymbolBasedReference] is not a component, so this storage can be used to have all
+ * For instance, [KaFirReference] is not a component, so this storage can be used to have all
  * [KaSession] benefits such as active invalidation inside
- * [KaSymbolBasedReference.resolveToSymbols] implementation.
+ * [KaFirReference.resolveToSymbols] implementation.
  *
  * In addition, this storage provides entry points like [softCachedValueWithPsiKey] to unify the UX.
  */
@@ -58,7 +58,7 @@ internal class KaFirInternalCacheStorage(private val analysisSession: KaFirSessi
         }
     }
 
-    val resolveToSymbolsCache: CachedValue<Cache<KaSymbolBasedReference, Collection<KaSymbol>>> by lazy {
+    val resolveToSymbolsCache: CachedValue<Cache<KaFirReference, Collection<KaSymbol>>> by lazy {
         softCachedValueWithPsiKey {
             Caffeine.newBuilder()
                 .withStatsCounter(statisticsService?.analysisSessions?.resolveToSymbolsCacheStatsCounter)

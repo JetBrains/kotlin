@@ -239,8 +239,8 @@ internal class KaFirResolver(
 
     private fun doResolveToSymbols(reference: KtReference): Collection<KaSymbol> {
         checkWithAttachment(
-            reference is KaSymbolBasedReference,
-            { "${reference::class.simpleName} is not extends ${KaSymbolBasedReference::class.simpleName}" },
+            reference is KaFirReference,
+            { "${reference::class.simpleName} is not extends ${KaFirReference::class.simpleName}" },
         ) {
             withPsiEntry("reference", reference.element)
         }

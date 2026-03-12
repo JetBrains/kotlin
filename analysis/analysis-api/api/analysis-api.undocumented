@@ -565,8 +565,6 @@ org.jetbrains.kotlin.analysis.api.resolution.KaCompoundUnaryOperation.Precedence
 org.jetbrains.kotlin.analysis.api.resolution.KaDelegatedConstructorCall.Kind
 org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSymbol
 org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSymbol
-org.jetbrains.kotlin.analysis.api.resolution.KaSymbolBasedReference
-org.jetbrains.kotlin.analysis.api.resolution.KaSymbolBasedReference.resolveToSymbols()
 org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionNavigationTargetsProvider
 org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider.Companion.EP_NAME
 org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider.Companion.provideExtensionsFor(KaModule)
