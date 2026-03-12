@@ -1,54 +1,142 @@
-# Test Failure Analysis - Post Iteration 24
+# Test Failure Analysis - Post Iteration 25c
 
 **Date**: 2026-03-12  
-**Context**: Comprehensive analysis after iteration 24 fixes  
+**Context**: Post-mortem analysis after iteration 25/25c underwhelming results  
 **Current Results**: 
-- Box: 1167 total, 18 failed (98.5% pass)
-- Phased: 1442 total, 124 failed (91.4% pass)
-- **Combined: 2609 total, 142 failed (94.6% pass)**
+- Box: 1167 total, 17 failed (98.5% pass)
+- Phased: 1442 total, 110 failed (92.4% pass)
+- **Combined: 2609 total, 127 failed (95.1% pass)**
 
 ---
 
-## Iteration 24 Fixed (15 tests)
+## Critical Lesson: Estimation Accuracy
 
-The following regressions were fixed in iteration 24:
+### Iteration 25 Estimation vs Reality
 
-| Category | Tests Fixed | Fix Applied |
-|----------|-------------|-------------|
-| Constant Evaluation | ~5 | Added `JAVA_LANG_TYPES` map in `JavaTypeOverAst.kt` |
-| Protected Static Visibility | 7 | Changed to `ProtectedStaticVisibility` in `JavaMemberOverAst.kt` |
-| Sibling Inner Classes | 3 | Added sibling lookup in `JavaResolutionContext.findLocalClass()` |
+| Category | Estimated | Actual Fixed | Notes |
+|----------|-----------|--------------|-------|
+| Inherited Inner Classes | 30-40 | 2 | Only 2 tests were actually this root cause |
+| Interface Static Flag | (grouped above) | 8 | Different root cause, discovered during iteration |
+| **Total** | **30-40** | **10** | **75% overestimate** |
+
+### Why the Discrepancy?
+
+**Root Cause of Bad Estimation**: Tests were categorized by **symptom** (test name containing "Inherited", "Inner", "Nested") rather than by **actual root cause**. Many tests that appear to be about "inherited inner classes" have completely different underlying issues:
+
+1. **Ambiguity Detection Tests** (`InheritanceAmbiguity`, `InheritanceAmbiguity2`, `InheritanceAmbiguity3`)
+   - Expected: Report `MISSING_DEPENDENCY_CLASS` when multiple inner classes named `Z` exist from different supertypes
+   - java-direct: **Resolves one** (wrong behavior) instead of detecting ambiguity
+   - This is NOT about finding inherited inner classes - it's about detecting **ambiguous** inner classes
+
+2. **Type Parameter Scoping Tests** (`InnerWithTypeParameter`, `SeveralInnersWithTypeParameters`, `Clash`)
+   - About type parameters being properly scoped in nested generic classes
+   - Not about inherited inner class lookup at all
+
+3. **Import/Package Edge Cases** (`TopLevelClassVsPackage`, `NestedClassClash`)
+   - About complex import resolution with package/class name conflicts
+   - Not about inheritance
+
+### Improved Estimation Methodology
+
+**BEFORE estimating fix counts:**
+1. **Debug 2-3 representative tests** from each category to confirm the actual root cause
+2. **Check if tests share the EXACT same code path** where the fix would be applied
+3. **Categorize by code path**, not by test name or superficial error message
+4. **Apply 50% discount** to initial estimates for unfamiliar code areas
 
 ---
 
-## Remaining Failures Analysis (142 tests)
+## Corrected Remaining Failures Analysis (127 tests)
 
-### Category 1: Inherited Inner Class Resolution (~30-40 tests) — HIGH PRIORITY
+### Category 1: Inherited Inner Class Resolution (TRUE) — 2-5 tests remaining
 
-**Error Pattern**: `MISSING_DEPENDENCY_CLASS: Cannot access class 'y'`
+**Confirmed Tests**: Only tests where the actual issue is finding an inner class from a supertype.
+- Most were already fixed in iteration 25
 
-**Root Cause**: When class B extends class A, and A has inner class `Inner`, references to `Inner` from B's context fail. The current `findLocalClass` only checks:
-1. Inner classes of the containing class
-2. Sibling inner classes (fixed in iter 24)
-3. Top-level classes
+**Status**: Mostly resolved
 
-It does NOT search supertypes' inner classes per JLS 6.5.2.
+---
 
-**Affected Tests** (representative):
-- `testInheritedInner`, `testInheritedInner2`
-- `testInheritedInnerAndNested`
-- `testInheritedInnerUsageInInner`
-- `testNestedFromJava`, `testNestedFromJavaAfterKotlin`
-- `testSuperTypeWithSameInner`
-- `testInheritedKotlinInner`
-- Multiple `testNested*` and `testInheritance*` tests
+### Category 2: Ambiguity Detection — ~5-8 tests — MEDIUM PRIORITY
 
-**Fix Required**: Extend `findLocalClass` in `JavaResolutionContext.kt` to walk up the supertype hierarchy and search each supertype's inner classes. This requires:
-1. Getting the containing class's supertypes
-2. For each supertype, check `findInnerClass(name)`
-3. Recursively check supertypes of supertypes
+**Error Pattern**: java-direct resolves a type when it should report ambiguity/MISSING_DEPENDENCY_CLASS
 
-**Note**: The callback-based `resolveFromSupertypes` already exists but only runs during FIR resolution. The issue is that `findLocalClass` is called during Java model construction, before FIR callbacks are available.
+**Root Cause**: When a class inherits from multiple sources (class + interface) that both define inner class `Z`, Java should report ambiguity. java-direct picks one instead.
+
+**Affected Tests**:
+- `testInheritanceAmbiguity`, `testInheritanceAmbiguity2`, `testInheritanceAmbiguity3`
+- `testInheritedInner2` (different: type param shadows inherited inner)
+- `testClash` (type parameter `O` clashes with inherited inner `O`)
+- `testSupertypeInnerAndTypeParameterWithSameNames`
+
+**Fix Required**: Modify inner class resolution to:
+1. Collect ALL matching inner classes from supertypes
+2. If multiple found, return null (let FIR report MISSING_DEPENDENCY)
+3. Only return if exactly one match
+
+---
+
+### Category 3: Type Parameter Scoping in Nested Classes — ~6-10 tests — MEDIUM PRIORITY
+
+**Error Pattern**: Type parameters from outer classes not visible in inner classes
+
+**Affected Tests**:
+- `testInnerWithTypeParameter`
+- `testSeveralInnersWithTypeParameters`
+- `testJ_k`, `testJ_k_complex`
+
+**Status**: Needs investigation - may be FIR integration issue, not java-direct
+
+---
+
+### Category 4: Sealed Classes — ~12-15 tests — HIGH PRIORITY
+
+(unchanged from previous analysis)
+
+---
+
+### Category 5: Java Records — ~6-8 tests — HIGH PRIORITY
+
+(unchanged from previous analysis)
+
+---
+
+### Category 6: Import/Package Edge Cases — ~8-10 tests — MEDIUM PRIORITY
+
+(unchanged from previous analysis)
+
+---
+
+### Category 7: Raw Types — ~10-15 tests — LOW PRIORITY
+
+(unchanged from previous analysis)
+
+---
+
+### Category 8: Baseline Differences Only — ~50-60 tests — LOW PRIORITY
+
+(unchanged from previous analysis)
+
+---
+
+## Updated Priority Order
+
+### Iteration 26: Sealed Classes  
+- **Impact**: 12-15 tests (HIGH CONFIDENCE - distinct feature)
+- **Complexity**: LOW-MEDIUM
+- **Files**: `JavaClassOverAst.kt`
+
+### Iteration 27: Java Records
+- **Impact**: 6-8 tests (HIGH CONFIDENCE - distinct feature)
+- **Complexity**: MEDIUM
+- **Files**: `JavaClassOverAst.kt`, new `JavaRecordComponentOverAst.kt`
+
+### Iteration 28: Ambiguity Detection
+- **Impact**: 5-8 tests (MEDIUM CONFIDENCE)
+- **Complexity**: MEDIUM
+- **Files**: `JavaResolutionContext.kt`
+
+### Later: Type parameter scoping, Import edge cases, baseline updates
 
 ---
 

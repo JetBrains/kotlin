@@ -5,74 +5,76 @@
 This document tracks iteration history and plans for the `java-direct` module.
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration  
-**Status**: Iteration 24 complete — 1149/1167 box tests (98.5%), ~1318/1442 phased tests (~91.4%)  
-**Combined**: 2609 total, 142 failed (94.6% pass)  
+**Status**: Iteration 25c complete — 1150/1167 box tests (98.5%), ~1326/1442 phased tests (~92.0%)  
+**Combined**: 2609 total, 127 failed (95.1% pass)  
 **Last Updated**: 2026-03-12
 
 ---
 
-## Current State After Iteration 24
+## CRITICAL: Estimation Accuracy Lesson
 
-### What Was Fixed in Iteration 24
-1. **Constant Evaluation** (~5 tests) — Added `JAVA_LANG_TYPES` map for implicit java.lang import
-2. **Protected Static Visibility** (7 tests) — Use `ProtectedStaticVisibility` for protected static members
-3. **Sibling Inner Classes** (3 tests) — Added sibling lookup in `findLocalClass`
+### Iteration 25 Post-Mortem
 
-### Remaining Failures (142 tests)
-See `TEST_FAILURE_ANALYSIS.md` for detailed breakdown. Summary:
+| Category | Estimated | Actual Fixed | Accuracy |
+|----------|-----------|--------------|----------|
+| Inherited Inner Classes | 30-40 | 2 | **5-7%** |
+| Interface Static Flag | (grouped above) | 8 | (discovered during work) |
+| **Total** | **30-40** | **10** | **25-33%** |
 
-| Category | Est. Tests | Priority | Complexity |
-|----------|------------|----------|------------|
-| **Inherited Inner Classes** | ~30-40 | HIGH | MEDIUM |
-| **Sealed Classes** | ~12-15 | HIGH | LOW-MEDIUM |
-| **Java Records** | ~6-8 | HIGH | MEDIUM |
-| **Import Edge Cases** | ~8-10 | MEDIUM | MEDIUM |
-| **Raw Types** | ~10-15 | LOW | VARIES |
-| **Enum Handling** | ~3-5 | LOW | LOW |
-| **Baseline Diffs Only** | ~60-70 | LOW | N/A |
+### Root Cause of Bad Estimation
+
+Tests were categorized by **symptom/test name** rather than **actual root cause**:
+
+1. **"InheritanceAmbiguity" tests** - NOT about finding inherited inner classes, but about **detecting ambiguity** when multiple inner classes with same name exist from different supertypes
+2. **"InnerWithTypeParameter" tests** - About **type parameter scoping**, not inheritance
+3. **"NestedClassClash" tests** - About **import resolution**, not inheritance
+
+### MANDATORY Estimation Process
+
+**BEFORE estimating fix counts for ANY category:**
+
+1. **Debug 2-3 representative tests** — Run with debugger, trace actual code path
+2. **Verify tests share SAME code path** — Different symptoms ≠ same root cause
+3. **Categorize by code path**, not test name
+4. **Apply 50% discount** for unfamiliar code areas
+5. **Maximum confidence estimate**: 15 tests per category unless proven otherwise
+
+---
+
+## Current State After Iteration 25c
+
+### What Was Fixed in Iterations 24-25c
+| Iteration | Category | Tests Fixed |
+|-----------|----------|-------------|
+| 24 | Constant Evaluation | ~5 |
+| 24 | Protected Static Visibility | 7 |
+| 24 | Sibling Inner Classes | 3 |
+| 25 | Inherited Inner from Supertypes | 2 |
+| 25c | Interface Nested Class Static | 8 |
+
+### Remaining Failures (127 tests) — CORRECTED ESTIMATES
+See `TEST_FAILURE_ANALYSIS.md` for details.
+
+| Category | Est. Tests | Confidence | Priority |
+|----------|------------|------------|----------|
+| **Sealed Classes** | 12-15 | HIGH | HIGH |
+| **Java Records** | 6-8 | HIGH | HIGH |
+| **Ambiguity Detection** | 5-8 | MEDIUM | MEDIUM |
+| **Type Param Scoping** | 6-10 | LOW | MEDIUM |
+| **Import Edge Cases** | 8-10 | LOW | MEDIUM |
+| **Baseline Diffs** | 50-60 | HIGH | LOW |
+
+**Note**: Sealed Classes and Records have HIGH confidence because they're **distinct features** with clear implementation gaps (isSealed=false, isRecord=false), not subtle resolution bugs.
 
 ---
 
 ## Recommended Next Iterations
 
-### Iteration 25: Inherited Inner Class Resolution (RECOMMENDED NEXT)
+### Iteration 26: Sealed Classes (RECOMMENDED NEXT)
 
-**Impact**: ~30-40 tests (largest category of actual failures)
+**Impact**: 12-15 tests (HIGH CONFIDENCE — distinct unimplemented feature)
 
-**Problem**: When class B extends class A, and A has inner class `Inner`, references to `Inner` from B fail because `findLocalClass` doesn't search supertypes.
-
-**Test to debug first**: `testInheritedInner` in `compiler/testData/diagnostics/tests/javac/inheritance/InheritedInner.kt`
-
-**Fix approach**:
-```kotlin
-// In JavaResolutionContext.kt, modify findLocalClass:
-fun findLocalClass(name: Name): JavaClass? {
-    val containingClass = containingClassProvider?.invoke()
-    // 1. Inner classes of containing class
-    containingClass?.findInnerClass(name)?.let { return it }
-    // 2. Sibling inner classes (already implemented in iter 24)
-    containingClass?.outerClass?.findInnerClass(name)?.let { return it }
-    // 3. NEW: Inner classes of supertypes (JLS 6.5.2)
-    containingClass?.let { cls ->
-        findInnerClassFromSupertypes(name, cls)?.let { return it }
-    }
-    // 4. Top-level classes
-    return localClassProvider(name)
-}
-
-private fun findInnerClassFromSupertypes(name: Name, javaClass: JavaClass): JavaClass? {
-    // Walk supertype hierarchy, check each for inner class with given name
-    // Be careful about cycles and external classes
-}
-```
-
-**Challenge**: Supertypes may be external (resolved via FIR), so we need to handle the case where `classifier` is null and only `classifierQualifiedName` is available. May need to use the resolution callback.
-
----
-
-### Iteration 26: Sealed Classes
-
-**Impact**: ~12-15 tests
+**Why High Confidence**: `isSealed` literally returns `false` always. Every sealed class test will fail until this is implemented. No ambiguity about root cause.
 
 **Problem**: `isSealed` returns `false`, `permittedTypes` returns empty.
 
@@ -96,7 +98,9 @@ override val permittedTypes: Sequence<JavaClassifierType>
 
 ### Iteration 27: Java Records
 
-**Impact**: ~6-8 tests
+**Impact**: 6-8 tests (HIGH CONFIDENCE — distinct unimplemented feature)
+
+**Why High Confidence**: `isRecord` returns `false` always. Same reasoning as sealed classes.
 
 **Problem**: `isRecord` returns `false`, `recordComponents` returns empty.
 
@@ -117,6 +121,18 @@ override val permittedTypes: Sequence<JavaClassifierType>
    ```
 
 2. Create new `JavaRecordComponentOverAst.kt` implementing `JavaRecordComponent` interface.
+
+---
+
+### Iteration 28: Ambiguity Detection (LOWER CONFIDENCE)
+
+**Impact**: 5-8 tests (MEDIUM CONFIDENCE — needs debugging to confirm)
+
+**Problem**: When multiple inner classes with same name exist from different supertypes, java-direct resolves one instead of returning null (which would trigger MISSING_DEPENDENCY_CLASS).
+
+**Tests**: `testInheritanceAmbiguity*`, `testClash`
+
+**MUST DEBUG FIRST** to confirm these share the same root cause.
 
 ---
 
