@@ -1078,22 +1078,38 @@ object ArrayOps : TemplateGroupBase() {
                 sample("samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf")
                 returns("SELF")
                 on(Platform.JS) {
+                    /**
+                     * Benchmarking showed that when copying a small number of elements (typically < 20),
+                     * a simple loop is consistently faster than calling `TypedArray.set` or `TypedArray.slice`
+                     * across JS engines. We chose [OPTIMAL_SIZE_FOR_REGULAR_LOOP] as an arbitrary threshold based on those results.
+                     **/
                     when (primitive!!) {
                         PrimitiveType.Boolean -> body {
                             "return withType(\"BooleanArray\", arrayCopyResize(this, newSize, false))"
                         }
-                        /**
-                         * Benchmarking showed that when copying a small number of elements (typically < 20),
-                         * a simple loop is consistently faster than calling `TypedArray.set` or `TypedArray.slice`
-                         * across JS engines. We chose [OPTIMAL_SIZE_FOR_REGULAR_LOOP] as an arbitrary threshold based on those results.
-                         **/
+                        PrimitiveType.Long -> {
+                            annotation("@OptIn(JsIntrinsic::class)")
+                            body {
+                                """
+                                if (!isLongCompiledToBigInt()) return fillFrom(this, LongArray(newSize))
+                                val size = this.size
+                                return when {
+                                    newSize < OPTIMAL_SIZE_FOR_REGULAR_LOOP || size < OPTIMAL_SIZE_FOR_REGULAR_LOOP -> fillFrom(this, ${primitive}Array(newSize))
+                                    newSize > size -> LongArray(newSize).also { copy ->
+                                        copy.asDynamic().set(this)
+                                    }
+                                    else -> this.asDynamic().slice(0, newSize)
+                                }
+                            """.trimIndent()
+                            }
+                        }
                         PrimitiveType.Char -> body {
                             """
                             val size = this.size
                             val copy = when {
                                 newSize < OPTIMAL_SIZE_FOR_REGULAR_LOOP || size < OPTIMAL_SIZE_FOR_REGULAR_LOOP -> fillFrom(this, CharArray(newSize))
                                 newSize > size -> CharArray(newSize).also { copy ->
-                                    copy.asDynamic().set(this, 0)
+                                    copy.asDynamic().set(this)
                                 }
                                 else -> this.asDynamic().slice(0, newSize)
                             }
@@ -1107,7 +1123,7 @@ object ArrayOps : TemplateGroupBase() {
                             return when {
                                 newSize < OPTIMAL_SIZE_FOR_REGULAR_LOOP || size < OPTIMAL_SIZE_FOR_REGULAR_LOOP -> fillFrom(this, ${primitive}Array(newSize))
                                 newSize > size -> ${primitive}Array(newSize).also { copy ->
-                                    copy.asDynamic().set(this, 0)
+                                    copy.asDynamic().set(this)
                                 }
                                 else -> this.asDynamic().slice(0, newSize)
                             }

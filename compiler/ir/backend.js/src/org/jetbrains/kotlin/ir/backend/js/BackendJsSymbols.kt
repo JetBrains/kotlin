@@ -344,6 +344,8 @@ class BackendJsSymbols(
     val jsLongToString: IrSimpleFunctionSymbol = CallableIds.jsLongToString.functionSymbol()
     val longToStringImpl: IrSimpleFunctionSymbol = CallableIds.toStringImpl(compileLongAsBigint).functionSymbol()
 
+    val isLongCompiledToBigInt: IrSimpleFunctionSymbol = CallableIds.isLongCompiledToBigInt.functionSymbol()
+
     val stringConstructorSymbol by StandardClassIds.String.primaryConstructorSymbol()
 
     val anyConstructorSymbol by StandardClassIds.Any.primaryConstructorSymbol()
@@ -591,6 +593,7 @@ private object CallableIds {
     val isComparable = "isComparable".jsCallableId
     val isCharSequence = "isCharSequence".jsCallableId
     val longCopyOfRange = "longCopyOfRange".jsCallableId
+    val isLongCompiledToBigInt = "isLongCompiledToBigInt".jsCallableId
     val isBooleanArray = "isBooleanArray".jsCallableId
     val isByteArray = "isByteArray".jsCallableId
     val isShortArray = "isShortArray".jsCallableId

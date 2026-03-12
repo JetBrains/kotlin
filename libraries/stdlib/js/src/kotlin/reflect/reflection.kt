@@ -26,15 +26,14 @@ internal fun <T : Any> getKClass(jClass: JsClass<T>): KClass<T> {
     }
 }
 
-private val IS_COMPILED_TO_BIGINT = jsTypeOf(23L) === "bigint"
-
+@OptIn(JsIntrinsic::class)
 @UsedFromCompilerGeneratedCode
 internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
     when (jsTypeOf(e)) {
         "string" -> PrimitiveClasses.stringClass
         "number" -> if (jsBitwiseOr(e, 0).asDynamic() === e) PrimitiveClasses.intClass else PrimitiveClasses.doubleClass
         "bigint" -> {
-            if (IS_COMPILED_TO_BIGINT && js("BigInt.asIntN(64, e)") === e) PrimitiveClasses.longClass
+            if (isLongCompiledToBigInt() && js("BigInt.asIntN(64, e)") === e) PrimitiveClasses.longClass
             else PrimitiveClasses.bigintClass
         }
         "boolean" -> PrimitiveClasses.booleanClass

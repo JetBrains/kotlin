@@ -189,6 +189,10 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsInvocation(JsNameRef(Namer.SLICE_FUNCTION, translateCallArguments(call, context).single()))
             }
 
+            add(symbols.isLongCompiledToBigInt) { _, _ ->
+                JsBooleanLiteral(backendContext.configuration.compileLongAsBigint)
+            }
+
             add(symbols.longCopyOfRange) { call, context ->
                 val args = translateCallArguments(call, context)
 

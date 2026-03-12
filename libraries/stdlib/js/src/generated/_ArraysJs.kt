@@ -954,7 +954,7 @@ public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
     return when {
         newSize < OPTIMAL_SIZE_FOR_REGULAR_LOOP || size < OPTIMAL_SIZE_FOR_REGULAR_LOOP -> fillFrom(this, ByteArray(newSize))
         newSize > size -> ByteArray(newSize).also { copy ->
-            copy.asDynamic().set(this, 0)
+            copy.asDynamic().set(this)
         }
         else -> this.asDynamic().slice(0, newSize)
     }
@@ -975,7 +975,7 @@ public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
     return when {
         newSize < OPTIMAL_SIZE_FOR_REGULAR_LOOP || size < OPTIMAL_SIZE_FOR_REGULAR_LOOP -> fillFrom(this, ShortArray(newSize))
         newSize > size -> ShortArray(newSize).also { copy ->
-            copy.asDynamic().set(this, 0)
+            copy.asDynamic().set(this)
         }
         else -> this.asDynamic().slice(0, newSize)
     }
@@ -996,7 +996,7 @@ public actual fun IntArray.copyOf(newSize: Int): IntArray {
     return when {
         newSize < OPTIMAL_SIZE_FOR_REGULAR_LOOP || size < OPTIMAL_SIZE_FOR_REGULAR_LOOP -> fillFrom(this, IntArray(newSize))
         newSize > size -> IntArray(newSize).also { copy ->
-            copy.asDynamic().set(this, 0)
+            copy.asDynamic().set(this)
         }
         else -> this.asDynamic().slice(0, newSize)
     }
@@ -1011,13 +1011,15 @@ public actual fun IntArray.copyOf(newSize: Int): IntArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
+@OptIn(JsIntrinsic::class)
 public actual fun LongArray.copyOf(newSize: Int): LongArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
+    if (!isLongCompiledToBigInt()) return fillFrom(this, LongArray(newSize))
     val size = this.size
     return when {
         newSize < OPTIMAL_SIZE_FOR_REGULAR_LOOP || size < OPTIMAL_SIZE_FOR_REGULAR_LOOP -> fillFrom(this, LongArray(newSize))
         newSize > size -> LongArray(newSize).also { copy ->
-            copy.asDynamic().set(this, 0)
+            copy.asDynamic().set(this)
         }
         else -> this.asDynamic().slice(0, newSize)
     }
@@ -1038,7 +1040,7 @@ public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
     return when {
         newSize < OPTIMAL_SIZE_FOR_REGULAR_LOOP || size < OPTIMAL_SIZE_FOR_REGULAR_LOOP -> fillFrom(this, FloatArray(newSize))
         newSize > size -> FloatArray(newSize).also { copy ->
-            copy.asDynamic().set(this, 0)
+            copy.asDynamic().set(this)
         }
         else -> this.asDynamic().slice(0, newSize)
     }
@@ -1059,7 +1061,7 @@ public actual fun DoubleArray.copyOf(newSize: Int): DoubleArray {
     return when {
         newSize < OPTIMAL_SIZE_FOR_REGULAR_LOOP || size < OPTIMAL_SIZE_FOR_REGULAR_LOOP -> fillFrom(this, DoubleArray(newSize))
         newSize > size -> DoubleArray(newSize).also { copy ->
-            copy.asDynamic().set(this, 0)
+            copy.asDynamic().set(this)
         }
         else -> this.asDynamic().slice(0, newSize)
     }
@@ -1094,7 +1096,7 @@ public actual fun CharArray.copyOf(newSize: Int): CharArray {
     val copy = when {
         newSize < OPTIMAL_SIZE_FOR_REGULAR_LOOP || size < OPTIMAL_SIZE_FOR_REGULAR_LOOP -> fillFrom(this, CharArray(newSize))
         newSize > size -> CharArray(newSize).also { copy ->
-            copy.asDynamic().set(this, 0)
+            copy.asDynamic().set(this)
         }
         else -> this.asDynamic().slice(0, newSize)
     }
