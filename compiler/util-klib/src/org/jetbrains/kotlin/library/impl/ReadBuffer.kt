@@ -8,111 +8,59 @@ package org.jetbrains.kotlin.library.impl
 import java.lang.ref.SoftReference
 import java.nio.ByteBuffer
 
-/**
- * A buffer that allows effectively reading data from an underlying byte buffer.
- * See inheritors for implementation details.
- */
-sealed interface ReadBuffer {
+sealed class ReadBuffer {
+    private var lastPosition: Int = 0
+    private var isUsingBuffer = false
 
-    val size: Int
-    fun get(result: ByteArray, offset: Int, length: Int)
-    var position: Int
+    fun <T> use(block: (ByteBuffer) -> T): T {
+        require(!isUsingBuffer) { "use {} cannot be called recursively." }
+        try {
+            isUsingBuffer = true
 
-    val byte: Byte
-    val int: Int
-    val long: Long
+            val tmpBuffer = ensureBuffer()
+            tmpBuffer.position(lastPosition)
+            val result = block(tmpBuffer)
+            lastPosition = tmpBuffer.position()
+            return result
+        } finally {
+            isUsingBuffer = false
+        }
+    }
+
+    protected abstract fun ensureBuffer(): ByteBuffer
 
     /**
      * Allows reading data directly from the byte array [bytes].
      * The byte array is known at the time of [MemoryBuffer] creation.
      */
-    class MemoryBuffer(bytes: ByteArray) : ReadBuffer {
-        private val buffer: ByteBuffer = bytes.buffer
+    class MemoryBuffer(bytes: ByteArray) : ReadBuffer() {
+        private val buffer: ByteBuffer = ByteBuffer.wrap(bytes)
 
-        override val size: Int
-            get() = buffer.limit()
-
-        override fun get(result: ByteArray, offset: Int, length: Int) {
-            buffer.get(result, offset, length)
-        }
-
-        override var position: Int
-            get() = buffer.position()
-            set(value) {
-                buffer.position(value)
-            }
-
-        override val byte: Byte
-            get() = buffer.get()
-
-        override val int: Int
-            get() = buffer.int
-
-        override val long: Long
-            get() = buffer.long
+        override fun ensureBuffer() = buffer
     }
 
     /**
      * Allows reading data from the byte array that is obtained though [loadBytes].
      *
      * The byte array may not be known at the time of [OnDemandMemoryBuffer] creation.
-     * It will be created later, on the first access to any of the declared [OnDemandMemoryBuffer] members.
+     * It will be created later, on the first call to use {}.
      * The byte array is cached using [SoftReference], which means that it can be potentially
-     * released (garbage collected) in case of JVM heap memory deficit.
+     * released (garbage collected) in-between the [use] blocks, in case of JVM heap memory deficit.
      *
      * This implementation allows having lesser memory consumption than [MemoryBuffer] in case
      * of occasional reads from [ReadBuffer].
      */
-    class OnDemandMemoryBuffer(private val loadBytes: () -> ByteArray) : ReadBuffer {
-        private var bufferRef: SoftReference<ByteBuffer> = SoftReference(null)
-        private var pos: Int = 0
+    class OnDemandMemoryBuffer(private val loadBytes: () -> ByteArray) : ReadBuffer() {
+        private var cachedBuffer: SoftReference<ByteBuffer?> = SoftReference(null)
 
-        override val size: Int
-            get() = ensureBuffer().limit()
-
-        override fun get(result: ByteArray, offset: Int, length: Int) {
-            val buf = ensureBuffer()
-            pos += length
-            buf.get(result, offset, length)
-        }
-
-        override var position: Int
-            get() = pos.also { assert(it == ensureBuffer().position()) }
-            set(value) {
-                val buf = ensureBuffer()
-                pos = value
-                buf.position(value)
+        override fun ensureBuffer(): ByteBuffer {
+            var buffer = cachedBuffer.get()
+            if (buffer != null) {
+                return buffer
             }
-
-        override val byte: Byte
-            get() {
-                val buf = ensureBuffer()
-                pos += 1
-                return buf.get()
-            }
-
-        override val int: Int
-            get(): Int {
-                val buf = ensureBuffer()
-                pos += Int.SIZE_BYTES
-                return buf.int
-            }
-
-        override val long: Long
-            get(): Long {
-                val buf = ensureBuffer()
-                pos += Long.SIZE_BYTES
-                return buf.long
-            }
-
-        private fun ensureBuffer(): ByteBuffer {
-            var tmpBuffer = bufferRef.get()
-            if (tmpBuffer == null) {
-                tmpBuffer = loadBytes().buffer
-                tmpBuffer.position(pos)
-                bufferRef = SoftReference(tmpBuffer)
-            }
-            return tmpBuffer
+            buffer = ByteBuffer.wrap(loadBytes())
+            cachedBuffer = SoftReference(buffer)
+            return buffer
         }
     }
 }
