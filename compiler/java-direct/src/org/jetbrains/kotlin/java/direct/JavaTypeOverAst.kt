@@ -133,9 +133,58 @@ class JavaClassifierTypeOverAst(
                 return result
             }
 
-            // 4. Return as-is - FIR will resolve via callback (same package, star imports, java.lang)
+            // 4. Check java.lang implicit import (simple names only)
+            // In Java, java.lang.* is implicitly imported in all compilation units.
+            // We handle well-known java.lang types here to support hasConstantNotNullInitializer
+            // (which needs to know if a field type is java.lang.String before FIR resolution).
+            if (parts.size == 1) {
+                val javaLangQualified = JAVA_LANG_TYPES[parts[0]]
+                if (javaLangQualified != null) {
+                    return javaLangQualified
+                }
+            }
+
+            // 5. Return as-is - FIR will resolve via callback (same package, star imports, other java.lang types)
             return rawTypeName
         }
+
+    companion object {
+        /**
+         * Well-known java.lang types that are implicitly imported in Java.
+         * This is not exhaustive - only includes types commonly used where early resolution
+         * is needed (e.g., String for constant evaluation).
+         * Other java.lang types are resolved via FIR's resolution callback.
+         */
+        // TODO: review the list to find out, whether it is a good idea to hardcode all these types
+        private val JAVA_LANG_TYPES = mapOf(
+            "String" to "java.lang.String",
+            "Object" to "java.lang.Object",
+            "Class" to "java.lang.Class",
+            "Throwable" to "java.lang.Throwable",
+            "Exception" to "java.lang.Exception",
+            "RuntimeException" to "java.lang.RuntimeException",
+            "Error" to "java.lang.Error",
+            // Wrapper types
+            "Boolean" to "java.lang.Boolean",
+            "Byte" to "java.lang.Byte",
+            "Character" to "java.lang.Character",
+            "Short" to "java.lang.Short",
+            "Integer" to "java.lang.Integer",
+            "Long" to "java.lang.Long",
+            "Float" to "java.lang.Float",
+            "Double" to "java.lang.Double",
+            "Number" to "java.lang.Number",
+            "Void" to "java.lang.Void",
+            // Common interfaces/classes
+            "Comparable" to "java.lang.Comparable",
+            "CharSequence" to "java.lang.CharSequence",
+            "Iterable" to "java.lang.Iterable",
+            "Enum" to "java.lang.Enum",
+            "Deprecated" to "java.lang.Deprecated",
+            "Override" to "java.lang.Override",
+            "SuppressWarnings" to "java.lang.SuppressWarnings",
+        )
+    }
 
     override val presentableText: String get() = node.text
 

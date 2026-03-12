@@ -97,8 +97,9 @@ class JavaFieldOverAst(
             // Must be final and have a primitive or String type
             if (!isFinal) return false
             val fieldType = type
-            return fieldType is JavaPrimitiveType ||
-                   (fieldType is JavaClassifierType && fieldType.classifierQualifiedName == "java.lang.String")
+            val isString = fieldType is JavaClassifierType && 
+                fieldType.classifierQualifiedName == "java.lang.String"
+            return fieldType is JavaPrimitiveType || isString
         }
 
     override val initializerValue: Any?
