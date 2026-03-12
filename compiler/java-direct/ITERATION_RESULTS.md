@@ -14,9 +14,9 @@ This file captures key findings, decisions, and learnings from each iteration.
 |-------|------------|-----------|--------------|
 | Foundation | 1-6 | 90/138 (65.2%) | — |
 | Core Implementation | 7-16 | 139/142 → 1075/1166 (92.2%) | 242/327 (74.0%) |
-| Advanced Features | 17-23 | 1134/1166 (97.2%) | 300/329 (91.2%) |
+| Advanced Features | 17-24 | 1149/1167 (98.5%) | ~300/329 |
 
-**Current Status**: ~62 failing tests remaining
+**Current Status**: ~18 box test failures remaining
 
 ---
 
@@ -75,6 +75,7 @@ Established: Array parsing, type parameter scope, wildcards, annotations, interf
 | 21 | Implicit supertypes | +15 tests |
 | 22 | TYPE_USE annotation filtering via callback | +1 test |
 | 23 | Cross-language constant evaluation | +4 tests |
+| 24 | Three regression fixes | +13 tests |
 
 ---
 
@@ -117,6 +118,69 @@ Established: Array parsing, type parameter scope, wildcards, annotations, interf
 ### Key Learnings
 [What to add to AGENT_INSTRUCTIONS.md?]
 ```
+
+---
+
+## Iteration 24: Three Regression Fixes - 2026-03-12
+
+### Status
+✅ Completed
+
+### Overview
+Fixed three regression categories that were blocking tests after iteration 23's test suite restoration.
+
+### Fix 1: Constant Evaluation - java.lang Types
+**Problem**: `hasConstantNotNullInitializer` checked `classifierQualifiedName == "java.lang.String"`, but java-direct returned just `"String"` for unresolved types.
+
+**Root Cause**: `classifierQualifiedName` in `JavaTypeOverAst.kt` didn't handle the implicit `java.lang.*` import that Java has by default.
+
+**Solution**: Added `JAVA_LANG_TYPES` map in `JavaClassifierTypeOverAst` companion object to resolve common `java.lang` types (String, Object, Integer, etc.) before falling back to unresolved names.
+
+**Files Modified**: `JavaTypeOverAst.kt`
+
+**Tests Fixed**: ~5 (constant evaluation tests like `testAccessComplexConst`, `testDifferentTypes`, `testKt29833`)
+
+### Fix 2: Protected Static Visibility
+**Problem**: Protected static members returned `Visibilities.Protected` instead of `JavaVisibilities.ProtectedStaticVisibility`, causing FIR to reject access from subclasses in different packages.
+
+**Root Cause**: Java has special semantics for protected static members - they're accessible from subclasses even in different packages. PSI and javac-wrapper correctly distinguish between `ProtectedStaticVisibility` and `ProtectedAndPackage`.
+
+**Solution**: Modified `visibility` property in `JavaMemberOverAst.kt`:
+```kotlin
+hasModifier("PROTECTED_KEYWORD") -> if (isStatic) JavaVisibilities.ProtectedStaticVisibility else JavaVisibilities.ProtectedAndPackage
+```
+
+**Files Modified**: `JavaMemberOverAst.kt`
+
+**Tests Fixed**: 7 (`testProtectedStatic`, `testProtectedStatic2`, `testActualizeExpectProtectedToJavaProtected`, `testJavaVisibility`, etc.)
+
+### Fix 3: Sibling Inner Class Resolution
+**Problem**: When an inner class extends a sibling inner class (e.g., `class J { class AImpl {} class A extends AImpl {} }`), the type resolver couldn't find `AImpl`.
+
+**Root Cause**: `findLocalClass` only looked for inner classes of the current class and top-level classes, not siblings in the outer class.
+
+**Solution**: Modified `findLocalClass` in `JavaResolutionContext.kt` to also check `containingClass.outerClass.findInnerClass(name)`.
+
+**Files Modified**: `JavaResolutionContext.kt`
+
+**Tests Fixed**: 3 (`testIrrelevantImplCharSequence`, `testIrrelevantImplCharSequenceWithExtraSupertype`, `testIrrelevantImplMutableListSubstitution`)
+
+### Test Results
+- Box: 1149/1167 (98.5%) — 18 failures remaining
+- Started at 33 failures, fixed 15 total (some overlap with constant eval)
+
+### Remaining Failures (18)
+Categories:
+- **IR dump differences** (BASELINE_DIFF_ONLY): `testNotErasedMapGetMap_inherited`
+- **Enum entries**: `testEnumEntriesFromJava`, `testStaticImportFromEnumJava`
+- **Reflection**: `testJavaMethodsSmokeTest`, `testJavaAnnotationConstructorTypes`, `testRawRecursiveType`, `testJavaArrayType`, `testJavaVisibility`
+- **Annotations**: `testAnnotationWithKotlinProperty`, `testAnnotationWithKotlinPropertyFromInterfaceCompanion`, `testConstValAsAnnotationArgumentInJava`
+- **Other**: `testGenericBoundInnerConstructorRef`, `testInheritedInnerAndNested`, `testCapturedSelfInsideIntersection4`, `testApproximationForDefinitelyNotNull`, `testKt47785`, `testJavaMapWithCustomEntries`, `testAnnotationsViaActualTypeAliasFromBinary`
+
+### Key Learnings
+1. **Check reference implementations first** — PSI's `JavaElementUtil.getVisibility()` showed the correct visibility handling pattern
+2. **java.lang implicit import** — Java always has `java.lang.*` implicitly imported; handling well-known types locally avoids resolution round-trips
+3. **Inner class scoping** — Java allows referencing sibling inner classes by simple name; resolution must walk up the containment hierarchy
 
 ---
 

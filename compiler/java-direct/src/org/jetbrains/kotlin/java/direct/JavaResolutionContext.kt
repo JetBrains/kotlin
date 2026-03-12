@@ -30,11 +30,16 @@ class JavaResolutionContext private constructor(
     /**
      * Finds a class by simple name. Checks:
      * 1. Inner classes of the containing class (if any)
-     * 2. Top-level classes in the same compilation unit
+     * 2. Sibling inner classes (inner classes of the outer class)
+     * 3. Top-level classes in the same compilation unit
      */
     fun findLocalClass(name: Name): JavaClass? {
+        val containingClass = containingClassProvider?.invoke()
         // First check inner classes of the containing class
-        containingClassProvider?.invoke()?.findInnerClass(name)?.let { return it }
+        containingClass?.findInnerClass(name)?.let { return it }
+        // Then check sibling inner classes (classes in the outer class)
+        // This handles cases like: class J { class AImpl {} class A extends AImpl {} }
+        containingClass?.outerClass?.findInnerClass(name)?.let { return it }
         // Then check top-level classes
         return localClassProvider(name)
     }
