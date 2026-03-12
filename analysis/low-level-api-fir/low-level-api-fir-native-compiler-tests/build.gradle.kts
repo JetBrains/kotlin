@@ -37,3 +37,9 @@ projectTests {
 }
 
 testsJar()
+
+if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+    tasks.named("check") {
+        dependsOn("llFirNativeTests")
+    }
+}

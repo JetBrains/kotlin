@@ -156,13 +156,13 @@ testsJar()
 
 tasks.register("analysisLowLevelApiFirAllTests") {
     dependsOn(
-        ":analysis:low-level-api-fir:test",
-        ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests:test",
+        ":analysis:low-level-api-fir:check",
+        ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests:check",
     )
 
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         dependsOn(
-            ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests:llFirNativeTests",
+            ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests:check",
         )
     }
 }
