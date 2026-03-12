@@ -274,6 +274,14 @@ internal class KotlinWrapperPre2_4_0(
                         ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $stringValue")
                 }
 
+                CommonCompilerArguments.X_NAME_BASED_DESTRUCTURING -> {
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
+                    NameBasedDestructuringMode.values().firstOrNull { it.stringValue == stringValue } as V
+                        ?: throw CompilerArgumentsParseException("Unknown -Xname-based-destructuring value: $stringValue")
+                }
+
                 else -> delegate[key]
             }
         }
@@ -383,6 +391,14 @@ internal class KotlinWrapperPre2_4_0(
 
                 CommonCompilerArguments.X_ANNOTATION_DEFAULT_TARGET -> {
                     val mode = value as AnnotationDefaultTargetMode?
+                    val stringValue = mode?.stringValue
+                    val stringKey = CommonCompilerArguments.CommonCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                    delegate[stringKey] = stringValue
+                }
+
+                CommonCompilerArguments.X_NAME_BASED_DESTRUCTURING -> {
+                    val mode = value as NameBasedDestructuringMode?
                     val stringValue = mode?.stringValue
                     val stringKey = CommonCompilerArguments.CommonCompilerArgument<String?>(key.id, key.availableSinceVersion)
 

@@ -344,6 +344,14 @@ class AnnotationDefaultTargetModeType : EnumType<AnnotationDefaultTargetMode>(Re
     override val defaultValue: ReleaseDependent<AnnotationDefaultTargetMode?> = ReleaseDependent(null)
 }
 
+/**
+ * A value which accepts [NameBasedDestructuringMode] type.
+ */
+@Serializable
+class NameBasedDestructuringModeType : EnumType<NameBasedDestructuringMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<NameBasedDestructuringMode?> = ReleaseDependent(null)
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

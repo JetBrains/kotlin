@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.AnnotationDefaultTarg
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.HeaderMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.NameBasedDestructuringMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
 
 /**
@@ -476,7 +477,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_NAME_BASED_DESTRUCTURING: CommonCompilerArgument<String?> =
+    public val X_NAME_BASED_DESTRUCTURING: CommonCompilerArgument<NameBasedDestructuringMode?> =
         CommonCompilerArgument("X_NAME_BASED_DESTRUCTURING", KotlinReleaseVersion(2, 3, 0))
 
     /**

@@ -154,6 +154,12 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 val mode = value as AnnotationDefaultTargetMode
                 mode.stringValue as V
             }
+            CommonCompilerArguments.X_NAME_BASED_DESTRUCTURING -> {
+                if (value == null) return null as V
+
+                val mode = value as NameBasedDestructuringMode
+                mode.stringValue as V
+            }
 
             else -> {
                 value as V
@@ -245,6 +251,13 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 val stringValue = value as String
                 AnnotationDefaultTargetMode.entries.firstOrNull { it.stringValue == stringValue } as T
                     ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $stringValue")
+            }
+            CommonCompilerArguments.X_NAME_BASED_DESTRUCTURING -> {
+                if (value == null) return null as T
+
+                val stringValue = value as String
+                NameBasedDestructuringMode.entries.firstOrNull { it.stringValue == stringValue } as T
+                    ?: throw CompilerArgumentsParseException("Unknown -Xname-based-destructuring value: $stringValue")
             }
 
             else -> {

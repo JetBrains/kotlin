@@ -62,4 +62,7 @@ class AllKotlinArgumentTypes {
     @Serializable(with = AllDetailsAnnotationDefaultTargetModeSerializer::class)
     val annotationDefaultTarget = AnnotationDefaultTargetMode.entries.toSet()
 
+    @Serializable(with = AllDetailsNameBasedDestructuringModeSerializer::class)
+    val nameBasedDestructuring = NameBasedDestructuringMode.entries.toSet()
+
 }

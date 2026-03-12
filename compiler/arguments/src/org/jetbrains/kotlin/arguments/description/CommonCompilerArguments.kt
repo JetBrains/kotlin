@@ -1209,6 +1209,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xname-based-destructuring"
         description = """Enables the following destructuring features:
@@ -1217,6 +1218,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
 -Xname-based-destructuring=complete:      Enables short-form name-based destructuring with parentheses;""".asReleaseDependent()
         valueDescription = "only-syntax|name-mismatch|complete".asReleaseDependent()
         valueType = StringType.defaultNull
+        argumentType = NameBasedDestructuringModeType()
         additionalAnnotations(
             Enables(LanguageFeature.NameBasedDestructuring, "only-syntax"),
             Enables(LanguageFeature.NameBasedDestructuring, "name-mismatch"),

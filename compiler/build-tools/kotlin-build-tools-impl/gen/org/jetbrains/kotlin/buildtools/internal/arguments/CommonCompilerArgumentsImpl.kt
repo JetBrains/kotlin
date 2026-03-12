@@ -129,6 +129,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.AnnotationDefaultTarg
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.HeaderMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.NameBasedDestructuringMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments as ArgumentsCommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments as CommonCompilerArguments
@@ -233,7 +234,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_METADATA_VERSION in this) { arguments.metadataVersion = get(X_METADATA_VERSION)}
     if (X_MULTI_DOLLAR_INTERPOLATION in this) { arguments.multiDollarInterpolation = get(X_MULTI_DOLLAR_INTERPOLATION)}
     if (X_MULTI_PLATFORM in this) { arguments.multiPlatform = get(X_MULTI_PLATFORM)}
-    if (X_NAME_BASED_DESTRUCTURING in this) { arguments.nameBasedDestructuring = get(X_NAME_BASED_DESTRUCTURING)}
+    if (X_NAME_BASED_DESTRUCTURING in this) { arguments.nameBasedDestructuring = get(X_NAME_BASED_DESTRUCTURING)?.stringValue}
     if (X_NESTED_TYPE_ALIASES in this) { arguments.nestedTypeAliases = get(X_NESTED_TYPE_ALIASES)}
     if (X_NEW_INFERENCE in this) { arguments.newInference = get(X_NEW_INFERENCE)}
     if (X_NO_CHECK_ACTUAL in this) { arguments.noCheckActual = get(X_NO_CHECK_ACTUAL)}
@@ -339,7 +340,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_METADATA_VERSION] = arguments.metadataVersion } catch (_: NoSuchMethodError) {  }
     try { this[X_MULTI_DOLLAR_INTERPOLATION] = arguments.multiDollarInterpolation } catch (_: NoSuchMethodError) {  }
     try { this[X_MULTI_PLATFORM] = arguments.multiPlatform } catch (_: NoSuchMethodError) {  }
-    try { this[X_NAME_BASED_DESTRUCTURING] = arguments.nameBasedDestructuring } catch (_: NoSuchMethodError) {  }
+    try { this[X_NAME_BASED_DESTRUCTURING] = arguments.nameBasedDestructuring?.let { NameBasedDestructuringMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xname-based-destructuring value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_NESTED_TYPE_ALIASES] = arguments.nestedTypeAliases } catch (_: NoSuchMethodError) {  }
     try { this[X_NEW_INFERENCE] = arguments.newInference } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_CHECK_ACTUAL] = arguments.noCheckActual } catch (_: NoSuchMethodError) {  }
@@ -558,7 +559,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     public val X_MULTI_PLATFORM: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_MULTI_PLATFORM")
 
-    public val X_NAME_BASED_DESTRUCTURING: CommonCompilerArgument<String?> =
+    public val X_NAME_BASED_DESTRUCTURING: CommonCompilerArgument<NameBasedDestructuringMode?> =
         CommonCompilerArgument("X_NAME_BASED_DESTRUCTURING")
 
     public val X_NESTED_TYPE_ALIASES: CommonCompilerArgument<Boolean> =

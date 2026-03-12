@@ -638,6 +638,15 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMo
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode : java/lang/Enum {
+	public static final field COMPLETE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
+	public static final field NAME_MISMATCH Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
+	public static final field ONLY_SYNTAX Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode : java/lang/Enum {
 	public static final field CHECKER Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
 	public static final field DISABLED Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
