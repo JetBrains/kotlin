@@ -43,6 +43,9 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
 val FirDeclaration.evaluatedInPlace: Boolean
     get() = symbol.evaluatedInPlace
 
+val FirDeclaration.newEvaluatedInPlace: Boolean
+    get() = symbol.newEvaluatedInPlace
+
 val FirBasedSymbol<*>.evaluatedInPlace: Boolean
     get() = when (this) {
         is FirAnonymousFunctionSymbol -> invocationKind.isInPlace
@@ -52,9 +55,23 @@ val FirBasedSymbol<*>.evaluatedInPlace: Boolean
         else -> true // property initializer, etc.
     }
 
+val FirBasedSymbol<*>.newEvaluatedInPlace: Boolean
+    get() = when (this) {
+        is FirAnonymousFunctionSymbol -> !invocationKind.isInPlace
+        is FirAnonymousObjectSymbol -> classKind != ClassKind.ENUM_ENTRY
+        is FirConstructorSymbol -> true // child of class initialization graph
+        is FirFunctionSymbol, is FirClassSymbol -> false
+        else -> true // property initializer, etc.
+    }
+
 fun ControlFlowGraph.nearestNonInPlaceGraph(): ControlFlowGraph =
     if (declaration?.evaluatedInPlace == true)
         enterNode.previousNodes.firstOrNull()?.owner?.nearestNonInPlaceGraph() ?: this
+    else this
+
+fun ControlFlowGraph.newNearestNonInPlaceGraph(): ControlFlowGraph =
+    if (declaration?.newEvaluatedInPlace == true)
+        enterNode.previousNodes.firstOrNull()?.owner?.newNearestNonInPlaceGraph() ?: this
     else this
 
 /**

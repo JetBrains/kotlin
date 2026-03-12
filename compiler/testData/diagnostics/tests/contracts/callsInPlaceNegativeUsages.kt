@@ -41,7 +41,6 @@ fun negativeExisting(): Box = exactlyOnceResult {
     }
 }
 
-// maybe better exclude
 fun negativeEffectivelyImmutableVar() {
     var x: String? = maybeString()
     if (x != null) {
@@ -74,6 +73,14 @@ fun negativeLocalFunction() {
         }
 
         local()
+    }
+}
+
+fun badCastOnFunctionParameter(x: Any?) {
+    exactlyOnceResult {
+        if (x is String) {
+            <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        }
     }
 }
 

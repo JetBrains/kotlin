@@ -12,6 +12,13 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.cfa.evaluatedInPlace
+import org.jetbrains.kotlin.fir.analysis.cfa.util.FindCapturedWrites
+import org.jetbrains.kotlin.fir.analysis.cfa.util.FindVisibleWrites
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PathAwareControlFlowInfo
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyAccessType
+import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableWriteData
+import org.jetbrains.kotlin.fir.analysis.cfa.util.traverseToFixedPoint
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
@@ -24,6 +31,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -38,12 +48,21 @@ object FirSmartCastRelyingOnCallsInPlaceChecker : FirFunctionChecker(MppCheckerK
     override fun check(declaration: FirFunction) {
         if (context.containingElements.any { it is FirFunction && it != declaration }) return
 
+        val graph = (declaration as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return
+        val collector = ControlFlowAnalysisDiagnosticComponent.LocalPropertyCollector().apply {
+            declaration.acceptChildren(this, graph.subGraphs.toSet())
+        }
+
+        val capturedWrites = graph.traverseToFixedPoint(FindCapturedWrites(collector.properties))
+        val visibleWrites = graph.traverseToFixedPoint(FindVisibleWrites(capturedWrites, collector.properties))
+
         val visitor = FirFunctionDeepVisitorWithData2()
         visitor.visitFunction(
             declaration,
             CapturedVariableCheckerData(
                 context,
                 reporter,
+                visibleWrites
             )
         )
     }
@@ -51,6 +70,7 @@ object FirSmartCastRelyingOnCallsInPlaceChecker : FirFunctionChecker(MppCheckerK
     data class CapturedVariableCheckerData(
         val context: CheckerContext,
         val reporter: DiagnosticReporter,
+        val visibleWrites: Map<CFGNode<*>, PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>>,
         val propertiesStack: MutableList<Pair<Set<FirPropertySymbol>, FirAnonymousFunction>> = mutableListOf(),
     )
 
@@ -71,7 +91,6 @@ object FirSmartCastRelyingOnCallsInPlaceChecker : FirFunctionChecker(MppCheckerK
             }
 
             if (hasCallInPlaceContract) {
-                println("Node: ${anonymousFunction.render()} invocationKind: ${invocationKind}")
                 data.propertiesStack.add(Pair(collector.properties, anonymousFunction))
             }
             super.visitAnonymousFunction(anonymousFunction, data)
@@ -85,10 +104,45 @@ object FirSmartCastRelyingOnCallsInPlaceChecker : FirFunctionChecker(MppCheckerK
             smartCastExpression.originalExpression.checkExpressionCapturedVariable(data)
         }
 
+        private fun isHasWriteFromNestedNode(
+            pathInfo: PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>?,
+            propertySymbol: FirPropertySymbol,
+            currentGraphOwner: ControlFlowGraph
+        ): Boolean {
+            // Check if there are Captured writes from different lambda contexts
+            // We want to warn only if writes are in nested lambdas, not if they're in parent scope before the current lambda
+            return pathInfo?.values?.any { controlFlowInfo ->
+                controlFlowInfo[PropertyAccessType.Captured]?.get(propertySymbol)?.any { writeNode ->
+                    if (writeNode !is VariableAssignmentNode) return@any false
+                    writeNode.owner != currentGraphOwner
+                } == true
+            } == true
+
+        }
+
+        private fun isHasWrites(
+            statement: FirStatement,
+            data: CapturedVariableCheckerData,
+            propertySymbol: FirPropertySymbol
+        ): Boolean {
+            val accessNode = data.visibleWrites.keys.find { node ->
+                node.fir == statement
+            }
+            if (accessNode == null) return false
+
+            val pathInfo = accessNode.let { data.visibleWrites[it] }
+            val currentGraphOwner = accessNode.owner
+            val hasCapturedWritesFromDifferentLambda = isHasWriteFromNestedNode(pathInfo, propertySymbol, currentGraphOwner)
+            return hasCapturedWritesFromDifferentLambda
+        }
+
         private fun FirExpression.checkExpressionCapturedVariable(data: CapturedVariableCheckerData) {
             if (this is FirQualifiedAccessExpression) {
-                val symbol = this.calleeReference.toResolvedVariableSymbol() ?: return
-                checkCapturedVariable(symbol, data, this.source)
+                val symbol = this.calleeReference.toResolvedVariableSymbol() as? FirPropertySymbol ?: return
+                val hasWrites = isHasWrites(this, data, symbol)
+                if (hasWrites) {
+                    checkCapturedVariable(symbol, data, this.source)
+                }
                 val receiver = this.explicitReceiver?.unwrapErrorExpression()?.unwrapArgument()
                 receiver?.checkExpressionCapturedVariable(data)
             }
@@ -108,6 +162,7 @@ object FirSmartCastRelyingOnCallsInPlaceChecker : FirFunctionChecker(MppCheckerK
             source: KtSourceElement?,
         ) {
             if (data.propertiesStack.isEmpty()) return
+            if (variableSymbol.isVal) return
             val functionLocals = data.propertiesStack.last().first
             val anonymousFunction = data.propertiesStack.last().second
             if (variableSymbol in functionLocals) return

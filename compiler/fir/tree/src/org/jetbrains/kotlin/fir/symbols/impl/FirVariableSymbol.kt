@@ -23,6 +23,31 @@ import org.jetbrains.kotlin.mpp.ValueParameterSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
+//fun maybeString(): String? = "ok"
+//
+//@OptIn(ExperimentalContracts::class)
+//fun <R> exactlyOnceResult(block: () -> R): R {
+////    contract {
+////        callsInPlace(block, InvocationKind.AT_LEAST_ONCE)
+////    }
+//    return block()
+//}
+//
+//fun badCastOnFunctionParameter2() {
+//    var x: String? = maybeString()
+//    exactlyOnceResult {
+//        if (x is String) {
+//            x.length
+//        }
+//        exactlyOnceResult {
+//            x = null
+//        }
+//    }
+//}
 
 sealed class FirVariableSymbol<out E : FirVariable> : FirCallableSymbol<E>() {
     val resolvedInitializer: FirExpression?
