@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.withConfigurationCache
 import kotlin.test.assertEquals
 
-@NativeGradlePluginTests
 @SwiftPMImportGradlePluginTests
 class LazyMapWithCCTest : KGPBaseTest() {
 
