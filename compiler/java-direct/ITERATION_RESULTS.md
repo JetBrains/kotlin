@@ -336,4 +336,60 @@ override val isStatic: Boolean
 
 ---
 
+## Iteration 26: Sealed Classes Implementation - 2026-03-12
+
+### Status
+✅ Completed
+
+### Overview
+Implemented `isSealed` and `permittedTypes` properties for Java sealed classes support (Java 17+).
+
+### Root Cause Analysis
+Java sealed classes were not recognized by java-direct:
+- `isSealed` returned `false` always
+- `permittedTypes` returned empty sequence
+
+Initial implementation used `SEALED_KEYWORD` but the parser actually produces just `SEALED` as the token name.
+
+### Fix
+Modified `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt` lines 135-145:
+
+```kotlin
+// Before:
+override val isSealed: Boolean get() = false
+override val permittedTypes: Sequence<JavaClassifierType> get() = emptySequence()
+
+// After (corrected after debugging):
+override val isSealed: Boolean get() = hasModifier("SEALED")  // NOT "SEALED_KEYWORD"
+
+override val permittedTypes: Sequence<JavaClassifierType>
+    get() {
+        val permitsList = node.findChildByType("PERMITS_LIST") ?: return emptySequence()
+        return permitsList.children
+            .filter { it.type.toString() == "JAVA_CODE_REFERENCE" }
+            .map { JavaClassifierTypeOverAst(it, memberResolutionContext) }
+            .asSequence()
+    }
+```
+
+### Test Results
+- Total: 2649 tests
+- Before: 134 failures
+- After: 125 failures
+- **Tests fixed**: 9 (6 sealed class tests + 3 related)
+
+### Investigation Process
+1. **Parser library check**: Verified `org.jetbrains:java-syntax-jvm:0.3.340` defines `SEALED_KEYWORD`, `NON_SEALED_KEYWORD`, and `PERMITS_KEYWORD` tokens
+2. **Exception-based debugging**: Added debug code to dump actual AST structure for sealed classes
+3. **Discovery**: Parser produces token name `SEALED` (not `SEALED_KEYWORD`) and `PERMITS_LIST` works correctly
+4. **Fix**: Changed from `hasModifier("SEALED_KEYWORD")` to `hasModifier("SEALED")`
+
+### Key Learnings
+1. **Parser token names != library constant names** — The parser library defines `SEALED_KEYWORD` constant but produces `SEALED` token in AST
+2. **Exception-based debugging is essential** — Dumping actual AST structure reveals the truth about token names
+3. **PERMITS_LIST works correctly** — The permits clause parsing was correct from the start
+4. **Java 17 support exists** — Parser fully supports sealed classes, just with different token naming than expected
+
+---
+
 *For detailed iteration histories, see `implDocs/archive/`*

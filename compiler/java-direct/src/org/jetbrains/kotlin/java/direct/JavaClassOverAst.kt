@@ -132,8 +132,17 @@ class JavaClassOverAst(
     override val isAnnotationType: Boolean get() = node.findChildByType("AT") != null && isInterface
     override val isEnum: Boolean get() = node.findChildByType("ENUM_KEYWORD") != null
     override val isRecord: Boolean get() = node.findChildByType("RECORD_KEYWORD") != null
-    override val isSealed: Boolean get() = false
-    override val permittedTypes: Sequence<JavaClassifierType> get() = emptySequence()
+    // Note: Parser produces "SEALED" token, not "SEALED_KEYWORD"
+    override val isSealed: Boolean get() = hasModifier("SEALED") || hasModifier("SEALED_KEYWORD")
+
+    override val permittedTypes: Sequence<JavaClassifierType>
+        get() {
+            val permitsList = node.findChildByType("PERMITS_LIST") ?: return emptySequence()
+            return permitsList.children
+                .filter { it.type.toString() == "JAVA_CODE_REFERENCE" }
+                .map { JavaClassifierTypeOverAst(it, memberResolutionContext) }
+                .asSequence()
+        }
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
     override val methods: Collection<JavaMethod>
