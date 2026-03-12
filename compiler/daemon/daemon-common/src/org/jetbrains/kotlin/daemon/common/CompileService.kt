@@ -35,7 +35,8 @@ interface CompileService : Remote {
     enum class TargetPlatform : Serializable {
         JVM,
         JS,
-        METADATA
+        METADATA,
+        WASM
     }
 
     companion object {

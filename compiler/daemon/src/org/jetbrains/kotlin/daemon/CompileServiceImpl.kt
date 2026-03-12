@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
@@ -366,6 +367,7 @@ abstract class CompileServiceImplBase(
         val compiler = when (targetPlatform) {
             CompileService.TargetPlatform.JVM -> K2JVMCompiler()
             CompileService.TargetPlatform.JS -> K2JSCompiler()
+            CompileService.TargetPlatform.WASM -> KotlinWasmCompiler()
             CompileService.TargetPlatform.METADATA -> KotlinMetadataCompiler()
         } as CLICompiler<CommonCompilerArguments>
 
@@ -464,6 +466,20 @@ abstract class CompileServiceImplBase(
                         doCompile(sessionId, daemonReporter, tracer = null, compilationId = null) { _, _, _ ->
                             execJsIncrementalCompiler(
                                 k2PlatformArgs as K2JSCompilerArguments,
+                                gradleIncrementalArgs,
+                                messageCollector,
+                                getICReporter(
+                                    gradleIncrementalServicesFacade,
+                                    compilationResults!!,
+                                    gradleIncrementalArgs
+                                )
+                            )
+                        }
+                    }
+                    CompileService.TargetPlatform.WASM -> withJsIC(k2PlatformArgs) {
+                        doCompile(sessionId, daemonReporter, tracer = null, compilationId = null) { _, _, _ ->
+                            execJsIncrementalCompiler(
+                                k2PlatformArgs as KotlinWasmCompilerArguments,
                                 gradleIncrementalArgs,
                                 messageCollector,
                                 getICReporter(
@@ -667,7 +683,7 @@ abstract class CompileServiceImplBase(
     }
 
     protected fun execJsIncrementalCompiler(
-        args: K2JSCompilerArguments,
+        args: CommonJsAndWasmCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
         reporter: RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,

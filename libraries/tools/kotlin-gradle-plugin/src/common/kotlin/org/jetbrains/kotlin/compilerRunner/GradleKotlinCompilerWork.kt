@@ -209,7 +209,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
         val targetPlatform = when (config.compilerClassName) {
             KotlinCompilerClass.JVM -> CompileService.TargetPlatform.JVM
-            KotlinCompilerClass.JS, KotlinCompilerClass.WASM -> CompileService.TargetPlatform.JS
+            KotlinCompilerClass.JS -> CompileService.TargetPlatform.JS
+            KotlinCompilerClass.WASM -> CompileService.TargetPlatform.WASM
             KotlinCompilerClass.METADATA -> CompileService.TargetPlatform.METADATA
             else -> throw IllegalArgumentException("Unknown compiler type ${config.compilerClassName}")
         }
