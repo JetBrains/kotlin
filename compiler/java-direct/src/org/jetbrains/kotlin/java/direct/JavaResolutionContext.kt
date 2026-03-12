@@ -31,7 +31,9 @@ class JavaResolutionContext private constructor(
      * Finds a class by simple name. Checks:
      * 1. Inner classes of the containing class (if any)
      * 2. Sibling inner classes (inner classes of the outer class)
-     * 3. Top-level classes in the same compilation unit
+     * 3. Inner classes of supertypes (JLS 6.5.2 - inherited member types)
+     * 4. Inner classes of outer classes' supertypes (for nested inner classes)
+     * 5. Top-level classes in the same compilation unit
      */
     fun findLocalClass(name: Name): JavaClass? {
         val containingClass = containingClassProvider?.invoke()
@@ -40,8 +42,58 @@ class JavaResolutionContext private constructor(
         // Then check sibling inner classes (classes in the outer class)
         // This handles cases like: class J { class AImpl {} class A extends AImpl {} }
         containingClass?.outerClass?.findInnerClass(name)?.let { return it }
+        // Then check inner classes of supertypes (inherited member types per JLS 6.5.2)
+        // This handles cases like: class B extends A { ... } where A has inner class Y
+        containingClass?.let { cls ->
+            findInnerClassFromSupertypes(name, cls, mutableSetOf())?.let { return it }
+        }
+        // Also check inner classes of outer classes' supertypes
+        // This handles nested inner class cases like: class Y extends X { class D { z ref; } }
+        // where z is an inner class of X (Y's supertype)
+        var outer = containingClass?.outerClass
+        while (outer != null) {
+            findInnerClassFromSupertypes(name, outer, mutableSetOf())?.let { return it }
+            outer = outer.outerClass
+        }
         // Then check top-level classes
         return localClassProvider(name)
+    }
+    
+    /**
+     * Searches for an inner class with the given name in the supertype hierarchy.
+     * This implements JLS 6.5.2 - inherited member types are in scope.
+     * 
+     * IMPORTANT: To avoid infinite recursion, we resolve supertypes using localClassProvider
+     * directly instead of going through classifier (which calls findLocalClass).
+     * This means we only search local (same compilation unit) supertypes.
+     * For external supertypes, the resolution callback (resolveWithCallback) handles it via FIR.
+     */
+    private fun findInnerClassFromSupertypes(name: Name, javaClass: JavaClass, visited: MutableSet<JavaClass>): JavaClass? {
+        // Cycle detection using object identity
+        if (javaClass in visited) return null
+        visited.add(javaClass)
+        
+        for (supertype in javaClass.supertypes) {
+            // Get the supertype's raw name (first part before any dots or generics)
+            // presentableText gives us the raw reference text like "x" or "List<String>"
+            val supertypeRef = supertype.presentableText.let { text ->
+                // Extract simple name (before '<' for generics, first part for qualified)
+                val withoutGenerics = text.substringBefore('<').trim()
+                withoutGenerics.substringBefore('.').trim()
+            }
+            
+            if (supertypeRef.isEmpty()) continue
+            
+            // Try to find this supertype as a local class (using localClassProvider to avoid recursion)
+            val supertypeClass = localClassProvider(Name.identifier(supertypeRef)) ?: continue
+            
+            // Check direct inner class of the supertype
+            supertypeClass.findInnerClass(name)?.let { return it }
+            
+            // Recursively check supertypes of the supertype
+            findInnerClassFromSupertypes(name, supertypeClass, visited)?.let { return it }
+        }
+        return null
     }
 
     fun findTypeParameter(name: String): JavaTypeParameter? = typeParametersInScope[name]
@@ -152,9 +204,12 @@ class JavaResolutionContext private constructor(
         // 4. Nested classes of supertypes (JLS 6.5.2 - inherited member types)
         // In Java, nested classes of supertypes are in scope. For example, if class C implements
         // interface I, and I has nested class I.X, then X can be referenced as just "X" inside C.
-        val containingClass = containingClassProvider?.invoke()
-        if (containingClass != null) {
+        // For nested inner classes, we also need to check outer classes' supertypes.
+        var containingClass = containingClassProvider?.invoke()
+        while (containingClass != null) {
             foundFqn = resolveFromSupertypes(simpleName, containingClass, tryResolve)
+            if (foundFqn != null) return foundFqn
+            containingClass = containingClass.outerClass
         }
         
         return foundFqn
@@ -176,12 +231,27 @@ class JavaResolutionContext private constructor(
         visited: MutableSet<String>
     ): String? {
         for (supertype in javaClass.supertypes) {
-            val supertypeName = supertype.classifierQualifiedName
+            var supertypeName = supertype.classifierQualifiedName
             if (supertypeName in visited) continue
             visited.add(supertypeName)
             
+            // If supertypeName is not fully qualified (no dots), try with package prefix
+            // This handles same-package supertypes where classifierQualifiedName returns just "x"
+            if (!supertypeName.contains('.') && !packageFqName.isRoot) {
+                val packageQualified = "${packageFqName.asString()}.$supertypeName"
+                // Try package-qualified version first
+                val nestedCandidate = "$packageQualified.$simpleName"
+                if (tryResolve(nestedCandidate)) {
+                    return nestedCandidate
+                }
+                // If that worked for the supertype itself, use it for recursion
+                if (tryResolve(packageQualified)) {
+                    supertypeName = packageQualified
+                }
+            }
+            
             // Try the simple name as a nested class of this supertype
-            // e.g., if supertype is "B" and simpleName is "Y", try "B.Y"
+            // e.g., if supertype is "a.x" and simpleName is "y", try "a.x.y"
             val nestedCandidate = "$supertypeName.$simpleName"
             if (tryResolve(nestedCandidate)) {
                 return nestedCandidate

@@ -14,9 +14,9 @@ This file captures key findings, decisions, and learnings from each iteration.
 |-------|------------|-----------|--------------|
 | Foundation | 1-6 | 90/138 (65.2%) | — |
 | Core Implementation | 7-16 | 139/142 → 1075/1166 (92.2%) | 242/327 (74.0%) |
-| Advanced Features | 17-24b | 1150/1167 (98.5%) | 1323/1442 (91.7%) |
+| Advanced Features | 17-25 | 1150/1167 (98.5%) | 1326/1442 (92.0%) |
 
-**Current Status**: 17 box test failures, 119 phased test failures remaining
+**Current Status**: 17 box test failures, 116 phased test failures remaining
 
 ---
 
@@ -220,6 +220,61 @@ This matches the existing safety pattern in the `JavaClass` branch (line 264).
 ### Key Learnings
 1. **Always check both branches** — When there's a safety guard in one code branch (e.g., `JavaClass`), verify the parallel branch (`classifier == null`) has equivalent protection
 2. **Cyclic type bounds are tricky** — Java allows mutually-referencing type parameters across classes; FIR handles this with multi-round resolution, but we must not trigger class loading during first round
+
+---
+
+## Iteration 25: Inherited Inner Class Resolution - 2026-03-12
+
+### Status
+✅ Completed
+
+### Overview
+Fixed resolution of inherited inner classes per JLS 6.5.2. When class B extends class A, and A has inner class `Inner`, references to `Inner` from B (or B's inner classes) now resolve correctly.
+
+### Root Cause Analysis
+Test `testInheritedInner` failed with `MISSING_DEPENDENCY_CLASS: Cannot access class 'y'`:
+```java
+// a/x.java
+public class x { public class y {} }
+
+// a/b.java  
+public class b extends x { public y getY() { return null; } }
+```
+
+The type `y` in `b.getY()` return type couldn't be resolved because:
+1. `findLocalClass` only searched within the same compilation unit
+2. `resolveFromSupertypesRecursive` returned unqualified names for same-package supertypes
+
+### Fix
+Modified `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResolutionContext.kt`:
+
+1. **Added `findInnerClassFromSupertypes`** to `findLocalClass` — Searches inner classes of local supertypes (same compilation unit)
+
+2. **Added outer class supertype search** — For nested inner classes, also search supertypes of outer classes. This handles cases like:
+   ```java
+   class Y extends X { class D { z ref; } }  // z is inner class of X
+   ```
+
+3. **Fixed same-package supertype resolution** — In `resolveFromSupertypesRecursive`, if supertype name is unqualified (no dots), try with package prefix first:
+   ```kotlin
+   if (!supertypeName.contains('.') && !packageFqName.isRoot) {
+       val packageQualified = "${packageFqName.asString()}.$supertypeName"
+       // Try package-qualified version...
+   }
+   ```
+
+4. **Walk outer class hierarchy in `resolveSimpleName`** — For nested inner classes, check supertypes of all enclosing classes, not just the immediate containing class.
+
+### Test Results
+- Box: 1150/1167 (17 failures, unchanged)
+- Phased: 1326/1442 (116 failures, was 118)
+- **Tests fixed**: 2 phased tests (`testInheritedInner`, `testInheritedInnerUsageInInner`)
+- 2 remaining failures are baseline diffs only (no actual errors)
+
+### Key Learnings
+1. **Avoid cycles in lazy resolution** — Accessing `classifier` or `classifierQualifiedName` during supertype search can cause infinite recursion. Use `localClassProvider` directly or `presentableText` for raw names.
+2. **Same-package types need qualification** — When resolving via callback, unqualified type names like `"x"` won't match; need to try `"pkg.x"` for same-package classes.
+3. **JLS 6.5.2 scope rules** — Inner classes of supertypes AND outer classes' supertypes are all in scope for nested inner classes.
 
 ---
 
