@@ -160,6 +160,12 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 val mode = value as NameBasedDestructuringMode
                 mode.stringValue as V
             }
+            CommonCompilerArguments.X_VERIFY_IR -> {
+                if (value == null) return null as V
+
+                val mode = value as VerifyIrMode
+                mode.stringValue as V
+            }
 
             else -> {
                 value as V
@@ -258,6 +264,13 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 val stringValue = value as String
                 NameBasedDestructuringMode.entries.firstOrNull { it.stringValue == stringValue } as T
                     ?: throw CompilerArgumentsParseException("Unknown -Xname-based-destructuring value: $stringValue")
+            }
+            CommonCompilerArguments.X_VERIFY_IR -> {
+                if (value == null) return null as T
+
+                val stringValue = value as String
+                VerifyIrMode.entries.firstOrNull { it.stringValue == stringValue } as T
+                    ?: throw CompilerArgumentsParseException("Unknown -Xverify-ir value: $stringValue")
             }
 
             else -> {

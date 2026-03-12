@@ -1344,6 +1344,38 @@
                     }
                 }
             ]
+        },
+        "verifyIrMode": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.VerifyIrModeType",
+            "values": [
+                {
+                    "name": "none",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.0.20",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "warning",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.0.20",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "error",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.0.20",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
         }
     },
     "topLevel": {
@@ -5375,7 +5407,7 @@
                             "removedVersion": null
                         },
                         "argumentType": {
-                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.VerifyIrModeType",
                             "isNullable": {
                                 "current": true,
                                 "valueInVersions": []

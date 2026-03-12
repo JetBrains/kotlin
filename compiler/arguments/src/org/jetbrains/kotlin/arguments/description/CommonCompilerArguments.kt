@@ -509,11 +509,13 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     }
 
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xverify-ir"
         description = "IR verification mode (no verification by default).".asReleaseDependent()
         valueDescription = "{none|warning|error}".asReleaseDependent()
         valueType = StringType.defaultNull
+        argumentType = VerifyIrModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,

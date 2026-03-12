@@ -352,6 +352,14 @@ class NameBasedDestructuringModeType : EnumType<NameBasedDestructuringMode>(Rele
     override val defaultValue: ReleaseDependent<NameBasedDestructuringMode?> = ReleaseDependent(null)
 }
 
+/**
+ * A value which accepts [VerifyIrMode] type.
+ */
+@Serializable
+class VerifyIrModeType : EnumType<VerifyIrMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<VerifyIrMode?> = ReleaseDependent(null)
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

@@ -673,6 +673,15 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/StringCon
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/StringConcatMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode : java/lang/Enum {
+	public static final field ERROR Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode;
+	public static final field NONE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode;
+	public static final field WARNING Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/VerifyIrMode;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode : java/lang/Enum {
 	public static final field INDY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode;
 	public static final field INLINE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode;

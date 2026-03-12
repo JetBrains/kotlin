@@ -65,4 +65,7 @@ class AllKotlinArgumentTypes {
     @Serializable(with = AllDetailsNameBasedDestructuringModeSerializer::class)
     val nameBasedDestructuring = NameBasedDestructuringMode.entries.toSet()
 
+    @Serializable(with = AllDetailsVerifyIrModeSerializer::class)
+    val verifyIrMode = VerifyIrMode.entries.toSet()
+
 }

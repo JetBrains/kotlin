@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.HeaderMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.NameBasedDestructuringMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode
 
 /**
  * @since 2.3.0
@@ -763,7 +764,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_VERIFY_IR: CommonCompilerArgument<String?> =
+    public val X_VERIFY_IR: CommonCompilerArgument<VerifyIrMode?> =
         CommonCompilerArgument("X_VERIFY_IR", KotlinReleaseVersion(2, 0, 20))
 
     /**
