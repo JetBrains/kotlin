@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
@@ -135,10 +136,12 @@ abstract class KotlinCompileDaemonBase {
                 val compilerSelector = object : CompilerSelector {
                     private val jvm by lazy { K2JVMCompiler() }
                     private val js by lazy { K2JSCompiler() }
+                    private val wasm by lazy { KotlinWasmCompiler() }
                     private val metadata by lazy { KotlinMetadataCompiler() }
                     override fun get(targetPlatform: CompileService.TargetPlatform): CLICompiler<*> = when (targetPlatform) {
                         CompileService.TargetPlatform.JVM -> jvm
                         CompileService.TargetPlatform.JS -> js
+                        CompileService.TargetPlatform.WASM -> wasm
                         CompileService.TargetPlatform.METADATA -> metadata
                     }
                 }
