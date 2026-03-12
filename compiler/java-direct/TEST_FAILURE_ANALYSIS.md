@@ -1,181 +1,202 @@
-# Test Failure Analysis After Test Suite Restoration
+# Test Failure Analysis - Post Iteration 24
 
 **Date**: 2026-03-12  
-**Context**: Test suite restored from ~1166 to ~2500 tests  
+**Context**: Comprehensive analysis after iteration 24 fixes  
 **Current Results**: 
-- Box: 1167 total, 33 failed (97.2% pass)
-- Phased: 1442 total, 158 failed (89.0% pass)
-
-## Box Test Failures (33 tests)
-
-### Category 1: REGRESSION - Constant Evaluation (4 tests)
-**Related to**: Iteration 23 (cross-language constants)  
-**Error**: `CONST_VAL_WITH_NON_CONST_INITIALIZER`
-
-| Test | Issue |
-|------|-------|
-| testAccessComplexConst | Complex const from Java not evaluated |
-| testDifferentTypes | Const types from Java not evaluated |
-| testKt29833 | Const evaluation regression |
-| testJavaConstAnnotationArguments | `ANNOTATION_ARGUMENT_MUST_BE_CONST` |
-
-**Analysis**: The iteration 23 `resolveInitializerValue` callback may not be handling all cases. These tests reference Java constants that use Kotlin constants.
-
-**Action**: Investigate `ConstantEvaluator.kt` and the FIR callback in `lazyInitializer`.
+- Box: 1167 total, 18 failed (98.5% pass)
+- Phased: 1442 total, 124 failed (91.4% pass)
+- **Combined: 2609 total, 142 failed (94.6% pass)**
 
 ---
 
-### Category 2: REGRESSION - Visibility/Protected Access (7 tests)
-**Error**: `INVISIBLE_REFERENCE`
+## Iteration 24 Fixed (15 tests)
 
-| Test | Issue |
-|------|-------|
-| testProtectedStatic | Protected static member access |
-| testProtectedStatic2 | Protected static member access |
-| testStaticImportFromEnumJava | Static import from enum |
-| testJavaVisibility | Java visibility modifiers |
-| testWeirdCharBuffers | CharBuffer protected members |
-| testContractAndRawField | Contract with raw field |
-| testJavaAnnotationConstructorTypes | Annotation constructor types |
+The following regressions were fixed in iteration 24:
 
-**Analysis**: Protected members in Java classes may not be correctly marked as visible. This could be a regression in visibility calculation or a new issue exposed by expanded tests.
-
-**Action**: Check `JavaMemberOverAst.visibility` and how protected is handled for static members.
+| Category | Tests Fixed | Fix Applied |
+|----------|-------------|-------------|
+| Constant Evaluation | ~5 | Added `JAVA_LANG_TYPES` map in `JavaTypeOverAst.kt` |
+| Protected Static Visibility | 7 | Changed to `ProtectedStaticVisibility` in `JavaMemberOverAst.kt` |
+| Sibling Inner Classes | 3 | Added sibling lookup in `JavaResolutionContext.findLocalClass()` |
 
 ---
 
-### Category 3: REGRESSION - Supertype Resolution (4 tests)
-**Error**: `MISSING_DEPENDENCY_SUPERCLASS` / `MISSING_DEPENDENCY_CLASS`
+## Remaining Failures Analysis (142 tests)
 
-| Test | Issue |
-|------|-------|
-| testIrrelevantImplCharSequence | CharSequence supertype |
-| testIrrelevantImplCharSequenceWithExtraSupertype | Extra supertype |
-| testIrrelevantImplMutableListSubstitution | MutableList substitution |
-| testCapturedSelfInsideIntersection4 | Intersection type |
+### Category 1: Inherited Inner Class Resolution (~30-40 tests) — HIGH PRIORITY
 
-**Analysis**: Supertype resolution in iteration 21 may not handle all cases. These involve complex generic supertypes.
+**Error Pattern**: `MISSING_DEPENDENCY_CLASS: Cannot access class 'y'`
 
-**Action**: Check `JavaClassOverAst.supertypes` and supertype resolution callbacks.
+**Root Cause**: When class B extends class A, and A has inner class `Inner`, references to `Inner` from B's context fail. The current `findLocalClass` only checks:
+1. Inner classes of the containing class
+2. Sibling inner classes (fixed in iter 24)
+3. Top-level classes
 
----
+It does NOT search supertypes' inner classes per JLS 6.5.2.
 
-### Category 4: NEW - Enum Entries (1 test)
-**Error**: `NoSuchFieldError: entries`
+**Affected Tests** (representative):
+- `testInheritedInner`, `testInheritedInner2`
+- `testInheritedInnerAndNested`
+- `testInheritedInnerUsageInInner`
+- `testNestedFromJava`, `testNestedFromJavaAfterKotlin`
+- `testSuperTypeWithSameInner`
+- `testInheritedKotlinInner`
+- Multiple `testNested*` and `testInheritance*` tests
 
-| Test | Issue |
-|------|-------|
-| testEnumEntriesFromJava | Java enum missing `entries` property |
+**Fix Required**: Extend `findLocalClass` in `JavaResolutionContext.kt` to walk up the supertype hierarchy and search each supertype's inner classes. This requires:
+1. Getting the containing class's supertypes
+2. For each supertype, check `findInnerClass(name)`
+3. Recursively check supertypes of supertypes
 
-**Analysis**: The `entries` synthetic property isn't being generated for Java enums. Related to iteration 17c `enumEntriesOrigin` work but may need additional handling.
-
-**Action**: Check `FirJavaFacade.kt` enum entries generation for java-direct enums.
-
----
-
-### Category 5: NEW - Type Inference (2 tests)
-**Error**: `CANNOT_INFER_PARAMETER_TYPE`
-
-| Test | Issue |
-|------|-------|
-| testApproximationForDefinitelyNotNull | DefinitelyNotNull approximation |
-| testGenericBoundInnerConstructorRef | Generic bound inner constructor |
-
-**Analysis**: Type inference with complex Java generics. Likely new tests not previously in suite.
-
-**Action**: Lower priority - investigate after regressions fixed.
+**Note**: The callback-based `resolveFromSupertypes` already exists but only runs during FIR resolution. The issue is that `findLocalClass` is called during Java model construction, before FIR callbacks are available.
 
 ---
 
-### Category 6: NEW - Nested Class (1 test)
-**Error**: `UNRESOLVED_REFERENCE`
+### Category 2: Sealed Classes (~12-15 tests) — HIGH PRIORITY
 
-| Test | Issue |
-|------|-------|
-| testInheritedInnerAndNested | Inherited inner/nested classes |
+**Error Pattern**: Various - wrong diagnostics, missing permitted types
 
-**Analysis**: Nested class resolution from iteration 18 may not handle inherited inner classes.
+**Root Cause**: `isSealed` returns `false` always, `permittedTypes` returns empty.
 
-**Action**: Check `JavaResolutionContext.resolveNestedClass()` for inherited cases.
+**Affected Tests**:
+- `testSealedJavaClass`, `testSealedJavaClassEnabled`
+- `testJavaSealedClassExhaustiveness`, `testJavaSealedInterfaceExhaustiveness`
+- `testActualJavaSealedClass`
+- `testDirectJavaActualization_sealedClass`
+- `testKotlinInheritsJavaClass`, `testKotlinInheritsJavaInterface`
+- `testFlexibleSealedInSubject`
 
----
-
-### Category 7: NEW - Abstract Member (1 test)
-**Error**: `ABSTRACT_MEMBER_NOT_IMPLEMENTED`
-
-| Test | Issue |
-|------|-------|
-| testJavaMapWithCustomEntries | Map with custom entries |
-
-**Analysis**: Custom Map.Entry implementation not recognized as implementing abstract member.
-
-**Action**: Lower priority - investigate method signature matching.
+**Fix Required**: In `JavaClassOverAst.kt`:
+1. Implement `isSealed` - check for `SEALED_KEYWORD` in modifier list
+2. Implement `permittedTypes` - parse `PERMITS_LIST` node for permitted class references
 
 ---
 
-### Category 8: BASELINE DIFF ONLY (7 tests)
-These may just need baseline file updates:
+### Category 3: Java Records (~6-8 tests) — HIGH PRIORITY
 
-| Test | Notes |
-|------|-------|
-| testAbstractMutableList_modCount | Multiplatform K2 |
-| testActualizeExpectProtectedToJavaProtected | Multiplatform K2 |
-| testAnnotationsViaActualTypeAliasFromBinary | Binary annotations |
-| testCallableReferenceToJavaField | Callable reference |
-| testCannotAccessInterfaceMemberViaReceiver | Interface member |
-| testConstValAsAnnotationArgumentInJava | IR issue |
-| testNotErasedMapGetMap_inherited | Map inheritance |
+**Error Pattern**: `UNRESOLVED_REFERENCE` for record component accessors
 
-**Action**: Run with `-Pkotlin.test.update.test.data=true` to see if baselines can be updated, or if real errors exist.
+**Root Cause**: `isRecord` returns `false`, `recordComponents` returns empty.
 
----
+**Affected Tests**:
+- `testSimpleRecords`, `testSimpleRecordsDefaultConstructor`
+- `testSimpleRecordsWithSecondaryConstructor`
+- `testJavaRecordWithCanonicalConstructor`
+- `testJavaRecordWithExplicitComponent`
+- `testJavaRecordWithGeneric`
 
-## Priority Recommendations
-
-### High Priority (Regressions from iterations 17-23)
-1. **Constant Evaluation (4 tests)** - Core functionality, iteration 23 regression
-2. **Visibility/Protected (7 tests)** - May affect many tests
-3. **Enum Entries (1 test)** - Related to iteration 17c work
-
-### Medium Priority (Supertype/Nested)
-4. **Supertype Resolution (4 tests)** - Iteration 21 related
-5. **Nested Class (1 test)** - Iteration 18 related
-
-### Low Priority (New issues)
-6. **Type Inference (2 tests)** - Complex new tests
-7. **Abstract Member (1 test)** - Edge case
-8. **Baseline Diffs (7 tests)** - May not be real issues
+**Fix Required**: In `JavaClassOverAst.kt`:
+1. Implement `isRecord` - check for `RECORD_KEYWORD`
+2. Implement `recordComponents` - parse `RECORD_HEADER` or `RECORD_COMPONENT` nodes
+3. Create `JavaRecordComponentOverAst` class implementing `JavaRecordComponent`
 
 ---
 
-## Phased Test Analysis (158 failures)
+### Category 4: Import/Package Edge Cases (~8-10 tests) — MEDIUM PRIORITY
 
-The phased tests have 158 failures (vs 33 box failures). Many are likely the same root causes:
-- BASELINE_DIFF patterns
-- Same visibility/constant issues
+**Error Pattern**: `UNRESOLVED_REFERENCE: Unresolved reference '_ab'`
 
-**Recommendation**: Fix box test regressions first, then re-run phased tests to see how many are resolved.
+**Root Cause**: Complex scenarios where package names clash with class names.
+
+**Affected Tests**:
+- `testTopLevelClassVsPackage`, `testTopLevelClassVsPackage2`
+- `testPackageVsClass`, `testPackageVsRootClass`
+- `testNestedAndTopLevelClassClash`, `testNestedClassClash`
+- `testCurrentPackageAndExplicitNestedImport`
+
+**Fix Required**: Review import resolution in `JavaResolutionContext.kt` for edge cases where:
+- A class name matches a package name
+- Nested imports clash with top-level classes
 
 ---
 
-## Summary
+### Category 5: Raw Types (~10-15 tests) — LOW PRIORITY
 
-| Category | Count | Type |
-|----------|-------|------|
-| Constant Eval Regression | 4 | REGRESSION |
-| Visibility Regression | 7 | REGRESSION |
-| Supertype Regression | 4 | REGRESSION |
-| Enum Entries | 1 | NEW (related to 17c) |
-| Type Inference | 2 | NEW |
-| Nested Class | 1 | NEW (related to 18) |
-| Abstract Member | 1 | NEW |
-| Baseline Diff | 7 | UNKNOWN |
-| **Uncategorized** | 6 | UNKNOWN |
-| **Total** | 33 | |
+**Error Pattern**: Mostly baseline differences, some `MISSING_DEPENDENCY`
 
-**Key Finding**: ~15 tests (45%) appear to be regressions from iterations 17-23 work, particularly:
-- Constant evaluation (iteration 23)
-- Visibility handling
-- Enum entries (iteration 17c)
+**Affected Tests**:
+- `testRecursiveBound`, `testIntermediateRecursion`
+- `testRawSupertypeOverride`, `testRawTypeSyntheticExtensions`
+- `testNonTrivialErasure`, `testInterdependentTypeParameters`
+- `testArrays`, `testRawTypes`
 
-**Recommended Next Step**: Start with constant evaluation failures as they're clearly related to recent iteration 23 work.
+**Status**: Many are baseline differences only. Some may be related to inherited inner class issue.
+
+---
+
+### Category 6: Enum Handling (~3-5 tests) — LOW PRIORITY
+
+**Affected Tests**:
+- `testEnumEntriesFromJava`
+- `testStaticImportFromEnumJava`
+- `testJavaEnum`
+- `testDirectJavaActualization_enumStatics`
+
+**Status**: May require investigation of enum entries generation for java-direct.
+
+---
+
+### Category 7: Baseline Differences Only (~60-70 tests) — LOW PRIORITY
+
+**Error Pattern**: `Actual data differs from file content` with no compilation error
+
+These tests compile successfully but produce slightly different IR/diagnostic output.
+
+**Status**: May be acceptable differences or require baseline updates. Lower priority.
+
+---
+
+## Box Test Failures Detail (18 tests)
+
+| Test | Category | Error |
+|------|----------|-------|
+| testAnnotationWithKotlinProperty | Annotation | Baseline diff |
+| testAnnotationWithKotlinPropertyFromInterfaceCompanion | Annotation | Baseline diff |
+| testNotErasedMapGetMap_inherited | Collections | Baseline diff |
+| testEnumEntriesFromJava | Enum | Runtime/entries |
+| testStaticImportFromEnumJava | Enum | Baseline diff |
+| testCapturedSelfInsideIntersection4 | Inference | Complex generics |
+| testInheritedInnerAndNested | Inner | MISSING_DEPENDENCY |
+| testGenericBoundInnerConstructorRef | Inner/Generics | UNRESOLVED |
+| testConstValAsAnnotationArgumentInJava | Const | Baseline diff |
+| testAnnotationsViaActualTypeAliasFromBinary | Multiplatform | Baseline diff |
+| testKt47785 | Platform types | Baseline diff |
+| testJavaAnnotationConstructorTypes | Reflection | Baseline diff |
+| testJavaMethodsSmokeTest | Reflection | Baseline diff |
+| testJavaVisibility | Reflection | Baseline diff |
+| testJavaArrayType | Reflection | Baseline diff |
+| testRawRecursiveType | Reflection | Baseline diff |
+| testApproximationForDefinitelyNotNull | Regression | Baseline diff |
+| testJavaMapWithCustomEntries | Special builtins | Baseline diff |
+
+---
+
+## Priority Order for Next Iterations
+
+### Iteration 25 (Recommended): Inherited Inner Classes
+- **Impact**: ~30-40 tests
+- **Complexity**: MEDIUM
+- **Files**: `JavaResolutionContext.kt`
+- **Approach**: Add supertype inner class lookup to `findLocalClass`
+
+### Iteration 26: Sealed Classes  
+- **Impact**: ~12-15 tests
+- **Complexity**: LOW-MEDIUM
+- **Files**: `JavaClassOverAst.kt`
+- **Approach**: Implement `isSealed` and `permittedTypes`
+
+### Iteration 27: Java Records
+- **Impact**: ~6-8 tests
+- **Complexity**: MEDIUM
+- **Files**: `JavaClassOverAst.kt`, new `JavaRecordComponentOverAst.kt`
+- **Approach**: Implement `isRecord` and `recordComponents`
+
+### Later: Import edge cases, baseline updates
+
+---
+
+## Key Learnings from Iteration 24
+
+1. **Check PSI/javac-wrapper first** — The `ProtectedStaticVisibility` pattern was directly from PSI's `JavaElementUtil.getVisibility()`
+2. **java.lang implicit import** — Java always has `java.lang.*` implicitly imported; handle common types locally
+3. **Sibling vs Inherited** — Inner class resolution has two distinct cases that need separate handling
