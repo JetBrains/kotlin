@@ -24,7 +24,7 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(intellijCore())
     compileOnly(libs.guava)
-    runtimeOnly(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.core)
 }
 
 sourceSets {
