@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.backend.utils.buildSubstitutorByCalledCallable
 import org.jetbrains.kotlin.fir.declarations.*
@@ -51,7 +52,9 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -1397,6 +1400,26 @@ class CallAndReferenceGenerator(
     }
 
     /**
+     * Evaluates an argument from `js` call. This is required for the Web platform only.
+     * By the language semantic we expect to have a single string **literal** in the `js` call.
+     * Compiler will fold the argument if it is evaluatable. If it is not, then the error is reported later in the pipeline.
+     */
+    private fun evaluateAndApplyJsCallArg(jsFirCall: FirFunctionCall, jsIrCall: IrCall) {
+        val firArg = jsFirCall.arguments.singleOrNull() ?: return
+        val irArg = jsIrCall.arguments.singleOrNull() ?: return
+
+        @OptIn(PrivateConstantEvaluatorAPI::class)
+        val evaluated = FirExpressionEvaluator.evaluateExpression(firArg, session)
+        val evaluatedLiteral = evaluated?.unwrapOr<FirLiteralExpression> { return } ?: return
+        if (evaluatedLiteral.kind != ConstantValueKind.String) return
+        val irConst = evaluatedLiteral.toIrConst(evaluatedLiteral.resolvedType.toIrType()).apply {
+            startOffset = irArg.startOffset
+            endOffset = irArg.endOffset
+        }
+        jsIrCall.arguments[0] = irConst
+    }
+
+    /**
      * @param irAssignmentRhs If passed, this expression will be the only applied argument.
      * Context arguments will still be set from [statement].
      */
@@ -1410,13 +1433,19 @@ class CallAndReferenceGenerator(
 
         val receiverInfo = putReceivers(statement, declarationSiteSymbol, explicitReceiverExpression)
 
-        return if (irAssignmentRhs != null && this is IrMemberAccessExpression<*>) {
+        val result = if (irAssignmentRhs != null && this is IrMemberAccessExpression<*>) {
             val contextArgumentCount = this.putContextArguments(statement, receiverInfo)
             this.arguments[receiverInfo.valueArgumentOffset(contextArgumentCount)] = irAssignmentRhs
             this
         } else {
             applyCallArguments(statement, declarationSiteSymbol, receiverInfo)
         }
+
+        if (result is IrCall && statement is FirFunctionCall && declarationSiteSymbol?.callableId == WebCommonStandardClassIds.Callables.Js) {
+            evaluateAndApplyJsCallArg(statement, result)
+        }
+
+        return result
     }
 
     private fun IrExpression.putReceivers(
