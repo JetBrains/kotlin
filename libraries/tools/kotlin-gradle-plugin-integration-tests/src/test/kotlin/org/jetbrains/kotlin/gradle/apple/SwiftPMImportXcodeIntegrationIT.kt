@@ -354,7 +354,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
 
     @GradleTest
     fun `integrateLinkagePackage task base idempotency check`(version: GradleVersion) {
-        project("emptyxcode", version) {
+        project("emptyxcode", version, buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(version)) {
             initDefaultKmpWithLocalSPM()
 
             build(
