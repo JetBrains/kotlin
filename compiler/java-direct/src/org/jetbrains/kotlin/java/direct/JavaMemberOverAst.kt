@@ -42,7 +42,7 @@ abstract class JavaMemberOverAst(
         get() = when {
             containingClass.isInterface -> Visibilities.Public
             hasModifier("PUBLIC_KEYWORD") -> Visibilities.Public
-            hasModifier("PROTECTED_KEYWORD") -> Visibilities.Protected
+            hasModifier("PROTECTED_KEYWORD") -> if (isStatic) JavaVisibilities.ProtectedStaticVisibility else JavaVisibilities.ProtectedAndPackage
             hasModifier("PRIVATE_KEYWORD") -> Visibilities.Private
             else -> JavaVisibilities.PackageVisibility
         }
