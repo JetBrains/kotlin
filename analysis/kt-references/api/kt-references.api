@@ -61,6 +61,7 @@ public abstract class org/jetbrains/kotlin/idea/references/KtDefaultAnnotationAr
 	public fun getCanonicalText ()Ljava/lang/String;
 	public fun getRangeInElement ()Lcom/intellij/openapi/util/TextRange;
 	public fun getResolvesByNames ()Ljava/util/Collection;
+	protected final fun isDefaultAnnotationMethod (Lcom/intellij/psi/PsiElement;)Z
 	public fun isReferenceTo (Lcom/intellij/psi/PsiElement;)Z
 }
 
