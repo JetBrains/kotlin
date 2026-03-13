@@ -1,0 +1,15 @@
+klib declarations:
+Classifier: test/Baz; klibFileAnnotations: [
+  kotlin/Suppress(names = ["UNUSED_PARAMETER"])
+    psi: null
+]
+
+Callable: test/bar; klibFileAnnotations: [
+  kotlin/Suppress(names = ["UNUSED_PARAMETER"])
+    psi: null
+]
+
+Callable: test/foo; klibFileAnnotations: [
+  kotlin/Suppress(names = ["UNUSED_PARAMETER"])
+    psi: null
+]

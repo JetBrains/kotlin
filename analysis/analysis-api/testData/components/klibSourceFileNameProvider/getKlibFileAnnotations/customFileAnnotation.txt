@@ -1,0 +1,10 @@
+klib declarations:
+Classifier: test/MyFileAnnotation; klibFileAnnotations: [
+  test/MyFileAnnotation()
+    psi: null
+]
+
+Callable: test/baz; klibFileAnnotations: [
+  test/MyFileAnnotation()
+    psi: null
+]

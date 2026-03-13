@@ -1,16 +1,19 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.components.KaSourceProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirFileLevelAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.fir.declarations.utils.klibFileAnnotations
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 
 internal class KaFirSourceProvider(
@@ -19,5 +22,12 @@ internal class KaFirSourceProvider(
     override val KaDeclarationSymbol.klibSourceFileName: String?
         get() = withValidityAssertion {
             firSymbol.klibSourceFile?.name
+        }
+
+    override val KaDeclarationSymbol.klibFileAnnotations: KaAnnotationList?
+        get() = withValidityAssertion {
+            firSymbol.klibFileAnnotations?.let {
+                KaFirFileLevelAnnotationList.create(it, analysisSession.firSymbolBuilder)
+            }
         }
 }

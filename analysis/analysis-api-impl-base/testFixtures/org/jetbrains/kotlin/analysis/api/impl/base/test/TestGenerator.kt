@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInt
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractJavaGetterSetterNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractPsiTypeAsKaTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.kdocProvider.AbstractKDocProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider.AbstractGetKlibFileAnnotationsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider.AbstractGetKlibSourceFileNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractGetExpectsForActualTest
@@ -750,6 +751,9 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("klibSourceFileNameProvider", filter = frontendIs(FrontendKind.Fir) and analysisApiModeIs(AnalysisApiMode.Standalone)) {
         test<AbstractGetKlibSourceFileNameTest> {
             model(it, "getKlibSourceFileName")
+        }
+        test<AbstractGetKlibFileAnnotationsTest> {
+            model(it, "getKlibFileAnnotations")
         }
     }
 

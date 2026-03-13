@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.analysis.test.framework.utils.indented
 import org.jetbrains.kotlin.name.ClassId
 
 object TestAnnotationRenderer {
-    fun renderAnnotations(analysisSession: KaSession, annotations: KaAnnotationList) = buildString {
-        renderAnnotationsRecursive(analysisSession, annotations, currentMetaAnnotations = null, indent = 0)
+    fun renderAnnotations(analysisSession: KaSession, annotations: KaAnnotationList, prefix: String = "annotations") = buildString {
+        renderAnnotationsRecursive(analysisSession, annotations, currentMetaAnnotations = null, indent = 0, prefix)
     }
 
     fun renderAnnotationsWithMeta(analysisSession: KaSession, annotations: KaAnnotationList) = buildString {
@@ -24,9 +24,10 @@ object TestAnnotationRenderer {
         analysisSession: KaSession,
         annotations: KaAnnotationList,
         currentMetaAnnotations: Set<ClassId>?,
-        indent: Int
+        indent: Int,
+        prefix: String = "annotations",
     ) {
-        appendLine("annotations: [".indented(indent))
+        appendLine("$prefix: [".indented(indent))
         for (annotation in annotations) {
             appendLine(KaDebugRenderer().renderAnnotationApplication(analysisSession, annotation).indented(indent = indent + 2))
             if (currentMetaAnnotations != null) {
@@ -38,7 +39,7 @@ object TestAnnotationRenderer {
 
                 val metaAnnotations = with(analysisSession) { findClass(classId)?.annotations }
                 if (metaAnnotations != null) {
-                    renderAnnotationsRecursive(analysisSession, metaAnnotations, currentMetaAnnotations + classId, indent = indent + 4)
+                    renderAnnotationsRecursive(analysisSession, metaAnnotations, currentMetaAnnotations + classId, indent = indent + 4, )
                 } else {
                     appendLine("<unknown meta-annotation ${classId}>".indented(indent + 4))
                 }

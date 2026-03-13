@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaK1Unsupported
-import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 
@@ -23,6 +21,15 @@ public interface KaSourceProvider : KaSessionComponent {
     @KaNonPublicApi
     @KaK1Unsupported
     public val KaDeclarationSymbol.klibSourceFileName: String?
+
+    /**
+     * File-level annotations (`@file:SomeAnnotation`) for the given [KaDeclarationSymbol] located in a Kotlin library
+     * (klib), or `null` if the declaration is not located in a klib, or when file annotations are not available.
+     */
+    @KaNonPublicApi
+    @KaK1Unsupported
+    @KaExperimentalApi
+    public val KaDeclarationSymbol.klibFileAnnotations: KaAnnotationList?
 }
 
 /**
@@ -36,3 +43,15 @@ public interface KaSourceProvider : KaSessionComponent {
 context(session: KaSession)
 public val KaDeclarationSymbol.klibSourceFileName: String?
     get() = with(session) { klibSourceFileName }
+
+/**
+ * File-level annotations (`@file:SomeAnnotation`) for the given [KaDeclarationSymbol] located in a Kotlin library
+ * (klib), or `null` if the declaration is not located in a klib, or when file annotations are not available.
+ */
+@KaNonPublicApi
+@KaK1Unsupported
+@KaContextParameterApi
+@KaExperimentalApi
+context(session: KaSession)
+public val KaDeclarationSymbol.klibFileAnnotations: KaAnnotationList?
+    get() = with(session) { klibFileAnnotations }
