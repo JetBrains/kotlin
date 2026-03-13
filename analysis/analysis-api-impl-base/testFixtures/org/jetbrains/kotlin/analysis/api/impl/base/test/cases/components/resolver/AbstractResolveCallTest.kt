@@ -34,6 +34,10 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
 
         ignoreStabilityIfNeeded {
             assertStableResult(testServices, callInfo, secondCall?.asCallInfo())
+            if (mainElement is KtResolvableCall) {
+                val oldCall = mainElement.resolveToCall()
+                assertStableResult(testServices, callInfo, oldCall)
+            }
         }
 
         // This call mustn't be suppressed as this is the API contracts
