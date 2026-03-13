@@ -33,27 +33,6 @@ internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLV
 }
 
 /**
- * Creates an LLVM module containing WritableTypeInfo structures with ObjC export converters
- * for special Kotlin classes (String, collections).
- *
- * This is needed for hot reload mode because:
- * 1. stdlib-cache.a is built without ObjCExportCodeGenerator (isFinalBinary=false)
- * 2. Therefore WritableTypeInfo for String, List, etc. are zero-initialized (no converters)
- * 3. The bootstrap module imports TypeInfo from host, which points to these empty WritableTypeInfos
- * 4. This causes String->NSString conversion to fail, creating wrapper classes instead
- *
- * By emitting WritableTypeInfo globals with EXTERNAL linkage in the host module,
- * the linker will pick these over the COMMON linkage zero-initialized ones from stdlib-cache.a.
- *
- * @param generationState The native generation state
- * @return An LLVM module with WritableTypeInfo globals, or null if not applicable
- */
-internal fun createObjCExportConvertersModule(generationState: NativeGenerationState): LLVMModuleRef? {
-    if (!generationState.config.target.family.isAppleFamily) return null
-    return createObjCExportConvertersModule(generationState.llvmContext)
-}
-
-/**
  * Creates the ObjC export converters module in an arbitrary LLVM context.
  * Used by hot reload HOST mode where the host module lives in a separate LLVM context.
  */
