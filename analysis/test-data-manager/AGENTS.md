@@ -243,12 +243,12 @@ ManagedTestAssertions.assertEqualsToTestDataFile(
 
 ## Key Classes Reference
 
-| Class                    | Location             | Purpose                                      |
-|--------------------------|----------------------|----------------------------------------------|
-| `ManagedTest`            | testFixtures         | Interface for tests managed by the system    |
-| `ManagedTestAssertions`  | testFixtures         | Assertion functions for test data comparison |
-| `TestDataManagerRunner`  | testFixtures         | Main runner (discovery, grouping, execution) |
-| `TestDataContext`        | testFixtures         | File path resolution for variant chains      |
-| `ManagedTestFilter`      | testFixtures/filters | JUnit filter for ManagedTest implementations |
-| `TestMetadataFilter`     | testFixtures/filters | JUnit filter by @TestMetadata paths          |
-| `VariantChainComparator` | testFixtures         | Orders variant chains by depth               |
+| Class                    | Location             | Purpose                                          |
+|--------------------------|----------------------|--------------------------------------------------|
+| `ManagedTest`            | testFixtures         | Interface for tests managed by the system        |
+| `ManagedTestAssertions`  | testFixtures         | Assertion functions for test data comparison     |
+| `TestDataManagerRunner`  | testFixtures         | Main runner (discovery, grouping, execution)     |
+| `TestDataContext`        | testFixtures         | File path resolution and mode for variant chains |
+| `ManagedTestFilter`      | testFixtures/filters | JUnit filter for ManagedTest implementations     |
+| `TestMetadataFilter`     | testFixtures/filters | JUnit filter by @TestMetadata paths              |
+| `VariantChainComparator` | testFixtures         | Orders variant chains by depth                   |

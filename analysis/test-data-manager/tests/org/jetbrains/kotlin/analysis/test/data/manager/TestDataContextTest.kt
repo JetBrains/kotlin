@@ -21,10 +21,10 @@ class TestDataContextTest {
         extension: String = ".txt",
     ) {
         val testDataPath = tempDir.resolve("test.kt")
-        val testDataContext = TestDataContext.build(testDataPath, prefixes, extension)
-        val actualReadable = testDataContext.readableFiles.joinToString(", ") { it.fileName.toString() }
+        val context = TestDataContext.build(testDataPath, prefixes, extension, TestDataManagerMode.CHECK)
+        val actualReadable = context.readableFiles.joinToString(", ") { it.fileName.toString() }
         assertEquals(expectedReadable, actualReadable)
-        assertEquals(expectedWriteTarget, testDataContext.writeTargetFile.fileName.toString())
+        assertEquals(expectedWriteTarget, context.writeTargetFile.fileName.toString())
     }
 
     @Test
