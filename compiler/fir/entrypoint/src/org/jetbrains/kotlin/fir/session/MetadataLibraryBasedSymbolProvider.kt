@@ -1,17 +1,20 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.klibFileAnnotations
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 import org.jetbrains.kotlin.fir.deserialization.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -30,7 +33,7 @@ import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension
 import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import java.util.IdentityHashMap
+import java.util.*
 
 abstract class MetadataLibraryBasedSymbolProvider<L>(
     session: FirSession,
@@ -57,6 +60,18 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
     private val cachedFragments: MutableMap<L, MutableMap<Pair<String, String>, ProtoBuf.PackageFragment>> = mutableMapOf()
     private val fragmentToNameResolver = IdentityHashMap<ProtoBuf.PackageFragment, NameResolver>()
     private val fragmentToKlibMetadataClassDataFinder = IdentityHashMap<ProtoBuf.PackageFragment, KlibMetadataClassDataFinder>()
+    private val fragmentToFileAnnotations = IdentityHashMap<ProtoBuf.PackageFragment, List<FirAnnotation>>()
+
+    private fun getFileAnnotations(fragment: ProtoBuf.PackageFragment, nameResolver: NameResolver): List<FirAnnotation> {
+        return fragmentToFileAnnotations.getOrPut(fragment) {
+            val fileAnnotationProtos = fragment.getExtension(KlibMetadataProtoBuf.fileAnnotation)
+            if (fileAnnotationProtos.isNullOrEmpty()) {
+                emptyList()
+            } else {
+                loadAnnotationsFromMetadata(session, fileAnnotationProtos, nameResolver, AnnotationUseSiteTarget.FILE)
+            }
+        }
+    }
 
     private fun getPackageFragment(
         resolvedLibrary: L, packageStringName: String, packageMetadataPart: String
@@ -100,6 +115,8 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
 
                 val nameResolver = getNameResolver(fragment)
 
+                val fileAnnotations = getFileAnnotations(fragment, nameResolver)
+
                 PackagePartsCacheData(
                     packageProto,
                     FirDeserializationContext.createForPackage(
@@ -109,7 +126,8 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
                         constDeserializer,
                         createDeserializedContainerSource(resolvedLibrary, packageFqName),
                     ),
-                    (resolvedLibrary as? KotlinLibrary)?.let(::MetadataLibraryPackagePartCacheDataExtra)
+                    (resolvedLibrary as? KotlinLibrary)?.let(::MetadataLibraryPackagePartCacheDataExtra),
+                    fileAnnotations = fileAnnotations,
                 )
             }
         }
@@ -165,6 +183,11 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
                 }
 
                 symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
+
+                val fileAnnotations = getFileAnnotations(fragment, nameResolver)
+                if (fileAnnotations.isNotEmpty()) {
+                    symbol.fir.klibFileAnnotations = fileAnnotations
+                }
             }
         }
 

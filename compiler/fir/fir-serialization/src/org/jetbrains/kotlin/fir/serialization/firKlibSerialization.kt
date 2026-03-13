@@ -64,6 +64,10 @@ fun serializeSingleFirFile(
         (declaration as? FirClass)?.makeClassProtoWithNested()
     }
 
+    val fileAnnotationProtos = file.annotations.mapNotNull { annotation ->
+        serializerExtension.annotationSerializer.serializeAnnotation(annotation)
+    }
+
     return buildKlibPackageFragment(
         packageProto,
         classesProto,
@@ -72,7 +76,8 @@ fun serializeSingleFirFile(
                 packageProto.propertyList.isEmpty() &&
                 packageProto.typeAliasList.isEmpty() &&
                 classesProto.isEmpty(),
-        serializerExtension.stringTable as SerializableStringTable
+        serializerExtension.stringTable as SerializableStringTable,
+        fileAnnotations = fileAnnotationProtos,
     )
 }
 

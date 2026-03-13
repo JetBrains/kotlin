@@ -34,6 +34,7 @@ public final class DebugKlibMetadataProtoBuf {
     registry.add(org.jetbrains.kotlin.library.metadata.DebugKlibMetadataProtoBuf.isEmpty);
     registry.add(org.jetbrains.kotlin.library.metadata.DebugKlibMetadataProtoBuf.fqName);
     registry.add(org.jetbrains.kotlin.library.metadata.DebugKlibMetadataProtoBuf.className);
+    registry.add(org.jetbrains.kotlin.library.metadata.DebugKlibMetadataProtoBuf.fileAnnotation);
   }
   public interface HeaderOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.library.metadata.Header)
@@ -1686,6 +1687,17 @@ public final class DebugKlibMetadataProtoBuf {
           .newFileScopedGeneratedExtension(
         java.lang.Integer.class,
         null);
+  public static final int FILE_ANNOTATION_FIELD_NUMBER = 175;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.PackageFragment { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment,
+      java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation>> fileAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.getDefaultInstance());
   private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_library_metadata_Header_descriptor;
   private static
@@ -1776,8 +1788,11 @@ public final class DebugKlibMetadataProtoBuf {
       "ragment\030\254\001 \001(\010:@\n\007fq_name\022..org.jetbrain" +
       "s.kotlin.metadata.PackageFragment\030\255\001 \001(\t" +
       ":G\n\nclass_name\022..org.jetbrains.kotlin.me" +
-      "tadata.PackageFragment\030\256\001 \003(\005B\002\020\001B\033B\031Deb" +
-      "ugKlibMetadataProtoBuf"
+      "tadata.PackageFragment\030\256\001 \003(\005B\002\020\001:s\n\017fil" +
+      "e_annotation\022..org.jetbrains.kotlin.meta" +
+      "data.PackageFragment\030\257\001 \003(\0132).org.jetbra" +
+      "ins.kotlin.metadata.AnnotationB\033B\031DebugK",
+      "libMetadataProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1826,6 +1841,7 @@ public final class DebugKlibMetadataProtoBuf {
     isEmpty.internalInit(descriptor.getExtensions().get(24));
     fqName.internalInit(descriptor.getExtensions().get(25));
     className.internalInit(descriptor.getExtensions().get(26));
+    fileAnnotation.internalInit(descriptor.getExtensions().get(27));
     org.jetbrains.kotlin.protobuf.ExtensionRegistry registry =
         org.jetbrains.kotlin.protobuf.ExtensionRegistry.newInstance();
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.skipInComparison);
