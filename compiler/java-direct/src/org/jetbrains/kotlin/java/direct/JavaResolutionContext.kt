@@ -63,6 +63,9 @@ class JavaResolutionContext private constructor(
      * Searches for an inner class with the given name in the supertype hierarchy.
      * This implements JLS 6.5.2 - inherited member types are in scope.
      * 
+     * Returns null if multiple inner classes with the same name are found (ambiguity),
+     * which will cause MISSING_DEPENDENCY_CLASS error as per javac behavior.
+     * 
      * IMPORTANT: To avoid infinite recursion, we resolve supertypes using localClassProvider
      * directly instead of going through classifier (which calls findLocalClass).
      * This means we only search local (same compilation unit) supertypes.
@@ -72,6 +75,8 @@ class JavaResolutionContext private constructor(
         // Cycle detection using object identity
         if (javaClass in visited) return null
         visited.add(javaClass)
+        
+        val allFound = mutableSetOf<JavaClass>()
         
         for (supertype in javaClass.supertypes) {
             // Get the supertype's raw name (first part before any dots or generics)
@@ -88,12 +93,21 @@ class JavaResolutionContext private constructor(
             val supertypeClass = localClassProvider(Name.identifier(supertypeRef)) ?: continue
             
             // Check direct inner class of the supertype
-            supertypeClass.findInnerClass(name)?.let { return it }
+            supertypeClass.findInnerClass(name)?.let { found ->
+                allFound.add(found)
+            }
             
             // Recursively check supertypes of the supertype
-            findInnerClassFromSupertypes(name, supertypeClass, visited)?.let { return it }
+            findInnerClassFromSupertypes(name, supertypeClass, visited)?.let { found ->
+                allFound.add(found)
+            }
         }
-        return null
+        
+        // Return null if ambiguous (multiple different classes found)
+        if (allFound.size > 1) {
+            return null
+        }
+        return allFound.firstOrNull()
     }
 
     fun findTypeParameter(name: String): JavaTypeParameter? = typeParametersInScope[name]
@@ -147,13 +161,13 @@ class JavaResolutionContext private constructor(
      */
     private fun resolveNestedClass(name: String, tryResolve: (String) -> Boolean): String? {
         val parts = name.split('.')
-        
+
         // Try resolving increasing prefixes as the outer class
         // For "A.B.C", try: A (then A.B.C), A.B (then A.B.C)
         for (i in 1 until parts.size) {
             val outerParts = parts.subList(0, i).joinToString(".")
             val nestedParts = parts.subList(i, parts.size).joinToString(".")
-            
+
             // Resolve the outer class
             val resolvedOuter = if (outerParts.contains('.')) {
                 resolveNestedClass(outerParts, tryResolve)
@@ -218,18 +232,23 @@ class JavaResolutionContext private constructor(
     /**
      * Try to resolve a simple name as a nested class of one of the supertypes.
      * This implements JLS 6.5.2 - inherited member types are in scope.
+     * Returns null if ambiguous (multiple supertypes have nested class with same name).
      */
     private fun resolveFromSupertypes(simpleName: String, containingClass: JavaClass, tryResolve: (String) -> Boolean): String? {
         val visited = mutableSetOf<String>()
-        return resolveFromSupertypesRecursive(simpleName, containingClass, tryResolve, visited)
+        val allMatches = mutableSetOf<String>()
+        resolveFromSupertypesRecursive(simpleName, containingClass, tryResolve, visited, allMatches)
+        // Return null if ambiguous (multiple different fully qualified names found)
+        return if (allMatches.size > 1) null else allMatches.firstOrNull()
     }
     
     private fun resolveFromSupertypesRecursive(
         simpleName: String, 
         javaClass: JavaClass, 
         tryResolve: (String) -> Boolean,
-        visited: MutableSet<String>
-    ): String? {
+        visited: MutableSet<String>,
+        allMatches: MutableSet<String>
+    ) {
         for (supertype in javaClass.supertypes) {
             var supertypeName = supertype.classifierQualifiedName
             if (supertypeName in visited) continue
@@ -242,7 +261,7 @@ class JavaResolutionContext private constructor(
                 // Try package-qualified version first
                 val nestedCandidate = "$packageQualified.$simpleName"
                 if (tryResolve(nestedCandidate)) {
-                    return nestedCandidate
+                    allMatches.add(nestedCandidate)
                 }
                 // If that worked for the supertype itself, use it for recursion
                 if (tryResolve(packageQualified)) {
@@ -254,7 +273,7 @@ class JavaResolutionContext private constructor(
             // e.g., if supertype is "a.x" and simpleName is "y", try "a.x.y"
             val nestedCandidate = "$supertypeName.$simpleName"
             if (tryResolve(nestedCandidate)) {
-                return nestedCandidate
+                allMatches.add(nestedCandidate)
             }
             
             // Also recursively check supertypes of this supertype
@@ -262,11 +281,9 @@ class JavaResolutionContext private constructor(
             // if it's in the local scope
             val supertypeClass = supertype.classifier as? JavaClass
             if (supertypeClass != null) {
-                val found = resolveFromSupertypesRecursive(simpleName, supertypeClass, tryResolve, visited)
-                if (found != null) return found
+                resolveFromSupertypesRecursive(simpleName, supertypeClass, tryResolve, visited, allMatches)
             }
         }
-        return null
     }
 
     companion object {

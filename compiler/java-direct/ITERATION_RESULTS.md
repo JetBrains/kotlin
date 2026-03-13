@@ -232,4 +232,84 @@ Three bugs, all preventing `createDeclarationsForJavaRecord` from working:
 
 ---
 
+## Iteration 29: Ambiguity Detection for Inner Classes - 2026-03-13
+
+### Status
+✅ Complete — 2 tests fixed, 1 architectural limitation documented
+
+### Root Cause Analysis
+When multiple Java supertypes have inner classes with the same name, javac reports ambiguity at the method declaration site. Verified with javac:
+
+```java
+class X { public class Z {} }
+interface I { public class Z {} }
+class Y extends X implements I {
+    public Z getZ() { return null; }  // javac error: reference to Z is ambiguous
+}
+```
+
+Java-direct was not detecting this ambiguity, allowing one of the `Z` classes to be resolved arbitrarily.
+
+**Debug process**: 
+1. Confirmed javac behavior for 3 test scenarios
+2. Traced through `findInnerClassFromSupertypes` — returned first match instead of checking all
+3. Traced through `resolveFromSupertypes` — same issue in callback-based resolution
+
+### Implementation
+
+Modified `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResolutionContext.kt`:
+
+**1. `findInnerClassFromSupertypes()` (lines 71-106)**
+- Changed from returning first match to collecting all matches in `Set<JavaClass>`
+- Returns `null` if `allFound.size > 1` (ambiguity detected)
+- Works for classes within same compilation unit
+
+**2. `resolveFromSupertypes()` + `resolveFromSupertypesRecursive()` (lines 237-286)**
+- Changed from returning first match to collecting all matches in `Set<String>` (FQNs)
+- Returns `null` if `allMatches.size > 1` (ambiguity detected)
+- Used for callback-based resolution by FIR
+
+### Test Results
+- Box: 1152/1167 (15 failing) — no change
+- Phased: 1349/1442 (93 failing) — **+2 improvement** (was 95)
+- **Total: ~2501/2609 passing (~108 failing, down from ~110)**
+
+**Fixed tests:**
+- ✅ `testInheritanceAmbiguity` — Direct conflict: `x.Z` vs `i.Z` in same package
+- ✅ `testInheritanceAmbiguity3` — Direct conflict: `i.Z` vs `i2.Z` both as direct supertypes
+
+### Known Limitation
+
+❌ `testInheritanceAmbiguity2` — **Cannot fix** due to architectural constraint
+
+**Test scenario**: 
+```java
+class X { public class Z {} }
+interface I { public class Z {} }
+interface I2 extends I {}
+class Y extends X implements I2 {  // I2 in separate file
+    public Z getZ() { return null; }
+}
+```
+
+**Root cause**: Each Java file is parsed independently with its own `JavaResolutionContext`. The `localClassProvider` only knows about classes within the same file. When resolving from `Y`:
+- `Y`'s supertypes are `X` and `I2` (both in different files)
+- `supertype.classifier` returns `null` for classes in other files
+- Cannot navigate to `I2`'s supertype `I` to find `I.Z`
+- Cannot detect ambiguity between `X.Z` and `I.Z`
+
+**Architectural trade-off**:
+- **javac**: Compiles all files together, full cross-file visibility
+- **java-direct**: On-demand parsing for performance, file-scoped resolution
+
+This is a fundamental design choice, not a bug. The ambiguity detection correctly handles same-file cases.
+
+### Key Learnings
+1. **Set-based collection** handles duplicate paths naturally (same class found via different supertype chains)
+2. **Two-level ambiguity detection needed**: both Java Model level (`findInnerClassFromSupertypes`) and FIR callback level (`resolveFromSupertypes`)
+3. **File-scoped resolution** limits cross-file inheritance analysis — acceptable trade-off for on-demand parsing architecture
+4. **Verified with javac** before implementing — understanding reference compiler behavior prevents wrong assumptions
+
+---
+
 *For detailed iteration histories, see `implDocs/archive/`*

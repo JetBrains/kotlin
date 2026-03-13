@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 28 (2026-03-13) |
+| **Last Iteration** | 29 (2026-03-13) |
 | **Box Tests** | 1152/1167 passing (98.7%) |
-| **Phased Tests** | 1347/1442 passing (93.4%) |
-| **Combined** | ~2499/2609 passing, **~110 failing** |
+| **Phased Tests** | 1349/1442 passing (93.5%) |
+| **Combined** | ~2501/2609 passing, **~108 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -27,24 +27,24 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 
 ## Remaining Failures (125 tests)
 
-### Completed Features (iterations 26-27)
+### Completed Features (iterations 26-29)
 
-| Category | Status | Tests Fixed |
-|----------|--------|-------------|
-| **Sealed Classes** | Done (iter 26) | 9 tests fixed |
-| **Java Records** | Partial (iter 27) — Java Model done, needs FIR integration | 0 (2/8 record tests pass) |
+| Category | Status                  | Tests Fixed           |
+|----------|-------------------------|-----------------------|
+| **Sealed Classes** | Done (iter 26)          | 9 tests fixed         |
+| **Java Records** | Done (iter 27, iter 28) | all record tests pass |
+| **Ambiguity Detection** | Done (iter 29)          | 2 tests fixed (same-file only) |
 
 ### Next Priorities
 
-#### Ambiguity Detection — ~5-8 tests — MEDIUM CONFIDENCE
+#### Ambiguity Detection — ✅ PARTIALLY DONE (iter 29)
 
-**Problem**: When multiple inner classes with same name exist from different supertypes, java-direct resolves one instead of returning null (which would trigger MISSING_DEPENDENCY_CLASS).
+**Status**: Fixed 2/4 tests. Remaining failure (`testInheritanceAmbiguity2`) cannot be fixed due to architectural limitation (cross-file ambiguity detection requires parsing all files together, but java-direct uses on-demand per-file parsing).
 
-**Tests to debug first**: `testInheritanceAmbiguity`, `testClash`, `testSupertypeInnerAndTypeParameterWithSameNames`
-
-**Approach**: Modify inner class resolution to collect ALL matching inner classes from supertypes; return null if multiple found.
-
-**MUST DEBUG FIRST** to confirm these share the same root cause.
+**Tests fixed**:
+- ✅ `testInheritanceAmbiguity` (same-file)
+- ✅ `testInheritanceAmbiguity3` (same-file)
+- ❌ `testInheritanceAmbiguity2` (cross-file, architectural limitation)
 
 #### Type Parameter Scoping — ~6-10 tests — LOW CONFIDENCE
 
@@ -114,6 +114,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 26 | Sealed classes (`isSealed`, `permittedTypes`) | +9 |
 | 27 | Java records (Java Model only, FIR integration pending) | +0 |
 | 28 | Java records FIR integration (isRecord token fix, isVararg fix, canonical ctor detection) | +6 phased, +2 box |
+| 29 | Ambiguity detection for inner classes (same-file only) | +2 phased |
 
 ---
 
