@@ -408,6 +408,15 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
 }
 @end
 
+@interface NSProxy (NSProxyToKotlin)
+@end
+
+@implementation NSProxy (NSProxyToKotlin)
+-(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+  RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
+}
+@end
+
 static void injectToRuntimeImpl() {
   // If the code below fails, then it is most likely caused by KT-42254.
   constexpr const char* errorMessage = "runtime injected twice; https://youtrack.jetbrains.com/issue/KT-42254 might be related";

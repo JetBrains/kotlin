@@ -281,8 +281,13 @@ extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
 
 }
 
-extern "C" PERFORMANCE_INLINE OBJ_GETTER(Kotlin_ObjCExport_convertUnmappedObjCObject, id obj) {
-  const TypeInfo* typeInfo = getOrCreateTypeInfo(object_getClass(obj));
+extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_ObjCExport_convertUnmappedObjCObject, id obj) {
+  Class cls = object_getClass(obj);
+  if (class_getSuperclass(cls) == [NSProxy class]) {
+    cls = [obj class];
+  }
+
+  const TypeInfo* typeInfo = getOrCreateTypeInfo(cls);
   RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, objc_retain(obj));
 }
 
