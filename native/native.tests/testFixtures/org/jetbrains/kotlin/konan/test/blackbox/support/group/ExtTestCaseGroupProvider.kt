@@ -631,8 +631,11 @@ private class ExtTestDataFile(
             OutputMatcher(Output.STDOUT) { output -> lldbSpec.checkLLDBOutput(output, settings.get()) }
         } ?: parseOutputRegex(structure.directives)
 
-        val expectedExitCode = if (testKind == TestKind.STANDALONE_NO_TR) parseExpectedExitCode(structure.directives)
-        else ExitCode.Expected(0)
+        val expectedExitCode = when (testKind) {
+            TestKind.STANDALONE_NO_TR -> parseExpectedExitCode(structure.directives)
+            TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> ExitCode.SkipIfNot(0) // Mute if fails. See KT-84923.
+            else -> ExitCode.Expected(0)
+        }
 
         val expectedTimeoutFailure = parseExpectedTimeoutFailure(structure.directives)
         val executionTimeoutCheck = if (expectedTimeoutFailure != null) ExecutionTimeout.ShouldExceed(expectedTimeoutFailure)

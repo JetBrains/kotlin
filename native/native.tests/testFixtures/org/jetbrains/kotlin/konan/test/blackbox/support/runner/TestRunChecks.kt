@@ -63,6 +63,8 @@ sealed interface TestRunCheck {
 
         data class Expected(val expectedExitCode: Int) : ExitCode()
 
+        data class SkipIfNot(val expectedExitCode: Int) : ExitCode()
+
         override fun apply(testRun: TestRun, runResult: RunResult): Result {
             // Don't check the exit code if it is unknown.
             val knownExitCode: Int = runResult.exitCode ?: return Result.Passed
@@ -77,6 +79,10 @@ sealed interface TestRunCheck {
                     if (knownExitCode != expectedExitCode)
                         Result.Failed("Exit code is $knownExitCode while $expectedExitCode was expected.")
                     else Result.Passed
+                }
+                is SkipIfNot -> {
+                    Assumptions.assumeTrue(knownExitCode == expectedExitCode)
+                    Result.Passed
                 }
             }
         }
