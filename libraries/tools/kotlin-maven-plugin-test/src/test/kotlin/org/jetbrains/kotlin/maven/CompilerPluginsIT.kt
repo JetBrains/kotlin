@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.maven.test.TestVersions
 import org.jetbrains.kotlin.maven.test.assertBuildLogContains
 import org.jetbrains.kotlin.maven.test.assertFilesExist
 
-class CompilerPluginsTest : KotlinMavenTestBase() {
+class CompilerPluginsIT : KotlinMavenTestBase() {
     @MavenTest
     fun testDebugLogsKt77036(mavenVersion: TestVersions.Maven) {
         testProject("kotlin-no-arg", mavenVersion) {

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.maven.test.assertBuildLogContains
 import org.jetbrains.kotlin.maven.test.assertCompiledKotlin
 import org.jetbrains.kotlin.maven.test.assertFilesExist
 
-class IncrementalCompilationTest : KotlinMavenTestBase() {
+class IncrementalCompilationIT : KotlinMavenTestBase() {
 
     private fun kotlinSimpleOutputPaths() = arrayOf(
         "target/classes/test.properties",
