@@ -181,7 +181,11 @@ private fun SmartPrinter.generateArgumentsClass(
         println("@Suppress(\"DEPRECATION\")")
     }
     if (!info.levelIsFinal) {
-        print("abstract ")
+        if (Modifier.SEALED in level.modifiers) {
+            print("sealed ")
+        } else {
+            print("abstract ")
+        }
     }
     print("class ${info.className}")
     val supertypes = when (parent) {

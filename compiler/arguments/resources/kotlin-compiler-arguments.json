@@ -12439,7 +12439,8 @@
                                             }
                                         ],
                                         "modifiers": [
-                                            "DEPRECATED"
+                                            "DEPRECATED",
+                                            "SEALED"
                                         ]
                                     },
                                     {
@@ -13272,7 +13273,9 @@
                                         "modifiers": []
                                     }
                                 ],
-                                "modifiers": []
+                                "modifiers": [
+                                    "SEALED"
+                                ]
                             },
                             {
                                 "name": "nativeArguments",
