@@ -1,0 +1,9 @@
+gradle.projectsEvaluated {
+    allprojects {
+        tasks.withType(Test).configureEach {
+            reports.junitXml.required = true
+            reports.html.required = false
+            classpath += files("${rootProject.projectDir}/.claude/skills/run-test/cli-runner/test-log/build/libs/test-log.jar")
+        }
+    }
+}
