@@ -1,5 +1,8 @@
 # Java-Direct Development Process Analysis
 
+> **SUPERSEDED**: See `PROCESS_ANALYSIS_V2.md` for the updated analysis covering iterations 24-27 (2026-03-13).
+> This document is kept for historical reference only.
+
 ## Executive Summary
 
 This document analyzes the development process for the `java-direct` module after reviewing:

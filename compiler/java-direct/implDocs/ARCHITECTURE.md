@@ -1,0 +1,135 @@
+# Java-Direct: Architecture & Reference Guide
+
+This document contains architecture decisions, callback patterns, key files, and reference
+implementation mappings. Consult on-demand when implementing new features — not required reading
+for every iteration.
+
+---
+
+## Key Architecture Decisions
+
+### 1. Type Resolution in FIR Layer (Not Java Model)
+Java Model provides names (`classifierQualifiedName`), FIR resolves them via `session.symbolProvider`. **No `FirSession` access in Java Model**.
+
+### 2. Callback Pattern for Resolution
+
+**CRITICAL**: Always prefer callback-based resolution over hardcoded lists.
+
+`resolve(tryResolve: (String) -> Boolean)` in `JavaClassifierType` allows Java Model to implement Java resolution rules while FIR validates existence.
+
+**Established callback patterns** (use these as templates for new features):
+
+| Feature | Interface Method | FIR Callback |
+|---------|-----------------|--------------|
+| Type resolution | `JavaClassifierType.resolve(tryResolve)` | `symbolProvider.getClassLikeSymbolByClassId` |
+| Annotation resolution | `JavaAnnotation.resolveAnnotation(tryResolve)` | `symbolProvider.getClassLikeSymbolByClassId` |
+| Enum class resolution | `JavaEnumValueAnnotationArgument.resolveEnumClass(tryResolve)` | `findClassId()` in `JavaTypeConversion.kt` |
+| TYPE_USE filtering | `JavaType.filterTypeUseAnnotations(isTypeUse)` | `isTypeUseAnnotationClass()` |
+| Constant evaluation | `JavaField.resolveInitializerValue(resolveReference)` | `resolveExternalFieldValue()` in `FirJavaFacade.kt` |
+
+**Why callbacks**: Allows java-direct to handle its own resolution without affecting PSI-based or javac-wrapper implementations.
+
+### 3. Hybrid Class Finder
+`CombinedJavaClassFinder` tries source class finder first, falls back to binary class finder for JDK/library classes.
+
+### 4. Resolution Context Pattern
+`JavaResolutionContext` encapsulates all resolution data (package, imports, type parameters, containing class). Passed through AST nodes. Use `withTypeParameters()`, `withContainingClass()` to extend scope.
+
+### 5. Two-Phase Type Parameter Construction
+When type parameters can reference each other in bounds (e.g., `<E, S extends Element<E>>`):
+1. Create all instances first with basic context
+2. Update context with all siblings via `updateResolutionContext()`
+
+### 6. PSI/Java-Direct Discrimination
+When shared FIR code needs different behavior for java-direct:
+```kotlin
+// Java-direct classes have null source (no PSI)
+val isJavaDirectClass = classSource == null && origin.fromSource
+```
+
+### 7. Implicit Supertypes
+Java classes have implicit inheritance:
+- Enums -> `java.lang.Enum<E>`
+- Annotation types -> `java.lang.annotation.Annotation`
+- Classes without extends -> `java.lang.Object`
+
+---
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `JavaClassFinderOverAstImpl.kt` | Source class finder, file indexing |
+| `JavaClassOverAst.kt` | Java class model, `memberResolutionContext` |
+| `JavaTypeOverAst.kt` | Type representations, `classifierQualifiedName`, wildcards |
+| `JavaMemberOverAst.kt` | Methods, fields, parameters |
+| `JavaResolutionContext.kt` | Import/type parameter scope management |
+| `JavaAnnotationOverAst.kt` | Annotation parsing and resolution |
+| `JavaDirectComponentRegistrar.kt` | Plugin registration, hybrid finder setup |
+
+## Reference Implementations
+
+Check these BEFORE implementing new features:
+
+| Feature | javac-wrapper | PSI-based |
+|---------|---------------|-----------|
+| Type resolution | `TreeBasedClassifierType` | `JavaClassifierTypeImpl` |
+| Annotation args | `TreeBasedAnnotation` | `annotationArgumentsImpl.kt` |
+| Supertypes | `TreeBasedClass.supertypes` | `JavaClassImpl.supertypes` |
+| Type arguments | `TreeBasedClassifierType.typeArguments` | `JavaClassifierTypeImpl.typeArguments` |
+
+**Paths**:
+- javac-wrapper: `compiler/javac-wrapper/src/org/jetbrains/kotlin/javac/wrappers/`
+- PSI-based: `compiler/frontend.common.jvm/src/org/jetbrains/kotlin/load/java/structure/impl/`
+
+## Shared FIR Files (modify with caution)
+
+- `compiler/fir/fir-jvm/src/.../FirJavaFacade.kt` -- Java class -> FIR conversion
+- `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt` -- type conversion, raw type detection
+- `compiler/fir/fir-jvm/src/.../javaAnnotationsMapping.kt` -- annotation resolution
+- `core/compiler.common.jvm/src/.../load/java/structure/*.kt` -- Java model interfaces
+
+---
+
+## Java Language Implicit Rules
+
+- **Interface fields**: implicitly `public static final`
+- **Interface methods without body**: implicitly `public abstract`
+- **Nested interfaces/enums**: implicitly `static` (even without keyword)
+- **Nested classes in interfaces**: implicitly `static` (JLS 9.5)
+- **Nested classes**: only static if explicitly marked
+
+## KMP Parser Edge Cases
+
+- **Reserved words in imports**: `import kotlin.*` may parse as `ERROR_ELEMENT`, not `IMPORT_STATEMENT`
+- **Fragmented imports**: Parser may split constructs across sibling nodes
+- **Recovery needed**: `ERROR_ELEMENT` nodes often contain recoverable info
+- **Token naming mismatch**: Parser library defines `SEALED_KEYWORD` constant but produces `SEALED` token in AST. Always verify actual token names via exception-based AST dumping.
+
+## FIR Integration Points
+
+- **Type conversion**: `JavaTypeConversion.kt` - handles `classifier==null` for external types
+- **Raw types**: Must create `ConeRawType` for proper method inheritance semantics
+- **Flexible types**: Two calls - lower bound with erased args, upper bound with star projections
+- **TYPE_USE annotations**: Annotations from method modifier list need filtering before attaching to return type
+
+---
+
+## Common Fixes Reference
+
+| Issue | Solution |
+|-------|----------|
+| `MISSING_DEPENDENCY_CLASS: 'T'` | Type parameter not in scope - use `resolutionContext.withTypeParameters()` |
+| `MISSING_DEPENDENCY_CLASS: 'Outer.Inner'` | Nested class in binary - need to resolve outer first, then lookup nested |
+| Raw type errors | Check `isRaw` detection, ensure `ConeRawType.create()` wrapping in FIR |
+| Annotation not resolved | Use callback pattern via `resolveAnnotation(tryResolve)` |
+| `IR annotation has null argument` (literal) | `JavaAnnotationArgument` must implement value subinterfaces (Literal/Array/Enum/etc) |
+| `IR annotation has null argument` (const val) | `REFERENCE_EXPRESSION` for const val needs special handling, not enum |
+| `UNRESOLVED_REFERENCE: 'value'` on annotation | Annotation INTERFACE methods need to be exposed (not annotation argument issue) |
+| `@Override` on return type | Filter non-TYPE_USE annotations in `JavaTypeOverAst.annotations` |
+| Nested interface wrong `isInner` | `isStatic` must return `true` for nested interfaces/enums |
+| Nullability check fails | TYPE_USE annotations on type arguments need parsing |
+
+---
+
+*Extracted from AGENT_INSTRUCTIONS.md — 2026-03-13*

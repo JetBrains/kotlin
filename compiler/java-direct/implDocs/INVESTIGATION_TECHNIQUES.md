@@ -360,6 +360,63 @@ throw IllegalStateException("DEBUG finder: looking for $classId, found=${symbol 
 
 ---
 
+## Failure Categorization Script
+
+**Important**: Test results are in nested XML files. Use recursive glob:
+
+```python
+import xml.etree.ElementTree as ET
+import glob
+from collections import defaultdict
+import re
+
+results_dir = "compiler/java-direct/build/test-results/test"
+failures = defaultdict(list)
+
+def categorize(text):
+    """Extract error category from failure text"""
+    patterns = [
+        (r'MISSING_DEPENDENCY_CLASS', 'MISSING_DEP_CLASS'),
+        (r'MISSING_DEPENDENCY_SUPERCLASS', 'MISSING_DEP_SUPER'),
+        (r'IR annotation has null argument', 'ANNOTATION_NULL_ARG'),
+        (r"UNRESOLVED_REFERENCE.*value", 'ANNOTATION_VALUE_UNRESOLVED'),
+        (r'NoSuchMethodError', 'NO_SUCH_METHOD'),
+        (r'INVISIBLE_REFERENCE', 'INVISIBLE_REF'),
+        (r'ABSTRACT_MEMBER_NOT_IMPLEMENTED', 'ABSTRACT_NOT_IMPL'),
+        (r'Actual data differs from file content', 'BASELINE_DIFF'),
+        (r'Content is not equal', 'CONTENT_DIFF'),
+        (r'should throw on get\(\)', 'NULLABILITY_CHECK_FAIL'),
+        (r'There should left no projections', 'STAR_PROJECTION_BUG'),
+    ]
+    for pattern, cat in patterns:
+        if re.search(pattern, text, re.IGNORECASE):
+            return cat
+    return 'OTHER'
+
+# Use recursive glob to find all XML files (tests are in nested directories)
+for xml_file in glob.glob(f"{results_dir}/**/*.xml", recursive=True):
+    try:
+        tree = ET.parse(xml_file)
+        for tc in tree.findall('.//testcase'):
+            failure = tc.find('failure')
+            if failure is not None:
+                name = tc.get('name').replace('()','')
+                classname = tc.get('classname', '')
+                text = (failure.text or '') + (failure.get('message', '') or '')
+                test_type = 'box' if 'Box' in classname else 'phased'
+                cat = categorize(text)
+                failures[f"{test_type}:{cat}"].append((name, text[:200]))
+    except: pass
+
+for key in sorted(failures.keys(), key=lambda k: -len(failures[k])):
+    tests = failures[key]
+    print(f"\n=== {key} ({len(tests)} tests) ===")
+    for name, text in tests[:5]:
+        print(f"  - {name}")
+```
+
+---
+
 ## Lessons Learned
 
 1. **Exception-based debugging is essential** - Only reliable way to see output in Gradle tests
@@ -375,3 +432,5 @@ throw IllegalStateException("DEBUG finder: looking for $classId, found=${symbol 
 6. **Reserved words cause parser issues** - `kotlin` in imports triggers Java 9 module parsing
 
 7. **Check input node type first** - Before calling `findChildByType()`, verify the node isn't already the target type
+
+8. **Parser token names != library constant names** - The parser library may define e.g. `SEALED_KEYWORD` but produce `SEALED` in AST. Always verify via exception-based AST dumping before implementing.

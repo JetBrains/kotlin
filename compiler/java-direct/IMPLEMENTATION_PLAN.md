@@ -4,13 +4,13 @@
 
 Replace IntelliJ platform-based Java parsing with a custom implementation using KMP Java Parser. Goal: eliminate platform dependency while maintaining Java-Kotlin bidirectional interoperability.
 
-**Status**: 1434/1495 tests passing (95.9%) after iteration 23  
-**Last Updated**: 2026-03-12
+**Status**: See `FIXING_ITERATIONS.md` for current test counts.
 
 **Related docs**:
-- `AGENT_INSTRUCTIONS.md` — Agent guidelines, learnings, debugging techniques
+- `AGENT_INSTRUCTIONS.md` — Agent ground rules and mandatory checklist
+- `FIXING_ITERATIONS.md` — Current status, remaining work, iteration plans (single source of truth for metrics)
 - `ITERATION_RESULTS.md` — Progress history and key findings
-- `FIXING_ITERATIONS.md` — Iteration plans and archive links
+- `implDocs/ARCHITECTURE.md` — Architecture decisions, callback patterns, key files
 
 ---
 

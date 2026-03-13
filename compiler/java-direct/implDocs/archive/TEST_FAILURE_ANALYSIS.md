@@ -1,8 +1,11 @@
 # Test Failure Analysis - Post Iteration 25c
 
-**Date**: 2026-03-12  
-**Context**: Post-mortem analysis after iteration 25/25c underwhelming results  
-**Current Results**: 
+> **SUPERSEDED**: This document has been merged into `FIXING_ITERATIONS.md` (2026-03-13).
+> Kept for historical reference only. See `FIXING_ITERATIONS.md` for current failure analysis.
+
+**Date**: 2026-03-12
+**Context**: Post-mortem analysis after iteration 25/25c underwhelming results
+**Current Results**:
 - Box: 1167 total, 17 failed (98.5% pass)
 - Phased: 1442 total, 110 failed (92.4% pass)
 - **Combined: 2609 total, 127 failed (95.1% pass)**

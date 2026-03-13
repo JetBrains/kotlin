@@ -46,3 +46,4 @@ The key starting places are:
 Generate the resulting analysis document with conclusiong in the .md format in the `direct-java` module.
 
 Ask questions or ask for instructions if this information is insufficient for the research, or if you got stuck.
+
