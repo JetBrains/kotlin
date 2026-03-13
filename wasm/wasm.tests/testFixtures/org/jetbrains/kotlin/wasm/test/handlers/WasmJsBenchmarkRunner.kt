@@ -23,6 +23,10 @@ class WasmJsBenchmarkRunner(
     testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
     private val vmsToCheck: List<WasmVM> = listOfNotNull(WasmVM.V8)
+    
+    companion object {
+        private const val BENCHMARK_REPORT_FILE = "benchmark_results.csv"
+    }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
@@ -143,17 +147,43 @@ class WasmJsBenchmarkRunner(
             val disableExceptions = DISABLE_WASM_EXCEPTION_HANDLING in testServices.moduleStructure.allDirectives
             val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
 
+            // Capture benchmark output
+            val vmsOutputs = mutableMapOf<String, String>()
+            
             val exceptions = vmsToCheck
                 .mapNotNull { vm ->
-                    vm.runWithCaughtExceptions(
-                        debugMode = debugMode,
-                        useNewExceptionHandling = useNewExceptionProposal,
-                        failsIn = failsIn,
-                        entryFile = collectedJsArtifacts.entryPath,
-                        jsFilePaths = jsFilePaths,
-                        workingDirectory = dir,
-                    )
+                    try {
+                        if (debugMode >= DebugMode.DEBUG) {
+                            println(" ------ Run benchmark in ${vm.shortName}")
+                        }
+                        val output = vm.run(
+                            entryFile = "./${collectedJsArtifacts.entryPath}",
+                            jsFiles = jsFilePaths,
+                            workingDirectory = dir,
+                            useNewExceptionHandling = useNewExceptionProposal
+                        )
+                        
+                        // Capture benchmark output
+                        vmsOutputs[vm.shortName] = output
+                        
+                        if (vm.shortName in failsIn) {
+                            AssertionError("The test expected to fail in ${vm.javaClass.simpleName}. Please update the testdata.")
+                        } else {
+                            null
+                        }
+                    } catch (e: Throwable) {
+                        if (vm.shortName !in failsIn) {
+                            e
+                        } else {
+                            null
+                        }
+                    }
                 }
+            
+            // Write results to report file
+            if (vmsOutputs.isNotEmpty()) {
+                writeBenchmarkReport(originalFile, mode, vmsOutputs, debugMode)
+            }
 
             return exceptions + when (mode) {
                 "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
@@ -169,5 +199,37 @@ class WasmJsBenchmarkRunner(
                     (artifacts.compilerResultWithOptimizer?.let { writeToFilesAndRunTest("optimized", it) } ?: emptyList())
 
         processExceptions(allExceptions)
+    }
+    
+    private fun writeBenchmarkReport(testFile: File, mode: String, vmsOutputs: Map<String, String>, debugMode: DebugMode) {
+        val projectRoot = File(System.getProperty("user.dir"))
+        val reportFile = File(projectRoot, BENCHMARK_REPORT_FILE)
+        
+        val timestamp = java.time.LocalDateTime.now().toString()
+        val testPath = testFile.absolutePath
+
+        if (!reportFile.exists() || reportFile.length() == 0L) {
+            reportFile.writeText("Timestamp,Test,Mode,VM,Iterations,Min,Max,Average,Median\n")
+        }
+        
+        vmsOutputs.forEach { (vmName, output) ->
+            val iterations = parseValue(output, "Iterations")
+            val min = parseValue(output, "Min")
+            val max = parseValue(output, "Max")
+            val average = parseValue(output, "Average")
+            val median = parseValue(output, "Median")
+            
+            val csvRow = "$timestamp,$testPath,$mode,$vmName,$iterations,$min,$max,$average,$median\n"
+            reportFile.appendText(csvRow)
+        }
+        
+        if (debugMode >= DebugMode.DEBUG) {
+            println("Benchmark results written to: ${reportFile.absolutePath}")
+        }
+    }
+
+    private fun parseValue(output: String, label: String): String {
+        val regex = Regex("$label: (\\d+)")
+        return regex.find(output)?.groupValues?.get(1) ?: ""
     }
 }

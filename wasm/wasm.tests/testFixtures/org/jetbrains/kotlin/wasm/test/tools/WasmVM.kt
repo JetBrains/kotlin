@@ -11,7 +11,7 @@ import java.io.InputStreamReader
 import java.lang.Boolean.getBoolean
 import kotlin.test.fail
 
-private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
+private val toolLogsEnabled: Boolean = true
 
 internal sealed class WasmVM(
     val shortName: String,
@@ -59,6 +59,7 @@ internal sealed class WasmVM(
             tool.run(
                 *toolArgs.toTypedArray(),
                 *jsFiles.toTypedArray(),
+                "--prof",
                 "--module",
                 *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
                 "--experimental-wasm-wasmfx",
