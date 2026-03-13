@@ -9,7 +9,7 @@ class Ctx {
 }
 
 class Scope {
-    val o = "O"
+    val o = "OK"
 }
 
 fun accept(block: context(Ctx) Scope.(Int) -> String) = 1
