@@ -3,7 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.maven.test
+package org.jetbrains.kotlin.maven
+
+import org.jetbrains.kotlin.maven.test.KotlinMavenTestBase
+import org.jetbrains.kotlin.maven.test.MavenTest
+import org.jetbrains.kotlin.maven.test.TestVersions
+import org.jetbrains.kotlin.maven.test.assertBuildLogContains
+import org.jetbrains.kotlin.maven.test.assertFilesExist
 
 class CompilerPluginsTest : KotlinMavenTestBase() {
     @MavenTest
