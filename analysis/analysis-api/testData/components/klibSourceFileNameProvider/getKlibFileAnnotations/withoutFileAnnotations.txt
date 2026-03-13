@@ -1,0 +1,2 @@
+klib declarations:
+Callable: test/foo; klibFileAnnotations: null

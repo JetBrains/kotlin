@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.utils.klibFileAnnotations
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
+import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFirSourceProvider(
     override val analysisSessionProvider: () -> KaFirSession,
@@ -19,5 +22,10 @@ internal class KaFirSourceProvider(
     override val KaDeclarationSymbol.klibSourceFileName: String?
         get() = withValidityAssertion {
             firSymbol.klibSourceFile?.name
+        }
+
+    override val KaDeclarationSymbol.klibFileAnnotationClassIds: List<ClassId>?
+        get() = withValidityAssertion {
+            firSymbol.klibFileAnnotations?.mapNotNull { it.toAnnotationClassId(analysisSession.firSession) }
         }
 }
