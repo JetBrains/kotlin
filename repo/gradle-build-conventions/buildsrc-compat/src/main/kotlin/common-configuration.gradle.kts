@@ -443,9 +443,8 @@ fun Project.configureTests() {
         https://github.com/gradle/gradle/issues/36996
          */
         reports {
-            val isTeamcityBuild = kotlinBuildProperties.isTeamcityBuild
             configureEach {
-                if (isTeamcityBuild.get() && GradleVersion.current() == GradleVersion.version("9.4.0")) {
+                if (GradleVersion.current() == GradleVersion.version("9.4.0")) {
                     this.required = false
                 }
             }
