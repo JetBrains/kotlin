@@ -29,9 +29,9 @@ class Derived : Base {
     // which set fields to their default value, which is why x ends up with
     // value 1 after the constructor call.
     var xBool = false
-    var xByte = 0.toByte()
-    var xChar = 0.toChar()
-    var xShort = 0.toShort()
+    var xByte: Byte = 0
+    var xChar: Char = '\u0000'
+    var xShort: Short = 0
     var xInt = 0
     var xLong = 0L
     var xFloat = 0.0f

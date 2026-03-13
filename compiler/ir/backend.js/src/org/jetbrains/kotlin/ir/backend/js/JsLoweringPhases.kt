@@ -33,8 +33,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsPrivateFunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.*
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
-import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 private fun createValidateIrAfterInliningOnlyPrivateFunctions(context: LoweringContext): IrValidationAfterInliningOnlyPrivateFunctionsPhase<LoweringContext> {
     return IrValidationAfterInliningOnlyPrivateFunctionsPhase(
@@ -109,14 +107,6 @@ private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): A
     return AutoboxingTransformer(context, replaceTypesInsideInlinedFunctionBlock = true)
 }
 
-private fun createConstEvaluationPhase(context: JsIrBackendContext): ConstEvaluationLowering {
-    val configuration = IrInterpreterConfiguration(
-        printOnlyExceptionMessage = true,
-        platform = JsPlatforms.defaultJsPlatform,
-    )
-    return ConstEvaluationLowering(context, configuration = configuration)
-}
-
 fun jsLoweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings,
 ): List<NamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> {
@@ -154,7 +144,6 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     // END: Common Native/JS/Wasm prefix.
 
     ::KCallableAndEnumNameInlineLowering,
-    ::createConstEvaluationPhase,
     ::CopyInlineFunctionBodyLowering,
     ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,
     ::PrepareValueClassesToBeExportedLowering,

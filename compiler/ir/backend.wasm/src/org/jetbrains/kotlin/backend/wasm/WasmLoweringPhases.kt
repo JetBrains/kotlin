@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLow
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.*
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
-import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 
 private fun createValidateIrAfterInliningOnlyPrivateFunctionsPhase(context: LoweringContext): IrValidationAfterInliningOnlyPrivateFunctionsPhase<*> {
     return IrValidationAfterInliningOnlyPrivateFunctionsPhase(
@@ -94,15 +92,6 @@ private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): A
     return AutoboxingTransformer(context)
 }
 
-//@PhasePrerequisites(FunctionInlining::class) // This prerequisite is hard to represent for common lowering
-private fun createConstEvaluationPhase(context: CommonBackendContext): ConstEvaluationLowering {
-    val configuration = IrInterpreterConfiguration(
-        printOnlyExceptionMessage = true,
-        platform = WasmPlatforms.unspecifiedWasmPlatform,
-    )
-    return ConstEvaluationLowering(context, configuration = configuration)
-}
-
 fun wasmLoweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings,
 ): List<NamedCompilerPhase<WasmPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> {
@@ -136,7 +125,6 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     // END: Common Native/JS/Wasm prefix.
 
     ::KCallableAndEnumNameInlineLowering,
-    ::createConstEvaluationPhase,
     ::createSpecializeSharedVariableBoxesPhase,
     ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,
 
