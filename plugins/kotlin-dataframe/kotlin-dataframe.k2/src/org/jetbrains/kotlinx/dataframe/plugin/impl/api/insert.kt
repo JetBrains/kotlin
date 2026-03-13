@@ -1,7 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlinx.dataframe.api.*
-import org.jetbrains.kotlinx.dataframe.columns.ColumnPath
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.InsertClauseApproximation
@@ -17,36 +16,48 @@ internal class Insert1 : AbstractInterpreter<InsertClauseApproximation>() {
     }
 }
 
+/**
+ * `insert {}.under { existingGroup }`
+ *
+ * `insert {}.under { pathOf("new", "group") }`
+ */
 internal class Under0 : AbstractInterpreter<PluginDataFrameSchema>() {
-    val Arguments.column: SingleColumnApproximation by arg()
     val Arguments.receiver: InsertClauseApproximation by arg()
+    val Arguments.column: SingleColumnApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val column = column.resolve(receiver.df).single()
         return receiver.df.asDataFrame()
             .insert(receiver.column.asDataColumn()).under { column.path }
             .toPluginDataFrameSchema()
     }
 }
 
+/**
+ * __DEPRECATED__: Deprecated from DataFrame 1.0.0-Beta5 onwards.
+ *
+ * `insert {}.under(pathOf("colGroup"))`
+ */
 internal class Under1 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.columnPath: ColumnPathApproximation by arg()
     val Arguments.receiver: InsertClauseApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df.asDataFrame()
-            .insert(receiver.column.asDataColumn()).under(columnPath.path)
+            .insert(receiver.column.asDataColumn()).under { columnPath.path }
             .toPluginDataFrameSchema()
     }
 }
 
+/**
+ * `insert {}.under("colGroup")`
+ */
 internal class Under4 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.column: String by arg()
     val Arguments.receiver: InsertClauseApproximation by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df.asDataFrame()
-            .insert(receiver.column.asDataColumn()).under(pathOf(column))
+            .insert(receiver.column.asDataColumn()).under { pathOf(column) }
             .toPluginDataFrameSchema()
     }
 }

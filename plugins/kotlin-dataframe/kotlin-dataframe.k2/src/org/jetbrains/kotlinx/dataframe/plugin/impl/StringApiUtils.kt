@@ -31,7 +31,7 @@ fun PluginDataFrameSchema.insertImpliedColumns(selector: ColumnsResolver): Plugi
     // just containsColumn is not enough to distinguish these 2 cases, need to know exactly how it was resolved (is it from string api?)
     val columns = selector.resolve(this).filter { it.isImpliedColumn }
     val schema = columns.filterNot { df.containsColumn(it.path) }.fold(df) { acc, column ->
-        acc.insert(column.column.asDataColumn()).under(column.path.dropLast())
+        acc.insert(column.column.asDataColumn()).under { column.path.dropLast() }
     }.toPluginDataFrameSchema()
     return schema
 }
