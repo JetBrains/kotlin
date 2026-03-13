@@ -6,16 +6,21 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 
 open class CommonCompilerArgumentsConfigurator {
     interface Reporter {
         fun reportWarning(message: String)
         fun reportError(message: String)
+
+        fun report(factory: KtSourcelessDiagnosticFactory, message: String)
+
         fun info(message: String)
 
         object DoNothing : Reporter {
             override fun reportWarning(message: String) {}
             override fun reportError(message: String) {}
+            override fun report(factory: KtSourcelessDiagnosticFactory, message: String) {}
             override fun info(message: String) {}
         }
 

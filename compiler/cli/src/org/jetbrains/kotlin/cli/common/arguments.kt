@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.FlexibleTypeImpl
@@ -128,6 +129,10 @@ fun CommonCompilerArgumentsConfigurator.Reporter.Companion.fromConfiguration(con
 
         override fun reportError(message: String) {
             configuration.report(COMPILER_ARGUMENTS_ERROR, message)
+        }
+
+        override fun report(factory: KtSourcelessDiagnosticFactory, message: String) {
+            configuration.report(factory, message)
         }
 
         override fun info(message: String) {
