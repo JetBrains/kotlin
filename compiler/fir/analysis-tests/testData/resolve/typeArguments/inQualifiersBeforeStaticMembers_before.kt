@@ -25,6 +25,10 @@ enum class E {
     X;
 }
 
+typealias ET = E
+
+typealias JT<T> = JavaUtils<T>
+
 fun test() {
     E<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.X
     E<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int, String><!>.X
@@ -32,11 +36,17 @@ fun test() {
     E<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.values()
     E<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int, String><!>.valueOf("E")
 
+    ET<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.X
+    ET<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.entries
+
     JavaUtils<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><String><!>.foo()
     JavaUtils<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Nothing><!>.bar
     JavaUtils.Nested<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Any?><!>.foo()
     JavaUtils<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.Inner.foo()
     JavaUtils<Int>.Inner<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.foo()
+
+    JT<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><String><!>.foo()
+    JT<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Nothing><!>.bar
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, lambdaLiteral, nullableType,

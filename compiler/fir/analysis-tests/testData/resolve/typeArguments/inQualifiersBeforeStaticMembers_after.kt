@@ -25,6 +25,10 @@ enum class E {
     X;
 }
 
+typealias ET = E
+
+typealias JT<T> = JavaUtils<T>
+
 fun test() {
     E<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.X
     E<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int, String><!>.X
@@ -32,11 +36,17 @@ fun test() {
     E<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.values()
     E<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int, String><!>.valueOf("E")
 
+    ET<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.X
+    ET<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.entries
+
     JavaUtils<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.foo()
     JavaUtils<!TYPE_ARGUMENTS_NOT_ALLOWED!><Nothing><!>.bar
     JavaUtils.Nested<!TYPE_ARGUMENTS_NOT_ALLOWED!><Any?><!>.foo()
     JavaUtils<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.Inner.foo()
     JavaUtils<Int>.Inner<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.foo()
+
+    JT<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.foo()
+    JT<!TYPE_ARGUMENTS_NOT_ALLOWED!><Nothing><!>.bar
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, lambdaLiteral, nullableType,

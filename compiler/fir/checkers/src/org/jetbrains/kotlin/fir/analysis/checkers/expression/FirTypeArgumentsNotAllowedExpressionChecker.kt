@@ -6,23 +6,21 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isExplicit
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.ownTypeArguments
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 
 object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -36,12 +34,18 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressio
                 reporter.reportOn(explicitReceiver.source, FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED, "for packages")
             }
 
-            if (explicitReceiver.symbol != null && expression.isStaticMemberCall()) {
-                val diagnostic = if (LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled()) {
-                    FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
-                } else {
-                    FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_WARNING
-                }
+            val symbol = expression.toResolvedCallableSymbol()
+
+            if (explicitReceiver.symbol != null && symbol?.isStatic == true && expression !is FirCallableReferenceAccess) {
+                val diagnostic =
+                    // Skip deprecation phase for companion block members/extensions but not static enum members
+                    if (!symbol.isJavaOrEnhancement && symbol.getContainingClassSymbol()?.classKind != ClassKind.ENUM_CLASS ||
+                        LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled()
+                    ) {
+                        FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
+                    } else {
+                        FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_WARNING
+                    }
 
                 reporter.reportOn(
                     qualifierWithTypeArguments.source,
@@ -68,14 +72,5 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressio
         if (!ownTypeArguments.isEmpty()) return this
 
         return explicitParent?.lastQualifierPartWithTypeArguments()
-    }
-
-    private fun FirQualifiedAccessExpression.isStaticMemberCall(): Boolean {
-        return when (this) {
-            is FirFunctionCall, is FirPropertyAccessExpression -> {
-                toResolvedCallableSymbol()?.isStatic == true
-            }
-            else -> false
-        }
     }
 }
