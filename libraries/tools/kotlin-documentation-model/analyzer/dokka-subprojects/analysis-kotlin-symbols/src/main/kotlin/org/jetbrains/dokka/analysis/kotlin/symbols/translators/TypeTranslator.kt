@@ -4,18 +4,31 @@
 
 package org.jetbrains.dokka.analysis.kotlin.symbols.translators
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.AnnotationTranslator.Companion.getPresentableName
+import org.jetbrains.dokka.analysis.kotlin.symbols.utils.getLocation
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.properties.PropertyContainer
+import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
 
 internal const val ERROR_CLASS_NAME = "<ERROR CLASS>"
+
+internal class Location(private val symbol: KaSymbol) {
+    fun KaSession.computePath(): String {
+        val psi: PsiElement? = symbol.sourcePsiSafe<PsiElement>()
+        return if (psi != null)
+            getLocation(psi) ?: getDRIFromSymbol(symbol).toString()
+        else getDRIFromSymbol(symbol).toString()
+    }
+}
 
 /**
  * Maps [KaType] to Dokka [Bound] or [TypeConstructorWithKind].
@@ -25,14 +38,15 @@ internal const val ERROR_CLASS_NAME = "<ERROR CLASS>"
 internal class TypeTranslator(
     private val sourceSet: DokkaConfiguration.DokkaSourceSet,
     private val annotationTranslator: AnnotationTranslator,
+    private val logger: DokkaLogger
 ) {
 
     private fun <T> T.toSourceSetDependent() = if (this != null) mapOf(sourceSet to this) else emptyMap()
 
-    private fun KaSession.toProjection(typeProjection: KaTypeProjection): Projection =
+    private fun KaSession.toProjection(typeProjection: KaTypeProjection, location: Location): Projection =
         when (typeProjection) {
             is KaStarTypeProjection -> Star
-            is KaTypeArgumentWithVariance -> toBoundFrom(typeProjection.type).wrapWithVariance(typeProjection.variance)
+            is KaTypeArgumentWithVariance -> toBoundFrom(typeProjection.type, location).wrapWithVariance(typeProjection.variance)
         }
 
     /**
@@ -47,7 +61,7 @@ internal class TypeTranslator(
      * `Outer` is [abbreviationType]
      * `String` is [fullyExpandedType]
      */
-    private fun KaSession.toBoundFromTypeAliased(abbreviationType: KaClassType, fullyExpandedType: Bound): TypeAliased {
+    private fun KaSession.toBoundFromTypeAliased(abbreviationType: KaClassType, fullyExpandedType: Bound, location: Location): TypeAliased {
         val classSymbol = abbreviationType.symbol
         return if (classSymbol is KaTypeAliasSymbol)
             TypeAliased(
@@ -55,7 +69,7 @@ internal class TypeTranslator(
                     abbreviationType,
                     bound = GenericTypeConstructor(
                         dri = getDRIFromClassType(abbreviationType),
-                        projections = abbreviationType.typeArguments.map { toProjection(it) }
+                        projections = abbreviationType.typeArguments.map { toProjection(it, location) }
                     )
                 ),
                 inner = fullyExpandedType,
@@ -66,19 +80,19 @@ internal class TypeTranslator(
             throw IllegalStateException("Expected type alias symbol in type")
     }
 
-    private fun KaSession.toTypeConstructorFrom(classType: KaClassType) =
+    private fun KaSession.toTypeConstructorFrom(classType: KaClassType, location: Location) =
         GenericTypeConstructor(
             dri = getDRIFromClassType(classType),
-            projections = classType.typeArguments.map { toProjection(it) },
+            projections = classType.typeArguments.map { toProjection(it, location) },
             presentableName = classType.getPresentableName(),
             extra = PropertyContainer.withAll(
                 getDokkaAnnotationsFrom(classType)?.toSourceSetDependent()?.toAnnotations()
             )
         )
 
-    private fun KaSession.toFunctionalTypeConstructorFrom(functionalType: KaFunctionType) = FunctionalTypeConstructor(
+    private fun KaSession.toFunctionalTypeConstructorFrom(functionalType: KaFunctionType, location: Location) = FunctionalTypeConstructor(
         dri = getDRIFromClassType(functionalType),
-        projections = functionalType.typeArguments.map { toProjection(it) },
+        projections = functionalType.typeArguments.map { toProjection(it, location) },
         isExtensionFunction = functionalType.receiverType != null,
         isSuspendable = functionalType.isSuspend,
         presentableName = functionalType.getPresentableName(),
@@ -88,18 +102,18 @@ internal class TypeTranslator(
         contextParametersCount = @OptIn(KaExperimentalApi::class) functionalType.contextReceivers.size
     )
 
-    fun KaSession.toBoundFrom(type: KaType): Bound {
+    fun KaSession.toBoundFrom(type: KaType, location: Location): Bound {
         val abbreviation = type.abbreviation
-        val bound = toBoundFromNoAbbreviation(type)
+        val bound = toBoundFromNoAbbreviation(type, location)
         return when {
-            abbreviation != null -> toBoundFromTypeAliased(abbreviation, bound)
+            abbreviation != null -> toBoundFromTypeAliased(abbreviation, bound, location)
             else -> bound
         }
     }
 
-    fun KaSession.toBoundFromNoAbbreviation(type: KaType): Bound =
+    private fun KaSession.toBoundFromNoAbbreviation(type: KaType, location: Location): Bound =
         when (type) {
-            is KaUsualClassType -> toTypeConstructorFrom(type)
+            is KaUsualClassType -> toTypeConstructorFrom(type, location)
             is KaTypeParameterType -> TypeParameter(
                 dri = getDRIFromTypeParameter(type.symbol),
                 name = type.name.asString(),
@@ -108,23 +122,24 @@ internal class TypeTranslator(
                     getDokkaAnnotationsFrom(type)?.toSourceSetDependent()?.toAnnotations()
                 )
             )
-
-            is KaClassErrorType -> UnresolvedBound(type.toString())
-            is KaFunctionType -> toFunctionalTypeConstructorFrom(type)
+            is KaErrorType -> {
+                logErrorType(type, location)
+                @OptIn(KaNonPublicApi::class)
+                UnresolvedBound(type.presentableText ?: type.toString())
+            }
+            is KaFunctionType -> toFunctionalTypeConstructorFrom(type, location)
             is KaDynamicType -> Dynamic
             is KaDefinitelyNotNullType -> DefinitelyNonNullable(
-                toBoundFrom(type.original)
+                toBoundFrom(type.original, location)
             )
 
             is KaFlexibleType -> TypeAliased(
-                toBoundFrom(type.upperBound),
-                toBoundFrom(type.lowerBound),
+                toBoundFrom(type.upperBound, location),
+                toBoundFrom(type.lowerBound, location),
                 extra = PropertyContainer.withAll(
                     getDokkaAnnotationsFrom(type)?.toSourceSetDependent()?.toAnnotations()
                 )
             )
-
-            is KaErrorType -> UnresolvedBound(type.toString())
             is KaCapturedType -> throw NotImplementedError()
             is KaIntersectionType -> throw NotImplementedError()
             else -> throw NotImplementedError()
@@ -136,59 +151,54 @@ internal class TypeTranslator(
         if (type.isMarkedNullable) Nullable(bound) else bound
 
 
-    fun KaSession.buildAncestryInformationFrom(
-        type: KaType
+    internal fun KaSession.buildAncestryInformationFrom(
+        type: KaType,
+        location: Location
     ): AncestryNode {
         val (interfaces, superclass) = type.directSupertypes(true).filterNot { it.isAnyType }
             .partition {
-                val typeConstructorWithKind = toTypeConstructorWithKindFrom(it)
+                val typeConstructorWithKind = toTypeConstructorWithKindFrom(it, location)
                 typeConstructorWithKind.kind == KotlinClassKindTypes.INTERFACE ||
                         typeConstructorWithKind.kind == JavaClassKindTypes.INTERFACE
             }
 
         return AncestryNode(
-            typeConstructor = toTypeConstructorWithKindFrom(type).typeConstructor,
-            superclass = superclass.map { buildAncestryInformationFrom(it) }.singleOrNull(),
-            interfaces = interfaces.map { buildAncestryInformationFrom(it) }
+            typeConstructor = toTypeConstructorWithKindFrom(type, location).typeConstructor,
+            superclass = superclass.map { buildAncestryInformationFrom(it, location) }.singleOrNull(),
+            interfaces = interfaces.map { buildAncestryInformationFrom(it, location) }
         )
     }
 
-    internal fun KaSession.toTypeConstructorWithKindFrom(type: KaType): TypeConstructorWithKind = when (type) {
+    internal fun KaSession.toTypeConstructorWithKindFrom(type: KaType, location: Location): TypeConstructorWithKind = when (type) {
         is KaUsualClassType ->
             when (val classSymbol = type.symbol) {
                 is KaNamedClassSymbol -> TypeConstructorWithKind(
-                    toTypeConstructorFrom(type),
+                    toTypeConstructorFrom(type, location),
                     classSymbol.classKind.toDokkaClassKind()
                 )
 
                 is KaAnonymousObjectSymbol -> throw NotImplementedError()
-                is KaTypeAliasSymbol -> toTypeConstructorWithKindFrom(classSymbol.expandedType)
+                is KaTypeAliasSymbol -> toTypeConstructorWithKindFrom(classSymbol.expandedType, location)
             }
+        is KaErrorType -> {
+            logErrorType(type, location)
+            @OptIn(KaNonPublicApi::class)
+            TypeConstructorWithKind(
+                GenericTypeConstructor(
+                    dri = DRI(packageName = "", classNames = type.presentableText ?: "$ERROR_CLASS_NAME $type"),
+                    projections = emptyList(),
 
-        is KaClassErrorType -> TypeConstructorWithKind(
-            GenericTypeConstructor(
-                dri = DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type"),
-                projections = emptyList(),
-
-                ),
-            KotlinClassKindTypes.CLASS
-        )
-
-        is KaErrorType -> TypeConstructorWithKind(
-            GenericTypeConstructor(
-                dri = DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type"),
-                projections = emptyList(),
-
-                ),
-            KotlinClassKindTypes.CLASS
-        )
+                    ),
+                KotlinClassKindTypes.CLASS
+            )
+        }
 
         is KaFunctionType -> TypeConstructorWithKind(
-            toFunctionalTypeConstructorFrom(type),
+            toFunctionalTypeConstructorFrom(type, location),
             KotlinClassKindTypes.CLASS
         )
 
-        is KaDefinitelyNotNullType -> toTypeConstructorWithKindFrom(type.original)
+        is KaDefinitelyNotNullType -> toTypeConstructorWithKindFrom(type.original, location)
 
         is KaCapturedType -> throw NotImplementedError()
         is KaDynamicType -> throw NotImplementedError()
@@ -209,5 +219,21 @@ internal class TypeTranslator(
         KaClassKind.COMPANION_OBJECT -> KotlinClassKindTypes.OBJECT
         KaClassKind.INTERFACE -> KotlinClassKindTypes.INTERFACE
         KaClassKind.ANONYMOUS_OBJECT -> KotlinClassKindTypes.OBJECT
+    }
+
+    private fun KaSession.logErrorType(errorType: KaErrorType, location: Location) {
+        @OptIn(KaNonPublicApi::class)
+        logger.warn(buildString {
+            append(if (errorType.presentableText != null) "`${errorType.presentableText}` is unresolved" else errorType.errorMessage)
+            append(" in ")
+            append(
+                with(location) {
+                    computePath()
+                })
+        }
+        )
+
+        @OptIn(KaNonPublicApi::class)
+        logger.debug("${errorType.errorMessage}\n" + Thread.currentThread().stackTrace.drop(1).joinToString("\n"))
     }
 }

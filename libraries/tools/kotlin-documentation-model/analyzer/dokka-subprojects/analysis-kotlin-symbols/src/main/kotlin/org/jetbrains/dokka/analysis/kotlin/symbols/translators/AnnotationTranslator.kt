@@ -4,10 +4,12 @@
 
 package org.jetbrains.dokka.analysis.kotlin.symbols.translators
 
+import org.jetbrains.dokka.analysis.kotlin.symbols.utils.getLocation
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.withEnumEntryExtra
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.ClassValue
+import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
@@ -23,9 +25,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
- * Map [KtAnnotationApplication] to Dokka [Annotations.Annotation]
+ * Map [KaAnnotation] to Dokka [Annotations.Annotation]
  */
-internal class AnnotationTranslator {
+internal class AnnotationTranslator(private val logger: DokkaLogger) {
     private fun KaSession.getFileLevelAnnotationsFrom(symbol: KaSymbol) =
         if (symbol.origin != KaSymbolOrigin.SOURCE)
             null
@@ -73,11 +75,27 @@ internal class AnnotationTranslator {
 
     private fun KaSession.toDokkaAnnotation(annotation: KaAnnotation) =
         Annotations.Annotation(
-            dri = annotation.classId?.createDRI()
-                ?: DRI(packageName = "", classNames = ERROR_CLASS_NAME), // classId might be null on a non-existing annotation call,
+            dri = run {
+                val classId = annotation.classId
+                // classId might be null on a non-existing annotation call,
+                if (classId != null && classId != errorClassId) {
+                    classId.createDRI()
+                } else {
+                    val psi = annotation.psi
+                    val location = psi?.let { getLocation(it) }
+                    val text = psi?.text.orEmpty()
+                    logger.warn("Unknown annotation `$text` in $location")
+                    logger.debug(
+                        "Unknown annotation `$text` in ${location}\n" + Thread.currentThread().stackTrace.drop(1)
+                            .joinToString("\n")
+                    )
+                    DRI(packageName = "", classNames = ERROR_CLASS_NAME)
+                }
+            },
             params = annotation.arguments.associate {
                 it.name.asString() to toDokkaAnnotationValue(
-                    it.expression
+                    it.expression,
+                    annotation
                 )
             },
             mustBeDocumented = mustBeDocumented(annotation),
@@ -85,7 +103,7 @@ internal class AnnotationTranslator {
         )
 
     @OptIn(ExperimentalUnsignedTypes::class)
-    private fun KaSession.toDokkaAnnotationValue(annotationValue: KaAnnotationValue): AnnotationParameterValue =
+    private fun KaSession.toDokkaAnnotationValue(annotationValue: KaAnnotationValue, containingAnnotation: KaAnnotation): AnnotationParameterValue =
         when (annotationValue) {
             is KaAnnotationValue.ConstantValue -> {
                 when (val value = annotationValue.value) {
@@ -112,22 +130,34 @@ internal class AnnotationTranslator {
                 getDRIFrom(annotationValue)
             )
 
-            is KaAnnotationValue.ArrayValue -> ArrayValue(annotationValue.values.map { toDokkaAnnotationValue(it) })
+            is KaAnnotationValue.ArrayValue -> ArrayValue(annotationValue.values.map { toDokkaAnnotationValue(it, containingAnnotation) })
             is KaAnnotationValue.NestedAnnotationValue -> AnnotationValue(toDokkaAnnotation(annotationValue.annotation))
             is KaAnnotationValue.ClassLiteralValue -> when (val type: KaType = annotationValue.type) {
                 is KaClassType -> ClassValue(
                     type.classId.relativeClassName.asString(),
                     type.classId.createDRI()
                 )
-                else -> ClassValue(
-                    type.toString(),
+                else -> {
+                    val psi = annotationValue.sourcePsi ?: containingAnnotation.psi
+                    val location = psi?.let { getLocation(it) }
+                    logger.warn("Unknown annotation value `${psi?.text.orEmpty()}` in $location")
+
+                    ClassValue(
+                        type.toString(),
+                        DRI(packageName = "", classNames = ERROR_CLASS_NAME)
+                    )
+                }
+            }
+            is KaAnnotationValue.UnsupportedValue -> {
+                val psi = annotationValue.sourcePsi ?: containingAnnotation.psi
+                val location = psi?.let { getLocation(it) }
+                logger.warn("Unsupported annotation value `${psi?.text.orEmpty()}` in $location")
+
+                ClassValue(
+                    "<Unsupported Annotation Value>",
                     DRI(packageName = "", classNames = ERROR_CLASS_NAME)
                 )
             }
-            is KaAnnotationValue.UnsupportedValue -> ClassValue(
-                "<Unsupported Annotation Value>",
-                DRI(packageName = "", classNames = ERROR_CLASS_NAME)
-            )
         }
 
     private fun getDRIFrom(enumEntry: KaAnnotationValue.EnumEntryValue): DRI {
@@ -140,6 +170,8 @@ internal class AnnotationTranslator {
     }
 
     companion object {
+        val errorClassId = ClassId.fromString("<error>") // https://youtrack.jetbrains.com/issue/KT-84186/Unresolved-annotation-ClassId-returns-error
+
         val mustBeDocumentedAnnotation = ClassId(StandardNames.ANNOTATION_PACKAGE_FQ_NAME, FqName("MustBeDocumented"), false)
         val parameterNameAnnotation = StandardNames.FqNames.parameterNameClassId
 
