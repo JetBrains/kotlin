@@ -110,10 +110,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 )
                 if (classSymbol.resolvedSuperTypes.any { it.classId == generatedSerializerId }) {
                     result += SerialEntityNames.CHILD_SERIALIZERS_GETTER
-
-                    if (classSymbol.typeParameterSymbols.isNotEmpty()) {
-                        result += SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER
-                    }
+                    result += SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER
                 }
             }
 
