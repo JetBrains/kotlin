@@ -232,7 +232,7 @@ object NativeConfigurationKeys {
     @JvmField
     val PROPERTY_LAZY_INITIALIZATION = CompilerConfigurationKey.create<Boolean>("PROPERTY_LAZY_INITIALIZATION")
 
-    // Use external dependencies to enhance IR linker error messages.
+    // The file with the graph of dependencies (libraries) collected by the build system.
     @JvmField
     val EXTERNAL_DEPENDENCIES = CompilerConfigurationKey.create<String>("EXTERNAL_DEPENDENCIES")
 

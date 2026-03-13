@@ -71,8 +71,6 @@ abstract class KotlinIrLinker(
 
     open val moduleDependencyTracker: IrModuleDependencyTracker get() = IrModuleDependencyTracker.DISABLED
 
-    protected open val userVisibleIrModulesSupport: UserVisibleIrModulesSupport get() = UserVisibleIrModulesSupport.DEFAULT
-
     fun deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
         idSignature: IdSignature,
         symbolKind: BinarySymbolData.SymbolKind,
@@ -91,7 +89,7 @@ abstract class KotlinIrLinker(
         val symbol: IrSymbol? = actualModuleDeserializer?.tryDeserializeIrSymbol(idSignature, symbolKind)
 
         if (symbol != null) {
-            moduleDependencyTracker?.trackDependency(
+            moduleDependencyTracker.trackDependency(
                 fromModule = moduleDeserializer.moduleFragment,
                 toModule = actualModuleDeserializer.moduleFragment
             )
@@ -103,8 +101,6 @@ abstract class KotlinIrLinker(
             SignatureIdNotFoundInModuleWithDependencies(
                 idSignature = idSignature,
                 problemModuleDeserializer = moduleDeserializer,
-                allModuleDeserializers = deserializersForModules.values,
-                userVisibleIrModulesSupport = userVisibleIrModulesSupport
             ).raiseIssue(messageCollector)
     }
 
@@ -161,7 +157,7 @@ abstract class KotlinIrLinker(
             try {
                 findDeserializedDeclarationForSymbol(symbol) ?: return null
             } catch (e: IrSymbolTypeMismatchException) {
-                SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageCollector)
+                SymbolTypeMismatch(e).raiseIssue(messageCollector)
             }
         }
 
@@ -275,7 +271,7 @@ abstract class KotlinIrLinker(
         }.moduleFragment
 
         moduleFragment.kotlinLibrary = kotlinLibrary
-        moduleDependencyTracker?.addModuleForTracking(module = moduleFragment)
+        moduleDependencyTracker.addModuleForTracking(module = moduleFragment)
 
         // The IrModule and its IrFiles have been created during module initialization.
         return moduleFragment

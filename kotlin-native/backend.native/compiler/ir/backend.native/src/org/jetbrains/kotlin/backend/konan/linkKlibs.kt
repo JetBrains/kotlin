@@ -165,7 +165,6 @@ internal fun LinkKlibsContext.linkKlibs(
                         diagnosticReporter = irDiagnosticReporter,
                 ),
                 libraryBeingCached = config.libraryToCache,
-                userVisibleIrModulesSupport = config.userVisibleIrModulesSupport,
                 externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition)
         ).also { linker ->
 

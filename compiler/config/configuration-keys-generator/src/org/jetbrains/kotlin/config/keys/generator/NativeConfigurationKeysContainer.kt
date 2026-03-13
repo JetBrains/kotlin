@@ -76,7 +76,7 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val PRE_LINK_CACHES by key<Boolean>("Perform compiler caches pre-link.")
     val OVERRIDE_KONAN_PROPERTIES by key<Map<String, String>>("Override konan.properties values.")
     val PROPERTY_LAZY_INITIALIZATION by key<Boolean>()
-    val EXTERNAL_DEPENDENCIES by key<String>("Use external dependencies to enhance IR linker error messages.")
+    val EXTERNAL_DEPENDENCIES by key<String>("The file with the graph of dependencies (libraries) collected by the build system.")
     val LLVM_VARIANT by key<LlvmVariant>()
     val RUNTIME_LOGS by key<String>()
     val TEST_DUMP_OUTPUT_PATH by key<String>("Path to a file to dump the list of all available tests.")

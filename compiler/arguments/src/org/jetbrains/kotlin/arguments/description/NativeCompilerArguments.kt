@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.arguments.description
 
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
@@ -467,9 +468,15 @@ This library must be one of the ones passed with '-library'.""".asReleaseDepende
 
     compilerArgument {
         name = "Xexternal-dependencies"
-        description = """Path to the file containing external dependencies.
-External dependencies are required for verbose output in the event of IR linker errors,
-but they do not affect compilation at all.""".asReleaseDependent()
+        description = ReleaseDependent(
+            current = "Path to the file containing external dependencies.",
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v2_0_0..KotlinReleaseVersion.v2_3_20 to """Path to the file containing external dependencies.
+                    |External dependencies are required for verbose output in the event of IR linker errors,
+                    |but they do not affect compilation at all.""".trimMargin("|")
+            )
+
+        )
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 

@@ -242,9 +242,7 @@ This library must be one of the ones passed with '-library'.""",
     @Argument(
         value = "-Xexternal-dependencies",
         valueDescription = "<path>",
-        description = """Path to the file containing external dependencies.
-External dependencies are required for verbose output in the event of IR linker errors,
-but they do not affect compilation at all.""",
+        description = "Path to the file containing external dependencies.",
     )
     var externalDependencies: String? = null
         set(value) {

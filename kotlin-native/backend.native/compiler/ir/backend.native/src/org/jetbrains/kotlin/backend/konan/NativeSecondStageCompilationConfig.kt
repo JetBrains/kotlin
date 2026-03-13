@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.backend.konan
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.legacyKlibReverseTopoSort
-import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
-import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
 import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
@@ -430,15 +428,6 @@ class NativeSecondStageCompilationConfig(
     }
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::File)
-
-    internal val userVisibleIrModulesSupport = KonanUserVisibleIrModulesSupport(
-            externalDependenciesLoader = UserVisibleIrModulesSupport.ExternalDependenciesLoader.from(
-                    externalDependenciesFile = externalDependenciesFile,
-                    onMalformedExternalDependencies = { warningMessage ->
-                        configuration.report(CompilerMessageSeverity.STRONG_WARNING, warningMessage)
-                    }),
-            konanKlibDir = File(distribution.klib)
-    )
 
     val fullExportedNamePrefix: String
         get() = configuration.fullExportedNamePrefix ?: implicitModuleName

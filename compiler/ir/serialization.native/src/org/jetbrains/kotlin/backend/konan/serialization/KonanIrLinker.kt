@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
-import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
@@ -41,7 +40,6 @@ class KonanIrLinker(
     exportedDependencies: List<ModuleDescriptor>,
     override val partialLinkageSupport: PartialLinkageSupportForLinker,
     private val libraryBeingCached: PartialCacheInfo?,
-    override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport,
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
 ) : KotlinIrLinker(currentModule, messageCollector, builtIns, symbolTable, exportedDependencies) {
 

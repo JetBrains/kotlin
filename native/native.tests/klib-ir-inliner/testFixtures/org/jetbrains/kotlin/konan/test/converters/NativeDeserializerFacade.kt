@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.converters
 
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
-import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
@@ -131,7 +130,6 @@ class NativeDeserializerFacade(
                 diagnosticReporter = irDiagnosticReporter,
             ),
             libraryBeingCached = null,
-            userVisibleIrModulesSupport = UserVisibleIrModulesSupport(externalDependenciesLoader = UserVisibleIrModulesSupport.ExternalDependenciesLoader.EMPTY),
             externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition)
         )
 

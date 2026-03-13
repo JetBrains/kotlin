@@ -13280,8 +13280,14 @@
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Path to the file containing external dependencies.\nExternal dependencies are required for verbose output in the event of IR linker errors,\nbut they do not affect compilation at all.",
-                                            "valueInVersions": []
+                                            "current": "Path to the file containing external dependencies.",
+                                            "valueInVersions": [
+                                                {
+                                                    "minReleaseVersion": "2.0.0",
+                                                    "maxReleaseVersion": "2.3.20",
+                                                    "value": "Path to the file containing external dependencies.\nExternal dependencies are required for verbose output in the event of IR linker errors,\nbut they do not affect compilation at all."
+                                                }
+                                            ]
                                         },
                                         "delimiter": null,
                                         "valueType": {
