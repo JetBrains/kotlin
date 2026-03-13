@@ -19,7 +19,21 @@ if [ ! -f "$CLI_RUNNER_JAR" ] || [ ! -f "$TEST_LOG_JAR" ]; then
   (cd "$CLI_RUNNER_DIR" && ./gradlew shadowJar :test-log:jar -q)
 fi
 PROJECT_ROOT=$(git rev-parse --show-toplevel)
-java -jar "$CLI_RUNNER_JAR" --project-root "$PROJECT_ROOT" --gradle-args "--init-script $PROJECT_ROOT/gradle/init-scripts/junit-xml-reports.gradle" --test-data-path $1
+EXTRA_GRADLE_ARGS="--init-script $PROJECT_ROOT/gradle/init-scripts/junit-xml-reports.gradle"
+TEST_DATA_PATH=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --update-test-data)
+      EXTRA_GRADLE_ARGS="$EXTRA_GRADLE_ARGS -Pkotlin.test.update.test.data=true"
+      shift
+      ;;
+    *)
+      TEST_DATA_PATH="$1"
+      shift
+      ;;
+  esac
+done
+java -jar "$CLI_RUNNER_JAR" --project-root "$PROJECT_ROOT" --gradle-args "$EXTRA_GRADLE_ARGS" --test-data-path "$TEST_DATA_PATH"
 
 echo "Test result reports found:"
 find . -type d -name "test-results" -exec find {} -type f -name "*.xml" \;
