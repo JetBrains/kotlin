@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -44,10 +44,12 @@ public expect enum class DurationUnit {
      * Time unit representing one day, which is always equal to 24 hours.
      */
     DAYS;
+
+    @SinceKotlin("2.4") public companion object
 }
 
 /**
- * Converts the given time duration [value] expressed in the duration unit specified by the receiver into the specified [targetUnit].
+ * Converts the given time duration [value] expressed in the [sourceUnit] duration unit into the specified [targetUnit].
  *
  * The part of the [value] that is smaller than the specified [targetUnit]
  * becomes a fractional part of the result and then is truncated (rounded towards zero).
@@ -60,10 +62,11 @@ public expect enum class DurationUnit {
  */
 @SinceKotlin("2.4")
 @ExperimentalTime
-public fun DurationUnit.convert(value: Long, targetUnit: DurationUnit): Long = convertDurationUnit(value, this, targetUnit)
+public fun DurationUnit.Companion.convert(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long =
+    convertDurationUnit(value, sourceUnit, targetUnit)
 
 /**
- * Converts the given time duration [value] expressed in the duration unit specified by the receiver into the specified [targetUnit].
+ * Converts the given time duration [value] expressed in the [sourceUnit] duration unit into the specified [targetUnit].
  *
  * The part of the [value] that is smaller than the specified [targetUnit]
  * becomes a fractional part of the result and then is truncated (rounded towards zero).
@@ -76,11 +79,11 @@ public fun DurationUnit.convert(value: Long, targetUnit: DurationUnit): Long = c
  */
 @SinceKotlin("2.4")
 @ExperimentalTime
-public fun DurationUnit.convert(value: Int, targetUnit: DurationUnit): Int =
-    convert(value.toLong(), targetUnit).coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt()
+public fun DurationUnit.Companion.convert(value: Int, sourceUnit: DurationUnit, targetUnit: DurationUnit): Int =
+    convert(value.toLong(), sourceUnit, targetUnit).coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt()
 
 /**
- * Converts the given time duration [value] expressed in the duration unit specified by the receiver into the specified [targetUnit].
+ * Converts the given time duration [value] expressed in the [sourceUnit] duration unit into the specified [targetUnit].
  *
  * If the result doesn't fit in the range of finite values representable by [Double] type, an infinite value is returned:
  * - [Double.NEGATIVE_INFINITY] is returned if it's less than `-Double.MAX_VALUE`,
@@ -92,7 +95,8 @@ public fun DurationUnit.convert(value: Int, targetUnit: DurationUnit): Int =
  */
 @SinceKotlin("2.4")
 @ExperimentalTime
-public fun DurationUnit.convert(value: Double, targetUnit: DurationUnit): Double = Duration.convert(value, this, targetUnit)
+public fun DurationUnit.Companion.convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
+    @Suppress("DEPRECATED") Duration.convert(value, sourceUnit, targetUnit)
 
 /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
 @SinceKotlin("1.3")
