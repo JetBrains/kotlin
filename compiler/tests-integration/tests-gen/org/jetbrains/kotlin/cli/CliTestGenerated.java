@@ -1801,6 +1801,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/simple.args");
     }
 
+    @TestMetadata("suppressVersionWarningWithWarningLevel.args")
+    public void testSuppressVersionWarningWithWarningLevel() {
+      runTest("compiler/testData/cli/jvm/suppressVersionWarningWithWarningLevel.args");
+    }
+
     @TestMetadata("syntaxError_lt.args")
     public void testSyntaxError_lt() {
       runTest("compiler/testData/cli/jvm/syntaxError_lt.args");
