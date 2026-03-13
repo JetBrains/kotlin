@@ -18,6 +18,7 @@ import org.jetbrains.dokka.analysis.kotlin.internal.FullClassHierarchyBuilder
 import org.jetbrains.dokka.analysis.kotlin.internal.Supertypes
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.AnnotationTranslator
+import org.jetbrains.dokka.analysis.kotlin.symbols.translators.Location
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.TypeTranslator
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.plugin
@@ -29,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClassHierarchyBuilder {
     private val kotlinAnalysis = context.plugin<SymbolsAnalysisPlugin>().querySingle { kotlinAnalysis }
+    private val logger = context.logger
 
     override suspend fun build(module: DModule): ClassHierarchy {
         val map = module.sourceSets.associateWith { ConcurrentHashMap<DRI, List<DRI>>() }
@@ -106,7 +108,7 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
         documentable: Iterable<Documentable>,
         sourceSet: DokkaConfiguration.DokkaSourceSet
     ): Map<DRI, SuperclassesWithKind> {
-        val typeTranslator = TypeTranslator(sourceSet, AnnotationTranslator())
+        val typeTranslator = TypeTranslator(sourceSet, AnnotationTranslator(logger), logger)
         val hierarchy = mutableMapOf<DRI, SuperclassesWithKind>()
 
         analyze(kotlinAnalysis.getModule(sourceSet)) {
@@ -114,10 +116,12 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
                 val source = it.sources[sourceSet]
                 if (source is KtPsiDocumentableSource) {
                     (source.psi as? KtClassOrObject)?.let { psi ->
-                        val type = psi.namedClassSymbol?.defaultType ?: return@analyze
+                        val namedClassSymbol = psi.namedClassSymbol?: return@analyze
+                        val location = Location(namedClassSymbol)
+                        val type = namedClassSymbol.defaultType
                         collectSupertypesWithKindFromKotlinType(typeTranslator, with(typeTranslator) {
-                            toTypeConstructorWithKindFrom(type)
-                        } to type, hierarchy)
+                            toTypeConstructorWithKindFrom(type, location)
+                        } to type, hierarchy, location)
                     }
                 }  // else if (source is PsiDocumentableSource)  TODO val psi = source.psi as? PsiClass
             }
@@ -128,7 +132,8 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
     private fun KaSession.collectSupertypesWithKindFromKotlinType(
         typeTranslator: TypeTranslator,
         typeConstructorWithKindWithKType: Pair<TypeConstructorWithKind, KaType>,
-        supersMap: MutableMap<DRI, SuperclassesWithKind>
+        supersMap: MutableMap<DRI, SuperclassesWithKind>,
+        location: Location
     ) {
         val (typeConstructorWithKind, kotlinType) = typeConstructorWithKindWithKType
 
@@ -137,12 +142,17 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
 
             val supertypesDriWithKType = supertypes.map { supertype ->
                 with(typeTranslator) {
-                    toTypeConstructorWithKindFrom(supertype)
+                    toTypeConstructorWithKindFrom(supertype, location)
                 } to supertype
             }
             supersMap[typeConstructorWithKind.typeConstructor.dri] =
                 SuperclassesWithKind(typeConstructorWithKind, supertypesDriWithKType.map { it.first })
-            supertypesDriWithKType.forEach { collectSupertypesWithKindFromKotlinType(typeTranslator, it, supersMap) }
+            supertypesDriWithKType.forEach { collectSupertypesWithKindFromKotlinType(
+                typeTranslator,
+                it,
+                supersMap,
+                location
+            ) }
         }
     }
 }
