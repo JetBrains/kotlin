@@ -35,6 +35,8 @@ public actual enum class DurationUnit(internal val scale: Double) {
      * Time unit representing one day, which is always equal to 24 hours.
      */
     DAYS(86400e9);
+
+    @SinceKotlin("2.4") public actual companion object
 }
 
 @SinceKotlin("1.3")
