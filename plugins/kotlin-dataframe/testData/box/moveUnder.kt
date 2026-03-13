@@ -13,5 +13,15 @@ fun box(): String {
     dataFrameOf("a", "b", "c")(1, 2, 3)
         .move { a and b }.under("d")
         .checkCompileTimeSchemaEqualsRuntime()
+
+    // new group by path
+    dataFrameOf("a", "b", "c")(1, 2, 3)
+        .move { a and b }.under { pathOf("new", "group") }
+        .let { df ->
+            df.new.group.a
+            df.new.group.b
+            df.checkCompileTimeSchemaEqualsRuntime()
+        }
+
     return "OK"
 }
