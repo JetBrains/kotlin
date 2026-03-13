@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.isJavaRecord
+import org.jetbrains.kotlin.fir.isJavaRecordComponent
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -334,6 +337,16 @@ private fun ConeKotlinType.properties(session: FirSession): List<ToDataFrameProp
         withForcedTypeCalculator = false,
         memberRequiredPhase = FirResolvePhase.STATUS
     )
+
+
+    @OptIn(SymbolInternals::class)
+    symbol.fir.let { firClass ->
+        if (firClass is FirJavaClass && firClass.isJavaRecord == true) {
+            return scope.collectAllFunctions()
+                .filter { it.fir.isJavaRecordComponent == true }
+                .map { ToDataFrameProperty(it, it.name.identifier) }
+        }
+    }
 
     return scope.collectAllProperties()
         .filterIsInstance<FirPropertySymbol>()

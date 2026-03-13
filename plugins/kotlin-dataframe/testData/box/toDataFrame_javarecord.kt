@@ -1,26 +1,11 @@
-// JVM_TARGET: 1.8
-
-// FILE: JavaPojo.java
+// FILE: JavaRecord.java
 import java.util.List;
 import java.util.Arrays;
 
-public class JavaPojo {
-    public int getI() {
-        return 42;
-    }
-
-    public List<String> getStringList() {
-        return Arrays.asList("aaa", "bbb", "ccc");
-    }
-
-    public List<Bean> getBeans() {
-        return Arrays.asList(new Bean());
-    }
-
-    public List<Bean> getBeanWithParameter(int i) {
-        return Arrays.asList(new Bean());
-    }
-}
+public record JavaRecord(
+    int i,
+    Bean bean
+) {}
 
 // FILE: Bean.java
 import java.util.List;
@@ -40,25 +25,25 @@ public class Bean {
     }
 }
 
+
 // FILE: test.kt
 
 import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.api.*
 
 class KotlinRecord(
-    val javaPojo: JavaPojo,
+    val javaRecord: JavaRecord,
 )
 
 fun box(): String {
     val res = listOf(
         KotlinRecord(
-            JavaPojo(),
+            JavaRecord(1, Bean()),
         ),
     ).toDataFrame(maxDepth = 2)
-    val i: Int = res[0].javaPojo.i
+    val v1: Int = res[0].javaRecord.i
+    val v2: Int? = res[0].javaRecord.bean.i
     res.compileTimeSchema().print()
-    val l: List<String?> = res[0].javaPojo.stringList
-    val array: IntArray? = res[0].javaPojo.beans[0].array
     res.assert()
     return "OK"
 }

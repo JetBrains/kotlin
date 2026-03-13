@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.fir.dataframe.services.DataFrameRuntimeClasspathProvider
 import org.jetbrains.kotlin.fir.dataframe.services.DataFrameDirectives
 import org.jetbrains.kotlin.fir.dataframe.services.DataFrameEnvironmentConfigurator
 import org.jetbrains.kotlin.fir.dataframe.services.TestUtilsSourceProvider
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.configuration.configureModernJavaTest
 import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -27,6 +29,12 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
         builder.defaultDirectives {
             JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK
             +JvmEnvironmentConfigurationDirectives.WITH_REFLECT
+        }
+        builder.forTestsMatching("*/toDataFrame_javarecord.kt") {
+            defaultDirectives {
+                -JvmEnvironmentConfigurationDirectives.JDK_KIND
+            }
+            configureModernJavaTest(TestJdkKind.FULL_JDK_17, JvmTarget.JVM_17)
         }
         builder.forTestsMatching("*/csDsl/*") {
             builder.useAdditionalSourceProviders(::SelectionDslUtilsSourceProvider)
