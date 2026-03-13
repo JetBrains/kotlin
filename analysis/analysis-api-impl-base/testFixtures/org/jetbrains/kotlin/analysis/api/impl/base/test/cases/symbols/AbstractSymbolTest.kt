@@ -54,12 +54,6 @@ import kotlin.reflect.jvm.javaField
 import kotlin.test.fail
 
 abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
-    /**
-     * Currently [KaFileSymbol] cannot be restored without a backed PSI element,
-     * so it is better to suppress it to not hide other problems.
-     */
-    open val suppressPsiBasedFilePointerCheck: Boolean get() = true
-
     open val defaultRenderer = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
 
     open val defaultRendererOption: PrettyRendererOption? = null
@@ -101,7 +95,6 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
 
         fun safePointer(ktSymbol: KaSymbol): KaSymbolPointer<*>? = when {
-            disablePsiBasedLogic && ktSymbol is KaFileSymbol && suppressPsiBasedFilePointerCheck -> null
             else -> ktSymbol.runCatching {
                 createPointerForTest(disablePsiBasedLogic = disablePsiBasedLogic)
             }.getOrNull()?.also {
@@ -136,14 +129,15 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                             pointer = safePointer(symbol),
                             rendered = renderSymbolForComparison(symbol, directives),
                             shouldBeRendered = shouldBeRendered,
+                            psiOnly = symbol.supportsOnlyPsiBasedPointersByDesign,
                         )
                     }
                     .toList()
 
                 val pointerWithPrettyRenderedSymbol = symbolForPrettyRendering.map { symbol ->
                     PointerWithRenderedSymbol(
-                        safePointer(symbol),
-                        when (symbol) {
+                        pointer = safePointer(symbol),
+                        rendered = when (symbol) {
                             is KaReceiverParameterSymbol -> KaDebugRenderer().render(useSiteSession, symbol)
                             is KaDeclarationSymbol -> symbol.render(prettyRenderer)
                             is KaFileSymbol -> prettyPrint {
@@ -153,6 +147,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                             }
                             else -> error(symbol::class.toString())
                         },
+                        psiOnly = symbol.supportsOnlyPsiBasedPointersByDesign,
                     )
                 }
 
@@ -263,19 +258,32 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         disablePsiBasedLogic: Boolean,
         analyzeContext: KtElement?,
     ) {
-        val directiveToIgnore = directives.doNotCheckNonPsiSymbolRestoreDirective()?.takeIf { disablePsiBasedLogic }
-            ?: directives.doNotCheckSymbolRestoreDirective()
+        val directiveToIgnore = if (disablePsiBasedLogic) {
+            directives.doNotCheckNonPsiSymbolRestoreDirective()
+        } else {
+            directives.doNotCheckSymbolRestoreDirective()
+        }
 
         val restoredPointers = mutableListOf<KaSymbolPointer<*>>()
         val nonRestoredSymbols = mutableListOf<String>()
 
         val restored = analyzeForTest(analyzeContext ?: ktFile) {
-            pointersWithRendered.mapNotNull { (pointer, expectedRender, shouldBeRendered) ->
+            pointersWithRendered.mapNotNull { (pointer, expectedRender, shouldBeRendered, psiOnly) ->
+                fun addNonRestoredSymbol() {
+                    if (!psiOnly || !disablePsiBasedLogic) {
+                        nonRestoredSymbols += expectedRender
+                    }
+                }
+
                 val restored = pointer?.let { restoreSymbol(it, disablePsiBasedLogic) }
                 if (restored != null) {
+                    if (psiOnly && disablePsiBasedLogic) {
+                        fail("The symbol is unexpectedly restored from '${pointer::class.simpleName}', so 'supportsOnlyPsiBasedPointersByDesign' must be updated.")
+                    }
+
                     restoredPointers += pointer
                 } else {
-                    nonRestoredSymbols += expectedRender
+                    addNonRestoredSymbol()
                 }
 
                 val actualRender = restored?.let { renderSymbolForComparison(it, directives) }
@@ -283,7 +291,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                 when {
                     shouldBeRendered -> actualRender ?: expectedRender
                     actualRender != null && actualRender != expectedRender -> {
-                        nonRestoredSymbols += expectedRender
+                        addNonRestoredSymbol()
                         null
                     }
 
@@ -320,7 +328,13 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
 
         if (hasNonRestorable && directiveToIgnore == null) {
-            fail("Some symbols are non-restorable. Add // DO_NOT_CHECK_SYMBOL_RESTORE directive.")
+            val directive = if (disablePsiBasedLogic) {
+                DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
+            } else {
+                DO_NOT_CHECK_SYMBOL_RESTORE
+            }
+
+            fail("Some symbols are non-restorable. Add // $directive directive.")
         }
 
         if (directiveToIgnore != null && !hasNonRestorable) {
@@ -468,7 +482,34 @@ private data class PointerWithRenderedSymbol(
     val pointer: KaSymbolPointer<*>?,
     val rendered: String,
     val shouldBeRendered: Boolean = true,
+    val psiOnly: Boolean,
 )
+
+/**
+ * Whether the symbol is expected to be non-restorable without the underlying PSI element.
+ *
+ * This property is supposed to be used only for cases where symbols are not
+ * expected to be restorable without the underlying PSI element by design.
+ * Such a filter helps to reduce the number of false positives in the test data
+ * and the change of missing the real problem.
+ *
+ * The property must not be used to hide some errors.
+ */
+private val KaSymbol.supportsOnlyPsiBasedPointersByDesign: Boolean
+    get() = when (this) {
+        is KaFileSymbol,
+        is KaClassInitializerSymbol,
+        is KaAnonymousObjectSymbol,
+        is KaAnonymousFunctionSymbol,
+        is KaLocalVariableSymbol,
+            -> true
+
+        is KaNamedFunctionSymbol,
+        is KaPropertySymbol,
+            -> location == KaSymbolLocation.LOCAL
+
+        else -> false
+    }
 
 private fun KaSymbol?.withImplicitSymbols(): Sequence<KaSymbol> {
     val ktSymbol = this ?: return emptySequence()

@@ -1,5 +1,6 @@
 // class: JavaClass
 // DO_NOT_CHECK_SYMBOL_RESTORE
+// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
 // FILE: main.kt
 
 // FILE: JavaClass.java

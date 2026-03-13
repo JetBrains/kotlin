@@ -179,28 +179,3 @@ KaTypeAliasSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   importableFqName: null
-
-KaAnonymousObjectSymbol:
-  annotations: []
-  classId: null
-  classKind: ANONYMOUS_OBJECT
-  compilerVisibility: Local
-  isActual: false
-  isExpect: false
-  isExternal: false
-  location: LOCAL
-  modality: FINAL
-  name: null
-  origin: SOURCE
-  superTypes: [
-    KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: java/lang/Runnable
-  ]
-  visibility: LOCAL
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-  getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
-  importableFqName: null
