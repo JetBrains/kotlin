@@ -56,7 +56,7 @@ internal class WasmContinuation<T, R>(
             isResumed = true
             val resumeResult: ResumeIntrinsicResult = exception?.let {
                 resumeThrowImpl(it, wasmContBox)
-            } ?: resumeWithImpl(wasmContBox, this)
+            } ?: resumeWithImpl(this, wasmContBox)
             wasmContBox = resumeResult.remainingFunction ?: return resumeResult.result
             isResumed = false
             wasSuspended = true
@@ -76,21 +76,18 @@ internal class WasmContinuation<T, R>(
     }
 }
 
-internal fun resumeWithImpl(wasmContinuation: contref1, result: Any?): ResumeIntrinsicResult =
-    resumeWithIntrinsic(wasmContinuation, result)
+internal fun resumeWithImpl(result: Any?, wasmContinuation: contref1): ResumeIntrinsicResult =
+    resumeWithIntrinsic()
 
 internal fun resumeThrowImpl(objectToThrow: Throwable, cont: contref1): ResumeIntrinsicResult =
-    resumeThrowIntrinsic(objectToThrow, cont)
+    resumeThrowIntrinsic()
 
-@Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun resumeWithIntrinsic(wasmContinuation: contref1, result: Any?): ResumeIntrinsicResult {
+internal fun resumeWithIntrinsic(): ResumeIntrinsicResult =
     implementedAsIntrinsic
-}
 
-@Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun resumeThrowIntrinsic(objectToThrow: Throwable, cont: contref1): ResumeIntrinsicResult {
+internal fun resumeThrowIntrinsic(): ResumeIntrinsicResult {
     implementedAsIntrinsic
 }
 
