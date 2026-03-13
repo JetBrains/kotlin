@@ -1,0 +1,17 @@
+FILE: errorReference.kt
+    public final fun box(): R|kotlin/String| {
+        lval l: R|kotlin/collections/List<kotlin/Int>?| = when () {
+            Q|kotlin/random/Random|.R|kotlin/random/Random.Default.nextBoolean|() ->  {
+                R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(123))
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+        R|<local>/l|.R|org/jetbrains/kotlinx/dataframe/api/toDataFrame<Inapplicable(UNSAFE_CALL): org/jetbrains/kotlinx/dataframe/api/toDataFrame>#|<R|kotlin/Int|>(<L> = toDataFrame@fun R|org/jetbrains/kotlinx/dataframe/api/CreateDataFrameDsl<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@toDataFrame Unit
+        }
+        )
+        ^box String(OK)
+    }
