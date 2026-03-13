@@ -1243,9 +1243,8 @@ public actual inline fun Float.roundToLong(): Long = toDouble().roundToLong()
  * @see absoluteValue extension property for [Int]
  * @sample samples.math.MathSamples.Ints.abs
  */
-// TODO: remove manual 'or' when KT-19290 is fixed
 @SinceKotlin("1.2")
-public actual fun abs(n: Int): Int = if (n < 0) (-n or 0) else n
+public actual fun abs(n: Int): Int = if (n < 0) -n else n
 
 /**
  * Returns the smaller of two values.
