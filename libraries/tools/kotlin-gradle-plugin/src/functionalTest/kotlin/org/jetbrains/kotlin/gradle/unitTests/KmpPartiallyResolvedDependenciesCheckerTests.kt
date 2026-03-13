@@ -168,7 +168,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
             repositories.mavenLocal()
             kotlin {
                 iosArm64()
-                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
 
                 sourceSets.commonMain.dependencies {
@@ -235,7 +235,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
             repositories.mavenLocal()
             kotlin {
                 iosArm64()
-                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
 
                 sourceSets.commonMain.dependencies {
@@ -283,7 +283,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
             repositories.mavenLocal()
             kotlin {
                 iosArm64()
-                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
 
                 sourceSets.commonMain.dependencies {

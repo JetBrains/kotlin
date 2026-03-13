@@ -36,7 +36,7 @@ class InternalKotlinSourceSetTest {
         val jvm = kotlin.jvm()
         val linux = kotlin.linuxX64()
 
-        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         val macos = kotlin.macosX64()
 
         val metadataCompilation = kotlin.metadata().compilations.getByName("main")
@@ -133,7 +133,7 @@ class InternalKotlinSourceSetTest {
                 jvm()
                 linuxX64()
                 linuxArm64()
-                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 iosArm64()
             }

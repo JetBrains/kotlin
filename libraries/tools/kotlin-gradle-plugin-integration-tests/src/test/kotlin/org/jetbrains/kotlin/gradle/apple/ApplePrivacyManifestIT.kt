@@ -233,12 +233,12 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
 
                         // Universal
                         watchosSimulatorArm64(),
-                        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                         watchosX64(),
 
                         // Universal macOS
                         macosArm64(),
-                        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                         macosX64(),
                     ).forEach {
                         it.binaries.framework {
@@ -296,7 +296,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
 
                     // Universal
                     watchosSimulatorArm64()
-                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     watchosX64()
 
                     // Thin macOS
@@ -356,7 +356,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
 
                     // Universal
                     watchosSimulatorArm64()
-                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     watchosX64()
 
                     with(cocoapods) {

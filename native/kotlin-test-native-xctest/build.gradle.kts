@@ -104,7 +104,7 @@ fun MutableList<KotlinNativeTarget>.addIfEnabledOnHost(target: KotlinNativeTarge
 
 kotlin {
     with(nativeTargets) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR", "DEPRECATION")
         addIfEnabledOnHost(macosX64())
         addIfEnabledOnHost(macosArm64())
         @Suppress("DEPRECATION")

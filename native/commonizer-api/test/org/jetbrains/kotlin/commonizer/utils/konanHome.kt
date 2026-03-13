@@ -35,7 +35,7 @@ internal val konanHome: File by lazy {
             project.plugins.apply("kotlin-multiplatform")
 
             (project.kotlinExtension as KotlinMultiplatformExtension).apply {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 macosX64()
                 macosArm64()
                 linuxX64()

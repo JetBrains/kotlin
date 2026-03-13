@@ -321,7 +321,7 @@ class DisabledNativeCacheTest {
 //    macos_arm64 \
 //    ios_simulator_arm64 \
 //    ios_arm64
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
 private fun KotlinMultiplatformExtension.createCacheableTargets(): List<KotlinNativeTarget> {
     val isArm64 = HostManager.hostArch() == "aarch64"
 
