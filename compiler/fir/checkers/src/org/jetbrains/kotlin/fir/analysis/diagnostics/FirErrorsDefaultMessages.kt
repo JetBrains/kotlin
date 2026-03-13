@@ -2085,7 +2085,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(TYPE_PARAMETERS_IN_ENUM, "Enum class cannot have type parameters.")
         map.put(
             CONFLICTING_PROJECTION,
-            "Projection is conflicting with variance of the corresponding type parameter of ''{0}''. Remove the projection or replace it with ''*''.",
+            "Projection conflicts with variance of the corresponding type parameter of ''{0}''. Remove the projection or replace it with ''*''.",
             RENDER_TYPE,
         )
         map.put(
@@ -2095,7 +2095,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING,
-            "Projection is conflicting with variance of the corresponding type parameter of ''{0}''. Remove the projection or replace it with ''*''."
+            "Projection conflicts with variance of the corresponding type parameter of ''{0}''. Remove the projection or replace it with ''*''."
                 .toDeprecationWarningMessage(LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS),
             RENDER_TYPE,
         )
