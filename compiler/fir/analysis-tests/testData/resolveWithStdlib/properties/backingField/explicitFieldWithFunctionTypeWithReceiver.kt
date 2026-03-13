@@ -30,7 +30,7 @@ fun usageOutside() {
     Test().typeFunctionalCheck3(1)
 
     with(1){
-        Test().typeFunctionalCheck<!NO_VALUE_FOR_PARAMETER!>()<!>
+        <!NO_VALUE_FOR_PARAMETER!>Test().typeFunctionalCheck()<!>
         Test().typeFunctionalCheck2()
         Test().typeFunctionalCheck3()
     }

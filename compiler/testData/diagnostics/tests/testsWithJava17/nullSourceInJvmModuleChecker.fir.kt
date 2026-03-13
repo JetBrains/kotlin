@@ -4,7 +4,7 @@
 
 import sun.awt.image.*
 
-fun withCustomDecoders(originalGetDecoder: () -> <!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>ImageDecoder?<!>) {}
+fun withCustomDecoders(originalGetDecoder: () -> ImageDecoder?) {}
 fun createImage() = withCustomDecoders { null }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType */

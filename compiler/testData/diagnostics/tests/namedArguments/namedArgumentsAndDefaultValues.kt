@@ -16,7 +16,7 @@ fun test() {
 
     bar(z = "")
     bar<!NO_VALUE_FOR_PARAMETER!>()<!>
-    bar(<!NO_VALUE_FOR_PARAMETER!><!TYPE_MISMATCH!>""<!>)<!>
+    bar<!NO_VALUE_FOR_PARAMETER!>(<!TYPE_MISMATCH!>""<!>)<!>
     bar(1, 1, "")
     bar(1, 1, "")
     bar(1, z = "")

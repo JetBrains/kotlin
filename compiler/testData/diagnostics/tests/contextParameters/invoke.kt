@@ -98,7 +98,7 @@ fun qux(
     }
 
     with("") {
-        f1(<!NO_VALUE_FOR_PARAMETER!><!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)<!>
+        f1<!NO_VALUE_FOR_PARAMETER!>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)<!>
         f2(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>, <!NO_VALUE_FOR_PARAMETER!><!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>)<!>
         f3(1, true)
         f4(1, "")

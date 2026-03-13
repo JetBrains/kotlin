@@ -21,17 +21,17 @@ fun test() {
     bar(x = 1, f = {})
 
     // Bad
-    <!NO_VALUE_FOR_PARAMETER!>bar<!> {}
-    bar(<!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>{}<!>)<!>
+    <!NO_VALUE_FOR_PARAMETER!>bar {}<!>
+    bar<!NO_VALUE_FOR_PARAMETER!>(<!ARGUMENT_TYPE_MISMATCH!>{}<!>)<!>
 
     // OK
     baz(other = false, f = {})
     baz({}, false)
 
     // Bad
-    <!NO_VALUE_FOR_PARAMETER!>baz<!> <!ARGUMENT_TYPE_MISMATCH!>{}<!>
+    <!NO_VALUE_FOR_PARAMETER!>baz <!ARGUMENT_TYPE_MISMATCH!>{}<!><!>
     baz<!NO_VALUE_FOR_PARAMETER!>()<!> <!ARGUMENT_TYPE_MISMATCH!>{}<!>
-    baz(<!NO_VALUE_FOR_PARAMETER!>other = false)<!> <!TOO_MANY_ARGUMENTS!>{}<!>
+    baz<!NO_VALUE_FOR_PARAMETER!>(other = false)<!> <!TOO_MANY_ARGUMENTS!>{}<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral */
