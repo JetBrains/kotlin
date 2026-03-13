@@ -32,7 +32,7 @@
 
 **MANDATORY before writing any fix:**
 
-- [ ] **Verified AST node names** by exception-based debugging (token names often differ from library constant names — e.g. `SEALED` not `SEALED_KEYWORD`)
+- [ ] **Verified AST node names** by checking java-syntax-jvm sources (token names often differ from constant names — e.g. `SEALED` not `SEALED_KEYWORD`, `RECORD` not `RECORD_KEYWORD`; check `SyntaxElementType("...")` string in JavaSyntaxTokenType.kt)
 - [ ] **Checked reference implementation** in javac-wrapper or PSI (see `implDocs/ARCHITECTURE.md` for paths)
 - [ ] **Confirmed root cause** by debugging 2-3 representative failing tests
 - [ ] **Verified correct test class name** before running full suite (use wildcards below)

@@ -131,7 +131,8 @@ class JavaClassOverAst(
     override val isInterface: Boolean get() = node.findChildByType("INTERFACE_KEYWORD") != null
     override val isAnnotationType: Boolean get() = node.findChildByType("AT") != null && isInterface
     override val isEnum: Boolean get() = node.findChildByType("ENUM_KEYWORD") != null
-    override val isRecord: Boolean get() = node.findChildByType("RECORD_KEYWORD") != null
+    // Note: Parser produces "RECORD" token, not "RECORD_KEYWORD" (SyntaxElementType("RECORD"))
+    override val isRecord: Boolean get() = node.findChildByType("RECORD") != null
     // Note: Parser produces "SEALED" token, not "SEALED_KEYWORD"
     override val isSealed: Boolean get() = hasModifier("SEALED") || hasModifier("SEALED_KEYWORD")
 
@@ -166,7 +167,12 @@ class JavaClassOverAst(
             .filter { it.findChildByType("TYPE") == null }
             .map { JavaConstructorOverAst(it, this) }
 
-    override val recordComponents: Collection<JavaRecordComponent> get() = emptyList()
+    override val recordComponents: Collection<JavaRecordComponent>
+        get() {
+            val header = node.findChildByType("RECORD_HEADER") ?: return emptyList()
+            return header.getChildrenByType("RECORD_COMPONENT")
+                .map { JavaRecordComponentOverAst(it, this) }
+        }
 
     override fun hasDefaultConstructor(): Boolean = !isInterface && constructors.isEmpty()
 

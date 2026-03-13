@@ -139,4 +139,97 @@ Established: Array parsing, type parameter scope, wildcards, annotations, interf
 
 ---
 
+## Iteration 27: Java Records Implementation - 2026-03-12
+
+### Status
+⚠️ Partially Complete (Java Model implemented, requires FIR integration)
+
+### Overview
+Implemented `recordComponents` property and created `JavaRecordComponentOverAst` class for Java records support (Java 17+).
+
+### Root Cause Analysis
+Java records were not recognized by java-direct:
+- `isRecord` was already implemented (checks for `RECORD_KEYWORD`)
+- `recordComponents` returned empty list
+- Record components need to be parsed from `RECORD_HEADER` containing `RECORD_COMPONENT` nodes
+
+### Implementation
+1. Created new file `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaRecordComponentOverAst.kt`:
+```kotlin
+class JavaRecordComponentOverAst(
+    node: JavaSyntaxNode,
+    containingClass: JavaClassOverAst
+) : JavaMemberOverAst(node, containingClass), JavaRecordComponent {
+    override val type: JavaType = createJavaType(typeNode, containingClass.memberResolutionContext)
+    override val isVararg: Boolean = node.findChildByType("ELLIPSIS") != null
+    override val isFromSource: Boolean = true
+}
+```
+
+2. Modified `JavaClassOverAst.kt` line 169-174:
+```kotlin
+override val recordComponents: Collection<JavaRecordComponent>
+    get() {
+        val header = node.findChildByType("RECORD_HEADER") ?: return emptyList()
+        return header.getChildrenByType("RECORD_COMPONENT")
+            .map { JavaRecordComponentOverAst(it, this) }
+    }
+```
+
+### Test Results
+- Total: 2649 tests
+- Before: 125 failures
+- After: 125 failures
+- **Record tests**: 2/8 passing, 6/8 still failing
+
+### Issue: Requires FIR Integration
+The Java Model correctly parses record components, but tests still fail with `UNRESOLVED_REFERENCE: Unresolved reference 'x'`.
+
+**Root cause**: FIR needs to generate **synthetic properties** from record components (similar to how Kotlin creates synthetic properties for Java getters). For example:
+- Java: `record MyRecord(int x)`
+- Kotlin should see: `mr.x` property (synthetic from `x()` accessor method)
+
+This requires FIR-level changes in files like:
+- `compiler/fir/fir-jvm/src/.../FirJavaFacade.kt` — Synthetic property generation
+- `compiler/fir/fir-jvm/src/.../JavaSymbolProvider.kt` — Record component handling
+
+### Key Learnings
+1. **Java Model != Full Feature Support** — Parsing record components is not enough; FIR must generate synthetic properties
+2. **Records are more complex than sealed classes** — Sealed classes only need metadata, records need synthetic member generation
+3. **Partial implementation is valuable** — Even though tests don't pass, the foundation is in place for future FIR integration
+4. **Similar to getters** — Record component handling should follow the pattern of synthetic properties from Java getters/setters
+
+---
+
+## Iteration 28: Java Records FIR Integration - 2026-03-13
+
+### Status
+✅ Complete — all 6 phased record tests fixed
+
+### Root Cause Analysis
+Three bugs, all preventing `createDeclarationsForJavaRecord` from working:
+
+1. **`isRecord` token name mismatch** (primary bug): `RECORD_KEYWORD.toString()` returns `"RECORD"` not `"RECORD_KEYWORD"` (unlike `ENUM_KEYWORD` which returns `"ENUM_KEYWORD"`). So `findChildByType("RECORD_KEYWORD")` always returned null → `isRecord = false` → `createDeclarationsForJavaRecord` never called.
+
+2. **`isVararg` incomplete check**: `JavaRecordComponentOverAst.isVararg` only checked the component node directly, not inside the TYPE child (where ELLIPSIS can live). Caused vararg record component to be treated as array parameter.
+
+3. **Canonical constructor not detected as primary**: `isPrimary` in `convertJavaConstructorToFir` uses PSI-based `JavaPsiRecordUtil.isCanonicalConstructor`. For java-direct (no PSI), all constructors got `isPrimary = false`, causing `createDeclarationsForJavaRecord` to always add a synthetic primary, creating duplicates for explicit canonical constructors → `OVERLOAD_RESOLUTION_AMBIGUITY`.
+
+### Fix
+1. `JavaClassOverAst.kt`: `findChildByType("RECORD_KEYWORD")` → `findChildByType("RECORD")`
+2. `JavaRecordComponentOverAst.kt`: `isVararg` now also checks inside TYPE node (matching `JavaValueParameterOverAst` pattern)
+3. `FirJavaFacade.kt`: Added third condition to `isPrimary`: for source-based (non-PSI) records, compare constructor parameter names with record component names in order (JLS guarantees same names for explicit canonical constructors)
+
+### Test Results
+- Box: 1152/1167 (was 1150, +2)
+- Phased: 1347/1442 (was 1341 on same machine/run, +6)
+- Record tests: 6/6 passing (was 0/6)
+
+### Key Learnings
+- **RECORD_KEYWORD token mismatch**: Like SEALED vs SEALED_KEYWORD, RECORD_KEYWORD's toString is "RECORD". Always verify token toString via sources/debugging.
+- **Canonical constructor detection**: Java spec guarantees explicit canonical constructors have same parameter names as record components — name comparison is reliable.
+- **FirJavaFacade.isPrimary TODO**: The `// TODO get rid of dependency on PSI KT-63046` comment marks this exact problem. The fix aligns with that future direction.
+
+---
+
 *For detailed iteration histories, see `implDocs/archive/`*

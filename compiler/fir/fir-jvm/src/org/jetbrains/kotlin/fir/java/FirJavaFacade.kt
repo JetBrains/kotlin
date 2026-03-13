@@ -816,7 +816,9 @@ private fun convertJavaConstructorToFir(
         symbol = constructorSymbol
         status = methodStatus
         // TODO get rid of dependency on PSI KT-63046
-        isPrimary = javaConstructor == null || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
+        isPrimary = javaConstructor == null
+                || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
+                || (source == null && javaClass.isRecord && isCanonicalRecordConstructorForSource(javaConstructor, javaClass))
         returnTypeRef = buildResolvedTypeRef {
             coneType = classSymbol.defaultType()
         }
@@ -874,6 +876,15 @@ private fun buildConstructorForAnnotationClass(
     }.apply {
         containingClassForStaticMemberAttr = classSymbol.toLookupTag()
     }
+}
+
+// For source-based (non-PSI) Java class finders: detect canonical record constructor by matching
+// parameter names to record component names in order (JLS requires identical names for explicit canonical ctors).
+private fun isCanonicalRecordConstructorForSource(constructor: JavaConstructor, javaClass: JavaClass): Boolean {
+    val components = javaClass.recordComponents.toList()
+    val params = constructor.valueParameters
+    if (params.size != components.size) return false
+    return params.zip(components).all { (param, component) -> param.name == component.name }
 }
 
 private fun FqName.topLevelName() = asString().substringBefore(".")
