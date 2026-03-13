@@ -381,8 +381,8 @@ class JavaResolutionContext private constructor(
                                     hasStar = true
                                     break
                                 }
-                                // Stop at CLASS or other significant nodes
-                                if (nextSibType == "CLASS" || nextSibType == "INTERFACE" || nextSibType == "ENUM") break
+                                // Stop at CLASS or other significant nodes (interfaces/enums are also CLASS nodes)
+                                if (nextSibType == "CLASS") break
                             }
                             break
                         }
@@ -390,8 +390,8 @@ class JavaResolutionContext private constructor(
                         if (sibType == "ERROR_ELEMENT" && sibling.text.contains("*")) {
                             hasStar = true
                         }
-                        // Stop at CLASS or other significant nodes
-                        if (sibType == "CLASS" || sibType == "INTERFACE" || sibType == "ENUM") break
+                        // Stop at CLASS or other significant nodes (interfaces/enums are also CLASS nodes)
+                        if (sibType == "CLASS") break
                     }
                     
                     if (typeNode != null) {

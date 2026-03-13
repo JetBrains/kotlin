@@ -133,8 +133,8 @@ class JavaClassOverAst(
     override val isEnum: Boolean get() = node.findChildByType("ENUM_KEYWORD") != null
     // Note: Parser produces "RECORD" token, not "RECORD_KEYWORD" (SyntaxElementType("RECORD"))
     override val isRecord: Boolean get() = node.findChildByType("RECORD") != null
-    // Note: Parser produces "SEALED" token, not "SEALED_KEYWORD"
-    override val isSealed: Boolean get() = hasModifier("SEALED") || hasModifier("SEALED_KEYWORD")
+    // Note: Parser produces "SEALED" token, not "SEALED_KEYWORD" (SyntaxElementType("SEALED"))
+    override val isSealed: Boolean get() = hasModifier("SEALED")
 
     override val permittedTypes: Sequence<JavaClassifierType>
         get() {
