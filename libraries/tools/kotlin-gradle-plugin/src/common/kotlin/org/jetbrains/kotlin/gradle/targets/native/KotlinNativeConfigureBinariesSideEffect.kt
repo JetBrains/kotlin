@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinNativeCacheMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeLinkTaskMetrics
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.chooseKotlinNativeProvider
-import org.jetbrains.kotlin.gradle.tasks.ExternalDependenciesBuilder
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -142,14 +141,6 @@ private fun Project.createLinkTask(binary: NativeBinary) {
             .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
             .finalizeValueOnRead()
 
-        val externalDependenciesBuilder = ExternalDependenciesBuilder(project, compilation)
-        task.externalDependenciesBuildCompilerArgs
-            .value(
-                project.providers.provider {
-                    externalDependenciesBuilder.buildCompilerArgs()
-                }
-            )
-            .disallowChanges()
         KotlinNativeCacheMetrics.collectMetrics(this, task.disableCache)
     }
 

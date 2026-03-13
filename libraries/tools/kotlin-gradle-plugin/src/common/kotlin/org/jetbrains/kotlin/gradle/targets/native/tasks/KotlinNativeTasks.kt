@@ -7,12 +7,6 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.component.ModuleComponentIdentifier
-import org.gradle.api.artifacts.component.ModuleComponentSelector
-import org.gradle.api.artifacts.result.DependencyResult
-import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -35,7 +29,6 @@ import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.internal.tasks.ProducesKlib
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
@@ -64,15 +57,8 @@ import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
-import java.nio.file.Files
 import java.security.MessageDigest
 import javax.inject.Inject
-import org.jetbrains.kotlin.utils.ResolvedDependencies as KResolvedDependencies
-import org.jetbrains.kotlin.utils.ResolvedDependenciesSupport as KResolvedDependenciesSupport
-import org.jetbrains.kotlin.utils.ResolvedDependency as KResolvedDependency
-import org.jetbrains.kotlin.utils.ResolvedDependencyArtifactPath as KResolvedDependencyArtifactPath
-import org.jetbrains.kotlin.utils.ResolvedDependencyId as KResolvedDependencyId
-import org.jetbrains.kotlin.utils.ResolvedDependencyVersion as KResolvedDependencyVersion
 
 // region Useful extensions
 internal fun MutableList<String>.addArg(parameter: String, value: String) {
@@ -601,176 +587,6 @@ internal constructor(
     private fun resolveLanguageVersion() =
         compilerOptions.languageVersion.orNull?.version?.let { v -> KotlinVersion.fromVersion(v) }
 
-}
-
-internal class ExternalDependenciesBuilder(
-    val project: Project,
-    val compilation: KotlinCompilation<*>,
-    intermediateLibraryName: String?,
-) {
-    constructor(project: Project, compilation: KotlinNativeCompilation) : this(
-        project, compilation, compilation.compileTaskProvider.get().compilerOptions.moduleName.get()
-    )
-
-    private val compileDependencyConfiguration: Configuration
-        get() = project.configurations.getByName(compilation.compileDependencyConfigurationName)
-
-    private val sourceCodeModuleId: KResolvedDependencyId =
-        intermediateLibraryName?.let { KResolvedDependencyId(it) } ?: KResolvedDependencyId.DEFAULT_SOURCE_CODE_MODULE_ID
-
-    fun buildCompilerArgs(): List<String> {
-        val dependenciesFile = writeDependenciesFile(buildDependencies(), deleteOnExit = true)
-        return if (dependenciesFile != null)
-            listOf("-Xexternal-dependencies=${dependenciesFile.path}")
-        else
-            emptyList()
-    }
-
-    private fun buildDependencies(): Collection<KResolvedDependency> {
-        // Collect all artifacts.
-        val moduleNameToArtifactPaths: MutableMap</* unique name*/ String, MutableSet<KResolvedDependencyArtifactPath>> = mutableMapOf()
-        compileDependencyConfiguration.incoming.artifacts.artifacts.mapNotNull { resolvedArtifact ->
-            val uniqueName = (resolvedArtifact.id.componentIdentifier as? ModuleComponentIdentifier)?.uniqueName ?: return@mapNotNull null
-            val artifactPath = resolvedArtifact.file.absolutePath
-
-            moduleNameToArtifactPaths.getOrPut(uniqueName) { mutableSetOf() } += KResolvedDependencyArtifactPath(artifactPath)
-        }
-
-        // The build system may express the single module as two modules where the first one is a common
-        // module without artifacts and the second one is a platform-specific module with mandatory artifact.
-        // Example: "org.jetbrains.kotlinx:atomicfu" (common) and "org.jetbrains.kotlinx:atomicfu-macosx64" (platform-specific).
-        // Both such modules should be merged into a single module with just two names:
-        // "org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-macosx64)".
-        val moduleIdsToMerge: MutableMap</* platform-specific */ KResolvedDependencyId, /* common */ KResolvedDependencyId> = mutableMapOf()
-
-        // Collect plain modules.
-        val plainModules: MutableMap<KResolvedDependencyId, KResolvedDependency> = mutableMapOf()
-        val processedDependencies = hashSetOf<ResolvedDependencyResult>()
-        fun processModule(resolvedDependency: DependencyResult, incomingDependencyId: KResolvedDependencyId) {
-            if (resolvedDependency !is ResolvedDependencyResult) return
-            if (resolvedDependency.isConstraint) return
-            if (!processedDependencies.add(resolvedDependency)) return
-
-            val requestedModule = resolvedDependency.requested as? ModuleComponentSelector ?: return
-            val selectedModule = resolvedDependency.selected
-            val selectedModuleId = selectedModule.id as? ModuleComponentIdentifier ?: return
-
-            val moduleId = KResolvedDependencyId(selectedModuleId.uniqueName)
-            val module = plainModules.getOrPut(moduleId) {
-                val artifactPaths = moduleId.uniqueNames.asSequence()
-                    .mapNotNull { uniqueName -> moduleNameToArtifactPaths[uniqueName] }
-                    .firstOrNull()
-                    .orEmpty()
-
-                KResolvedDependency(
-                    id = moduleId,
-                    selectedVersion = KResolvedDependencyVersion(selectedModuleId.version),
-                    requestedVersionsByIncomingDependencies = mutableMapOf(), // To be filled in just below.
-                    artifactPaths = artifactPaths.toMutableSet()
-                )
-            }
-
-            // Record the requested version of the module by the current incoming dependency.
-            module.requestedVersionsByIncomingDependencies[incomingDependencyId] = KResolvedDependencyVersion(requestedModule.version)
-
-            // TODO: Use [ResolvedDependencyResult.resolvedVariant.externalVariant] to find a connection between platform-specific
-            //  and common modules when "resolvedVariant" and "externalVariant" graduate from incubating state.
-            if (module.artifactPaths.isNotEmpty()) {
-                val originModuleId = resolvedDependency.from.id as? ModuleComponentIdentifier
-                if (originModuleId != null
-                    && selectedModuleId.group == originModuleId.group
-                    && selectedModuleId.module.startsWith(originModuleId.module)
-                    && selectedModuleId.version == originModuleId.version
-                ) {
-                    // These two modules should be merged.
-                    moduleIdsToMerge[moduleId] = KResolvedDependencyId(originModuleId.uniqueName)
-                }
-            }
-
-            selectedModule.dependencies.forEach { processModule(it, incomingDependencyId = moduleId) }
-        }
-
-        compileDependencyConfiguration.incoming.resolutionResult.root.dependencies.forEach { dependencyResult ->
-            processModule(dependencyResult, incomingDependencyId = sourceCodeModuleId)
-        }
-
-        if (moduleIdsToMerge.isEmpty())
-            return plainModules.values
-
-        // Do merge.
-        val replacedModules: MutableMap</* old module ID */ KResolvedDependencyId, /* new module */ KResolvedDependency> = mutableMapOf()
-        moduleIdsToMerge.forEach { (platformSpecificModuleId, commonModuleId) ->
-            val platformSpecificModule = plainModules.getValue(platformSpecificModuleId)
-            val commonModule = plainModules.getValue(commonModuleId)
-
-            val replacementModuleId = KResolvedDependencyId(platformSpecificModuleId.uniqueNames + commonModuleId.uniqueNames)
-            val replacementModule = KResolvedDependency(
-                id = replacementModuleId,
-                visibleAsFirstLevelDependency = commonModule.visibleAsFirstLevelDependency,
-                selectedVersion = commonModule.selectedVersion,
-                requestedVersionsByIncomingDependencies = mutableMapOf<KResolvedDependencyId, KResolvedDependencyVersion>().apply {
-                    this += commonModule.requestedVersionsByIncomingDependencies
-                    this += platformSpecificModule.requestedVersionsByIncomingDependencies - commonModuleId
-                },
-                artifactPaths = mutableSetOf<KResolvedDependencyArtifactPath>().apply {
-                    this += commonModule.artifactPaths
-                    this += platformSpecificModule.artifactPaths
-                }
-            )
-
-            replacedModules[platformSpecificModuleId] = replacementModule
-            replacedModules[commonModuleId] = replacementModule
-        }
-
-        // Assemble new modules together (without "replaced" and with "replacements").
-        val mergedModules: MutableMap<KResolvedDependencyId, KResolvedDependency> = mutableMapOf()
-        mergedModules += plainModules - replacedModules.keys
-        replacedModules.values.forEach { replacementModule -> mergedModules[replacementModule.id] = replacementModule }
-
-        // Fix references to point to "replacement" modules instead of "replaced" modules.
-        mergedModules.values.forEach { module ->
-            module.requestedVersionsByIncomingDependencies.mapNotNull { (replacedModuleId, requestedVersion) ->
-                val replacementModuleId = replacedModules[replacedModuleId]?.id ?: return@mapNotNull null
-                Triple(replacedModuleId, replacementModuleId, requestedVersion)
-            }.forEach { (replacedModuleId, replacementModuleId, requestedVersion) ->
-                module.requestedVersionsByIncomingDependencies.remove(replacedModuleId)
-                module.requestedVersionsByIncomingDependencies[replacementModuleId] = requestedVersion
-            }
-        }
-
-        return mergedModules.values
-    }
-
-    private fun writeDependenciesFile(dependencies: Collection<KResolvedDependency>, deleteOnExit: Boolean): File? {
-        if (dependencies.isEmpty()) return null
-
-        val dependenciesFile = Files.createTempFile("kotlin-native-external-dependencies", ".deps").toAbsolutePath().toFile()
-        if (deleteOnExit) dependenciesFile.deleteOnExit()
-        dependenciesFile.writeText(KResolvedDependenciesSupport.serialize(KResolvedDependencies(dependencies, sourceCodeModuleId)))
-        return dependenciesFile
-    }
-
-    private val ModuleComponentIdentifier.uniqueName: String
-        get() = "$group:$module"
-
-    companion object {
-        @Suppress("unused") // Used for tests only. Accessed via reflection.
-        @JvmStatic
-        fun buildExternalDependenciesFileForTests(project: Project): File? {
-            val compilation = project.tasks.asSequence()
-                .filterIsInstance<KotlinNativeLink>()
-                .map { it.binary }
-                .filterIsInstance<Executable>() // Not TestExecutable or any other kind of NativeBinary. Strictly Executable!
-                .firstOrNull()
-                ?.compilation
-                ?: return null
-
-            return with(ExternalDependenciesBuilder(project, compilation)) {
-                val dependencies = buildDependencies().sortedBy { it.id.toString() }
-                writeDependenciesFile(dependencies, deleteOnExit = false)
-            }
-        }
-    }
 }
 
 @DisableCachingByDefault(because = "CInterop task uses custom Up-To-Date check for content of headers instead of Gradle mechanisms.")
