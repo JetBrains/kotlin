@@ -23,9 +23,9 @@ fun parseJavaToSyntaxTreeBuilder(
         charSequence,
         performLexing(charSequence, lexer, cancellationProvider = null, logger = null),
         whitespaces = JavaSyntaxDefinition.whitespaces,
-        comments = JavaSyntaxDefinition.commentSet,
+        comments = JavaSyntaxDefinition.comments,
     ).withStartOffset(start)
-        .withWhitespaceOrCommentBindingPolicy(JavaSyntaxDefinition.getWhitespaceOrCommentBindingPolicy())
+        .withWhitespaceOrCommentBindingPolicy(JavaSyntaxDefinition.whitespaceOrCommentBindingPolicy)
         .build()
 
     parse(LanguageLevel.HIGHEST, syntaxTreeBuilder)
