@@ -177,5 +177,5 @@ internal fun compilerArgumentsLevel(
 
 
 enum class Modifier {
-    DEPRECATED,
+    DEPRECATED, SEALED
 }

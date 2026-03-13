@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 // DO NOT MODIFY IT MANUALLY.
 
 @Deprecated("This class was deprecated and will be removed soon.", level = DeprecationLevel.WARNING)
-abstract class K2WasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
+sealed class K2WasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
     @Argument(
         value = "-Xir-dce-dump-reachability-info-to-file",
         valueDescription = "<path>",

@@ -112,7 +112,7 @@ inline fun <reified T : CommonToolArguments> parseCommandLineArguments(args: Lis
 
 fun <T : CommonToolArguments> parseCommandLineArguments(clazz: KClass<T>, args: List<String>): T {
     val constructor = getArgumentsInfo(clazz.java).defaultArgsConstructor
-    val arguments = clazz.cast(constructor.newInstance())
+    val arguments = clazz.cast(constructor?.newInstance() ?: error("Missing empty constructor on '${clazz.java.name}"))
     parseCommandLineArguments(args, arguments)
     return arguments
 }
@@ -148,10 +148,10 @@ data class ArgumentField(
 
 data class ArgumentsInfo(
     val cliArgNameToArguments: Map<String, ArgumentField>,
-    val defaultArgsConstructor: Constructor<*>,
+    val defaultArgsConstructor: Constructor<*>?,
 ) {
     private val defaultArgs: CommonToolArguments by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        defaultArgsConstructor.newInstance() as CommonToolArguments
+        defaultArgsConstructor?.newInstance() as? CommonToolArguments ?: error("Missing empty constructor")
     }
 
     fun getDefaultValue(argumentField: ArgumentField): Any? = argumentField.getter.invoke(defaultArgs)
@@ -177,7 +177,7 @@ fun getArgumentsInfo(klass: Class<*>): ArgumentsInfo {
                     }
                 }
             },
-            defaultArgsConstructor = klass.constructors.find { it.parameters.isEmpty() } ?: error("Missing empty constructor on '${klass.name}"),
+            defaultArgsConstructor = klass.constructors.find { it.parameters.isEmpty() },
         )
     }
 }

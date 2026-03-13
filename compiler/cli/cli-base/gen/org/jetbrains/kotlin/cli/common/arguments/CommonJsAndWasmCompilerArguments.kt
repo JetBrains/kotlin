@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 // Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/CommonJsAndWasmCompilerArguments.kt
 // DO NOT MODIFY IT MANUALLY.
 
-abstract class CommonJsAndWasmCompilerArguments : CommonKlibBasedCompilerArguments() {
+sealed class CommonJsAndWasmCompilerArguments : CommonKlibBasedCompilerArguments() {
     @Argument(
         value = "-Xcache-directory",
         valueDescription = "<path>",

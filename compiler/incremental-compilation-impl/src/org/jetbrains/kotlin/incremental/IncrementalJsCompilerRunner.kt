@@ -218,9 +218,6 @@ class IncrementalJsCompilerRunner(
                     compiler = K2JSCompiler()
                     compiler.exec(messageCollector, services, args) to sourcesToCompile
                 }
-                else -> {
-                    error("Unsupported compiler arguments type. Must be one of: ${K2JSCompilerArguments::class.simpleName}, ${KotlinWasmCompilerArguments::class.simpleName}, but was: ${args::class.simpleName}")
-                }
             }
         } finally {
             args.freeArgs = freeArgsBackup

@@ -30,11 +30,13 @@ val kotlinCompilerArguments = compilerArguments {
                     name = CompilerArgumentsLevelNames.commonJsAndWasmArguments,
                     mergeWith = setOf(actualCommonJsAndWasmArguments)
                 ) {
+                    modifier(Modifier.SEALED)
                     subLevel(
                         name = CompilerArgumentsLevelNames.legacyWasmArguments,
                         mergeWith = setOf(actualWasmArguments, removedWasmArguments)
                     ) {
                         modifier(Modifier.DEPRECATED)
+                        modifier(Modifier.SEALED)
                         subLevel(
                             name = CompilerArgumentsLevelNames.jsArguments,
                             mergeWith = setOf(actualJsArguments, removedJsArguments)
