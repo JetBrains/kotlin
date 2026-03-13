@@ -75,7 +75,8 @@ open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerWithT
         facadeStep(::CustomJsCompilerSecondStageFacade)
 
         jsArtifactsHandlersStep()
-        configureJsBoxHandlers()
+        // There is a bug in 2.3.0, so it will always fail
+        configureJsBoxHandlers(verifySourceMap = false)
 
         useAfterAnalysisCheckers(
             // Suppress all tests that failed on the first stage if they are anyway marked as "IGNORE_BACKEND*".

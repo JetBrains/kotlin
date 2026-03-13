@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.handlers.JsDebugRunner
 import org.jetbrains.kotlin.js.test.handlers.JsDtsHandler
 import org.jetbrains.kotlin.js.test.handlers.JsExportSourcePreprocessor
+import org.jetbrains.kotlin.js.test.handlers.JsSourceMapValidator
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
@@ -35,7 +36,10 @@ fun TestConfigurationBuilder.configureSteppingTests() {
     }
     useAdditionalSourceProviders(::JsSteppingTestAdditionalSourceProvider)
     jsArtifactsHandlersStep {
-        useHandlers(::JsDebugRunner)
+        useHandlers(
+            ::JsDebugRunner,
+            ::JsSourceMapValidator,
+        )
     }
 }
 

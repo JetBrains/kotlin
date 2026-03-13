@@ -223,14 +223,15 @@ class JsIrLoweringFacade(
         val newJsCode = wrapWithModuleEmulationMarkers(readText(), moduleKind, moduleId)
         val jsCodeWithCorrectImportPath = jsIrPathReplacer.replacePathTokensWithRealPath(newJsCode, newJsTarget, rootDir)
 
-        val oldJsMap = File("$absolutePath.map")
-        val jsCodeMap = (moduleKind == ModuleKind.PLAIN && oldJsMap.exists()).ifTrue { oldJsMap.readText() }
-
-        this.delete()
-        oldJsMap.delete()
-
+        delete()
         newJsTarget.write(jsCodeWithCorrectImportPath)
-        jsCodeMap?.let { File("${newJsTarget.absolutePath}.map").write(it) }
+
+        File("$absolutePath.map")
+            .takeIf { it.exists() }
+            ?.let {
+                it.copyTo(File("${newJsTarget.absolutePath}.map"))
+                it.delete()
+            }
     }
 
     private fun CompilationOutputs.writeTo(

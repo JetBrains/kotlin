@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.klib
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -62,6 +64,8 @@ class CustomJsCompilerSecondStageFacade(
                 output = printStream,
                 listOfNotNull(
                     K2JSCompilerArguments::irProduceJs.cliArgument,
+                    K2JSCompilerArguments::sourceMap.cliArgument,
+                    K2JSCompilerArguments::sourceMapEmbedSources.cliArgument(SOURCE_MAP_SOURCE_CONTENT_NEVER),
                     K2JSCompilerArguments::includes.cliArgument(mainLibrary),
 
                     K2JSCompilerArguments::outputDir.cliArgument, jsArtifactFile.parentFile.path,
@@ -83,14 +87,8 @@ class CustomJsCompilerSecondStageFacade(
 
         if (exitCode == ExitCode.OK) {
             // Successfully compiled. Return the artifact.
-
-            // CLI compilation creates an output file of different name than testInfra usually does.
-            // A rename is needed, in order the testInfra runner can use its usual logic to run the test script.
-            val generatedJsScript = File(jsArtifactFile.parentFile.path, module.name + ".js")
-            require(generatedJsScript.exists()) {
-                "Internal testinfra error: Couldn't find expected generated js script ${generatedJsScript.absolutePath}"
-            }
-            generatedJsScript.renameTo(jsArtifactFile)
+            File(jsArtifactFile.parentFile.path, module.name + ".js")
+                .renameFollowingTestInfraConvention(jsArtifactFile)
 
             return BinaryArtifacts.Js.JsIrArtifact(
                 outputFile = jsArtifactFile,
@@ -108,6 +106,25 @@ class CustomJsCompilerSecondStageFacade(
         } else {
             // Throw an exception to abort further test execution.
             throw CustomKlibCompilerException(exitCode, compilerXmlOutput.toString(Charsets.UTF_8.name()))
+        }
+    }
+
+    // CLI compilation creates an output file of different name than testInfra usually does.
+    // A rename is needed, in order the testInfra runner can use its usual logic to run the test script.
+    private fun File.renameFollowingTestInfraConvention(outputFile: File) {
+        require(exists()) {
+            "Internal testinfra error: Couldn't find expected generated js script ${absolutePath}"
+        }
+
+        renameTo(outputFile)
+
+        // Move SourceMap file as well
+        with(withExtension(".js.map")) {
+            require(exists()) {
+                "Internal testinfra error: Couldn't find expected generated js source map ${absolutePath}"
+            }
+
+            renameTo(outputFile.withExtension(".js.map"))
         }
     }
 }

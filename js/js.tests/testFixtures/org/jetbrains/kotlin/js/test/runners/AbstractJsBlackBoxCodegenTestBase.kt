@@ -185,7 +185,10 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
 /**
  * Configures handlers for JS box testing
  */
-fun TestConfigurationBuilder.configureJsBoxHandlers(verifyJsAst: Boolean = true) {
+fun TestConfigurationBuilder.configureJsBoxHandlers(
+    verifyJsAst: Boolean = true,
+    verifySourceMap: Boolean = true,
+) {
     configureJsArtifactsHandlersStep {
         useHandlers(
             ::JsTypeScriptCompilationHandler,
@@ -194,6 +197,9 @@ fun TestConfigurationBuilder.configureJsBoxHandlers(verifyJsAst: Boolean = true)
         )
         runIf(verifyJsAst) {
             useHandlers(::JsAstHandler)
+        }
+        runIf(verifySourceMap) {
+            useHandlers(::JsSourceMapValidator)
         }
     }
 }
