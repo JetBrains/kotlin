@@ -315,7 +315,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         actual: String,
         extension: String = ".txt",
         subdirectoryName: String? = null,
-        testPrefixes: List<String> = configurator.testPrefixes,
+        testPrefixes: List<String> = variantChain,
     ) {
         val resolvedPath = if (subdirectoryName != null) {
             testDataPath.resolveSibling(subdirectoryName).resolve(testDataPath.fileName)
@@ -342,7 +342,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
     protected fun getTestOutputFile(
         extension: String = "txt",
         subdirectoryName: String? = null,
-        testPrefixes: List<String> = configurator.testPrefixes,
+        testPrefixes: List<String> = variantChain,
     ): Path {
         for (variant in testPrefixes) {
             findVariantTestOutputFile(extension, subdirectoryName, variant)?.let { return it }

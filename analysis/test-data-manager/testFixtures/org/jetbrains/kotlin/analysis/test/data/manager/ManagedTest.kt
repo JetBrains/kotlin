@@ -24,11 +24,37 @@ package org.jetbrains.kotlin.analysis.test.data.manager
  *
  * **Output:** Only the last element determines the output file suffix.
  *
+ * **Composing chains:** Use [withAdditionalVariant] to extend a base chain with an extra specialization dimension
+ * (e.g., adding `"dangling"` to differentiate dangling-file tests that share the same test data directory).
+ *
  * See [README.md](https://github.com/JetBrains/kotlin/blob/master/analysis/test-data-manager/README.md) for more details.
  *
  * @see ManagedTest.variantChain
+ * @see withAdditionalVariant
  */
 typealias TestVariantChain = List<String>
+
+/**
+ * Creates a refined variant chain by adding [variant] as an additional specialization.
+ *
+ * The resulting chain includes:
+ * 1. The original chain elements (for fallback to base variant files)
+ * 2. The [variant] alone (as a cross-variant fallback)
+ * 3. Each original element combined with [variant] (most specific)
+ *
+ * Example: `["standalone.fir"].withAdditionalVariant("dangling")`
+ *   → `["standalone.fir", "dangling", "standalone.fir.dangling"]`
+ *
+ * Read priority (reversed): `.standalone.fir.dangling.txt` → `.dangling.txt` → `.standalone.fir.txt` → `.txt`
+ * Write target: `.standalone.fir.dangling.txt`
+ */
+fun TestVariantChain.withAdditionalVariant(variant: String): TestVariantChain = buildList {
+    addAll(this@withAdditionalVariant)         // original chain for fallback
+    add(variant)                               // standalone new variant
+    for (existing in this@withAdditionalVariant) {
+        add("$existing.$variant")              // combined: existing.new
+    }
+}
 
 /**
  * Represents a test that can be processed by the Managed Test Data system.
