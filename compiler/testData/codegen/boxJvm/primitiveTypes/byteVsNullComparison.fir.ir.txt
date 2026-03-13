@@ -51,8 +51,19 @@ FILE fqName:<root> fileName:/byteVsNullComparison.kt
                     ARG <this>: CONST Int type=kotlin.Int value=0
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Boolean declared in <root>.box'
                 CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  ARG arg0: CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Short' type=kotlin.Int origin=null
-                    ARG <this>: GET_VAR 'val value: @[FlexibleNullability] kotlin.Short? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Short? origin=null
+                  ARG arg0: BLOCK type=kotlin.Int? origin=SAFE_CALL
+                    VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:@[FlexibleNullability] kotlin.Short? [val]
+                      GET_VAR 'val value: @[FlexibleNullability] kotlin.Short? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Short? origin=null
+                    WHEN type=kotlin.Int? origin=null
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                          ARG arg0: GET_VAR 'val tmp_0: @[FlexibleNullability] kotlin.Short? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Short? origin=null
+                          ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                        then: CONST Null type=kotlin.Nothing? value=null
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Short' type=kotlin.Int origin=null
+                          ARG <this>: GET_VAR 'val tmp_0: @[FlexibleNullability] kotlin.Short? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Short? origin=null
                   ARG arg1: CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Short' type=kotlin.Int origin=null
                     ARG <this>: CALL 'public open fun toShort (): kotlin.Short declared in kotlin.Int' type=kotlin.Short origin=null
                       ARG <this>: CONST Int type=kotlin.Int value=0
@@ -109,8 +120,19 @@ FILE fqName:<root> fileName:/byteVsNullComparison.kt
                     ARG <this>: CONST Int type=kotlin.Int value=0
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Boolean declared in <root>.box'
                 CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  ARG arg0: CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Byte' type=kotlin.Int origin=null
-                    ARG <this>: GET_VAR 'val value: @[FlexibleNullability] kotlin.Byte? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Byte? origin=null
+                  ARG arg0: BLOCK type=kotlin.Int? origin=SAFE_CALL
+                    VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:@[FlexibleNullability] kotlin.Byte? [val]
+                      GET_VAR 'val value: @[FlexibleNullability] kotlin.Byte? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Byte? origin=null
+                    WHEN type=kotlin.Int? origin=null
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                          ARG arg0: GET_VAR 'val tmp_1: @[FlexibleNullability] kotlin.Byte? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Byte? origin=null
+                          ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                        then: CONST Null type=kotlin.Nothing? value=null
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Byte' type=kotlin.Int origin=null
+                          ARG <this>: GET_VAR 'val tmp_1: @[FlexibleNullability] kotlin.Byte? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Byte? origin=null
                   ARG arg1: CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Byte' type=kotlin.Int origin=null
                     ARG <this>: CALL 'public open fun toByte (): kotlin.Byte declared in kotlin.Int' type=kotlin.Byte origin=null
                       ARG <this>: CONST Int type=kotlin.Int value=0
