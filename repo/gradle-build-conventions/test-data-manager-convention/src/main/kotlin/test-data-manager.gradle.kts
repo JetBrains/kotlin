@@ -67,8 +67,13 @@ tasks.register<TestDataManagerModuleTask>(manageTestDataTaskName) {
     // Use testTask.classpath to include both compiled test classes AND dependencies
     classpath = testTask.classpath
     workingDir = testTask.workingDir
+    environment = testTask.environment
     jvmArgs = testTask.jvmArgs
+    enableAssertions = testTask.enableAssertions
+    minHeapSize = testTask.minHeapSize
+    maxHeapSize = testTask.maxHeapSize
     jvmArgumentProviders += testTask.jvmArgumentProviders
+    javaLauncher = testTask.javaLauncher
 
     /**
      * This disables `KotlinSecurityManager` in the Test Data Manager.
