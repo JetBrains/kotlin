@@ -14,7 +14,7 @@ import kotlin.io.path.nameWithoutExtension
  *
  * The [writeTargetFile] is always the first (most specific) file in [readableFiles].
  */
-internal class TestDataFiles private constructor(
+internal class TestDataContext private constructor(
     val testDataPath: Path,
     val readableFiles: List<Path>,
 ) {
@@ -25,7 +25,7 @@ internal class TestDataFiles private constructor(
         get() = readableFiles.drop(1).firstOrNull { it.exists() }
 
     companion object {
-        fun build(testDataPath: Path, variantChain: TestVariantChain, extension: String): TestDataFiles {
+        fun build(testDataPath: Path, variantChain: TestVariantChain, extension: String): TestDataContext {
             val baseName = testDataPath.nameWithoutExtension
             val directory = testDataPath.parent
             val ext = "." + extension.removePrefix(".")
@@ -38,7 +38,7 @@ internal class TestDataFiles private constructor(
                 add(directory.resolve("$baseName$ext"))
             }
 
-            return TestDataFiles(testDataPath, readableFiles)
+            return TestDataContext(testDataPath, readableFiles)
         }
     }
 }

@@ -10,26 +10,26 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 
-class TestDataFilesTest {
+class TestDataContextTest {
     @TempDir
     lateinit var tempDir: Path
 
-    private fun assertTestDataFiles(
+    private fun assertTestDataContext(
         prefixes: List<String>,
         expectedReadable: String,
         expectedWriteTarget: String,
         extension: String = ".txt",
     ) {
         val testDataPath = tempDir.resolve("test.kt")
-        val testDataFiles = TestDataFiles.build(testDataPath, prefixes, extension)
-        val actualReadable = testDataFiles.readableFiles.joinToString(", ") { it.fileName.toString() }
+        val testDataContext = TestDataContext.build(testDataPath, prefixes, extension)
+        val actualReadable = testDataContext.readableFiles.joinToString(", ") { it.fileName.toString() }
         assertEquals(expectedReadable, actualReadable)
-        assertEquals(expectedWriteTarget, testDataFiles.writeTargetFile.fileName.toString())
+        assertEquals(expectedWriteTarget, testDataContext.writeTargetFile.fileName.toString())
     }
 
     @Test
     fun `golden only`() {
-        assertTestDataFiles(
+        assertTestDataContext(
             prefixes = emptyList(),
             expectedReadable = "test.txt",
             expectedWriteTarget = "test.txt",
@@ -38,7 +38,7 @@ class TestDataFilesTest {
 
     @Test
     fun `single prefix`() {
-        assertTestDataFiles(
+        assertTestDataContext(
             prefixes = listOf("js"),
             expectedReadable = "test.js.txt, test.txt",
             expectedWriteTarget = "test.js.txt",
@@ -47,7 +47,7 @@ class TestDataFilesTest {
 
     @Test
     fun `multiple prefixes`() {
-        assertTestDataFiles(
+        assertTestDataContext(
             prefixes = listOf("knm", "js"),
             expectedReadable = "test.js.txt, test.knm.txt, test.txt",
             expectedWriteTarget = "test.js.txt",
@@ -58,7 +58,7 @@ class TestDataFilesTest {
 
     @Test
     fun `compound extension - golden only`() {
-        assertTestDataFiles(
+        assertTestDataContext(
             prefixes = emptyList(),
             extension = ".pretty.txt",
             expectedReadable = "test.pretty.txt",
@@ -68,7 +68,7 @@ class TestDataFilesTest {
 
     @Test
     fun `compound extension - single prefix`() {
-        assertTestDataFiles(
+        assertTestDataContext(
             prefixes = listOf("js"),
             extension = ".pretty.txt",
             expectedReadable = "test.js.pretty.txt, test.pretty.txt",
@@ -78,7 +78,7 @@ class TestDataFilesTest {
 
     @Test
     fun `compound extension - multiple prefixes`() {
-        assertTestDataFiles(
+        assertTestDataContext(
             prefixes = listOf("knm", "js"),
             extension = ".pretty.txt",
             expectedReadable = "test.js.pretty.txt, test.knm.pretty.txt, test.pretty.txt",
