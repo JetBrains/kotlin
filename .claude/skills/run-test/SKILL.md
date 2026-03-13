@@ -12,7 +12,10 @@ Always save the output into a temporary file, as it is large and tests can take 
 
 The script will run all tests that is based on the test data path and output list of test reports.
 Examine reports to understand which tests failed.
-Example: `.claude/skills/run-test/scripts/run_test_by_test_data_path.sh tests/compiler/testData/codegen/boxInline/anonymousObject/lambdaWithCapturedOuterVar.1.kt`
+Example: `.claude/skills/run-test/scripts/run_test_by_test_data_path.sh compiler/testData/codegen/boxInline/anonymousObject/lambdaWithCapturedOuterVar.1.kt`
+
+To update test data files (when expected output changes), pass the `--update-test-data` flag:
+Example: `.claude/skills/run-test/scripts/run_test_by_test_data_path.sh compiler/testData/codegen/boxInline/anonymousObject/lambdaWithCapturedOuterVar.1.kt --update-test-data`
 
 
 
