@@ -18,11 +18,14 @@ open class CommonCompilerArgumentsConfigurator {
 
         fun info(message: String)
 
+        fun withLanguageVersionSettings(languageVersionSettings: LanguageVersionSettings): Reporter
+
         object DoNothing : Reporter {
             override fun reportWarning(message: String) {}
             override fun reportError(message: String) {}
             override fun report(factory: KtSourcelessDiagnosticFactory, message: String) {}
             override fun info(message: String) {}
+            override fun withLanguageVersionSettings(languageVersionSettings: LanguageVersionSettings): Reporter = this
         }
 
         companion object
@@ -238,9 +241,9 @@ fun CommonCompilerArguments.toLanguageVersionSettings(
         configureLanguageFeatures(reporter)
     )
 
-    checkApiAndLanguageVersion(languageVersion, apiVersion, reporter)
-
-    checkExplicitApiAndExplicitReturnTypesAtTheSameTime(reporter)
+    val reporterWithProperWarningLevels = reporter.withLanguageVersionSettings(languageVersionSettings)
+    checkApiAndLanguageVersion(languageVersion, apiVersion, reporterWithProperWarningLevels)
+    checkExplicitApiAndExplicitReturnTypesAtTheSameTime(reporterWithProperWarningLevels)
 
     return languageVersionSettings
 }

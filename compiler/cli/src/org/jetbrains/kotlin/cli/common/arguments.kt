@@ -138,6 +138,13 @@ fun CommonCompilerArgumentsConfigurator.Reporter.Companion.fromConfiguration(con
         override fun info(message: String) {
             configuration.reportInfo(message)
         }
+
+        override fun withLanguageVersionSettings(languageVersionSettings: LanguageVersionSettings): CommonCompilerArgumentsConfigurator.Reporter {
+            val newConfiguration = configuration.copy().apply {
+                this.languageVersionSettings = languageVersionSettings
+            }
+            return fromConfiguration(newConfiguration)
+        }
     }
 }
 
