@@ -785,11 +785,6 @@ class BodyGenerator(
             }
         }
 
-        if (call.symbol == wasmSymbols.resumeWithIntrinsic || call.symbol == wasmSymbols.resumeThrowIntrinsic) {
-            tryToGenerateIntrinsicCall(call, call.symbol.owner)
-            return
-        }
-
         call.arguments.forEach { generateExpression(it!!) }
 
         val callFunction = call.symbol.owner
@@ -1210,13 +1205,14 @@ class BodyGenerator(
             }
 
             wasmSymbols.resumeThrowIntrinsic -> {
+                val objectToThrow = functionContext.referenceLocal(0)
                 val wasmContinuation = functionContext.referenceLocal(1)
 
                 val zeroArgContType = typeCodegenContext.referenceHeapContType(1)
 
                 body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
                     // Throwable
-                    body.buildGetLocal(functionContext.referenceLocal(0), location)
+                    body.buildGetLocal(objectToThrow, location)
 
                     if (backendContext.isWasmJsTarget) {
                         body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getJsError), location)
@@ -1238,13 +1234,14 @@ class BodyGenerator(
             }
 
             wasmSymbols.resumeWithIntrinsic -> {
-                val wasmContinuation = functionContext.referenceLocal(0)
+                val kotlinContinuation = functionContext.referenceLocal(0)
+                val wasmContinuation = functionContext.referenceLocal(1)
 
                 val zeroArgContType = typeCodegenContext.referenceHeapContType(1)
 
                 body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
                     // result: Result<T>
-                    body.buildGetLocal(functionContext.referenceLocal(1), location)
+                    body.buildGetLocal(kotlinContinuation, location)
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
                     body.buildResume(zeroArgContType, contHandle, location)
