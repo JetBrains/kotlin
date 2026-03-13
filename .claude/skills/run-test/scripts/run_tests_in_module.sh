@@ -10,6 +10,13 @@ set +e
 #else
 #  export JAVA_HOME=$(find ~/.gradle/jdks -maxdepth 2 -type d -name "jdk-17*" 2>/dev/null | head -1)/Contents/Home
 #fi
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+CLI_RUNNER_DIR="$SCRIPT_DIR/../cli-runner"
+TEST_LOG_JAR="$CLI_RUNNER_DIR/test-log/build/libs/test-log.jar"
+if [ ! -f "$TEST_LOG_JAR" ]; then
+  echo "Building test-log..."
+  (cd "$CLI_RUNNER_DIR" && ./gradlew :test-log:jar -q)
+fi
 MODULE=$1
 shift
 PROJECT_ROOT=$(git rev-parse --show-toplevel)
