@@ -34,6 +34,7 @@ public final class KlibMetadataProtoBuf {
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.isEmpty);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.fqName);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.className);
+    registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.fileAnnotation);
   }
   public interface HeaderOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.library.metadata.Header)
@@ -1626,6 +1627,22 @@ public final class KlibMetadataProtoBuf {
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
         true,
         java.lang.Integer.class);
+  public static final int FILE_ANNOTATION_FIELD_NUMBER = 175;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.PackageFragment { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment,
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> fileAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment.getDefaultInstance(),
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
+        null,
+        175,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
+        false,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
 
   static {
   }

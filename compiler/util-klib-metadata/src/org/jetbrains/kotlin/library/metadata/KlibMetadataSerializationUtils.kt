@@ -15,6 +15,7 @@ fun buildKlibPackageFragment(
     fqName: FqName,
     isEmpty: Boolean,
     stringTable: SerializableStringTable,
+    fileAnnotations: List<ProtoBuf.Annotation> = emptyList(),
 ): ProtoBuf.PackageFragment {
 
     val (stringTableProto, nameTableProto) = stringTable.buildProto()
@@ -30,6 +31,9 @@ fun buildKlibPackageFragment(
             }
             packageFragment.setExtension(KlibMetadataProtoBuf.isEmpty, isEmpty)
             packageFragment.setExtension(KlibMetadataProtoBuf.fqName, fqName.asString())
+            fileAnnotations.forEach {
+                packageFragment.addExtension(KlibMetadataProtoBuf.fileAnnotation, it)
+            }
         }
         .build()
 }

@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.klibFileAnnotations
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
@@ -57,6 +59,18 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
     private val cachedFragments: MutableMap<L, MutableMap<Pair<String, String>, ProtoBuf.PackageFragment>> = mutableMapOf()
     private val fragmentToNameResolver = IdentityHashMap<ProtoBuf.PackageFragment, NameResolver>()
     private val fragmentToKlibMetadataClassDataFinder = IdentityHashMap<ProtoBuf.PackageFragment, KlibMetadataClassDataFinder>()
+    private val fragmentToFileAnnotations = IdentityHashMap<ProtoBuf.PackageFragment, List<FirAnnotation>>()
+
+    private fun getFileAnnotations(fragment: ProtoBuf.PackageFragment, nameResolver: NameResolver): List<FirAnnotation> {
+        return fragmentToFileAnnotations.getOrPut(fragment) {
+            val fileAnnotationProtos = fragment.getExtension(KlibMetadataProtoBuf.fileAnnotation)
+            if (fileAnnotationProtos.isNullOrEmpty()) {
+                emptyList()
+            } else {
+                loadAnnotationsFromMetadata(session, fileAnnotationProtos, nameResolver)
+            }
+        }
+    }
 
     private fun getPackageFragment(
         resolvedLibrary: L, packageStringName: String, packageMetadataPart: String
@@ -100,6 +114,8 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
 
                 val nameResolver = getNameResolver(fragment)
 
+                val fileAnnotations = getFileAnnotations(fragment, nameResolver)
+
                 PackagePartsCacheData(
                     packageProto,
                     FirDeserializationContext.createForPackage(
@@ -109,7 +125,8 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
                         constDeserializer,
                         createDeserializedContainerSource(resolvedLibrary, packageFqName),
                     ),
-                    (resolvedLibrary as? KotlinLibrary)?.let(::MetadataLibraryPackagePartCacheDataExtra)
+                    (resolvedLibrary as? KotlinLibrary)?.let(::MetadataLibraryPackagePartCacheDataExtra),
+                    fileAnnotations = fileAnnotations,
                 )
             }
         }
@@ -165,6 +182,11 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
                 }
 
                 symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
+
+                val fileAnnotations = getFileAnnotations(fragment, nameResolver)
+                if (fileAnnotations.isNotEmpty()) {
+                    symbol.fir.klibFileAnnotations = fileAnnotations
+                }
             }
         }
 

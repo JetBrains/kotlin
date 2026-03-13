@@ -102,4 +102,5 @@ extend org.jetbrains.kotlin.metadata.PackageFragment {
   optional string fq_name = 173;
   // id in StringTable
   repeated int32 class_name = 174 [packed = true];
+  repeated org.jetbrains.kotlin.metadata.Annotation file_annotation = 175;
 }
