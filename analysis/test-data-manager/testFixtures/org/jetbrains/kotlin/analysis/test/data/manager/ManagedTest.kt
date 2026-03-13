@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.test.data.manager
 
+import java.nio.file.Path
+
 /**
  * Chain of test variant identifiers that determines output file naming and execution priority.
  *
@@ -74,4 +76,20 @@ interface ManagedTest {
      * @see ManagedTestAssertions.assertEqualsToTestDataFile
      */
     val variantChain: TestVariantChain get() = emptyList()
+}
+
+/**
+ * Extension for convenient usage from [ManagedTest] implementations.
+ */
+fun ManagedTest.assertEqualsToTestDataFile(
+    testDataPath: Path,
+    actual: String?,
+    extension: String,
+) {
+    ManagedTestAssertions.assertEqualsToTestDataFile(
+        testDataPath = testDataPath,
+        actual = actual,
+        variantChain = variantChain,
+        extension = extension,
+    )
 }

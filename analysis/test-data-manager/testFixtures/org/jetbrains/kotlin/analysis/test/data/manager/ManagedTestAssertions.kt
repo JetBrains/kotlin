@@ -295,19 +295,3 @@ object ManagedTestAssertions {
     internal fun normalizeContent(content: String): String =
         content.trim().convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
 }
-
-/**
- * Extension for convenient usage from [ManagedTest] implementations.
- */
-fun ManagedTest.assertEqualsToTestDataFile(
-    testDataPath: Path,
-    actual: String?,
-    extension: String,
-) {
-    ManagedTestAssertions.assertEqualsToTestDataFile(
-        testDataPath = testDataPath,
-        actual = actual,
-        variantChain = variantChain,
-        extension = extension,
-    )
-}
