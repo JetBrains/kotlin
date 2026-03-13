@@ -291,6 +291,10 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      *
      * Checks whether the [actual] string matches the content of the test output file.
      *
+     * If [actual] is `null`, asserts that the corresponding test output file does not exist. If the file exists, it will be deleted
+     * (in UPDATE mode or CHECK mode locally) and an assertion error is raised (in CHECK mode). Only the write-target file is checked —
+     * fallback files in the variant chain are not affected.
+     *
      * If a non-empty [variantChain] is specified, the function will firstly check whether test output files with any of the
      * specified variants exist. If so, it will check the [actual] content against that file (the last variant has the highest priority).
      * Also, if files with earlier variants or the non-variant file contain the same output, an assertion error is raised.
@@ -314,7 +318,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      */
     @Suppress("UnusedReceiverParameter")
     protected fun AssertionsService.assertEqualsToTestOutputFile(
-        actual: String,
+        actual: String?,
         extension: String = ".txt",
         subdirectoryName: String? = null,
         testPrefixes: List<String> = variantChain,
@@ -329,6 +333,10 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
 
     /**
      * Checks whether the [actual] string matches the content of the test output file.
+     *
+     * If [actual] is `null`, asserts that the corresponding test output file does not exist. If the file exists, it will be deleted
+     * (in UPDATE mode or CHECK mode locally) and an assertion error is raised (in CHECK mode). Only the write-target file is checked —
+     * fallback files in the variant chain are not affected.
      *
      * If a non-empty [variantChain] is specified, the function will firstly check whether test output files with any of the
      * specified variants exist. If so, it will check the [actual] content against that file (the last variant has the highest priority).
@@ -352,7 +360,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * - For secondary tests: writes to a variant file only if different from golden
      */
     protected fun assertEqualsToTestOutputFile(
-        actual: String,
+        actual: String?,
         extension: String = ".txt",
         subdirectoryName: String? = null,
         variantChain: TestVariantChain = this.variantChain,

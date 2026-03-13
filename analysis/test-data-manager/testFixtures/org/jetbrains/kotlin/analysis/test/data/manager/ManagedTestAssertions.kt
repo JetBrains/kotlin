@@ -69,6 +69,8 @@ object ManagedTestAssertions {
      *
      * | Scenario                 | UPDATE        | CHECK (local)   | CHECK (TeamCity) |
      * |--------------------------|---------------|-----------------|------------------|
+     * | actual=null, file missing | Pass         | Pass            | Pass             |
+     * | actual=null, file exists  | Delete       | Delete + throw  | Throw            |
      * | File missing (golden)    | Create        | Create + throw  | Throw            |
      * | File missing (secondary) | Create        | Throw           | Throw            |
      * | Content matches          | Pass          | Pass            | Pass             |
@@ -76,7 +78,7 @@ object ManagedTestAssertions {
      * | Content mismatch         | Update        | Throw           | Throw            |
      *
      * @param testDataPath path to the test input file (used to derive expected file paths)
-     * @param actual actual content to compare
+     * @param actual actual content to compare, or `null` if the file should not exist
      * @param variantChain chain of variant identifiers from [ManagedTest.variantChain]
      * @param extension file extension for expected files (e.g., ".txt")
      * @param mode test data manager mode (defaults to [TestDataManagerMode.currentMode])
@@ -84,13 +86,18 @@ object ManagedTestAssertions {
      */
     fun assertEqualsToTestDataFile(
         testDataPath: Path,
-        actual: String,
+        actual: String?,
         variantChain: TestVariantChain,
         extension: String,
         mode: TestDataManagerMode = TestDataManagerMode.currentMode,
     ) {
         val isGoldenTest = variantChain.isEmpty()
         val testDataFiles = TestDataFiles.build(testDataPath, variantChain, extension)
+
+        if (actual == null) {
+            handleFileShouldNotExist(testDataFiles, mode)
+            return
+        }
 
         val normalizedActual = normalizeContent(actual)
 
@@ -203,6 +210,34 @@ object ManagedTestAssertions {
         }
     }
 
+    private fun handleFileShouldNotExist(testDataFiles: TestDataFiles, mode: TestDataManagerMode) {
+        val writeTargetFile = testDataFiles.writeTargetFile
+        if (!writeTargetFile.exists()) return
+
+        val modificationAllowed = mode == TestDataManagerMode.UPDATE || !TestDataManagerMode.isUnderTeamCity
+        if (modificationAllowed) testDataFiles.update {
+            writeTargetFile.deleteIfExists()
+        }
+
+        if (mode == TestDataManagerMode.CHECK) {
+            throw createUnexpectedFileAssertion(
+                writeTargetFile = writeTargetFile,
+                fileWasDeleted = modificationAllowed,
+            )
+        }
+    }
+
+    private fun createUnexpectedFileAssertion(writeTargetFile: Path, fileWasDeleted: Boolean): AssertionFailedError {
+        val message = buildString {
+            append("File should not exist")
+            if (fileWasDeleted) append(", deleted")
+            append(": ")
+            append(writeTargetFile)
+        }
+
+        return AssertionFailedError(message)
+    }
+
     private fun writeFile(testDataFiles: TestDataFiles, content: String): Unit = testDataFiles.update {
         val path = testDataFiles.writeTargetFile
         path.createParentDirectories()
@@ -282,7 +317,7 @@ object ManagedTestAssertions {
  */
 fun ManagedTest.assertEqualsToTestDataFile(
     testDataPath: Path,
-    actual: String,
+    actual: String?,
     extension: String,
 ) {
     ManagedTestAssertions.assertEqualsToTestDataFile(

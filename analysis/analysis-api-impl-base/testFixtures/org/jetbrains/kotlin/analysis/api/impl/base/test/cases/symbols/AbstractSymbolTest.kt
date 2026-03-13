@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.util.concurrent.ExecutionException
@@ -300,14 +301,12 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         val actual = restored.renderAsDeclarations()
         val hasNonRestorable = nonRestoredSymbols.isNotEmpty()
         if (configurator.frontendKind == FrontendKind.Fir) {
-            if (hasNonRestorable) {
-                val nonRestorableActual = nonRestoredSymbols.joinToString(separator = "\n\n").trimEnd()
-                assertEqualsToTestOutputFile(
-                    actual = nonRestorableActual,
-                    extension = "nonRestorable.txt",
-                    variantChain = variantChain,
-                )
-            }
+            val nonRestorableActual = nonRestoredSymbols.ifNotEmpty { joinToString(separator = "\n\n").trimEnd() }
+            assertEqualsToTestOutputFile(
+                actual = nonRestorableActual,
+                extension = "nonRestorable.txt",
+                variantChain = variantChain,
+            )
 
             assertEqualsToTestOutputFile(
                 actual = actual,
