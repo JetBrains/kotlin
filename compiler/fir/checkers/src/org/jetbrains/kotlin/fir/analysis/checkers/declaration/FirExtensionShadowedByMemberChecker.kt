@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isVisible
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.canBeNull
@@ -59,7 +58,12 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
             ?.toClassLikeSymbol()
             ?.fullyExpandedClass()
             ?: return
-        val scope = receiverSymbol.unsubstitutedScope()
+
+        val scope = if (declaration.isCompanionExtension) {
+            receiverSymbol.staticScope(context) ?: return
+        } else {
+            receiverSymbol.unsubstitutedScope()
+        }
 
         val shadowingMember = when (declaration) {
             is FirVariable -> findFirstSymbolByCondition<FirVariableSymbol<*>>(

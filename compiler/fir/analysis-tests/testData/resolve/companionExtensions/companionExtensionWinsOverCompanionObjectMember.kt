@@ -29,7 +29,7 @@ fun example() {
     val z: Int = Example.test3()
 }
 
-companion fun Example.testInCompanionBlock() {
+companion fun Example.testInCompanionExtension() {
     // Just for completeness, but companion object members aren't in scope when unqualified anyway.
     val x: String = test()
     val y: String = test2()
