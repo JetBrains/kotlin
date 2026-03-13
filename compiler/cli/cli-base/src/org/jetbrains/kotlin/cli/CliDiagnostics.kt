@@ -19,6 +19,10 @@ object CliDiagnostics : KtDiagnosticsContainer() {
     val ROOTS_RESOLUTION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
     val ROOTS_RESOLUTION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
+    val UNSUPPORTED_LANGUAGE_VERSION: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val DEPRECATED_LANGUAGE_VERSION: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val EXPERIMENTAL_LANGUAGE_VERSION: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+
     val COMPILER_PLUGIN_INITIALIZATION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
     val COMPILER_PLUGIN_INITIALIZATION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
@@ -55,6 +59,10 @@ object CliDiagnostics : KtDiagnosticsContainer() {
             map.put(JAVA_MODULE_RESOLUTION_ERROR, MESSAGE_PLACEHOLDER)
             map.put(ROOTS_RESOLUTION_WARNING, MESSAGE_PLACEHOLDER)
             map.put(ROOTS_RESOLUTION_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(UNSUPPORTED_LANGUAGE_VERSION, MESSAGE_PLACEHOLDER)
+            map.put(DEPRECATED_LANGUAGE_VERSION, MESSAGE_PLACEHOLDER)
+            map.put(EXPERIMENTAL_LANGUAGE_VERSION, MESSAGE_PLACEHOLDER)
 
             map.put(COMPILER_PLUGIN_INITIALIZATION_WARNING, MESSAGE_PLACEHOLDER)
             map.put(COMPILER_PLUGIN_INITIALIZATION_ERROR, MESSAGE_PLACEHOLDER)

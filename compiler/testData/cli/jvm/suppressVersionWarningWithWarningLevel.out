@@ -1,3 +1,2 @@
-warning: [COMPILER_ARGUMENTS_WARNING] Language version 2.0 is deprecated and its support will be removed in a future version of Kotlin. Update the version to 2.1.
-error: [MISSING_DIAGNOSTIC_NAME] Warning with name "DEPRECATED_LANGUAGE_VERSION" does not exist
-COMPILATION_ERROR
+warning: [DEPRECATED_LANGUAGE_VERSION] Language version 2.0 is deprecated and its support will be removed in a future version of Kotlin. Update the version to 2.1.
+OK
