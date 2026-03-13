@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
-import org.jetbrains.kotlin.idea.references.*
+import org.jetbrains.kotlin.idea.references.KDocReference
+import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
+import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -148,12 +151,6 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     final override fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol? = resolveSymbolSafe()
     final override fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe()
     final override fun KtQualifiedExpression.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe()
-    final override fun KtInvokeFunctionReference.resolveSymbol(): KaNamedFunctionSymbol? = resolveSymbolSafe()
-    final override fun KtDestructuringDeclarationReference.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe()
-    final override fun KtConstructorDelegationReference.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe()
-    final override fun KtCollectionLiteralReference.resolveSymbol(): KaNamedFunctionSymbol? = resolveSymbolSafe()
-    final override fun KtArrayAccessReference.resolveSymbol(): KaNamedFunctionSymbol? = resolveSymbolSafe()
-    final override fun KtDefaultAnnotationArgumentReference.resolveSymbol(): KaValueParameterSymbol? = resolveSymbolSafe()
     final override fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe()
     final override fun KtNameReferenceExpression.resolveSymbol(): KaDeclarationSymbol? = resolveSymbolSafe()
     final override fun KtInstanceExpressionWithLabel.resolveSymbol(): KaDeclarationSymbol? = resolveSymbolSafe()
