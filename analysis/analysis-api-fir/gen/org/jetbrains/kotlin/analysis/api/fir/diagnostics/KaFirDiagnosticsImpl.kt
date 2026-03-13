@@ -5671,6 +5671,11 @@ internal class CompanionExtensionReceiverIsTypeParameterImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionReceiverIsTypeParameter
 
+internal class CompanionExtensionReceiverAnnotatedImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionReceiverAnnotated
+
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

@@ -1893,6 +1893,12 @@ private fun KaDiagnosticConverterBuilder.addConversions38() {
             token,
         )
     }
+    add(FirErrors.COMPANION_EXTENSION_RECEIVER_ANNOTATED) { firDiagnostic ->
+        CompanionExtensionReceiverAnnotatedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JAVA_TYPE_MISMATCH) { firDiagnostic ->
         JavaTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

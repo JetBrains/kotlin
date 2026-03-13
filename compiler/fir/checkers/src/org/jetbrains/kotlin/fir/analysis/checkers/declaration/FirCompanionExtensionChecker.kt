@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.isDisabled
@@ -43,13 +44,18 @@ object FirCompanionExtensionChecker : FirCallableDeclarationChecker(MppCheckerKi
             reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, "companion extension")
         }
 
-        checkReceiverType(declaration)
+        declaration.receiverParameter?.let { checkReceiver(it) }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkReceiverType(declaration: FirCallableDeclaration) {
-        val typeRef = declaration.receiverParameter?.typeRef
-        val receiverType = typeRef?.coneType?.abbreviatedTypeOrSelf ?: return
+    private fun checkReceiver(receiverParameter: FirReceiverParameter) {
+        receiverParameter.annotations.forEach { reporter.reportOn(it.source, FirErrors.COMPANION_EXTENSION_RECEIVER_ANNOTATED) }
+
+        val typeRef = receiverParameter.typeRef
+
+        typeRef.annotations.forEach { reporter.reportOn(it.source, FirErrors.COMPANION_EXTENSION_RECEIVER_ANNOTATED) }
+
+        val receiverType = typeRef.coneType.abbreviatedTypeOrSelf
 
         if (receiverType.typeArguments.isNotEmpty()) {
             reporter.reportOn(typeRef.source, FirErrors.COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS, receiverType)

@@ -4723,6 +4723,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val type: KaType
     }
 
+    interface CompanionExtensionReceiverAnnotated : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = CompanionExtensionReceiverAnnotated::class
+    }
+
     interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverrideCannotBeStatic::class
     }
