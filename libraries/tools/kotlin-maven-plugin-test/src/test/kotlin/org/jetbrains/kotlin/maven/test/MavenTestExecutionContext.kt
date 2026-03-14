@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.maven.test
 
-import org.jetbrains.kotlin.maven.test.TestVersions
 import org.jetbrains.kotlin.maven.test.jdk.CompositeJdkProvider
 import org.jetbrains.kotlin.maven.test.jdk.JavaHomeFallbackJdkProvider
 import org.jetbrains.kotlin.maven.test.jdk.JdkProvider
@@ -27,58 +26,36 @@ class MavenTestExecutionContext(
         ?: error("Can't find JDK $version")
 }
 
-class EnvironmentConfigProvider {
-    /**
-     * Replaces all non-word characters (anything except letters, digits, and underscores)
-     * with underscores and converts the result to uppercase.
-     *
-     * Examples:
-     * - "kotlin.version" → "KOTLIN_VERSION"
-     */
-    private fun String.toEnvironmentKey() = replace("\\W".toRegex(), "_").uppercase()
-
-    fun get(
-        propertyKey: String,
-        environmentKey: String = propertyKey.toEnvironmentKey(),
-        defaultValue: String? = null
-    ): String? {
-        return System.getProperty(propertyKey)
-            ?: System.getenv(environmentKey)
-            ?: defaultValue
-    }
-}
+private fun systemPropertyOrDefault(
+    name: String,
+    defaultValue: () -> String
+) = System.getProperty(name) ?: defaultValue()
 
 fun createMavenTestExecutionContext(
-    tmpDir: Path,
-    configProvider: EnvironmentConfigProvider = EnvironmentConfigProvider(),
+    tmpDir: Path
 ): MavenTestExecutionContext {
     val jdkProvider = JavaHomeFallbackJdkProvider(
         mainProvider = CompositeJdkProvider
     )
 
-    val testProjectsDir = configProvider.get(
+    val testProjectsDir = systemPropertyOrDefault(
         "kotlin.it.testDirs",
-        defaultValue = "${System.getProperty("user.dir")}/src/it/"
-    ) ?: error("kotlin.it.testDirs system property is not set, set it to location with test projects")
-
-    val mavenRepoLocal = configProvider.get(
-        "kotlin.it.localRepo",
-        defaultValue = "${System.getProperty("user.dir")}/local-repo"
-    ) ?: error("kotlin.it.localRepo system property is not set")
-
-    val kotlinVersion = configProvider.get("kotlin.version",
-        defaultValue = KotlinVersion.CURRENT.toString() + "-SNAPSHOT"
-    ) ?: error("kotlin.version system property is not set")
-
-    val kotlinBuildRepo = configProvider.get(
-        "kotlin.build.repo",
-        defaultValue = "${System.getProperty("user.dir")}/../../../build/repo"
+        defaultValue = { "${System.getProperty("user.dir")}/src/it/" }
     )
-        ?: error("""
-            "kotlin.build.repo system property is not set.
-             It should point to maven repository created after ./gradlew publish in kotlin.git"
-             By default it is '{kotlinProjectDir}/build/repo'
-        """.trimIndent())
+
+    val mavenRepoLocal = systemPropertyOrDefault(
+        "kotlin.it.localRepo",
+        defaultValue = { "${System.getProperty("user.dir")}/local-repo" }
+    )
+
+    val kotlinVersion = systemPropertyOrDefault("kotlin.version",
+        defaultValue = { "${KotlinVersion.CURRENT.major}.${KotlinVersion.CURRENT.minor}.255-SNAPSHOT" }
+    )
+
+    val kotlinBuildRepo = systemPropertyOrDefault(
+        "kotlin.build.repo",
+        defaultValue = { "${System.getProperty("user.dir")}/../../../build/repo" }
+    )
 
     return MavenTestExecutionContext(
         jdkProvider = jdkProvider,
