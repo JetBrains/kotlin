@@ -403,9 +403,19 @@ public fun CharSequence.hasSurrogatePairAt(index: Int): Boolean {
 public fun String.substring(range: IntRange): String = substring(range.start, range.endInclusive + 1)
 
 /**
+ * Returns a substring specified by the given [range] of indices.
+ */
+public inline operator fun String.get(range: IntRange): String = substring(range)
+
+/**
  * Returns a subsequence of this char sequence specified by the given [range] of indices.
  */
 public fun CharSequence.subSequence(range: IntRange): CharSequence = subSequence(range.start, range.endInclusive + 1)
+
+/**
+ * Returns a subsequence of this char sequence specified by the given [range] of indices.
+ */
+public inline operator fun CharSequence.get(range: IntRange): CharSequence = subSequence(range)
 
 /**
  * Returns a subsequence of this char sequence.
