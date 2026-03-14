@@ -68,6 +68,7 @@ internal fun bridgeAsNSCollectionElement(type: SirType): WithSingleType = when (
     is AsIs -> AsNSNumber(bridge.swiftType)
     is AsOptionalWrapper -> AsObjCBridgedOptional(bridge.wrappedObject.swiftType)
     is AsOptionalNothing -> AsObjCBridgedOptional(bridge.swiftType)
+    is AsOptionalVoid -> AsObjCBridgedOptional(bridge.swiftType)
     is AsObject,
     is AsExistential,
     is AsAnyBridgeable,
@@ -102,6 +103,7 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
                 -> AsOptionalWrapper(bridge)
 
             is AsNothing -> AsOptionalNothing
+            is AsVoid -> AsOptionalVoid
 
             is AsIs,
                 -> AsOptionalWrapper(
@@ -306,6 +308,28 @@ internal sealed class Bridge(
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
                 "{ ${valueExpression}; return () }()"
+        }
+    }
+
+    object AsOptionalVoid : WithSingleType(
+        SirNominalType(SirSwiftModule.optional, listOf(SirNominalType(SirSwiftModule.void))),
+        KotlinType.Boolean,
+        CType.Bool
+    ) {
+        override val inKotlinSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "(if ($valueExpression) Unit else null)"
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "($valueExpression != null)"
+        }
+
+        override val inSwiftSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "($valueExpression != nil)"
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "($valueExpression ? () : nil)"
         }
     }
 
@@ -728,13 +752,13 @@ internal sealed class Bridge(
                         }; } }()"
                     is AsContravariantBlock,
                     is AsIs,
-                    is AsVoid,
                     is AsOpaqueObject,
                     is AsOutError,
                         -> TODO("not yet supported")
 
                     is AsNothing -> error("AsOptionalNothing must be used for AsNothing")
-                    is AsOptionalWrapper, AsOptionalNothing -> error("there is not optional wrappers for optional")
+                    is AsVoid -> error("AsOptionalVoid must be used for AsVoid")
+                    is AsOptionalWrapper, AsOptionalNothing, AsOptionalVoid -> error("there is not optional wrappers for optional")
                 }
             }
         }

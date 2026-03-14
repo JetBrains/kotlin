@@ -78,6 +78,11 @@ public var str: Swift.String? {
         return { __root___str_set__TypesOfArguments__Swift_Optional_Swift_String___(newValue ?? nil); return () }()
     }
 }
+public func consumeNullableUnit(
+    a: Swift.Void?
+) -> Swift.Void {
+    return { __root___consumeNullableUnit__TypesOfArguments__Swift_Optional_Swift_Void___((a != nil)); return () }()
+}
 public func foo(
     a: main.Bar
 ) -> Swift.Void {
@@ -135,6 +140,9 @@ public func primitive_in(
 }
 public func primitive_out() -> Swift.Bool? {
     return __root___primitive_out().map { it in it.boolValue }
+}
+public func produceNullableUnit() -> Swift.Void? {
+    return (__root___produceNullableUnit() ? () : nil)
 }
 public func string_in(
     a: Swift.String?
