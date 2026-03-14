@@ -77,6 +77,13 @@ public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRa
     return run { _result; true }
 }
 
+@ExportedBridge("__root___consumeNullableUnit__TypesOfArguments__Swift_Optional_Swift_Void___")
+public fun __root___consumeNullableUnit__TypesOfArguments__Swift_Optional_Swift_Void___(a: Boolean): Boolean {
+    val __a = (if (a) Unit else null)
+    val _result = run { consumeNullableUnit(__a) }
+    return run { _result; true }
+}
+
 @ExportedBridge("__root___foo__TypesOfArguments__main_Bar__")
 public fun __root___foo__TypesOfArguments__main_Bar__(a: kotlin.native.internal.NativePtr): Boolean {
     val __a = kotlin.native.internal.ref.dereferenceExternalRCRef(a) as Bar
@@ -172,6 +179,12 @@ public fun __root___primitive_set__TypesOfArguments__Swift_Optional_Swift_Double
     val __newValue = if (newValue == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Double>(newValue)
     val _result = run { primitive = __newValue }
     return run { _result; true }
+}
+
+@ExportedBridge("__root___produceNullableUnit")
+public fun __root___produceNullableUnit(): Boolean {
+    val _result = run { produceNullableUnit() }
+    return (_result != null)
 }
 
 @ExportedBridge("__root___str_get")

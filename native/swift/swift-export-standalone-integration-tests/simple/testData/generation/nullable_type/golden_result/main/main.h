@@ -23,6 +23,8 @@ void * __root___Foo_init_allocate();
 
 _Bool __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_main_Bar___(void * __kt, void * _Nullable b);
 
+_Bool __root___consumeNullableUnit__TypesOfArguments__Swift_Optional_Swift_Void___(_Bool a);
+
 _Bool __root___foo__TypesOfArguments__main_Bar__(void * a);
 
 _Bool __root___foo__TypesOfArguments__Swift_Optional_main_Bar___(void * _Nullable a);
@@ -48,6 +50,8 @@ _Bool __root___primitive_in__TypesOfArguments__Swift_Optional_Swift_Bool__Swift_
 NSNumber * _Nullable __root___primitive_out();
 
 _Bool __root___primitive_set__TypesOfArguments__Swift_Optional_Swift_Double___(NSNumber * _Nullable newValue);
+
+_Bool __root___produceNullableUnit();
 
 NSString * _Nullable __root___str_get();
 
