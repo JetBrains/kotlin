@@ -7,7 +7,7 @@ import kotlin.io.path.Path
 class JavaHomeFallbackJdkProvider(
     val mainProvider: JdkProvider
 ) : JdkProvider {
-    override fun getJavaHome(version: TestVersions.Java): Path? {
+    override fun getJavaHome(version: TestVersions.Java): Path {
         val jdk = mainProvider.getJavaHome(version)
         if (jdk == null) {
             println("Can't find JDK $version, falling back to Java Home. Tests may fail due to unexpected JDK version.")
