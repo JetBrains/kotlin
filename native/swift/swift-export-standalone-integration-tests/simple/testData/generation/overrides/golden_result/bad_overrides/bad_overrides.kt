@@ -53,10 +53,10 @@ public fun weird_A_throws(self: kotlin.native.internal.NativePtr, _out_error: ko
 }
 
 @ExportedBridge("weird_B_bar_get")
-public fun weird_B_bar_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+public fun weird_B_bar_get(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as weird.B
     val _result = run { __self.bar }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return _result
 }
 
 @ExportedBridge("weird_B_foo")

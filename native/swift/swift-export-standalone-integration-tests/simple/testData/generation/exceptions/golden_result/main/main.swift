@@ -154,7 +154,7 @@ public func throwing_fun_never() throws -> Swift.Never {
     var _out_error: UnsafeMutableRawPointer? = nil
     let _result = __root___throwing_fun_never(&_out_error)
     guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
-    return _result
+    return { _result; fatalError() }()
 }
 public func throwing_fun_nullable() throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
     var _out_error: UnsafeMutableRawPointer? = nil

@@ -13,7 +13,7 @@ _Bool weird_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__
 
 _Bool weird_A_throws(void * self, void *_Nullable * _Nonnull _out_error);
 
-void weird_B_bar_get(void * self) __attribute((noreturn));
+_Bool weird_B_bar_get(void * self) __attribute((noreturn));
 
 _Bool weird_B_foo(void * self);
 

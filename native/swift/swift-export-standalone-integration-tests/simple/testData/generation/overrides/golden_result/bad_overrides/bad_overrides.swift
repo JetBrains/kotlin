@@ -39,7 +39,7 @@ extension ExportedKotlinPackages.weird {
         @_nonoverride
         public var bar: Swift.Never {
             get {
-                return weird_B_bar_get(self.__externalRCRef())
+                return { weird_B_bar_get(self.__externalRCRef()); fatalError() }()
             }
         }
         @_nonoverride

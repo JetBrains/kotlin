@@ -393,13 +393,13 @@ public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase {
         return OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(self.__externalRCRef())
     }
     public func next() -> Swift.Never {
-        return OBJECT_WITH_GENERIC_INHERITANCE_next(self.__externalRCRef())
+        return { OBJECT_WITH_GENERIC_INHERITANCE_next(self.__externalRCRef()); fatalError() }()
     }
     public func nextIndex() -> Swift.Int32 {
         return OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(self.__externalRCRef())
     }
     public func previous() -> Swift.Never {
-        return OBJECT_WITH_GENERIC_INHERITANCE_previous(self.__externalRCRef())
+        return { OBJECT_WITH_GENERIC_INHERITANCE_previous(self.__externalRCRef()); fatalError() }()
     }
     public func previousIndex() -> Swift.Int32 {
         return OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(self.__externalRCRef())

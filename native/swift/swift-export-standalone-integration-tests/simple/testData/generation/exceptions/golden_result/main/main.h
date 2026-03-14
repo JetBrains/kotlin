@@ -39,7 +39,7 @@ int32_t __root___throwing_fun_int(void *_Nullable * _Nonnull _out_error);
 
 int32_t __root___throwing_fun_int__TypesOfArguments__Swift_Int32__(int32_t arg, void *_Nullable * _Nonnull _out_error);
 
-void __root___throwing_fun_never(void *_Nullable * _Nonnull _out_error) __attribute((noreturn));
+_Bool __root___throwing_fun_never(void *_Nullable * _Nonnull _out_error) __attribute((noreturn));
 
 void * _Nullable __root___throwing_fun_nullable(void *_Nullable * _Nonnull _out_error);
 

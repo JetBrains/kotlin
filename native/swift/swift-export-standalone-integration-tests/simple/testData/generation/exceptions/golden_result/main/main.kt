@@ -235,14 +235,14 @@ public fun __root___throwing_fun_int__TypesOfArguments__Swift_Int32__(arg: Int, 
 }
 
 @ExportedBridge("__root___throwing_fun_never")
-public fun __root___throwing_fun_never(_out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
+public fun __root___throwing_fun_never(_out_error: kotlinx.cinterop.COpaquePointerVar): Boolean {
     val ___out_error = _out_error
     try {
         val _result = run { throwing_fun_never() }
-        return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+        return _result
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
-        return kotlin.native.internal.NativePtr.NULL
+        return false
     }
 }
 

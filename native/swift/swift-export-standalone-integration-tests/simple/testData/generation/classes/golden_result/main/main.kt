@@ -510,10 +510,10 @@ public fun OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(self: kotlin.native.inter
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_next")
-public fun OBJECT_WITH_GENERIC_INHERITANCE_next(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+public fun OBJECT_WITH_GENERIC_INHERITANCE_next(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
     val _result = run { __self.next() }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return _result
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_nextIndex")
@@ -524,10 +524,10 @@ public fun OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(self: kotlin.native.interna
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_previous")
-public fun OBJECT_WITH_GENERIC_INHERITANCE_previous(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+public fun OBJECT_WITH_GENERIC_INHERITANCE_previous(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
     val _result = run { __self.previous() }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return _result
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_previousIndex")

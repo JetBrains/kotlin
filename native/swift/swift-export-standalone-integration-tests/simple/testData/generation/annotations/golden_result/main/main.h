@@ -45,7 +45,7 @@ NSString * __root___MESSAGE_get();
 
 void * __root___classA_get();
 
-void __root___constMessage() __attribute((noreturn));
+_Bool __root___constMessage() __attribute((noreturn));
 
 void * __root___deprecatedChildT_init_allocate();
 
@@ -63,13 +63,13 @@ _Bool __root___deprecationInheritedImplicitlyV_get();
 
 _Bool __root___deprecationInheritedV_get();
 
-void __root___formattedMessage() __attribute((noreturn));
+_Bool __root___formattedMessage() __attribute((noreturn));
 
 void * __root___interfaceC_get();
 
-void __root___multilineFormattedMessage() __attribute((noreturn));
+_Bool __root___multilineFormattedMessage() __attribute((noreturn));
 
-void __root___multilineMessage() __attribute((noreturn));
+_Bool __root___multilineMessage() __attribute((noreturn));
 
 void * __root___normalChildT_init_allocate();
 
@@ -85,13 +85,13 @@ _Bool __root___obsoletedF();
 
 _Bool __root___obsoletedV_get();
 
-void __root___renamed__TypesOfArguments__Swift_Int32_Swift_Float__(int32_t x, float y) __attribute((noreturn));
+_Bool __root___renamed__TypesOfArguments__Swift_Int32_Swift_Float__(int32_t x, float y) __attribute((noreturn));
 
 _Bool __root___renamedF();
 
-void __root___renamedQualified__TypesOfArguments__Swift_Int32_Swift_Float__(int32_t x, float y) __attribute((noreturn));
+_Bool __root___renamedQualified__TypesOfArguments__Swift_Int32_Swift_Float__(int32_t x, float y) __attribute((noreturn));
 
-void __root___renamedQualifiedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(int32_t x, float y) __attribute((noreturn));
+_Bool __root___renamedQualifiedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(int32_t x, float y) __attribute((noreturn));
 
 void * __root___renamedT_init_allocate();
 
@@ -99,7 +99,7 @@ _Bool __root___renamedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRa
 
 _Bool __root___renamedV_get();
 
-void __root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(int32_t x, float y) __attribute((noreturn));
+_Bool __root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(int32_t x, float y) __attribute((noreturn));
 
 void * __root___returnClassA__TypesOfArguments__main_SwiftClassA__(void * value);
 
@@ -107,7 +107,7 @@ void * __root___returnInterfaceC__TypesOfArguments__anyU20main_SwiftInterfaceC__
 
 void * __root___returnObjectB__TypesOfArguments__main_ObjCObjectB__(void * value);
 
-void __root___unrenamed() __attribute((noreturn));
+_Bool __root___unrenamed() __attribute((noreturn));
 
 _Bool deprecatedChildT_deprecationFurtherReinforcedF(void * self);
 

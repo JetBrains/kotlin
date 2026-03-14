@@ -25,6 +25,33 @@ public var flowFoo: KotlinCoroutineSupport._KotlinTypedFlow<main.Foo> {
         return KotlinCoroutineSupport._KotlinTypedFlow<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowFoo_get()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
     }
 }
+public func alwaysFails() async throws -> Swift.Never {
+    try await {
+        try Task.checkCancellation()
+        var cancellation: KotlinCoroutineSupport.KotlinTask! = nil
+        return try await withTaskCancellationHandler {
+            try await withUnsafeThrowingContinuation { nativeContinuation in
+                withUnsafeCurrentTask { currentTask in
+                    let continuation: (Swift.Never) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
+                    let exception: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = { error in
+                        nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
+                    }
+                    cancellation = KotlinCoroutineSupport.KotlinTask(currentTask!)
+
+                    let _: Bool = __root___alwaysFails({
+                        let originalBlock = continuation
+                        return { arg0 in return { originalBlock({ arg0; fatalError() }()); return true }() }
+                    }(), {
+                        let originalBlock = exception
+                        return { arg0 in return { originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()); return true }() }
+                    }(), cancellation.__externalRCRef())
+                }
+            }
+        } onCancel: {
+            cancellation?.cancelExternally()
+        }
+    }()
+}
 public func demo() -> KotlinCoroutineSupport._KotlinTypedFlow<main.Foo> {
     return KotlinCoroutineSupport._KotlinTypedFlow<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___demo()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
 }

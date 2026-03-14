@@ -141,7 +141,7 @@ open class Child: overrides.Parent {
         return Child_genericReturnTypeFunc(self.__externalRCRef()) as! Swift.Array<overrides.Child>
     }
     open func nonoverride() -> Swift.Never {
-        return Child_nonoverride(self.__externalRCRef())
+        return { Child_nonoverride(self.__externalRCRef()); fatalError() }()
     }
     open override func objectFunc(
         arg: overrides.Child
