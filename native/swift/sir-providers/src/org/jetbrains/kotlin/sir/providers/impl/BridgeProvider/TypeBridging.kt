@@ -73,7 +73,8 @@ internal fun bridgeAsNSCollectionElement(type: SirType): WithSingleType = when (
     is AsAnyBridgeable,
     is AsTypedFlow,
     is AsOpaqueObject,
-    is SirCustomTypeTranslatorImpl.RangeBridge
+    is SirCustomTypeTranslatorImpl.RangeBridge,
+    AsNothing,
         -> AsObjCBridged(bridge.swiftType, CType.id)
     is AsObjCBridged,
     AsOutError,
@@ -87,7 +88,7 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
     if (customTypeBridgeWrapper != null) return customTypeBridgeWrapper.bridge
     return when (val subtype = type.typeDeclaration) {
         SirSwiftModule.unsafeMutableRawPointer -> AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
-        SirSwiftModule.never -> AsOpaqueObject(type, KotlinType.KotlinObject, CType.Void)
+        SirSwiftModule.never -> AsNothing
 
         SirSwiftModule.optional -> when (val bridge = bridgeType(type.typeArguments.first(), position)) {
             is AsObject,
@@ -100,13 +101,7 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
             is SirCustomTypeTranslatorImpl.RangeBridge
                 -> AsOptionalWrapper(bridge)
 
-            is AsOpaqueObject -> {
-                if (bridge.swiftType.isNever) {
-                    AsOptionalNothing
-                } else {
-                    error("Found Optional wrapping for OpaqueObject. That is impossible")
-                }
-            }
+            is AsNothing -> AsOptionalNothing
 
             is AsIs,
                 -> AsOptionalWrapper(
@@ -644,20 +639,46 @@ internal sealed class Bridge(
         }
     }
 
+    data object AsNothing : WithSingleType(
+        SirNominalType(SirSwiftModule.never),
+        KotlinType.Boolean,
+        CType.Bool
+    ) {
+        override val inKotlinSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "run { ${valueExpression}; throw IllegalStateException() }"
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String = valueExpression
+        }
+
+        override val inSwiftSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "{ $valueExpression }()"
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "{ ${valueExpression}; fatalError() }()"
+        }
+    }
+
     data object AsOptionalNothing : WithSingleType(
         SirNominalType(SirSwiftModule.optional, listOf(SirNominalType(SirSwiftModule.never))),
         KotlinType.Boolean,
         CType.Bool
     ) {
         override val inKotlinSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "null"
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = "true"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "run { ${valueExpression}; null }"
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "run { ${valueExpression}; true }"
         }
 
         override val inSwiftSources = object : ValueConversion {
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "true"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "{ ${valueExpression}; return true }()"
+
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
-                "{ ${valueExpression}; return nil; }()"
+                "{ ${valueExpression}; return nil }()"
         }
     }
 
@@ -712,6 +733,7 @@ internal sealed class Bridge(
                     is AsOutError,
                         -> TODO("not yet supported")
 
+                    is AsNothing -> error("AsOptionalNothing must be used for AsNothing")
                     is AsOptionalWrapper, AsOptionalNothing -> error("there is not optional wrappers for optional")
                 }
             }
@@ -828,7 +850,7 @@ internal sealed class Bridge(
 
     class AsCovariantBlock private constructor(
         override val swiftType: SirFunctionalType,
-        private val bridgeProxy: BridgeFunctionProxy,
+        private val bridgeProxy: BridgeFunctionProxy?,
     ) : KotlinToSwiftBridgeWithSingleType(
         swiftType = swiftType,
         kotlinType = KotlinType.KotlinObject,
@@ -857,7 +879,7 @@ internal sealed class Bridge(
                     extensionReceiverParameter = null,
                     errorParameter = null,
                     isAsync = swiftType.isAsync
-                )!!
+                )
             )
 
             context(session: SirSession)
@@ -880,7 +902,8 @@ internal sealed class Bridge(
 
         override val inSwiftSources = object : KotlinToSwiftValueConversion {
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
-                val allArgs = bridgeProxy.argumentsForInvocation().applyIf(swiftType.isAsync) { dropLast(3) }
+                val allArgs = bridgeProxy?.argumentsForInvocation()?.applyIf(swiftType.isAsync) { dropLast(3) }
+                    ?: List(1 + swiftType.contextTypes.size + swiftType.parameterTypes.size) { "_" }
                 val defineArgs = buildList {
                     if (swiftType.contextType != null) add("context")
                     addAll(allArgs.drop(1 + swiftType.contextTypes.size))
@@ -889,7 +912,11 @@ internal sealed class Bridge(
                     if (swiftType.contextType != null) {
                         add(List(swiftType.contextTypes.size) { idx -> "ctx$idx" }.joinToString(prefix = "let (", postfix = ") = context"))
                     }
-                    addAll(bridgeProxy.createSwiftInvocation({ "return $it" }))
+                    if (bridgeProxy != null) {
+                        addAll(bridgeProxy.createSwiftInvocation({ "return $it" }))
+                    } else {
+                        add("fatalError()")
+                    }
                 }
                 return """{
                 |    let ${allArgs.first()} = $valueExpression
@@ -900,10 +927,10 @@ internal sealed class Bridge(
 
         context(sir: SirSession)
         override fun helperBridges(typeNamer: SirTypeNamer): List<SirBridge> {
-            return bridgeProxy.createSirBridges {
+            return bridgeProxy?.createSirBridges {
                 val actualArgs = argNames.drop(1).also { if (extensionReceiverParameter != null) it.drop(1) else it }
                 buildCall("(__pointerToBlock as ${typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}).invoke(${actualArgs.joinToString()})")
-            }
+            } ?: emptyList()
         }
     }
 

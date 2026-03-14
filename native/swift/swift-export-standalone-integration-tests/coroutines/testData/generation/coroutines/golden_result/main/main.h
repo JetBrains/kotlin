@@ -7,6 +7,8 @@ void * __root___Foo_init_allocate();
 
 _Bool __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+_Bool __root___alwaysFails(_Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
 void * __root___demo();
 
 void * __root___flowFoo_get();

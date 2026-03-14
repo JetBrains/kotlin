@@ -35,6 +35,8 @@ suspend fun returnUnit(): Unit = TODO()
 
 fun returnSuspendUnit(): suspend () -> Unit = TODO()
 
+suspend fun alwaysFails(): Nothing = TODO()
+
 // MODULE: flow_overrides
 // FILE: flow_overrides.kt
 package namespace

@@ -166,9 +166,9 @@ public fun __root___classA_get(): kotlin.native.internal.NativePtr {
 }
 
 @ExportedBridge("__root___constMessage")
-public fun __root___constMessage(): kotlin.native.internal.NativePtr {
+public fun __root___constMessage(): Boolean {
     val _result = run { constMessage() }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return _result
 }
 
 @ExportedBridge("__root___deprecatedChildT_init_allocate")
@@ -222,9 +222,9 @@ public fun __root___deprecationInheritedV_get(): Boolean {
 }
 
 @ExportedBridge("__root___formattedMessage")
-public fun __root___formattedMessage(): kotlin.native.internal.NativePtr {
+public fun __root___formattedMessage(): Boolean {
     val _result = run { formattedMessage() }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return _result
 }
 
 @ExportedBridge("__root___interfaceC_get")
@@ -234,15 +234,15 @@ public fun __root___interfaceC_get(): kotlin.native.internal.NativePtr {
 }
 
 @ExportedBridge("__root___multilineFormattedMessage")
-public fun __root___multilineFormattedMessage(): kotlin.native.internal.NativePtr {
+public fun __root___multilineFormattedMessage(): Boolean {
     val _result = run { multilineFormattedMessage() }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return _result
 }
 
 @ExportedBridge("__root___multilineMessage")
-public fun __root___multilineMessage(): kotlin.native.internal.NativePtr {
+public fun __root___multilineMessage(): Boolean {
     val _result = run { multilineMessage() }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return _result
 }
 
 @ExportedBridge("__root___normalChildT_init_allocate")
@@ -290,11 +290,11 @@ public fun __root___obsoletedV_get(): Boolean {
 }
 
 @ExportedBridge("__root___renamed__TypesOfArguments__Swift_Int32_Swift_Float__")
-public fun __root___renamed__TypesOfArguments__Swift_Int32_Swift_Float__(x: Int, y: Float): kotlin.native.internal.NativePtr {
+public fun __root___renamed__TypesOfArguments__Swift_Int32_Swift_Float__(x: Int, y: Float): Boolean {
     val __x = x
     val __y = y
     val _result = run { renamed(__x, __y) }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return _result
 }
 
 @ExportedBridge("__root___renamedF")
@@ -304,19 +304,19 @@ public fun __root___renamedF(): Boolean {
 }
 
 @ExportedBridge("__root___renamedQualified__TypesOfArguments__Swift_Int32_Swift_Float__")
-public fun __root___renamedQualified__TypesOfArguments__Swift_Int32_Swift_Float__(x: Int, y: Float): kotlin.native.internal.NativePtr {
+public fun __root___renamedQualified__TypesOfArguments__Swift_Int32_Swift_Float__(x: Int, y: Float): Boolean {
     val __x = x
     val __y = y
     val _result = run { renamedQualified(__x, __y) }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return _result
 }
 
 @ExportedBridge("__root___renamedQualifiedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__")
-public fun __root___renamedQualifiedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(x: Int, y: Float): kotlin.native.internal.NativePtr {
+public fun __root___renamedQualifiedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(x: Int, y: Float): Boolean {
     val __x = x
     val __y = y
     val _result = run { renamedQualifiedWithArguments(__x, __y) }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return _result
 }
 
 @ExportedBridge("__root___renamedT_init_allocate")
@@ -339,11 +339,11 @@ public fun __root___renamedV_get(): Boolean {
 }
 
 @ExportedBridge("__root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__")
-public fun __root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(x: Int, y: Float): kotlin.native.internal.NativePtr {
+public fun __root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(x: Int, y: Float): Boolean {
     val __x = x
     val __y = y
     val _result = run { renamedWithArguments(__x, __y) }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return _result
 }
 
 @ExportedBridge("__root___returnClassA__TypesOfArguments__main_SwiftClassA__")
@@ -368,9 +368,9 @@ public fun __root___returnObjectB__TypesOfArguments__main_ObjCObjectB__(value: k
 }
 
 @ExportedBridge("__root___unrenamed")
-public fun __root___unrenamed(): kotlin.native.internal.NativePtr {
+public fun __root___unrenamed(): Boolean {
     val _result = run { unrenamed() }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return _result
 }
 
 @ExportedBridge("deprecatedChildT_deprecationFurtherReinforcedF")

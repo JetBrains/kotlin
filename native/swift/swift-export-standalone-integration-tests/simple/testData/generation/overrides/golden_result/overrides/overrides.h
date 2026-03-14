@@ -21,7 +21,7 @@ _Bool Child_finalOverrideFunc(void * self);
 
 NSArray<id> * Child_genericReturnTypeFunc(void * self);
 
-void Child_nonoverride(void * self) __attribute((noreturn));
+_Bool Child_nonoverride(void * self) __attribute((noreturn));
 
 void * Child_objectFunc__TypesOfArguments__overrides_Child__(void * self, void * arg);
 

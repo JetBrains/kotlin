@@ -79,10 +79,10 @@ public fun Child_genericReturnTypeFunc(self: kotlin.native.internal.NativePtr): 
 }
 
 @ExportedBridge("Child_nonoverride")
-public fun Child_nonoverride(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+public fun Child_nonoverride(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
     val _result = run { __self.nonoverride() }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+    return _result
 }
 
 @ExportedBridge("Child_objectFunc__TypesOfArguments__overrides_Child__")

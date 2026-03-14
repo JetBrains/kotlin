@@ -67,11 +67,11 @@ _Bool OBJECT_WITH_GENERIC_INHERITANCE_hasNext(void * self);
 
 _Bool OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(void * self);
 
-void OBJECT_WITH_GENERIC_INHERITANCE_next(void * self) __attribute((noreturn));
+_Bool OBJECT_WITH_GENERIC_INHERITANCE_next(void * self) __attribute((noreturn));
 
 int32_t OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(void * self);
 
-void OBJECT_WITH_GENERIC_INHERITANCE_previous(void * self) __attribute((noreturn));
+_Bool OBJECT_WITH_GENERIC_INHERITANCE_previous(void * self) __attribute((noreturn));
 
 int32_t OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(void * self);
 
