@@ -41,7 +41,7 @@ interface NativeCompilationConfig {
         get() = configuration.metadataKlib
 
     val friendModuleFiles: Set<File>
-        get() = configuration.konanFriendLibraries.map { File(it) }.toSet()
+        get() = configuration.konanFriendLibraries.map { File(it).canonicalFile }.toSet()
 
     val refinesModuleFiles: Set<File>
         get() = configuration.konanRefinesModules.map { File(it) }.toSet()
