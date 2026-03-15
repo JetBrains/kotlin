@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.junit.jupiter.api.Assumptions
 import java.io.File
 import java.io.InputStream
 import java.io.PrintWriter
@@ -360,6 +361,7 @@ fun <T> TestProject.buildModel(
     progressListener: ((ProgressEvent) -> Unit)? = null,
     builder: (Project) -> T
 ): T {
+    Assumptions.assumeFalse(isWindows, "Building model is not working on windws KT-84353")
     val buildParams = commonBuildSetup(
         buildArguments = emptyList(), // it is actually task names, but for build model they passed separately
         buildOptions = buildOptions,
