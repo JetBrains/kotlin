@@ -240,6 +240,7 @@ class KotlinCompileApiTest {
         androidExtension.compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
         androidExtension.compilerOptions.javaParameters.set(true)
         androidExtension.explicitApi = ExplicitApiMode.Strict
+        @Suppress("DEPRECATION")
         androidExtension.sourceSets.register("main")
         androidExtension.target.withSourcesJar(false)
         androidExtension.target.compilations.register("main")
@@ -252,6 +253,7 @@ class KotlinCompileApiTest {
             ExplicitApiMode.Strict,
             (androidTask.get() as KotlinCompile).explicitApiMode.get()
         )
+        @Suppress("DEPRECATION")
         assertNotNull(androidExtension.sourceSets.findByName("main"))
     }
 

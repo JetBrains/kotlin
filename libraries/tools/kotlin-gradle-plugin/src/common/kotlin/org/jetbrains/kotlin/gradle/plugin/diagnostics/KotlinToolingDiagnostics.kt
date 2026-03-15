@@ -2236,6 +2236,22 @@ internal object KotlinToolingDiagnostics {
                 .solution("Use the source set created by the compilation instead of creating it manually")
         }
     }
+
+    internal object SourceSetsAccessInAndroidExtension : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Kgp.Deprecation
+    ) {
+        operator fun invoke(trace: Throwable? = null) = build(throwable = trace) {
+            title {"sourceSets collection in Kotlin Android is deprecated" }
+                .description {
+                    """
+                        Kotlin Source Sets collection in Android extension should not be used and is deprecated now.
+                    """.trimIndent()
+                }
+                .solution { "Use source set alternative provided by Android Gradle Plugin: https://kotl.in/b2vftz" }
+                .documentationLink(URI("https://youtrack.jetbrains.com/issue/KT-74451"))
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

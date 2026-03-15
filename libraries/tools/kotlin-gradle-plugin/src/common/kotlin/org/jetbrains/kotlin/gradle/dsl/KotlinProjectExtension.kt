@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Undispatched
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationExtensionImpl
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.isCalledOutsideKotlinOrAndroidPlugins
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
@@ -106,6 +109,7 @@ abstract class KotlinProjectExtension @Inject constructor(
         // Required for Gradle to generate accessors to source sets or 'sourceSets {}' DSL
         extensions.add("sourceSets", kotlinSourceSets)
     }
+
     override var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
         get() = sourceSetsContainer
         @Deprecated("Assigning new value to 'sourceSets' is deprecated", level = DeprecationLevel.ERROR)
@@ -333,6 +337,23 @@ abstract class KotlinAndroidProjectExtension @Inject constructor(
     override fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
         configure(compilerOptions)
     }
+
+    override var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
+        @Deprecated("Use source sets provided by Android Gradle Plugin instead.")
+        get() {
+            /**
+             * Android Gradle Plugin calls it for configuration purposes
+             * Also, this method can be called in KGP code where generic "KotlinExtension" is expected.
+             */
+            if (isCalledOutsideKotlinOrAndroidPlugins) {
+                project.reportDiagnosticOncePerProject(
+                    KotlinToolingDiagnostics.SourceSetsAccessInAndroidExtension(Throwable())
+                )
+            }
+            return super.sourceSets
+        }
+        @Deprecated("Assigning new value to 'sourceSets' is deprecated", level = DeprecationLevel.ERROR)
+        set(_) {}
 }
 
 enum class NativeCacheKind(val produce: String?, val outputKind: CompilerOutputKind?) {

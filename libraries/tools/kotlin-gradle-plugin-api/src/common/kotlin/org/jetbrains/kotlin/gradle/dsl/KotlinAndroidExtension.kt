@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 
 /**
@@ -29,4 +31,7 @@ interface KotlinAndroidExtension : KotlinBaseExtension,
      * An instance of [KotlinTarget] for [KotlinPlatformType.androidJvm] platform.
      */
     val target: KotlinTarget
+
+    @Deprecated("Use source sets provided by Android Gradle Plugin instead.")
+    override val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 }
