@@ -25,7 +25,17 @@ nativeInteropPlugin {
     systemIncludeDirs.set(listOf("${nativeDependencies.llvmPath}/include"))
     linkerArgs.set(buildList {
         if (PlatformInfo.isMac()) {
-            addAll(listOf("-Wl,--no-demangle", "-Wl,-search_paths_first", "-Wl,-headerpad_max_install_names"))
+            addAll(listOf(
+                    "-Wl,--no-demangle",
+                    "-Wl,-search_paths_first",
+                    "-Wl,-headerpad_max_install_names",
+                    /**
+                     * FIXME: KT-85015 - Since the macOS deployment target has been bumped from 11 to 12 in KT-84826, the dlopen call in
+                     * cinterops starts exploding due to the undefined symbols below. Disabling "chained fixups" brings back the old
+                     * behavior where the libclangstubs.dylib can have unbound symbols at runtime.
+                     */
+                    "-Wl,-no_fixup_chains",
+            ))
             // Let some symbols be undefined to avoid linking unnecessary parts.
             listOf(
                     "_futimens",
