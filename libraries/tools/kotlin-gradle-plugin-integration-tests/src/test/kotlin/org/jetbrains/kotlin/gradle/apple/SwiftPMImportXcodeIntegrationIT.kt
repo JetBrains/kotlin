@@ -35,7 +35,7 @@ import kotlin.test.*
 )
 @OptIn(EnvironmentalVariablesOverride::class)
 @DisplayName("SwiftPM import Xcode integration tests")
-@NativeGradlePluginTests
+@SwiftPMImportGradlePluginTests
 class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
 
     @GradleTest
