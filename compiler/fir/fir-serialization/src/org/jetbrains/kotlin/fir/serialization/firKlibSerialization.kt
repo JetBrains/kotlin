@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.library.metadata.buildKlibPackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 
@@ -64,9 +66,11 @@ fun serializeSingleFirFile(
         (declaration as? FirClass)?.makeClassProtoWithNested()
     }
 
-    val fileAnnotationProtos = file.annotations.mapNotNull { annotation ->
-        serializerExtension.annotationSerializer.serializeAnnotation(annotation)
-    }
+    val fileAnnotationProtos = file.annotations
+        .filter { it.toAnnotationClassId(session) in KLIB_FILE_ANNOTATION_CLASS_IDS }
+        .mapNotNull { annotation ->
+            serializerExtension.annotationSerializer.serializeAnnotation(annotation)
+        }
 
     return buildKlibPackageFragment(
         packageProto,
@@ -78,6 +82,20 @@ fun serializeSingleFirFile(
                 classesProto.isEmpty(),
         serializerExtension.stringTable as SerializableStringTable,
         fileAnnotations = fileAnnotationProtos,
+    )
+}
+
+/**
+ * The set of file-level annotation class IDs that are serialized into KLib metadata.
+ *
+ * Currently, only JS-specific annotations are supported to unblock work on `@JsExport`.
+ * This restriction can be lifted in the future to include other file-level annotations.
+ */
+private val KLIB_FILE_ANNOTATION_CLASS_IDS: Set<ClassId> = run {
+    val jsPackage = StandardClassIds.BASE_KOTLIN_PACKAGE.child(Name.identifier("js"))
+    setOf(
+        ClassId(jsPackage, Name.identifier("JsExport")),
+        ClassId(jsPackage, Name.identifier("JsFileName")),
     )
 }
 

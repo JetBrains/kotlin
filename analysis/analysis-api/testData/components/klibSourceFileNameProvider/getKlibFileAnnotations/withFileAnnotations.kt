@@ -3,7 +3,7 @@
 // MODULE_KIND: LibraryBinary
 
 // FILE: lib.kt
-@file:Suppress("UNUSED_PARAMETER")
+@file:JsExport
 
 package test
 

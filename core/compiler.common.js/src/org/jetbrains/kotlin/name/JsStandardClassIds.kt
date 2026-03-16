@@ -59,6 +59,9 @@ object JsStandardClassIds {
         val JsExport = "JsExport".jsId()
 
         @JvmField
+        val JsFileName = "JsFileName".jsId()
+
+        @JvmField
         val JsImplicitExport = "JsImplicitExport".jsId()
 
         @JvmField

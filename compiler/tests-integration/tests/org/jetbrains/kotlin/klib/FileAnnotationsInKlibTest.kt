@@ -85,8 +85,7 @@ class FileAnnotationsInKlibTest : KtUsefulTestCase() {
         withTempDir { dir ->
             val klibFile = compileJsKlib(
                 """
-                @file:Suppress("UNUSED_PARAMETER")
-                @file:OptIn(ExperimentalStdlibApi::class)
+                @file:JsExport
                 
                 package test
                 
@@ -99,17 +98,13 @@ class FileAnnotationsInKlibTest : KtUsefulTestCase() {
             val testAnnotations = annotations["test"]
             assertNotNull("Expected file annotations for package 'test'", testAnnotations)
             assertTrue(
-                "Expected kotlin.Suppress in file annotations, got: $testAnnotations",
-                testAnnotations!!.any { it == "kotlin.Suppress" },
-            )
-            assertTrue(
-                "Expected kotlin.OptIn in file annotations, got: $testAnnotations",
-                testAnnotations.any { it == "kotlin.OptIn" },
+                "Expected kotlin.js.JsExport in file annotations, got: $testAnnotations",
+                testAnnotations!!.any { it == "kotlin.js.JsExport" },
             )
         }
     }
 
-    fun testCustomFileAnnotation() {
+    fun testNonJsFileAnnotationsAreNotSerialized() {
         withTempDir { dir ->
             val klibFile = compileJsKlib(
                 """
@@ -128,10 +123,9 @@ class FileAnnotationsInKlibTest : KtUsefulTestCase() {
 
             val annotations = loadFileAnnotations(klibFile)
             val testAnnotations = annotations["test"]
-            assertNotNull("Expected file annotations for package 'test'", testAnnotations)
             assertTrue(
-                "Expected test.MyFileAnnotation in file annotations, got: $testAnnotations",
-                testAnnotations!!.any { it == "test.MyFileAnnotation" },
+                "Expected no file annotations for package 'test', got: $testAnnotations",
+                testAnnotations.isNullOrEmpty(),
             )
         }
     }
