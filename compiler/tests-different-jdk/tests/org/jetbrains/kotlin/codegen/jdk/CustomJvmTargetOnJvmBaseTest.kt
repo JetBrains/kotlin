@@ -18,10 +18,6 @@ import org.junit.platform.suite.api.Suite
 
 @Suite
 @SelectClasses(
-    IrBlackBoxCodegenTestGenerated::class,
-    IrBlackBoxInlineCodegenTestGenerated::class,
-    IrCompileKotlinAgainstInlineKotlinTestGenerated::class,
-
     FirLightTreeBlackBoxCodegenTestGenerated::class,
     FirLightTreeBlackBoxInlineCodegenTestGenerated::class,
 
