@@ -1,0 +1,22 @@
+FILE: deprecatedAll.kt
+    public final class MyClass : R|kotlin/Any| {
+        public constructor(prop: R|kotlin/Int|): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        @ALL:R|kotlin/Deprecated|(message = String(Obsolete) [evaluated = String(Obsolete)]) public final var prop: R|kotlin/Int| = R|<local>/prop|
+            @R|kotlin/Deprecated|(message = String(Obsolete) [evaluated = String(Obsolete)]) public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        @ALL:R|kotlin/Deprecated|(message = String(Obsolete) [evaluated = String(Obsolete)]) public final var otherProp: R|kotlin/Int| = Int(42)
+            @R|kotlin/Deprecated|(message = String(Obsolete) [evaluated = String(Obsolete)]) public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        lval my: R|MyClass| = R|/MyClass.MyClass|(Int(42))
+        R|<local>/my|.R|/MyClass.prop|
+        R|<local>/my|.R|/MyClass.prop| = Int(13)
+        R|<local>/my|.R|/MyClass.otherProp| = Int(13)
+        R|<local>/my|.R|/MyClass.otherProp|
+    }
