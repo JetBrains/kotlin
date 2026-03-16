@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.additionalIrCheckers
+import org.jetbrains.kotlin.config.disableIrCheckers
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -365,14 +367,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(module.directives)
 
                     keyConfiguration.languageVersionSettings = module.languageVersionSettings
-                    keyConfiguration.put(
-                        CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS,
-                        !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module, services),
-                    )
-                    keyConfiguration.put(
-                        CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS,
-                        !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module, services),
-                    )
+                    keyConfiguration.disableIrCheckers = IrCheckersDisabledByTestDirectives.filter { it.key.isApplicableTo(module, services) }.values.toList()
+                    keyConfiguration.additionalIrCheckers = IrCheckersEnabledByTestDirectives.filter { module.directives.contains(it.key) }.values.toList()
 
                     val key = ConfigurationKey(kind, jdkKind, keyConfiguration.toString())
                     val compiler = if (kind.withReflection) reflectionFlavor else commonFlavor

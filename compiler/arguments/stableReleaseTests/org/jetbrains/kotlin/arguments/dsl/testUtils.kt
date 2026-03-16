@@ -15,6 +15,8 @@ import kotlin.reflect.KClass
 // Really experimental compiler arguments should have a special handling in tests
 private val temporaryExceptions: Set<String> = setOf(
     // Add here argument name to ignore from checks
+    "Xverify-ir-visibility",
+    "Xverify-ir-nested-offsets",
 )
 
 internal fun Set<StableKotlinCompilerArgument>.filterNonDeprecated() = filter {

@@ -20,6 +20,23 @@ data class IrValidatorConfig(
 ) {
     fun withCheckers(vararg checkers: IrChecker) = copy(checkers = this.checkers + checkers)
     fun withoutCheckers(vararg checkers: IrChecker) = copy(checkers = this.checkers - checkers.toSet())
+
+    fun withCheckersByName(include: List<String>, candidateCheckers: List<IrChecker>): IrValidatorConfig = copy(
+        checkers = this.checkers + candidateCheckers.filter { checker ->
+            include.intersect(getCheckerFilteringKeys(checker.javaClass)).isNotEmpty()
+        }
+    )
+
+    fun withoutCheckersByName(exclude: List<String>) = copy(
+        checkers = checkers.filterNot { checker ->
+            exclude.intersect(getCheckerFilteringKeys(checker.javaClass)).isNotEmpty()
+        }.toSet()
+    )
+
+    companion object {
+        private fun getCheckerFilteringKeys(checkerClass: Class<*>): Set<String> =
+            setOf(checkerClass.simpleName) + checkerClass.annotations.mapNotNull { it.annotationClass.simpleName }
+    }
 }
 
 /**
