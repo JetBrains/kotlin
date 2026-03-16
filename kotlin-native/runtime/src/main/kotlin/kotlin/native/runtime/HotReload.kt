@@ -127,7 +127,3 @@ public object HotReload {
     @InternalForKotlinNativeTests
     public external fun perform(objectPath: String)
 }
-
-@NativeRuntimeApi
-public val HotReload.Stats.duration: Long
-    get() = end - start
