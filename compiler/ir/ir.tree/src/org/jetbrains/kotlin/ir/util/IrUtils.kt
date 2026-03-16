@@ -904,6 +904,7 @@ fun IrTypeParametersContainer.copyTypeParameters(
     // Therefore, we first copy the parameters themselves, then set up their supertypes.
     val newTypeParameters = srcTypeParameters.memoryOptimizedMapIndexed { i, sourceParameter ->
         sourceParameter.copyToWithoutSuperTypes(this, index = i + shift, origin = origin ?: sourceParameter.origin).also {
+            it.copyAnnotationsFrom(sourceParameter)
             oldToNewParameterMap[sourceParameter] = it
         }
     }
