@@ -77,7 +77,7 @@ class JavaClassFinderOverAstImpl(
 
         val result = mutableListOf<JavaClass>()
         for (file in candidates) {
-            val javaClass = parseTopLevelClassFromFile(file.path, topLevelName) ?: continue
+            val javaClass = parseTopLevelClassFromFile(file, topLevelName) ?: continue
             val resolved = if (innerNames.isEmpty()) {
                 javaClass
             } else {
@@ -140,15 +140,26 @@ class JavaClassFinderOverAstImpl(
         return FileEntry(path, packageFqName, classNames)
     }
 
-    private fun parseTopLevelClassFromFile(path: Path, simpleName: String): JavaClassOverAst? {
-        val source = tryReadFile(path) ?: return null
+    private fun parseTopLevelClassFromFile(file: FileEntry, simpleName: String): JavaClassOverAst? {
+        // Check cache first: this ensures that all lookups (direct or via inner-class navigation)
+        // return the *same* JavaClassOverAst instance for a given top-level class. Without this,
+        // findClass("a.x") and the intermediate "a.x" created during findClass("a.x.y") would
+        // produce different JavaClassOverAst instances with different JavaTypeParameterOverAst
+        // instances for the same type parameter (e.g. T). FIR matches Java type parameters by
+        // object identity, so mismatched instances cause "ERROR CLASS: Unresolved name: T".
+        val classId = ClassId(file.packageFqName, FqName(simpleName), isLocal = false)
+        classCache[classId]?.let { return it as? JavaClassOverAst }
+
+        val source = tryReadFile(file.path) ?: return null
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
         val resolutionContext = JavaResolutionContext.create(root, classFinderProvider = { this })
         val node = root.getChildrenByType("CLASS").firstOrNull { n ->
             n.findChildByType("IDENTIFIER")?.text == simpleName
         } ?: return null
-        return JavaClassOverAst(node, resolutionContext, outerClass = null)
+        return JavaClassOverAst(node, resolutionContext, outerClass = null).also {
+            classCache[classId] = it
+        }
     }
 
     private fun tryReadFile(path: Path): CharSequence? = try {
@@ -169,7 +180,7 @@ class JavaClassFinderOverAstImpl(
             val name = Name.identifier(simpleName)
             if (!nameFilter(name)) continue
             for (file in files) {
-                parseTopLevelClassFromFile(file.path, simpleName)?.let { result.add(it) }
+                parseTopLevelClassFromFile(file, simpleName)?.let { result.add(it) }
             }
         }
         return result

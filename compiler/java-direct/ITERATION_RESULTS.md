@@ -495,3 +495,61 @@ val isRawType = isRaw || run {
 2. **Debug with unit tests first** — Adding `testRawTypeDetection` to JavaParsingTest quickly revealed the empty REFERENCE_PARAMETER_LIST issue
 3. **Two-level fix needed** — Java Model `isRaw` handles local classes, FIR handles external classes via resolution
 4. **Star imports need resolution** — `classifierQualifiedName` returns simple names for star imports; must resolve before using
+
+---
+
+## Iteration 34: Type Parameter Identity Across Class Finder Lookups — 2026-03-16
+
+### Status
+✅ Complete — 3 tests fixed
+
+### Root Cause Analysis
+
+Tests `testInnerWithTypeParameter`, `testSeveralInnersWithTypeParameters`, and `testSupertypeInnerAndTypeParameterWithSameNames` all failed with:
+```
+SourceCodeAnalysisException: Cannot serialize error type: ERROR CLASS: Unresolved name: T
+```
+
+The error occurred during Kotlin metadata serialization, not Java model creation. FIR failed to substitute outer class type parameters (e.g. `T` from `x<T>`) in return types of inner class methods.
+
+**Root cause**: `parseTopLevelClassFromFile` created a fresh `JavaClassOverAst` instance for the outer class every time it was called. This means:
+
+1. When FIR loaded `a.x` via `findClass(ClassId("a", "x"))` → created `x1` with `T1: JavaTypeParameterOverAst`
+2. When FIR loaded `a.x.y` via `findClass(ClassId("a", "x.y"))` → `findClasses` calls `parseTopLevelClassFromFile` again → created `x2` with `T2: JavaTypeParameterOverAst` → navigated to `y2` via `x2.findInnerClass("y")` → `y2`'s methods reference `T2`
+
+FIR matches `JavaTypeParameter` by object identity when building FIR type parameter symbols. `T1 !== T2`, so FIR could not find `T2` in its scope → `ERROR CLASS: Unresolved name: T`.
+
+The same pattern applies to `Outer<Foo>` where `Foo` is a type parameter name that shadows an inner class — FIR failed to resolve `Foo` as a type parameter.
+
+### Fix
+
+Changed `parseTopLevelClassFromFile` to accept `FileEntry` (which already holds `packageFqName`) and check the class cache before parsing:
+
+```kotlin
+private fun parseTopLevelClassFromFile(file: FileEntry, simpleName: String): JavaClassOverAst? {
+    val classId = ClassId(file.packageFqName, FqName(simpleName), isLocal = false)
+    classCache[classId]?.let { return it as? JavaClassOverAst }  // return cached instance
+
+    // ... parse file, create JavaClassOverAst ...
+
+    return JavaClassOverAst(node, resolutionContext, outerClass = null).also {
+        classCache[classId] = it  // cache for future lookups
+    }
+}
+```
+
+This ensures that all lookups for a given top-level class — whether direct (`findClass("a.x")`) or as an intermediate step during inner-class navigation (`findClass("a.x.y")` internally creates `x`) — return the **same** `JavaClassOverAst` instance with the **same** `JavaTypeParameterOverAst` instances.
+
+### Test Results
+- **Phased tests**: +3 fixed (`testInnerWithTypeParameter`, `testSeveralInnersWithTypeParameters`, `testSupertypeInnerAndTypeParameterWithSameNames`)
+- **Total failures**: 98 → 94
+- PSI regression tests: All passing ✅
+
+### Files Modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt` — Cache top-level class instances in `parseTopLevelClassFromFile`; accept `FileEntry` instead of `Path`
+
+### Key Learnings
+1. **FIR matches JavaTypeParameter by object identity** — Two `JavaTypeParameterOverAst` instances representing the same type parameter are not equal in FIR's eyes; only the exact same object works
+2. **Separate class finder lookups can produce different instances** — `findClass("a.x")` and the intermediate x during `findClass("a.x.y")` both call `parseTopLevelClassFromFile` independently
+3. **Error appears late in pipeline** — The mismatch only manifests during FIR metadata serialization (backend), not during Java model creation, making it harder to trace
+4. **Cache top-level classes eagerly** — Caching in `parseTopLevelClassFromFile` at creation time (rather than only in `findClass`) ensures consistency even when the top-level class is an intermediate navigation step
