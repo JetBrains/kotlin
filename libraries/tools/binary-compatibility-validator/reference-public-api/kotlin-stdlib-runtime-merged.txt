@@ -1278,6 +1278,51 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun intersect ([Ljava/lang/Object;Ljava/lang/Iterable;)Ljava/util/Set;
 	public static final fun intersect ([SLjava/lang/Iterable;)Ljava/util/Set;
 	public static final fun intersect ([ZLjava/lang/Iterable;)Ljava/util/Set;
+	public static final fun isSorted ([B)Z
+	public static final fun isSorted ([C)Z
+	public static final fun isSorted ([D)Z
+	public static final fun isSorted ([F)Z
+	public static final fun isSorted ([I)Z
+	public static final fun isSorted ([J)Z
+	public static final fun isSorted ([Ljava/lang/Comparable;)Z
+	public static final fun isSorted ([S)Z
+	public static final fun isSorted ([Z)Z
+	public static final fun isSortedBy ([BLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedBy ([CLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedBy ([DLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedBy ([FLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedBy ([ILkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedBy ([JLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedBy ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedBy ([SLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedBy ([ZLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending ([BLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending ([CLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending ([DLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending ([FLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending ([ILkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending ([JLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending ([SLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending ([ZLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedDescending ([B)Z
+	public static final fun isSortedDescending ([C)Z
+	public static final fun isSortedDescending ([D)Z
+	public static final fun isSortedDescending ([F)Z
+	public static final fun isSortedDescending ([I)Z
+	public static final fun isSortedDescending ([J)Z
+	public static final fun isSortedDescending ([Ljava/lang/Comparable;)Z
+	public static final fun isSortedDescending ([S)Z
+	public static final fun isSortedDescending ([Z)Z
+	public static final fun isSortedWith ([BLjava/util/Comparator;)Z
+	public static final fun isSortedWith ([CLjava/util/Comparator;)Z
+	public static final fun isSortedWith ([DLjava/util/Comparator;)Z
+	public static final fun isSortedWith ([FLjava/util/Comparator;)Z
+	public static final fun isSortedWith ([ILjava/util/Comparator;)Z
+	public static final fun isSortedWith ([JLjava/util/Comparator;)Z
+	public static final fun isSortedWith ([Ljava/lang/Object;Ljava/util/Comparator;)Z
+	public static final fun isSortedWith ([SLjava/util/Comparator;)Z
+	public static final fun isSortedWith ([ZLjava/util/Comparator;)Z
 	public static final fun joinTo ([BLjava/lang/Appendable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Appendable;
 	public static final fun joinTo ([CLjava/lang/Appendable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Appendable;
 	public static final fun joinTo ([DLjava/lang/Appendable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Appendable;
@@ -2299,6 +2344,11 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun indexOfLast (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)I
 	public static final fun indexOfLast (Ljava/util/List;Lkotlin/jvm/functions/Function1;)I
 	public static final fun intersect (Ljava/lang/Iterable;Ljava/lang/Iterable;)Ljava/util/Set;
+	public static final fun isSorted (Ljava/lang/Iterable;)Z
+	public static final fun isSortedBy (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedDescending (Ljava/lang/Iterable;)Z
+	public static final fun isSortedWith (Ljava/lang/Iterable;Ljava/util/Comparator;)Z
 	public static final fun iterator (Ljava/util/Enumeration;)Ljava/util/Iterator;
 	public static final fun joinTo (Ljava/lang/Iterable;Ljava/lang/Appendable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Appendable;
 	public static synthetic fun joinTo$default (Ljava/lang/Iterable;Ljava/lang/Appendable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/Appendable;
@@ -2719,6 +2769,26 @@ public final class kotlin/collections/unsigned/UArraysKt {
 	public static final fun getOrNull-nggk6HY ([SI)Lkotlin/UShort;
 	public static final fun getOrNull-qFRl0hI ([II)Lkotlin/UInt;
 	public static final fun getOrNull-r7IrZao ([JI)Lkotlin/ULong;
+	public static final fun isSorted--ajY-9A ([I)Z
+	public static final fun isSorted-GBYM_sE ([B)Z
+	public static final fun isSorted-QwZRm1k ([J)Z
+	public static final fun isSorted-rL5Bavg ([S)Z
+	public static final fun isSortedBy-JOV_ifY ([BLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedBy-MShoTSo ([JLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedBy-jgv0xPQ ([ILkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedBy-xTcfx_M ([SLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending-JOV_ifY ([BLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending-MShoTSo ([JLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending-jgv0xPQ ([ILkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending-xTcfx_M ([SLkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedDescending--ajY-9A ([I)Z
+	public static final fun isSortedDescending-GBYM_sE ([B)Z
+	public static final fun isSortedDescending-QwZRm1k ([J)Z
+	public static final fun isSortedDescending-rL5Bavg ([S)Z
+	public static final fun isSortedWith-XMRcp5o ([BLjava/util/Comparator;)Z
+	public static final fun isSortedWith-YmdZ_VM ([ILjava/util/Comparator;)Z
+	public static final fun isSortedWith-eOHTfZs ([SLjava/util/Comparator;)Z
+	public static final fun isSortedWith-zrEWJaI ([JLjava/util/Comparator;)Z
 	public static final fun lastOrNull--ajY-9A ([I)Lkotlin/UInt;
 	public static final fun lastOrNull-GBYM_sE ([B)Lkotlin/UByte;
 	public static final fun lastOrNull-QwZRm1k ([J)Lkotlin/ULong;
@@ -5419,6 +5489,11 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun indexOf (Lkotlin/sequences/Sequence;Ljava/lang/Object;)I
 	public static final fun indexOfFirst (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)I
 	public static final fun indexOfLast (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)I
+	public static final fun isSorted (Lkotlin/sequences/Sequence;)Z
+	public static final fun isSortedBy (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedByDescending (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun isSortedDescending (Lkotlin/sequences/Sequence;)Z
+	public static final fun isSortedWith (Lkotlin/sequences/Sequence;Ljava/util/Comparator;)Z
 	public static final fun iterator (Lkotlin/jvm/functions/Function2;)Ljava/util/Iterator;
 	public static final fun joinTo (Lkotlin/sequences/Sequence;Ljava/lang/Appendable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Appendable;
 	public static synthetic fun joinTo$default (Lkotlin/sequences/Sequence;Ljava/lang/Appendable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/Appendable;
