@@ -27,7 +27,10 @@ val testFederationMode: TestFederationMode?
 val testFederationAffectedSubsystems: List<Subsystem>?
     get() {
         val raw = resolve(TEST_FEDERATION_AFFECTED_SUBSYSTEMS_KEY, TEST_FEDERATION_AFFECTED_SUBSYSTEMS_ENV_KEY) ?: return null
-        return raw.split(";").map { Subsystem.valueOf(it) }
+        return raw.split(";").flatMap { value ->
+            if (value == "*") Subsystem.entries
+            else listOf(Subsystem.valueOf(value))
+        }
     }
 
 private fun resolve(key: String, envKey: String): String? =

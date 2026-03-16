@@ -41,7 +41,7 @@ internal val Project.testFederationMode: Provider<TestFederationMode>
 internal val Project.testFederationAffectedSubsystems: Provider<Set<Subsystem>>
     get() {
         return providers.environmentVariable(TEST_FEDERATION_AFFECTED_SUBSYSTEMS_ENV_KEY)
-            .map { it.split(";").map { Subsystem.valueOf(it) }.toSet() }
+            .map { argumentString -> Subsystem.fromArgumentString(argumentString).toSet() }
             .orElse(project.affectedSubsystemsService.map { it.affectedSubsystems })
     }
 

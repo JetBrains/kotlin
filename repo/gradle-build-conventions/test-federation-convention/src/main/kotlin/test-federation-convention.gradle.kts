@@ -22,7 +22,7 @@ if (project.testFederationEnabled.orNull == true) {
             systemProperty(TEST_FEDERATION_MODE_KEY, subsystemMode.get().name)
             environment(TEST_FEDERATION_MODE_ENV, subsystemMode.get().name)
 
-            val formattedAffectedSubsystems = affectedSubsystems.get().joinToString(separator = ";") { it.name }
+            val formattedAffectedSubsystems = affectedSubsystems.get().asArgumentString()
             logger.quiet("Affected Subsystems: '$formattedAffectedSubsystems'")
             systemProperty(TEST_FEDERATION_AFFECTED_SUBSYSTEMS_KEY, formattedAffectedSubsystems)
             environment(TEST_FEDERATION_AFFECTED_SUBSYSTEMS_ENV_KEY, formattedAffectedSubsystems)

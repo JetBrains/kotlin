@@ -57,7 +57,8 @@ tasks.register("generateSubsystemSources") {
                 for (system in allSystems) {
                     this += "|    ${system.name},"
                 }
-                this += "|    Unknown,"
+                this += "|    Unknown;"
+                this += "| companion object"
                 this += "|}"
                 this += "|"
                 for (system in allSystems) {
