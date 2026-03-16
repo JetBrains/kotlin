@@ -1,5 +1,7 @@
 // WITH_STDLIB
 
+// CHECK_BYTECODE_TEXT
+// 0 iterator
 fun box(): String {
     val seq = generateSequence(1) { if (it > 9) null else it + 1 }
     val list = listOf(2, 6, 10, 14, 18)

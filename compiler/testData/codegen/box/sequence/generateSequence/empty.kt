@@ -1,5 +1,7 @@
 // WITH_STDLIB
 
+// CHECK_BYTECODE_TEXT
+// 0 iterator
 fun box(): String {
     val seq = generateSequence(null) { it }
     for (item in seq) {

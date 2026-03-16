@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+// CHECK_BYTECODE_TEXT
 fun box(): String {
     val seq = sequenceOf(12, 23, 34, "cake").map(
         { x ->

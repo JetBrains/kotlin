@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+// CHECK_BYTECODE_TEXT
 fun box(): String {
     val list = mutableListOf<Int>()
     val seq = sequenceOf(list).map<MutableList<Int>, Unit> { it.add(1) }

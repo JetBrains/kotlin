@@ -1,5 +1,7 @@
 // WITH_STDLIB
 
+// CHECK_BYTECODE_TEXT
+// 1 iterator
 fun box(): String {
     var seq = sequenceOf(1, 2, 3)
     run {

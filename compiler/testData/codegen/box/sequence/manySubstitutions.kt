@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+// CHECK_BYTECODE_TEXT
 fun test(seq: Sequence<Int>): String? {
     val seq1 = seq.map { it * 4 }
     val seq2 = seq1.map { it / 2 }
@@ -12,6 +13,7 @@ fun test(seq: Sequence<Int>): String? {
     }
     return null
 }
+
 fun box(): String {
     val seq = sequenceOf(5, 6, 7)
     if (test(seq) != null) return test(seq)!!
