@@ -1796,7 +1796,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CONTEXTUAL_OVERLOAD_SHADOWED,
-            "Contextual declaration is shadowed by the following overloads:{0}",
+            "The following overloads conflict with this contextual declaration. Calls will be ambiguous because context arguments are not used for overload resolution.{0}",
             SYMBOLS_ON_NEXT_LINES,
         )
         map.put(
