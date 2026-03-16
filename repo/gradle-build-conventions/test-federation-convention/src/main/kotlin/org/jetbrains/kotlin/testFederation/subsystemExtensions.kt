@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.testFederation
 fun Iterable<Subsystem>.asArgumentString(): String = joinToString(";") { it.name }
 
 fun Subsystem.Companion.fromArgumentString(value: String): List<Subsystem> {
+    if (value.isBlank()) return Subsystem.entries
     val values = value.split(";")
     return buildList {
         values.forEach { raw ->
