@@ -5,17 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-
 enum class CompanionExtensionPolicy(
-    private val acceptsCompanionExtension: Boolean,
+    val acceptsCompanionExtension: Boolean,
 ) {
     OnlyCompanionExtensions(true),
     NoCompanionExtensions(false),
-    ;
-
-    fun accepts(candidate: FirCallableSymbol<*>): Boolean {
-        return candidate.isCompanionExtension == acceptsCompanionExtension
-    }
 }

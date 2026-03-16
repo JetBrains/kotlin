@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.resolve.*
@@ -360,6 +359,9 @@ internal class ScopeBasedTowerLevel(
 ) : TowerLevel(), SessionHolder {
     override val session: FirSession get() = bodyResolveComponents.session
 
+    internal var hasFoundCompanionExtensions: Boolean = false
+        private set
+
     private val scope = if (LanguageFeature.MultiPlatformProjects.isEnabled()) {
         FirActualizingScope(givenScope, session)
     } else {
@@ -428,7 +430,9 @@ internal class ScopeBasedTowerLevel(
         callInfo: CallInfo,
         processor: TowerLevelProcessor
     ) {
-        if (!companionExtensionPolicy.accepts(candidate)) {
+        val isCompanionExtension = candidate.isCompanionExtension
+        if (isCompanionExtension) hasFoundCompanionExtensions = true
+        if (isCompanionExtension != companionExtensionPolicy.acceptsCompanionExtension) {
             return
         }
 
