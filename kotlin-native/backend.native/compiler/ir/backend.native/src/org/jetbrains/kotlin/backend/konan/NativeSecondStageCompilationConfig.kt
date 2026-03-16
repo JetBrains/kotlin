@@ -340,12 +340,14 @@ class NativeSecondStageCompilationConfig(
         }
     } ?: false // Disabled by default because of KT-68928
 
+    val defaultForceNativeThreadStateForFunctions: Set<String> = setOf(
+            "org_jetbrains_skia_DirectContext__1nFlushAndSubmit", // KT-75895, KT-79384
+            "org_jetbrains_skia_Canvas__1nDrawPicture", // KT-84768, KT-79384
+    )
+
     val forceNativeThreadStateForFunctions: Set<String> =
             configuration.get(BinaryOptions.forceNativeThreadStateForFunctions)?.toSet()
-                    ?: setOf(
-                            "org_jetbrains_skia_DirectContext__1nFlushAndSubmit", // KT-75895, KT-79384
-                            "org_jetbrains_skia_Canvas__1nDrawPicture", // KT-84768, KT-79384
-                    )
+                    ?: defaultForceNativeThreadStateForFunctions
 
     val globalDataLazyInit: Boolean
         get() = configuration.get(BinaryOptions.globalDataLazyInit)?.also {
@@ -596,7 +598,7 @@ class NativeSecondStageCompilationConfig(
     internal val ignoreCacheReason = when {
         optimizationsEnabled -> "for optimized compilation"
         runtimeLogsEnabled -> "with runtime logs"
-        configuration.get(BinaryOptions.forceNativeThreadStateForFunctions) != null -> "with non-default forceNativeThreadStateForFunctions"
+        forceNativeThreadStateForFunctions != defaultForceNativeThreadStateForFunctions -> "with non-default forceNativeThreadStateForFunctions"
         else -> null
     }
 
