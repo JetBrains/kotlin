@@ -141,7 +141,10 @@ class JavaParsingTest {
         assert(base.name.asString() == "Base")
         assert(derived.name.asString() == "Derived")
 
-        assert(base.supertypes.isEmpty()) { "Base should have no supertypes" }
+        // Base has implicit java.lang.Object supertype
+        assert(base.supertypes.size == 1) { "Base should have 1 supertype (implicit Object), got ${base.supertypes.size}" }
+        assert(base.supertypes.first().classifierQualifiedName == "java.lang.Object") { "Base should extend Object" }
+        
         assert(derived.supertypes.size == 1) { "Derived should have 1 supertype, got ${derived.supertypes.size}" }
 
         val supertype = derived.supertypes.first()

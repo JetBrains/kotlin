@@ -15,6 +15,7 @@
 - **Update ITERATION_RESULTS.md** after each iteration
 - **Check files with `get_file_problems`** after changes
 - **Run PSI tests after FIR changes** — see "Shared Files" section below
+- **Keep JavaParsingTest green** — run after core changes to JavaTypeOverAst, JavaClassOverAst, JavaResolutionContext
 
 ### Code Quality
 - **No obvious comments** — comment only "why", never "what"
@@ -66,6 +67,9 @@
 
 # Phased/diagnostic tests (~1442 tests)
 ./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" -q 2>&1 | tee test_output.txt
+
+# Unit tests (40 tests - MUST stay green)
+./gradlew :compiler:java-direct:test --tests "JavaParsingTest" -q
 
 # Single test (use wildcard to avoid nested class path issues)
 ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated.*testSpecificName*" -q

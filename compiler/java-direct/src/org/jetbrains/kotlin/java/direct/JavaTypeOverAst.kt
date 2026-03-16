@@ -133,18 +133,7 @@ class JavaClassifierTypeOverAst(
                 return result
             }
 
-            // 4. Check java.lang implicit import (simple names only)
-            // In Java, java.lang.* is implicitly imported in all compilation units.
-            // We handle well-known java.lang types here to support hasConstantNotNullInitializer
-            // (which needs to know if a field type is java.lang.String before FIR resolution).
-            if (parts.size == 1) {
-                val javaLangQualified = JAVA_LANG_TYPES[parts[0]]
-                if (javaLangQualified != null) {
-                    return javaLangQualified
-                }
-            }
-
-            // 5. Return as-is - FIR will resolve via callback (same package, star imports, other java.lang types)
+            // 4. Return as-is - FIR will resolve via callback (same package, star imports, java.lang types)
             return rawTypeName
         }
 

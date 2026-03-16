@@ -326,4 +326,57 @@ Modified `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResoluti
 
 ---
 
+## Iteration 31: Fixed JavaParsingTest Regressions
+
+**Goal**: Fix 9 JavaParsingTest failures that appeared after implementing cross-file ambiguity detection
+
+**Root cause analysis**: The JAVA_LANG_TYPES eager resolution (added for `hasConstantNotNullInitializer` support) created an inconsistency:
+- `classifierQualifiedName` returned "java.lang.Object" (qualified) for unqualified "Object"
+- `isResolved` returned `false` (unresolved)
+- Tests expected unresolved types to keep their unqualified names until explicit resolution via callback
+
+**The problem**: JAVA_LANG_TYPES map was added to help `hasConstantNotNullInitializer` identify String types early (before FIR resolution), but it violated the lazy resolution contract that `classifierQualifiedName` should return raw type names for unresolved types.
+
+**Fixes applied**:
+1. **Removed JAVA_LANG_TYPES from `classifierQualifiedName`** (JavaTypeOverAst.kt):
+   - Removed step 4 that eagerly resolved java.lang types
+   - Now returns raw type name as written in source
+   - Resolution happens lazily via `resolve()` callback (which already handles java.lang)
+
+2. **Updated `hasConstantNotNullInitializer`** (JavaMemberOverAst.kt):
+   - Now accepts both "String" (unresolved) and "java.lang.String" (resolved)
+   - Works correctly without eager resolution
+
+3. **Fixed `testLocalInheritance`** (JavaParsingTest.kt):
+   - Updated to expect implicit java.lang.Object supertype for Base class
+   - This implicit supertype was added in iteration 21 (correct Java semantics)
+
+**Test results**: 
+- Before: 40 tests, 9 failures
+- After: **40 tests, all passing** ✅
+
+**Failing tests that were fixed**:
+- `testTypeResolution` - Expected unqualified "Object", not "java.lang.Object"
+- `testTypeNameStripsTypeArguments` - Type name qualification issue
+- `testAnnotatedTypeArguments` - Type name qualification issue
+- `testAnnotatedTypeArgumentsMultiple` - Type name qualification issue
+- `testLocalInheritance` - Expected implicit Object supertype
+- `testSimpleTypeArguments` - Type name qualification issue
+- `testMethodParametersWithObjectType` - Type name qualification issue
+- `testUnboundedWildcard` - Type name qualification issue
+- `testMethodParameters` - Type name qualification issue
+
+**Files modified**:
+- `JavaTypeOverAst.kt` - removed eager java.lang resolution from `classifierQualifiedName`
+- `JavaMemberOverAst.kt` - updated String check to handle both qualified and unqualified
+- `JavaParsingTest.kt` - updated `testLocalInheritance` expectations
+
+### Key Learnings
+1. **Maintain consistency** between `classifierQualifiedName` and `isResolved` - they must agree on resolution state
+2. **Lazy resolution is the contract** - unresolved types should keep their raw names until explicitly resolved
+3. **Targeted fixes over broad heuristics** - updated `hasConstantNotNullInitializer` to handle both cases instead of forcing eager resolution
+4. **Regression testing is critical** - JavaParsingTest caught the inconsistency that cross-file changes introduced
+
+---
+
 *For detailed iteration histories, see `implDocs/archive/`*
