@@ -55,12 +55,18 @@ class JavaClassOverAst(
         return modifierList?.children?.any { it.type.toString() == modifier } ?: false
     }
 
-    override val isAbstract: Boolean get() = hasModifier("ABSTRACT_KEYWORD") || isInterface
+    // Interfaces and annotation types are implicitly abstract; enums/annotations with abstract
+    // methods (each constant overrides) are also abstract per JLS 8.1.1.1 / 9.6.1
+    override val isAbstract: Boolean
+        get() = hasModifier("ABSTRACT_KEYWORD") || isInterface ||
+                ((isAnnotationType || isEnum) && methods.any { it.isAbstract })
 
     // Java nested interfaces and enums are implicitly static even without the keyword
     // Classes nested inside interfaces are also implicitly static (JLS 9.5)
     override val isStatic: Boolean get() = hasModifier("STATIC_KEYWORD") || (outerClass != null && (isInterface || isEnum)) || (outerClass?.isInterface == true)
-    override val isFinal: Boolean get() = hasModifier("FINAL_KEYWORD")
+
+    // Enums are implicitly final (JLS 8.9) unless they have abstract methods (subclass per constant)
+    override val isFinal: Boolean get() = (isEnum && !methods.any { it.isAbstract }) || hasModifier("FINAL_KEYWORD")
 
     override val visibility: Visibility
         get() = when {
@@ -184,8 +190,12 @@ class JavaClassOverAst(
             ?.map { JavaAnnotationOverAst(it, resolutionContext) }
             ?: emptyList()
 
-    override val isDeprecatedInJavaDoc: Boolean get() = false
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+    // Javadoc @deprecated tag: DOC_COMMENT is bound as a child of the declaration node
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = node.findChildByType("DOC_COMMENT")?.text?.contains("@deprecated", ignoreCase = true) == true
+
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? =
+        annotations.find { it.classId?.asSingleFqName() == fqName }
 
     override val isFromSource: Boolean get() = true
 }

@@ -1426,4 +1426,104 @@ class JavaParsingTest {
         assert(barParamType.typeArguments.size == 1) { "List<String> should have 1 type arg" }
         assert(!barParamType.isRaw) { "List<String> should not be raw" }
     }
+
+    @Test
+    fun testEnumImplicitFinal() {
+        // JLS 8.9: enums are implicitly final (unless they have abstract methods)
+        val source = """
+            public enum Day { MON, TUE }
+            public enum Ops {
+                PLUS { public int apply(int x) { return x + 1; } };
+                public abstract int apply(int x);
+            }
+        """.trimIndent()
+        val (root, context) = parseSource(source)
+        val classes = root.getChildrenByType("CLASS").map { JavaClassOverAst(it, context) }
+
+        val day = classes.first { it.name.asString() == "Day" }
+        assert(day.isEnum) { "Day should be enum" }
+        assert(day.isFinal) { "Plain enum Day should be implicitly final" }
+        assert(!day.isAbstract) { "Plain enum Day should not be abstract" }
+
+        val ops = classes.first { it.name.asString() == "Ops" }
+        assert(ops.isEnum) { "Ops should be enum" }
+        assert(!ops.isFinal) { "Enum Ops with abstract method should NOT be final" }
+        assert(ops.isAbstract) { "Enum Ops with abstract method should be abstract" }
+    }
+
+    @Test
+    fun testAnnotationTypeImplicitAbstract() {
+        // Annotation types with methods are implicitly abstract
+        val source = "public @interface Ann { String value(); }"
+        val javaClass = parseFirstClass(source)
+        assert(javaClass.isAnnotationType) { "Ann should be annotation type" }
+        assert(javaClass.isAbstract) { "Annotation type with methods should be abstract" }
+        assert(!javaClass.isFinal) { "Annotation type should not be final" }
+    }
+
+    @Test
+    fun testFindAnnotationOnClass() {
+        val source = """
+            @Deprecated
+            public class Foo {}
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+        assert(javaClass.annotations.isNotEmpty()) { "Should have annotations" }
+        val found = javaClass.findAnnotation(org.jetbrains.kotlin.name.FqName("Deprecated"))
+        assert(found != null) { "findAnnotation should find @Deprecated on class, got null" }
+        val notFound = javaClass.findAnnotation(org.jetbrains.kotlin.name.FqName("Override"))
+        assert(notFound == null) { "findAnnotation should return null for missing annotation" }
+    }
+
+    @Test
+    fun testNativeMethod() {
+        val source = """
+            public class Foo {
+                public native void nativeMethod();
+                public void normalMethod() {}
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+        val nativeMethod = javaClass.methods.first { it.name.asString() == "nativeMethod" }
+        val normalMethod = javaClass.methods.first { it.name.asString() == "normalMethod" }
+        assert(nativeMethod.isNative) { "nativeMethod should have isNative=true" }
+        assert(!normalMethod.isNative) { "normalMethod should have isNative=false" }
+    }
+
+    @Test
+    fun testConstructorImplicitFinal() {
+        val source = "public class Foo { public Foo() {} }"
+        val javaClass = parseFirstClass(source)
+        val ctor = javaClass.constructors.single()
+        assert(ctor.isFinal) { "Constructor should be implicitly final" }
+        assert(!ctor.isAbstract) { "Constructor should not be abstract" }
+        assert(!ctor.isStatic) { "Constructor should not be static" }
+    }
+
+    @Test
+    fun testDeprecatedInJavaDoc() {
+        val source = """
+            /** @deprecated use Foo2 instead */
+            public class Foo {
+                /** @deprecated */
+                public void oldMethod() {}
+                public void newMethod() {}
+                /**
+                 * @deprecated Ha-ha-ha
+                 */
+                public int oldField = 0;
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+        assert(javaClass.isDeprecatedInJavaDoc) { "Class Foo should be deprecated via JavaDoc" }
+
+        val oldMethod = javaClass.methods.first { it.name.asString() == "oldMethod" }
+        assert(oldMethod.isDeprecatedInJavaDoc) { "oldMethod should be deprecated via JavaDoc" }
+
+        val newMethod = javaClass.methods.first { it.name.asString() == "newMethod" }
+        assert(!newMethod.isDeprecatedInJavaDoc) { "newMethod should NOT be deprecated" }
+
+        val oldField = javaClass.fields.first { it.name.asString() == "oldField" }
+        assert(oldField.isDeprecatedInJavaDoc) { "oldField should be deprecated via JavaDoc" }
+    }
 }

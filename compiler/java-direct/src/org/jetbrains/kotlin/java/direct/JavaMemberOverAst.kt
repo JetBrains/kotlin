@@ -30,7 +30,7 @@ abstract class JavaMemberOverAst(
     private val modifierList: JavaSyntaxNode?
         get() = node.findChildByType("MODIFIER_LIST")
 
-    private fun hasModifier(modifier: String): Boolean {
+    protected fun hasModifier(modifier: String): Boolean {
         return modifierList?.children?.any { it.type.toString() == modifier } ?: false
     }
 
@@ -52,7 +52,10 @@ abstract class JavaMemberOverAst(
             ?.map { JavaAnnotationOverAst(it, resolutionContext) }
             ?: emptyList()
 
-    override val isDeprecatedInJavaDoc: Boolean get() = false
+    // Javadoc @deprecated tag: DOC_COMMENT is bound as a child of the declaration node
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = node.findChildByType("DOC_COMMENT")?.text?.contains("@deprecated", ignoreCase = true) == true
+
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
 }
 
@@ -194,7 +197,7 @@ class JavaMethodOverAst(
         }
 
     override val hasAnnotationParameterDefaultValue: Boolean get() = annotationParameterDefaultValue != null
-    override val isNative: Boolean get() = false
+    override val isNative: Boolean get() = hasModifier("NATIVE_KEYWORD")
 
     override val isFromSource: Boolean get() = true
 }
@@ -203,6 +206,10 @@ class JavaConstructorOverAst(
     node: JavaSyntaxNode,
     containingClass: JavaClassOverAst
 ) : JavaMemberOverAst(node, containingClass), JavaConstructor {
+    // Constructors are never static, abstract, and are always final (can't be overridden)
+    override val isAbstract: Boolean get() = false
+    override val isStatic: Boolean get() = false
+    override val isFinal: Boolean get() = true
 
     override val typeParameters: List<JavaTypeParameter> by lazy {
         computeTypeParameters(node, containingClass.memberResolutionContext)
@@ -253,7 +260,10 @@ class JavaValueParameterOverAst(
             ?.map { JavaAnnotationOverAst(it, resolutionContext) }
             ?: emptyList()
 
-    override val isDeprecatedInJavaDoc: Boolean get() = false
+    // Javadoc @deprecated tag: DOC_COMMENT is bound as a child of the declaration node
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = node.findChildByType("DOC_COMMENT")?.text?.contains("@deprecated", ignoreCase = true) == true
+
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
     override val isFromSource: Boolean get() = true
 }
