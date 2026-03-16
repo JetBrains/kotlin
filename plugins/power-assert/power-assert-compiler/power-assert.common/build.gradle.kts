@@ -5,8 +5,6 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":compiler:util"))
-    compileOnly(project(":core:compiler.common"))
     compileOnly(project(":compiler:frontend.common"))
     compileOnly(project(":compiler:frontend.common-psi"))
     compileOnly(intellijCore())
