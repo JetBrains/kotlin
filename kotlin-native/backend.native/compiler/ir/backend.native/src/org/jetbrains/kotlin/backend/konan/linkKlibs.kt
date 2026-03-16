@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 internal interface LinkKlibsContext : NativeBackendPhaseContext {
     val symbolTable: SymbolTable?
@@ -133,8 +134,10 @@ internal fun LinkKlibsContext.linkKlibs(
                 stubGenerator = stubGenerator,
         )
 
+        // TODO Don't use file names in friend modules detection. Should be done in scope of KT-61096
+        val canonicalFriendPaths = config.friendModuleFiles.mapToSetOrEmpty { it.canonicalPath }
         val friendModules = config.resolvedLibraries.getFullList()
-                .filter { it.libraryFile in config.friendModuleFiles }
+                .filter { it.libraryFile.canonicalPath in canonicalFriendPaths }
                 .map { it.uniqueName }
 
         val friendModulesMap = (
