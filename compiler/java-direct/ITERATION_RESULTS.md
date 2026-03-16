@@ -553,3 +553,66 @@ This ensures that all lookups for a given top-level class — whether direct (`f
 2. **Separate class finder lookups can produce different instances** — `findClass("a.x")` and the intermediate x during `findClass("a.x.y")` both call `parseTopLevelClassFromFile` independently
 3. **Error appears late in pipeline** — The mismatch only manifests during FIR metadata serialization (backend), not during Java model creation, making it harder to trace
 4. **Cache top-level classes eagerly** — Caching in `parseTopLevelClassFromFile` at creation time (rather than only in `findClass`) ensures consistency even when the top-level class is an intermediate navigation step
+
+---
+
+## Iteration 35: Unresolvable Enum Annotation Argument Crash Fix — 2026-03-16
+
+### Status
+✅ Complete — 1 test fixed
+
+### Root Cause Analysis
+
+Test `testTestIllegalAnnotationClass` crashed with:
+```
+IllegalArgumentException: Required value was null.
+  at javaAnnotationsMapping.kt:208 (requireNotNull call)
+```
+
+**Setup**: Java annotation `@State` in package `simulation` with `@Retention(RetentionPolicy.RUNTIME)` but **no import** for `java.lang.annotation.RetentionPolicy`.
+
+**Flow**: When generating IR for `KotlinImporterComponent` (annotated with `@State`), the backend calls `getAnnotationTargets` on the `simulation.State` annotation class. This lazily evaluates `@Retention(RetentionPolicy.RUNTIME)` on the Java `State` class — a `JavaEnumValueAnnotationArgument`.
+
+**Crash path** in `javaAnnotationsMapping.kt`:
+1. `resolveEnumClass` tries to resolve `RetentionPolicy` → fails (not imported, not in `java.lang.*`, not in star imports) → returns `null`
+2. First fallback: `expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId` → also `null` (no expected type context when evaluating class-level Java annotations from IR)  
+3. `requireNotNull(null)` → `IllegalArgumentException`
+
+With PSI-based approach this never happens: PSI reads `@Retention` from the compiled `.class` file where `RetentionPolicy` is fully qualified as `java.lang.annotation.RetentionPolicy`.
+
+### Fix
+
+In `javaAnnotationsMapping.kt`, replaced `requireNotNull(...)` in the fallback else branch with an explicit null check:
+
+```kotlin
+val fallbackClassId = expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
+if (fallbackClassId != null) {
+    buildEnumEntryDeserializedAccessExpression {
+        enumClassId = fallbackClassId
+        enumEntryName = entryName ?: SpecialNames.NO_NAME_PROVIDED
+    }
+} else {
+    buildErrorExpression {
+        this.source = source
+        diagnostic = ConeSimpleDiagnostic(
+            "Cannot resolve enum annotation argument: ${entryName?.asString() ?: "?"}",
+            DiagnosticKind.Java,
+        )
+    }
+}
+```
+
+The error expression allows FIR to continue processing without crashing. The test baseline (`.fir.txt`) only covers the Kotlin file output, not the Java annotation class internals, so it matches correctly.
+
+### Test Results
+- **Phased tests**: +1 fixed (`testTestIllegalAnnotationClass` in `Resolve$Diagnostics`)
+- **Total failures**: 94 → 93
+- PSI regression tests: All passing ✅ (change is in shared FIR code, PSI never hits this null path)
+
+### Files Modified
+- `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/javaAnnotationsMapping.kt` — Replace `requireNotNull` with null-safe fallback to error expression
+
+### Key Learnings
+1. **Source-based Java parsing vs bytecode** — PSI reads compiled `.class` files where annotations are fully qualified; java-direct reads source where imports may be missing
+2. **`requireNotNull` in shared FIR code can crash java-direct** — Shared code may have assumptions that hold for PSI (classpath always resolves) but not for source-based parsing
+3. **Error expressions are better than crashes** — When an annotation argument can't be resolved, returning a `buildErrorExpression` is always preferable to throwing

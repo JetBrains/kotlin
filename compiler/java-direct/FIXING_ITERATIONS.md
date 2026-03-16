@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 34 (2026-03-16) |
+| **Last Iteration** | 35 (2026-03-16) |
 | **Box Tests** | 1155/1168 passing (98.9%) |
-| **Phased Tests** | 1360/1442 passing (94.3%) |
-| **Combined** | ~2558/2652 passing, **~94 failing** |
+| **Phased Tests** | 1361/1442 passing (94.4%) |
+| **Combined** | ~2559/2652 passing, **~93 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -130,6 +130,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 32 | Kotlin constants in Java annotations | +2 phased |
 | 33 | Raw types detection fix | +8 phased, +2 box |
 | 34 | Type parameter identity across class finder lookups | +3 phased |
+| 35 | Unresolvable enum annotation argument crash fix | +1 phased |
 
 ---
 
@@ -173,6 +174,7 @@ Use the **ad-hoc debugging approach** from iterations 11-16:
 
 ## Document Change Log
 
+- 2026-03-16: Iteration 35 (enum annotation crash fix) complete, updated metrics to 93 failures
 - 2026-03-16: Iteration 34 (type parameter identity) complete, updated metrics to 94 failures
 - 2026-03-16: Iteration 33 (raw types) complete, updated metrics to 98 failures
 - 2026-03-13: Restructured — merged TEST_FAILURE_ANALYSIS content, removed code snippets, updated metrics to post-iter-27

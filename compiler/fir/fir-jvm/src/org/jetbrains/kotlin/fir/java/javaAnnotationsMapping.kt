@@ -239,9 +239,22 @@ internal fun JavaAnnotationArgument.toFirExpression(
                 // a static import. In this case, the parameter default initializer will not have its type set, which isn't usually an
                 // issue except in edge cases like KT-47702 where we do need to evaluate the default values of annotations.
                 // As a fallback, we use the expected type which should be the type of the enum.
-                buildEnumEntryDeserializedAccessExpression {
-                    enumClassId = requireNotNull(expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId)
-                    enumEntryName = entryName ?: SpecialNames.NO_NAME_PROVIDED
+                // If even the expected type is unavailable (e.g., unresolvable reference in source-based Java parsing where
+                // the import is missing), return an error expression rather than crashing.
+                val fallbackClassId = expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
+                if (fallbackClassId != null) {
+                    buildEnumEntryDeserializedAccessExpression {
+                        enumClassId = fallbackClassId
+                        enumEntryName = entryName ?: SpecialNames.NO_NAME_PROVIDED
+                    }
+                } else {
+                    buildErrorExpression {
+                        this.source = source
+                        diagnostic = ConeSimpleDiagnostic(
+                            "Cannot resolve enum annotation argument: ${entryName?.asString() ?: "?"}",
+                            DiagnosticKind.Java,
+                        )
+                    }
                 }
             }
         }
