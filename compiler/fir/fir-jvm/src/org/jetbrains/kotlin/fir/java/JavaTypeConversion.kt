@@ -298,7 +298,10 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 // Resolve the name - this handles both simple names and nested class references like "Map.Entry"
                 resolveTypeName(qualifiedName, this, session, source)
             } else {
-                ClassId.topLevel(FqName(qualifiedName))
+                // Even for resolved names, use findClassId to correctly handle nested class FQNs.
+                // ClassId.topLevel would incorrectly split "a.X.Y" as package "a.X", class "Y"
+                // when the actual class is package "a", nested class "X.Y".
+                findClassId(qualifiedName, session) ?: ClassId.topLevel(FqName(qualifiedName))
             }
 
             classId = if (mode.insideAnnotation) {

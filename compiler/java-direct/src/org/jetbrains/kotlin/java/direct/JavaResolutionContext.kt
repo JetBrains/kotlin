@@ -208,23 +208,32 @@ class JavaResolutionContext private constructor(
 
     /**
      * Resolve a simple (non-nested) type name.
+     * Resolution order per JLS 7.5.1: explicit single-type imports shadow same-package classes.
      */
     private fun resolveSimpleName(simpleName: String, tryResolve: (String) -> Boolean): String? {
-        // 1. Same package
-        if (!packageFqName.isRoot) {
-            val samePackageFqn = "${packageFqName.asString()}.$simpleName"
-            if (tryResolve(samePackageFqn)) return samePackageFqn
+        // 1. Explicit single-type imports (higher priority than same-package per JLS 7.5.1)
+        simpleImports[simpleName]?.let { imported ->
+            val fqn = imported.asString()
+            if (tryResolve(fqn)) return fqn
         }
 
-        // 2. java.lang.*
+        // 2. Same package (also handles default package when packageFqName is root)
+        val samePackageFqn = if (!packageFqName.isRoot) {
+            "${packageFqName.asString()}.$simpleName"
+        } else {
+            simpleName  // Default package: FQN is just the simple name
+        }
+        if (tryResolve(samePackageFqn)) return samePackageFqn
+
+        // 3. java.lang.*
         val javaLangFqn = "java.lang.$simpleName"
         if (JavaToKotlinClassMap.mapJavaToKotlin(FqName(javaLangFqn)) != null || tryResolve(javaLangFqn)) {
             return javaLangFqn
         }
 
-        // 3. Explicit star imports
+        // 4. Explicit star imports (deduplicated to avoid false ambiguity from duplicate imports)
         var foundFqn: String? = null
-        for (starPackage in starImports) {
+        for (starPackage in starImports.distinct()) {
             val candidateFqn = "${starPackage.asString()}.$simpleName"
             if (tryResolve(candidateFqn)) {
                 if (foundFqn != null) return null // Ambiguous
