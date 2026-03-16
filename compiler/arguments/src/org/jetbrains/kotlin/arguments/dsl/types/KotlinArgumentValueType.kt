@@ -183,7 +183,7 @@ class PathType(
  * A value which accepts [ProfileCompilerCommand] type.
  */
 @Serializable
-object ProfileCompilerCommandType : KotlinArgumentValueType<ProfileCompilerCommand> {
+    class ProfileCompilerCommandType : KotlinArgumentValueType<ProfileCompilerCommand> {
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true)
     override val defaultValue: ReleaseDependent<ProfileCompilerCommand?> = ReleaseDependent(null)
 

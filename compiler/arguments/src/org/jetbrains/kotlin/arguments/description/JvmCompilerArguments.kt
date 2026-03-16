@@ -770,7 +770,7 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
             )
         valueType = StringType.defaultNull
         valueDescription = "<profilerPath:command:outputDir>".asReleaseDependent()
-        argumentType = ProfileCompilerCommandType
+        argumentType = ProfileCompilerCommandType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_20,
