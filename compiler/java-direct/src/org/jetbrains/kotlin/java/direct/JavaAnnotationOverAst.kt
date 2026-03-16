@@ -122,6 +122,8 @@ internal fun createAnnotationArgumentFromValue(
         }
         "REFERENCE_EXPRESSION" -> {
             // Could be enum constant reference (e.g., RetentionPolicy.RUNTIME)
+            // or constant field reference (e.g., KotlinClass.FOO_INT)
+            // FIR will determine which it is during resolution
             JavaEnumValueAnnotationArgumentOverAst(name, valueNode, resolutionContext)
         }
         "CLASS_OBJECT_ACCESS_EXPRESSION" -> {
@@ -363,6 +365,12 @@ class JavaEnumValueAnnotationArgumentOverAst(
         val resolved = resolutionContext.resolveWithCallback(className, tryResolve)
         if (resolved != null) {
             return fqNameToClassId(resolved)
+        }
+
+        // Special case: if in default package and resolution failed, try the simple name directly
+        // This handles cases like: default package, @Foo(KotlinClass.CONST) where KotlinClass is also in default package
+        if (resolutionContext.packageFqName.isRoot && tryResolve(className)) {
+            return ClassId.topLevel(FqName(className))
         }
 
         return null

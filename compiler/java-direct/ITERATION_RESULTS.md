@@ -380,3 +380,35 @@ Modified `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResoluti
 ---
 
 *For detailed iteration histories, see `implDocs/archive/`*
+
+## Iteration 32 (Final): Kotlin Constants in Java Annotations
+
+**Goal**: Support Kotlin `const val` in Java annotations without causing regressions
+
+**Problem**: Java annotations using Kotlin constants (e.g., `@Foo(KotlinClass.FOO_INT)`) failed
+
+**Solution** (targeted, no new Java Model interfaces):
+1. **Reused `JavaEnumValueAnnotationArgument`** for both enums AND const fields
+2. **Extended FIR mapping**: Check if symbol is const property before creating enum entry
+   - Looks in both class declarations and companion object
+   - Extracts `FirLiteralExpression.value` and returns as constant
+3. **Targeted fix in annotation resolution**: Added special handling in `JavaEnumValueAnnotationArgumentOverAst.resolveEnumClass()`
+   - When in default package and standard resolution fails, try simple name directly
+   - Avoids broad changes to general name resolution that caused 99 test regressions
+
+**Results**: ✅ **Net improvement: 108 → 106 failures (-2)**
+- Box tests: 16 → 16 failures (no change)
+- Phased tests: 92 → 90 failures (-2)
+- Fixed annotation tests:
+  - ✅ `testAnnotationWithKotlinProperty`
+  - ✅ `testAnnotationWithKotlinPropertyFromInterfaceCompanion`
+  - ❌ `testConstValAsAnnotationArgumentInJava` (requires static import support)
+  - ❌ `testAnnotationsViaActualTypeAliasFromBinary` (binary/typealias issue)
+
+**Files modified**:
+- `compiler/java-direct/src/.../JavaAnnotationOverAst.kt` - targeted root package fix in resolveEnumClass
+- `compiler/fir/fir-jvm/src/.../javaAnnotationsMapping.kt` - const field detection and value extraction
+
+**Known limitation**: Static imports still unsupported (need static import tracking infrastructure).
+
+**Key lesson**: Targeted fixes in specific code paths are better than broad changes to core resolution logic.

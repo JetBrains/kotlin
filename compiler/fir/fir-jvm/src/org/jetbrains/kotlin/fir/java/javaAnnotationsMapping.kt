@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
@@ -200,13 +201,48 @@ internal fun JavaAnnotationArgument.toFirExpression(
                 enumClassId
             } ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
 
-            buildEnumEntryDeserializedAccessExpression {
+            if (classId != null) {
+                // Check if this is actually an enum or a const field (for Kotlin constants in Java annotations)
+                val firClass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir as? FirRegularClass
+                val fieldName = entryName
+                
+                if (firClass != null && fieldName != null) {
+                    // First try to find it as a const field (for Kotlin const vals)
+                    // Check both the class itself and its companion object
+                    val constField = firClass.declarations.filterIsInstance<FirProperty>().find { 
+                        it.name == fieldName && it.status.isConst
+                    } ?: run {
+                        // Check companion object
+                        val companion = firClass.companionObjectSymbol?.fir
+                        companion?.declarations?.filterIsInstance<FirProperty>()?.find {
+                            it.name == fieldName && it.status.isConst
+                        }
+                    }
+                    
+                    if (constField != null) {
+                        // It's a const field - return its literal value
+                        val constantValue = (constField.initializer as? FirLiteralExpression)?.value
+                        if (constantValue != null) {
+                            return constantValue.createConstantOrError(session, expectedArrayElementTypeIfArray)
+                        }
+                        // If constantValue is null, fall through to treat as enum (will likely fail but allows for other resolution paths)
+                    }
+                }
+                
+                // Otherwise treat it as an enum entry
+                buildEnumEntryDeserializedAccessExpression {
+                    enumClassId = classId
+                    enumEntryName = fieldName ?: SpecialNames.NO_NAME_PROVIDED
+                }
+            } else {
                 // enumClassId can be null when a java annotation uses a Kotlin enum as parameter and declares the default value using
                 // a static import. In this case, the parameter default initializer will not have its type set, which isn't usually an
                 // issue except in edge cases like KT-47702 where we do need to evaluate the default values of annotations.
                 // As a fallback, we use the expected type which should be the type of the enum.
-                enumClassId = requireNotNull(classId)
-                enumEntryName = entryName ?: SpecialNames.NO_NAME_PROVIDED
+                buildEnumEntryDeserializedAccessExpression {
+                    enumClassId = requireNotNull(expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId)
+                    enumEntryName = entryName ?: SpecialNames.NO_NAME_PROVIDED
+                }
             }
         }
         is JavaClassObjectAnnotationArgument -> buildGetClassCall {
