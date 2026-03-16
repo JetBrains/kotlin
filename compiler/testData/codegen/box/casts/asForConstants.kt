@@ -2,6 +2,8 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
 
+@file:Suppress("CAST_NEVER_SUCCEEDS_ERROR")
+
 fun box(): String {
     if (check(1, { it as Int }) == "OK") return "fail 1"
     if (check(1, { it as Byte }) != "OK") return "fail 2"

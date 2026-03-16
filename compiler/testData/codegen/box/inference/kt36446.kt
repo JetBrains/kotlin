@@ -22,6 +22,7 @@ class ArgumentBuilder<Value> {
     fun defaultInt(default: Int): Unit {}
 }
 class ConversionBuilder<Value> {
+    @Suppress("CAST_NEVER_SUCCEEDS_ERROR")
     fun <ArgumentValue> argument(
         configure: ArgumentBuilder<ArgumentValue>.() -> Unit
     ): ArgumentDefinition<ArgumentValue> = null as ArgumentDefinition<ArgumentValue>

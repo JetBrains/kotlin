@@ -7,6 +7,7 @@ val p = MyObject::class.qualifiedName!!.removeSuffix("MyObject")
 
 fun box(): String {
     try {
+        @Suppress("CAST_NEVER_SUCCEEDS_ERROR")
         object {} as MyObject
     } catch (e: Throwable) {
         if (e !is ClassCastException) return "fail 1: $e"

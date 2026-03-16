@@ -2,6 +2,7 @@ interface BasePublisher<U>
 
 interface Flow<out P>
 
+@Suppress("CAST_NEVER_SUCCEEDS_ERROR")
 fun <R> asFlow(x: BasePublisher<R>): Flow<R> = null as Flow<R>
 
 class Document<S>

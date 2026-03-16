@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // SKIP_TXT
-// DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -UNCHECKED_CAST -UNUSED_PARAMETER -UNUSED_VARIABLE -OPT_IN_USAGE_ERROR -UNUSED_EXPRESSION
+// DIAGNOSTICS: -CAST_NEVER_SUCCEEDS_WARNING -UNCHECKED_CAST -UNUSED_PARAMETER -UNUSED_VARIABLE -OPT_IN_USAGE_ERROR -UNUSED_EXPRESSION
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -26,6 +26,8 @@ val <K> FlowCollector<K>.foo5: K get() = null as K
 class Foo6
 
 class Foo7<T>
+
+@Suppress("CAST_NEVER_SUCCEEDS_ERROR")
 fun foo7() = null as Foo7<Int>
 
 interface FlowCollector<in T> {}

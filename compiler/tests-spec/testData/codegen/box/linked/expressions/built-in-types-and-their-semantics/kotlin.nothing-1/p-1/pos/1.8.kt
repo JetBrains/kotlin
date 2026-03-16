@@ -27,6 +27,7 @@ fun box(): String {
 }
 
 open class Class() {
+    @Suppress("CAST_NEVER_SUCCEEDS_ERROR")
     var data: () -> Nothing = { throwException("data") as Nothing }
     val value: () -> Nothing
         get() = { TODO() as Nothing }

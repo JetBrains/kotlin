@@ -6,6 +6,7 @@ fun foo() {}
 
 fun box(): String {
     try {
+        @Suppress("CAST_NEVER_SUCCEEDS_ERROR")
         foo() as Int?
     }
     catch (e: ClassCastException) {

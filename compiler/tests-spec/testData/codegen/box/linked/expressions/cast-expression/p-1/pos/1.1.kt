@@ -19,6 +19,7 @@ fun box(): String {
 }
 
 open class Class() {
+    @Suppress("CAST_NEVER_SUCCEEDS_ERROR")
     var data: () -> Nothing = { throwException("boo") as Nothing }
     var exception: () -> CharSequence = { throwException("foo") as String }
     val value: () -> Any

@@ -1,3 +1,5 @@
+// DIAGNOSTICS: -CAST_NEVER_SUCCEEDS_WARNING
+
 public interface A {
     @JsName("foo")
     fun foo() {

@@ -45,6 +45,7 @@ fun box(): String {
     val units = arrayOf(Unit, Unit, Unit)
     varfoo(Unit, *units, foo(), Unit)
 
+    @Suppress("CAST_NEVER_SUCCEEDS_ERROR")
     val tmp5 = foo() as? Blumbs
 
     val tmp6 = if (zoot() == "str") Unit else foo()

@@ -135,7 +135,10 @@ fun box(): String {
     safeAsReturnsNull("null as? MutableMap") { null as? MutableMap<*, *> }
     safeAsReturnsNull("null as? MutableMap.MutableEntry") { null as? MutableMap.MutableEntry<*, *> }
 
+    @Suppress("CAST_NEVER_SUCCEEDS_ERROR")
     safeAsReturnsNull("mlist as? MutableSet") { mlist as? MutableSet<*> }
+
+    @Suppress("CAST_NEVER_SUCCEEDS_ERROR")
     safeAsReturnsNull("mlist as? MutableIterator") { mlist as? MutableIterator<*> }
 
     return "OK"

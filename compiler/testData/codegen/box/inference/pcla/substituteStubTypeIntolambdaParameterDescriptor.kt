@@ -14,6 +14,7 @@ fun <T : Any> defineType(definition: TypeDefinition<T>.() -> Unit): Unit {}
 
 fun test() {
     defineType {
+        @Suppress("CAST_NEVER_SUCCEEDS_ERROR")
         parse { it as Int }
         serialize { it.toString() }
     }

@@ -2,6 +2,8 @@
 // TARGET_BACKEND: WASM
 
 // FILE: lib.kt
+@file:Suppress("CAST_NEVER_SUCCEEDS_ERROR")
+
 import kotlin.reflect.KProperty1
 
 inline fun <reified T> tryCast(x: Any?, expected: String?): String? {
@@ -24,6 +26,8 @@ inline fun <reified T> expectOk(x: Any?): String? =
     }
 
 // FILE: main.kt
+@file:Suppress("CAST_NEVER_SUCCEEDS_ERROR")
+
 fun tryCastToNothing(x: Any?, expected: String): String? {
     try {
         x as Nothing

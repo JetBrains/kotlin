@@ -12,6 +12,7 @@ fun <T> test2(): T {
    return a as T
 }
 
+@Suppress("CAST_NEVER_SUCCEEDS_ERROR")
 fun <T: Any> test3() = null as T
 
 fun box(): String {

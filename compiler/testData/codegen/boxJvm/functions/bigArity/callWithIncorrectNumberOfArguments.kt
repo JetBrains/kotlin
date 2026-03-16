@@ -63,7 +63,7 @@ fun box(): String {
     J.test(lambda as kotlin.jvm.functions.FunctionN<Unit>)
     @Suppress("DEPRECATION_ERROR")
     J.test(::foo as kotlin.jvm.functions.FunctionN<Unit>)
-    @Suppress("DEPRECATION_ERROR")
+    @Suppress("DEPRECATION_ERROR", "CAST_NEVER_SUCCEEDS_ERROR")
     J.test(Fun() as kotlin.jvm.functions.FunctionN<Unit>)
     return "OK"
 }

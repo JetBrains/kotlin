@@ -1,3 +1,5 @@
+@file:Suppress("CAST_NEVER_SUCCEEDS_ERROR")
+
 class A
 class B
 

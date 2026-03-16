@@ -62,7 +62,7 @@ class Fun : (Int, Int, Int) -> Int,
 }
 
 fun box(): String {
-    @Suppress("DEPRECATION_ERROR")
+    @Suppress("DEPRECATION_ERROR", "CAST_NEVER_SUCCEEDS_ERROR")
     J.test(Fun() as kotlin.jvm.functions.FunctionN<Int>)
     return "OK"
 }

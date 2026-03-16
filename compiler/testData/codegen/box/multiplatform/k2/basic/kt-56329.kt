@@ -10,6 +10,7 @@ expect fun <T> foo(y: T): String
 
 expect fun <T> foo(y: T, x: S): String
 
+@Suppress("CAST_NEVER_SUCCEEDS_ERROR")
 fun ok() = foo(1) + foo(2, "K" as S)
 
 // MODULE: jvm()()(common)

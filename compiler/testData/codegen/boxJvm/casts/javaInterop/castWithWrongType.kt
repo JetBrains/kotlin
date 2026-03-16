@@ -12,6 +12,7 @@ public class A<T> {
 // FILE: test.kt
 
 fun box(): String {
+    @Suppress("CAST_NEVER_SUCCEEDS_ERROR")
     val x = A.f<String>() as Int
     return if (x == 1) "OK" else "Fail"
 }
