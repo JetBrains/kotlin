@@ -43,7 +43,7 @@ class Fir2IrConfiguration private constructor(
     val carefulApproximationOfContravariantProjectionForSam: Boolean,
 ) {
     class IrVerificationSettings(
-        val mode: IrVerificationMode,
+        var mode: IrVerificationMode,
         val validateForKlibSerialization: Boolean,
         val enableIrVisibilityChecks: Boolean,
         val enableIrVarargTypesChecks: Boolean,

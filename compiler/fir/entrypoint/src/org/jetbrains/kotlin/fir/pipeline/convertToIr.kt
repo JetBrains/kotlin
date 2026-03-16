@@ -487,6 +487,8 @@ private class Fir2IrPipeline(
         extension: IrGenerationExtension?,
         module: IrModuleFragment,
     ): Boolean {
+        fir2IrConfiguration.irVerificationSettings.mode = IrVerificationMode.ERROR
+
         val verificationMode = fir2IrConfiguration.irVerificationSettings.mode
         val validateForKlibSerialization = fir2IrConfiguration.irVerificationSettings.validateForKlibSerialization
 
