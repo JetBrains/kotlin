@@ -137,16 +137,24 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 
 ## Recommended Approach
 
-Use the **ad-hoc debugging approach** from iterations 11-16:
+**Preferred: Area Audit (faster than ad-hoc)**
 
-1. **Pick category** — start with highest impact
-2. **Debug 2-3 representative tests** — verify root cause (run pre-implementation checklist from AGENT_INSTRUCTIONS.md)
-3. **Check reference implementation** — javac-wrapper or PSI (see `implDocs/ARCHITECTURE.md`)
+1. **Pick a java-direct file** — `JavaClassOverAst.kt`, `JavaMemberOverAst.kt`, `JavaTypeOverAst.kt`, etc.
+2. **Open the reference** — `TreeBasedClass.kt` / `TreeBasedField.kt` / `TreeBasedMethod.kt` (javac-wrapper) or `JavaClassImpl.java` / `JavaMemberImpl.java` (PSI)
+3. **Compare every property** — list ALL differences, not just the first failing test
+4. **Fix all discrepancies together** — one iteration instead of three
+5. **Run the full suite once** to confirm net improvement
+
+**For shared files**: Always run `git show origin/master:<file>` first — upstream may already have the correct pattern.
+
+**Ad-hoc (for isolated exceptions):**
+
+1. **Pick exception** from `grep "FAILED" /tmp/jd_test.txt` — non-AssertionError first
+2. **Debug 2-3 representative tests** — verify root cause
+3. **Check reference implementation** — javac-wrapper or PSI
 4. **Implement fix** — target verified root cause only
 5. **Run PSI regression tests** if shared FIR files modified
 6. **Document in `ITERATION_RESULTS.md`**
-
-**Key insight**: Always check PSI (`JavaElementUtil`) and javac-wrapper implementations first. They often show the correct pattern.
 
 ---
 

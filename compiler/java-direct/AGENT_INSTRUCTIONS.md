@@ -39,12 +39,31 @@ Modifying test data to match java-direct output will break the PSI-based tests, 
 
 ---
 
+## Preferred Approach: Reference-First Area Audit
+
+**Before hunting individual test exceptions**, prefer a systematic area audit:
+
+1. **Pick a code area** — e.g., member visibility, type parameters, annotation arguments
+2. **Read the reference** — open the equivalent class in javac-wrapper (`compiler/javac-wrapper/src/.../wrappers/trees/TreeBasedField.kt`, `TreeBasedClass.kt`, `TreeBasedMethod.kt`) or PSI (`compiler/frontend.common.jvm/src/.../impl/JavaClassImpl.java`, `JavaMemberImpl.java`, `JavaFieldImpl.java`)
+3. **Compare property by property** with the java-direct equivalent (`JavaClassOverAst.kt`, `JavaMemberOverAst.kt`, etc.)
+4. **List ALL discrepancies** in one pass — don't stop at the first one
+5. **Fix all discrepancies together** — this turns 3–4 exception-driven iterations into one targeted fix
+
+**For any shared file change**, check upstream git first — the issue may already be solved differently there:
+```bash
+git show origin/master:<path/to/shared/file> | grep -A10 "relevantFunction"
+```
+This takes seconds vs. 30+ minutes of FIR2IR tracing.
+
+---
+
 ## Pre-Implementation Checklist
 
 **MANDATORY before writing any fix:**
 
-- [ ] **Verified AST node names** by checking java-syntax-jvm sources (token names often differ from constant names — e.g. `SEALED` not `SEALED_KEYWORD`, `RECORD` not `RECORD_KEYWORD`; check `SyntaxElementType("...")` string in JavaSyntaxTokenType.kt)
 - [ ] **Checked reference implementation** in javac-wrapper or PSI (see `implDocs/ARCHITECTURE.md` for paths)
+- [ ] **For shared files: compared with `git show origin/master:...`** to see what upstream does
+- [ ] **Verified AST node names** by checking java-syntax-jvm sources (token names often differ from constant names — e.g. `SEALED` not `SEALED_KEYWORD`, `RECORD` not `RECORD_KEYWORD`; check `SyntaxElementType("...")` string in JavaSyntaxTokenType.kt)
 - [ ] **Confirmed root cause** by debugging 2-3 representative failing tests
 - [ ] **Verified correct test class name** before running full suite (use wildcards below)
 
@@ -72,24 +91,53 @@ Modifying test data to match java-direct output will break the PSI-based tests, 
 ## Test Commands
 
 ```bash
-# Box tests (~1167 tests)
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated" -q 2>&1 | tee test_output.txt
+# Box tests (~1168 tests)
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated" -q --rerun 2>&1 | tee /tmp/jd_test.txt
 
 # Phased/diagnostic tests (~1442 tests)
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" -q 2>&1 | tee test_output.txt
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" -q --rerun 2>&1 | tee /tmp/jd_test.txt
+
+# Both suites together (2610 tests)
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" --tests "JavaUsingAstBoxTestGenerated" -q --rerun 2>&1 | tee /tmp/jd_test.txt
 
 # Unit tests (40 tests - MUST stay green)
 ./gradlew :compiler:java-direct:test --tests "JavaParsingTest" -q
 
-# Single test (use wildcard to avoid nested class path issues)
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated.*testSpecificName*" -q
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated.*testSpecificName*" -q
+# Single test (use wildcard * prefix for nested class disambiguation)
+./gradlew :compiler:java-direct:test --tests "*JavaUsingAstBoxTestGenerated.*testSpecificName*" -q --rerun
+./gradlew :compiler:java-direct:test --tests "*JavaUsingAstPhasedTestGenerated.*testSpecificName*" -q --rerun
 
 # PSI regression (after shared FIR file or test data changes)
 ./gradlew :compiler:fir:analysis-tests:test --tests "PhasedJvmDiagnosticLightTreeTestGenerated.*" -q
+```
 
-# Verify a test is java-direct specific (not a general FIR issue)
-./gradlew :compiler:fir:analysis-tests:test --tests "FirLightTreeBlackBoxCodegenTestGenerated.*testSpecificName*" -q
+### Extracting failures from output
+
+**ALWAYS use Gradle text output — never XML files.** Box test XMLs are overwritten by phased test XMLs; both share the same results directory and the split is invisible in XML.
+
+```bash
+# Get all failing test names from the saved output
+grep "FAILED" /tmp/jd_test.txt | sort -u
+
+# Get only box test failures
+grep "BoxJvm.*FAILED" /tmp/jd_test.txt
+
+# Get failures with embedded exceptions (MultipleFailuresError)
+grep -A3 "FAILED" /tmp/jd_test.txt | grep -E "IllegalState|NoSuch|Exception|Error:" | head -20
+```
+
+### Verifying PSI behavior for a failing test
+
+**Do NOT try to run `FirLightTreeBlackBoxCodegenTestGenerated.*testName*`** — the `$` in nested class names causes the Gradle filter to silently match nothing (BUILD SUCCESSFUL with 0 tests). It wastes time with no signal.
+
+Instead, for box tests use `--info` and check the exception:
+```bash
+./gradlew :compiler:java-direct:test --tests "*BoxTestGenerated.*testFoo*" --rerun --info 2>&1 | grep -E "FAILED|Exception|Error:" | head -10
+```
+
+For shared file changes, compare with upstream **before** tracing FIR internals:
+```bash
+git show origin/master:compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/FirJavaFacade.kt | grep -A8 "relevantSection"
 ```
 
 ---
@@ -104,6 +152,10 @@ Modifying test data to match java-direct output will break the PSI-based tests, 
 - **Don't implement partial interfaces** — e.g., `JavaAnnotationArgument` requires value subinterfaces, not just `name`
 - **Don't create git commits** — user reviews all changes first
 - **Don't persist a failing approach** — if a fix causes net regressions, revert it and document the limitation
+- **Don't parse XML test result files** — they are stale and unreliable; use Gradle text output
+- **Don't run `FirLightTreeBlackBoxCodegenTestGenerated.*testName*` to verify PSI behavior** — the nested `$` class filter silently matches nothing and wastes time; use `git show origin/master:...` instead
+- **Don't trace deep FIR2IR internals before checking upstream** — for any shared file, compare `git show origin/master:` first; fixes are often already there
+- **Don't fix one implicit-Java-rule corner case at a time** — when a fix involves implicit Java modifiers (visibility, static, final, abstract), audit the ENTIRE file against the reference and fix all discrepancies at once
 
 ---
 
@@ -120,4 +172,4 @@ Modifying test data to match java-direct output will break the PSI-based tests, 
 
 ---
 
-*Last updated: 2026-03-16*
+*Last updated: 2026-03-16 (iter 36 retrospective)*
