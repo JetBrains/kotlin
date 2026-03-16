@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -66,7 +67,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
             reporter.reportError(declaration.source, "is not allowed on properties with a custom getter or setter")
         }
 
-        if (declaration.isExtension) {
+        if (declaration.isExtension && !declaration.isCompanionExtension) {
             reporter.reportError(declaration.source, "is not allowed on extension properties")
         }
 

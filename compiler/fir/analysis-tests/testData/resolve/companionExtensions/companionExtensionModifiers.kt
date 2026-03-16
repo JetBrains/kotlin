@@ -40,7 +40,7 @@ internal companion val D.internal = 1
 
 <!WRONG_MODIFIER_TARGET!>suspend<!> companion val D.suspend = 1
 <!WRONG_MODIFIER_TARGET!>external<!> companion val D.external: String
-<!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> companion var D.lateinit: Any
+lateinit companion var D.lateinit: Any
 <!WRONG_MODIFIER_TARGET!>tailrec<!> companion val D.tailrec = 1
 const companion val D.const = 1
 <!NOT_A_MULTIPLATFORM_COMPILATION!>expect<!> companion val D.expect: String
