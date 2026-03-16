@@ -3108,6 +3108,12 @@ private fun KaDiagnosticConverterBuilder.addConversions70() {
             token,
         )
     }
+    add(FirErrors.CAST_NEVER_SUCCEEDS.errorFactory) { firDiagnostic ->
+        CastNeverSucceedsErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DECLARATION_CANT_BE_INLINED) { firDiagnostic ->
         DeclarationCantBeInlinedImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -7467,8 +7473,8 @@ private fun KaDiagnosticConverterBuilder.addConversions170() {
             token,
         )
     }
-    add(FirErrors.CAST_NEVER_SUCCEEDS) { firDiagnostic ->
-        CastNeverSucceedsImpl(
+    add(FirErrors.CAST_NEVER_SUCCEEDS.warningFactory) { firDiagnostic ->
+        CastNeverSucceedsWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ProhibitNullableTypeThroughTy
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitScriptTopLevelInnerClasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSingleNamedFunctionAsExpression
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitTypealiasAsCallableQualifierInImport
+import org.jetbrains.kotlin.config.LanguageFeature.TurnTypeCastWarningsIntoErrors
 import org.jetbrains.kotlin.config.LanguageFeature.TurnTypeCheckWarningsIntoErrors
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.MavenComparableVersion
@@ -923,7 +924,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val CANNOT_CHECK_FOR_ERASED: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("CANNOT_CHECK_FOR_ERASED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val UNSAFE_CAST_RELYING_ON_NULL: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNSAFE_CAST_RELYING_ON_NULL", WARNING, SourceElementPositioningStrategies.OPERATOR, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
     val SAFE_CAST_RELYING_ON_NULL: KtDiagnosticFactory0 = KtDiagnosticFactory0("SAFE_CAST_RELYING_ON_NULL", WARNING, SourceElementPositioningStrategies.OPERATOR, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
-    val CAST_NEVER_SUCCEEDS: KtDiagnosticFactory0 = KtDiagnosticFactory0("CAST_NEVER_SUCCEEDS", WARNING, SourceElementPositioningStrategies.OPERATOR, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
+    val CAST_NEVER_SUCCEEDS: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("CAST_NEVER_SUCCEEDS", TurnTypeCastWarningsIntoErrors, SourceElementPositioningStrategies.OPERATOR, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
     val USELESS_CAST: KtDiagnosticFactory0 = KtDiagnosticFactory0("USELESS_CAST", WARNING, SourceElementPositioningStrategies.AS_TYPE, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
     val UNCHECKED_CAST: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("UNCHECKED_CAST", WARNING, SourceElementPositioningStrategies.AS_TYPE, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
     val NUMERIC_CAST_NEVER_SUCCEEDS_BUT_CAN_BE_REPLACED_WITH_TO_CALL: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NUMERIC_CAST_NEVER_SUCCEEDS_BUT_CAN_BE_REPLACED_WITH_TO_CALL", WARNING, SourceElementPositioningStrategies.AS_TYPE, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())

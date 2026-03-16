@@ -9,9 +9,16 @@ import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformSpecificCastChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCastOperatorsChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.toTypeInfo
+import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
+import org.jetbrains.kotlin.fir.resolve.isSubclassOf
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
+import org.jetbrains.kotlin.fir.types.toLookupTag
+import org.jetbrains.kotlin.name.NativeStandardInteropNames
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirNativeCastChecker : FirPlatformSpecificCastChecker() {
     context(context: CheckerContext)
@@ -20,10 +27,34 @@ object FirNativeCastChecker : FirPlatformSpecificCastChecker() {
         fromType: ConeKotlinType,
         toType: ConeKotlinType,
         checker: FirCastOperatorsChecker,
-    ): FirCastOperatorsChecker.Applicability =
-        checker.checkGeneralApplicability(expression, fromType.toTypeInfo(context.session), toType.toTypeInfo(context.session))
+    ): FirCastOperatorsChecker.Applicability {
+        if (
+            fromType.classId == StandardClassIds.String && toType.classId == NativeStandardInteropNames.NSStringClassId ||
+            fromType.isPrimitiveOrNullablePrimitive && toType.classId == NativeStandardInteropNames.NSNumberClassId ||
+            // Allow casts like `objcnames.classes.NsMethodSignature` to `platform.Foundation.NsMethodSignature`
+            fromType.classId?.packageFqName in NativeStandardInteropNames.ForwardDeclarations.syntheticPackages ||
+            toType.toRegularClassSymbol()?.isExternal == true
+        ) {
+            return FirCastOperatorsChecker.Applicability.APPLICABLE
+        }
+
+        val isListSubclass = fromType.toRegularClassSymbol().let {
+            it != null && it.isSubclassOf(
+                ownerLookupTag = StandardClassIds.List.toLookupTag(),
+                session = context.session,
+                isStrict = false,
+                lookupInterfaces = true,
+            )
+        }
+
+        if (isListSubclass && toType.classId == NativeStandardInteropNames.NSArrayClassId) {
+            return FirCastOperatorsChecker.Applicability.APPLICABLE
+        }
+
+        return checker.checkGeneralApplicability(expression, fromType.toTypeInfo(context.session), toType.toTypeInfo(context.session))
             .takeUnless { it == FirCastOperatorsChecker.Applicability.IMPOSSIBLE_CAST && isCastToAForwardDeclaration(toType) }
             ?: FirCastOperatorsChecker.Applicability.APPLICABLE
+    }
 
     /**
      * Here, we only check that we are casting to a forward declaration to suppress a CAST_NEVER_SUCCEEDS warning.

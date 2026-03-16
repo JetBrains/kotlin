@@ -4641,10 +4641,15 @@ internal class SafeCastRelyingOnNullImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtBinaryExpressionWithTypeRHS>(firDiagnostic, token), KaFirDiagnostic.SafeCastRelyingOnNull
 
-internal class CastNeverSucceedsImpl(
+internal class CastNeverSucceedsErrorImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtBinaryExpressionWithTypeRHS>(firDiagnostic, token), KaFirDiagnostic.CastNeverSucceeds
+) : KaAbstractFirDiagnostic<KtBinaryExpressionWithTypeRHS>(firDiagnostic, token), KaFirDiagnostic.CastNeverSucceedsError
+
+internal class CastNeverSucceedsWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtBinaryExpressionWithTypeRHS>(firDiagnostic, token), KaFirDiagnostic.CastNeverSucceedsWarning
 
 internal class UselessCastImpl(
     firDiagnostic: KtPsiDiagnostic,

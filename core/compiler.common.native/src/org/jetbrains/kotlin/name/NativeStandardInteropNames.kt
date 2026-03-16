@@ -8,12 +8,21 @@ package org.jetbrains.kotlin.name
 @Suppress("ConstPropertyName")
 object NativeStandardInteropNames {
     val cInteropPackage = FqName("kotlinx.cinterop")
+    val foundationPackage = FqName("platform.Foundation")
 
     internal val COpaque = Name.identifier("COpaque")
     internal val CStructVar = Name.identifier("CStructVar")
     internal val ObjCObjectBase = Name.identifier("ObjCObjectBase")
     internal val ObjCObject = Name.identifier("ObjCObject")
     val ExperimentalForeignApi = Name.identifier("ExperimentalForeignApi")
+
+    val NSString = Name.identifier("NSString")
+    val NSNumber = Name.identifier("NSNumber")
+    val NSArray = Name.identifier("NSArray")
+
+    val NSStringClassId = ClassId(foundationPackage, NSString)
+    val NSNumberClassId = ClassId(foundationPackage, NSNumber)
+    val NSArrayClassId = ClassId(foundationPackage, NSArray)
 
     val objCDirectClassId = ClassId(cInteropPackage, Name.identifier("ObjCDirect"))
     val objCMethodClassId = ClassId(cInteropPackage, Name.identifier("ObjCMethod"))

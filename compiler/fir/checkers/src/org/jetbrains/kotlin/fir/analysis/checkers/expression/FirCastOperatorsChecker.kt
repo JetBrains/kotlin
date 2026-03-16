@@ -225,7 +225,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                 (rType as? ConeClassLikeType)?.isPrimitiveNumberOrUnsignedNumberType() == true) -> {
             FirErrors.NUMERIC_CAST_NEVER_SUCCEEDS_BUT_CAN_BE_REPLACED_WITH_TO_CALL.createOn(expression.source, rType, context.session)
         }
-        else -> FirErrors.CAST_NEVER_SUCCEEDS.createOn(expression.source, context.session)
+        else -> FirErrors.CAST_NEVER_SUCCEEDS.chooseFactory().createOn(expression.source, context.session)
     }
 
     context(context: CheckerContext)

@@ -3873,8 +3873,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SafeCastRelyingOnNull::class
     }
 
-    interface CastNeverSucceeds : KaFirDiagnostic<KtBinaryExpressionWithTypeRHS> {
-        override val diagnosticClass get() = CastNeverSucceeds::class
+    interface CastNeverSucceedsError : KaFirDiagnostic<KtBinaryExpressionWithTypeRHS> {
+        override val diagnosticClass get() = CastNeverSucceedsError::class
+    }
+
+    interface CastNeverSucceedsWarning : KaFirDiagnostic<KtBinaryExpressionWithTypeRHS> {
+        override val diagnosticClass get() = CastNeverSucceedsWarning::class
     }
 
     interface UselessCast : KaFirDiagnostic<KtBinaryExpressionWithTypeRHS> {
