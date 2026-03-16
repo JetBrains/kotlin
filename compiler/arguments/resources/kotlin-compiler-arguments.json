@@ -1376,6 +1376,26 @@
                     }
                 }
             ]
+        },
+        "profileCompilerCommand": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.ProfileCompilerCommandType",
+            "properties": [
+                {
+                    "name": "command",
+                    "type": "kotlin.String",
+                    "isNullable": false
+                },
+                {
+                    "name": "outputDir",
+                    "type": "java.nio.file.Path",
+                    "isNullable": false
+                },
+                {
+                    "name": "profilerPath",
+                    "type": "java.nio.file.Path",
+                    "isNullable": false
+                }
+            ]
         }
     },
     "topLevel": {

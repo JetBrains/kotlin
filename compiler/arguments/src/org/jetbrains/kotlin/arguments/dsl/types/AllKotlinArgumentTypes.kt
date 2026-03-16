@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.arguments.dsl.types
 
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.serialization.json.*
+import org.jetbrains.kotlin.arguments.serialization.json.base.descriptorOf
 
 /**
  * Class containing all non-primitive compiler argument types which are serialized in more detailed form.
@@ -67,5 +68,8 @@ class AllKotlinArgumentTypes {
 
     @Serializable(with = AllDetailsVerifyIrModeSerializer::class)
     val verifyIrMode = VerifyIrMode.entries.toSet()
+
+    @Serializable(with = ProfileCompilerCommandSerializer::class)
+    val profileCompilerCommand = descriptorOf<ProfileCompilerCommand>()
 
 }

@@ -28,6 +28,7 @@ standardPublicJars()
 
 dependencies {
     api(kotlinStdlib())
+    implementation(kotlin("reflect"))
 
     implementation(libs.kotlinx.serialization.json)
 
