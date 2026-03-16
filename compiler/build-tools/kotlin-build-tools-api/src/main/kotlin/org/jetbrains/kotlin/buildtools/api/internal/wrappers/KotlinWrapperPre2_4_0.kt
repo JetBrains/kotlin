@@ -83,6 +83,11 @@ internal class KotlinWrapperPre2_4_0(
         private val base: JvmCompilationOperation,
     ) : JvmCompilationOperation by base, BuildOperationWrapper<CompilationResult>(base), CancellableBuildOperation<CompilationResult> {
         override val compilerArguments: JvmCompilerArguments = JvmCompilerArgumentsWrapper(base.compilerArguments)
+
+        override fun <V> get(key: BaseCompilationOperation.Option<V>): V {
+            val jvmOption = JvmCompilationOperation.Option<V>(key.id)
+            return base[jvmOption]
+        }
     }
 
     private class JvmCompilationOperationBuilderWrapper(
@@ -101,6 +106,16 @@ internal class KotlinWrapperPre2_4_0(
                 dependenciesSnapshotFiles,
                 workingDirectory.resolve("shrunk-classpath-snapshot.bin"),
             )
+        }
+
+        override fun <V> set(key: BaseCompilationOperation.Option<V>, value: V) {
+            val jvmOption = JvmCompilationOperation.Option<V>(key.id)
+            base[jvmOption] = value
+        }
+
+        override fun <V> get(key: BaseCompilationOperation.Option<V>): V {
+            val jvmOption = JvmCompilationOperation.Option<V>(key.id)
+            return base[jvmOption]
         }
 
         override fun build(): JvmCompilationOperation {

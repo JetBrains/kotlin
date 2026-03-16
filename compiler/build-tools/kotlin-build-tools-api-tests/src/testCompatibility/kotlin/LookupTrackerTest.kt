@@ -3,21 +3,26 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import java.nio.file.Paths
 
 class LookupTrackerTest : BaseCompilationTest() {
 
@@ -55,7 +60,7 @@ class LookupTrackerTest : BaseCompilationTest() {
 
             }
             module1.compile(compilationConfigAction = { builder: JvmCompilationOperation.Builder ->
-                builder[JvmCompilationOperation.LOOKUP_TRACKER] = lookupTracker
+                builder[BaseCompilationOperation.LOOKUP_TRACKER] = lookupTracker
             }) {
                 assertTrue(lookupRecorded) { "Lookup tracker didn't produce any output" }
             }
@@ -84,10 +89,53 @@ class LookupTrackerTest : BaseCompilationTest() {
 
             }
             module1.compileIncrementally(SourcesChanges.Unknown, compilationConfigAction = { builder: JvmCompilationOperation.Builder ->
-                builder[JvmCompilationOperation.LOOKUP_TRACKER] = lookupTracker
+                builder[BaseCompilationOperation.LOOKUP_TRACKER] = lookupTracker
             }) {
                 assertTrue(lookupRecorded) { "Lookup tracker didn't produce any output" }
             }
         }
+    }
+
+    @DisplayName("LOOKUP_TRACKER can be set using the deprecated Option")
+    @BtaVersionsOnlyCompilationTest
+    @Suppress("DEPRECATION")
+    fun setLookupTrackerDeprecated(toolchain: KotlinToolchains) {
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(""))
+        val lookupTracker = object : CompilerLookupTracker {
+            override fun clear() {}
+
+            override fun recordLookup(
+                filePath: String,
+                scopeFqName: String,
+                scopeKind: CompilerLookupTracker.ScopeKind,
+                name: String,
+            ) {
+            }
+        }
+
+        jvmOperation[JvmCompilationOperation.LOOKUP_TRACKER] = lookupTracker
+        assertEquals(lookupTracker, jvmOperation[JvmCompilationOperation.LOOKUP_TRACKER])
+        assertEquals(lookupTracker, jvmOperation.build()[JvmCompilationOperation.LOOKUP_TRACKER])
+    }
+
+    @DisplayName("LOOKUP_TRACKER can be set using the newer Option")
+    @BtaVersionsOnlyCompilationTest
+    fun setLookupTracker(toolchain: KotlinToolchains) {
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(""))
+        val lookupTracker = object : CompilerLookupTracker {
+            override fun clear() {}
+
+            override fun recordLookup(
+                filePath: String,
+                scopeFqName: String,
+                scopeKind: CompilerLookupTracker.ScopeKind,
+                name: String,
+            ) {
+            }
+        }
+
+        jvmOperation[BaseCompilationOperation.LOOKUP_TRACKER] = lookupTracker
+        assertEquals(lookupTracker, jvmOperation[BaseCompilationOperation.LOOKUP_TRACKER])
+        assertEquals(lookupTracker, jvmOperation.build()[BaseCompilationOperation.LOOKUP_TRACKER])
     }
 }

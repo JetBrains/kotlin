@@ -1,3 +1,24 @@
+public abstract interface class org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+	public static final field COMPILER_ARGUMENTS_LOG_LEVEL Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;
+	public static final field COMPILER_MESSAGE_RENDERER Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Companion;
+	public static final field GENERATE_COMPILER_REF_INDEX Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;
+	public static final field LOOKUP_TRACKER Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;Ljava/lang/Object;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Builder : org/jetbrains/kotlin/buildtools/api/BuildOperation$Builder {
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/BuildOperation {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/BuildOperation$Companion;
 	public static final field METRICS_COLLECTOR Lorg/jetbrains/kotlin/buildtools/api/BuildOperation$Option;
@@ -1038,9 +1059,8 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspa
 public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation : org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation {
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation : org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation, org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation {
 	public static final field COMPILER_ARGUMENTS_LOG_LEVEL Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
-	public static final field COMPILER_MESSAGE_RENDERER Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Companion;
 	public static final field GENERATE_COMPILER_REF_INDEX Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
 	public static final field INCREMENTAL_COMPILATION Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
@@ -1055,7 +1075,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operatio
 	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder;
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder : org/jetbrains/kotlin/buildtools/api/BuildOperation$Builder {
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder : org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Builder {
 	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;)Ljava/lang/Object;
 	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$Builder;

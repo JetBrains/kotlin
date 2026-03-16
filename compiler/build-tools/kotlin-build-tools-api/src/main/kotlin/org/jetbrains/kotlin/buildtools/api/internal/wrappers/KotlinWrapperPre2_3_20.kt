@@ -83,6 +83,8 @@ internal class KotlinWrapperPre2_3_20(
     }
 
     private abstract class BuildOperationWrapper<R>(val baseOperation: BuildOperation<R>) : BuildOperation<R>
+    private abstract class BaseCompilationOperationWrapper(val baseCompilationOperation: BaseCompilationOperation) :
+        BuildOperationWrapper<CompilationResult>(baseCompilationOperation), BaseCompilationOperation
 
     private class JvmPlatformToolchainWrapper(private val base: JvmPlatformToolchain) : JvmPlatformToolchain by base {
         override fun jvmCompilationOperationBuilder(sources: List<Path>, destinationDirectory: Path): JvmCompilationOperationWrapper {
@@ -161,7 +163,7 @@ internal class KotlinWrapperPre2_3_20(
                         Path("")
                     ).compilerArguments
                 }),
-        ) : BuildOperationWrapper<CompilationResult>(base), JvmCompilationOperation by base, JvmCompilationOperation.Builder {
+        ) : BaseCompilationOperationWrapper(base), JvmCompilationOperation by base, JvmCompilationOperation.Builder {
             override fun toBuilder(): JvmCompilationOperation.Builder {
                 return copy()
             }
@@ -283,6 +285,11 @@ internal class KotlinWrapperPre2_3_20(
                             }
                         newOperation.compilerArguments.applyArgumentStrings(this.compilerArguments.toArgumentStrings())
                     }
+            }
+
+            override fun <V> set(key: BaseCompilationOperation.Option<V>, value: V) {
+                val oldOption = JvmCompilationOperation.Option<V>(key.id)
+                this[oldOption] = value
             }
         }
 

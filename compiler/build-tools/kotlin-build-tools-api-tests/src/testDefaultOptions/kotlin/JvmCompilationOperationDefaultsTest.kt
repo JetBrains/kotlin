@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.buildtools.tests.defaults
 
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
@@ -22,12 +23,12 @@ class JvmCompilationOperationDefaultsTest {
         val operation = kotlinToolchains.jvm.jvmCompilationOperationBuilder(emptyList(), Path(".")).build()
         assertEquals(DEFAULT_METRICS_COLLECTOR, operation[BuildOperation.METRICS_COLLECTOR])
         assertEquals(null, operation[JvmCompilationOperation.INCREMENTAL_COMPILATION])
-        assertEquals(null, operation[JvmCompilationOperation.LOOKUP_TRACKER])
+        assertEquals(null, operation[BaseCompilationOperation.LOOKUP_TRACKER])
         assertEquals(null, operation[JvmCompilationOperation.KOTLINSCRIPT_EXTENSIONS])
-        assertEquals(CompilerArgumentsLogLevel.DEBUG, operation[JvmCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL])
-        assertEquals(false, operation[JvmCompilationOperation.GENERATE_COMPILER_REF_INDEX])
+        assertEquals(CompilerArgumentsLogLevel.DEBUG, operation[BaseCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL])
+        assertEquals(false, operation[BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX])
         // we cannot directly acquire objectInstance as it's coupled with the classloader
         val defaultCompilerMessageRenderer = btaClassloader.loadClass(DefaultCompilerMessageRendererClassName).kotlin.objectInstance
-        assertEquals(defaultCompilerMessageRenderer, operation[JvmCompilationOperation.COMPILER_MESSAGE_RENDERER])
+        assertEquals(defaultCompilerMessageRenderer, operation[BaseCompilationOperation.COMPILER_MESSAGE_RENDERER])
     }
 }

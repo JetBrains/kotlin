@@ -35,7 +35,7 @@ import kotlin.contracts.contract
  * @since 2.3.0
  */
 @ExperimentalBuildToolsApi
-public interface JvmCompilationOperation : CancellableBuildOperation<CompilationResult> {
+public interface JvmCompilationOperation : BaseCompilationOperation, CancellableBuildOperation<CompilationResult> {
 
     /**
      * All sources of the compilation unit. This includes Java source files.
@@ -56,7 +56,7 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
      *
      * @since 2.3.20
      */
-    public interface Builder : BuildOperation.Builder {
+    public interface Builder : BaseCompilationOperation.Builder {
         /**
          * All sources of the compilation unit. This includes Java source files.
          *
@@ -221,6 +221,13 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
         /**
          * Adds a tracker that will be informed whenever the compiler makes lookups for references.
          */
+        @Deprecated(
+            "Use `BaseCompilationOperation.LOOKUP_TRACKER` instead",
+            ReplaceWith(
+                "BaseCompilationOperation.LOOKUP_TRACKER",
+                "org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation"
+            )
+        )
         @JvmField
         public val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER")
 
@@ -237,28 +244,28 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
          *
          * Defaults to [CompilerArgumentsLogLevel.DEBUG].
          */
+        @Deprecated(
+            "Use `BaseCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL` instead",
+            ReplaceWith(
+                "BaseCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL",
+                "org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation"
+            )
+        )
         @JvmField
         public val COMPILER_ARGUMENTS_LOG_LEVEL: Option<CompilerArgumentsLogLevel> = Option("COMPILER_ARGUMENTS_LOG_LEVEL")
 
         /**
          * Enables the Compiler Reference Index generation during the compilation.
          */
+        @Deprecated(
+            "Use `BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX` instead",
+            ReplaceWith(
+                "BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX",
+                "org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation"
+            )
+        )
         @JvmField
         public val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX")
-
-        /**
-         * Transform compiler diagnostics into formatted strings for output.
-         *
-         * If no specific renderer is provided, the system defaults to a standard format:
-         * file://<path>:<line>:<column> <message>
-         *
-         * Example Output:
-         * file:///path/to/File.kt:10:5 Unresolved reference: foo
-         *
-         * @see CompilerMessageRenderer
-         */
-        @JvmField
-        public val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> = Option("COMPILER_MESSAGE_RENDERER")
     }
 
     public enum class CompilerArgumentsLogLevel {

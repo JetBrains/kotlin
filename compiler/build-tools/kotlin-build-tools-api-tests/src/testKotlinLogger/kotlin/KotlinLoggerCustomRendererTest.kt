@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer.Severity
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer.SourceLocation
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
@@ -31,7 +31,7 @@ class KotlinLoggerCustomRendererTest : BaseCompilationTest() {
         project(strategyConfig) {
             val module = module("deprecated-usage")
             module.compile(compilationConfigAction = {
-                it[JvmCompilationOperation.COMPILER_MESSAGE_RENDERER] = renderer
+                it[BaseCompilationOperation.COMPILER_MESSAGE_RENDERER] = renderer
             }) {
                 val warnLines = logLines[LogLevel.WARN].orEmpty()
                 assertTrue(warnLines.any { "[CUSTOM WARNING]" in it && "deprecated" in it.lowercase() }) {
