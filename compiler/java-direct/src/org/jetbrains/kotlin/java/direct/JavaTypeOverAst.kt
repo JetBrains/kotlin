@@ -178,8 +178,11 @@ class JavaClassifierTypeOverAst(
     override val presentableText: String get() = node.text
 
     override val isRaw: Boolean by lazy {
-        val hasParameterList = node.findChildByType("REFERENCE_PARAMETER_LIST") != null
-        !hasParameterList && (classifier as? JavaClass)?.typeParameters?.isNotEmpty() == true
+        // A type is raw if it has no type arguments but the class has type parameters.
+        // Note: REFERENCE_PARAMETER_LIST may exist but be empty (no TYPE children).
+        val parameterList = node.findChildByType("REFERENCE_PARAMETER_LIST")
+        val hasTypeArguments = parameterList?.children?.any { it.type.toString() == "TYPE" } == true
+        !hasTypeArguments && (classifier as? JavaClass)?.typeParameters?.isNotEmpty() == true
     }
 
     override val typeArguments: List<JavaType> by lazy {

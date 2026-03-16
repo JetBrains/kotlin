@@ -412,3 +412,86 @@ Modified `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResoluti
 **Known limitation**: Static imports still unsupported (need static import tracking infrastructure).
 
 **Key lesson**: Targeted fixes in specific code paths are better than broad changes to core resolution logic.
+
+---
+
+## Iteration 33: Raw Types Detection Fix - 2026-03-16
+
+### Status
+✅ Complete — 10 tests fixed
+
+### Root Cause Analysis
+
+Two separate bugs were causing raw type detection failures:
+
+**Bug 1: Java Model `isRaw` detection (JavaTypeOverAst.kt)**
+
+The `REFERENCE_PARAMETER_LIST` node exists even when empty (no type arguments). The old check:
+```kotlin
+val hasParameterList = node.findChildByType("REFERENCE_PARAMETER_LIST") != null
+!hasParameterList && (classifier as? JavaClass)?.typeParameters?.isNotEmpty() == true
+```
+Always returned `false` for raw types because `hasParameterList` was `true` even for empty parameter lists.
+
+Debug output showed:
+```
+JAVA_CODE_REFERENCE: 'Generic'
+  IDENTIFIER: 'Generic'
+  REFERENCE_PARAMETER_LIST: ''   <-- Empty but still present!
+```
+
+**Bug 2: FIR raw type detection for unresolved types (JavaTypeConversion.kt)**
+
+For types resolved via star imports (e.g., `List` from `import java.util.*;`), `classifierQualifiedName` returns the simple name `"List"`, not `"java.util.List"`. The raw type detection at line 158:
+```kotlin
+val classId = ClassId.topLevel(FqName(classifierQualifiedName))
+```
+Created `ClassId(FqName(""), Name("List"))` — a class named "List" in the default package, which doesn't exist.
+
+### Fix
+
+**1. JavaTypeOverAst.kt** — Check for TYPE children, not just parameter list existence:
+```kotlin
+override val isRaw: Boolean by lazy {
+    val parameterList = node.findChildByType("REFERENCE_PARAMETER_LIST")
+    val hasTypeArguments = parameterList?.children?.any { it.type.toString() == "TYPE" } == true
+    !hasTypeArguments && (classifier as? JavaClass)?.typeParameters?.isNotEmpty() == true
+}
+```
+
+**2. JavaTypeConversion.kt** — Use `resolveTypeName()` to get FQN before raw type check:
+```kotlin
+val isRawType = isRaw || run {
+    if (classifier != null || typeArguments.isNotEmpty()) false
+    else if (mode == FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND) false
+    else {
+        // For unresolved types (star imports, java.lang), use resolve callback
+        val resolvedClassId = resolveTypeName(classifierQualifiedName, this, session, source)
+        val mappedClassId = JavaToKotlinClassMap.mapJavaToKotlin(resolvedClassId.asSingleFqName()) ?: resolvedClassId
+        mappedClassId.toLookupTag().toRegularClassSymbol(session)?.typeParameterSymbols?.isNotEmpty() == true
+    }
+}
+```
+
+### Test Results
+- **Phased tests**: 93 → 85 failures (**-8**)
+- **Box tests**: 15 → 13 failures (**-2**)
+- **Total improvement: 10 tests fixed**
+- **Raw type tests**: 7 → 2 failures (**-5**)
+- PSI regression tests: All passing ✅
+- JavaParsingTest: All 42 tests passing ✅
+
+### Files Modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt` — Fixed `isRaw` detection
+- `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt` — Fixed raw type detection for unresolved types
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt` — Added unit tests for raw type detection
+
+### Remaining Raw Type Failures (2)
+- `testPseudoRawTypes` — Java compilation error (special test with custom `java.util.Collection`)
+- `testRawSupertypeOverride` — Complex raw supertype inheritance scenario
+
+### Key Learnings
+1. **AST nodes can be empty but present** — Always check for actual children, not just node existence
+2. **Debug with unit tests first** — Adding `testRawTypeDetection` to JavaParsingTest quickly revealed the empty REFERENCE_PARAMETER_LIST issue
+3. **Two-level fix needed** — Java Model `isRaw` handles local classes, FIR handles external classes via resolution
+4. **Star imports need resolution** — `classifierQualifiedName` returns simple names for star imports; must resolve before using

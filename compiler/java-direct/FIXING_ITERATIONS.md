@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 29 (2026-03-13) |
-| **Box Tests** | 1152/1167 passing (98.7%) |
-| **Phased Tests** | 1349/1442 passing (93.5%) |
-| **Combined** | ~2501/2609 passing, **~108 failing** |
+| **Last Iteration** | 33 (2026-03-16) |
+| **Box Tests** | 1155/1168 passing (98.9%) |
+| **Phased Tests** | 1357/1442 passing (94.1%) |
+| **Combined** | ~2512/2610 passing, **~98 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -33,18 +33,32 @@ Estimates have been consistently wrong (5-60% accuracy). Follow these rules:
 |----------|-------------------------|-----------------------|
 | **Sealed Classes** | Done (iter 26)          | 9 tests fixed         |
 | **Java Records** | Done (iter 27, iter 28) | all record tests pass |
-| **Ambiguity Detection** | Done (iter 29)          | 2 tests fixed (same-file only) |
+| **Ambiguity Detection** | Done (iter 29-30)       | 4 tests fixed (including cross-file) |
+| **Raw Types** | Done (iter 33)          | 10 tests fixed        |
 
 ### Next Priorities
 
-#### Ambiguity Detection — ✅ PARTIALLY DONE (iter 29)
+#### Ambiguity Detection — ✅ DONE (iter 29-30)
 
-**Status**: Fixed 2/4 tests. Remaining failure (`testInheritanceAmbiguity2`) cannot be fixed due to architectural limitation (cross-file ambiguity detection requires parsing all files together, but java-direct uses on-demand per-file parsing).
+**Status**: All 4 tests fixed, including cross-file detection.
 
 **Tests fixed**:
 - ✅ `testInheritanceAmbiguity` (same-file)
+- ✅ `testInheritanceAmbiguity2` (cross-file)
 - ✅ `testInheritanceAmbiguity3` (same-file)
-- ❌ `testInheritanceAmbiguity2` (cross-file, architectural limitation)
+- ✅ `testInheritanceAmbiguity4` (cross-file)
+
+#### Raw Types — ✅ DONE (iter 33)
+
+**Status**: 10 tests fixed. Two edge cases remain.
+
+**Root causes fixed**:
+1. Java Model `isRaw` — empty `REFERENCE_PARAMETER_LIST` was treated as having type args
+2. FIR raw type detection — star imports returned simple names, not FQN
+
+**Remaining failures (2)**:
+- `testPseudoRawTypes` — Java compilation error (custom `java.util.Collection`)
+- `testRawSupertypeOverride` — Complex raw supertype inheritance
 
 #### Type Parameter Scoping — ~6-10 tests — LOW CONFIDENCE
 
@@ -115,6 +129,10 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 27 | Java records (Java Model only, FIR integration pending) | +0 |
 | 28 | Java records FIR integration (isRecord token fix, isVararg fix, canonical ctor detection) | +6 phased, +2 box |
 | 29 | Ambiguity detection for inner classes (same-file only) | +2 phased |
+| 30 | Cross-file ambiguity detection | +2 phased |
+| 31 | JavaParsingTest regressions fix | +0 (regression fix) |
+| 32 | Kotlin constants in Java annotations | +2 phased |
+| 33 | Raw types detection fix | +8 phased, +2 box |
 
 ---
 

@@ -155,8 +155,10 @@ private fun JavaType?.toConeTypeProjection(
                 if (classifier != null || typeArguments.isNotEmpty()) false
                 else if (mode == FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND) false
                 else {
-                    val classId = ClassId.topLevel(FqName(classifierQualifiedName))
-                    val mappedClassId = JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName()) ?: classId
+                    // For unresolved types (star imports, java.lang), classifierQualifiedName may be
+                    // a simple name like "List". Use resolve callback to get FQN first.
+                    val resolvedClassId = resolveTypeName(classifierQualifiedName, this, session, source)
+                    val mappedClassId = JavaToKotlinClassMap.mapJavaToKotlin(resolvedClassId.asSingleFqName()) ?: resolvedClassId
                     mappedClassId.toLookupTag().toRegularClassSymbol(session)?.typeParameterSymbols?.isNotEmpty() == true
                 }
             }

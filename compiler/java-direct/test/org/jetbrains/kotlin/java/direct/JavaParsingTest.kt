@@ -1356,4 +1356,74 @@ class JavaParsingTest {
         println("\n=== method2 return type annotations: ${returnType2.annotations.map { it.classId }} ===")
         println("=== method2 (member) annotations: ${method2.annotations.map { it.classId }} ===")
     }
+
+    @Test
+    fun testRawTypeDetection() {
+        // Test raw types - generic class used without type arguments
+        val source = """
+            public class Generic<T> {
+                public static Generic raw = new Generic();
+                public Generic<String> notRaw = new Generic<>();
+                public Generic alsoRaw;
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        assert(javaClass.typeParameters.size == 1) { "Generic should have 1 type parameter" }
+        assert(javaClass.typeParameters.first().name.asString() == "T")
+
+        // Check the static raw field
+        val rawField = javaClass.fields.first { it.name.asString() == "raw" }
+        val rawType = rawField.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(rawType.classifierQualifiedName == "Generic") { "Expected 'Generic', got ${rawType.classifierQualifiedName}" }
+        assert(rawType.typeArguments.isEmpty()) { "Raw type should have no type arguments" }
+        // classifier should resolve to the containing class itself
+        assert(rawType.classifier != null) { "classifier should resolve to Generic class" }
+        assert(rawType.classifier == javaClass) { "classifier should be the same Generic class" }
+        // isRaw should be true because Generic has type params but no args provided
+        assert(rawType.isRaw) { "Expected isRaw=true for raw Generic field" }
+
+        // Check the notRaw field (has explicit type argument)
+        val notRawField = javaClass.fields.first { it.name.asString() == "notRaw" }
+        val notRawType = notRawField.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(notRawType.classifierQualifiedName == "Generic") { "Expected 'Generic', got ${notRawType.classifierQualifiedName}" }
+        assert(notRawType.typeArguments.size == 1) { "notRaw should have 1 type argument, got ${notRawType.typeArguments.size}" }
+        assert(!notRawType.isRaw) { "Expected isRaw=false for Generic<String>" }
+
+        // Check the alsoRaw field (instance field, also raw)
+        val alsoRawField = javaClass.fields.first { it.name.asString() == "alsoRaw" }
+        val alsoRawType = alsoRawField.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(alsoRawType.typeArguments.isEmpty()) { "alsoRaw should have no type arguments" }
+        assert(alsoRawType.isRaw) { "Expected isRaw=true for raw alsoRaw field" }
+    }
+
+    @Test
+    fun testRawTypeWithExternalClass() {
+        // Test raw types with external classes (via star import)
+        val source = """
+            import java.util.*;
+            public class A {
+                void foo(List x) {}
+                void bar(List<String> y) {}
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+
+        val fooMethod = javaClass.methods.first { it.name.asString() == "foo" }
+        val fooParamType = fooMethod.valueParameters.first().type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        // For external class via star import, classifier is null (not in local scope)
+        assert(fooParamType.classifier == null) { "External class List should have null classifier" }
+        // classifierQualifiedName returns "List" (unresolved via star import)
+        assert(fooParamType.classifierQualifiedName == "List") { "Expected 'List', got ${fooParamType.classifierQualifiedName}" }
+        assert(fooParamType.typeArguments.isEmpty()) { "Raw List should have no type args" }
+        // isRaw returns false for external classes because we can't determine type params without FIR
+        // FIR's type conversion handles this via fallback logic
+        // This documents the current behavior - java-direct can't determine isRaw for external classes
+        assert(!fooParamType.isRaw) { "isRaw is false for external classes (FIR handles this)" }
+
+        val barMethod = javaClass.methods.first { it.name.asString() == "bar" }
+        val barParamType = barMethod.valueParameters.first().type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        assert(barParamType.typeArguments.size == 1) { "List<String> should have 1 type arg" }
+        assert(!barParamType.isRaw) { "List<String> should not be raw" }
+    }
 }
