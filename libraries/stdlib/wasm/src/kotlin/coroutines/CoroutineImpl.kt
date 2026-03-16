@@ -10,13 +10,17 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @SinceKotlin("1.3")
 @UsedFromCompilerGeneratedCode
-internal abstract class CoroutineImpl<T, R>(private val resultContinuation: Continuation<R>, val rethrowExceptions: Boolean = false) : Continuation<T> {
-    protected var state = 0
-    protected var exceptionState = 0
-    internal var result: Any? = null
-    protected var exception: Throwable? = null
+public abstract class CoroutineImpl<T, R>(
+    private val resultContinuation: Continuation<R>,
+    private val rethrowExceptions: Boolean = false
+) : Continuation<T> {
+    protected var state: Int = 0
+    protected var exceptionState: Int = 0
+    public var result: Any? = null
+    public var exception: Throwable? = null
     protected var finallyPath: Array<Int>? = null
-    internal var wasSuspended = false
+    public var wasSuspended: Boolean = false
+    public var isResumed: Boolean = false
 
     private val _context: CoroutineContext = resultContinuation.context
 

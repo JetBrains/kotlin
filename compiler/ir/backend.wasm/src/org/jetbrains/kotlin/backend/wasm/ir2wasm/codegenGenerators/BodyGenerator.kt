@@ -1240,7 +1240,6 @@ class BodyGenerator(
                 val zeroArgContType = typeCodegenContext.referenceHeapContType(1)
 
                 body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
-                    // result: Result<T>
                     body.buildGetLocal(kotlinContinuation, location)
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)

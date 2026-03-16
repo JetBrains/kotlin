@@ -39,7 +39,7 @@ internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinu
 @PublishedApi
 @DoNotInlineOnFirstStage
 @UsedFromCompilerGeneratedCode
-internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(noinline block: (Continuation<T>) -> Any?): T {
+internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(block: (Continuation<T>) -> Any?): T {
     return suspendCoroutineUninterceptedOrReturnImpl<T>(block)
 }
 
@@ -48,31 +48,35 @@ internal class WasmContinuation<T, R>(
     completion: Continuation<R>,
     rethrowExceptions: Boolean = false
 ) : CoroutineImpl<T, R>(completion, rethrowExceptions) {
+    var isRunning: Boolean = false
+
     val resultValue: Any? get() = result
-    internal var isResumed = false
     override fun doResume(): Any? {
-        do {
-            require(!isResumed) { "WasmContinuation can be resumed only once" }
-            isResumed = true
-            val resumeResult: ResumeIntrinsicResult = exception?.let {
-                resumeThrowImpl(it, wasmContBox)
-            } ?: resumeWithImpl(this, wasmContBox)
-            wasmContBox = resumeResult.remainingFunction ?: return resumeResult.result
-            isResumed = false
-            wasSuspended = true
-            if (resumeResult.result === COROUTINE_SUSPENDED) return COROUTINE_SUSPENDED
-            require(resumeResult.suspendBody != null)
-            val suspendBodyResult = try {
-                resumeResult.suspendBody(this).takeIf { it !== COROUTINE_SUSPENDED }?.let { Result.success(it) }
-            } catch (e: Throwable) {
-                Result.failure(e)
-            }
-            if (suspendBodyResult == null) {
-                return COROUTINE_SUSPENDED
-            }
-            result = suspendBodyResult.getOrNull()
-            exception = suspendBodyResult.exceptionOrNull()
-        } while (true)
+        if (isResumed) {
+            isResumed = false  // signal: sync resume happened, result stored in this.result
+            return COROUTINE_SUSPENDED
+        }
+        isResumed = true
+        isRunning = true
+        val resumeResult: ResumeIntrinsicResult = exception?.let {
+            resumeThrowImpl(it, wasmContBox)
+        } ?: resumeWithImpl(this, wasmContBox)
+        isResumed = false
+        isRunning = false
+        wasSuspended = true
+        wasmContBox = resumeResult.remainingFunction ?: return resumeResult.result
+        return COROUTINE_SUSPENDED
+    }
+
+    override fun resumeWith(result: Result<T>) {
+        if (isRunning) {
+            // Sync re-entrant resume: store result and signal, but don't call doResume()
+            this.result = result.getOrNull()
+            this.exception = result.exceptionOrNull()
+            isResumed = false  // signal to suspendCoroutineUninterceptedOrReturnImpl
+            return
+        }
+        super.resumeWith(result)
     }
 }
 
@@ -92,7 +96,6 @@ internal fun resumeThrowIntrinsic(): ResumeIntrinsicResult {
 }
 
 internal class ResumeIntrinsicResult(
-    val suspendBody: ((Continuation<*>) -> Any?)?,
     val remainingFunction: contref1?,
     val result: Any?,
 )
@@ -100,16 +103,16 @@ internal class ResumeIntrinsicResult(
 @Suppress("UNUSED")
 @UsedFromCompilerGeneratedCode
 internal fun buildResumeIntrinsicSuspendResult(
-    suspendBody: ((Continuation<*>) -> Any?)?,
+    suspendBody: Any?,
     remainingFunction: contref1,
 ): ResumeIntrinsicResult {
-    return ResumeIntrinsicResult(suspendBody, remainingFunction, null)
+    return ResumeIntrinsicResult(remainingFunction, null)
 }
 
 @Suppress("UNUSED")
 @UsedFromCompilerGeneratedCode
 internal fun buildResumeIntrinsicValueResult(value: Any?): ResumeIntrinsicResult {
-    return ResumeIntrinsicResult(null, nullableContrefIntrinsic(), value)
+    return ResumeIntrinsicResult(nullableContrefIntrinsic(), value)
 }
 
 @ExcludedFromCodegen
@@ -118,16 +121,34 @@ internal fun nullableContrefIntrinsic(): contref1? {
 }
 
 @PublishedApi
-@Suppress("UNCHECKED_CAST")
-internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Continuation<T>) -> Any?): T {
-    return (suspendIntrinsic(block) as CoroutineImpl<*, *>).result as T
+@Suppress("USELESS_CAST", "UNCHECKED_CAST", "RETURN_VALUE_NOT_USED")
+internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Continuation<T>) -> Any?): T {
+    val continuation = getContinuation<T>() as Continuation<T>
+    val c = continuation as CoroutineImpl<*, *>
+    c.wasSuspended = true
+    c.isResumed = true
+    val blockResult = block(continuation)
+    if (blockResult !== COROUTINE_SUSPENDED) return (continuation as CoroutineImpl<*, *>).result as T
+    if (!(continuation as CoroutineImpl<*, *>).isResumed) {
+        val c = continuation as CoroutineImpl<*, *>
+        val e = c.exception
+        if (e != null) throw e
+        // isResumed was reset to false by doResume() early-return path:
+        // x.resume() was called synchronously inside block — result is already in continuation.result
+        return (continuation as CoroutineImpl<*, *>).result as T
+    }
+    c.isResumed = false
+    suspendIntrinsic(null)
+    val e = c.exception
+    if (e != null) throw e
+    return continuation.result as T
 }
 
 @UsedFromCompilerGeneratedCode
 @PublishedApi
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun <T> suspendIntrinsic(block: (Continuation<T>) -> Any?): Any? {
+internal fun suspendIntrinsic(x: Any?): Any? {
     implementedAsIntrinsic
 }
 
