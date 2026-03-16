@@ -1081,7 +1081,7 @@ object ArrayOps : TemplateGroupBase() {
                     /**
                      * Benchmarking showed that when copying a small number of elements (typically < 20),
                      * a simple loop is consistently faster than calling `TypedArray.set` or `TypedArray.slice`
-                     * across JS engines. We chose [OPTIMAL_SIZE_FOR_REGULAR_LOOP] as an arbitrary threshold based on those results.
+                     * across JS engines. We chose OPTIMAL_LOOP_COPY_THRESHOLD as an arbitrary threshold based on those results.
                      **/
                     when (primitive!!) {
                         PrimitiveType.Boolean -> body {
@@ -1094,7 +1094,7 @@ object ArrayOps : TemplateGroupBase() {
                                 if (!isLongCompiledToBigInt()) return fillFrom(this, LongArray(newSize))
                                 val size = this.size
                                 return when {
-                                    newSize < OPTIMAL_SIZE_FOR_REGULAR_LOOP || size < OPTIMAL_SIZE_FOR_REGULAR_LOOP -> fillFrom(this, ${primitive}Array(newSize))
+                                    newSize < OPTIMAL_LOOP_COPY_THRESHOLD || size < OPTIMAL_LOOP_COPY_THRESHOLD -> fillFrom(this, ${primitive}Array(newSize))
                                     newSize > size -> LongArray(newSize).also { copy ->
                                         copy.asDynamic().set(this)
                                     }
@@ -1107,7 +1107,7 @@ object ArrayOps : TemplateGroupBase() {
                             """
                             val size = this.size
                             val copy = when {
-                                newSize < OPTIMAL_SIZE_FOR_REGULAR_LOOP || size < OPTIMAL_SIZE_FOR_REGULAR_LOOP -> fillFrom(this, CharArray(newSize))
+                                newSize < OPTIMAL_LOOP_COPY_THRESHOLD || size < OPTIMAL_LOOP_COPY_THRESHOLD -> fillFrom(this, CharArray(newSize))
                                 newSize > size -> CharArray(newSize).also { copy ->
                                     copy.asDynamic().set(this)
                                 }
@@ -1121,7 +1121,7 @@ object ArrayOps : TemplateGroupBase() {
                             """
                             val size = this.size
                             return when {
-                                newSize < OPTIMAL_SIZE_FOR_REGULAR_LOOP || size < OPTIMAL_SIZE_FOR_REGULAR_LOOP -> fillFrom(this, ${primitive}Array(newSize))
+                                newSize < OPTIMAL_LOOP_COPY_THRESHOLD || size < OPTIMAL_LOOP_COPY_THRESHOLD -> fillFrom(this, ${primitive}Array(newSize))
                                 newSize > size -> ${primitive}Array(newSize).also { copy ->
                                     copy.asDynamic().set(this)
                                 }
