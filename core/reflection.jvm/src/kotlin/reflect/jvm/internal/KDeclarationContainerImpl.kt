@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
+import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.KmConstructor
 import kotlin.metadata.KmFunction
 import kotlin.metadata.KmProperty
@@ -73,9 +74,13 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
 
         return if (kmProperty.isVar)
-            KotlinKMutableProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty, KCallableOverriddenStorage.EMPTY)
+            KotlinKMutableProperty0<Any?>(
+                this, signature, CallableReference.NO_RECEIVER, kmProperty, KCallableOverriddenStorage.EMPTY
+            )
         else
-            KotlinKProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty, KCallableOverriddenStorage.EMPTY)
+            KotlinKProperty0<Any?>(
+                this, signature, CallableReference.NO_RECEIVER, kmProperty, KCallableOverriddenStorage.EMPTY
+            )
     }
 
     fun findPropertyMetadata(name: String, signature: String): KmProperty {

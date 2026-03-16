@@ -11,12 +11,12 @@ import kotlin.reflect.KCallable
 public class PackageReference(
     override val jClass: Class<*>,
     @Suppress("unused") private val moduleName: String
-) : ClassBasedDeclarationContainer {
+) : PackageDeclarationContainer {
     override val members: Collection<KCallable<*>>
         get() = throw KotlinReflectionNotSupportedError()
 
     override fun equals(other: Any?): Boolean =
-        other is PackageReference && jClass == other.jClass
+        other is PackageDeclarationContainer && jClass == other.jClass
 
     override fun hashCode(): Int =
         jClass.hashCode()

@@ -10,7 +10,7 @@ import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty;
 
 @SuppressWarnings("rawtypes")
-public abstract class PropertyReference extends CallableReference implements KProperty {
+public abstract class PropertyReference extends CallableReference implements KPropertyWithEqualityData {
     private final boolean syntheticJavaProperty;
 
     public PropertyReference() {
@@ -28,9 +28,9 @@ public abstract class PropertyReference extends CallableReference implements KPr
 
     @SinceKotlin(version = "1.4")
     public PropertyReference(Object receiver, Class owner, String name, String signature, int flags) {
-        super(receiver, owner, name, signature, (flags & 1) == 1);
+        super(receiver, owner, name, signature, flags);
 
-        syntheticJavaProperty = (flags & 2) == 2;
+        syntheticJavaProperty = Flag.SYNTHETIC_JAVA_PROPERTY.isSet(flags);
     }
 
     @Override
@@ -63,17 +63,13 @@ public abstract class PropertyReference extends CallableReference implements KPr
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj instanceof PropertyReference) {
-            PropertyReference other = (PropertyReference) obj;
-            return getOwner().equals(other.getOwner()) &&
-                   getName().equals(other.getName()) &&
-                   getSignature().equals(other.getSignature()) &&
-                   Intrinsics.areEqual(getBoundReceiver(), other.getBoundReceiver());
-        }
-        if (obj instanceof KProperty) {
-            return obj.equals(compute());
-        }
-        return false;
+        if (!(obj instanceof KPropertyWithEqualityData)) return false;
+
+        KPropertyWithEqualityData other = (KPropertyWithEqualityData) obj;
+        return getOwner().equals(other.getOwner()) &&
+               getName().equals(other.getName()) &&
+               getSignature().equals(other.getSignature()) &&
+               Intrinsics.areEqual(getRawBoundReceiver(), other.getRawBoundReceiver());
     }
 
     @Override

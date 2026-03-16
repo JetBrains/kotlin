@@ -10,20 +10,23 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import kotlin.coroutines.Continuation
+import kotlin.jvm.internal.KFunctionWithEqualityData
 import kotlin.jvm.internal.KotlinGenericDeclaration
 import kotlin.jvm.internal.findMethodBySignature
 import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
 import kotlin.reflect.full.valueParameters
 
-internal interface ReflectKFunction : ReflectKCallable<Any?>, KFunction<Any?>, KotlinGenericDeclaration {
-    val signature: String
+internal interface ReflectKFunction : ReflectKCallable<Any?>, KFunctionWithEqualityData<Any?>, KotlinGenericDeclaration {
+    override val signature: String
 
     val overridden: Collection<ReflectKFunction>
 
     val isPrimaryConstructor: Boolean
 
     override fun findJavaDeclaration(): GenericDeclaration? = container.findMethodBySignature(signature)
+
+    override val owner: Any
+        get() = container
 }
 
 internal fun ReflectKFunction.extractContinuationArgument(): Type? {

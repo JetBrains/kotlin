@@ -8,7 +8,9 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.runtime.structure.desc
 import java.lang.reflect.Method
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
+import kotlin.jvm.internal.KFunctionWithEqualityData
 import kotlin.metadata.Modality
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -29,7 +31,7 @@ internal class JavaAnnotationConstructor(
     private val methods = klass.java.declaredMethods.sortedBy { it.name }
 
     override val container: KDeclarationContainerImpl get() = klass
-    override val rawBoundReceiver: Any? get() = null
+    override val rawBoundReceiver: Any? get() = CallableReference.NO_RECEIVER
     override val signature: String by lazy(PUBLICATION) {
         parameters.joinToString(separator = "", prefix = "<init>(", postfix = ")V") { it.type.jvmErasure.java.desc }
     }
@@ -76,12 +78,15 @@ internal class JavaAnnotationConstructor(
         error("Annotation constructors cannot be copied: $this")
 
     override fun equals(other: Any?): Boolean {
-        val that = other.asReflectFunction() ?: return false
-        return container == that.container && name == that.name && signature == that.signature && rawBoundReceiver == that.rawBoundReceiver
+        val that = other as? KFunctionWithEqualityData<*> ?: return false
+        return owner == that.owner &&
+                name == that.name &&
+                signature == that.signature &&
+                rawBoundReceiver == that.rawBoundReceiver
     }
 
     override fun hashCode(): Int =
-        (container.hashCode() * 31 + name.hashCode()) * 31 + signature.hashCode()
+        (owner.hashCode() * 31 + name.hashCode()) * 31 + signature.hashCode()
 
     override fun toString(): String =
         ReflectionObjectRenderer.renderFunction(this)

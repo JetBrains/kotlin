@@ -28,6 +28,7 @@ import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
+import kotlin.jvm.internal.KFunctionWithEqualityData
 import kotlin.reflect.KClass
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
@@ -253,12 +254,15 @@ internal class DescriptorKFunction private constructor(
         get() = (descriptor as? ConstructorDescriptor)?.isPrimary == true
 
     override fun equals(other: Any?): Boolean {
-        val that = other.asReflectFunction() ?: return false
-        return container == that.container && name == that.name && signature == that.signature && rawBoundReceiver == that.rawBoundReceiver
+        val that = other as? KFunctionWithEqualityData<*> ?: return false
+        return owner == that.owner &&
+                name == that.name &&
+                signature == that.signature &&
+                rawBoundReceiver == that.rawBoundReceiver
     }
 
     override fun hashCode(): Int =
-        (container.hashCode() * 31 + name.hashCode()) * 31 + signature.hashCode()
+        (owner.hashCode() * 31 + name.hashCode()) * 31 + signature.hashCode()
 
     override fun toString(): String =
         ReflectionObjectRenderer.renderFunction(this)

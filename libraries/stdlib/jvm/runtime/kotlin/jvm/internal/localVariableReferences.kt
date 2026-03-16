@@ -15,7 +15,8 @@ private fun notSupportedError(): Nothing {
 
 @SinceKotlin("1.1")
 public open class LocalVariableReference : PropertyReference0() {
-    override fun getOwner(): KDeclarationContainer = notSupportedError()
+    override val owner: KDeclarationContainer
+        get() = notSupportedError()
 
     override fun get(): Any? = notSupportedError()
 
@@ -23,7 +24,8 @@ public open class LocalVariableReference : PropertyReference0() {
 
 @SinceKotlin("1.1")
 public open class MutableLocalVariableReference : MutablePropertyReference0() {
-    override fun getOwner(): KDeclarationContainer = notSupportedError()
+    override val owner: KDeclarationContainer
+        get() = notSupportedError()
 
     override fun get(): Any? = notSupportedError()
 

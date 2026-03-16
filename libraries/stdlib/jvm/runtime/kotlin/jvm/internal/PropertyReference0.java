@@ -26,8 +26,8 @@ public abstract class PropertyReference0 extends PropertyReference implements KP
     }
 
     @Override
-    protected KCallable computeReflected() {
-        return Reflection.property0(this);
+    protected KCallable computeReflected(boolean forceStdlibOnlyReflection) {
+        return forceStdlibOnlyReflection ? StdlibOnlyReflection.property0(this) : Reflection.property0(this);
     }
 
     @Override

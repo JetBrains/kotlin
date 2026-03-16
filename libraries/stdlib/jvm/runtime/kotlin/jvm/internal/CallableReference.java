@@ -8,6 +8,7 @@ package kotlin.jvm.internal;
 import kotlin.SinceKotlin;
 import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.ObjectStreamException;
@@ -41,10 +42,28 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
     private final String name;
 
     @SinceKotlin(version = "1.4")
+    @NotNull
     private final String signature;
 
-    @SinceKotlin(version = "1.4")
-    private final boolean isTopLevel;
+    @SinceKotlin(version = "2.4")
+    private final int flags;
+
+    @SinceKotlin(version = "2.4")
+    protected enum Flag {
+        TOP_LEVEL(1),
+        SYNTHETIC_JAVA_PROPERTY(1 << 1),
+        STDLIB_ONLY_REFLECTION(1 << 2);
+
+        private final int mask;
+
+        Flag(int mask) {
+            this.mask = mask;
+        }
+
+        public boolean isSet(int flags) {
+            return (flags & mask) != 0;
+        }
+    }
 
     @SinceKotlin(version = "1.1")
     public static final Object NO_RECEIVER = NoReceiver.INSTANCE;
@@ -64,22 +83,31 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
 
     @SinceKotlin(version = "1.1")
     protected CallableReference(Object receiver) {
-        this(receiver, null, null, null, false);
+        this(receiver, null, null, null, 0);
     }
 
     @SinceKotlin(version = "1.4")
-    protected CallableReference(Object receiver, Class owner, String name, String signature, boolean isTopLevel) {
+    protected CallableReference(Object receiver, Class owner, String name, String signature, int flags) {
         this.receiver = receiver;
         this.owner = owner;
         this.name = name;
         this.signature = signature;
-        this.isTopLevel = isTopLevel;
+        this.flags = flags;
     }
 
-    protected abstract KCallable computeReflected();
+    protected abstract KCallable computeReflected(boolean forceStdlibOnlyReflection);
+
+    private boolean isStdlibOnlyReflection() {
+        return Flag.STDLIB_ONLY_REFLECTION.isSet(flags);
+    }
 
     @SinceKotlin(version = "1.1")
     public Object getBoundReceiver() {
+        return receiver;
+    }
+
+    @SinceKotlin(version = "2.4")
+    public Object getRawBoundReceiver() {
         return receiver;
     }
 
@@ -87,7 +115,7 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
     public KCallable compute() {
         KCallable result = reflected;
         if (result == null) {
-            result = computeReflected();
+            result = computeReflected(isStdlibOnlyReflection());
             reflected = result;
         }
         return result;
@@ -97,7 +125,7 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
     protected KCallable getReflected() {
         KCallable result = compute();
         if (result == this) {
-            throw new KotlinReflectionNotSupportedError();
+            throw Reflection.notSupportedError();
         }
         return result;
     }
@@ -110,14 +138,22 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
      * @return the class or package where the callable should be located, usually specified on the LHS of the '::' operator
      */
     public KDeclarationContainer getOwner() {
-        return owner == null ? null :
-               isTopLevel ? Reflection.getOrCreateKotlinPackage(owner) : Reflection.getOrCreateKotlinClass(owner);
+        if (owner == null) {
+            return null;
+        }
+        boolean isTopLevel = Flag.TOP_LEVEL.isSet(flags);
+        if (isStdlibOnlyReflection()) {
+            return isTopLevel ? StdlibOnlyReflection.getOrCreateKotlinPackage(owner) : StdlibOnlyReflection.getOrCreateKotlinClass(owner);
+        } else {
+            return isTopLevel ? Reflection.getOrCreateKotlinPackage(owner) : Reflection.getOrCreateKotlinClass(owner);
+        }
     }
 
     /**
      * @return Kotlin name of the callable, the one which was declared in the source code (@JvmName doesn't change it)
      */
     @Override
+    @NotNull
     public String getName() {
         return name;
     }
@@ -130,6 +166,7 @@ public abstract class CallableReference implements KCallable, Serializable, Kotl
      * Note that technically the signature itself is not even used as a signature per se in reflection implementation,
      * but only as a unique and unambiguous way to map a function/property descriptor to a string.
      */
+    @NotNull
     public String getSignature() {
         return signature;
     }

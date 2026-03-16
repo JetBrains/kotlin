@@ -7,6 +7,7 @@ package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.jvm.internal.KPropertyWithEqualityData
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
 import kotlin.reflect.*
@@ -197,12 +198,15 @@ internal abstract class KotlinKProperty<out V>(
     }
 
     override fun equals(other: Any?): Boolean {
-        val that = other.asReflectProperty() ?: return false
-        return container == that.container && name == that.name && signature == that.signature && rawBoundReceiver == that.rawBoundReceiver
+        val that = other as? KPropertyWithEqualityData<*> ?: return false
+        return owner == that.owner &&
+                name == that.name &&
+                signature == that.signature &&
+                rawBoundReceiver == that.rawBoundReceiver
     }
 
     override fun hashCode(): Int =
-        (container.hashCode() * 31 + name.hashCode()) * 31 + signature.hashCode()
+        (owner.hashCode() * 31 + name.hashCode()) * 31 + signature.hashCode()
 
     override fun toString(): String =
         ReflectionObjectRenderer.renderProperty(this)

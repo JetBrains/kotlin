@@ -334,15 +334,19 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     ) {
         val container = expression.propertyContainer
         val containerClass = kClassToJavaClass(calculateOwnerKClass(container))
-        val isPackage = (container is IrClass && container.isFileClass) || container is IrPackageFragment
         call.arguments.assignFrom(
             listOfNotNull(
                 receiver, containerClass,
                 irString((expression.symbol.owner as IrDeclarationWithName).name.asString()),
                 computeSignatureString(expression),
-                irInt((if (isPackage) 1 else 0) or (if (expression.isJavaSyntheticPropertyReference) 2 else 0))
+                irInt(getPropertyReferenceFlags(container, expression))
             )
         )
+    }
+
+    private fun getPropertyReferenceFlags(container: IrDeclarationParent, expression: IrRichPropertyReference): Int {
+        val isTopLevel = (container is IrClass && container.isFileClass) || container is IrPackageFragment
+        return getCallableReferenceFlags(isTopLevel, context.config.forceStdlibOnlyReflection, expression.isJavaSyntheticPropertyReference)
     }
 
     private val IrRichPropertyReference.isJavaSyntheticPropertyReference: Boolean

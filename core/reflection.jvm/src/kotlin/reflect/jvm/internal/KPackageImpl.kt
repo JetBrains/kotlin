@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.jvm.internal.PackageDeclarationContainer
 import kotlin.metadata.KmConstructor
 import kotlin.metadata.KmFunction
 import kotlin.metadata.KmPackage
@@ -43,7 +44,7 @@ import kotlin.reflect.KCallable
 
 internal class KPackageImpl(
     override val jClass: Class<*>,
-) : KDeclarationContainerImpl() {
+) : KDeclarationContainerImpl(), PackageDeclarationContainer {
     private inner class Data : KDeclarationContainerImpl.Data() {
         val kmPackages: List<KmPackage> by lazy(PUBLICATION) {
             if (loadMetadataDirectly) {
@@ -172,7 +173,7 @@ internal class KPackageImpl(
         data.value.kmPackages.singleOrNull()?.localDelegatedProperties?.getOrNull(index)
 
     override fun equals(other: Any?): Boolean =
-        other is KPackageImpl && jClass == other.jClass
+        other is PackageDeclarationContainer && jClass == other.jClass
 
     override fun hashCode(): Int =
         jClass.hashCode()

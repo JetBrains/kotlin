@@ -22,8 +22,8 @@ public abstract class MutablePropertyReference2 extends MutablePropertyReference
     }
 
     @Override
-    protected KCallable computeReflected() {
-        return Reflection.mutableProperty2(this);
+    protected KCallable computeReflected(boolean forceStdlibOnlyReflection) {
+        return forceStdlibOnlyReflection ? StdlibOnlyReflection.mutableProperty2(this) : Reflection.mutableProperty2(this);
     }
 
     @Override

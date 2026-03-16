@@ -408,8 +408,13 @@ fun IrDeclarationParent.getCallableReferenceOwnerKClassType(context: JvmBackendC
         context.symbols.intrinsicsKotlinClass.defaultType
     }
 
-fun IrDeclaration.getCallableReferenceTopLevelFlag(): Int =
-    if (parent.let { it is IrClass && it.isFileClass }) 1 else 0
+fun getCallableReferenceFlags(isTopLevel: Boolean, forceStdlibOnlyReflection: Boolean, isSyntheticJavaProperty: Boolean = false): Int {
+    val isTopLevelBit = if (isTopLevel) 1 else 0
+    val isSyntheticJavaPropertyBit = if (isSyntheticJavaProperty) 1 else 0
+    val stdlibOnlyReflectionBit = if (forceStdlibOnlyReflection) 1 else 0
+
+    return (stdlibOnlyReflectionBit shl 2) + (isSyntheticJavaPropertyBit shl 1) + isTopLevelBit
+}
 
 fun findSuperDeclaration(function: IrSimpleFunction): IrSimpleFunction {
     var current = function

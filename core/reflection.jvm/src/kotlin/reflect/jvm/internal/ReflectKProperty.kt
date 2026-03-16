@@ -7,19 +7,22 @@ package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.*
 import kotlin.jvm.internal.KotlinGenericDeclaration
+import kotlin.jvm.internal.KPropertyWithEqualityData
 import kotlin.jvm.internal.findMethodBySignature
 import kotlin.reflect.KParameter
-import kotlin.reflect.KProperty
 import kotlin.reflect.full.IllegalPropertyDelegateAccessException
 import kotlin.reflect.jvm.internal.DescriptorKProperty.Companion.EXTENSION_PROPERTY_DELEGATE
 import kotlin.reflect.jvm.isAccessible
 
-internal interface ReflectKProperty<out V> : ReflectKCallable<V>, KProperty<V>, KotlinGenericDeclaration {
-    val signature: String
+internal interface ReflectKProperty<out V> : ReflectKCallable<V>, KPropertyWithEqualityData<V>, KotlinGenericDeclaration {
+    override val signature: String
 
     val javaField: Field?
 
     override fun findJavaDeclaration(): GenericDeclaration? = container.findMethodBySignature(signature)
+
+    override val owner: Any
+        get() = container
 }
 
 internal val ReflectKProperty<*>.isLocalDelegated: Boolean

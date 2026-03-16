@@ -10,7 +10,7 @@ import kotlin.reflect.KCallable;
 import kotlin.reflect.KFunction;
 
 @SuppressWarnings({"rawtypes", "unused"})
-public class FunctionReference extends CallableReference implements FunctionBase, KFunction {
+public class FunctionReference extends CallableReference implements FunctionBase, KFunctionWithEqualityData {
     private final int arity;
 
     public FunctionReference(int arity) {
@@ -23,8 +23,8 @@ public class FunctionReference extends CallableReference implements FunctionBase
     }
 
     @SinceKotlin(version = "1.4")
-    public FunctionReference(int arity, Object receiver, Class owner, String name, String signature, int flagsWithIsTopLevel) {
-        super(receiver, owner, name, signature, (flagsWithIsTopLevel & 1) == 1);
+    public FunctionReference(int arity, Object receiver, Class owner, String name, String signature, int flags) {
+        super(receiver, owner, name, signature, flags);
         this.arity = arity;
     }
 
@@ -41,8 +41,8 @@ public class FunctionReference extends CallableReference implements FunctionBase
 
     @Override
     @SinceKotlin(version = "1.1")
-    protected KCallable computeReflected() {
-        return Reflection.function(this);
+    protected KCallable computeReflected(boolean forceStdlibOnlyReflection) {
+        return forceStdlibOnlyReflection ? StdlibOnlyReflection.function(this) : Reflection.function(this);
     }
 
     @Override
@@ -78,18 +78,14 @@ public class FunctionReference extends CallableReference implements FunctionBase
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj instanceof FunctionReference) {
-            FunctionReference other = (FunctionReference) obj;
+        // the only KFunction without equality data are properties getters/setters, and they are not equal to functions
+        if (!(obj instanceof KFunctionWithEqualityData)) return false;
 
-            return getName().equals(other.getName()) &&
-                   getSignature().equals(other.getSignature()) &&
-                   Intrinsics.areEqual(getBoundReceiver(), other.getBoundReceiver()) &&
-                   Intrinsics.areEqual(getOwner(), other.getOwner());
-        }
-        if (obj instanceof KFunction) {
-            return obj.equals(compute());
-        }
-        return false;
+        KFunctionWithEqualityData other = (KFunctionWithEqualityData) obj;
+        return getName().equals(other.getName()) &&
+               getSignature().equals(other.getSignature()) &&
+               Intrinsics.areEqual(getRawBoundReceiver(), other.getRawBoundReceiver()) &&
+               Intrinsics.areEqual(getOwner(), other.getOwner());
     }
 
     @Override

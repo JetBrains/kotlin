@@ -435,27 +435,29 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     call.arguments[index++] = kClassToJavaClass(owner)
                     call.arguments[index++] = irString(callableReferenceTarget.originalName.asString())
                     call.arguments[index++] = generateSignature(callableReferenceTarget.symbol)
-                    call.arguments[index] = irInt(getFunctionReferenceFlags(callableReferenceTarget))
+                    call.arguments[index] = irInt(getAdaptedOrCallableReferenceFlags(callableReferenceTarget))
                 }
             }
         }
 
-        private fun getFunctionReferenceFlags(callableReferenceTarget: IrFunction): Int {
-            val isTopLevelBit = callableReferenceTarget.getCallableReferenceTopLevelFlag()
-            val adaptedCallableReferenceFlags = getAdaptedCallableReferenceFlags()
-            return isTopLevelBit + (adaptedCallableReferenceFlags shl 1)
-        }
+        private fun getAdaptedOrCallableReferenceFlags(callableReferenceTarget: IrFunction): Int =
+            if (adaptedReferenceOriginalTarget == null)
+                return getCallableReferenceFlags(callableReferenceTarget.isTopLevel, context.config.forceStdlibOnlyReflection)
+            else
+                return getAdaptedFunctionReferenceFlagsWithIsTopLevel(callableReferenceTarget.isTopLevel)
 
-        private fun getAdaptedCallableReferenceFlags(): Int {
+        private fun getAdaptedFunctionReferenceFlagsWithIsTopLevel(isTopLevel: Boolean): Int {
             if (adaptedReferenceOriginalTarget == null) return 0
 
+            val isTopLevelBit = if (isTopLevel) 1 else 0
             val isVarargMappedToElementBit = if (irFunctionReference.hasVarargConversion) 1 else 0
             val isSuspendConvertedBit = if (irFunctionReference.hasSuspendConversion) 1 else 0
             val isCoercedToUnitBit = if (irFunctionReference.hasUnitConversion) 1 else 0
 
-            return isVarargMappedToElementBit +
-                    (isSuspendConvertedBit shl 1) +
-                    (isCoercedToUnitBit shl 2)
+            return isTopLevelBit +
+                    (isVarargMappedToElementBit shl 1) +
+                    (isSuspendConvertedBit shl 2) +
+                    (isCoercedToUnitBit shl 3)
         }
 
         /**

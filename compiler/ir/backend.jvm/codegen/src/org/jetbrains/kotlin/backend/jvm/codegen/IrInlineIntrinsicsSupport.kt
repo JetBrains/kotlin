@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.intrinsics.SignatureString
+import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceFlags
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceOwnerKClassType
-import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceTopLevelFlag
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
@@ -91,7 +92,7 @@ class IrInlineIntrinsicsSupport(
         v.aconst(declaration.name.asString())
         // TODO: generate correct signature for functions and property accessors which have inline class types in the signature.
         SignatureString.generateSignatureString(v, function, classCodegen)
-        v.iconst(declaration.getCallableReferenceTopLevelFlag())
+        v.iconst(getCallableReferenceFlags(declaration.isTopLevel, config.forceStdlibOnlyReflection))
         val parameterTypes =
             (if (withArity) listOf(INT_TYPE) else emptyList()) +
                     listOf(JAVA_CLASS_TYPE, JAVA_STRING_TYPE, JAVA_STRING_TYPE, INT_TYPE)
