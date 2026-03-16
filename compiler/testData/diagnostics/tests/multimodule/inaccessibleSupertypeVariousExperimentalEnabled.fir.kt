@@ -33,7 +33,7 @@ fun main() {
     dependencyInheritor.<!MISSING_DEPENDENCY_SUPERCLASS, UNRESOLVED_REFERENCE!>foo<!>()
     dependencyInheritor.<!MISSING_DEPENDENCY_SUPERCLASS!>bar<!>()
 
-    DependencyInheritor::<!UNRESOLVED_REFERENCE!>foo<!>
+    DependencyInheritor::<!MISSING_DEPENDENCY_SUPERCLASS, UNRESOLVED_REFERENCE!>foo<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, propertyDeclaration, typeParameter */
