@@ -303,6 +303,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringNestedCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringNestedColUntyped
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ParseString
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Require0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Require1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringSelect
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum1
@@ -700,6 +701,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "ParseString" -> ParseString()
         "ParseDefault" -> ParseDefault()
         "Require0" -> Require0()
+        "Require1" -> Require1()
         else -> if (isTest) error(this) else null
     }
 }
