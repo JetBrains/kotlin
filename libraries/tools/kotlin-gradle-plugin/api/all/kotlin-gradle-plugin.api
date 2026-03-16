@@ -2753,9 +2753,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/Distribution$Compa
 	public static final field DIST Ljava/lang/String;
 }
 
-public abstract interface annotation class org/jetbrains/kotlin/gradle/targets/js/dsl/ExperimentalDceDsl : java/lang/annotation/Annotation {
-}
-
 public abstract interface annotation class org/jetbrains/kotlin/gradle/targets/js/dsl/ExperimentalDistributionDsl : java/lang/annotation/Annotation {
 }
 
