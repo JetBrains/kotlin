@@ -64,8 +64,11 @@ class JavaClassOverAst(
 
     override val visibility: Visibility
         get() = when {
+            // Nested type declarations in interfaces are implicitly public (JLS 9.5)
+            outerClass?.isInterface == true -> Visibilities.Public
             hasModifier("PUBLIC_KEYWORD") -> Visibilities.Public
-            hasModifier("PROTECTED_KEYWORD") -> Visibilities.Protected
+            // Protected nested classes are visible in same package + subclasses (like members)
+            hasModifier("PROTECTED_KEYWORD") -> if (isStatic) JavaVisibilities.ProtectedStaticVisibility else JavaVisibilities.ProtectedAndPackage
             hasModifier("PRIVATE_KEYWORD") -> Visibilities.Private
             else -> JavaVisibilities.PackageVisibility
         }

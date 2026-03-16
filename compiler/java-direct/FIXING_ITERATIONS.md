@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 35 (2026-03-16) |
-| **Box Tests** | 1155/1168 passing (98.9%) |
-| **Phased Tests** | 1361/1442 passing (94.4%) |
-| **Combined** | ~2559/2652 passing, **~93 failing** |
+| **Last Iteration** | 36 (2026-03-16) |
+| **Box Tests** | 1157/1168 passing (99.1%) |
+| **Phased Tests** | 1374/1442 passing (95.3%) |
+| **Combined** | ~2531/2610 passing, **~79 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -131,6 +131,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 33 | Raw types detection fix | +8 phased, +2 box |
 | 34 | Type parameter identity across class finder lookups | +3 phased |
 | 35 | Unresolvable enum annotation argument crash fix | +1 phased |
+| 36 | Java enum entries, enum constant visibility, nested class visibility | +2 box, +12 phased |
 
 ---
 

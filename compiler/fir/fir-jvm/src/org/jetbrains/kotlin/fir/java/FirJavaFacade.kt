@@ -342,12 +342,12 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
                 origin = mappedJavaEnumFunctionsOrigin,
             )
 
-            // FirDeclarationOrigin.Source requires a source element, but java-direct classes
-            // don't have PSI source elements. Use Java.Source for java-direct source classes.
-            // Keep Source/Library for PSI-based classes to maintain backward compatibility.
+            // For java-direct source classes (classSource == null): use Library to avoid the validation
+            // check in FirPropertyAccessorImpl that requires source element for Source origin. Library
+            // origin still creates a proper getter (not a Java backing field) which EnumExternalEntriesLowering
+            // can intercept to generate the correct intrinsic mapping.
             val enumEntriesOrigin = when {
-                classSource == null && firJavaClass.origin.fromSource -> FirDeclarationOrigin.Java.Source
-                firJavaClass.origin.fromSource -> FirDeclarationOrigin.Source
+                firJavaClass.origin.fromSource && classSource != null -> FirDeclarationOrigin.Source
                 else -> FirDeclarationOrigin.Library
             }
 

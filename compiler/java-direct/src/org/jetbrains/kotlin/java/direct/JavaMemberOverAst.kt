@@ -61,6 +61,10 @@ class JavaFieldOverAst(
     containingClass: JavaClassOverAst
 ) : JavaMemberOverAst(node, containingClass), JavaField {
     override val isEnumEntry: Boolean get() = node.type.toString() == "ENUM_CONSTANT"
+
+    // Enum constants are implicitly public (JLS 8.9.3)
+    override val visibility: Visibility get() = if (isEnumEntry) Visibilities.Public else super.visibility
+
     override val type: JavaType
         get() {
             // For enum constants, the type is the containing enum class itself

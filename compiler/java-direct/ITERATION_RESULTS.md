@@ -6,7 +6,72 @@ Append-only log of iteration findings, decisions, and learnings.
 
 **Current status**: See `FIXING_ITERATIONS.md` for up-to-date test counts and remaining work.
 
-**Last Updated**: 2026-03-13
+**Last Updated**: 2026-03-16
+
+---
+
+## Iteration 36: Visibility and Enum Entries — 2026-03-16
+
+### Root Cause Analysis
+
+Three independent visibility/enum bugs:
+
+**Bug 1 — Java enum `entries` property (NoSuchFieldError)**
+`FirJavaFacade.kt` used `Java.Source` origin for the synthetic `entries` getter of java-direct source enums.
+`Java.Source` is a `FirDeclarationOrigin.Java` subtype → `isJavaOrigin=true` in `createPropertySymbols` → no getter symbol created, backing field `entries` created instead → JVM codegen generates `GETSTATIC MyEnum.entries` → `NoSuchFieldError` at runtime.
+Using `Library` origin (non-Java) avoids the backing field and creates a getter, which `EnumExternalEntriesLowering` then correctly intrinsifies.
+Note: `Source` origin is blocked because `FirPropertyAccessorImpl` validates `source != null` for Source origin.
+
+**Bug 2 — Enum constant visibility (INVISIBLE_REFERENCE)**
+`JavaFieldOverAst` had no visibility override for enum entries. They have no explicit modifiers in the AST → fell through to `PackageVisibility`. Java spec (JLS 8.9.3): enum constants are implicitly `public static final`.
+
+**Bug 3 — Nested class visibility (INVISIBLE_REFERENCE)**
+`JavaClassOverAst.visibility` had two issues:
+- Nested types in interfaces should be `Public` (JLS 9.5): missing `outerClass?.isInterface == true` → Public case
+- Protected nested classes returned `Visibilities.Protected` (subclasses only), should be `ProtectedAndPackage` or `ProtectedStaticVisibility` to also allow same-package access
+
+### Fix
+
+**FirJavaFacade.kt**: Changed `enumEntriesOrigin` for java-direct source classes from `Java.Source` to `Library`:
+```kotlin
+val enumEntriesOrigin = when {
+    firJavaClass.origin.fromSource && classSource != null -> FirDeclarationOrigin.Source
+    else -> FirDeclarationOrigin.Library
+}
+```
+
+**JavaMemberOverAst.kt** (`JavaFieldOverAst`): Added visibility override for enum entries:
+```kotlin
+override val visibility: Visibility get() = if (isEnumEntry) Visibilities.Public else super.visibility
+```
+
+**JavaClassOverAst.kt**: Fixed nested class visibility:
+```kotlin
+override val visibility: Visibility
+    get() = when {
+        outerClass?.isInterface == true -> Visibilities.Public
+        hasModifier("PUBLIC_KEYWORD") -> Visibilities.Public
+        hasModifier("PROTECTED_KEYWORD") -> if (isStatic) JavaVisibilities.ProtectedStaticVisibility else JavaVisibilities.ProtectedAndPackage
+        hasModifier("PRIVATE_KEYWORD") -> Visibilities.Private
+        else -> JavaVisibilities.PackageVisibility
+    }
+```
+
+### Test Results
+- **Box tests**: 13 → 11 (+2 fixed: `testEnumEntriesFromJava`, `testStaticImportFromEnumJava`, `testJavaAnnotationConstructorTypes`, `testJavaVisibility`)
+- **Phased tests**: 80 → 68 (+12 fixed: enum visibility, nested interface type visibility, protected member visibility across multiple test suites)
+- **Total failures**: 93 → 79 (14 tests fixed)
+- PSI regression tests: All passing ✅
+
+### Files Modified
+- `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/FirJavaFacade.kt` — enumEntriesOrigin fix
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt` — enum constant visibility
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt` — nested class visibility
+
+### Key Learnings
+1. **FirDeclarationOrigin.Java subtypes suppress getter creation** — `isJavaOrigin` check blocks getter symbol for Java-origin properties, creating backing fields instead; synthetic properties like `entries` must use non-Java origin
+2. **Implicit member modifiers in Java** — enum constants (public), interface members (public), interface nested types (public) have no explicit modifiers in AST; all need explicit rules
+3. **Protected in Java means package+protected** — `Visibilities.Protected` only covers subclasses; Java's `protected` is `ProtectedAndPackage`
 
 ---
 
