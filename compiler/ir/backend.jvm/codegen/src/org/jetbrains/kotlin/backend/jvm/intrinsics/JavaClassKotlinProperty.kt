@@ -8,17 +8,15 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
-import org.jetbrains.kotlin.backend.jvm.codegen.materialize
+import org.jetbrains.kotlin.backend.jvm.codegen.materializeAt
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetClass
 
 object JavaClassKotlinProperty : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val extensionReceiver = expression.arguments.singleOrNull() ?: return null
 
-        extensionReceiver.accept(codegen, data).materialize()
+        extensionReceiver.accept(codegen, data).materializeAt(extensionReceiver.type)
         AsmUtil.wrapJavaClassIntoKClass(codegen.mv, codegen.state.config.forceStdlibOnlyReflection)
 
         return with(codegen) { expression.onStack }
