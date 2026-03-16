@@ -214,7 +214,7 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     )
 
     // TODO: Drop this directive and make the offset validation enabled by default when KT-81475 is fixed.
-    val ENABLE_IR_NESTED_OFFSETS_CHECKS by stringDirective(
+    val ENABLE_IR_NESTED_OFFSETS_CHECKS by directive(
         description = "Enables validation of the nested IR elements offsets"
     )
 
