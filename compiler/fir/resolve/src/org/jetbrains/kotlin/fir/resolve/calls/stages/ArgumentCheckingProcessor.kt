@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE
+import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
@@ -260,8 +261,21 @@ internal object ArgumentCheckingProcessor {
                 if (type is ConeTypeVariableType) {
                     val lookupTag = type.typeConstructor
 
-                    val constraints = csBuilder.currentStorage().notFixedTypeVariables[lookupTag]?.constraints
-                    val constraintTypes = constraints?.mapNotNull { it.type as? ConeKotlinType }
+                    val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[lookupTag]
+
+                    if (variableWithConstraints != null) {
+                        context(candidate.system) {
+                            (context.inferenceComponents.resultTypeResolver
+                                .findResultTypeOrNull(variableWithConstraints, UNKNOWN) as ConeKotlinType?)
+                                ?.applyIf(type.isMarkedNullable) {
+                                    withNullability(type.isMarkedNullable, session.typeContext)
+                                }?.let {
+                                    return it
+                                }
+                        }
+                    }
+
+                    val constraintTypes = variableWithConstraints?.constraints?.mapNotNull { it.type as? ConeKotlinType }
                     if (!constraintTypes.isNullOrEmpty()) {
                         return ConeTypeIntersector.intersectTypes(session.typeContext, constraintTypes).applyIf(type.isMarkedNullable) {
                             withNullability(type.isMarkedNullable, session.typeContext)
