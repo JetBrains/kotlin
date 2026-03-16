@@ -359,6 +359,13 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("kind", constKindType, withReplace = true)
         +field("value", anyType, nullable = true)
         +field("prefix", string, nullable = true)
+
+        kDoc = """
+            Represents a literal expression in FIR, such as a plain string, number (signed or unsigned), boolean, char, or null.
+            
+            The [value] doesn't describe the type of expression that is stored. It is possible that unsigned number is represented as signed.
+            Only the [kind] field describes the type of expression that is stored. For that reason [kind] and [coneTypeOrNull] should be in sync.
+        """.trimIndent()
     }
 
     val functionCall: Element by element(Expression) {
