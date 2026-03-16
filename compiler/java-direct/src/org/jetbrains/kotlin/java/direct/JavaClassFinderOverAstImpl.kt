@@ -44,6 +44,9 @@ class JavaClassFinderOverAstImpl(
     // package cache
     private val packageCache: MutableMap<FqName, JavaPackage> = ConcurrentHashMap()
 
+    // Cache: ClassId -> list of supertype ClassIds (direct only)
+    private val supertypeCache: MutableMap<ClassId, List<ClassId>> = ConcurrentHashMap()
+
     init {
         buildIndex()
     }
@@ -141,7 +144,7 @@ class JavaClassFinderOverAstImpl(
         val source = tryReadFile(path) ?: return null
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
-        val resolutionContext = JavaResolutionContext.create(root)
+        val resolutionContext = JavaResolutionContext.create(root, classFinderProvider = { this })
         val node = root.getChildrenByType("CLASS").firstOrNull { n ->
             n.findChildByType("IDENTIFIER")?.text == simpleName
         } ?: return null
@@ -192,5 +195,128 @@ class JavaClassFinderOverAstImpl(
             }
         }
         return direct
+    }
+
+    /**
+     * Parses just enough of a class to extract its direct supertypes.
+     * This is lightweight - only reads extends/implements clauses.
+     */
+    internal fun getDirectSupertypes(classId: ClassId): List<ClassId> {
+        return supertypeCache.getOrPut(classId) {
+            val files = findFilesForClass(classId)
+            if (files.isEmpty()) return@getOrPut emptyList()
+
+            val file = files.first()
+            val source = tryReadFile(file.path) ?: return@getOrPut emptyList()
+            val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+            val root = buildSyntaxTree(builder, source)
+
+            val packageFqName = extractPackageName(root)
+            val classNode = findClassInTree(root, classId) ?: return@getOrPut emptyList()
+
+            val supertypes = mutableListOf<ClassId>()
+
+            classNode.findChildByType("EXTENDS_LIST")
+                ?.getChildrenByType("JAVA_CODE_REFERENCE")
+                ?.forEach { ref ->
+                    resolveSupertypeReference(ref.text, packageFqName)?.let {
+                        supertypes.add(it)
+                    }
+                }
+
+            classNode.findChildByType("IMPLEMENTS_LIST")
+                ?.getChildrenByType("JAVA_CODE_REFERENCE")
+                ?.forEach { ref ->
+                    resolveSupertypeReference(ref.text, packageFqName)?.let {
+                        supertypes.add(it)
+                    }
+                }
+
+            supertypes
+        }
+    }
+
+    /**
+     * Recursively collects all inner class names from the supertype hierarchy.
+     * Returns Map<simpleName, Set<ClassId>> to detect ambiguities.
+     */
+    internal fun collectInheritedInnerClasses(classId: ClassId): Map<String, Set<ClassId>> {
+        val result = mutableMapOf<String, MutableSet<ClassId>>()
+        val visited = mutableSetOf<ClassId>()
+
+        fun collectRecursive(current: ClassId) {
+            if (current in visited) return
+            visited.add(current)
+
+            val innerClasses = getInnerClassNames(current)
+            for (innerName in innerClasses) {
+                val innerClassId = current.createNestedClassId(Name.identifier(innerName))
+                result.getOrPut(innerName) { mutableSetOf() }.add(innerClassId)
+            }
+
+            for (supertypeId in getDirectSupertypes(current)) {
+                collectRecursive(supertypeId)
+            }
+        }
+
+        collectRecursive(classId)
+        return result
+    }
+
+    private fun findFilesForClass(classId: ClassId): List<FileEntry> {
+        val packageFqName = classId.packageFqName
+        val topLevelName = classId.relativeClassName.pathSegments().firstOrNull()?.asString()
+            ?: return emptyList()
+        return index[packageFqName]?.get(topLevelName) ?: emptyList()
+    }
+
+    private fun extractPackageName(root: JavaSyntaxNode): FqName {
+        val packageStmt = root.findChildByType("PACKAGE_STATEMENT")
+        val packageName = packageStmt?.findChildByType("JAVA_CODE_REFERENCE")?.text
+        return if (packageName != null) FqName(packageName) else FqName.ROOT
+    }
+
+    private fun findClassInTree(root: JavaSyntaxNode, classId: ClassId): JavaSyntaxNode? {
+        val segments = classId.relativeClassName.pathSegments().map { it.asString() }
+        if (segments.isEmpty()) return null
+
+        var currentNode: JavaSyntaxNode = root
+        for (segment in segments) {
+            val classNode = currentNode.getChildrenByType("CLASS").firstOrNull { node ->
+                node.findChildByType("IDENTIFIER")?.text == segment
+            } ?: return null
+            currentNode = classNode
+        }
+        return currentNode
+    }
+
+    private fun resolveSupertypeReference(ref: String, packageFqName: FqName): ClassId? {
+        val simpleName = ref.substringBefore('<').trim()
+
+        if (!simpleName.contains('.')) {
+            val samePackageId = ClassId(packageFqName, Name.identifier(simpleName))
+            if (index[packageFqName]?.containsKey(simpleName) == true) {
+                return samePackageId
+            }
+        }
+
+        return null
+    }
+
+    private fun getInnerClassNames(classId: ClassId): Set<String> {
+        val files = findFilesForClass(classId)
+        if (files.isEmpty()) return emptySet()
+
+        val file = files.first()
+        val source = tryReadFile(file.path) ?: return emptySet()
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildSyntaxTree(builder, source)
+
+        val classNode = findClassInTree(root, classId) ?: return emptySet()
+
+        return classNode.children
+            .filter { it.type.toString() == "CLASS" }
+            .mapNotNull { it.findChildByType("IDENTIFIER")?.text }
+            .toSet()
     }
 }

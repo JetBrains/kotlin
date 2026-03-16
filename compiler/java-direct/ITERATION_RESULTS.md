@@ -278,37 +278,51 @@ Modified `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResoluti
 - ✅ `testInheritanceAmbiguity` — Direct conflict: `x.Z` vs `i.Z` in same package
 - ✅ `testInheritanceAmbiguity3` — Direct conflict: `i.Z` vs `i2.Z` both as direct supertypes
 
-### Known Limitation
+---
 
-❌ `testInheritanceAmbiguity2` — **Cannot fix** due to architectural constraint
+## Iteration 30: Cross-file Ambiguity Detection
 
-**Test scenario**: 
-```java
-class X { public class Z {} }
-interface I { public class Z {} }
-interface I2 extends I {}
-class Y extends X implements I2 {  // I2 in separate file
-    public Z getZ() { return null; }
-}
-```
+**Goal**: Implement cross-file ambiguity detection for `testInheritanceAmbiguity2` with minimal eager parsing
 
-**Root cause**: Each Java file is parsed independently with its own `JavaResolutionContext`. The `localClassProvider` only knows about classes within the same file. When resolving from `Y`:
-- `Y`'s supertypes are `X` and `I2` (both in different files)
-- `supertype.classifier` returns `null` for classes in other files
-- Cannot navigate to `I2`'s supertype `I` to find `I.Z`
-- Cannot detect ambiguity between `X.Z` and `I.Z`
+**Approach**: Design document created at `implDocs/CROSS_FILE_AMBIGUITY_SOLUTION.md` proposing 4-phase minimal solution:
+1. Add `classFinderProvider` callback to `JavaResolutionContext`
+2. Implement `getDirectSupertypes()` - lightweight parsing of extends/implements clauses
+3. Implement `collectInheritedInnerClasses()` - recursive collection with cycle detection
+4. Update ambiguity detection to use cross-file detection as fallback
 
-**Architectural trade-off**:
-- **javac**: Compiles all files together, full cross-file visibility
-- **java-direct**: On-demand parsing for performance, file-scoped resolution
+**Implementation**:
+- ✅ Added `classFinderProvider` parameter to `JavaResolutionContext` constructor and threaded through all context creation methods
+- ✅ Implemented `getDirectSupertypes()` with caching in `JavaClassFinderOverAstImpl`
+- ✅ Implemented `collectInheritedInnerClasses()` with cycle detection
+- ✅ Updated `findInnerClassFromSupertypes()` and `resolveFromSupertypes()` to use cross-file detection when local resolution finds nothing
+- ✅ Added helper methods: `findFilesForClass()`, `resolveSupertypeReference()`, `getInnerClassNames()`
 
-This is a fundamental design choice, not a bug. The ambiguity detection correctly handles same-file cases.
+**Errors encountered and fixed**:
+1. Type mismatch using `relativeClassName.child()` - fixed by using `createNestedClassId()`
+2. Test timeout due to incorrect `ClassId.topLevel(fqName)` usage - fixed by adding `fqNameToClassId()` helper
+3. Lowercase class name bug in `fqNameToClassId()`:
+   - Initial implementation used heuristic assuming class names start with uppercase
+   - Test case has lowercase class names (x, y, i, i2)
+   - For `FqName("a.y")`, incorrectly returned `ClassId(FqName.ROOT, FqName("a.y"))` instead of `ClassId(FqName("a"), FqName("y"))`
+   - Fixed by using `packageFqName` directly from context instead of heuristic
+
+**Test results**: **ALL 4 ambiguity tests pass!** ✅
+- ✅ `testInheritanceAmbiguity`
+- ✅ `testInheritanceAmbiguity2` - **FIXED!**
+- ✅ `testInheritanceAmbiguity3`
+- ✅ `testInheritanceAmbiguity4`
+
+**Files modified**:
+- `JavaResolutionContext.kt` - added infrastructure, cross-file detection logic, and `fqNameToClassId()` fix
+- `JavaClassFinderOverAstImpl.kt` - added supertype parsing and inner class collection
+- `InheritanceAmbiguity2.kt` - updated test expectations (removed `MISSING_DEPENDENCY_CLASS` error)
 
 ### Key Learnings
 1. **Set-based collection** handles duplicate paths naturally (same class found via different supertype chains)
 2. **Two-level ambiguity detection needed**: both Java Model level (`findInnerClassFromSupertypes`) and FIR callback level (`resolveFromSupertypes`)
-3. **File-scoped resolution** limits cross-file inheritance analysis — acceptable trade-off for on-demand parsing architecture
-4. **Verified with javac** before implementing — understanding reference compiler behavior prevents wrong assumptions
+3. **Cross-file detection is possible** with minimal eager parsing - the "architectural limitation" claim was incorrect
+4. **Avoid heuristics when exact information is available** - using `packageFqName` from context is more reliable than uppercase detection
+5. **Test with edge cases** - lowercase class names revealed the heuristic bug
 
 ---
 

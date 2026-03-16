@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -26,6 +28,7 @@ class JavaResolutionContext private constructor(
     private val localClassProvider: (Name) -> JavaClass?,
     private val typeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
     private val containingClassProvider: (() -> JavaClass?)? = null,
+    private val classFinderProvider: (() -> JavaClassFinderOverAstImpl)? = null,
 ) {
     /**
      * Finds a class by simple name. Checks:
@@ -66,47 +69,60 @@ class JavaResolutionContext private constructor(
      * Returns null if multiple inner classes with the same name are found (ambiguity),
      * which will cause MISSING_DEPENDENCY_CLASS error as per javac behavior.
      * 
-     * IMPORTANT: To avoid infinite recursion, we resolve supertypes using localClassProvider
-     * directly instead of going through classifier (which calls findLocalClass).
-     * This means we only search local (same compilation unit) supertypes.
-     * For external supertypes, the resolution callback (resolveWithCallback) handles it via FIR.
+     * Uses the classFinderProvider (if available) to detect cross-file ambiguities.
+     * Falls back to local resolution for same-file supertypes.
      */
     private fun findInnerClassFromSupertypes(name: Name, javaClass: JavaClass, visited: MutableSet<JavaClass>): JavaClass? {
-        // Cycle detection using object identity
         if (javaClass in visited) return null
         visited.add(javaClass)
         
         val allFound = mutableSetOf<JavaClass>()
-        
+
+        // First try local resolution (same-file supertypes)
         for (supertype in javaClass.supertypes) {
-            // Get the supertype's raw name (first part before any dots or generics)
-            // presentableText gives us the raw reference text like "x" or "List<String>"
             val supertypeRef = supertype.presentableText.let { text ->
-                // Extract simple name (before '<' for generics, first part for qualified)
                 val withoutGenerics = text.substringBefore('<').trim()
                 withoutGenerics.substringBefore('.').trim()
             }
-            
+
             if (supertypeRef.isEmpty()) continue
-            
-            // Try to find this supertype as a local class (using localClassProvider to avoid recursion)
+
             val supertypeClass = localClassProvider(Name.identifier(supertypeRef)) ?: continue
-            
-            // Check direct inner class of the supertype
+
             supertypeClass.findInnerClass(name)?.let { found ->
                 allFound.add(found)
             }
-            
-            // Recursively check supertypes of the supertype
+
             findInnerClassFromSupertypes(name, supertypeClass, visited)?.let { found ->
                 allFound.add(found)
             }
         }
         
-        // Return null if ambiguous (multiple different classes found)
-        if (allFound.size > 1) {
-            return null
+        // If local resolution found nothing, try cross-file detection
+        if (allFound.isEmpty()) {
+            val javaClassOverAst = javaClass as? JavaClassOverAst
+            if (javaClassOverAst != null && classFinderProvider != null) {
+                val fqName = javaClassOverAst.fqName
+                if (fqName != null) {
+                    val containingClassId = fqNameToClassId(fqName)
+                    val classFinder = classFinderProvider.invoke()
+
+                    val inheritedInners = classFinder.collectInheritedInnerClasses(containingClassId)
+                    val candidates = inheritedInners[name.asString()] ?: emptySet()
+
+                    if (candidates.size > 1) {
+                        // Ambiguity detected across multiple supertypes
+                        return null
+                    }
+
+                    if (candidates.size == 1) {
+                        return classFinder.findClass(JavaClassFinder.Request(candidates.first()))
+                    }
+                }
+            }
         }
+
+        if (allFound.size > 1) return null
         return allFound.firstOrNull()
     }
 
@@ -122,7 +138,7 @@ class JavaResolutionContext private constructor(
         if (typeParams.isEmpty()) return this
         val newScope = typeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, localClassProvider, newScope, containingClassProvider
+            packageFqName, simpleImports, starImports, localClassProvider, newScope, containingClassProvider, classFinderProvider
         )
     }
 
@@ -132,8 +148,10 @@ class JavaResolutionContext private constructor(
      */
     fun withContainingClass(containingClass: JavaClass): JavaResolutionContext {
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, localClassProvider, typeParametersInScope
-        ) { containingClass }
+            packageFqName, simpleImports, starImports, localClassProvider, typeParametersInScope,
+            containingClassProvider = { containingClass },
+            classFinderProvider = classFinderProvider
+        )
     }
 
     /**
@@ -235,11 +253,63 @@ class JavaResolutionContext private constructor(
      * Returns null if ambiguous (multiple supertypes have nested class with same name).
      */
     private fun resolveFromSupertypes(simpleName: String, containingClass: JavaClass, tryResolve: (String) -> Boolean): String? {
+        // Try local resolution first
         val visited = mutableSetOf<String>()
         val allMatches = mutableSetOf<String>()
         resolveFromSupertypesRecursive(simpleName, containingClass, tryResolve, visited, allMatches)
-        // Return null if ambiguous (multiple different fully qualified names found)
-        return if (allMatches.size > 1) null else allMatches.firstOrNull()
+        
+        if (allMatches.isNotEmpty()) {
+            return if (allMatches.size > 1) null else allMatches.firstOrNull()
+        }
+        
+        // If local resolution found nothing, try cross-file detection
+        val javaClassOverAst = containingClass as? JavaClassOverAst
+        if (javaClassOverAst != null && classFinderProvider != null) {
+            val fqName = javaClassOverAst.fqName
+            if (fqName != null) {
+                val containingClassId = fqNameToClassId(fqName)
+                val classFinder = classFinderProvider.invoke()
+
+                val inheritedInners = classFinder.collectInheritedInnerClasses(containingClassId)
+                val candidates = inheritedInners[simpleName] ?: emptySet()
+
+                if (candidates.size > 1) {
+                    // Ambiguity detected
+                    return null
+                }
+
+                if (candidates.size == 1) {
+                    val candidateId = candidates.first()
+                    val fqn = buildFqnFromClassId(candidateId)
+                    if (tryResolve(fqn)) return fqn
+                }
+            }
+        }
+        
+        return null
+    }
+
+    private fun buildFqnFromClassId(classId: ClassId): String {
+        val pkg = classId.packageFqName.asString()
+        val className = classId.relativeClassName.pathSegments().joinToString(".") { it.asString() }
+        return if (pkg.isEmpty()) className else "$pkg.$className"
+    }
+    
+    private fun fqNameToClassId(fqName: FqName): ClassId {
+        // We know the package from resolutionContext.packageFqName
+        // The class name is whatever comes after the package
+        val fqnString = fqName.asString()
+        val pkgString = packageFqName.asString()
+        
+        val className = if (pkgString.isEmpty()) {
+            fqnString
+        } else if (fqnString.startsWith(pkgString + ".")) {
+            fqnString.substring(pkgString.length + 1)
+        } else {
+            fqnString
+        }
+        
+        return ClassId(packageFqName, FqName(className), isLocal = false)
     }
     
     private fun resolveFromSupertypesRecursive(
@@ -287,7 +357,10 @@ class JavaResolutionContext private constructor(
     }
 
     companion object {
-        fun create(root: JavaSyntaxNode): JavaResolutionContext {
+        fun create(
+            root: JavaSyntaxNode,
+            classFinderProvider: (() -> JavaClassFinderOverAstImpl)? = null
+        ): JavaResolutionContext {
             val packageFqName = extractPackageName(root)
             val (simpleImports, starImports) = extractImports(root)
 
@@ -307,7 +380,8 @@ class JavaResolutionContext private constructor(
                 packageFqName = packageFqName,
                 simpleImports = simpleImports,
                 starImports = starImports,
-                localClassProvider = localClassProvider
+                localClassProvider = localClassProvider,
+                classFinderProvider = classFinderProvider
             ).also { contextRef = it }
         }
 
