@@ -110,6 +110,12 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeByDeclarationReturnTypeT
   }
 
   @Test
+  @TestMetadata("nestedClassInsideGeneratedTopLevelClass.kt")
+  public void testNestedClassInsideGeneratedTopLevelClass() {
+    run("nestedClassInsideGeneratedTopLevelClass.kt");
+  }
+
+  @Test
   @TestMetadata("referenceToExtensionFunctionOfStarProjectionType.kt")
   public void testReferenceToExtensionFunctionOfStarProjectionType() {
     run("referenceToExtensionFunctionOfStarProjectionType.kt");

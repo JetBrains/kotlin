@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirDanglingFil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.nullableJavaSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolByClassIdWithoutDependencies
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
@@ -242,12 +241,11 @@ private fun collectDesignationPathWithContainingClassFallback(
     val useSiteSession by lazy(LazyThreadSafetyMode.NONE) { getTargetSession(target) }
 
     fun resolveChunk(classId: ClassId): FirRegularClass {
+        val symbolProvider = useSiteSession.symbolProvider
         val declaration = if (useSiteSession.requiresDependenciesSearch) {
-            useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
+            symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
         } else {
-            useSiteSession.firProvider.getFirClassifierByFqName(classId)
-                ?: useSiteSession.nullableJavaSymbolProvider?.getClassLikeSymbolByClassId(classId)?.fir
-                ?: findKotlinStdlibClass(classId, target)
+            symbolProvider.getClassLikeSymbolByClassIdWithoutDependencies(classId)?.fir ?: findKotlinStdlibClass(classId, target)
         }
 
         checkWithAttachment(
