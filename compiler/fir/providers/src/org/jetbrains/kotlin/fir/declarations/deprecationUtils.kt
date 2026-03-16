@@ -108,14 +108,12 @@ fun FirBasedSymbol<*>.getDeprecation(session: FirSession, callSite: FirElement?)
 }
 
 fun FirAnnotationContainer.getDeprecationsProvider(session: FirSession): DeprecationsProvider {
-    return extractDeprecationInfoPerUseSite(session).toDeprecationsProvider(session.firCachesFactory)
+    return extractDeprecationInfoPerUseSite(session, annotations).toDeprecationsProvider(session.firCachesFactory)
 }
 
 fun FirAnnotationContainer.extractDeprecationInfoPerUseSite(
     session: FirSession,
-    customAnnotations: List<FirAnnotation>? = annotations,
-    getterAnnotations: List<FirAnnotation>? = null,
-    setterAnnotations: List<FirAnnotation>? = null,
+    customAnnotations: List<FirAnnotation>,
 ): DeprecationAnnotationInfoPerUseSiteStorage {
     var fromJava = false
     var versionRequirements: List<VersionRequirement>? = null
@@ -124,17 +122,9 @@ fun FirAnnotationContainer.extractDeprecationInfoPerUseSite(
         versionRequirements = this.versionRequirements
     }
     return buildDeprecationAnnotationInfoPerUseSiteStorage {
-        add((customAnnotations ?: annotations).extractDeprecationAnnotationInfoPerUseSite(fromJava, session, versionRequirements))
+        add(customAnnotations.extractDeprecationAnnotationInfoPerUseSite(fromJava, session, versionRequirements))
         if (this@extractDeprecationInfoPerUseSite is FirProperty) {
-            add(
-                getDeprecationsAnnotationInfoByUseSiteFromAccessors(
-                    session = session,
-                    getter = getter,
-                    getterAnnotations = getterAnnotations,
-                    setter = setter,
-                    setterAnnotations = setterAnnotations,
-                )
-            )
+            add(getDeprecationsAnnotationInfoByUseSiteFromAccessors(session, getter, setter))
         }
     }
 }
@@ -152,26 +142,16 @@ fun getDeprecationsProviderFromAccessors(
 fun getDeprecationsAnnotationInfoByUseSiteFromAccessors(
     session: FirSession,
     getter: FirFunction?,
-    getterAnnotations: List<FirAnnotation>? = getter?.annotations,
     setter: FirFunction?,
-    setterAnnotations: List<FirAnnotation>? = setter?.annotations,
 ): DeprecationAnnotationInfoPerUseSiteStorage = buildDeprecationAnnotationInfoPerUseSiteStorage {
-    val setterDeprecations = setter?.extractDeprecationInfoPerUseSite(session, customAnnotations = setterAnnotations)
+    val setterDeprecations = setter?.extractDeprecationInfoPerUseSite(session, customAnnotations = setter.annotations)
     setterDeprecations?.storage?.forEach { (useSite, infos) ->
-        if (useSite == null) {
-            add(AnnotationUseSiteTarget.PROPERTY_SETTER, infos)
-        } else {
-            add(useSite, infos)
-        }
+        add(useSite ?: AnnotationUseSiteTarget.PROPERTY_SETTER, infos)
     }
 
-    val getterDeprecations = getter?.extractDeprecationInfoPerUseSite(session, customAnnotations = getterAnnotations)
+    val getterDeprecations = getter?.extractDeprecationInfoPerUseSite(session, customAnnotations = getter.annotations)
     getterDeprecations?.storage?.forEach { (useSite, infos) ->
-        if (useSite == null) {
-            add(AnnotationUseSiteTarget.PROPERTY_GETTER, infos)
-        } else {
-            add(useSite, infos)
-        }
+        add(useSite ?: AnnotationUseSiteTarget.PROPERTY_GETTER, infos)
     }
 }
 
