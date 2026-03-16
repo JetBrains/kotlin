@@ -28,19 +28,38 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFi
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
 
-class IrFileDeserializer(
-    val file: IrFile,
+abstract class IrFileDeserializer {
+    abstract val file: IrFile
+    abstract val symbolDeserializer: IrSymbolDeserializer
+    abstract val declarationDeserializer: IrDeclarationDeserializer
+    abstract val reversedSignatureIndex: Map<IdSignature, Int>
+
+    abstract fun deserializeDeclaration(idSig: IdSignature): IrDeclaration
+
+    /**
+     * Deserializes file-level annotations for the current [IrFile].
+     *
+     * The actual deserialization happens just once on the first invocation.
+     * The subsequent invocations have no effect.
+     *
+     * @return If the annotations have been actually deserialized on this invocation.
+     */
+    abstract fun deserializeFileImplicitDataIfFirstUse(): Boolean
+}
+
+class IrFileDeserializerImpl(
+    override val file: IrFile,
     private val libraryFile: IrLibraryFile,
     fileProto: ProtoFile,
-    val symbolDeserializer: IrSymbolDeserializer,
-    val declarationDeserializer: IrDeclarationDeserializer,
-) {
-    val reversedSignatureIndex = fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
+    override val symbolDeserializer: IrSymbolDeserializer,
+    override val declarationDeserializer: IrDeclarationDeserializer,
+) : IrFileDeserializer() {
+    override val reversedSignatureIndex = fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
 
     /** Once deserialized this property is set to `null`. */
     private var protoAnnotationsPendingDeserialization: List<ProtoAnnotation>? = fileProto.annotationList
 
-    fun deserializeDeclaration(idSig: IdSignature): IrDeclaration {
+    override fun deserializeDeclaration(idSig: IdSignature): IrDeclaration {
         return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(idSig), file.startOffset).also {
             file.declarations += it
         }
@@ -51,15 +70,7 @@ class IrFileDeserializer(
         return libraryFile.declaration(idSigIndex)
     }
 
-    /**
-     * Deserializes file-level annotations for the current [IrFile].
-     *
-     * The actual deserialization happens just once on the first invocation.
-     * The subsequent invocations have no effect.
-     *
-     * @return If the annotations have been actually deserialized on this invocation.
-     */
-    fun deserializeFileImplicitDataIfFirstUse(): Boolean {
+    override fun deserializeFileImplicitDataIfFirstUse(): Boolean {
         protoAnnotationsPendingDeserialization?.let {
             file.annotations += declarationDeserializer.deserializeAnnotations(it, file.startOffset)
             protoAnnotationsPendingDeserialization = null
@@ -124,7 +135,7 @@ class FileDeserializationState(
         fileEntryDeserializer = linker.fileEntryDeserializer,
     )
 
-    val fileDeserializer = IrFileDeserializer(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)
+    val fileDeserializer = IrFileDeserializerImpl(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)
 
     /**
      * This is the queue of top-level declarations in the current file to be deserialized.
