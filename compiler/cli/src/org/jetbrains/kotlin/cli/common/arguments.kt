@@ -55,25 +55,20 @@ fun CompilerConfiguration.setupCommonArguments(
     } ?: IrVerificationMode.NONE
     put(CommonConfigurationKeys.VERIFY_IR, irVerificationMode)
 
-    if (arguments.verifyIrVisibility) {
-        put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
-        if (irVerificationMode == IrVerificationMode.NONE) {
-            this.report(
-                COMPILER_ARGUMENTS_WARNING,
-                "'-Xverify-ir-visibility' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
-            )
-        }
+    if (arguments.disableIrCheckers.isNotEmpty() && irVerificationMode == IrVerificationMode.NONE) {
+        this.report(
+            COMPILER_ARGUMENTS_WARNING,
+            "'-Xdisable-ir-checkers' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
+        )
     }
-
-    if (arguments.verifyIrNestedOffsets) {
-        put(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS, true)
-        if (irVerificationMode == IrVerificationMode.NONE) {
-            this.report(
-                COMPILER_ARGUMENTS_WARNING,
-                "'-Xverify-ir-nested-offsets' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
-            )
-        }
+    put(CommonConfigurationKeys.DISABLE_IR_CHECKERS, arguments.disableIrCheckers.toList())
+    if (arguments.enableAdditionalIrCheckers.isNotEmpty() && irVerificationMode == IrVerificationMode.NONE) {
+        this.report(
+            COMPILER_ARGUMENTS_WARNING,
+            "'-Xadditional-ir-checkers' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
+        )
     }
+    put(CommonConfigurationKeys.ADDITIONAL_IR_CHECKERS, arguments.enableAdditionalIrCheckers.toList())
 
     @Suppress("DEPRECATION")
     if (arguments.useFirExperimentalCheckers) {

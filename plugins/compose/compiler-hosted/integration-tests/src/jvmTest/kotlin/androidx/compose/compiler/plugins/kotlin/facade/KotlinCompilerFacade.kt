@@ -110,7 +110,6 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
             val configuration = CompilerConfiguration.create().apply {
                 put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME)
                 put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
-                put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
                 this.targetPlatform = JvmPlatforms.unspecifiedJvmPlatform
                 put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_11)
                 @OptIn(MessageCollectorAccess::class) // write access

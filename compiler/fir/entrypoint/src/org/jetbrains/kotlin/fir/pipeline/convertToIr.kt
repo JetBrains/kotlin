@@ -63,7 +63,7 @@ value class AllModulesFrontendOutput(val outputs: List<SingleModuleFrontendOutpu
 data class SingleModuleFrontendOutput(
     val session: FirSession,
     val scopeSession: ScopeSession,
-    val fir: List<FirFile>
+    val fir: List<FirFile>,
 )
 
 data class Fir2IrActualizedResult(
@@ -139,7 +139,7 @@ private class Fir2IrPipeline(
         val irBuiltIns: IrBuiltIns,
         val symbolTable: SymbolTable,
         val irTypeSystemContext: IrTypeSystemContext,
-        val fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver
+        val fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver,
     ) {
         val componentsStorage: Fir2IrComponentsStorage = componentsStoragePerSourceSession.values.last()
     }
@@ -312,7 +312,7 @@ private class Fir2IrPipeline(
     }
 
     private fun Fir2IrConversionResult.createFakeOverrideBuilder(
-        irActualizer: IrActualizer?
+        irActualizer: IrActualizer?,
     ): Pair<IrFakeOverrideBuilder, Fir2IrDelegatedMembersGenerationStrategy> {
         val session = componentsStorage.session
         val delegatedMembersGenerationStrategy = Fir2IrDelegatedMembersGenerationStrategy(
@@ -376,7 +376,7 @@ private class Fir2IrPipeline(
 
     private fun IrFakeOverrideBuilder.buildForAll(
         modules: List<IrModuleFragment>,
-        resolver: SpecialFakeOverrideSymbolsResolver
+        resolver: SpecialFakeOverrideSymbolsResolver,
     ) {
         val builtFakeOverridesClasses = mutableSetOf<IrClass>()
         fun buildFakeOverrides(clazz: IrClass) {
@@ -507,22 +507,13 @@ private class Fir2IrPipeline(
                     IrCrossFileFieldUsageChecker,
                     IrValueAccessScopeChecker,
                     //IrTypeParameterScopeChecker // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305),
+                    IrVisibilityChecker.Strict,
                 )
-                .applyIf(fir2IrConfiguration.irVerificationSettings.enableIrVisibilityChecks) { // KT-80071
-                    // User code may use @Suppress("INVISIBLE_REFERENCE") or similar, and at this point we do allow that,
-                    // so visibility checks are only performed if requested via a flag, and in tests.
-                    withCheckers(IrVisibilityChecker.Strict)
-                }
-                .applyIf(fir2IrConfiguration.irVerificationSettings.enableIrNestedOffsetsChecks) {
-                    withCheckers(IrNestedOffsetRangeChecker)
-                }
+                .withVarargChecks()
                 .applyIf(extension == null) {
                     // KT-80065: This checker is known to trigger on a lot of internal and external compiler plugins,
                     //  while most of them, somehow, work. It is disabled for now, not to cause too much breakage.
                     withCheckers(IrCallTypeArgumentCountChecker)
-                }
-                .applyIf(fir2IrConfiguration.irVerificationSettings.enableIrVarargTypesChecks) {
-                    withVarargChecks()
                 }
                 .applyIf(
                     // On JVM we may sometimes generate non-private fields (KT-71243), and we allow plugins to do so too.
@@ -533,7 +524,12 @@ private class Fir2IrPipeline(
                 .applyIf(validateForKlibSerialization) {
                     // Serializing IrExpressionBody in IrFunction.body is not supported
                     withCheckers(IrExpressionBodyInFunctionChecker)
-                },
+                }
+                .withCheckersByName(
+                    fir2IrConfiguration.irVerificationSettings.additionalIrCheckers,
+                    listOf(IrNestedOffsetRangeChecker)
+                )
+                .withoutCheckersByName(fir2IrConfiguration.irVerificationSettings.disableIrCheckers),
             fir2IrConfiguration.diagnosticReporter,
             getSeverity = { error ->
                 if (validateForKlibSerialization) {

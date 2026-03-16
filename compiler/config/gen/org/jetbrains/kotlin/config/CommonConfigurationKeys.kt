@@ -103,17 +103,13 @@ object CommonConfigurationKeys {
     @JvmField
     val VERIFY_IR = CompilerConfigurationKey.create<IrVerificationMode>("VERIFY_IR")
 
-    // Checks pre-lowering IR for visibility violations.
+    // Disable specific IR checkers by simple class name or group tag
     @JvmField
-    val ENABLE_IR_VISIBILITY_CHECKS = CompilerConfigurationKey.create<Boolean>("ENABLE_IR_VISIBILITY_CHECKS")
+    val DISABLE_IR_CHECKERS = CompilerConfigurationKey.create<List<String>>("DISABLE_IR_CHECKERS")
 
-    // Checks IR for vararg types mismatches.
+    // Enable optional IR checkers by simple class name or group tag
     @JvmField
-    val ENABLE_IR_VARARG_TYPES_CHECKS = CompilerConfigurationKey.create<Boolean>("ENABLE_IR_VARARG_TYPES_CHECKS")
-
-    // Checks that offsets of nested IR elements conform to offsets of their containers.
-    @JvmField
-    val ENABLE_IR_NESTED_OFFSETS_CHECKS = CompilerConfigurationKey.create<Boolean>("ENABLE_IR_NESTED_OFFSETS_CHECKS")
+    val ADDITIONAL_IR_CHECKERS = CompilerConfigurationKey.create<List<String>>("ADDITIONAL_IR_CHECKERS")
 
     @JvmField
     val PHASE_CONFIG = CompilerConfigurationKey.create<PhaseConfig>("PHASE_CONFIG")
@@ -243,17 +239,13 @@ var CompilerConfiguration.verifyIr: IrVerificationMode?
     get() = get(CommonConfigurationKeys.VERIFY_IR)
     set(value) { put(CommonConfigurationKeys.VERIFY_IR, requireNotNull(value) { "nullable values are not allowed" }) }
 
-var CompilerConfiguration.enableIrVisibilityChecks: Boolean
-    get() = getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS)
-    set(value) { put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, value) }
+var CompilerConfiguration.disableIrCheckers: List<String>
+    get() = getList(CommonConfigurationKeys.DISABLE_IR_CHECKERS)
+    set(value) { put(CommonConfigurationKeys.DISABLE_IR_CHECKERS, value) }
 
-var CompilerConfiguration.enableIrVarargTypesChecks: Boolean
-    get() = getBoolean(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS)
-    set(value) { put(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS, value) }
-
-var CompilerConfiguration.enableIrNestedOffsetsChecks: Boolean
-    get() = getBoolean(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS)
-    set(value) { put(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS, value) }
+var CompilerConfiguration.additionalIrCheckers: List<String>
+    get() = getList(CommonConfigurationKeys.ADDITIONAL_IR_CHECKERS)
+    set(value) { put(CommonConfigurationKeys.ADDITIONAL_IR_CHECKERS, value) }
 
 var CompilerConfiguration.phaseConfig: PhaseConfig?
     get() = get(CommonConfigurationKeys.PHASE_CONFIG)

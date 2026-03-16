@@ -58,6 +58,8 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter
+import org.jetbrains.kotlin.test.services.IrCheckersDisabledByTestDirectives
+import org.jetbrains.kotlin.test.services.IrCheckersEnabledByTestDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -65,6 +67,8 @@ import org.jetbrains.kotlin.test.services.addAnnotations
 import org.jetbrains.kotlin.test.services.child
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import org.jetbrains.kotlin.test.services.packageFqNameForKLib
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 
 internal open class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(parentDisposable = null) {
@@ -206,18 +210,17 @@ private class ExtTestDataFile(
         args += structure.directives[FREE_COMPILER_ARGS]
         testDataFileSettings.languageSettings.mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
-        if (!structure.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny &&
-            !defaultDirectives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny
-        ) {
-            args.add("-Xverify-ir-visibility")
+
+        val disableIrCheckers = IrCheckersDisabledByTestDirectives
+            .filter { structure.directives[it.key].containsNativeOrAny || defaultDirectives[it.key].containsNativeOrAny }.values
+        if (disableIrCheckers.isNotEmpty()) {
+            args.add("-Xdisable-ir-checkers=" + disableIrCheckers.joinToString(","))
         }
 
-        if ((structure.directives.contains(CodegenTestDirectives.ENABLE_IR_NESTED_OFFSETS_CHECKS) ||
-                    defaultDirectives.contains(CodegenTestDirectives.ENABLE_IR_NESTED_OFFSETS_CHECKS)) &&
-            !structure.directives[CodegenTestDirectives.DISABLE_IR_NESTED_OFFSETS_CHECKS].containsNativeOrAny &&
-            !defaultDirectives[CodegenTestDirectives.DISABLE_IR_NESTED_OFFSETS_CHECKS].containsNativeOrAny
-        ) {
-            args.add("-Xverify-ir-nested-offsets")
+        val additionalIrCheckers = IrCheckersEnabledByTestDirectives
+            .filter { structure.directives.contains(it.key) || defaultDirectives.contains(it.key) }.values
+        if (additionalIrCheckers.isNotEmpty()) {
+            args.add("-Xadditional-ir-checkers=" + additionalIrCheckers.joinToString(","))
         }
 
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isStack()`
