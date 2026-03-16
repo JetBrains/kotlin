@@ -14,8 +14,18 @@
 - **FIR terminology**: `simpleImports`/`starImports` (NOT singleType/onDemand)
 - **Update ITERATION_RESULTS.md** after each iteration
 - **Check files with `get_file_problems`** after changes
-- **Run PSI tests after FIR changes** — see "Shared Files" section below
+- **Run PSI tests after any shared file or test data changes** — see "Shared Files" section below
 - **Keep JavaParsingTest green** — run after core changes to JavaTypeOverAst, JavaClassOverAst, JavaResolutionContext
+- **Check `git diff` for unintended test data changes** after every test run — especially after using `-Pkotlin.test.update.test.data=true`
+
+### Test Data Is Ground Truth
+Test data files (`compiler/testData/`) reflect the **correct behavior as defined by javac and the PSI-based implementation**. They are shared between java-direct and PSI test runners.
+
+**NEVER modify test data to make java-direct tests pass.** If java-direct produces a different result than what the test data expects:
+- The java-direct implementation is wrong — fix it, or
+- It is a known acceptable difference — document it in ITERATION_RESULTS.md and leave the test data unchanged
+
+Modifying test data to match java-direct output will break the PSI-based tests, which represent the reference behavior.
 
 ### Code Quality
 - **No obvious comments** — comment only "why", never "what"
@@ -52,9 +62,9 @@
 - `compiler/fir/fir-jvm/src/.../javaAnnotationsMapping.kt`
 - `core/compiler.common.jvm/src/.../load/java/structure/*.kt`
 
-**After modifying shared files**, always run PSI regression tests:
+**After modifying shared files or test data**, always run PSI regression tests:
 ```bash
-./gradlew :compiler:fir:fir-jvm:test --tests "PhasedJvmDiagnosticLightTreeTestGenerated.*" -q
+./gradlew :compiler:fir:analysis-tests:test --tests "PhasedJvmDiagnosticLightTreeTestGenerated.*" -q
 ```
 
 ---
@@ -75,23 +85,25 @@
 ./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated.*testSpecificName*" -q
 ./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated.*testSpecificName*" -q
 
-# PSI regression (after shared FIR file changes)
-./gradlew :compiler:fir:fir-jvm:test --tests "PhasedJvmDiagnosticLightTreeTestGenerated.*" -q
+# PSI regression (after shared FIR file or test data changes)
+./gradlew :compiler:fir:analysis-tests:test --tests "PhasedJvmDiagnosticLightTreeTestGenerated.*" -q
 
 # Verify a test is java-direct specific (not a general FIR issue)
-./gradlew :compiler:fir:fir-jvm:test --tests "FirLightTreeBlackBoxCodegenTestGenerated.*testSpecificName*" -q
+./gradlew :compiler:fir:analysis-tests:test --tests "FirLightTreeBlackBoxCodegenTestGenerated.*testSpecificName*" -q
 ```
 
 ---
 
 ## What NOT to Do
 
+- **Don't modify test data** to make java-direct tests pass — fix the implementation instead
 - **Don't hardcode lists** for resolution/filtering — use callback pattern
-- **Don't modify shared FIR files** without running PSI regression tests
+- **Don't modify shared FIR files or test data** without running PSI regression tests
 - **Don't assume AST token names** — always dump and verify via exception debugging
 - **Don't estimate fix counts without debugging** — verify root cause with 2-3 tests first
 - **Don't implement partial interfaces** — e.g., `JavaAnnotationArgument` requires value subinterfaces, not just `name`
 - **Don't create git commits** — user reviews all changes first
+- **Don't persist a failing approach** — if a fix causes net regressions, revert it and document the limitation
 
 ---
 
@@ -108,4 +120,4 @@
 
 ---
 
-*Last updated: 2026-03-13 (restructured per PROCESS_ANALYSIS_V2.md recommendation 6)*
+*Last updated: 2026-03-16*
