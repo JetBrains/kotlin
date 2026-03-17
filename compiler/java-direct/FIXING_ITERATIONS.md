@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 41 (2026-03-17) |
+| **Last Iteration** | 42 (2026-03-17) |
 | **Box Tests** | 1161/1168 passing (99.4%) |
-| **Phased Tests** | 1393/1442 passing (96.6%) |
-| **Combined** | ~2554/2611 passing, **~57 failing** |
+| **Phased Tests** | 1394/1442 passing (96.7%) |
+| **Combined** | ~2555/2611 passing, **~55-56 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -138,6 +138,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 39 | Sealed class inheritors (cross-file permits fallback + implicit permits detection); InheritedInner2 package-prefix for dotted supertypes | +0 box, +3 phased |
 | 40 | isObjectMethodInInterface for unresolved Object; rawTypeName strips generics through dots; typeArguments uses collectAllRefParamLists + resolves outer type params | +1 box, +2 phased |
 | 41 | Reference-first audit: JavaValueParameterOverAst.type passes modifier list annotations; JavaTypeParameterOverAst.upperBounds handles TYPE children; annotations reads MODIFIER_LIST | +0 (full suite count same, individual annotation tests pass) |
+| 42 | Fix rawTypeName to exclude annotations from type names (extract identifiers from AST, not text); remove unused JAVA_LANG_TYPES | +1 phased |
 
 ---
 

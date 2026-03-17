@@ -71,29 +71,36 @@ class JavaClassifierTypeOverAst(
 ) : JavaTypeOverAst(node, resolutionContext, extraAnnotations), JavaClassifierType {
 
     private val rawTypeName: String by lazy {
-        var text = node.text.trim()
-        while (text.endsWith("]")) {
-            val bracketIndex = text.lastIndexOf('[')
-            if (bracketIndex < 0) break
-            text = text.substring(0, bracketIndex).trimEnd()
-        }
-        // Strip type argument sections <...> while preserving dots between qualified name parts.
-        // For example, "BaseOuter<H>.BaseInner<Double, String>" → "BaseOuter.BaseInner",
-        // while simple cases like "List<String>" → "List" still work correctly.
-        stripTypeArguments(text)
+        // Extract the type name from AST structure, excluding annotations.
+        // For "java.util.List" → collect IDENTIFIERs: ["java", "util", "List"]
+        // For "@NotNull Object" → skip ANNOTATION, get IDENTIFIER: "Object"
+        // For "Outer<T>.Inner" → traverse JAVA_CODE_REFERENCEs recursively
+        extractTypeName(node)
     }
 
-    private fun stripTypeArguments(text: String): String {
-        val sb = StringBuilder()
-        var depth = 0
-        for (ch in text) {
-            when {
-                ch == '<' -> depth++
-                ch == '>' -> depth--
-                depth == 0 && !ch.isWhitespace() -> sb.append(ch)
+    /**
+     * Extracts type name from a JAVA_CODE_REFERENCE node, ignoring annotations and type arguments.
+     * Handles:
+     * - Simple: "Object" → "Object"
+     * - Qualified: "java.util.List" → "java.util.List"
+     * - Annotated: "@NotNull Object" → "Object"
+     * - Generic: "List<String>" → "List"
+     * - Nested generic: "Outer<T>.Inner<U>" → "Outer.Inner"
+     */
+    private fun extractTypeName(n: JavaSyntaxNode): String {
+        val parts = mutableListOf<String>()
+        collectIdentifiers(n, parts)
+        return parts.joinToString(".")
+    }
+
+    private fun collectIdentifiers(n: JavaSyntaxNode, parts: MutableList<String>) {
+        for (child in n.children) {
+            when (child.type.toString()) {
+                "IDENTIFIER" -> parts.add(child.text)
+                "JAVA_CODE_REFERENCE" -> collectIdentifiers(child, parts)
+                // Skip: ANNOTATION, REFERENCE_PARAMETER_LIST, WHITE_SPACE, DOT, etc.
             }
         }
-        return sb.toString()
     }
 
     override val classifier: JavaClassifier? by lazy {
@@ -148,44 +155,6 @@ class JavaClassifierTypeOverAst(
             // 4. Return as-is - FIR will resolve via callback (same package, star imports, java.lang types)
             return rawTypeName
         }
-
-    companion object {
-        /**
-         * Well-known java.lang types that are implicitly imported in Java.
-         * This is not exhaustive - only includes types commonly used where early resolution
-         * is needed (e.g., String for constant evaluation).
-         * Other java.lang types are resolved via FIR's resolution callback.
-         */
-        // TODO: review the list to find out, whether it is a good idea to hardcode all these types
-        private val JAVA_LANG_TYPES = mapOf(
-            "String" to "java.lang.String",
-            "Object" to "java.lang.Object",
-            "Class" to "java.lang.Class",
-            "Throwable" to "java.lang.Throwable",
-            "Exception" to "java.lang.Exception",
-            "RuntimeException" to "java.lang.RuntimeException",
-            "Error" to "java.lang.Error",
-            // Wrapper types
-            "Boolean" to "java.lang.Boolean",
-            "Byte" to "java.lang.Byte",
-            "Character" to "java.lang.Character",
-            "Short" to "java.lang.Short",
-            "Integer" to "java.lang.Integer",
-            "Long" to "java.lang.Long",
-            "Float" to "java.lang.Float",
-            "Double" to "java.lang.Double",
-            "Number" to "java.lang.Number",
-            "Void" to "java.lang.Void",
-            // Common interfaces/classes
-            "Comparable" to "java.lang.Comparable",
-            "CharSequence" to "java.lang.CharSequence",
-            "Iterable" to "java.lang.Iterable",
-            "Enum" to "java.lang.Enum",
-            "Deprecated" to "java.lang.Deprecated",
-            "Override" to "java.lang.Override",
-            "SuppressWarnings" to "java.lang.SuppressWarnings",
-        )
-    }
 
     override val presentableText: String get() = node.text
 

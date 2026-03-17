@@ -1555,4 +1555,126 @@ class JavaParsingTest {
             "Class with no valid constructors should have a default constructor"
         }
     }
+
+    @Test
+    fun testTypeParameterBoundWithAnnotation() {
+        // Test TYPE_USE annotations on type parameter bounds like T extends @NotNull Object
+        val source = """
+            import org.jetbrains.annotations.NotNull;
+            import org.jetbrains.annotations.Nullable;
+            
+            public class TestBound<T extends @NotNull Object, U extends @Nullable Number> {
+            }
+        """.trimIndent()
+
+        val (root, _) = parseSource(source)
+
+        fun printTree(node: JavaSyntaxNode, indent: String = "") {
+            println("$indent${node.type}: '${node.text.take(80).replace("\n", "\\n")}'")
+            for (child in node.children) {
+                printTree(child, "$indent  ")
+            }
+        }
+
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val typeParamList = classNode.findChildByType("TYPE_PARAMETER_LIST")
+        println("=== TYPE_PARAMETER_LIST structure (full) ===")
+        if (typeParamList != null) {
+            printTree(typeParamList)
+        }
+
+        // Check the EXTENDS_BOUND_LIST structure more carefully
+        val typeParam = typeParamList?.children?.firstOrNull { it.type.toString() == "TYPE_PARAMETER" }
+        val extendsBoundList = typeParam?.findChildByType("EXTENDS_BOUND_LIST")
+        println("=== EXTENDS_BOUND_LIST children ===")
+        extendsBoundList?.children?.forEach { child ->
+            println("  ${child.type}: '${child.text}'")
+            child.children.forEach { grandchild ->
+                println("    ${grandchild.type}: '${grandchild.text}'")
+            }
+        }
+
+        val javaClass = JavaClassOverAst(classNode, JavaResolutionContext.create(root))
+
+        assert(javaClass.typeParameters.size == 2) { "Expected 2 type parameters, got ${javaClass.typeParameters.size}" }
+
+        val paramT = javaClass.typeParameters.first { it.name.asString() == "T" }
+        println("paramT.upperBounds.size = ${paramT.upperBounds.size}")
+        paramT.upperBounds.forEachIndexed { i, b -> println("  bound[$i] = ${b.classifierQualifiedName}, class=${b::class.simpleName}") }
+        assert(paramT.upperBounds.size == 1) { "T should have 1 upper bound, got ${paramT.upperBounds.size}" }
+        val boundT = paramT.upperBounds.first()
+        println("boundT.classifierQualifiedName = ${boundT.classifierQualifiedName}")
+        assert(boundT.classifierQualifiedName == "Object") { "T's bound should be Object, got ${boundT.classifierQualifiedName}" }
+
+        // Check annotations on the bound type
+        println("T's bound annotations: ${boundT.annotations.map { it.classId }}")
+        assert(boundT.annotations.size == 1) { "T's bound should have 1 annotation (@NotNull), got ${boundT.annotations.size}" }
+        assert(boundT.annotations.first().classId?.shortClassName?.asString() == "NotNull") {
+            "Expected @NotNull annotation on T's bound"
+        }
+
+        val paramU = javaClass.typeParameters.first { it.name.asString() == "U" }
+        assert(paramU.upperBounds.size == 1) { "U should have 1 upper bound" }
+        val boundU = paramU.upperBounds.first()
+        assert(boundU.classifierQualifiedName == "Number") { "U's bound should be Number" }
+
+        println("U's bound annotations: ${boundU.annotations.map { it.classId }}")
+        assert(boundU.annotations.size == 1) { "U's bound should have 1 annotation (@Nullable), got ${boundU.annotations.size}" }
+        assert(boundU.annotations.first().classId?.shortClassName?.asString() == "Nullable") {
+            "Expected @Nullable annotation on U's bound"
+        }
+    }
+
+    @Test
+    fun testMethodReturnTypeWithAnnotation() {
+        // Test TYPE_USE annotations on method return types like @Nullable T bar()
+        val source = """
+            import org.jetbrains.annotations.NotNull;
+            import org.jetbrains.annotations.Nullable;
+            
+            public class TestReturn {
+                public <T> @NotNull T foo() { return null; }
+                public <T> @Nullable T bar() { return null; }
+            }
+        """.trimIndent()
+
+        val (root, _) = parseSource(source)
+
+        fun printTree(node: JavaSyntaxNode, indent: String = "") {
+            println("$indent${node.type}: '${node.text.take(80).replace("\n", "\\n")}'")
+            for (child in node.children) {
+                printTree(child, "$indent  ")
+            }
+        }
+
+        val classNode = root.children.first { it.type.toString() == "CLASS" }
+        val methods = classNode.getChildrenByType("METHOD")
+        println("=== METHOD structures ===")
+        methods.forEach { method ->
+            println("\n--- Method: ${method.findChildByType("IDENTIFIER")?.text} ---")
+            printTree(method)
+        }
+
+        val javaClass = JavaClassOverAst(classNode, JavaResolutionContext.create(root))
+
+        val fooMethod = javaClass.methods.first { it.name.asString() == "foo" }
+        val fooReturnType = fooMethod.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        println("foo return type: ${fooReturnType.classifierQualifiedName}")
+        println("foo return type annotations: ${fooReturnType.annotations.map { it.classId }}")
+        assert(fooReturnType.classifierQualifiedName == "T") { "foo's return type should be T" }
+        assert(fooReturnType.annotations.size == 1) { "foo's return type should have 1 annotation (@NotNull), got ${fooReturnType.annotations.size}" }
+        assert(fooReturnType.annotations.first().classId?.shortClassName?.asString() == "NotNull") {
+            "Expected @NotNull annotation on foo's return type"
+        }
+
+        val barMethod = javaClass.methods.first { it.name.asString() == "bar" }
+        val barReturnType = barMethod.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        println("bar return type: ${barReturnType.classifierQualifiedName}")
+        println("bar return type annotations: ${barReturnType.annotations.map { it.classId }}")
+        assert(barReturnType.classifierQualifiedName == "T") { "bar's return type should be T" }
+        assert(barReturnType.annotations.size == 1) { "bar's return type should have 1 annotation (@Nullable), got ${barReturnType.annotations.size}" }
+        assert(barReturnType.annotations.first().classId?.shortClassName?.asString() == "Nullable") {
+            "Expected @Nullable annotation on bar's return type"
+        }
+    }
 }

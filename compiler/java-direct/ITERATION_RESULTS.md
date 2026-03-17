@@ -372,6 +372,59 @@ The full-suite count discrepancy (individual tests pass, full suite fails) is a 
 
 ---
 
+## Iteration 42: Fix rawTypeName to Exclude Annotations — 2026-03-17
+
+### Root Cause Analysis
+Reference-first audit of type parameter bounds (`T extends @NotNull Object`) revealed that `JavaClassifierTypeOverAst.rawTypeName` was computed from `node.text`, which included annotation text. This caused `classifierQualifiedName` to return `"@NotNullObject"` instead of `"Object"`.
+
+AST structure for `T extends @NotNull Object`:
+```
+JAVA_CODE_REFERENCE: '@NotNull Object'
+  ANNOTATION: '@NotNull'
+  IDENTIFIER: 'Object'
+```
+
+The fix extracts identifiers from the AST structure instead of using the raw text.
+
+### Fix
+Replaced text-based `rawTypeName` computation with AST-based `extractTypeName()` that:
+1. Recursively traverses `JAVA_CODE_REFERENCE` nodes
+2. Collects only `IDENTIFIER` children
+3. Joins with `.` for qualified names
+4. Ignores `ANNOTATION`, `REFERENCE_PARAMETER_LIST`, etc.
+
+Also removed unused `JAVA_LANG_TYPES` constant (dead code since iteration 31).
+
+### Unit Tests Added (`JavaParsingTest.kt`)
+- `testTypeParameterBoundWithAnnotation` — verifies `T extends @NotNull Object` bound has:
+  - `classifierQualifiedName == "Object"` (not `"@NotNullObject"`)
+  - `annotations.size == 1` with `@NotNull`
+- `testMethodReturnTypeWithAnnotation` — verifies `<T> @Nullable T bar()` return type annotations parsed correctly
+
+### Test Results
+- **Box tests**: 7/1168 failing (no change)
+- **Phased tests**: 48/1442 failing (-1 fixed)
+- **Total failures**: 57 → 55 (1-2 tests fixed depending on flakiness)
+- **PSI regression tests**: All passing ✅
+- **JavaParsingTest unit tests**: All 42 passing ✅
+
+**Test FIXED:**
+- `testTypeFromGenericWithAnnotationWithoutWrtHack` — type param bounds with annotations now parse correctly
+
+### Files Modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt`:
+  - Replaced `rawTypeName` text-based computation with `extractTypeName()` + `collectIdentifiers()`
+  - Removed unused `JAVA_LANG_TYPES` constant
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt`:
+  - Added `testTypeParameterBoundWithAnnotation`
+  - Added `testMethodReturnTypeWithAnnotation`
+
+### Key Learnings
+- TYPE_USE annotations can appear inline within type references in the AST (not just in MODIFIER_LIST)
+- Always extract semantic content (identifiers) from AST structure, not raw text
+
+---
+
 ## Known Limitations
 
 - **`testPseudoRawTypes`**: Java compilation error (custom `java.util.Collection`) — pre-existing, not java-direct specific
