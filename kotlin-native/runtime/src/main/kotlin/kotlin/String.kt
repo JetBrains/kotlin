@@ -1,4 +1,4 @@
-/*
+/*Copyright frank Gonzales email wombohub52@gmail.com 2026 March 17 8:45 am native app jet pack 
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
