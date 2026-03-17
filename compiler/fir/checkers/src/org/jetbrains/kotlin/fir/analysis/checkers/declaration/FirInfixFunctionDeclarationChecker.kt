@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 
 object FirInfixFunctionDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -26,11 +26,8 @@ object FirInfixFunctionDeclarationChecker : FirFunctionChecker(MppCheckerKind.Co
         }
     }
 
-    context(context: CheckerContext)
-    private fun hasExtensionOrDispatchReceiver(
-        function: FirFunction
-    ): Boolean {
-        if (function.receiverParameter != null) return true
-        return context.containingDeclarations.lastOrNull() is FirClassSymbol
+    private fun hasExtensionOrDispatchReceiver(function: FirFunction): Boolean {
+        if (function.receiverParameter != null && !function.isCompanionExtension) return true
+        return function.dispatchReceiverType != null
     }
 }
