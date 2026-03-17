@@ -92,13 +92,13 @@ This takes seconds vs. 30+ minutes of FIR2IR tracing.
 
 ```bash
 # Box tests (~1168 tests)
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated" -q --rerun 2>&1 | tee /tmp/jd_test.txt
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstBoxTestGenerated" --rerun-tasks --no-build-cache 2>&1 | tee /tmp/jdb_test.txt
 
 # Phased/diagnostic tests (~1442 tests)
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" -q --rerun 2>&1 | tee /tmp/jd_test.txt
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" --rerun-tasks --no-build-cache 2>&1 | tee /tmp/jdp_test.txt
 
 # Both suites together (2610 tests)
-./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" --tests "JavaUsingAstBoxTestGenerated" -q --rerun 2>&1 | tee /tmp/jd_test.txt
+./gradlew :compiler:java-direct:test --tests "JavaUsingAstPhasedTestGenerated" --tests "JavaUsingAstBoxTestGenerated" --rerun-tasks --no-build-cache 2>&1 | tee /tmp/jd_test.txt
 
 # Unit tests (40 tests - MUST stay green)
 ./gradlew :compiler:java-direct:test --tests "JavaParsingTest" -q
@@ -110,6 +110,14 @@ This takes seconds vs. 30+ minutes of FIR2IR tracing.
 # PSI regression (after shared FIR file or test data changes)
 ./gradlew :compiler:fir:analysis-tests:test --tests "PhasedJvmDiagnosticLightTreeTestGenerated.*" -q
 ```
+
+### Test Result Caching — Run Once, Grep Many Times
+
+**Run the full suite ONCE after each code change, then grep `/tmp/jd_test.txt` for every filter you need. NEVER rerun the same suite just to see a different slice of the results.**
+
+If the relevant code has not changed since the last run, the output cannot have changed either — use the saved file directly.
+
+**PSI regression tests are independent of java-direct-specific changes.** If only files under `compiler/java-direct/src/**` were modified (no shared FIR files, no test data), skip the PSI regression run — its results cannot have changed.
 
 ### Extracting failures from output
 
@@ -132,7 +140,7 @@ grep -A3 "FAILED" /tmp/jd_test.txt | grep -E "IllegalState|NoSuch|Exception|Erro
 
 Instead, for box tests use `--info` and check the exception:
 ```bash
-./gradlew :compiler:java-direct:test --tests "*BoxTestGenerated.*testFoo*" --rerun --info 2>&1 | grep -E "FAILED|Exception|Error:" | head -10
+./gradlew :compiler:java-direct:test --tests "*BoxTestGenerated.*testFoo*" --rerun-tasks --info 2>&1 | grep -E "FAILED|Exception|Error:" | head -10
 ```
 
 For shared file changes, compare with upstream **before** tracing FIR internals:
@@ -153,6 +161,8 @@ git show origin/master:compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/Fi
 - **Don't create git commits** — user reviews all changes first
 - **Don't persist a failing approach** — if a fix causes net regressions, revert it and document the limitation
 - **Don't parse XML test result files** — they are stale and unreliable; use Gradle text output
+- **Don't rerun Gradle to get a different view of results** — run once, save with `tee /tmp/jd_test.txt` (use distinkt file name for each test suite), then grep the file for any slice you need
+- **Don't run PSI regression tests after java-direct-only changes** — if no shared FIR files or test data were modified, PSI results cannot change; skip the run
 - **Don't run `FirLightTreeBlackBoxCodegenTestGenerated.*testName*` to verify PSI behavior** — the nested `$` class filter silently matches nothing and wastes time; use `git show origin/master:...` instead
 - **Don't trace deep FIR2IR internals before checking upstream** — for any shared file, compare `git show origin/master:` first; fixes are often already there
 - **Don't fix one implicit-Java-rule corner case at a time** — when a fix involves implicit Java modifiers (visibility, static, final, abstract), audit the ENTIRE file against the reference and fix all discrepancies at once
