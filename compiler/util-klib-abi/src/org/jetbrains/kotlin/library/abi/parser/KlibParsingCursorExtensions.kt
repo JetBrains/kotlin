@@ -137,13 +137,7 @@ internal fun Cursor.parseValidIdentifierAndMaybeTrim(peek: Boolean = false, allo
     when {
         allowDot -> parseSymbol(validIdentifierWithDotRegex, peek)
         else -> parseValidIdentifier(peek)
-    }?.let {
-        if (parseSymbol(symbolsFollowingIdentifiersWithSpaces, peek = true) != null) {
-            it.dropLast(1)
-        } else {
-            it
-        }
-    }
+    }?.let { maybeTrim(it) }
 
 internal fun Cursor.parseAbiQualifiedName(peek: Boolean = false): AbiQualifiedName? {
     val cursor = subCursor(peek)
@@ -383,7 +377,7 @@ internal fun Cursor.parseSignatureVersion(): AbiSignatureVersion? {
 internal fun Cursor.parseEnumEntryKind(peek: Boolean = false) =
     parseSymbol(enumEntryKindSymbol, peek)
 
-internal fun Cursor.parseEnumEntryName() = parseSymbol(anythingButSlashRegex)
+internal fun Cursor.parseEnumEntryName() = parseSymbol(anythingButSlashRegex)?.let { maybeTrim(it) }
 
 internal fun Cursor.parseCommentMarker() = parseSymbol(commentSymbol)
 
@@ -449,6 +443,13 @@ private fun Cursor.parsePropertyKindString(peek: Boolean = false) =
 
 private fun Cursor.parseClassKindString(peek: Boolean = false) =
     parseSymbol(classKindSymbols, peek)?.uppercase()?.replace(" ", "_")
+
+private fun Cursor.maybeTrim(value: String) =
+    if (parseSymbol(symbolsFollowingIdentifiersWithSpaces, peek = true) != null) {
+        value.dropLast(1)
+    } else {
+        value
+    }
 
 private enum class GetterOrSetter() {
     GETTER,

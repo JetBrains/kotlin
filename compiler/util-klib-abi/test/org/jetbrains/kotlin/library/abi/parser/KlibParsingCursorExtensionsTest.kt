@@ -723,7 +723,7 @@ class KlibParsingCursorExtensionsTest {
         val input = "sOME! enum? //"
         val cursor = Cursor(input)
         val enumName = cursor.parseEnumEntryName()
-        assertEquals("sOME! enum? ", enumName)
+        assertEquals("sOME! enum?", enumName)
         assertEquals("//", cursor.currentLine)
     }
 
