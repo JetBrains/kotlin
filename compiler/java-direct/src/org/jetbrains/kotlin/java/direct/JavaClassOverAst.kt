@@ -147,12 +147,42 @@ class JavaClassOverAst(
 
     override val permittedTypes: Sequence<JavaClassifierType>
         get() {
-            val permitsList = node.findChildByType("PERMITS_LIST") ?: return emptySequence()
-            return permitsList.children
-                .filter { it.type.toString() == "JAVA_CODE_REFERENCE" }
-                .map { JavaClassifierTypeOverAst(it, memberResolutionContext) }
-                .asSequence()
+            val permitsList = node.findChildByType("PERMITS_LIST")
+            if (permitsList != null) {
+                return permitsList.children
+                    .filter { it.type.toString() == "JAVA_CODE_REFERENCE" }
+                    .map { JavaClassifierTypeOverAst(it, memberResolutionContext) }
+                    .asSequence()
+            }
+            // No explicit permits clause — sealed class: derive permitted types from direct
+            // subtypes in the same compilation unit (JLS 13.4.27).
+            if (!isSealed) return emptySequence()
+            return deriveImplicitPermittedTypes()
         }
+
+    private fun deriveImplicitPermittedTypes(): Sequence<JavaClassifierType> {
+        val myName = name.asString()
+        val myFqName = fqName?.asString() ?: myName
+        return node.children
+            .filter { it.type.toString() == "CLASS" }
+            .filter { innerNode ->
+                // Check if the inner class directly extends/implements this sealed type
+                val extendsRefs = innerNode.findChildByType("EXTENDS_LIST")
+                    ?.getChildrenByType("JAVA_CODE_REFERENCE")
+                    ?.map { it.text.substringBefore('<').trim() }
+                    ?: emptyList()
+                val implementsRefs = innerNode.findChildByType("IMPLEMENTS_LIST")
+                    ?.getChildrenByType("JAVA_CODE_REFERENCE")
+                    ?.map { it.text.substringBefore('<').trim() }
+                    ?: emptyList()
+                (extendsRefs + implementsRefs).any { ref -> ref == myName || ref == myFqName }
+            }
+            .mapNotNull { innerNode ->
+                val innerName = innerNode.findChildByType("IDENTIFIER")?.text ?: return@mapNotNull null
+                SimpleClassifierType("$myFqName.$innerName")
+            }
+            .asSequence()
+    }
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
     override val methods: Collection<JavaMethod>

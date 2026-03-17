@@ -331,31 +331,35 @@ class JavaResolutionContext private constructor(
             if (supertypeName in visited) continue
             visited.add(supertypeName)
             
-            // If supertypeName is not fully qualified (no dots), try with package prefix
-            // This handles same-package supertypes where classifierQualifiedName returns just "x"
-            if (!supertypeName.contains('.') && !packageFqName.isRoot) {
-                val packageQualified = "${packageFqName.asString()}.$supertypeName"
-                // Try package-qualified version first
-                val nestedCandidate = "$packageQualified.$simpleName"
-                if (tryResolve(nestedCandidate)) {
-                    allMatches.add(nestedCandidate)
-                }
-                // If that worked for the supertype itself, use it for recursion
-                if (tryResolve(packageQualified)) {
-                    supertypeName = packageQualified
+            if (!packageFqName.isRoot) {
+                if (!supertypeName.contains('.')) {
+                    // Simple unqualified name: prepend package (e.g., "Foo" → "pkg.Foo")
+                    val packageQualified = "${packageFqName.asString()}.$supertypeName"
+                    val nestedCandidate = "$packageQualified.$simpleName"
+                    if (tryResolve(nestedCandidate)) {
+                        allMatches.add(nestedCandidate)
+                    }
+                    if (tryResolve(packageQualified)) {
+                        supertypeName = packageQualified
+                    }
+                } else {
+                    // Dotted name (e.g., "x.S"): might be partially qualified within the current
+                    // package. Also try with the package prefix (e.g., "a.x.S.B").
+                    val packagePrefixed = "${packageFqName.asString()}.$supertypeName"
+                    val nestedCandidateWithPkg = "$packagePrefixed.$simpleName"
+                    if (tryResolve(nestedCandidateWithPkg)) {
+                        allMatches.add(nestedCandidateWithPkg)
+                    }
                 }
             }
             
-            // Try the simple name as a nested class of this supertype
-            // e.g., if supertype is "a.x" and simpleName is "y", try "a.x.y"
+            // Try the name as-is
             val nestedCandidate = "$supertypeName.$simpleName"
             if (tryResolve(nestedCandidate)) {
                 allMatches.add(nestedCandidate)
             }
             
-            // Also recursively check supertypes of this supertype
-            // This requires resolving the supertype to a JavaClass, which we can only do
-            // if it's in the local scope
+            // Recursively check supertypes of this supertype (local resolution only)
             val supertypeClass = supertype.classifier as? JavaClass
             if (supertypeClass != null) {
                 resolveFromSupertypesRecursive(simpleName, supertypeClass, tryResolve, visited, allMatches)

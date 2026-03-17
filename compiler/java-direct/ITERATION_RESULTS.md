@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-17 (iter 38)
+**Last Updated**: 2026-03-17 (iter 39)
 
 ---
 
@@ -233,6 +233,58 @@ Added `&& it.findChildByType("IDENTIFIER") != null` to the constructor filter. A
 - `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt` — `hasConstantNotNullInitializer` now uses `isInitializerPotentiallyConstant`; added `isSimpleNamePotentiallyConstant`
 - `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt` — constructor filter requires IDENTIFIER
 - `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt` — `testPublicClassWithMalformedMembers` unit test
+
+---
+
+## Iteration 39: Sealed Class Exhaustiveness + Supertype Inner Class Resolution — 2026-03-17
+
+### Root Cause Analysis
+
+**Bug A: Sealed class inheritors lost for cross-file permitted types**
+
+`FirJavaFacade.createFirJavaClass` derives `sealedClassInheritors` via `classifierType.classifier as? JavaClass`. In java-direct, `classifier` is null for any type not defined in the same compilation unit (cross-file resolution requires the class finder). For `Base permits A, B` where A and B are in separate `.java` files, both classifiers were null → empty inheritor list → FIR treated the sealed class as having no known subtypes → all `when` expressions were incorrectly considered exhaustive → `NO_ELSE_IN_WHEN` errors were missing.
+
+**Bug B: Implicit permits (no explicit `permits` clause) yielded empty permitted types**
+
+For `sealed class SameFile { class A extends SameFile {} class B implements SameFile {} }`, there is no `permits` keyword. `JavaClassOverAst.permittedTypes` only looked for a `PERMITS_LIST` node and returned `emptySequence()` when not found. FIR then had no inheritors and again incorrectly treated all `when` as exhaustive.
+
+**Bug C: Dotted supertype names not resolved with package prefix**
+
+In `resolveFromSupertypesRecursive`, when a supertype has `classifierQualifiedName = "x.S"` (partially qualified, without the current package `a`), the code tried `nestedCandidate = "x.S.B"`. FIR's `findClassId("x.S.B", session)` tried ClassId splits that didn't include the package prefix `a`, so it never found `a.x.S.B`. The existing handling for package prefix only covered simple (non-dotted) supertype names.
+
+### Fixes
+
+**Fix A: `FirJavaFacade.kt` — fallback ClassId construction for cross-file permitted types**
+
+When `classifierType.classifier as? JavaClass` is null, build a ClassId from `classifierType.classifierQualifiedName` using the current class's package:
+```kotlin
+ClassId(classId.packageFqName, FqName(qualifiedName), isLocal = false)
+```
+This correctly handles: `"A"` → `ClassId(ROOT, "A")`, `"B.C"` → `ClassId(ROOT, "B.C")` (inner class).
+
+**Fix B: `JavaClassOverAst.kt` — `deriveImplicitPermittedTypes()`**
+
+When `isSealed = true` and no `PERMITS_LIST` node exists, scan the class body for inner classes that directly extend/implement the sealed class (by checking their `EXTENDS_LIST`/`IMPLEMENTS_LIST`). Returns `SimpleClassifierType("SameFile.A")` etc., which the FIR fallback then resolves via Fix A.
+
+**Fix C: `JavaResolutionContext.kt` — package prefix for dotted supertype names**
+
+In `resolveFromSupertypesRecursive`, when the package is non-root and the supertype name contains a dot, also try `"${packageFqName}.$supertypeName.$simpleName"`. For `"x.S"` in package `a`: tries `"a.x.S.B"` → `findClassId("a.x.S.B", session)` → `ClassId(FqName("a"), FqName("x.S.B"))` → found.
+
+### Test Results
+- **Box tests**: 8 → 8 (unchanged)
+- **Phased tests**: 55 → 52 (+3 fixed)
+- **Total failures**: 63 → 60 (3 tests fixed)
+- PSI regression tests (`PhasedJvmDiagnosticLightTreeTestGenerated.*`): All passing ✅
+
+**Tests FIXED (3):**
+- `testJavaSealedClassExhaustiveness` — sealed class with cross-file + in-file permitted types
+- `testJavaSealedInterfaceExhaustiveness` — same for sealed interface
+- `testInheritedInner2` — `x1.getB()` resolves `B` via supertype `x.S`
+
+### Files Modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt` — `permittedTypes` with `deriveImplicitPermittedTypes()`
+- `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/FirJavaFacade.kt` — sealed inheritors fallback for null classifier
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResolutionContext.kt` — package prefix for dotted supertype names
 
 ---
 

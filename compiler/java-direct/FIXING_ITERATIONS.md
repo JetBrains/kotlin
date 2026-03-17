@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 38 (2026-03-17) |
+| **Last Iteration** | 39 (2026-03-17) |
 | **Box Tests** | 1160/1168 passing (99.3%) |
-| **Phased Tests** | 1388/1442 passing (96.3%) |
-| **Combined** | ~2548/2611 passing, **~63 failing** |
+| **Phased Tests** | 1391/1442 passing (96.5%) |
+| **Combined** | ~2551/2611 passing, **~60 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -135,6 +135,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 37 | isFinal/isAbstract for enums, findAnnotation on classes, isNative, constructor isFinal, isDeprecatedInJavaDoc | +3 box, +2 phased |
 | 37b | Explicit import priority, duplicate star import, findClassId for resolved nested types (removed default-pkg lookup to fix regressions) | +0 box, +7 phased |
 | 38 | `hasConstantNotNullInitializer` correctness (method calls/unresolvable refs → false); malformed constructor filter (IDENTIFIER required) | +0 box, +4 phased |
+| 39 | Sealed class inheritors (cross-file permits fallback + implicit permits detection); InheritedInner2 package-prefix for dotted supertypes | +0 box, +3 phased |
 
 ---
 
