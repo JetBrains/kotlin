@@ -4,10 +4,12 @@
 // FILE: C.kt
 class C {
     companion {
-        fun foo() {
-        }
-
+        fun foo() {}
+    }
+    companion {
         val bar = 1
+    }
+    companion {
         val baz get() = 2
     }
 
