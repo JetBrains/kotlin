@@ -10,7 +10,7 @@ func testRegular() async {
 
     let task = Task<[Elem], any Error>.detached {
         var actual: [Elem] = []
-        for try await element in testRegular() {
+        for try await element in testRegular().asAsyncSequence() {
             actual.append(element)
         }
         return actual
@@ -29,7 +29,7 @@ func testString() async {
 
     let task = Task<[String], any Error>.detached {
         var actual: [String] = []
-        for try await element in testString() {
+        for try await element in testString().asAsyncSequence() {
             actual.append(element)
         }
         return actual
@@ -48,7 +48,7 @@ func testList() async {
 
     let task = Task<[[Int32]], any Error>.detached {
         var actual: [[Int32]] = []
-        for try await element in testList() {
+        for try await element in testList().asAsyncSequence() {
             actual.append(element)
         }
         return actual
@@ -67,7 +67,7 @@ func testPrimitive() async {
 
     let task = Task<[UInt32], any Error>.detached {
         var actual: [UInt32] = []
-        for try await element in testPrimitive() {
+        for try await element in testPrimitive().asAsyncSequence() {
             actual.append(element)
         }
         return actual
@@ -83,7 +83,7 @@ func testPrimitive() async {
 @MainActor
 func testEmpty() async {
     let task = Task<Void, any Error>.detached {
-        for try await _ in testEmpty() {
+        for try await _ in testEmpty().asAsyncSequence() {
             throw CancellationError()
         }
     }
@@ -98,7 +98,7 @@ func testEmpty() async {
 @MainActor
 func testFailing() async {
     let task = Task<Void, any Error>.detached {
-        var iterator = testFailing().makeAsyncIterator()
+        var iterator = testFailing().asAsyncSequence().makeAsyncIterator()
         let first = try await iterator.next()
         #expect(first == Element1.shared)
         let second = try await iterator.next()
@@ -118,14 +118,14 @@ func testFailing() async {
 @MainActor
 func testDiscarding() async {
     let discardingImmediately = Task<Void, any Error>.detached {
-        var _ = testDiscarding().makeAsyncIterator()
+        var _ = testDiscarding().asAsyncSequence().makeAsyncIterator()
     }
     let discardingImmediatelyResult = await discardingImmediately.result
     #expect(!discardingImmediately.isCancelled)
     #expect(discardingImmediatelyResult == .success(()))
 
     let discardingAtEnd = Task<Void, any Error>.detached {
-        var iterator = testDiscarding().makeAsyncIterator()
+        var iterator = testDiscarding().asAsyncSequence().makeAsyncIterator()
         let first = try await iterator.next()
         #expect(first == Element1.shared)
         let second = try await iterator.next()
@@ -138,7 +138,7 @@ func testDiscarding() async {
     #expect(discardingAtEndResult == .success(()))
 
     let discardingMidway = Task<Void, any Error>.detached {
-        var iterator = testDiscarding().makeAsyncIterator()
+        var iterator = testDiscarding().asAsyncSequence().makeAsyncIterator()
         let first = try await iterator.next()
         #expect(first == Element1.shared)
     }
@@ -153,12 +153,12 @@ func testStateFlow() async {
     let expected: [Elem] = [Element1.shared, Element2.shared, Element3.shared]
 
     let subject = CurrentSubject.shared
-    #expect(subject.value.value == expected.first)
+    #expect(subject.stateFlow.value == expected.first)
 
     let collectTask = Task<[Elem], any Error>.detached {
         var actual: [Elem] = []
         var i = 0;
-        for try await element in subject.value {
+        for try await element in subject.stateFlow.asAsyncSequence() {
             actual.append(element)
             i += 1
             guard i < 3 else { break }
@@ -180,7 +180,7 @@ func testStateFlow() async {
     #expect(!collectTask.isCancelled)
     #expect(emitResult == .success(()))
     #expect(collectResult == .success(expected))
-    #expect(subject.value.value == expected.last)
+    #expect(subject.stateFlow.value == expected.last)
 }
 
 func ==<T>(_ lhs: Result<T, any Error>, _ rhs: Result<T, any Error>) -> Bool where T: Equatable {

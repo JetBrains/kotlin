@@ -16,12 +16,12 @@ object Element2: Elem()
 object Element3: Elem()
 
 object CurrentSubject {
-    private val flow: MutableStateFlow<Elem> = MutableStateFlow(Element1)
+    private val mutableStateflow: MutableStateFlow<Elem> = MutableStateFlow(Element1)
 
-    public val value: StateFlow<Elem> get() = flow
+    public val stateFlow: StateFlow<Elem> get() = mutableStateflow
 
     public fun update(value: Elem) {
-        flow.value = value
+        mutableStateflow.value = value
     }
 }
 

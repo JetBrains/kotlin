@@ -409,20 +409,20 @@ internal class SirFlowFromKtSymbol(
         val CLASS_IDS = listOf(FLOW_CLASS_ID, STATE_FLOW_CLASS_ID, MUTABLE_STATE_FLOW_CLASS_ID)
     }
 
-    private val additionalProtocols = when (ktSymbol.classId) {
-        FLOW_CLASS_ID -> listOf(KotlinCoroutineSupportModule.kotlinFlow, SirSwiftConcurrencyModule.asyncSequence)
-        STATE_FLOW_CLASS_ID -> listOf(KotlinCoroutineSupportModule.kotlinStateFlow)
-        MUTABLE_STATE_FLOW_CLASS_ID -> listOf(KotlinCoroutineSupportModule.kotlinMutableStateFlow)
+    private val supportProtocol = when (ktSymbol.classId) {
+        FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinFlow
+        STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinStateFlow
+        MUTABLE_STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinMutableStateFlow
         else -> throw IllegalArgumentException("Unsupported flow kind: ${ktSymbol.classId}")
     }
 
     internal inner class SirExistentialProtocolImplementation : SirExistentialProtocolImplementationFromKtSymbol(this@SirFlowFromKtSymbol) {
         override val protocols: List<SirProtocol>
-            get() = super.protocols + additionalProtocols
+            get() = super.protocols + supportProtocol
     }
 
     override val protocols: List<SirProtocol> by lazy {
-        super.protocols + additionalProtocols
+        super.protocols + supportProtocol
     }
 
     override val existentialExtension: SirExtension by lazy {
