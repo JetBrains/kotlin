@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.DisplayName
 
+@DisplayName("Warnings-as-errors: -Werror promotes warnings to error log level")
 class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
 
+    @DisplayName("Without -Werror, deprecation warning stays at WARN level")
     @BtaV2StrategyAgnosticCompilationTest
     fun warningIsLoggedAtWarnLevelWithoutWerror(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
@@ -32,6 +35,7 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
         }
     }
 
+    @DisplayName("With -Werror, deprecation warning is promoted to ERROR level")
     @BtaV2StrategyAgnosticCompilationTest
     fun warningIsLoggedAtErrorLevelWithWerror(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
