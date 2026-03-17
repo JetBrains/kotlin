@@ -50,15 +50,20 @@ internal class WasmContinuation<T, R>(
     completion: Continuation<R>,
     rethrowExceptions: Boolean = false
 ) : CoroutineImpl<T, R>(completion, rethrowExceptions) {
-    val resultValue: Any? get() = result
     internal var isResumed = false
+    internal var isFreshInstance = true
     override fun doResume(): Any? {
         do {
             require(!isResumed) { "WasmContinuation can be resumed only once" }
             isResumed = true
+            val resultValue = if (isFreshInstance && exception == null) {
+                require(result == Unit || result == resultContinuation)
+                isFreshInstance = false
+                resultContinuation
+            } else result
             val resumeResult: ResumeIntrinsicResult = exception?.let {
                 resumeThrowImpl(it, wasmContBox.cont)
-            } ?: resumeWithImpl(wasmContBox.cont, result)
+            } ?: resumeWithImpl(wasmContBox.cont, resultValue)
             wasmContBox = resumeResult.remainingFunction ?: return resumeResult.result
             isResumed = false
             wasSuspended = true
@@ -153,7 +158,7 @@ internal fun <T> suspendIntrinsic(block: (Continuation<T>) -> Any?): Any? {
 private fun <R> resumeWasmContinuationAndReturnResult(contref1: contref1, completion: Continuation<R>): Any? {
     val wasmContinuation = WasmContinuation<Continuation<R>, R>(WasmContinuationBox(contref1), completion, rethrowExceptions = true)
     wasmContinuation.resume(completion)
-    return if (wasmContinuation.wasSuspended) COROUTINE_SUSPENDED else wasmContinuation.resultValue
+    return if (wasmContinuation.wasSuspended) COROUTINE_SUSPENDED else wasmContinuation.result
 }
 
 internal fun <T> suspendFunction0ToContrefImpl(f: (suspend () -> T)): contref1 {
