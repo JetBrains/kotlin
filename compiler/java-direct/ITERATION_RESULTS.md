@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-17 (iter 39)
+**Last Updated**: 2026-03-17 (iter 40)
 
 ---
 
@@ -285,6 +285,56 @@ In `resolveFromSupertypesRecursive`, when the package is non-root and the supert
 - `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt` — `permittedTypes` with `deriveImplicitPermittedTypes()`
 - `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/FirJavaFacade.kt` — sealed inheritors fallback for null classifier
 - `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResolutionContext.kt` — package prefix for dotted supertype names
+
+---
+
+## Iteration 40: Object Method Detection + Qualified Generic Types — 2026-03-17
+
+### Root Cause Analysis
+
+**Bug A: `isMethodWithOneObjectParameter` missed unresolved `Object` types**
+
+`isObjectMethodInInterface()` determines whether a Java interface method overrides Object's `equals`/`hashCode`/`toString` (and thus should be excluded from SAM abstract method counts). For `equals(Object o)`, `isMethodWithOneObjectParameter` checked `classifier.fqName == "java.lang.Object"`. In java-direct, the parameter type `Object` has `classifier = null` (unresolved, since Object is in java.lang which needs FIR callback resolution), so the check returned `false`. This caused `J1.equals(Object o)` to NOT be treated as an Object method → JK1 inherited it as an abstract method → JK1 had 1 abstract method → appeared valid as a fun interface → no `FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS`.
+
+**Bug B: `rawTypeName` stripped at first `<`, losing qualified class names**
+
+For qualified generic types like `BaseOuter<H>.BaseInner<Double, String>`, `rawTypeName` used `indexOf('<')` to strip generics, giving `"BaseOuter"` instead of the correct `"BaseOuter.BaseInner"`. This caused `classifier` to resolve to the wrong class (BaseOuter instead of BaseInner), breaking supertype inheritance chains through qualified generic types.
+
+**Bug C: `typeArguments` didn't handle qualified generics or cross-file types**
+
+Related to Bug B: for `BaseOuter<H>.BaseInner<Double, String>`, `typeArguments` only found `<H>` (first REFERENCE_PARAMETER_LIST), giving [H] instead of [Double, String, H]. Also, when `classifier = null` (cross-file type), it returned early with only explicit args, missing outer class type args. Additionally, implicit outer type parameters used abstract `H_of_BaseOuter` instead of the contextual `H_of_Outer`, breaking FIR's type parameter substitution.
+
+### Fixes
+
+**Fix A: `javaLoading.kt` — fallback for unresolved `Object`**
+
+Added `|| qualifiedName == "Object"` check when `classifier == null`. Unqualified `"Object"` in Java always means `java.lang.Object`.
+
+**Fix B: `JavaTypeOverAst.kt` — `stripTypeArguments` for rawTypeName**
+
+Replaced `indexOf('<')` truncation with a balanced-brackets stripper that removes `<...>` groups while preserving dots: `"BaseOuter<H>.BaseInner<Double, String>"` → `"BaseOuter.BaseInner"`.
+
+**Fix C: `JavaTypeOverAst.kt` — `collectAllRefParamLists` + resolved outer type params**
+
+- `collectAllRefParamLists(node)` recursively collects all REFERENCE_PARAMETER_LISTs from nested JAVA_CODE_REFERENCE nodes, in source order
+- Uses the LAST param list for innermost explicit args
+- Uses earlier param lists (reversed) as outer class explicit args for qualified generics
+- For simple inner class refs: resolves implicit outer type params through `resolutionContext.findTypeParameter(name)` to get the caller's H (e.g., `H_of_Outer`) rather than the abstract `H_of_BaseOuter`
+
+### Test Results
+- **Box tests**: 8 → 7 (+1 fixed: testGenericBoundInnerConstructorRef)
+- **Phased tests**: 52 → 50 (+2 fixed: testFunInterfaceWithAnyOverrides, testJ_k_complex)
+- **Total failures**: 60 → 57 (3 tests fixed)
+- PSI regression tests: All passing ✅
+
+**Tests FIXED (3):**
+- `testFunInterfaceWithAnyOverrides` — unresolved Object in equals check
+- `testJ_k_complex` — qualified generic supertype, inherited methods found
+- `testGenericBoundInnerConstructorRef` — side effect of qualified generic type fix
+
+### Files Modified
+- `core/compiler.common.jvm/src/org/jetbrains/kotlin/load/java/structure/javaLoading.kt` — fallback for unresolved Object
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt` — rawTypeName, typeArguments, collectAllRefParamLists
 
 ---
 

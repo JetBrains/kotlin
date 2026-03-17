@@ -4,10 +4,10 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 39 (2026-03-17) |
-| **Box Tests** | 1160/1168 passing (99.3%) |
-| **Phased Tests** | 1391/1442 passing (96.5%) |
-| **Combined** | ~2551/2611 passing, **~60 failing** |
+| **Last Iteration** | 40 (2026-03-17) |
+| **Box Tests** | 1161/1168 passing (99.4%) |
+| **Phased Tests** | 1393/1442 passing (96.6%) |
+| **Combined** | ~2554/2611 passing, **~57 failing** |
 
 **Prerequisites**: Read `AGENT_INSTRUCTIONS.md` before starting any iteration.
 
@@ -136,6 +136,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 37b | Explicit import priority, duplicate star import, findClassId for resolved nested types (removed default-pkg lookup to fix regressions) | +0 box, +7 phased |
 | 38 | `hasConstantNotNullInitializer` correctness (method calls/unresolvable refs → false); malformed constructor filter (IDENTIFIER required) | +0 box, +4 phased |
 | 39 | Sealed class inheritors (cross-file permits fallback + implicit permits detection); InheritedInner2 package-prefix for dotted supertypes | +0 box, +3 phased |
+| 40 | isObjectMethodInInterface for unresolved Object; rawTypeName strips generics through dots; typeArguments uses collectAllRefParamLists + resolves outer type params | +1 box, +2 phased |
 
 ---
 

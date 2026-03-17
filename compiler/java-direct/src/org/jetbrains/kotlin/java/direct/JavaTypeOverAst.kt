@@ -77,11 +77,23 @@ class JavaClassifierTypeOverAst(
             if (bracketIndex < 0) break
             text = text.substring(0, bracketIndex).trimEnd()
         }
-        val genericIndex = text.indexOf('<')
-        if (genericIndex >= 0) {
-            text = text.substring(0, genericIndex).trimEnd()
+        // Strip type argument sections <...> while preserving dots between qualified name parts.
+        // For example, "BaseOuter<H>.BaseInner<Double, String>" → "BaseOuter.BaseInner",
+        // while simple cases like "List<String>" → "List" still work correctly.
+        stripTypeArguments(text)
+    }
+
+    private fun stripTypeArguments(text: String): String {
+        val sb = StringBuilder()
+        var depth = 0
+        for (ch in text) {
+            when {
+                ch == '<' -> depth++
+                ch == '>' -> depth--
+                depth == 0 && !ch.isWhitespace() -> sb.append(ch)
+            }
         }
-        text
+        return sb.toString()
     }
 
     override val classifier: JavaClassifier? by lazy {
@@ -186,21 +198,39 @@ class JavaClassifierTypeOverAst(
     }
 
     override val typeArguments: List<JavaType> by lazy {
-        val explicitArgs = node.findChildByType("REFERENCE_PARAMETER_LIST")?.children
+        // Collect all REFERENCE_PARAMETER_LISTs from this node and nested JAVA_CODE_REFERENCEs.
+        // This handles both flat ("A<T>.B<U>" → [<T>, <U>] as direct children) and
+        // nested ("A<T>.B<U>" → child JAVA_CODE_REF("A<T>") + sibling REFPARAMLIST(<U>)) structures.
+        val allRefParamLists = collectAllRefParamLists(node)
+
+        // The innermost class's explicit type arguments come from the LAST REFERENCE_PARAMETER_LIST.
+        val explicitArgs = allRefParamLists.lastOrNull()
+            ?.children
             ?.filter { it.type.toString() == "TYPE" }
             ?.map { typeNode -> createJavaType(typeNode, resolutionContext) }
             ?: emptyList()
 
-        // For non-static inner classes, we need to include implicit type arguments from outer classes.
-        // This matches the behavior of TreeBasedClassifierType in javac-wrapper.
-        // For example, if Outer<T> has inner class Inner<U>, then Outer<String>.Inner<Int>
-        // should have typeArguments = [String, Int], not just [Int].
+        // For qualified generic types like "BaseOuter<H>.BaseInner<Double, String>", the earlier
+        // REFERENCE_PARAMETER_LISTs contain explicit type arguments for the outer classes.
+        // These are used directly instead of implicit outer type params — for cross-file types
+        // (classifier == null) the source-level outer args are the only information available.
+        if (allRefParamLists.size > 1) {
+            val outerExplicitArgs = allRefParamLists.dropLast(1).reversed().flatMap { paramList ->
+                paramList.children.filter { it.type.toString() == "TYPE" }
+                    .map { createJavaType(it, resolutionContext) }
+            }
+            if (outerExplicitArgs.isNotEmpty()) {
+                return@lazy explicitArgs + outerExplicitArgs
+            }
+        }
+
+        // Simple (non-qualified) type: for non-static inner classes, add implicit outer type params.
+        // This handles references like "Inner<U>" inside Outer<T> where the outer T is implicit.
         val javaClass = classifier as? JavaClass
         if (javaClass == null || javaClass.isStatic) {
             return@lazy explicitArgs
         }
 
-        // Collect type parameters from all non-static outer classes
         val outerTypeParams = mutableListOf<JavaTypeParameter>()
         var outer = javaClass.outerClass
         while (outer != null && !outer.isStatic) {
@@ -212,13 +242,31 @@ class JavaClassifierTypeOverAst(
             return@lazy explicitArgs
         }
 
-        // Create type references for outer class type parameters
-        // These are implicit type arguments that FIR expects
+        // Resolve each outer type param through the current context so we get the caller's H
+        // (e.g., Outer.H) rather than the abstract H from the outer class declaration.
         val implicitArgs = outerTypeParams.map { typeParam ->
-            JavaTypeParameterTypeOverAst(typeParam)
+            val resolved = resolutionContext.findTypeParameter(typeParam.name.asString())
+            if (resolved != null) JavaTypeParameterTypeOverAst(resolved)
+            else JavaTypeParameterTypeOverAst(typeParam)
         }
 
         explicitArgs + implicitArgs
+    }
+
+    /**
+     * Recursively collects all REFERENCE_PARAMETER_LIST nodes in source order,
+     * traversing into child JAVA_CODE_REFERENCE nodes (for nested qualified types).
+     * For "A<T>.B<U>" → [paramList(<T>), paramList(<U>)] regardless of AST structure.
+     */
+    private fun collectAllRefParamLists(n: JavaSyntaxNode): List<JavaSyntaxNode> {
+        val result = mutableListOf<JavaSyntaxNode>()
+        for (child in n.children) {
+            when (child.type.toString()) {
+                "JAVA_CODE_REFERENCE" -> result.addAll(collectAllRefParamLists(child))
+                "REFERENCE_PARAMETER_LIST" -> result.add(child)
+            }
+        }
+        return result
     }
 
     override val isResolved: Boolean
