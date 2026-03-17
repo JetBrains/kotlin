@@ -8,7 +8,7 @@ package kotlin.coroutines
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 
 @SinceKotlin("1.3")
-internal abstract class CoroutineImpl<T, R>(private val resultContinuation: Continuation<R>, val rethrowExceptions: Boolean = false) : Continuation<T> {
+internal abstract class CoroutineImpl<T, R>(internal val resultContinuation: Continuation<R>, val rethrowExceptions: Boolean = false) : Continuation<T> {
     protected var state = 0
     protected var exceptionState = 0
     internal var result: Any? = null
