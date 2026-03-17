@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: NATIVE, WASM_JS, WASM_WASI
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 
 @Suppress("UNCHECKED_CAST")
 fun <T> uncheckedCastNull(): T = null as T
