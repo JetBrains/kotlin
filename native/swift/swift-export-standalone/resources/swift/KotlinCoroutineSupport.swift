@@ -39,23 +39,19 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
     }
 }
 
-public protocol KotlinFlow: KotlinRuntime.KotlinBase, AsyncSequence { }
+public protocol KotlinFlow: KotlinRuntime.KotlinBase { }
 
-extension KotlinFlow {
-    public func makeAsyncIterator() -> KotlinFlowIterator {
-        .init(flow: self)
-    }
-}
+public protocol KotlinTypedFlow<Element> {
+    associatedtype Element
 
-public protocol KotlinTypedFlow<Element>: AsyncSequence where AsyncIterator == KotlinTypedFlowIterator<Element> {
     var _flow: any KotlinFlow { get }
 }
 
 extension KotlinTypedFlow {
     public var wrapped: any KotlinFlow { _flow }
 
-    public func makeAsyncIterator() -> KotlinTypedFlowIterator<Element> {
-        KotlinTypedFlowIterator(_flow.makeAsyncIterator())
+    public func asAsyncSequence() -> KotlinFlowSequence<Element> {
+        KotlinFlowSequence(_flow)
     }
 }
 
@@ -110,16 +106,16 @@ public struct _KotlinTypedMutableStateFlowImpl<Element>: KotlinTypedMutableState
     }
 }
 
-public struct KotlinTypedFlowIterator<Element>: AsyncIteratorProtocol {
-    private var _iterator: KotlinFlowIterator
+/// An async sequence type for kotlinx.coroutines.flow.Flow
+public struct KotlinFlowSequence<Element>: AsyncSequence {
+    private let flow: any KotlinFlow
 
-    internal init(_ iterator: KotlinFlowIterator) {
-        self._iterator = iterator
+    fileprivate init(_ flow: any KotlinFlow) {
+        self.flow = flow
     }
 
-    public mutating func next() async throws -> Element? {
-        guard let raw = try await _iterator.next() else { return nil }
-        return raw as! Element
+    public func makeAsyncIterator() -> KotlinFlowIterator<Element> {
+        KotlinFlowIterator<Element>(flow)
     }
 }
 
@@ -128,11 +124,10 @@ public struct KotlinTypedFlowIterator<Element>: AsyncIteratorProtocol {
 /// ## Discussion
 /// This type is a manually bridged counterpart to SwiftFlowIterator type in Kotlin
 /// It simply maps `next()` calls to its implementation in Kotlin.
-public final class KotlinFlowIterator: KotlinRuntime.KotlinBase, AsyncIteratorProtocol {
-    public typealias Element = any KotlinRuntimeSupport._KotlinBridgeable
+public final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, AsyncIteratorProtocol {
     public typealias Failure = any Error
 
-    fileprivate init(flow: some KotlinFlow) {
+    fileprivate init(_ flow: some KotlinFlow) {
         let __kt = _kotlin_swift_SwiftFlowIterator_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         _kotlin_swift_SwiftFlowIterator_init_initialize(__kt, flow.__externalRCRef())
@@ -149,14 +144,14 @@ public final class KotlinFlowIterator: KotlinRuntime.KotlinBase, AsyncIteratorPr
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 
-    public func next() async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+    public func next() async throws -> Element? {
         try await {
             try Task.checkCancellation()
             var cancellation: KotlinCoroutineSupport.KotlinTask! = nil
             return try await withTaskCancellationHandler {
-                try await withUnsafeThrowingContinuation { (nativeContinuation: UnsafeContinuation<(any KotlinRuntimeSupport._KotlinBridgeable)?, any Error>) in
+                try await withUnsafeThrowingContinuation { (nativeContinuation: UnsafeContinuation<Element?, any Error>) in
                     withUnsafeCurrentTask { currentTask in
-                        let continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
+                        let continuation: (Swift.Optional<Element>) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
                         let exception: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = { error in
                             nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
                         }
@@ -164,7 +159,7 @@ public final class KotlinFlowIterator: KotlinRuntime.KotlinBase, AsyncIteratorPr
 
                         let _: () = _kotlin_swift_SwiftFlowIterator_next(self.__externalRCRef(), { arg0 in
                                 return {
-                                    continuation(arg0.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)));
+                                    continuation(arg0.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)) as! Element?);
                                     return 0
                                 }()
                         }, { arg0 in
