@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM
 // ISSUE: KT-83587
-// JVM_TARGET: 11
-// JDK_KIND: FULL_JDK_11
 // DUMP_IR
 
 fun box(): String {
