@@ -250,64 +250,6 @@ internal object ArgumentCheckingProcessor {
         if (expectedType == null) return
 
         val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argumentTypeBeforeCapturing, expectedType, session)
-        val expression = atom.expression
-
-        fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic {
-            if (expression.isNullLiteral && !actualExpectedType.isMarkedOrFlexiblyNullable) {
-                return NullForNotNullType(expression, actualExpectedType)
-            }
-
-            fun tryGetConeTypeThatCompatibleWithKtType(type: ConeKotlinType): ConeKotlinType {
-                if (type is ConeTypeVariableType) {
-                    val lookupTag = type.typeConstructor
-
-                    val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[lookupTag]
-
-                    if (variableWithConstraints != null) {
-                        context(candidate.system) {
-                            (context.inferenceComponents.resultTypeResolver
-                                .findResultTypeOrNull(variableWithConstraints, UNKNOWN) as ConeKotlinType?)
-                                ?.applyIf(type.isMarkedNullable) {
-                                    withNullability(type.isMarkedNullable, session.typeContext)
-                                }?.let {
-                                    return it
-                                }
-                        }
-                    }
-
-                    val constraintTypes = variableWithConstraints?.constraints?.mapNotNull { it.type as? ConeKotlinType }
-                    if (!constraintTypes.isNullOrEmpty()) {
-                        return ConeTypeIntersector.intersectTypes(session.typeContext, constraintTypes).applyIf(type.isMarkedNullable) {
-                            withNullability(type.isMarkedNullable, session.typeContext)
-                        }
-                    }
-
-                    val originalTypeParameter = lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag
-                    if (originalTypeParameter != null) {
-                        return ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
-                    }
-                } else if (type is ConeIntegerLiteralType) {
-                    return type.possibleTypes.firstOrNull() ?: type
-                }
-
-                return type
-            }
-
-            if (argumentType is ConeErrorType || actualExpectedType is ConeErrorType) return ErrorTypeInArguments
-
-            val preparedExpectedType = tryGetConeTypeThatCompatibleWithKtType(actualExpectedType)
-            val preparedActualType = tryGetConeTypeThatCompatibleWithKtType(argumentType)
-            return ArgumentTypeMismatch(
-                preparedExpectedType,
-                preparedActualType,
-                expression,
-                // Reaching here means argument types mismatch, and we want to record whether it's due to the nullability by checking a subtype
-                // relation with nullable expected type.
-                session.typeContext.isTypeMismatchDueToNullability(argumentType, actualExpectedType),
-                anonymousFunctionIfReturnExpression,
-                csBuilder.hasContradiction,
-            )
-        }
 
         when {
             isReceiver && isDispatch -> {
@@ -323,7 +265,7 @@ internal object ArgumentCheckingProcessor {
             else -> {
                 if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) return // no errors
 
-                val smartcastExpression = expression as? FirSmartCastExpression
+                val smartcastExpression = atom.expression as? FirSmartCastExpression
                 if (smartcastExpression != null && !smartcastExpression.isStable) {
                     val unstableType = smartcastExpression.smartcastType.coneType
                     if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
@@ -340,7 +282,7 @@ internal object ArgumentCheckingProcessor {
                 }
 
                 if (!isReceiver) {
-                    reportDiagnostic(subtypeError(expectedType))
+                    reportDiagnostic(subtypeError(atom.expression, argumentType))
                     return
                 }
 
@@ -355,6 +297,72 @@ internal object ArgumentCheckingProcessor {
             }
         }
     }
+
+    private fun ArgumentContext.subtypeError(
+        expression: FirExpression,
+        argumentType: ConeKotlinType,
+    ): ResolutionDiagnostic {
+        require(expectedType != null) { "Expected type mustn't be null" }
+
+        if (expression.isNullLiteral && !expectedType.isMarkedOrFlexiblyNullable) {
+            return NullForNotNullType(expression, expectedType)
+        }
+
+        if (argumentType is ConeErrorType || expectedType is ConeErrorType) return ErrorTypeInArguments
+
+        val preparedExpectedType = prepareTypeForArgumentTypeMismatch(expectedType)
+        val preparedActualType = prepareTypeForArgumentTypeMismatch(argumentType)
+        return ArgumentTypeMismatch(
+            preparedExpectedType,
+            preparedActualType,
+            expression,
+            // Reaching here means argument types mismatch, and we want to record whether it's due to the nullability by checking a subtype
+            // relation with nullable expected type.
+            session.typeContext.isTypeMismatchDueToNullability(argumentType, expectedType),
+            anonymousFunctionIfReturnExpression,
+            csBuilder.hasContradiction,
+        )
+    }
+
+    private fun ArgumentContext.prepareTypeForArgumentTypeMismatch(type: ConeKotlinType): ConeKotlinType {
+        if (type is ConeTypeVariableType) {
+            val lookupTag = type.typeConstructor
+            val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[lookupTag]
+
+            if (variableWithConstraints != null) {
+                // Retrieve type using proper logic in ResultTypeResolver.
+                // Might return null in case of PCLA when all constraints are non-proper.
+                context(candidate.system) {
+                    (context.inferenceComponents.resultTypeResolver
+                        .findResultTypeOrNull(variableWithConstraints, UNKNOWN) as ConeKotlinType?)
+                        ?.applyIf(type.isMarkedNullable) {
+                            withNullability(type.isMarkedNullable, session.typeContext)
+                        }?.let {
+                            return it
+                        }
+                }
+            }
+
+            // Fallback to just intersecting all constraint types, including non-proper ones.
+            val constraintTypes = variableWithConstraints?.constraints?.mapNotNull { it.type as? ConeKotlinType }
+            if (!constraintTypes.isNullOrEmpty()) {
+                return ConeTypeIntersector.intersectTypes(session.typeContext, constraintTypes).applyIf(type.isMarkedNullable) {
+                    withNullability(type.isMarkedNullable, session.typeContext)
+                }
+            }
+
+            // In case of no constraints, just return the corresponding type parameter type
+            val originalTypeParameter = lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag
+            if (originalTypeParameter != null) {
+                return ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
+            }
+        } else if (type is ConeIntegerLiteralType) {
+            return type.possibleTypes.firstOrNull() ?: type
+        }
+
+        return type
+    }
+
 
     private fun ArgumentContext.preprocessCallableReference(atom: ConeResolutionAtomWithPostponedChild) {
         val expression = atom.callableReferenceExpression
