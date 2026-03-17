@@ -16,9 +16,9 @@ public interface CompilerMessageRenderer {
      * @param severity the severity level of the message
      * @param message the message text
      * @param location the source location, or `null` if not applicable
-     * @return the formatted message or `null`
+     * @return the formatted message
      */
-    public fun render(severity: Severity, message: String, location: SourceLocation?): String?
+    public fun render(severity: Severity, message: String, location: SourceLocation?): String
 
     /**
      * The severity level of a compiler message.

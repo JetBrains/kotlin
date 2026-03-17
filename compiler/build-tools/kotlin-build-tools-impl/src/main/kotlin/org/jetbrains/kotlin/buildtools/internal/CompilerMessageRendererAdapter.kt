@@ -18,7 +18,7 @@ internal class CompilerMessageRendererAdapter(
         severity: CompilerMessageSeverity,
         message: String,
         location: CompilerMessageSourceLocation?,
-    ): String? {
+    ): String {
         return compilerMessageRenderer.render(
             severity.asCompilerMessageRendererSeverity(),
             message,

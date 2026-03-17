@@ -23,7 +23,7 @@ internal class KotlinLoggerMessageCollectorAdapter(
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         val effectiveSeverity = severity.toEffectiveSeverity(warningsAsErrors)
-        val renderedMessage: String = messageRenderer.render(effectiveSeverity, message, location) ?: return
+        val renderedMessage: String = messageRenderer.render(effectiveSeverity, message, location)
 
         when (effectiveSeverity) {
             CompilerMessageSeverity.EXCEPTION -> kotlinLogger.error(

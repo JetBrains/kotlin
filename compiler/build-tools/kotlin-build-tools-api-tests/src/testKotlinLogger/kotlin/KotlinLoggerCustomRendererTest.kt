@@ -40,28 +40,4 @@ class KotlinLoggerCustomRendererTest : BaseCompilationTest() {
             }
         }
     }
-
-    @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("No exception when renderer returns null")
-    fun noExceptionWhenRendererReturnsNull(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val nullRenderer = object : CompilerMessageRenderer {
-            override fun render(
-                severity: Severity,
-                message: String,
-                location: SourceLocation?,
-            ): String? = null
-        }
-
-        project(strategyConfig) {
-            val module = module("deprecated-usage")
-            module.compile(compilationConfigAction = {
-                it[JvmCompilationOperation.COMPILER_MESSAGE_RENDERER] = nullRenderer
-            }) {
-                val warnLines = logLines[LogLevel.WARN].orEmpty()
-                assertTrue(warnLines.isEmpty()) {
-                    "Expected no WARN messages when renderer returns null, but got: $warnLines"
-                }
-            }
-        }
-    }
 }
