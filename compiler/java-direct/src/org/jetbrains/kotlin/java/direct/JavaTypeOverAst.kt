@@ -481,14 +481,30 @@ class JavaTypeParameterOverAst(
 
     override val upperBounds: Collection<JavaClassifierType> by lazy {
         val extendsList = node.findChildByType("EXTENDS_BOUND_LIST") ?: return@lazy emptyList()
-        extendsList.getChildrenByType("JAVA_CODE_REFERENCE").map { ref ->
-            JavaClassifierTypeOverAst(ref, resolutionContext)
-        }
+        // Bounds may be TYPE nodes (with annotations like "T extends @NotNull Object") or bare
+        // JAVA_CODE_REFERENCE nodes. Matches TreeBasedTypeParameter.upperBounds behavior.
+        extendsList.children
+            .filter { it.type.toString() !in listOf("WHITE_SPACE", "AND") }
+            .mapNotNull { child ->
+                when (child.type.toString()) {
+                    "TYPE" -> createJavaType(child, resolutionContext) as? JavaClassifierType
+                    "JAVA_CODE_REFERENCE" -> JavaClassifierTypeOverAst(child, resolutionContext)
+                    else -> null
+                }
+            }
     }
 
-    override val annotations: Collection<JavaAnnotation> get() = emptyList()
+    // Annotations on the type parameter declaration itself (e.g., <@NonNull T>).
+    // Matches TreeBasedTypeParameter which reads tree.annotations().
+    override val annotations: Collection<JavaAnnotation>
+        get() = node.findChildByType("MODIFIER_LIST")
+            ?.getChildrenByType("ANNOTATION")
+            ?.map { JavaAnnotationOverAst(it, resolutionContext) }
+            ?: emptyList()
+
     override val isDeprecatedInJavaDoc: Boolean get() = false
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? =
+        annotations.find { it.classId?.asSingleFqName() == fqName }
     override val isFromSource: Boolean get() = true
 }
 

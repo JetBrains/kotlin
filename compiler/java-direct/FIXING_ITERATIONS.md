@@ -4,7 +4,7 @@
 
 | Metric | Value |
 |--------|-------|
-| **Last Iteration** | 40 (2026-03-17) |
+| **Last Iteration** | 41 (2026-03-17) |
 | **Box Tests** | 1161/1168 passing (99.4%) |
 | **Phased Tests** | 1393/1442 passing (96.6%) |
 | **Combined** | ~2554/2611 passing, **~57 failing** |
@@ -137,6 +137,7 @@ All 6 record tests pass. See iteration 28 in `ITERATION_RESULTS.md` for details.
 | 38 | `hasConstantNotNullInitializer` correctness (method calls/unresolvable refs → false); malformed constructor filter (IDENTIFIER required) | +0 box, +4 phased |
 | 39 | Sealed class inheritors (cross-file permits fallback + implicit permits detection); InheritedInner2 package-prefix for dotted supertypes | +0 box, +3 phased |
 | 40 | isObjectMethodInInterface for unresolved Object; rawTypeName strips generics through dots; typeArguments uses collectAllRefParamLists + resolves outer type params | +1 box, +2 phased |
+| 41 | Reference-first audit: JavaValueParameterOverAst.type passes modifier list annotations; JavaTypeParameterOverAst.upperBounds handles TYPE children; annotations reads MODIFIER_LIST | +0 (full suite count same, individual annotation tests pass) |
 
 ---
 

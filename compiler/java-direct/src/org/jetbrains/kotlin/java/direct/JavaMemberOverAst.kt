@@ -312,7 +312,9 @@ class JavaValueParameterOverAst(
     override val type: JavaType
         get() {
             val typeNode = node.findChildByType("TYPE") ?: node
-            return createJavaType(typeNode, resolutionContext)
+            // Pass modifier list annotations as extra annotations to the type.
+            // Matches TreeBasedValueParameter which passes annotations to TreeBasedType.create().
+            return createJavaTypeWithAnnotations(typeNode, modifierList, resolutionContext)
         }
 
     override val isVararg: Boolean
