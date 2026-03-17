@@ -27,6 +27,9 @@ val repoPatch = {
         "duckduckgo-4.patch" to File("benchmarkScripts/files/duckduckgo-4.patch")
             .readText()
             .byteInputStream(),
+        "duckduckgo-5.patch" to File("benchmarkScripts/files/duckduckgo-android-8.5.2.patch")
+            .readText()
+            .byteInputStream(),
     )
 }
 
