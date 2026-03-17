@@ -482,7 +482,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             model(it, "asPsiType/forDeclaration")
         }
 
-        test<AbstractExpressionTypeAsPsiTypeTest> {
+        test<AbstractExpressionTypeAsPsiTypeTest>(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
             model(it, "asPsiType/forExpression")
         }
 
