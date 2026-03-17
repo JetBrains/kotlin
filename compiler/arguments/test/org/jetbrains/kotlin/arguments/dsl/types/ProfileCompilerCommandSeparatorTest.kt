@@ -24,7 +24,7 @@ class ProfileCompilerCommandSeparatorTest {
         val expectedStringRepresentation =
             "\"${profileCommand.profilerPath.absolutePathString()}${File.pathSeparator}${profileCommand.command}${File.pathSeparator}${profileCommand.outputDir.absolutePathString()}\""
 
-        val representation = ProfileCompilerCommandType.stringRepresentation(profileCommand)
+        val representation = ProfileCompilerCommandType().stringRepresentation(profileCommand)
         assertNotNull(representation)
         val actualStringRepresentation = representation.replace($$"${File.pathSeparator}", File.pathSeparator)
 
