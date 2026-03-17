@@ -217,13 +217,11 @@ class JavaResolutionContext private constructor(
             if (tryResolve(fqn)) return fqn
         }
 
-        // 2. Same package (also handles default package when packageFqName is root)
-        val samePackageFqn = if (!packageFqName.isRoot) {
-            "${packageFqName.asString()}.$simpleName"
-        } else {
-            simpleName  // Default package: FQN is just the simple name
+        // 2. Same package
+        if (!packageFqName.isRoot) {
+            val samePackageFqn = "${packageFqName.asString()}.$simpleName"
+            if (tryResolve(samePackageFqn)) return samePackageFqn
         }
-        if (tryResolve(samePackageFqn)) return samePackageFqn
 
         // 3. java.lang.*
         val javaLangFqn = "java.lang.$simpleName"

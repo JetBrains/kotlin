@@ -125,7 +125,9 @@ Reference-first area audit: compared `JavaClassOverAst`/`JavaMemberOverAst` agai
 `testJavaCollectionOfExplicitNotNullFailFast`, `testJavaCollectionOfNotNullToTypedArrayFailFast`, `testJavaIteratorOfNotNullFailFast`, `testJavaCollectionOfExplicitNotNullWithIndexFailFast`, `testJavaIteratorOfNotNullWithIndexFailFast`
 → Root cause not yet investigated; likely caused by `findClassId` change in `JavaTypeConversion.kt`
 
-**Net improvement: 74 → 71 failures (−3)**
+**Net improvement: 74 → 67 failures (−7) after regression fix**
+
+**Regression investigation**: Initial implementation included default-package lookup (`tryResolve(simpleName)` when `packageFqName.isRoot`) to handle same-package types in default-package files. This broke 5 `FailFast` tests (`BoxJvm > Ranges > JavaInterop`). Root cause: for `J.java` (default package), the default-package lookup caused `isTypeUseAnnotation("NotNull")` to be called with the simple name instead of the FQN, which returned false, causing the `@NotNull` type-use annotation to be dropped — nullability assertions not generated — NPE not thrown — test fails. Fix: removed default-package lookup. `testSimpleCorrect` reverts to failing (was already failing before iter 37b).
 
 PSI regression tests (`PhasedJvmDiagnosticLightTreeTestGenerated.*`): All passing ✅
 
