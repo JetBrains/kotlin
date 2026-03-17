@@ -28,8 +28,8 @@ object WasmKlibCheckers {
 
             override fun visitModuleFragment(declaration: IrModuleFragment) {
                 val exportedDeclarations =
-                    WasmKlibExportingDeclaration.collectDeclarations(cleanFiles, declaration.files, exportedNames)
-                WasmKlibExportsChecker.check(exportedDeclarations, this.diagnosticContext, diagnosticReporter)
+                    WasmKlibExportingDeclaration.collectDeclarations(cleanFiles, exportedNames)
+                WasmKlibExportsChecker.check(exportedDeclarations, diagnosticContext, diagnosticReporter)
             }
         }
     }

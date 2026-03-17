@@ -12,15 +12,10 @@ import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
-import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibCheckers
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -70,7 +65,6 @@ class WasmPreSerializationLoweringFacade(
                     diagnosticReporter,
                     configuration.languageVersionSettings
                 )
-                runKlibCheckers(irDiagnosticReporter, configuration, inputArtifact.irModuleFragment)
                 val phaseConfig = createJsTestPhaseConfig(testServices, module)
                 if (diagnosticReporter.hasErrors) {
                     // Should errors be found by checkers, there's a chance that some lowering will throw an exception on unparseable code.
@@ -99,18 +93,5 @@ class WasmPreSerializationLoweringFacade(
                 throw IllegalArgumentException("Unexpected inputArtifact type: ${inputArtifact.javaClass.simpleName}")
             }
         }
-    }
-
-    private fun runKlibCheckers(
-        irDiagnosticReporter: IrDiagnosticReporter,
-        configuration: CompilerConfiguration,
-        irModuleFragment: IrModuleFragment,
-    ) {
-        irModuleFragment.acceptVoid(
-            WasmKlibCheckers.makeChecker(
-                irDiagnosticReporter,
-                configuration,
-            )
-        )
     }
 }

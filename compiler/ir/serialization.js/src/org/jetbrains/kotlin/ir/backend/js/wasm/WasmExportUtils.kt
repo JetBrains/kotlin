@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.wasm
 
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectJsExportNames
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
@@ -20,9 +21,18 @@ import kotlin.sequences.filter
 
 typealias ExportNamesMap = Map<ExportKind, Map<IrFile, Map<IrDeclarationWithName, String>>>
 
-enum class ExportKind {
-    JsExport,
-    WasmExport
+enum class ExportKind(
+    val clashError: KtDiagnosticFactory3<String, String, List<WasmKlibExportingDeclaration>>,
+    val crossClashError: KtDiagnosticFactory3<String, String, List<WasmKlibExportingDeclaration>>
+) {
+    JsExport(
+        WasmKlibErrors.EXPORTING_JS_NAME_CLASH,
+        WasmKlibErrors.EXPORTING_JS_NAME_WASM_EXPORT_CLASH
+    ),
+    WasmExport(
+        WasmKlibErrors.WASM_EXPORT_CLASH,
+        WasmKlibErrors.WASM_EXPORT_EXPORTING_JS_NAME_CLASH
+    )
 }
 
 fun IrAnnotationContainer.isWasmExportDeclaration(): Boolean {

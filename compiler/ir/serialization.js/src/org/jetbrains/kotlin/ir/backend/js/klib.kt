@@ -37,6 +37,9 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
+import org.jetbrains.kotlin.ir.backend.js.wasm.ExportKind
+import org.jetbrains.kotlin.ir.backend.js.wasm.WasmIrFileMetadata
+import org.jetbrains.kotlin.ir.backend.js.wasm.WasmIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibCheckers
 import org.jetbrains.kotlin.ir.backend.js.wasm.collectAllExportNames
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -489,7 +492,8 @@ fun serializeModuleIntoKlib(
     wasmTarget: WasmTarget? = null,
     performanceManager: PerformanceManager? = null
 ) {
-    val moduleJsExportNames = moduleFragment.collectJsExportNames()
+    val moduleAllExportNames = moduleFragment.collectAllExportNames()
+    val moduleJsExportNames = moduleAllExportNames[ExportKind.JsExport] ?: emptyMap()
     val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
     val empty = ByteArray(0)
     val serializerOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
@@ -501,11 +505,28 @@ fun serializeModuleIntoKlib(
             cleanFiles = cleanFiles,
             dependencies = emptyList(),
             createModuleSerializer = { irDiagnosticReporter ->
-                JsIrModuleSerializer(
-                    settings = IrSerializationSettings(configuration),
-                    irDiagnosticReporter,
-                    irBuiltIns,
-                ) { JsIrFileMetadata(moduleJsExportNames[it]?.values?.toSmartList() ?: emptyList()) }
+                if (builtInsPlatform == BuiltInsPlatform.JS) {
+                    JsIrModuleSerializer(
+                        settings = IrSerializationSettings(configuration),
+                        irDiagnosticReporter,
+                        irBuiltIns,
+                    ) {
+                        JsIrFileMetadata(moduleJsExportNames[it]?.values?.toSmartList() ?: emptyList())
+                    }
+                } else {
+                    WasmIrModuleSerializer(
+                        settings = IrSerializationSettings(configuration),
+                        irDiagnosticReporter,
+                        irBuiltIns,
+                    ) { irFile ->
+                        WasmIrFileMetadata(
+                            moduleAllExportNames.mapValues { (_, moduleAllExportNamesByType) ->
+                                moduleAllExportNamesByType[irFile]?.map { Pair(it.value, it.key.name.identifier) }?.toSmartList()
+                                    ?: emptyList()
+                            }
+                        )
+                    }
+                }
             },
             metadataSerializer = metadataSerializer,
             platformKlibCheckers = listOfNotNull(
@@ -529,7 +550,7 @@ fun serializeModuleIntoKlib(
                         irDiagnosticReporter,
                         configuration,
                         cleanFilesIrData,
-                        moduleFragment.collectAllExportNames(),
+                        moduleAllExportNames,
                     )
                 }.takeIf { builtInsPlatform == BuiltInsPlatform.WASM }
             ),

@@ -13,12 +13,16 @@ import org.jetbrains.kotlin.library.impl.IrStringWriter
 import org.jetbrains.kotlin.library.impl.toArray
 
 class WasmIrFileMetadata(
-    val exportNames: Map<ExportKind, List<String>>,
+    val exportNames: Map<ExportKind, List<Pair<String, String>>>,
 ) : IrFileSerializer.FileBackendSpecificMetadata {
 
     override fun toByteArray(): ByteArray {
-        val allExportBytes = ExportKind.entries.map { kind ->
-            IrStringWriter(exportNames[kind].orEmpty(), false).writeIntoMemory()
+        val allExportBytes = ExportKind.entries.flatMap { kind ->
+            val entries = exportNames[kind].orEmpty()
+            listOf(
+                IrStringWriter(entries.map { it.first }, false).writeIntoMemory(),  // export names
+                IrStringWriter(entries.map { it.second }, false).writeIntoMemory(), // declaration names
+            )
         }
         return IrArrayWriter(allExportBytes, false).writeIntoMemory()
     }
@@ -30,10 +34,10 @@ class WasmIrFileMetadata(
             val exportArrays = reader.toArray()
 
             val exportNames = ExportKind.entries.associateWith { kind ->
-                val bytes = exportArrays.getOrNull(kind.ordinal)
-                bytes?.let {
-                    IrArrayReader(it).toArray().map(WobblyTF8::decode)
-                } ?: emptyList()
+                val base = kind.ordinal * 2
+                val exportNames = IrArrayReader(exportArrays[base]).toArray().map(WobblyTF8::decode)
+                val declNames = IrArrayReader(exportArrays[base + 1]).toArray().map(WobblyTF8::decode)
+                exportNames.zip(declNames)
             }
 
             return WasmIrFileMetadata(exportNames)
