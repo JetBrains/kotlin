@@ -122,7 +122,7 @@ private val validIdentifierRegex =
 val validIdentifierWithDotRegex =
     Regex(
         """
-    ^((=(?!\s?\.\.\.)|[^;\[\]/<>:\\(){}?=,&])+)
+    ^((?!\.\.\.)(=(?!\s?\.\.\.)|[^;\[\]/<>:\\(){}?=,&]))+
     """
             .trimIndent()
     )
