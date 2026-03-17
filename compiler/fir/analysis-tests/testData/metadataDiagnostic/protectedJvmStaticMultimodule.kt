@@ -18,5 +18,5 @@ abstract class Parent {
 // FILE: m2.kt
 
 class Child : Parent() {
-    protected inline fun foo() = <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>someString<!>
+    protected inline fun foo() = someString
 }

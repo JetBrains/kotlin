@@ -211,25 +211,9 @@ abstract class AbstractFirMetadataSessionFactory(
         }
     }
 
-    override fun FirSessionConfigurator.registerPlatformCheckers() {
-        processPlatforms(
-            onJvmPlatform = { registerPlatformCheckers() },
-            onJsPlatform = { registerPlatformCheckers() },
-            onWasmJsPlatform = { registerPlatformCheckers() },
-            onWasmWasiPlatform = { registerPlatformCheckers() },
-            onNativePlatform = { registerPlatformCheckers() },
-        )
-    }
+    override fun FirSessionConfigurator.registerPlatformCheckers() {}
 
-    override fun FirSessionConfigurator.registerExtraPlatformCheckers() {
-        processPlatforms(
-            onJvmPlatform = { registerExtraPlatformCheckers() },
-            onJsPlatform = { registerExtraPlatformCheckers() },
-            onWasmJsPlatform = { registerExtraPlatformCheckers() },
-            onWasmWasiPlatform = { registerExtraPlatformCheckers() },
-            onNativePlatform = { registerExtraPlatformCheckers() },
-        )
-    }
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers() {}
 
     override fun FirSession.registerSourceSessionComponents(c: Context) {
         processPlatformsWithContext(
