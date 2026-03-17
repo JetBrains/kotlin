@@ -1053,6 +1053,11 @@ class CompileServiceImpl(
 
         ifAliveUnit(minAliveness = Aliveness.Alive) {
             when {
+                daemonOptions.autoshutdownMemoryThreshold != COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE &&
+                        usedMemory(withGC = false) > daemonOptions.autoshutdownMemoryThreshold -> {
+                    log.info("Memory threshold exceeded: threshold ${daemonOptions.autoshutdownMemoryThreshold}b")
+                    gracefulShutdown(false)
+                }
                 daemonOptions.autoshutdownUnusedSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && compilationsCounter.get() == 0 && nowSeconds() - lastUsedSeconds > daemonOptions.autoshutdownUnusedSeconds -> {
                     log.info("Unused timeout exceeded ${daemonOptions.autoshutdownUnusedSeconds}s")
                     gracefulShutdown(false)

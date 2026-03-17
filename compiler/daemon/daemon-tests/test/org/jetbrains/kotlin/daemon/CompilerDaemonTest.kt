@@ -233,10 +233,14 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     fun testDaemonOptionsParsing() {
         val backupOptions = System.getProperty(CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property)
         try {
-            System.setProperty(CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property, "runFilesPath=abcd,autoshutdownIdleSeconds=1111")
+            System.setProperty(
+                CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property,
+                "runFilesPath=abcd,autoshutdownIdleSeconds=1111,autoshutdownMemoryThreshold=333"
+            )
             val opts = configureDaemonOptions(DaemonOptions(shutdownDelayMilliseconds = 1))
             assertEquals("abcd", opts.runFilesPath)
             assertEquals(1111, opts.autoshutdownIdleSeconds)
+            assertEquals(333L, opts.autoshutdownMemoryThreshold)
         }
         finally {
             restoreSystemProperty(CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property, backupOptions)
@@ -370,6 +374,36 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 }
                 Thread.sleep(200)
                 logFile.assertLogContainsSequence("Idle timeout exceeded 1s",
+                                                  "Shutdown started")
+            }
+        }
+    }
+
+    fun testDaemonAutoshutdownOnMemoryThreshold() {
+        withFlagFile(getTestName(true), ".alive") { flagFile ->
+            val daemonOptions = DaemonOptions(
+                autoshutdownMemoryThreshold = 1,
+                autoshutdownIdleSeconds = COMPILE_DAEMON_TIMEOUT_INFINITE_S,
+                autoshutdownUnusedSeconds = COMPILE_DAEMON_TIMEOUT_INFINITE_S,
+                shutdownDelayMilliseconds = 1,
+                runFilesPath = File(testTempDir, getTestName(true)).absolutePath
+            )
+
+            withLogFile("kotlin-daemon-test") { logFile ->
+                val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
+
+                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
+                assertNotNull("failed to connect daemon", daemon)
+                daemon?.registerClient(flagFile.absolutePath)
+
+                // wait up to 6s (more than 2 * DAEMON_PERIODIC_CHECK_INTERVAL_MS)
+                for (attempts in 1..30) {
+                    if (logFile.isLogContainsSequence("Memory threshold exceeded")) break
+                    Thread.sleep(200)
+                }
+                Thread.sleep(200)
+
+                logFile.assertLogContainsSequence("Memory threshold exceeded",
                                                   "Shutdown started")
             }
         }
@@ -987,4 +1021,3 @@ internal fun URL.toFile() =
             if (protocol != "file") null
             else File(file)
         }
-
