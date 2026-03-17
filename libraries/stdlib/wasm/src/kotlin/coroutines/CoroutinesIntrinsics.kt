@@ -79,7 +79,7 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit> {
     return WasmContinuation<Unit, T>(
-        suspendFunction0ToContrefImpl(this),
+        WasmContinuationBox(suspendFunction0ToContrefImpl(this)),
         createSimpleCoroutineFromSuspendFunction(completion)
     )
 }
@@ -110,7 +110,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit> {
     return WasmContinuation<Unit, T>(
-        suspendFunction1ToContrefImpl(this, receiver),
+        WasmContinuationBox(suspendFunction1ToContrefImpl(this, receiver)),
         createSimpleCoroutineFromSuspendFunction(completion)
     )
 }
