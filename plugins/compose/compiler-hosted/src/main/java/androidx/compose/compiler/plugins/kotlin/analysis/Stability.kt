@@ -363,20 +363,9 @@ class StabilityInferencer(
         }
 
         if (declaration.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB) {
-            val bitmask = declaration.stabilityParamBitmask() ?: return Stability.Unstable
+            val mask = declaration.stabilityParamBitmask() ?: return Stability.Unstable
 
-            val knownStableMask =
-                if (typeParameters.size < 32) 0b1 shl typeParameters.size else 0
-            val isKnownStable = bitmask and knownStableMask != 0
-
-            // supporting incremental compilation, where declaration stubs can be
-            // in the same module, so we need to use already inferred values
-            val baseStability = if (isKnownStable && declaration.isInCurrentModule()) {
-                Stability.Stable
-            } else {
-                Stability.Runtime(declaration)
-            }
-            val mask = bitmask and knownStableMask.inv()
+            val baseStability = Stability.Runtime(declaration)
             return baseStability.applyTypeParameterMask(
                 mask,
                 typeParameters = typeParameters,
