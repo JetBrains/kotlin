@@ -96,21 +96,91 @@ class JavaFieldOverAst(
     override val hasConstantNotNullInitializer: Boolean
         get() {
             val init = initializerNode ?: return false
-            // Check for null literal
-            if (init.type.toString() == "LITERAL_EXPRESSION") {
-                val literalChild = init.children.firstOrNull()
-                if (literalChild?.type.toString() == "NULL_LITERAL") return false
-            }
             // Must be final and have a primitive or String type
             if (!isFinal) return false
             val fieldType = type
-            // For String, check both resolved "java.lang.String" and unresolved "String" 
+            // For String, check both resolved "java.lang.String" and unresolved "String"
             // (which implicitly refers to java.lang.String)
-            val isString = fieldType is JavaClassifierType && 
-                (fieldType.classifierQualifiedName == "java.lang.String" || 
+            val isString = fieldType is JavaClassifierType &&
+                (fieldType.classifierQualifiedName == "java.lang.String" ||
                  fieldType.classifierQualifiedName == "String")
-            return fieldType is JavaPrimitiveType || isString
+            if (fieldType !is JavaPrimitiveType && !isString) return false
+            // Verify the initializer is a potentially-constant expression form.
+            // This mirrors how PSI checks computeConstantValue() != null: method calls, object
+            // creation, etc. can never be compile-time constants per JLS 15.29.
+            // For cross-language references (e.g., Foo.FOO from Kotlin), we conservatively return
+            // true (qualified names might be resolvable via the callback in resolveInitializerValue).
+            return isInitializerPotentiallyConstant(init)
         }
+
+    /**
+     * Returns true if the initializer expression could possibly be a JLS compile-time constant
+     * expression. This is conservative: qualified references (e.g., Foo.BAR) are assumed
+     * potentially constant even if we cannot evaluate them locally, since they might be resolved
+     * via cross-language callback. Unresolvable simple names and method calls return false.
+     */
+    private fun isInitializerPotentiallyConstant(node: JavaSyntaxNode): Boolean {
+        return when (node.type.toString()) {
+            "LITERAL_EXPRESSION" -> {
+                val child = node.children.firstOrNull()
+                child?.type.toString() != "NULL_LITERAL"
+            }
+            "BINARY_EXPRESSION" -> {
+                val children = node.children.filter { it.type.toString() != "WHITE_SPACE" }
+                // [lhs, operator, rhs] — check both operands
+                children.size >= 3 &&
+                    isInitializerPotentiallyConstant(children[0]) &&
+                    isInitializerPotentiallyConstant(children[2])
+            }
+            "POLYADIC_EXPRESSION" -> {
+                // Multiple operands with same operator; operands are at even indices
+                val children = node.children.filter { it.type.toString() != "WHITE_SPACE" }
+                var i = 0
+                var result = true
+                while (i < children.size) {
+                    if (!isInitializerPotentiallyConstant(children[i])) {
+                        result = false
+                        break
+                    }
+                    i += 2  // skip operator token
+                }
+                result
+            }
+            "PREFIX_EXPRESSION" -> {
+                val children = node.children.filter { it.type.toString() != "WHITE_SPACE" }
+                children.size >= 2 && isInitializerPotentiallyConstant(children[1])
+            }
+            "PARENS_EXPRESSION" -> {
+                val inner = node.children.firstOrNull {
+                    it.type.toString() !in listOf("WHITE_SPACE", "LPARENTH", "RPARENTH")
+                }
+                inner != null && isInitializerPotentiallyConstant(inner)
+            }
+            "REFERENCE_EXPRESSION" -> {
+                val refText = node.text.trim()
+                if (refText.contains('.')) {
+                    // Qualified reference (e.g., MainKt.FOO, Foo.BAR) — might be an external
+                    // constant resolvable via the cross-language callback
+                    true
+                } else {
+                    // Simple name — must be resolvable as a constant in local scope
+                    isSimpleNamePotentiallyConstant(refText)
+                }
+            }
+            else -> false  // method calls, new expressions, etc. are never JLS constants
+        }
+    }
+
+    private fun isSimpleNamePotentiallyConstant(name: String): Boolean {
+        // Check if the name refers to a field in the same class
+        val localField = containingClass.fields.find { it.name.asString() == name } as? JavaFieldOverAst
+        if (localField != null) {
+            // A field reference is only potentially constant if the field itself is final
+            return localField.isFinal
+        }
+        // Not in the same class — check if it's a known single-type import (e.g., static import)
+        return containingClass.resolutionContext.getSimpleImport(name) != null
+    }
 
     override val initializerValue: Any?
         get() {

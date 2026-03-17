@@ -1526,4 +1526,33 @@ class JavaParsingTest {
         val oldField = javaClass.fields.first { it.name.asString() == "oldField" }
         assert(oldField.isDeprecatedInJavaDoc) { "oldField should be deprecated via JavaDoc" }
     }
+
+    @Test
+    fun testPublicClassWithMalformedMembers() {
+        // Regression: public class with syntactically invalid members (nameless method/field)
+        // must have public visibility and a default constructor.
+        // Previously, `void () {}` was treated as a constructor (no TYPE node in the AST)
+        // with no IDENTIFIER, making hasDefaultConstructor() = false and causing
+        // INVISIBLE_REFERENCE in FIR when the class was used as a supertype.
+        val source = """
+            package p;
+            public class Nameless {
+                void () {}
+                int ;
+            }
+        """.trimIndent()
+        val (root, context) = parseSource(source)
+        val classNode = root.getChildrenByType("CLASS")
+            .first { it.findChildByType("IDENTIFIER")?.text == "Nameless" }
+        val javaClass = JavaClassOverAst(classNode, context)
+        assert(javaClass.visibility.toString() == "public") {
+            "Expected public visibility for 'public class Nameless', got ${javaClass.visibility}"
+        }
+        assert(javaClass.constructors.isEmpty()) {
+            "Malformed 'void () {}' should not be treated as a constructor"
+        }
+        assert(javaClass.hasDefaultConstructor()) {
+            "Class with no valid constructors should have a default constructor"
+        }
+    }
 }

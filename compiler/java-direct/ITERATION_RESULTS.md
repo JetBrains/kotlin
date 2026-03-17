@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-16 (iter 37/37b)
+**Last Updated**: 2026-03-17 (iter 38)
 
 ---
 
@@ -170,6 +170,69 @@ Must be applied explicitly in java-direct (no parser support):
 - Enum constants: `public static final` (JLS 8.9.3)
 - Protected members: `ProtectedAndPackage` not plain `Protected`
 - Protected static members: `ProtectedStaticVisibility`
+
+---
+
+---
+
+## Iteration 38: Const Evaluation Correctness + Malformed Constructor Fix — 2026-03-17
+
+### Root Cause Analysis
+
+**Bug A: `hasConstantNotNullInitializer` (java-direct) returned true for non-constant initializers**
+
+PSI's `JavaFieldImpl.hasConstantNotNullInitializer()` evaluates the expression and returns `false` for method calls or unresolvable references. Java-direct's implementation only did a structural check (final + primitive/String type + has initializer), returning `true` even for `System.currentTimeMillis()` or `SOME_WRONG_EXPRESSION`. Since FIR's `FirConstCheckVisitor.visitPropertyAccessExpression` returns `VALID_CONST` for any `FirFieldSymbol` with `hasConstantInitializer=true`, these fields were incorrectly treated as compile-time constants.
+
+**Bug B: `void () {}` treated as constructor in malformed Java class**
+
+In the AST produced by the Java parser for the malformed method `void () {}`, the `void` keyword ends up as `ERROR_ELEMENT` rather than a `TYPE` node (because there's no method name after the return type). `JavaClassOverAst.constructors` filtered for `it.findChildByType("TYPE") == null`, so this malformed node was treated as a constructor with package-private visibility. Since `hasDefaultConstructor() = false` (an "explicit" constructor was found), FIR produced `INVISIBLE_REFERENCE` when calling `Nameless()`.
+
+### Fixes
+
+**Fix A: `isInitializerPotentiallyConstant` in `JavaMemberOverAst.kt`**
+
+Added `isInitializerPotentiallyConstant(node)` helper that returns `false` for:
+- Method calls and object creation (never JLS constant expressions)
+- Simple (unqualified) name references to non-final same-class fields
+- Simple name references with no local resolution and no import
+
+Returns `true` for:
+- Literals
+- Arithmetic expressions (binary, polyadic, prefix, parenthesized)
+- Qualified references (`Foo.BAR`) — might be cross-language constants resolvable via callback
+
+This correctly handles:
+- `System.currentTimeMillis()` → false (method call)
+- `i3 = i1` (i1 non-final) → false (simple name found in class as non-final field)
+- `SOME_WRONG_EXPRESSION` → false (simple name, not in class, not in imports)
+- `Foo.FOO + 1` (cross-Kotlin) → true (qualified ref, might be resolvable via callback)
+- `i4 = i2` (i2 final) → true (simple name found as final field)
+
+**Important**: The fix was originally attempted in `FirJavaFacade.kt` (making `lazyHasConstantInitializer` depend on `lazyInit.value != null`). This was reverted because it broke `testKotlinJavaCycle` — cycles in cross-language const resolution caused null initializer values even for valid structural constants. The correct fix is at the java-direct model level.
+
+**Fix B: `constructors` filter in `JavaClassOverAst.kt`**
+
+Added `&& it.findChildByType("IDENTIFIER") != null` to the constructor filter. A real constructor declaration always has an IDENTIFIER (the class name). Malformed method nodes with `ERROR_ELEMENT` instead of TYPE but no IDENTIFIER are not valid constructors.
+
+### Unit Tests Added
+- `testPublicClassWithMalformedMembers` — verifies public visibility + no spurious constructors for class with `void () {}` and `int ;`
+
+### Test Results
+- **Box tests**: 8 → 8 (unchanged)
+- **Phased tests**: 59 → 55 (+4 fixed)
+- **Total failures**: 67 → 63 (4 tests fixed)
+- PSI regression tests (`PhasedJvmDiagnosticLightTreeTestGenerated.*`): All passing ✅
+
+**Tests FIXED (4):**
+- `testFromJavaWithNonConstInitializer` — `System.currentTimeMillis()` no longer treated as constant
+- `testJavaProperties` — `i3 = i1` (non-final ref) no longer treated as constant
+- `testKt57802` — `SOME_WRONG_EXPRESSION` (unresolvable) no longer treated as constant
+- `testNamelessInJava` — malformed `void () {}` no longer treated as constructor
+
+### Files Modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt` — `hasConstantNotNullInitializer` now uses `isInitializerPotentiallyConstant`; added `isSimpleNamePotentiallyConstant`
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt` — constructor filter requires IDENTIFIER
+- `compiler/java-direct/test/org/jetbrains/kotlin/java/direct/JavaParsingTest.kt` — `testPublicClassWithMalformedMembers` unit test
 
 ---
 

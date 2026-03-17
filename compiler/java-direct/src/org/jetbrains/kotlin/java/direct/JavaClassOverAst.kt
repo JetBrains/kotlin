@@ -173,7 +173,7 @@ class JavaClassOverAst(
 
     override val constructors: Collection<JavaConstructor>
         get() = node.getChildrenByType("METHOD")
-            .filter { it.findChildByType("TYPE") == null }
+            .filter { it.findChildByType("TYPE") == null && it.findChildByType("IDENTIFIER") != null }
             .map { JavaConstructorOverAst(it, this) }
 
     override val recordComponents: Collection<JavaRecordComponent>
