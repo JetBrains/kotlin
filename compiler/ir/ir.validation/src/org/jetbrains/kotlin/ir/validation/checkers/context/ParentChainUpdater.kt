@@ -6,16 +6,13 @@
 package org.jetbrains.kotlin.ir.validation.checkers.context
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.validation.temporarilyPushing
 
 object ParentChainUpdater : ContextUpdater {
-    override fun runInNewContext(
-        context: CheckerContext,
-        element: IrElement,
-        block: () -> Unit,
-    ) {
-        context.parentChain.temporarilyPushing(element) {
-            block()
-        }
+    override fun onEnterElement(context: CheckerContext, element: IrElement) {
+        context.parentChain.add(element)
+    }
+
+    override fun onExitElement(context: CheckerContext, element: IrElement) {
+        context.parentChain.removeLast()
     }
 }

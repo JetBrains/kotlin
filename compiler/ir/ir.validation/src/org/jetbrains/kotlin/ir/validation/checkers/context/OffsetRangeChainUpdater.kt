@@ -7,19 +7,16 @@ package org.jetbrains.kotlin.ir.validation.checkers.context
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
-import org.jetbrains.kotlin.ir.validation.temporarilyPushing
 
 object OffsetRangeChainUpdater : ContextUpdater {
-    override fun runInNewContext(
-        context: CheckerContext,
-        element: IrElement,
-        block: () -> Unit,
-    ) {
+    override fun onEnterElement(context: CheckerContext, element: IrElement) {
         OffsetRange.createIfRealValidOffsets(element, useOwnOffsetsOfInlinedFunctionBlock = false)?.let { newOffsetBoundaries ->
-            context.offsetRanges.temporarilyPushing(newOffsetBoundaries) {
-                block()
-            }
-        } ?: block()
+            context.offsetRanges.add(newOffsetBoundaries)
+        }
+    }
+
+    override fun onExitElement(context: CheckerContext, element: IrElement) {
+        context.offsetRanges.removeLast()
     }
 }
 

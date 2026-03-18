@@ -84,17 +84,24 @@ private class IrFileValidator(
         elementCheckers.filter { it.elementClass.isAssignableFrom(type) }
     }
 
-    override fun visitElement(element: IrElement) {
-        var block = { element.acceptChildrenVoid(this) }
+    private inline fun withUpdatedContest(element: IrElement, block: () -> Unit) {
         for (contextUpdater in contextUpdaters) {
-            val currentBlock = block
-            block = { contextUpdater.runInNewContext(context, element, currentBlock) }
+            contextUpdater.onEnterElement(context, element)
         }
         block()
+        for (contextUpdater in contextUpdaters.asReversed()) {
+            contextUpdater.onExitElement(context, element)
+        }
 
         for (checker in getCheckersFor(element.javaClass)) {
             @Suppress("UNCHECKED_CAST")
             (checker as IrElementChecker<IrElement>).check(element, context)
+        }
+    }
+
+    override fun visitElement(element: IrElement) {
+        withUpdatedContest(element) {
+            super.visitElement(element)
         }
     }
 
