@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 class InlineAnalyzerExtension(
     private val reasonableInlineRules: Iterable<ReasonableInlineRule>,
@@ -169,11 +170,11 @@ class InlineAnalyzerExtension(
     }
 
     private fun checkHasInlinableAndNullability(functionDescriptor: FunctionDescriptor, function: KtFunction, trace: BindingTrace) {
-        var hasInlineArgs = false
-        function.valueParameters.zip(functionDescriptor.valueParameters).forEach { (parameter, descriptor) ->
-            hasInlineArgs = hasInlineArgs or checkInlinableParameter(descriptor, parameter, functionDescriptor, trace)
+        function.valueParameters.forEachZipped(functionDescriptor.valueParameters) { parameter, descriptor ->
+            if (checkInlinableParameter(descriptor, parameter, functionDescriptor, trace)) {
+                return
+            }
         }
-        if (hasInlineArgs) return
 
         if (functionDescriptor.isInlineWithReified() || functionDescriptor.isInlineOnly() || functionDescriptor.isExpect ||
             functionDescriptor.isSuspend

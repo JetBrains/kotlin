@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -277,7 +278,7 @@ internal fun assertStableSymbolResult(
     val assertions = testServices.assertions
     assertions.assertEquals(firstCandidates.size, secondCandidates.size)
 
-    for ((firstCandidate, secondCandidate) in firstCandidates.zip(secondCandidates)) {
+    firstCandidates.forEachZipped(secondCandidates) { firstCandidate, secondCandidate ->
         assertions.assertEquals(firstCandidate::class, secondCandidate::class)
         assertStableResult(testServices, firstCandidate.candidate as KaCall, secondCandidate.candidate as KaCall)
         assertions.assertEquals(firstCandidate.isInBestCandidates, secondCandidate.isInBestCandidates)

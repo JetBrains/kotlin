@@ -504,3 +504,21 @@ class ChainedIterator<T>(delegates: Collection<Iterator<T>>) : Iterator<T> {
 }
 
 val NullPair: Pair<Nothing?, Nothing?> = null to null
+
+inline fun <T, R> List<T>.forEachZipped(other: List<R>, action: (a: T, b: R) -> Unit) {
+    for (i in 0 until minOf(size, other.size)) {
+        action(this[i], other[i])
+    }
+}
+
+inline fun <T, R> List<T>.forEachZipped(other: Array<out R>, action: (a: T, b: R) -> Unit) {
+    for (i in 0 until minOf(size, other.size)) {
+        action(this[i], other[i])
+    }
+}
+
+inline fun <T, R> Array<out T>.forEachZipped(other: Array<out R>, action: (a: T, b: R) -> Unit) {
+    for (i in 0 until minOf(size, other.size)) {
+        action(this[i], other[i])
+    }
+}

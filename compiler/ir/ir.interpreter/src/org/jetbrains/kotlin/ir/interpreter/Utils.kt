@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.keysToMap
@@ -341,7 +342,7 @@ internal fun IrEnumEntry.toState(irBuiltIns: IrBuiltIns): Common {
             Primitive(this.name.asString(), irBuiltIns.stringType),
             Primitive(enumEntries.indexOf(this), irBuiltIns.intType)
         )
-        irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().zip(valueArguments).forEach { (property, argument) ->
+        irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().forEachZipped(valueArguments) { property, argument ->
             enumClassObject.setField(property.symbol, argument)
         }
     }

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name.identifier
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import java.util.ArrayDeque
 
 @PhasePrerequisites(
@@ -377,7 +378,7 @@ private class CallInlining(
         parameterToTempVariable: MutableMap<IrValueParameterSymbol, IrValueSymbol>,
         parameterToLambda: MutableMap<IrValueParameterSymbol, IrRichCallableReference<*>>,
     ) {
-        for ((parameter, argument) in callee.parameters.zip(callSite.arguments)) {
+        callee.parameters.forEachZipped(callSite.arguments) { parameter, argument ->
             val isDefaultArg = argument == null && parameter.defaultValue != null
             val argumentValue = when {
                 argument != null -> argument
@@ -411,12 +412,12 @@ private class CallInlining(
                         }
                     argumentValue.boundValues[index] = irGetValueWithoutLocation(variableSymbol)
                 }
-                continue
+                return@forEachZipped
             }
             // inline parameters should never be stored to temporaries, as it would prevent their inlining
             argumentValue.tryGetLoadedInlineParameter()?.let {
                 parameterToTempVariable[parameter.symbol] = it
-                continue
+                return@forEachZipped
             }
 
             val castedArgumentValue = argumentValue.doImplicitCastIfNeededTo(parameter.type)

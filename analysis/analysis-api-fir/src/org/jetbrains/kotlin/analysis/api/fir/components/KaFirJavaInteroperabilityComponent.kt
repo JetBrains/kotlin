@@ -86,6 +86,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.updateArgumentModeFromAnnotations
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.org.objectweb.asm.Type
 
 internal class KaFirJavaInteroperabilityComponent(
@@ -267,13 +268,13 @@ internal class KaFirJavaInteroperabilityComponent(
                         val memberSymbol = containingClassSymbol.declarationSymbols.find { it.findPsi(analysisSession.analysisScope) == member } as? FirCallableSymbol<*>
                         if (memberSymbol != null) {
                             //typeParamSymbol.fir.source == null thus zip is required, see KT-62354
-                            memberSymbol.typeParameterSymbols.zip(member.typeParameters).forEach { (typeParamSymbol, typeParam) ->
+                            memberSymbol.typeParameterSymbols.forEachZipped(member.typeParameters) { typeParamSymbol, typeParam ->
                                 javaTypeParameterStack.addParameter(JavaTypeParameterImpl(typeParam), typeParamSymbol)
                             }
                         }
                     }
 
-                    containingClassSymbol.typeParameterSymbols.zip(psiClass.typeParameters).forEach { (symbol, typeParameter) ->
+                    containingClassSymbol.typeParameterSymbols.forEachZipped(psiClass.typeParameters) { symbol, typeParameter ->
                         javaTypeParameterStack.addParameter(JavaTypeParameterImpl(typeParameter), symbol)
                     }
                 }

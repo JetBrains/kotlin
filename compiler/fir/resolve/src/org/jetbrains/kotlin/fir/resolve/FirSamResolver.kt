@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
@@ -183,13 +184,15 @@ class FirSamResolver(
                 .map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isMarkedNullable = false) }
 
         val substitutor = substitutorByMap(
-            firRegularClass.typeParameters
-                .map { it.symbol }
-                .zip(newTypeParameterTypes).toMap(),
+            buildMap {
+                firRegularClass.typeParameters.forEachZipped(newTypeParameterTypes) { typeParameter, newTypeParameterType ->
+                    this[typeParameter.symbol] = newTypeParameterType
+                }
+            },
             session
         )
 
-        for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {
+        newTypeParameters.forEachZipped(firRegularClass.typeParameters) { newTypeParameter, oldTypeParameter ->
             val declared = oldTypeParameter.symbol.fir
             newTypeParameter.bounds += declared.symbol.resolvedBounds.map { typeRef ->
                 buildResolvedTypeRef {
@@ -328,24 +331,26 @@ context(c: SessionHolder)
 private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(type: ConeClassLikeType): ConeSubstitutor {
     if (typeParameters.isEmpty()) return ConeSubstitutor.Empty
 
-    val substitutionMap = typeParameters.zip(type.typeArguments).associate { (parameter, projection) ->
-        val typeArgument =
-            projection.type
-            // TODO: Consider using `parameterSymbol.fir.bounds.first().coneType` once sure that it won't fail with exception
-                ?: parameter.symbol.fir.bounds.firstOrNull()?.coneTypeOrNull
-                    ?.let { bound ->
-                        if (!bound.containsReferenceToOtherTypeParameter(this)) {
-                            bound
-                        } else {
-                            val diagnostic = ConeCannotInferTypeParameterType(
-                                parameter.symbol,
-                                reason = "Parameter ${parameter.symbol.name} has a cycle in its upper bounds",
-                            )
-                            ConeErrorType(diagnostic)
+    val substitutionMap = buildMap {
+        typeParameters.forEachZipped(type.typeArguments) { parameter, projection ->
+            val typeArgument =
+                projection.type
+                // TODO: Consider using `parameterSymbol.fir.bounds.first().coneType` once sure that it won't fail with exception
+                    ?: parameter.symbol.fir.bounds.firstOrNull()?.coneTypeOrNull
+                        ?.let { bound ->
+                            if (!bound.containsReferenceToOtherTypeParameter(this@buildSubstitutorWithUpperBounds)) {
+                                bound
+                            } else {
+                                val diagnostic = ConeCannotInferTypeParameterType(
+                                    parameter.symbol,
+                                    reason = "Parameter ${parameter.symbol.name} has a cycle in its upper bounds",
+                                )
+                                ConeErrorType(diagnostic)
+                            }
                         }
-                    }
-                ?: c.session.builtinTypes.nullableAnyType.coneType
-        Pair(parameter.symbol, typeArgument)
+                    ?: c.session.builtinTypes.nullableAnyType.coneType
+            this[parameter.symbol] = typeArgument
+        }
     }
 
     return substitutorByMap(substitutionMap, c.session)

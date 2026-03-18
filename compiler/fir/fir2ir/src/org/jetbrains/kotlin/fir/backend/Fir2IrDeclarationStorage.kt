@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
@@ -447,11 +448,11 @@ class Fir2IrDeclarationStorage(
     fun <T : IrFunction> T.putParametersInScope(function: FirFunction): T {
         val contextParameters = function.contextParametersForFunctionOrContainingProperty()
 
-        for ((firParameter, irParameter) in contextParameters.zip(this.parameters.filter { it.kind == IrParameterKind.Context })) {
+        contextParameters.forEachZipped(this.parameters.filter { it.kind == IrParameterKind.Context }) { firParameter, irParameter ->
             localStorage.putParameter(firParameter, irParameter.symbol)
         }
 
-        for ((firParameter, irParameter) in function.valueParameters.zip(parameters.filter { it.kind == IrParameterKind.Regular })) {
+        function.valueParameters.forEachZipped(parameters.filter { it.kind == IrParameterKind.Regular }) { firParameter, irParameter ->
             localStorage.putParameter(firParameter, irParameter.symbol)
         }
         return this

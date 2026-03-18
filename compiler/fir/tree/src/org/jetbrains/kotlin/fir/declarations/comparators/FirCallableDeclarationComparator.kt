@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeRefComparator
 import org.jetbrains.kotlin.name.packageName
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 object FirCallableDeclarationComparator : Comparator<FirCallableDeclaration> {
     override fun compare(a: FirCallableDeclaration, b: FirCallableDeclaration): Int {
@@ -46,7 +47,7 @@ object FirCallableDeclarationComparator : Comparator<FirCallableDeclaration> {
             if (valueParameterSizeDiff != 0) {
                 return valueParameterSizeDiff
             }
-            for ((aValueParameter, bValueParameter) in a.valueParameters.zip(b.valueParameters)) {
+            a.valueParameters.forEachZipped(b.valueParameters) { aValueParameter, bValueParameter ->
                 val valueParameterDiff = FirValueParameterComparator.compare(aValueParameter, bValueParameter)
                 if (valueParameterDiff != 0) {
                     return valueParameterDiff
@@ -59,7 +60,7 @@ object FirCallableDeclarationComparator : Comparator<FirCallableDeclaration> {
         if (typeParameterSizeDiff != 0) {
             return typeParameterSizeDiff
         }
-        for ((aTypeParameter, bTypeParameter) in a.typeParameters.zip(b.typeParameters)) {
+        a.typeParameters.forEachZipped(b.typeParameters) { aTypeParameter, bTypeParameter ->
             val typeParameterDiff = FirTypeParameterRefComparator.compare(aTypeParameter, bTypeParameter)
             if (typeParameterDiff != 0) {
                 return typeParameterDiff

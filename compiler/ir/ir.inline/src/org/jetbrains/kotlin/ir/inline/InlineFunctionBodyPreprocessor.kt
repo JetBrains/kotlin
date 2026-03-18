@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 /**
@@ -43,7 +44,7 @@ internal class InlineFunctionBodyPreprocessor(
         result.patchDeclarationParents(irElement.parent)
 
         // Make all arguments regular and noinline if needed.
-        for ((originalParameter, newParameter) in irElement.parameters.zip(result.parameters)) {
+        irElement.parameters.forEachZipped(result.parameters) { originalParameter, newParameter ->
             newParameter.kind = IrParameterKind.Regular
             // It can become inline accidentally because of substitution of type parameter to inline function
             // To revert it we mark it as noinline explicitly

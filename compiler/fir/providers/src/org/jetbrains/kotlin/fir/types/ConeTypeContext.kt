@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.DoCustomTran
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.LowerIfFlexible
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.fir.expressions.withNewTypeSince as coneWithNewTypeSince
 
@@ -618,11 +619,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
 
         val substitutor = if (declaration is FirTypeParameterRefsOwner) {
-            val substitution =
-                declaration.typeParameters.zip(type.typeArguments).associate { (parameter, argument) ->
-                    parameter.symbol to ((argument as? ConeKotlinTypeProjection)?.type
-                        ?: session.builtinTypes.nullableAnyType.coneType)//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
+            val substitution = buildMap {
+                declaration.typeParameters.forEachZipped(type.typeArguments) { parameter, argument ->
+                    this[parameter.symbol] = (argument as? ConeKotlinTypeProjection)?.type
+                        ?: session.builtinTypes.nullableAnyType.coneType//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }
+            }
             substitutorByMap(substitution, session)
         } else {
             ConeSubstitutor.Empty

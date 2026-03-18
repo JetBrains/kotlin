@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.types.withAttributes
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import kotlin.reflect.KClass
 
 /**
@@ -37,7 +38,7 @@ internal class FE10LikeConeSubstitutor(
         typeParameters: List<FirTypeParameterSymbol>,
         typeArguments: List<ConeTypeProjection>,
         useSiteSession: FirSession
-    ) : this(typeParameters.zip(typeArguments).toMap(), useSiteSession)
+    ) : this(buildMap { typeParameters.forEachZipped(typeArguments) { param, arg -> this[param] = arg } }, useSiteSession)
 
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 abstract class FirAbstractOverrideChecker : FirOverrideChecker {
 
@@ -29,8 +30,10 @@ fun buildSubstitutorForOverridesCheck(
     if (overrideCandidate.typeParameters.size != baseDeclaration.typeParameters.size) return null
 
     if (baseDeclaration.typeParameters.isEmpty()) return ConeSubstitutor.Empty
-    val types = baseDeclaration.typeParameters.map {
-        ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+    val substitution = buildMap {
+        overrideCandidate.typeParameters.forEachZipped(baseDeclaration.typeParameters) { overrideParameter, baseParameter ->
+            this[overrideParameter.symbol] = ConeTypeParameterTypeImpl(baseParameter.symbol.toLookupTag(), false)
+        }
     }
-    return substitutorByMap(overrideCandidate.typeParameters.map { it.symbol }.zip(types).toMap(), useSiteSession)
+    return substitutorByMap(substitution, useSiteSession)
 }

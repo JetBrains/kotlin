@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tests
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.tests.GenerateSteppedRangesCodegenTestData.Function
 import org.jetbrains.kotlin.generators.tests.GenerateSteppedRangesCodegenTestData.Function.*
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -72,7 +73,7 @@ object GenerateInRangeExpressionTestData {
 
     private fun PrintWriter.generateGlobalValDefinitions(expressions: List<String>, prefix: String): List<String> {
         val valNames = expressions.indices.map { "$prefix$it" }
-        valNames.zip(expressions).forEach { (name, expression) -> println("val $name = $expression") }
+        valNames.forEachZipped(expressions) { name, expression -> println("val $name = $expression") }
         println()
         return valNames
     }

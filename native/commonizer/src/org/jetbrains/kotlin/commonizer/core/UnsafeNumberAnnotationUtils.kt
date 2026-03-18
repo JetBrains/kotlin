@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey
 import org.jetbrains.kotlin.commonizer.allLeaves
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 fun createUnsafeNumberAnnotationIfNecessary(
     targets: List<CommonizerTarget>,
@@ -24,7 +25,7 @@ fun createUnsafeNumberAnnotationIfNecessary(
 
     val actualPlatformTypes = mutableMapOf<String, RenderedType>()
 
-    inputTypes.zip(targets).forEach { (type, target) ->
+    inputTypes.forEachZipped(targets) { type, target ->
         target.allLeaves().forEach { leafCommonizerTarget ->
             actualPlatformTypes[leafCommonizerTarget.name] = renderTypeForUnsafeNumberAnnotation(type)
         }

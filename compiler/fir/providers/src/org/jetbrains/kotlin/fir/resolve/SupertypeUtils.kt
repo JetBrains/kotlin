@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import kotlin.Pair
 
@@ -344,10 +345,13 @@ fun ConeClassLikeType?.isClassBasedType(
 
 fun createSubstitutionForSupertype(superType: ConeLookupTagBasedType, session: FirSession): ConeSubstitutor {
     val klass = superType.lookupTag.toRegularClassSymbol(session)?.fir ?: return ConeSubstitutor.Empty
-    val arguments = superType.typeArguments.map {
-        it as? ConeKotlinType ?: ConeErrorType(ConeSimpleDiagnostic("illegal projection usage", DiagnosticKind.IllegalProjectionUsage))
+    val mapping = buildMap {
+        klass.typeParameters.forEachZipped(superType.typeArguments) { typeParameter, typeArgument ->
+            this[typeParameter.symbol] = typeArgument as? ConeKotlinType ?: ConeErrorType(
+                ConeSimpleDiagnostic("illegal projection usage", DiagnosticKind.IllegalProjectionUsage)
+            )
+        }
     }
-    val mapping = klass.typeParameters.map { it.symbol }.zip(arguments).toMap()
     return substitutorByMap(mapping, session)
 }
 

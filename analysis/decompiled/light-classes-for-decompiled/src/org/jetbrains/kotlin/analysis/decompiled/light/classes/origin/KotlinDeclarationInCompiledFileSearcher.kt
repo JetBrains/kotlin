@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -219,7 +220,7 @@ class KotlinDeclarationInCompiledFileSearcher {
 
         if (ktTypes.size != psiTypes.size) return false
         val isInsideAnnotation = member.containingClass?.isAnnotationType == true
-        ktTypes.zip(psiTypes).forEach { (ktType, psiType) ->
+        ktTypes.forEachZipped(psiTypes) { ktType, psiType ->
             if (!areTypesTheSame(ktType, psiType, false, isInsideAnnotation)) return false
         }
         return true
@@ -245,7 +246,7 @@ class KotlinDeclarationInCompiledFileSearcher {
         member.parameterList.parameters.forEach { psiNames.add(it.name) }
 
         if (names.size != psiNames.size) return false
-        names.zip(psiNames).forEach { (ktName, psiName) ->
+        names.forEachZipped(psiNames) { ktName, psiName ->
             if (ktName != psiName) return false
         }
         return true
@@ -330,7 +331,7 @@ class KotlinDeclarationInCompiledFileSearcher {
         if (parametersCount != initial.size) return false
 
         val memberValues = memberParameterList.parameters.map(fromPsiMapper)
-        initial.zip(memberValues).forEach { (fromKt, fromPsi) ->
+        initial.forEachZipped(memberValues) { fromKt, fromPsi ->
             if (!matcher(fromKt, fromPsi)) return false
         }
         return true

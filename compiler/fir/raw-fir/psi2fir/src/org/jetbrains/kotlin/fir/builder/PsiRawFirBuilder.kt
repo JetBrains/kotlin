@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -2012,9 +2013,7 @@ open class PsiRawFirBuilder(
                             val primaryConstructor = classOrObject.primaryConstructor
                             val firPrimaryConstructor = declarations.firstOrNull { it is FirConstructor } as? FirConstructor
                             if (primaryConstructor != null && firPrimaryConstructor != null) {
-                                primaryConstructor.valueParameters.zip(
-                                    firPrimaryConstructor.valueParameters
-                                ).forEach { (ktParameter, firParameter) ->
+                                primaryConstructor.valueParameters.forEachZipped(firPrimaryConstructor.valueParameters) { ktParameter, firParameter ->
                                     if (ktParameter.hasValOrVar()) {
                                         addDeclaration(ktParameter.toFirProperty(firParameter))
                                     }

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.reflect.KClass
 
@@ -70,12 +71,18 @@ internal fun checkUpperBoundViolated(
         return
     }
 
-    val substitution = typeParameterSymbols.zip(type.typeArguments).toMap()
+    val typeArgumentsList = type.typeArguments.toList()
+
+    val substitution = buildMap {
+        typeParameterSymbols.forEachZipped(typeArgumentsList) { typeParameterSymbol, typeArgument ->
+            this[typeParameterSymbol] = typeArgument
+        }
+    }
     val substitutor = FE10LikeConeSubstitutor(substitution, context.session)
 
     return checkUpperBoundViolated(
         typeParameterSymbols,
-        type.typeArguments.toList(),
+        typeArgumentsList,
         substitutor,
         isReportExpansionError = true,
         isIgnoreTypeParameters,

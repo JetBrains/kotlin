@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import java.lang.annotation.RetentionPolicy
 
 internal sealed class MetafactoryArgumentsResult {
@@ -302,7 +303,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         val methodParameters = fakeInstanceMethod.nonDispatchParameters
         validateMethodParameters(implParameters, methodParameters, implFun, fakeInstanceMethod)
-        for ((implParameter, methodParameter) in implParameters.zip(methodParameters)) {
+        implParameters.forEachZipped(methodParameters) { implParameter, methodParameter ->
             val constraint = constraints.parameters[methodParameter]
             if (!checkTypeCompliesWithConstraint(implParameter.type, constraint))
                 return false
@@ -346,7 +347,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         val implParameters = implFun.nonDispatchParameters.drop(capturedParametersCount)
         val methodParameters = fakeInstanceMethod.nonDispatchParameters
         validateMethodParameters(implParameters, methodParameters, implFun, fakeInstanceMethod)
-        for ((implParameter, methodParameter) in implParameters.zip(methodParameters)) {
+        implParameters.forEachZipped(methodParameters) { implParameter, methodParameter ->
             val parameterConstraint = constraints.parameters[methodParameter]
             if (parameterConstraint.requiresImplLambdaBoxing()) {
                 makeLambdaParameterNullable(implFun, implParameter)

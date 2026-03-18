@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.remapSymbolParent
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 internal class FunctionDefaultParametersActualizer(
     symbolRemapper: ActualizerSymbolRemapper,
@@ -28,7 +29,7 @@ internal class FunctionDefaultParametersActualizer(
     }
 
     private fun actualize(expectFunction: IrFunction, actualFunction: IrFunction) {
-        expectFunction.parameters.zip(actualFunction.parameters).forEach { (expectParameter, actualParameter) ->
+        expectFunction.parameters.forEachZipped(actualFunction.parameters) { expectParameter, actualParameter ->
             val expectDefaultValue = expectParameter.defaultValue
             if (actualParameter.defaultValue == null && expectDefaultValue != null) {
                 actualParameter.defaultValue = expectDefaultValue.deepCopyWithSymbols(actualFunction).transform(visitor, null)

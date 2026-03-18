@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractOverrideChecker() {
     private val context = session.typeContext
@@ -45,7 +46,12 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         val delegated1 = ref1.delegatedTypeRef as? FirUserTypeRef ?: return false
         val delegated2 = ref2.delegatedTypeRef as? FirUserTypeRef ?: return false
         if (delegated1.qualifier.size != delegated2.qualifier.size) return false
-        return delegated1.qualifier.zip(delegated2.qualifier).all { (l, r) -> l.name == r.name }
+        delegated1.qualifier.forEachZipped(delegated2.qualifier) { l, r ->
+            if (l.name != r.name) {
+                return false
+            }
+        }
+        return true
     }
 
 
@@ -83,8 +89,12 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         if (overrideCandidate.symbol == baseDeclaration.symbol) return true
         if (overrideCandidate !is FirTypeParameter || baseDeclaration !is FirTypeParameter) return false
         if (overrideCandidate.bounds.size != baseDeclaration.bounds.size) return false
-        return overrideCandidate.symbol.resolvedBounds.zip(baseDeclaration.symbol.resolvedBounds)
-            .all { (aBound, bBound) -> isEqualBound(aBound, bBound, overrideCandidate, baseDeclaration, substitutor) }
+        overrideCandidate.symbol.resolvedBounds.forEachZipped(baseDeclaration.symbol.resolvedBounds) { aBound, bBound ->
+            if (!isEqualBound(aBound, bBound, overrideCandidate, baseDeclaration, substitutor)) {
+                return false
+            }
+        }
+        return true
     }
 
     public override fun buildTypeParametersSubstitutorIfCompatible(
@@ -124,9 +134,12 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
 
         if (!commonCallableChecks(overrideCandidate, baseDeclaration, substitutor, ignoreVisibility)) return false
 
-        return overrideCandidate.valueParameters.zip(baseDeclaration.valueParameters).all { (memberParam, selfParam) ->
-            isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)
+        overrideCandidate.valueParameters.forEachZipped(baseDeclaration.valueParameters) { memberParam, selfParam ->
+            if (!isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)) {
+                return false
+            }
         }
+        return true
     }
 
     override fun isOverriddenProperty(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirProperty): Boolean {
@@ -157,13 +170,21 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
 
-        return isEqualReceiverTypes(
-            overrideCandidate.receiverParameter?.typeRef,
-            baseDeclaration.receiverParameter?.typeRef,
-            substitutor
-        ) && overrideCandidate.contextParameters.zip(baseDeclaration.contextParameters).all { (memberParam, selfParam) ->
-            isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)
+        if (!isEqualReceiverTypes(
+                overrideCandidate.receiverParameter?.typeRef,
+                baseDeclaration.receiverParameter?.typeRef,
+                substitutor)
+        ) {
+            return false
         }
+
+        overrideCandidate.contextParameters.forEachZipped(baseDeclaration.contextParameters) { memberParam, selfParam ->
+            if (!isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)) {
+                return false
+            }
+        }
+
+        return true
     }
 
     override fun chooseIntersectionVisibility(

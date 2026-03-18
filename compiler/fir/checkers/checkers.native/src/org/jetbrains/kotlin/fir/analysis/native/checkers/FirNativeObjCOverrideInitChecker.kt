@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCOverrideInitClassId
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -41,9 +42,12 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platfor
             val bParams = other.valueParameterSymbols
             if (aParams.size != bParams.size)
                 return false
-            return aParams.zip(bParams).all { (thisParameter, otherParameter) ->
-                thisParameter.name == otherParameter.name && thisParameter.resolvedReturnType == otherParameter.resolvedReturnType
+            aParams.forEachZipped(bParams) { thisParameter, otherParameter ->
+                if (thisParameter.name != otherParameter.name || thisParameter.resolvedReturnType != otherParameter.resolvedReturnType) {
+                    return false
+                }
             }
+            return true
         }
 
         fun checkCanGenerateOverrideInit(firClass: FirClass, constructor: FirConstructorSymbol) {

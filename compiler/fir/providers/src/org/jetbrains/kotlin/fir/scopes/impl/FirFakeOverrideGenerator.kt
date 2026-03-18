@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
@@ -903,7 +904,7 @@ object FirFakeOverrideGenerator {
         )
 
         var wereChangesInTypeParameters = forceTypeParametersRecreation
-        for ((newTypeParameter, originalTypeParameter) in newTypeParameters.zip(original.typeParameters)) {
+        newTypeParameters.forEachZipped(original.typeParameters) { newTypeParameter, originalTypeParameter ->
             for (boundTypeRef in originalTypeParameter.symbol.resolvedBounds) {
                 val typeForBound = boundTypeRef.coneType
                 val substitutedBound = chainedSubstitutor.substituteOrNull(typeForBound)

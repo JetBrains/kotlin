@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 interface VisibilityPolicy {
@@ -929,10 +930,10 @@ open class LocalDeclarationsLowering(
             oldDeclaration.capturedConstructor?.let { newDeclaration ->
                 transformedDeclarations[oldDeclaration] = newDeclaration
                 constructorContext.transformedDeclaration = newDeclaration
-                newDeclaration.parameters.zip(capturedValues).forEach { (it, capturedValue) ->
+                newDeclaration.parameters.forEachZipped(capturedValues) { it, capturedValue ->
                     newParameterToCaptured[it] = capturedValue
                 }
-                oldDeclaration.parameters.zip(newDeclaration.parameters).forEach { (v, it) ->
+                oldDeclaration.parameters.forEachZipped(newDeclaration.parameters) { v, it ->
                     newParameterToOld.putAbsentOrSame(it, v)
                 }
                 newDeclaration.recordTransformedValueParameters(constructorContext)

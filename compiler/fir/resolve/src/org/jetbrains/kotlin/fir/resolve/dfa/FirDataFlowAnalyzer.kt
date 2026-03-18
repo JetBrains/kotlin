@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 class DataFlowAnalyzerContext private constructor(
     private val session: FirSession,
@@ -1310,10 +1311,13 @@ abstract class FirDataFlowAnalyzer(
     ): ConeSubstitutor {
         val typeParameters = callee.typeParameters
         val typeArgumentsSubstitutor = if (typeParameters.isNotEmpty() && qualifiedAccess is FirQualifiedAccessExpression) {
-            @Suppress("UNCHECKED_CAST")
-            val substitutionFromArguments = typeParameters.zip(qualifiedAccess.typeArguments).map { (typeParameterRef, typeArgument) ->
-                typeParameterRef.symbol to typeArgument.toConeTypeProjection().type
-            }.filter { it.second != null }.toMap() as Map<FirTypeParameterSymbol, ConeKotlinType>
+            val substitutionFromArguments = buildMap {
+                typeParameters.forEachZipped(qualifiedAccess.typeArguments) { typeParameterRef, typeArgument ->
+                    typeArgument.toConeTypeProjection().type?.let {
+                        this[typeParameterRef.symbol] = it
+                    }
+                }
+            }
             substitutorByMap(substitutionFromArguments, components.session)
         } else {
             ConeSubstitutor.Empty
@@ -1321,7 +1325,11 @@ abstract class FirDataFlowAnalyzer(
         return if (originalFunction == null) {
             typeArgumentsSubstitutor
         } else {
-            val map = originalFunction.symbol.typeParameterSymbols.zip(typeParameters.map { it.symbol.toConeType() }).toMap()
+            val map = buildMap {
+                originalFunction.symbol.typeParameterSymbols.forEachZipped(typeParameters) { orignFuncTypeParameter, typeParameter ->
+                    this[orignFuncTypeParameter] = typeParameter.symbol.toConeType()
+                }
+            }
             substitutorByMap(map, components.session).chain(typeArgumentsSubstitutor)
         }
     }

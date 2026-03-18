@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.EXACT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.descriptorUtil.NO_INFER_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -709,7 +710,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
     ) = irCastIfNeeded(irBlock {
         +irReturn(irCall(target, origin = IrStatementOrigin.BRIDGE_DELEGATION, superQualifierSymbol = superQualifierSymbol).apply {
             if (getStructure(target) == null && getStructure(bridge) == null) {
-                for ((param, targetParam) in bridge.parameters.zip(target.parameters)) {
+                bridge.parameters.forEachZipped(target.parameters) { param, targetParam ->
                     val argument = irGet(param).let { argument ->
                         if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type.upperBound)
                     }

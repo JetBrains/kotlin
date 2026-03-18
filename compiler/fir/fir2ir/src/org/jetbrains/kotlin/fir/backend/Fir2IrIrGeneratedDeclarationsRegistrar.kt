@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 // opt-in is safe, this code runs after fir2ir is over and all symbols are bound
 @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -141,7 +142,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             updateFunctionCommon(firFunction, irFunction)
 
             with(firFunction) {
-                for ((firParameter, irParameter) in typeParameters.zip(irFunction.typeParameters)) {
+                typeParameters.forEachZipped(irFunction.typeParameters) { firParameter, irParameter ->
                     val newBounds = irParameter.superTypes.map { it.toConeType().toFirResolvedTypeRef() }
                     firParameter.replaceBounds(newBounds)
                     firParameter.replaceAnnotations(irParameter.convertAnnotations())

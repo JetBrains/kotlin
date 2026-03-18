@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 /**
  * The test suite is supposed to check how far the resolution process can go for stub-only files.
@@ -84,7 +85,7 @@ abstract class AbstractLLStubBasedResolutionTest : AbstractLLStubBasedTest<Pair<
             }
         }
 
-        astBasedElements.zip(phases).forEach { (element, phase) ->
+        astBasedElements.forEachZipped(phases) { element, phase ->
             element.lazyResolveToPhase(phase)
         }
 

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 // TODO reimplement using AdditionalTypeChecker KT-62864
 object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
@@ -46,7 +47,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
             suppressWarnings = { actualTypeForComparison -> shouldSuppressWarningForExtensionReceiver(symbol, actualTypeForComparison) }
         )
 
-        for ((contextArgument, contextParameter) in expression.contextArguments.zip(symbol.contextParameterSymbols)) {
+        expression.contextArguments.forEachZipped(symbol.contextParameterSymbols) { contextArgument, contextParameter ->
             contextArgument.checkExpressionForEnhancedTypeMismatch(
                 expectedType = substitutor.substituteOrSelf(contextParameter.resolvedReturnType),
                 FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS

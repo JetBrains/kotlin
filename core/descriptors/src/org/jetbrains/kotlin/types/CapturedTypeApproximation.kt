@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import java.util.*
 
 data class ApproximationBounds<out T>(
@@ -142,7 +143,7 @@ fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<KotlinType> 
     }
     val lowerBoundArguments = ArrayList<TypeArgument>()
     val upperBoundArguments = ArrayList<TypeArgument>()
-    for ((typeProjection, typeParameter) in type.arguments.zip(typeConstructor.parameters)) {
+    type.arguments.forEachZipped(typeConstructor.parameters) { typeProjection, typeParameter ->
         val typeArgument = typeProjection.toTypeArgument(typeParameter)
 
         // Protection from infinite recursion caused by star projection

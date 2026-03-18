@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 import org.jetbrains.kotlin.types.Variance
@@ -638,7 +639,7 @@ private fun BackendChecker.checkCanGenerateCFunctionCallOrGlobalAccess(expressio
 }
 
 private fun BackendChecker.checkCanAddArguments(arguments: List<IrExpression?>, callee: IrFunction, isObjCMethod: Boolean) {
-    for ((argument, parameter) in arguments.zip(callee.parameters)) {
+    arguments.forEachZipped(callee.parameters) { argument, parameter ->
         if (parameter.isVararg)
             checkCanHandleArgumentForVarargParameter(argument, isObjCMethod)
         else

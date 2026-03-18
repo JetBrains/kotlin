@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.util.WeakPair
 import org.jetbrains.kotlin.util.component1
 import org.jetbrains.kotlin.util.component2
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 @RequiresOptIn(
     "When a SessionHolder is available as implicit value, " +
@@ -198,7 +199,11 @@ private fun ConeClassLikeType.applyAttributesFrom(
 }
 
 fun FirTypeAlias.mapParametersToArgumentsOf(type: ConeKotlinType): List<Pair<FirTypeParameterSymbol, ConeTypeProjection>> =
-    typeParameters.map { it.symbol }.zip(type.typeArguments)
+    buildList {
+        typeParameters.forEachZipped(type.typeArguments) { typeParameter, typeArgument ->
+            add(typeParameter.symbol to typeArgument)
+        }
+    }
 
 fun createParametersSubstitutor(
     useSiteSession: FirSession,

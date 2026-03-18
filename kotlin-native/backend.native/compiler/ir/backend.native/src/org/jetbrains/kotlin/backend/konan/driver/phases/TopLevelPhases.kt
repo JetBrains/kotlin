@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasureDynamicPhaseTime
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -231,7 +232,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
 
         val threadsCount = context.config.threadsCount
         if (threadsCount == 1) {
-            fragmentsList.zip(generationStates).forEach { (fragment, generationState) ->
+            fragmentsList.forEachZipped(generationStates) { fragment, generationState ->
                 runAfterLowerings(fragment, generationState)
             }
         } else {

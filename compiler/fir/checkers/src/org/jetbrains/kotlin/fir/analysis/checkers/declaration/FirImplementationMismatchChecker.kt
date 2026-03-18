@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 @OptIn(ScopeFunctionRequiresPrewarm::class) // we call the process functions in check
 sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
@@ -351,9 +352,11 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         val fromParams = fromDeclaration.typeParameterSymbols
         val toParams = toDeclaration.typeParameterSymbols
 
-        val substitutionMap = fromParams.zip(toParams) { from, to ->
-            from to to.toConeType()
-        }.toMap()
+        val substitutionMap = buildMap {
+            fromParams.forEachZipped(toParams) { from, to ->
+                this[from] = to.toConeType()
+            }
+        }
 
         return substitutorByMap(substitutionMap, context.session).substituteOrSelf(this)
     }

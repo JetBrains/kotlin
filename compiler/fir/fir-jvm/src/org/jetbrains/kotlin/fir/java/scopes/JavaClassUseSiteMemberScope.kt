@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.withClassId
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -1090,16 +1091,15 @@ class JavaClassUseSiteMemberScope(
                 this.name = name
                 symbol = FirNamedFunctionSymbol(explicitlyDeclaredFunctionWithErasedValueParameters.callableId)
                 this.valueParameters.clear()
-                explicitlyDeclaredFunctionWithErasedValueParameters.fir.valueParameters.zip(
-                    relevantFunctionFromSupertypes.fir.valueParameters
-                ).mapTo(this.valueParameters) { (overrideParameter, parameterFromSupertype) ->
-                    if (!parameterFromSupertype.returnTypeRef.coneType.lowerBoundIfFlexible().isAny) {
-                        allParametersAreAny = false
+                explicitlyDeclaredFunctionWithErasedValueParameters.fir.valueParameters
+                    .forEachZipped(relevantFunctionFromSupertypes.fir.valueParameters) { overrideParameter, parameterFromSupertype ->
+                        if (!parameterFromSupertype.returnTypeRef.coneType.lowerBoundIfFlexible().isAny) {
+                            allParametersAreAny = false
+                        }
+                        this.valueParameters.add(buildJavaValueParameterCopy(overrideParameter as FirJavaValueParameter) {
+                            this@buildJavaValueParameterCopy.returnTypeRef = parameterFromSupertype.returnTypeRef
+                        })
                     }
-                    buildJavaValueParameterCopy(overrideParameter as FirJavaValueParameter) {
-                        this@buildJavaValueParameterCopy.returnTypeRef = parameterFromSupertype.returnTypeRef
-                    }
-                }
             }.apply {
                 initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters
             }

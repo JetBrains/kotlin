@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import java.io.StringWriter
 
 /**
@@ -908,7 +909,7 @@ fun IrTypeParametersContainer.copyTypeParameters(
         }
     }
     typeParameters = typeParameters memoryOptimizedPlus newTypeParameters
-    srcTypeParameters.zip(newTypeParameters).forEach { (srcParameter, dstParameter) ->
+    srcTypeParameters.forEachZipped(newTypeParameters) { srcParameter, dstParameter ->
         dstParameter.copySuperTypesFrom(srcParameter, oldToNewParameterMap)
     }
     return newTypeParameters
