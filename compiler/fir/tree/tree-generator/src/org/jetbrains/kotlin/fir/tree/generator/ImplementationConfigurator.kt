@@ -534,6 +534,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 "contextParameters", "typeParameters",
                 withGetter = true
             )
+            default("deprecationsProvider") {
+                value = "EmptyDeprecationsProvider"
+                withGetter = true
+            }
         }
 
         impl(whenSubjectExpression) {
@@ -702,6 +706,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(valueParameter) {
             configureCommonValueParameter()
+            default("deprecationsProvider") {
+                value = "EmptyDeprecationsProvider"
+                withGetter = true
+            }
         }
 
         impl(valueParameter, "FirDefaultSetterValueParameter") {

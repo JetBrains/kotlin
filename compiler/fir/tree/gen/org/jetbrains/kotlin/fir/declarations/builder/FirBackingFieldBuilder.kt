@@ -36,7 +36,6 @@ class FirBackingFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var returnTypeRef: FirTypeRef
-    override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override lateinit var name: Name
     override var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var isVal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
@@ -55,7 +54,6 @@ class FirBackingFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder
             origin,
             attributes,
             returnTypeRef,
-            deprecationsProvider,
             name,
             isVar,
             isVal,
@@ -77,6 +75,13 @@ class FirBackingFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder
 
     @Deprecated("Modification of 'receiverParameter' has no impact for FirBackingFieldBuilder", level = DeprecationLevel.HIDDEN)
     override var receiverParameter: FirReceiverParameter?
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'deprecationsProvider' has no impact for FirBackingFieldBuilder", level = DeprecationLevel.HIDDEN)
+    override var deprecationsProvider: DeprecationsProvider
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

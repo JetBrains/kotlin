@@ -110,7 +110,11 @@ fun FirBasedSymbol<*>.getDeprecation(session: FirSession, callSite: FirElement?)
     return getDeprecationForCallSite(session, *getUseSitesForCallSite(callSite))
 }
 
-fun FirAnnotationContainer.getDeprecationsProvider(session: FirSession): DeprecationsProvider {
+fun FirCallableDeclaration.getDeprecationsProvider(session: FirSession): DeprecationsProvider {
+    return extractDeprecationInfoPerUseSite(session, annotations).toDeprecationsProvider(session.firCachesFactory)
+}
+
+fun FirClassLikeDeclaration.getDeprecationsProvider(session: FirSession): DeprecationsProvider {
     return extractDeprecationInfoPerUseSite(session, annotations).toDeprecationsProvider(session.firCachesFactory)
 }
 
