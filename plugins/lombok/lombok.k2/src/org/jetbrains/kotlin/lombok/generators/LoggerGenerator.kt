@@ -384,7 +384,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             // Generate `ClassWithLogger::class.java`
             val javaPropertySymbol = session.symbolProvider
                 .getTopLevelPropertySymbols(JvmStandardClassIds.BASE_JVM_PACKAGE, JAVA_PROPERTY_NAME)
-                .singleOrNull()
+                .firstOrNull()
 
             val javaClassType =
                 javaPropertySymbol?.resolvedReturnType?.toClassSymbol(session)?.constructType(arrayOf(targetClassType))
