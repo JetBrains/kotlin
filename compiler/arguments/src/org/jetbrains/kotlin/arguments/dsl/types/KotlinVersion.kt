@@ -120,6 +120,7 @@ enum class KotlinVersion(
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
             stabilizedVersion = KotlinReleaseVersion.v2_1_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_0,
         )
     ),
     v2_2(

@@ -22,5 +22,6 @@ internal object UnsupportedKotlinLanguageVersionsMetadata {
         KotlinVersion.KOTLIN_1_8 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(2, 2, 0, "snapshot"), KotlinToolingVersion(2, 3, 0, "snapshot")),
         KotlinVersion.KOTLIN_1_9 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(2, 2, 0, "snapshot"), KotlinToolingVersion(2, 4, 0, "snapshot")),
         KotlinVersion.KOTLIN_2_0 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(2, 3, 0, "snapshot"), null),
+        KotlinVersion.KOTLIN_2_1 to UnsupportedKotlinLanguageVersionMetadata(KotlinToolingVersion(2, 4, 0, "snapshot"), null),
     )
 }
