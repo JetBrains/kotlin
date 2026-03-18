@@ -46,11 +46,11 @@ internal abstract class AbstractPostDiscoveryFilterTest {
         assertTrue(result.excluded()) { "Expected excluded: ${result.reason}" }
     }
 
-    protected inline fun <reified T> descriptorFromClass(
+    protected inline fun <reified T : Any> descriptorFromClass(
         type: TestDescriptor.Type = TestDescriptor.Type.TEST
     ): TestDescriptor = descriptorWithSource(ClassSource.from(T::class.java), type)
 
-    protected inline fun <reified T> descriptorFromMethod(method: KFunction1<T, Unit>): TestDescriptor {
+    protected inline fun <reified T : Any> descriptorFromMethod(method: KFunction1<T, Unit>): TestDescriptor {
         val klass = T::class.java
         val javaMethod = klass.getMethod(method.name)
         return descriptorWithSource(MethodSource.from(klass, javaMethod))

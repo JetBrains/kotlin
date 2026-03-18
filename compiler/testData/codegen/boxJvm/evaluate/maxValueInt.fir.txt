@@ -24,7 +24,7 @@ FILE: maxValueInt.kt
 
     }
     public final fun box(): R|kotlin/String| {
-        lval annotation: R|Ann| = <getClass>(Q|MyClass|).R|kotlin/jvm/java|<R|MyClass|>.R|SubstitutionOverride<java/lang/Class.getAnnotation: R|A!|>|<R|Ann!|>(<getClass>(Q|Ann|).R|kotlin/jvm/java|<R|Ann|>)!!
+        lval annotation: R|Ann| = <getClass>(Q|MyClass|).R|kotlin/jvm/java|<R|MyClass|>.R|SubstitutionOverride<java/lang/Class.getAnnotation: R|A!|>|<R|Ann!|>(<getClass>(Q|Ann|).R|kotlin/jvm/java|<R|Ann!|>)!!
         when () {
             !=(R|<local>/annotation|.R|/Ann.p1|, Int(-2147483648)) ->  {
                 ^box <strcat>(String(fail 1, expected = ), Int(-2147483648), String(, actual = ), R|<local>/annotation|.R|/Ann.p1|)
