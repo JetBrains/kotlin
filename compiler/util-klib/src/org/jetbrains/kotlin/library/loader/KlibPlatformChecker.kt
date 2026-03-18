@@ -31,7 +31,11 @@ interface KlibPlatformChecker {
                 checkTarget(
                     platform = BuiltInsPlatform.NATIVE,
                     expectedTarget = target ?: return@targetCheck null,
-                    actualTargets = library.nativeTargets,
+                    /**
+                     * The Kotlin/Native standard library published as a separate artifact has no targets in the manifest.
+                     * We need to skip the check if this is the case.
+                     */
+                    actualTargets = library.nativeTargets.takeIf { it.isNotEmpty() } ?: return@targetCheck null,
                 )
             }
         )
@@ -75,6 +79,7 @@ interface KlibPlatformChecker {
                         expectedTarget = target,
                         /**
                          * Some metadata-only Kotlin/Native libraries might not have any targets written in the manifest.
+                         * Also, the Kotlin/Native standard library published as a separate artifact has no targets in the manifest.
                          * We need to skip the check if this is the case.
                          */
                         actualTargets = library.nativeTargets.takeIf { it.isNotEmpty() } ?: return@targetCheck null,

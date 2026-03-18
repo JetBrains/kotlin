@@ -33,9 +33,9 @@ class NativeKlibPlatformCheckerTest {
         ).forEach { klib ->
             klib.assertLoadedWith(KlibPlatformChecker.Native())
 
-            klib.assertNotLoadedWith(KlibPlatformChecker.Native("target_a"))
-            klib.assertNotLoadedWith(KlibPlatformChecker.Native("target_b"))
-            klib.assertNotLoadedWith(KlibPlatformChecker.Native("target_c"))
+            klib.assertLoadedWith(KlibPlatformChecker.Native("target_a"))
+            klib.assertLoadedWith(KlibPlatformChecker.Native("target_b"))
+            klib.assertLoadedWith(KlibPlatformChecker.Native("target_c"))
 
             klib.assertLoadedWith(KlibPlatformChecker.NativeMetadata("target_a"))
             klib.assertLoadedWith(KlibPlatformChecker.NativeMetadata("target_b"))
@@ -69,9 +69,9 @@ class NativeKlibPlatformCheckerTest {
         ).forEach { klib ->
             klib.assertLoadedWith(KlibPlatformChecker.Native())
 
-            klib.assertNotLoadedWith(KlibPlatformChecker.Native("target_a"))
-            klib.assertNotLoadedWith(KlibPlatformChecker.Native("target_b"))
-            klib.assertNotLoadedWith(KlibPlatformChecker.Native("target_c"))
+            klib.assertLoadedWith(KlibPlatformChecker.Native("target_a"))
+            klib.assertLoadedWith(KlibPlatformChecker.Native("target_b"))
+            klib.assertLoadedWith(KlibPlatformChecker.Native("target_c"))
 
             klib.assertLoadedWith(KlibPlatformChecker.NativeMetadata("target_a"))
             klib.assertLoadedWith(KlibPlatformChecker.NativeMetadata("target_b"))
