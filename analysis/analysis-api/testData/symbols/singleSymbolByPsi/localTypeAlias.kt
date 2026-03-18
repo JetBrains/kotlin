@@ -1,4 +1,4 @@
-// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
+// DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION
 
 class MyClass<A> {
     fun <B> check() {

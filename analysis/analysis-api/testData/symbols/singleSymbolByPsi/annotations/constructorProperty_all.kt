@@ -1,5 +1,5 @@
 // LANGUAGE: +AnnotationAllUseSiteTarget
-// DO_NOT_CHECK_SYMBOL_RESTORE_K1
+// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 
 class MyClass(
     @all:Param

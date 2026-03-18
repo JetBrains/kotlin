@@ -1,4 +1,4 @@
 // WITH_STDLIB
 
 // callable: kotlin/collections/listOf
-// DO_NOT_CHECK_SYMBOL_RESTORE_K1
+// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1

@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.analysis.api.components.containingFile
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseIllegalPsiException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer.Companion.isCacheable
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K1
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K2
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_SYMBOL_RESTORATION
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_SYMBOL_RESTORATION_K2
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.PRETTY_RENDERER_OPTION
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.RENDER_IS_PUBLIC_API
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
@@ -211,13 +211,13 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     open fun getAllowedContainingFiles(mainFile: KtFile, testServices: TestServices): Set<KtFile> = setOf(mainFile)
 
     private fun RegisteredDirectives.doNotCheckSymbolRestoreDirective(): Directive? = findSpecificDirective(
-        commonDirective = DO_NOT_CHECK_SYMBOL_RESTORE,
-        k1Directive = DO_NOT_CHECK_SYMBOL_RESTORE_K1,
-        k2Directive = DO_NOT_CHECK_SYMBOL_RESTORE_K2,
+        commonDirective = DO_NOT_REQUIRE_SYMBOL_RESTORATION,
+        k1Directive = DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1,
+        k2Directive = DO_NOT_REQUIRE_SYMBOL_RESTORATION_K2,
     )
 
     private fun RegisteredDirectives.doNotCheckNonPsiSymbolRestoreDirective(): Directive? =
-        DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE.takeIf { it in this }
+        DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION.takeIf { it in this }
 
     private fun compareResults(data: SymbolPointersData, disablePsiBasedLogic: Boolean) {
         val actual = data.pointers.renderDeclarations()
@@ -329,9 +329,9 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
         if (hasNonRestorable && directiveToIgnore == null) {
             val directive = if (disablePsiBasedLogic) {
-                DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
+                DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION
             } else {
-                DO_NOT_CHECK_SYMBOL_RESTORE
+                DO_NOT_REQUIRE_SYMBOL_RESTORATION
             }
 
             fail("Some symbols are non-restorable. Add // $directive directive.")
@@ -413,19 +413,19 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 }
 
 object SymbolTestDirectives : SimpleDirectivesContainer() {
-    val DO_NOT_CHECK_SYMBOL_RESTORE by directive(
+    val DO_NOT_REQUIRE_SYMBOL_RESTORATION by directive(
         description = "Symbol restoring for some symbols in current test is not supported yet",
     )
 
-    val DO_NOT_CHECK_SYMBOL_RESTORE_K1 by directive(
+    val DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1 by directive(
         description = "Symbol restoring for some symbols in current test is not supported yet in K1",
     )
 
-    val DO_NOT_CHECK_SYMBOL_RESTORE_K2 by directive(
+    val DO_NOT_REQUIRE_SYMBOL_RESTORATION_K2 by directive(
         description = "Symbol restoring for some symbols in current test is not supported yet in K2",
     )
 
-    val DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE by directive(
+    val DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION by directive(
         description = "Symbol restoring w/o psi for some symbols in current test is not supported yet",
     )
 

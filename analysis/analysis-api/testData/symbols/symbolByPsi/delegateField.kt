@@ -1,4 +1,4 @@
-// DO_NOT_CHECK_SYMBOL_RESTORE_K1
+// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 // WITH_STDLIB
 
 class MyColor(val x: Int, val y: Int, val z: Int)

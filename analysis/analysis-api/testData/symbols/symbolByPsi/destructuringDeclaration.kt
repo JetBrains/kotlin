@@ -1,4 +1,4 @@
-// DO_NOT_CHECK_SYMBOL_RESTORE_K1
+// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 data class P(val x: Int, val y: Int)
 
 fun destruct(): Int {
