@@ -24,7 +24,7 @@ FILE: maxValueByte.kt
 
     }
     public final fun box(): R|kotlin/String| {
-        lval annotation: R|Ann| = <getClass>(Q|MyClass|).R|kotlin/jvm/java|<R|MyClass|>.R|SubstitutionOverride<java/lang/Class.getAnnotation: R|A!|>|<R|Ann!|>(<getClass>(Q|Ann|).R|kotlin/jvm/java|<R|Ann|>)!!
+        lval annotation: R|Ann| = <getClass>(Q|MyClass|).R|kotlin/jvm/java|<R|MyClass|>.R|SubstitutionOverride<java/lang/Class.getAnnotation: R|A!|>|<R|Ann!|>(<getClass>(Q|Ann|).R|kotlin/jvm/java|<R|Ann!|>)!!
         when () {
             !=(R|<local>/annotation|.R|/Ann.p1|, Int(128)) ->  {
                 ^box <strcat>(String(fail 1, expected = ), Int(128), String(, actual = ), R|<local>/annotation|.R|/Ann.p1|)
