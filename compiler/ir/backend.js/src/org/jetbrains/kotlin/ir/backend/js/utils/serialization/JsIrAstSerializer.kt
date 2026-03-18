@@ -170,7 +170,7 @@ private class JsIrAstSerializer {
     }
 
     private fun DataWriter.writeIrIcModel(classModel: JsIrIcClassModel) {
-        writeCollection(classModel.superClasses) {
+        writeCollection(classModel.dependsOnClasses) {
             writeInt(internalizeName(it))
         }
         writeCompositeBlock(classModel.preDeclarationBlock)
