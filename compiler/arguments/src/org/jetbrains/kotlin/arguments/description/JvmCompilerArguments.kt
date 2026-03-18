@@ -966,11 +966,13 @@ The default value is 'inline'.""".asReleaseDependent()
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xignored-annotations-for-bridges"
         description = "Do not copy these annotations to the bridge methods from their targets.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<fq.name>|*".asReleaseDependent()
+        argumentType = StringListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_20,
