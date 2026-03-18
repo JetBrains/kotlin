@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Descriptor
 import org.jetbrains.kotlin.util.ImplementationStatus
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.nameWithoutExtension
 
 internal class KaFe10SymbolRelationProvider(
     override val analysisSessionProvider: () -> KaFe10Session
@@ -163,8 +164,18 @@ internal class KaFe10SymbolRelationProvider(
                 }
             }
         } ?: TODO(descriptor::class.java.name)
+
+        // Returns the library name inferred from the library path.
+        // It's a naive implementation that strips out all digits looking like a library version.
+        // A more correct implementation, 'stripOutKotlinVersionFromFileName()', is not available in production sources.
+        // That's not a significant issue as the K1 implementation is obsolete and will be deleted soon anyway.
+        val libraryName = libraryPath.nameWithoutExtension
+            .split('-')
+            .takeWhile { it.isEmpty() || !it.first().isDigit() }
+            .joinToString(separator = "-")
+
         return object : KaLibraryModule, KaModuleBase() {
-            override val libraryName: String = libraryPath.fileName.toString().substringBeforeLast(".")
+            override val libraryName: String = libraryName
             override val librarySources: KaLibrarySourceModule? = null
             override val isSdk: Boolean = false
             override val binaryRoots: Collection<Path> = listOf(libraryPath)
