@@ -382,9 +382,11 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             }
 
             // Generate `ClassWithLogger::class.java`
+            // `firstOrNull` is used because the second symbol was introduced in 2.5; see KT-79212.
+            // Either symbol can be used, as both produce the same bytecode after inlining.
             val javaPropertySymbol = session.symbolProvider
                 .getTopLevelPropertySymbols(JvmStandardClassIds.BASE_JVM_PACKAGE, JAVA_PROPERTY_NAME)
-                .singleOrNull()
+                .firstOrNull()
 
             val javaClassType =
                 javaPropertySymbol?.resolvedReturnType?.toClassSymbol(session)?.constructType(arrayOf(targetClassType))
