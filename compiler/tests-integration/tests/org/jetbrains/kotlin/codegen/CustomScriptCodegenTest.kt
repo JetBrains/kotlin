@@ -102,7 +102,7 @@ open class CustomScriptCodegenTest : CodegenTestCase() {
     }
 }
 
-private inline fun <reified T> containingDependencyPath(): File? {
+private inline fun <reified T : Any> containingDependencyPath(): File? {
     return File(T::class.java.protectionDomain.codeSource.location.toURI().path)
 }
 

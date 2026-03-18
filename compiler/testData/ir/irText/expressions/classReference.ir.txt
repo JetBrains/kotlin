@@ -26,11 +26,11 @@ FILE fqName:<root> fileName:/classReference.kt
         GET_CLASS type=kotlin.reflect.KClass<out <root>.A>
           CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=GET_PROPERTY
+        CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<{T of kotlin.jvm.<get-java> & Any}>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=GET_PROPERTY
           TYPE_ARG T: <root>.A
           ARG <this>: CLASS_REFERENCE 'CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.A>
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<out <root>.A> origin=GET_PROPERTY
+        CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<{T of kotlin.jvm.<get-java> & Any}>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<out <root>.A> origin=GET_PROPERTY
           TYPE_ARG T: <root>.A
           ARG <this>: GET_CLASS type=kotlin.reflect.KClass<out <root>.A>
             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null

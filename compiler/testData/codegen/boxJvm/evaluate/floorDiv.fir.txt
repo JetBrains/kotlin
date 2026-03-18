@@ -24,7 +24,7 @@ FILE: floorDiv.kt
 
     }
     public final fun box(): R|kotlin/String| {
-        lval annotation: R|Ann| = <getClass>(Q|MyClass|).R|kotlin/jvm/java|<R|MyClass|>.R|SubstitutionOverride<java/lang/Class.getAnnotation: R|A!|>|<R|Ann!|>(<getClass>(Q|Ann|).R|kotlin/jvm/java|<R|Ann|>)!!
+        lval annotation: R|Ann| = <getClass>(Q|MyClass|).R|kotlin/jvm/java|<R|MyClass|>.R|SubstitutionOverride<java/lang/Class.getAnnotation: R|A!|>|<R|Ann!|>(<getClass>(Q|Ann|).R|kotlin/jvm/java|<R|Ann!|>)!!
         when () {
             !=(R|<local>/annotation|.R|/Ann.b|, Int(3).R|kotlin/Int.toByte|()) ->  {
                 ^box String(fail 1)

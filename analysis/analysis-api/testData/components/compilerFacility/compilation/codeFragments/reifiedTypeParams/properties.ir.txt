@@ -11,7 +11,7 @@ MODULE_FRAGMENT
             CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
               ARG <this>: CALL 'public final fun plus (<this>: kotlin.String?, other: kotlin.Any?): kotlin.String [operator] declared in kotlin' type=kotlin.String origin=PLUS
                 ARG <this>: CALL 'public abstract fun <get-simpleName> (): kotlin.String? declared in kotlin.reflect.KClass' type=kotlin.String? origin=GET_PROPERTY
-                  ARG <this>: CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true' type=kotlin.reflect.KClass<T of <root>.ContextKt.<get-inlineVar1>>
+                  ARG <this>: CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true' type=kotlin.reflect.KClass<{T of <root>.ContextKt.<get-inlineVar1> & Any}>
                 ARG other: CONST String type=kotlin.String value="_"
               ARG other: CALL 'public abstract fun <get-simpleName> (): kotlin.String? declared in kotlin.reflect.KClass' type=kotlin.String? origin=GET_PROPERTY
-                ARG <this>: CLASS_REFERENCE 'TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:true' type=kotlin.reflect.KClass<R of <root>.ContextKt.<get-inlineVar1>>
+                ARG <this>: CLASS_REFERENCE 'TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:true' type=kotlin.reflect.KClass<{R of <root>.ContextKt.<get-inlineVar1> & Any}>

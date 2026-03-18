@@ -495,6 +495,7 @@ enum class LanguageFeature(
     SkipHiddenObjectsInResolution(KOTLIN_2_4, issue = "KT-82555"),
     NoDeprecationOnImportStatements(KOTLIN_2_4, issue = "KT-52673"),
     JvmEnhancedBridges(KOTLIN_2_4, "KT-82900"),
+    DnnTypeForUnboundedReifiedTypeParameters(KOTLIN_2_4, sinceApiVersion = ApiVersion.KOTLIN_2_4, "KTLC-360"),
     DiscriminateNothingAsNullabilityConstraintInInference(KOTLIN_2_4, "KT-81948"),
     ResolveEqualsRhsInDependentContextWithCompletion(KOTLIN_2_4, "KT-81763"),
     IrIntraModuleInlinerBeforeKlibSerialization(KOTLIN_2_4, sinceApiVersion = ApiVersion.KOTLIN_2_3, issue = "KT-79717"),

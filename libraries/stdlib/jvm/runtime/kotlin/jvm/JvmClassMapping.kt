@@ -24,7 +24,18 @@ import java.lang.Short as JavaLangShort
  * Returns a Java [Class] instance corresponding to the given [KClass] instance.
  */
 @Suppress("UPPER_BOUND_VIOLATED")
-public val <T> KClass<T>.java: Class<T>
+@DeprecatedSinceKotlin(warningSince = "2.4", errorSince = "2.4", hiddenSince = "2.4")
+@Deprecated("")
+@InlineOnly
+public inline val <T> KClass<T>.java: Class<T>
+    @JvmName("getJavaClassDeprecated")
+    get() = (this as KClass<T & Any>).java as Class<T>
+
+/**
+ * Returns a Java [Class] instance corresponding to the given [KClass] instance.
+ */
+@SinceKotlin("2.4")
+public val <T> KClass<T & Any>.java: Class<T>
     @JvmName("getJavaClass")
     get() = (this as ClassBasedDeclarationContainer).jClass as Class<T>
 

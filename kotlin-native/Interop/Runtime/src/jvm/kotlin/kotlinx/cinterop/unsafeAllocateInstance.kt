@@ -14,7 +14,7 @@ private val unsafe: Unsafe = with(Unsafe::class.java.getDeclaredField("theUnsafe
 
 @PublishedApi
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-internal inline fun <reified T> unsafeAllocateInstance(): T {
+internal inline fun <reified T : Any> unsafeAllocateInstance(): T {
     // TODO KT-66632: get rid of this.
     return unsafe.allocateInstance(T::class.java) as T
 }

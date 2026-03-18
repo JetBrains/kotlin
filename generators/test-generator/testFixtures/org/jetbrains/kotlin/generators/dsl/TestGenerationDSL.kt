@@ -51,7 +51,7 @@ class TestGroup(
     val testClasses: List<TestClass>
         field: MutableList<TestClass> = mutableListOf()
 
-    inline fun <reified T> testClass(
+    inline fun <reified T : Any> testClass(
         suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
         annotations: List<AnnotationModel> = emptyList(),
         noinline init: TestClass.() -> Unit

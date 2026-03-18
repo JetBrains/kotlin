@@ -253,7 +253,7 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
               CALL 'public open fun getAnnotations (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? declared in java.lang.reflect.Field' type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? origin=GET_PROPERTY
                 ARG <this>: TYPE_OP type=java.lang.reflect.Field origin=IMPLICIT_NOTNULL typeOperand=java.lang.reflect.Field
                   CALL 'public open fun getDeclaredField (p0: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] java.lang.reflect.Field? declared in java.lang.Class' type=@[FlexibleNullability] java.lang.reflect.Field? origin=null
-                    ARG <this>: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.Foo> origin=GET_PROPERTY
+                    ARG <this>: CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<{T of kotlin.jvm.<get-java> & Any}>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.Foo> origin=GET_PROPERTY
                       TYPE_ARG T: <root>.Foo
                       ARG <this>: CLASS_REFERENCE 'CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.Foo>
                     ARG p0: CONST String type=kotlin.String value="param"
