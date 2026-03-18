@@ -1652,6 +1652,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("functionAsAnnotationArgument.kt")
+    public void testFunctionAsAnnotationArgument() {
+      run("functionAsAnnotationArgument.kt");
+    }
+
+    @Test
     @TestMetadata("incompletePropertyWithAnnotation.kt")
     public void testIncompletePropertyWithAnnotation() {
       run("incompletePropertyWithAnnotation.kt");
