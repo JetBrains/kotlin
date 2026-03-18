@@ -150,7 +150,6 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
         runCompilerViaCLI(
             listOf(
                 KotlinWasmCompilerArguments::irProduceJs.cliArgument,
-                KotlinWasmCompilerArguments::irPerModule.cliArgument,
                 KotlinWasmCompilerArguments::includes.cliArgument(mainModule.libraryFile.absolutePath),
                 KotlinWasmCompilerArguments::outputDir.cliArgument, binariesDir.absolutePath,
                 KotlinWasmCompilerArguments::moduleName.cliArgument, MAIN_MODULE_NAME,

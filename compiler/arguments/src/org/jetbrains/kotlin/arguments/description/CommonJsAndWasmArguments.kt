@@ -292,24 +292,4 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
             introducedVersion = KotlinReleaseVersion.v1_8_0,
         )
     }
-
-    compilerArgument {
-        name = "Xir-per-module"
-        description = "Generate one .js file per module.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_4_20,
-        )
-    }
-
-    compilerArgument {
-        name = "Xir-per-file"
-        description = "Generate one .js file per source file.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_6_20,
-        )
-    }
 }

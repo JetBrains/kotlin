@@ -10048,90 +10048,6 @@
                                         }
                                     },
                                     {
-                                        "name": "Xir-per-file",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Generate one .js file per source file.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "1.6.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        },
-                                        "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "name": "Xir-per-module",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Generate one .js file per module.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "1.4.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        },
-                                        "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        }
-                                    },
-                                    {
                                         "name": "Xir-per-module-output-name",
                                         "shortName": null,
                                         "deprecatedName": null,
@@ -12081,6 +11997,90 @@
                                                         },
                                                         "releaseVersionsMetadata": {
                                                             "introducedVersion": "1.7.0",
+                                                            "stabilizedVersion": null,
+                                                            "deprecatedVersion": null,
+                                                            "removedVersion": null
+                                                        },
+                                                        "argumentType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "Xir-per-file",
+                                                        "shortName": null,
+                                                        "deprecatedName": null,
+                                                        "description": {
+                                                            "current": "Generate one .js file per source file.",
+                                                            "valueInVersions": []
+                                                        },
+                                                        "delimiter": null,
+                                                        "valueType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        },
+                                                        "valueDescription": {
+                                                            "current": null,
+                                                            "valueInVersions": []
+                                                        },
+                                                        "releaseVersionsMetadata": {
+                                                            "introducedVersion": "1.6.20",
+                                                            "stabilizedVersion": null,
+                                                            "deprecatedVersion": null,
+                                                            "removedVersion": null
+                                                        },
+                                                        "argumentType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "Xir-per-module",
+                                                        "shortName": null,
+                                                        "deprecatedName": null,
+                                                        "description": {
+                                                            "current": "Generate one .js file per module.",
+                                                            "valueInVersions": []
+                                                        },
+                                                        "delimiter": null,
+                                                        "valueType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        },
+                                                        "valueDescription": {
+                                                            "current": null,
+                                                            "valueInVersions": []
+                                                        },
+                                                        "releaseVersionsMetadata": {
+                                                            "introducedVersion": "1.4.20",
                                                             "stabilizedVersion": null,
                                                             "deprecatedVersion": null,
                                                             "removedVersion": null

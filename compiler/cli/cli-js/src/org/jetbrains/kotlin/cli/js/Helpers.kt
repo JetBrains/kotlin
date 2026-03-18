@@ -30,16 +30,16 @@ val K2JSCompilerArguments.targetVersion: EcmaVersion?
     }
 
 val CommonJsAndWasmCompilerArguments.granularity: JsGenerationGranularity
-    get() = when {
-        this.irPerFile -> JsGenerationGranularity.PER_FILE
-        this.irPerModule -> JsGenerationGranularity.PER_MODULE
+    get() = when (this) {
+        is K2JSCompilerArguments if this.irPerFile -> JsGenerationGranularity.PER_FILE
+        is K2JSCompilerArguments if this.irPerModule -> JsGenerationGranularity.PER_MODULE
         else -> JsGenerationGranularity.WHOLE_PROGRAM
     }
 
 val CommonJsAndWasmCompilerArguments.dtsStrategy: TsCompilationStrategy
     get() = when {
         !this.generateDts -> TsCompilationStrategy.NONE
-        this.irPerFile -> TsCompilationStrategy.EACH_FILE
+        this is K2JSCompilerArguments && this.irPerFile -> TsCompilationStrategy.EACH_FILE
         else -> TsCompilationStrategy.MERGED
     }
 
