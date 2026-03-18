@@ -25,9 +25,11 @@ if __name__ == '__main__':
     properties = 'gradle.properties'
     kotlinc = '.idea/kotlinc.xml'
     kotlin_maven_pom = 'libraries/pom.xml'
+    kotlin_maven_pom_test = 'repo/artifacts-tests/src/test/resources/org/jetbrains/kotlin/kotlin-project/kotlin-project.pom'
     update_content(properties, 'bootstrap.kotlin.default.version', f'bootstrap.kotlin.default.version={version}\n')
     update_content(kotlinc, '    <option name="version" value=', f'    <option name="version" value="{version}" />\n')
     update_content(kotlin_maven_pom, '        <kotlin.bootstrap.version>', f'        <kotlin.bootstrap.version>{version}</kotlin.bootstrap.version>\n')
+    update_content(kotlin_maven_pom_test, '        <kotlin.bootstrap.version>', f'        <kotlin.bootstrap.version>{version}</kotlin.bootstrap.version>\n')
     git_add(properties, kotlinc, kotlin_maven_pom)
     git_commit(f'Advance bootstrap to {version}')
 
