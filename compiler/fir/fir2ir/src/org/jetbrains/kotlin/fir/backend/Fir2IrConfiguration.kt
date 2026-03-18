@@ -46,6 +46,7 @@ class Fir2IrConfiguration private constructor(
         val enableIrVisibilityChecks: Boolean,
         val enableIrVarargTypesChecks: Boolean,
         val enableIrNestedOffsetsChecks: Boolean,
+        val enableIrTypeParameterScopeChecks: Boolean,
     )
 
     companion object {
@@ -66,6 +67,7 @@ class Fir2IrConfiguration private constructor(
                     enableIrVisibilityChecks = compilerConfiguration.enableIrVisibilityChecks,
                     enableIrVarargTypesChecks = compilerConfiguration.enableIrVarargTypesChecks,
                     enableIrNestedOffsetsChecks = compilerConfiguration.enableIrNestedOffsetsChecks,
+                    enableIrTypeParameterScopeChecks = compilerConfiguration.enableIrTypeParameterScopeChecks,
                     validateForKlibSerialization = false,
                 ),
                 carefulApproximationOfContravariantProjectionForSam = compilerConfiguration.get(JVMConfigurationKeys.SAM_CONVERSIONS) != JvmClosureGenerationScheme.CLASS
@@ -88,6 +90,7 @@ class Fir2IrConfiguration private constructor(
                     enableIrVisibilityChecks = compilerConfiguration.enableIrVisibilityChecks,
                     enableIrVarargTypesChecks = compilerConfiguration.enableIrVarargTypesChecks,
                     enableIrNestedOffsetsChecks = compilerConfiguration.enableIrNestedOffsetsChecks,
+                    enableIrTypeParameterScopeChecks = compilerConfiguration.enableIrTypeParameterScopeChecks,
                     validateForKlibSerialization = true,
                 ),
                 carefulApproximationOfContravariantProjectionForSam = false,
@@ -111,6 +114,7 @@ class Fir2IrConfiguration private constructor(
                     enableIrVisibilityChecks = compilerConfiguration.enableIrVisibilityChecks,
                     enableIrVarargTypesChecks = compilerConfiguration.enableIrVarargTypesChecks,
                     enableIrNestedOffsetsChecks = compilerConfiguration.enableIrNestedOffsetsChecks,
+                    enableIrTypeParameterScopeChecks = compilerConfiguration.enableIrTypeParameterScopeChecks,
                     validateForKlibSerialization = false,
                 ),
                 carefulApproximationOfContravariantProjectionForSam = compilerConfiguration.get(JVMConfigurationKeys.SAM_CONVERSIONS) != JvmClosureGenerationScheme.CLASS,
