@@ -10,3 +10,10 @@ STEP 1:
     modified ir: m.kt
 STEP 2:
     dependencies: lib1, lib2
+STEP 3:
+    dependencies: lib1, lib2
+    modifications:
+            U : m.3.kt -> m.kt
+    modified ir: m.kt
+STEP 4:
+    dependencies: lib1, lib2

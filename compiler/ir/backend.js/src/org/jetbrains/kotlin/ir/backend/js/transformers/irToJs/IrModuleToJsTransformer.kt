@@ -461,7 +461,7 @@ class IrModuleToJsTransformer(
 
         staticContext.classModels.entries.forEach { (symbol, model) ->
             result.classes[nameGenerator.getNameForClass(symbol.owner)] =
-                JsIrIcClassModel(model.superClasses.memoryOptimizedMap { staticContext.getNameForClass(it.owner) }).also {
+                JsIrIcClassModel(model.dependsOnClasses.memoryOptimizedMap(staticContext::getNameForClass)).also {
                     it.preDeclarationBlock.statements += model.preDeclarationBlock.statements
                     it.postDeclarationBlock.statements += model.postDeclarationBlock.statements
                 }
