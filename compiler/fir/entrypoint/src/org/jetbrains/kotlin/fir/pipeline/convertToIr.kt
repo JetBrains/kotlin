@@ -510,7 +510,7 @@ private class Fir2IrPipeline(
                     IrCallValueArgumentCountChecker,
                     IrCrossFileFieldUsageChecker,
                     IrValueAccessScopeChecker,
-                    IrScopeChecker(IrScopeCheckerContext()),
+                    //IrScopeChecker(IrScopeCheckerContext()),
                     //IrTypeParameterScopeChecker // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305),
                 )
                 .applyIf(fir2IrConfiguration.irVerificationSettings.enableIrVisibilityChecks) { // KT-80071
