@@ -50,7 +50,7 @@ dependencies {
 
     embedded(project(":core:metadata")) { isTransitive = false }
     embedded(project(":core:metadata.jvm")) { isTransitive = false }
-    embedded(project(":compiler:compiler.version")) { isTransitive = false }
+//    embedded(project(":compiler:compiler.version")) { isTransitive = false }
     embedded(project(":core:compiler.common")) { isTransitive = false }
     embedded(project(":core:compiler.common.jvm")) { isTransitive = false }
     embedded(project(":core:deserialization.common")) { isTransitive = false }
