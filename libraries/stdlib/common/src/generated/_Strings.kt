@@ -2341,7 +2341,7 @@ public fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) -> R): 
  * 
  * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
  * 
- * @sample samples.collections.Collections.Transformations.chunked
+ * @sample samples.text.Strings.chunkedSequence
  */
 @SinceKotlin("1.2")
 public fun CharSequence.chunkedSequence(size: Int): Sequence<String> {
