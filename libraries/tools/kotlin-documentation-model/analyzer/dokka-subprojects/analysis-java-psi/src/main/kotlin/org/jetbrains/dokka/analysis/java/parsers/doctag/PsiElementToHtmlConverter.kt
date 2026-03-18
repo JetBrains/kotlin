@@ -174,7 +174,7 @@ internal class PsiElementToHtmlConverter(
                 val id = docTagParserContext.store(dri)
                 id
             } ?: run {
-                logger.warn("unresolved link to '$displayLabel'")
+                logger.warn("Couldn't resolve JavaDoc link '$displayLabel' in ${getLocation(this)}")
                 UNRESOLVED_PSI_ELEMENT
             }
 
