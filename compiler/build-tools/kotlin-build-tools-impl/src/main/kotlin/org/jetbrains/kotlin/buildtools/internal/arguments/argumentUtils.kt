@@ -2,7 +2,10 @@
 
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.NullabilityAnnotationMode
+import org.jetbrains.kotlin.buildtools.api.arguments.types.NullabilityAnnotation
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.konan.file.File
@@ -46,6 +49,22 @@ internal fun String.toXprofile(): ProfileCompilerCommand {
 
     return ProfileCompilerCommand(Path(parts[0]), parts[1], Path(parts[2]))
 }
+
+@OptIn(ExperimentalCompilerArgument::class)
+internal fun List<NullabilityAnnotation>.toArgumentValue(): Array<String> =
+    this.map { item -> "@${item.annotationFqName}:${item.mode.stringValue}" }.toTypedArray()
+
+@OptIn(ExperimentalCompilerArgument::class)
+internal fun Array<String>?.`toXnullability-annotations`(): List<NullabilityAnnotation> =
+    this?.map {
+        val parts = it.split(":")
+        require(parts.size == 2) { "Invalid nullability annotations settings format: $this" }
+
+        val nullabilityAnnotationMode =
+            NullabilityAnnotationMode.entries.firstOrNull { entry -> entry.stringValue == parts[1] }
+                ?: throw CompilerArgumentsParseException("Unknown -Xnullability-annotations mode: $it")
+        NullabilityAnnotation(parts[0].removePrefix("@"), nullabilityAnnotationMode)
+    } ?: emptyList()
 
 internal fun <T> Array<out T>?.toListOrEmpty(): List<T> = this?.toList() ?: emptyList()
 

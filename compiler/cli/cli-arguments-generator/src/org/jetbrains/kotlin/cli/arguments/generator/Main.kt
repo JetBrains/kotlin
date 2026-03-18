@@ -424,6 +424,7 @@ private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
         is StringListType -> "Array<String>"
         is SystemPathType -> "String?"
         is LiteralPathType -> "Array<String>"
+        is NullabilityAnnotationListType -> "Array<String>"
         else -> when (type.isNullable.current) {
             true -> "String?"
             false -> "String"
@@ -517,6 +518,8 @@ private val KotlinCompilerArgument.defaultValueInArgs: String
             is StringListType -> "arrayOf(${valueType.stringRepresentation(valueType.defaultValue.current)})"
             is LiteralPathType if valueType.defaultValue.current.isNullOrEmpty() -> "emptyArray()"
             is LiteralPathType -> "arrayOf(${valueType.stringRepresentation(valueType.defaultValue.current)})"
+            is NullabilityAnnotationListType if valueType.defaultValue.current.isNullOrEmpty() -> "emptyArray()"
+            is NullabilityAnnotationListType -> "arrayOf(${valueType.stringRepresentation(valueType.defaultValue.current)})"
             else -> valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
         }
     }

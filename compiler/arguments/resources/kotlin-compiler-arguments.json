@@ -1396,6 +1396,53 @@
                     "isNullable": false
                 }
             ]
+        },
+        "nullabilityAnnotation": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.NullabilityAnnotationListType",
+            "properties": [
+                {
+                    "name": "annotationFqName",
+                    "type": "kotlin.String",
+                    "isNullable": false
+                },
+                {
+                    "name": "mode",
+                    "type": "org.jetbrains.kotlin.arguments.dsl.types.NullabilityAnnotationMode",
+                    "isNullable": false
+                }
+            ]
+        },
+        "nullabilityAnnotationMode": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.NullabilityAnnotationMode",
+            "values": [
+                {
+                    "name": "ignore",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.30",
+                        "stabilizedVersion": "1.5.30",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "strict",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.30",
+                        "stabilizedVersion": "1.5.30",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "warn",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.5.30",
+                        "stabilizedVersion": "1.5.30",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
         }
     },
     "topLevel": {
@@ -7754,13 +7801,13 @@
                                     "removedVersion": null
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
-                                    "defaultValue": {
-                                        "current": null,
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.NullabilityAnnotationListType",
+                                    "isNullable": {
+                                        "current": false,
                                         "valueInVersions": []
                                     },
-                                    "isNullable": {
-                                        "current": true,
+                                    "defaultValue": {
+                                        "current": [],
                                         "valueInVersions": []
                                     }
                                 }

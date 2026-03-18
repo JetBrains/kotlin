@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
+import org.jetbrains.kotlin.buildtools.api.arguments.types.NullabilityAnnotation
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
@@ -580,6 +581,22 @@ internal class KotlinWrapperPre2_4_0(
                     arrayValue.toList() as V
                 }
 
+                JvmCompilerArguments.X_NULLABILITY_ANNOTATIONS -> {
+                    @Suppress("SENSELESS_COMPARISON")
+                    if (delegate[key] == null) return emptyList<NullabilityAnnotation>() as V
+
+                    val arrayValue = delegate[key] as Array<String>
+                    arrayValue.map {
+                        val parts = it.split(":")
+                        require(parts.size == 2) { "Invalid -Xnullability-annotations format: $this" }
+
+                        val nullabilityAnnotationMode =
+                            NullabilityAnnotationMode.values().firstOrNull { entry -> entry.stringValue == parts[1] }
+                                ?: throw CompilerArgumentsParseException("Unknown -Xnullability-annotations mode: $it")
+                        NullabilityAnnotation(parts[0].removePrefix("@"), nullabilityAnnotationMode)
+                    } as V
+                }
+
                 else -> delegate[key]
             }
         }
@@ -742,6 +759,16 @@ internal class KotlinWrapperPre2_4_0(
                     @Suppress("UNCHECKED_CAST")
                     val listValue: List<String>? = (value as? List<*>)?.takeIf { it.all { item -> item is String } } as List<String>?
                     val arrayValue = listValue?.toTypedArray()
+                    val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
+
+                    delegate[arrayKey] = arrayValue
+                }
+
+                JvmCompilerArguments.X_NULLABILITY_ANNOTATIONS -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<NullabilityAnnotation>? =
+                        (value as? List<*>)?.takeIf { it.all { item -> item is NullabilityAnnotation } } as List<NullabilityAnnotation>?
+                    val arrayValue = listValue?.map { item -> "@${item.annotationFqName}:${item.mode.stringValue}" }?.toTypedArray()
                     val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
 
                     delegate[arrayKey] = arrayValue

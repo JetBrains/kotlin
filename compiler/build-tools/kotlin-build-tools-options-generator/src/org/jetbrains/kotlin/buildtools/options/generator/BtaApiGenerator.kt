@@ -9,15 +9,13 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
-import org.jetbrains.kotlin.arguments.dsl.types.EnumType
-import org.jetbrains.kotlin.arguments.dsl.types.ProfileCompilerCommand
-import org.jetbrains.kotlin.arguments.dsl.types.ProfileCompilerCommandType
-import org.jetbrains.kotlin.arguments.dsl.types.WithStringRepresentation
+import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.full.primaryConstructor
 
@@ -154,6 +152,10 @@ internal class BtaApiGenerator(
                         is ProfileCompilerCommandType -> {
                             generatedCustomType(ProfileCompilerCommand::class)
                         }
+                        is NullabilityAnnotationListType -> {
+                            generatedEnumType(NullabilityAnnotationMode::class)
+                            LIST.parameterizedBy(generatedCustomType(NullabilityAnnotation::class))
+                        }
                         else -> {
                             argumentType.asTypeName()
                         }
@@ -267,19 +269,27 @@ internal class BtaApiGenerator(
                 }
             val parameters = constructor.parameters
 
+            fun resolveParamType(param: KParameter): TypeName {
+                val classifier = param.type.classifier
+                return if (classifier is KClass<*> && classifier.java.isEnum) {
+                    classifier.toBtaEnumClassName().copy(nullable = param.type.isMarkedNullable)
+                } else {
+                    param.type.asTypeName()
+                }
+            }
+
             primaryConstructor(
                 FunSpec.constructorBuilder().apply {
                     parameters.forEach { param ->
-                        addParameter(requireNotNull(param.name), param.type.asTypeName())
+                        addParameter(requireNotNull(param.name), resolveParamType(param))
                     }
                 }.build()
             )
 
             parameters.forEach { param ->
-                val paramType = param.type.asTypeName()
                 val parameterName = requireNotNull(param.name)
                 addProperty(
-                    PropertySpec.builder(parameterName, paramType)
+                    PropertySpec.builder(parameterName, resolveParamType(param))
                         .initializer(parameterName)
                         .build()
                 )

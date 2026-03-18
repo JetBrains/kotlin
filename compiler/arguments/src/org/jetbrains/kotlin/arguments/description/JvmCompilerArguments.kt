@@ -457,6 +457,7 @@ Modes:
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xnullability-annotations"
         description = """Specify the behavior for specific Java nullability annotations (provided with fully qualified package name).
@@ -466,6 +467,7 @@ Modes:
 * warn (report a warning)""".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "@<fq.name>:{ignore/strict/warn}".asReleaseDependent()
+        argumentType = NullabilityAnnotationListType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_30,

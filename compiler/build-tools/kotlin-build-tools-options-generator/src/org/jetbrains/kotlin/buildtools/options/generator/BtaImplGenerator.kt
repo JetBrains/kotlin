@@ -199,6 +199,9 @@ internal class BtaImplGenerator(
                         is ProfileCompilerCommandType -> {
                             ProfileCompilerCommand::class.toBtaCustomClassName()
                         }
+                        is NullabilityAnnotationListType -> {
+                            LIST.parameterizedBy(NullabilityAnnotation::class.toBtaCustomClassName())
+                        }
                         else -> {
                             type.asTypeName()
                         }

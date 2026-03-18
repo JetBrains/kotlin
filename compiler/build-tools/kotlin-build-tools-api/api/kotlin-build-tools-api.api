@@ -647,6 +647,15 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/NameBased
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/NullabilityAnnotationMode : java/lang/Enum {
+	public static final field IGNORE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NullabilityAnnotationMode;
+	public static final field STRICT Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NullabilityAnnotationMode;
+	public static final field WARN Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NullabilityAnnotationMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NullabilityAnnotationMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NullabilityAnnotationMode;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode : java/lang/Enum {
 	public static final field CHECKER Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
 	public static final field DISABLED Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
@@ -688,6 +697,12 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpre
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/WhenExpressionsMode;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/types/NullabilityAnnotation {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NullabilityAnnotationMode;)V
+	public final fun getAnnotationFqName ()Ljava/lang/String;
+	public final fun getMode ()Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NullabilityAnnotationMode;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/types/ProfileCompilerCommand {

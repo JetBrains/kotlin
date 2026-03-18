@@ -118,6 +118,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.types.NullabilityAnnotation
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -216,7 +217,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_NO_RESET_JAR_TIMESTAMPS in this) { arguments.noResetJarTimestamps = get(X_NO_RESET_JAR_TIMESTAMPS)}
     if (X_NO_SOURCE_DEBUG_EXTENSION in this) { arguments.noSourceDebugExtension = get(X_NO_SOURCE_DEBUG_EXTENSION)}
     if (X_NO_UNIFIED_NULL_CHECKS in this) { arguments.noUnifiedNullChecks = get(X_NO_UNIFIED_NULL_CHECKS)}
-    if (X_NULLABILITY_ANNOTATIONS in this) { arguments.nullabilityAnnotations = get(X_NULLABILITY_ANNOTATIONS) ?: emptyArray()}
+    if (X_NULLABILITY_ANNOTATIONS in this) { arguments.nullabilityAnnotations = get(X_NULLABILITY_ANNOTATIONS).toArgumentValue()}
     try { if (X_OUTPUT_BUILTINS_METADATA in this) { arguments.outputBuiltinsMetadata = get(X_OUTPUT_BUILTINS_METADATA)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_OUTPUT_BUILTINS_METADATA. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
     if (X_PROFILE in this) { arguments.profileCompilerCommand = get(X_PROFILE)?.toArgumentValue()}
     if (X_SAM_CONVERSIONS in this) { arguments.samConversions = get(X_SAM_CONVERSIONS)?.stringValue}
@@ -301,7 +302,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_NO_RESET_JAR_TIMESTAMPS] = arguments.noResetJarTimestamps } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_SOURCE_DEBUG_EXTENSION] = arguments.noSourceDebugExtension } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_UNIFIED_NULL_CHECKS] = arguments.noUnifiedNullChecks } catch (_: NoSuchMethodError) {  }
-    try { this[X_NULLABILITY_ANNOTATIONS] = arguments.nullabilityAnnotations } catch (_: NoSuchMethodError) {  }
+    try { this[X_NULLABILITY_ANNOTATIONS] = arguments.nullabilityAnnotations.`toXnullability-annotations`() } catch (_: NoSuchMethodError) {  }
     try { this[X_OUTPUT_BUILTINS_METADATA] = arguments.outputBuiltinsMetadata } catch (_: NoSuchMethodError) {  }
     try { this[X_PROFILE] = arguments.profileCompilerCommand?.toXprofile() } catch (_: NoSuchMethodError) {  }
     try { this[X_SAM_CONVERSIONS] = arguments.samConversions?.let { SamConversionsMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xsam-conversions value: $it") } } catch (_: NoSuchMethodError) {  }
@@ -481,7 +482,7 @@ internal class JvmCompilerArgumentsImpl(
     public val X_NO_UNIFIED_NULL_CHECKS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_NO_UNIFIED_NULL_CHECKS")
 
-    public val X_NULLABILITY_ANNOTATIONS: JvmCompilerArgument<Array<String>?> =
+    public val X_NULLABILITY_ANNOTATIONS: JvmCompilerArgument<List<NullabilityAnnotation>> =
         JvmCompilerArgument("X_NULLABILITY_ANNOTATIONS")
 
     public val X_OUTPUT_BUILTINS_METADATA: JvmCompilerArgument<Boolean> =

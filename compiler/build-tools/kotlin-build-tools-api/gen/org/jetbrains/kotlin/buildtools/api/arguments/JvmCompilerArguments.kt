@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.types.NullabilityAnnotation
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 
 /**
@@ -567,7 +568,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_NULLABILITY_ANNOTATIONS: JvmCompilerArgument<Array<String>?> =
+    public val X_NULLABILITY_ANNOTATIONS: JvmCompilerArgument<List<NullabilityAnnotation>> =
         JvmCompilerArgument("X_NULLABILITY_ANNOTATIONS", KotlinReleaseVersion(1, 5, 30))
 
     /**
