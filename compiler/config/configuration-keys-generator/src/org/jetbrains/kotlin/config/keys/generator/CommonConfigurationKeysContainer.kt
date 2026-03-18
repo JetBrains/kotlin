@@ -54,6 +54,7 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val ENABLE_IR_VISIBILITY_CHECKS by key<Boolean>("Checks pre-lowering IR for visibility violations.")
     val ENABLE_IR_VARARG_TYPES_CHECKS by key<Boolean>("Checks IR for vararg types mismatches.")
     val ENABLE_IR_NESTED_OFFSETS_CHECKS by key<Boolean>("Checks that offsets of nested IR elements conform to offsets of their containers.")
+    val ENABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS by key<Boolean>("Checks IR for out-of-scope type parameter usages.")
 
     val PHASE_CONFIG by key<PhaseConfig>()
 

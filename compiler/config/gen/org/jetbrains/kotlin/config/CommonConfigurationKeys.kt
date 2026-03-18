@@ -119,6 +119,10 @@ object CommonConfigurationKeys {
     @JvmField
     val ENABLE_IR_NESTED_OFFSETS_CHECKS = CompilerConfigurationKey.create<Boolean>("ENABLE_IR_NESTED_OFFSETS_CHECKS")
 
+    // Checks IR for out-of-scope type parameter usages.
+    @JvmField
+    val ENABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS = CompilerConfigurationKey.create<Boolean>("ENABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS")
+
     @JvmField
     val PHASE_CONFIG = CompilerConfigurationKey.create<PhaseConfig>("PHASE_CONFIG")
 
@@ -261,6 +265,10 @@ var CompilerConfiguration.enableIrVarargTypesChecks: Boolean
 var CompilerConfiguration.enableIrNestedOffsetsChecks: Boolean
     get() = getBoolean(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS)
     set(value) { put(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS, value) }
+
+var CompilerConfiguration.enableIrTypeParameterScopeChecks: Boolean
+    get() = getBoolean(CommonConfigurationKeys.ENABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS)
+    set(value) { put(CommonConfigurationKeys.ENABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS, value) }
 
 var CompilerConfiguration.phaseConfig: PhaseConfig?
     get() = get(CommonConfigurationKeys.PHASE_CONFIG)

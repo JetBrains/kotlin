@@ -261,6 +261,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     val DISABLE_IR_VARARG_TYPE_CHECKS by enumDirective<TargetBackend>(
         description = "Don't check for vararg type mismatches when validating IR on the target backend"
     )
+
+    val DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS by enumDirective<TargetBackend>(
+        description = "Don't check for out-of-scope type parameter usages when validating IR on the target backend"
+    )
 }
 
 fun ValueDirective<TargetBackend>.isApplicableTo(module: TestModule, testServices: TestServices): Boolean {
