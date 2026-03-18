@@ -1,4 +1,5 @@
 @file:Suppress("SENSELESS_COMPARISON")
+@file:OptIn(Idea222Api::class)
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
@@ -12,6 +13,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
+import org.jetbrains.kotlin.gradle.plugin.ide.prepareKotlinIdeaImportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
@@ -168,6 +171,10 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 hasDirectOrTransitiveSwiftPMDependencies.get()
             }
         }
+    }
+
+    prepareKotlinIdeaImportTask.configure {
+        it.dependsOn(project.swiftPMImportIdeContextProvider())
     }
 
     kotlinExtension.targets.matching { it.supportsSwiftPMImport() }.all { target ->
@@ -505,3 +512,12 @@ private fun Project.registerXcodeIntegrationTasks(
         it.mustRunAfter(embedAndSignIntegration)
     }
 }
+
+internal fun Project.swiftPMImportIdeContextProvider(): Provider<SwiftPMImportIdeContext> =
+    project.hasDirectOrTransitiveSwiftPMDependencies().map { hasDirectOrTransitiveSwiftPMDependencies ->
+        SwiftPMImportIdeContext(
+            hasDirectOrTransitiveSwiftPMDependencies,
+            ("${project.path}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}").replace("::", ":"),
+            SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+        )
+    }
