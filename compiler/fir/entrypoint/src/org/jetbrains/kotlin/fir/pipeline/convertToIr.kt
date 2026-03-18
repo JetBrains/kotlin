@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallTypeArgument
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallValueArgumentCountChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
+import org.jetbrains.kotlin.ir.validation.checkers.type.IrTypeParameterScopeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -506,7 +507,7 @@ private class Fir2IrPipeline(
                     IrCallValueArgumentCountChecker,
                     IrCrossFileFieldUsageChecker,
                     IrValueAccessScopeChecker,
-                    //IrTypeParameterScopeChecker // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305),
+                    IrTypeParameterScopeChecker,
                     IrVisibilityChecker.Strict,
                 )
                 .withVarargChecks()
