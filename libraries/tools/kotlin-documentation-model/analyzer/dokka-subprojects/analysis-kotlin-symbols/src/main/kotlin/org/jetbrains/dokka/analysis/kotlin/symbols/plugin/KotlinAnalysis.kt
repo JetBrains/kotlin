@@ -76,10 +76,6 @@ internal fun createAnalysisSession(
     projectDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project"),
     isSampleProject: Boolean = false
 ): KotlinAnalysis {
-    if (InternalConfiguration.experimentalKDocResolutionEnabled) {
-        enableExperimentalKDocResolution()
-    }
-
     val sourcesModule = mutableMapOf<DokkaConfiguration.DokkaSourceSet, KaSourceModule>()
     val isMultiplatformProject = sourceSets.any { it.analysisPlatform != Platform.jvm }
 
@@ -195,11 +191,4 @@ internal fun topologicalSortByDependantSourceSets(
     }
     sourceSets.forEach(::dfs)
     return result
-}
-
-private fun enableExperimentalKDocResolution() {
-    // Enable experimental KDoc resolution in Kotlin Analysis API (K2)
-    @Suppress("UnstableApiUsage")
-    LoadingState.setCurrentState(LoadingState.COMPONENTS_LOADED)
-    System.setProperty("kotlin.analysis.experimentalKDocResolution", "true")
 }
