@@ -369,6 +369,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
         )
         processArgsBeforeCompile(args)
+        @Suppress("DEPRECATION")
         if (args.wasm) {
             val wasmArgs = copyK2JSCompilerArguments(args, KotlinWasmCompilerArguments())
             compilerRunner.runWasmCompilerAsync(

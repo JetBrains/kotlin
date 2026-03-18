@@ -50,6 +50,7 @@ class CustomKlibCompiler(
         } catch (e: ClassNotFoundException) {
             // older compiler versions didn't have KotlinWasmCompiler and used JS compiler for Wasm
             if (className == "org.jetbrains.kotlin.cli.js.KotlinWasmCompiler") {
+                @Suppress("DEPRECATION")
                 Class.forName(
                     "org.jetbrains.kotlin.cli.js.K2JSCompiler",
                     true,

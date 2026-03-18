@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.js.testOld.klib
 
+import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.testOld.utils.runJsCompiler
+import org.jetbrains.kotlin.js.testOld.utils.runWasmCompiler
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_BUILTINS_PLATFORM
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -41,14 +43,13 @@ abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatib
     override val platformDisplayName get() = if (isWasm) "Kotlin/Wasm" else "Kotlin/JS"
 
     override fun runCompiler(context: CompilerInvocationContext) {
-        runJsCompiler(context.messageCollector, context.expectedExitCode) {
+        fun CommonJsAndWasmCompilerArguments.configureCommonArgs() {
             this.freeArgs = listOf(context.sourceFile.absolutePath)
             this.libraries = (context.additionalLibraries + context.fakeLibraryPath).joinToString(File.pathSeparator)
             this.outputDir = context.outputDir.absolutePath
             this.moduleName = context.moduleName
             this.irProduceKlibFile = true
             this.irModuleName = context.moduleName
-            this.wasm = isWasm
             if (context.exportKlibToOlderAbiVersion) {
                 this.languageVersion = "${LanguageVersion.LATEST_STABLE.major}.${LanguageVersion.LATEST_STABLE.minor - 1}"
                 this.internalArguments = listOf(
@@ -58,6 +59,15 @@ abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatib
                         "-XXLanguage:+ExportKlibToOlderAbiVersion"
                     )
                 )
+            }
+        }
+        if (isWasm) {
+            runWasmCompiler(context.messageCollector, context.expectedExitCode) {
+                this.configureCommonArgs()
+            }
+        } else {
+            runJsCompiler(context.messageCollector, context.expectedExitCode) {
+                this.configureCommonArgs()
             }
         }
     }

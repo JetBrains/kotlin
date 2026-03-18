@@ -19,7 +19,7 @@ class KotlinWasmCompilerArgumentsConfigurator : CommonKlibBasedCompilerArguments
         require(this is KotlinWasmCompilerArguments)
 
         super.configureAnalysisFlags(arguments, reporter, languageVersion).apply {
-            putAnalysisFlag(allowFullyQualifiedNameInKClass, wasm && wasmKClassFqn) //Only enabled WASM BE supports this flag
+            putAnalysisFlag(allowFullyQualifiedNameInKClass, wasmKClassFqn) //Only enabled WASM BE supports this flag
         }
     }
 
