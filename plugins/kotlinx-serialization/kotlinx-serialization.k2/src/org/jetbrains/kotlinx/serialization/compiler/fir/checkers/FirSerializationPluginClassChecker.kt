@@ -47,6 +47,8 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoNumberAnnotationClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoOneOfAnnotationClassId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoUnknownFieldsAnnotationClassId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoUnknownFieldHolderClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
 
 object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Common) {
@@ -71,6 +73,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             val properties = buildSerializableProperties(classSymbol, reporter) ?: return
             checkCorrectTransientAnnotationIsUsed(classSymbol, properties.serializableProperties, reporter)
             checkProtobufProperties(properties.serializableProperties, reporter)
+            checkProtoUnknownFields(classSymbol, reporter)
             checkTransients(classSymbol, reporter)
             analyzePropertiesSerializers(classSymbol, properties.serializableProperties, reporter)
             checkInheritedAnnotations(classSymbol, reporter)
@@ -379,6 +382,55 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 b = duplicateFieldsNames
             )
 
+        }
+    }
+
+    private fun CheckerContext.checkProtoUnknownFields(
+        classSymbol: FirClassSymbol<*>,
+        reporter: DiagnosticReporter,
+    ) {
+        val annotatedProps = mutableListOf<FirPropertySymbol>()
+        classSymbol.processAllDeclarations(session) { member ->
+            if (member is FirPropertySymbol &&
+                member.getAnnotationByClassId(protoUnknownFieldsAnnotationClassId, session) != null
+            ) {
+                annotatedProps.add(member)
+            }
+        }
+
+        if (annotatedProps.size > 1) {
+            val firstAnn = annotatedProps.first().getAnnotationByClassId(protoUnknownFieldsAnnotationClassId, session)!!
+            val allNames = annotatedProps.joinToString(", ") { it.name.asString() }
+            reporter.reportOn(
+                firstAnn.source ?: annotatedProps.first().source,
+                FirSerializationErrors.PROTO_UNKNOWN_FIELDS_MULTIPLE_ANNOTATIONS,
+                classSymbol.name.asString(),
+                allNames,
+            )
+        }
+
+        val prop = annotatedProps.firstOrNull() ?: return
+        val ann = prop.getAnnotationByClassId(protoUnknownFieldsAnnotationClassId, session)!!
+
+        val propType = prop.resolvedReturnTypeRef.coneType.fullyExpandedType()
+        if (propType.classId != protoUnknownFieldHolderClassId) {
+            reporter.reportOn(
+                ann.source ?: prop.source,
+                FirSerializationErrors.PROTO_UNKNOWN_FIELDS_WRONG_TYPE,
+                classSymbol.name.asString(),
+                prop.name.asString(),
+                propType.classId?.shortClassName?.asString() ?: propType.toString(),
+            )
+            return
+        }
+
+        if (!propType.isMarkedNullable && !declarationHasInitializer(prop)) {
+            reporter.reportOn(
+                prop.source,
+                FirSerializationErrors.PROTO_UNKNOWN_FIELDS_MISSING_DEFAULT,
+                classSymbol.name.asString(),
+                prop.name.asString(),
+            )
         }
     }
 

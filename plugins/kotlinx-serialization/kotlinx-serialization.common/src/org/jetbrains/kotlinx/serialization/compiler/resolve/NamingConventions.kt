@@ -48,6 +48,7 @@ object SerializationAnnotations {
 
     val protoNumberAnnotationFqName = FqName("kotlinx.serialization.protobuf.ProtoNumber")
     val protoOneOfAnnotationFqName = FqName("kotlinx.serialization.protobuf.ProtoOneOf")
+    val protoUnknownFieldsAnnotationFqName = FqName("kotlinx.serialization.protobuf.ProtoUnknownFields")
 
     val serializableAnnotationClassId = ClassId.topLevel(serializableAnnotationFqName)
     val serializerAnnotationClassId = ClassId.topLevel(serializerAnnotationFqName)
@@ -68,6 +69,9 @@ object SerializationAnnotations {
 
     val protoNumberAnnotationClassId = ClassId.topLevel(protoNumberAnnotationFqName)
     val protoOneOfAnnotationClassId = ClassId.topLevel(protoOneOfAnnotationFqName)
+
+    val protoUnknownFieldsAnnotationClassId = ClassId.topLevel(protoUnknownFieldsAnnotationFqName)
+    val protoUnknownFieldHolderClassId = ClassId(FqName("kotlinx.serialization.protobuf"), Name.identifier("ProtoUnknownFieldHolder"))
 }
 
 object SerialEntityNames {
