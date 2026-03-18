@@ -16,6 +16,8 @@ where advanced options include:
                              Lambda expressions that capture values are translated into in-line anonymous JavaScript functions.
   -Xir-keep                  Comma-separated list of fully qualified names not to be eliminated by DCE (if it can be reached), and for which to keep non-minified names.
   -Xir-minimized-member-names Minimize the names of members.
+  -Xir-per-file              Generate one .js file per source file.
+  -Xir-per-module            Generate one .js file per module.
   -Xir-safe-external-boolean Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'.
   -Xir-safe-external-boolean-diagnostic={log|exception}
                              Enable runtime diagnostics when accessing external 'Boolean' properties.
@@ -62,8 +64,6 @@ where advanced options include:
   -Xir-dce-runtime-diagnostic={log|exception}
                              Enable runtime diagnostics instead of removing declarations when performing DCE.
   -Xir-module-name=<name>    Specify the name of the compilation module for the IR backend.
-  -Xir-per-file              Generate one .js file per source file.
-  -Xir-per-module            Generate one .js file per module.
   -Xir-per-module-output-name Add a custom output name to the split .js files.
   -Xir-produce-js            Generate a JS file using the IR backend.
   -Xir-produce-klib-dir      Generate an unpacked klib into the parent directory of the output JS file.

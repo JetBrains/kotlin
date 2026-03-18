@@ -115,26 +115,6 @@ sealed class CommonJsAndWasmCompilerArguments : CommonKlibBasedCompilerArguments
         }
 
     @Argument(
-        value = "-Xir-per-file",
-        description = "Generate one .js file per source file.",
-    )
-    var irPerFile: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xir-per-module",
-        description = "Generate one .js file per module.",
-    )
-    var irPerModule: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xir-per-module-output-name",
         description = "Add a custom output name to the split .js files.",
     )

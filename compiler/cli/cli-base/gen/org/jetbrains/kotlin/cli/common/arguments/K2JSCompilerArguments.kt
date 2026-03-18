@@ -137,6 +137,26 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xir-per-file",
+        description = "Generate one .js file per source file.",
+    )
+    var irPerFile: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xir-per-module",
+        description = "Generate one .js file per module.",
+    )
+    var irPerModule: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xir-safe-external-boolean",
         description = "Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'.",
     )

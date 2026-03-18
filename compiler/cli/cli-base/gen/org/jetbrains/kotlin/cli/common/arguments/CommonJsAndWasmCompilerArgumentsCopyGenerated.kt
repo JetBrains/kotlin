@@ -20,8 +20,6 @@ fun copyCommonJsAndWasmCompilerArguments(from: CommonJsAndWasmCompilerArguments,
     to.irDcePrintReachabilityInfo = from.irDcePrintReachabilityInfo
     to.irDceRuntimeDiagnostic = from.irDceRuntimeDiagnostic
     to.irModuleName = from.irModuleName
-    to.irPerFile = from.irPerFile
-    to.irPerModule = from.irPerModule
     to.irPerModuleOutputName = from.irPerModuleOutputName
     to.irProduceJs = from.irProduceJs
     to.irProduceKlibDir = from.irProduceKlibDir

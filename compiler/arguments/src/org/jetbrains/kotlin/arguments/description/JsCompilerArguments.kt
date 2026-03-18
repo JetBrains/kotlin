@@ -85,6 +85,26 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
     }
 
     compilerArgument {
+        name = "Xir-per-module"
+        description = "Generate one .js file per module.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_20,
+        )
+    }
+
+    compilerArgument {
+        name = "Xir-per-file"
+        description = "Generate one .js file per source file.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_20,
+        )
+    }
+
+    compilerArgument {
         name = "Xir-generate-inline-anonymous-functions"
         description = "Lambda expressions that capture values are translated into in-line anonymous JavaScript functions.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
