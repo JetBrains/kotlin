@@ -58,8 +58,6 @@ open class UpgradeCallableReferences(
         val expression: IrExpression,
     )
 
-    open fun selectSAMOverriddenFunction(irClass: IrClass): IrSimpleFunction = irClass.selectSAMOverriddenFunction()
-
     private inner class UpgradeTransformer : IrTransformer<IrDeclarationParent>() {
         private fun IrClass?.isRestrictedSuspension(): Boolean {
             if (this == null) return false
@@ -93,13 +91,11 @@ open class UpgradeCallableReferences(
                 endOffset = expression.endOffset,
                 type = expression.type,
                 reflectionTargetSymbol = null,
-                overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.type.classOrFail.owner).symbol,
+                overriddenFunctionSymbol = expression.type.classOrFail.owner.selectSAMOverriddenFunction().symbol,
                 invokeFunction = expression.function,
                 origin = expression.origin,
                 isRestrictedSuspension = isRestrictedSuspension,
-            ).apply {
-                copyNecessaryAttributes(expression, this)
-            }
+            )
         }
 
         override fun visitElement(element: IrElement, data: IrDeclarationParent): IrElement {
@@ -202,7 +198,7 @@ open class UpgradeCallableReferences(
                 endOffset = expression.endOffset,
                 type = referenceType,
                 reflectionTargetSymbol = reflectionTarget,
-                overriddenFunctionSymbol = selectSAMOverriddenFunction(referenceType.classOrFail.owner).symbol,
+                overriddenFunctionSymbol = referenceType.classOrFail.owner.selectSAMOverriddenFunction().symbol,
                 invokeFunction = function,
                 origin = reference.origin,
                 hasSuspendConversion = reflectionTarget != null && reflectionTarget.isSuspend == false && function.isSuspend,
@@ -236,7 +232,7 @@ open class UpgradeCallableReferences(
                     startOffset = expression.startOffset
                     endOffset = expression.endOffset
                     type = expression.typeOperand
-                    overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.typeOperand.classOrFail.owner).symbol
+                    overriddenFunctionSymbol = expression.typeOperand.classOrFail.owner.selectSAMOverriddenFunction().symbol
                 }
             }
             return super.visitTypeOperator(expression, data)
@@ -258,7 +254,7 @@ open class UpgradeCallableReferences(
                 endOffset = expression.endOffset,
                 type = expression.type,
                 reflectionTargetSymbol = (expression.reflectionTarget ?: expression.symbol).takeUnless { expression.origin.isLambda },
-                overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.type.classOrFail.owner).symbol,
+                overriddenFunctionSymbol = expression.type.classOrFail.owner.selectSAMOverriddenFunction().symbol,
                 invokeFunction = expression.wrapFunction(arguments, data, expression.symbol.owner),
                 origin = expression.origin,
                 isRestrictedSuspension = expression.symbol.owner.isRestrictedSuspensionFunction(),
@@ -573,7 +569,6 @@ open class UpgradeCallableReferences(
         }
     }
 
-    protected open fun copyNecessaryAttributes(oldReference: IrFunctionExpression, newReference: IrRichFunctionReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrFunctionReference, newReference: IrRichFunctionReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrPropertyReference, newReference: IrRichPropertyReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrLocalDelegatedPropertyReference, newReference: IrRichPropertyReference) {}
