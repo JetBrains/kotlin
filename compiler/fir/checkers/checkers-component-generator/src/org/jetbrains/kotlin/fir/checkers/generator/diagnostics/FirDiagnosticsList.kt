@@ -2394,6 +2394,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("type")
         }
         val COMPANION_EXTENSION_RECEIVER_ANNOTATED by error<PsiElement>()
+        val COMPANION_EXTENSION_NULLABLE_RECEIVER by error<PsiElement>()
     }
 }
 

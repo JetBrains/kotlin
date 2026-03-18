@@ -2095,6 +2095,12 @@ private fun KaDiagnosticConverterBuilder.addConversions43() {
             token,
         )
     }
+    add(FirErrors.COMPANION_EXTENSION_NULLABLE_RECEIVER) { firDiagnostic ->
+        CompanionExtensionNullableReceiverImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions44() {

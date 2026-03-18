@@ -176,6 +176,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CON
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_BLOCK_MEMBER_EXTENSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_BLOCK_NESTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSION_NULLABLE_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSION_RECEIVER_ANNOTATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSION_RECEIVER_IS_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER
@@ -3924,6 +3925,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             COMPANION_EXTENSION_RECEIVER_ANNOTATED,
             "Companion extension receiver cannot be annotated.",
+        )
+        map.put(
+            COMPANION_EXTENSION_NULLABLE_RECEIVER,
+            "Companion extension receiver type cannot be nullable.",
         )
     }
 }
