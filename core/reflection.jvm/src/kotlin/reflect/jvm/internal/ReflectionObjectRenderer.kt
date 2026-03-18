@@ -31,14 +31,14 @@ import kotlin.reflect.jvm.jvmName
 
 internal object ReflectionObjectRenderer {
     private fun StringBuilder.appendReceiverType(receiver: KParameter): StringBuilder =
-        append(renderType(receiver.type)).append(".")
+        append(renderType(receiver.type)).append('.')
 
     private fun StringBuilder.appendReceivers(callable: KCallable<*>) {
         val receivers = (callable as ReflectKCallable<*>).allParameters.filter {
             it.kind == KParameter.Kind.INSTANCE || it.kind == KParameter.Kind.EXTENSION_RECEIVER
         }
         receivers.getOrNull(0)?.let { appendReceiverType(it) }
-        receivers.getOrNull(1)?.let { append("(").appendReceiverType(it).append(")") }
+        receivers.getOrNull(1)?.let { append('(').appendReceiverType(it).append(')') }
     }
 
     private fun StringBuilder.appendContexts(callable: KCallable<*>) {
@@ -95,7 +95,7 @@ internal object ReflectionObjectRenderer {
         return buildString {
             lambda.extensionReceiverParameter?.let {
                 append(renderType(it.type))
-                append(".")
+                append('.')
             }
 
             lambda.valueParameters.joinTo(this, separator = ", ", prefix = "(", postfix = ")") {

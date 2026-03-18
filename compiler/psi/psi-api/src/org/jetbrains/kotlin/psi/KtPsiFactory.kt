@@ -713,7 +713,7 @@ class KtPsiFactory private constructor(
             assert(state == State.MODIFIERS)
 
             if (sb.isNotEmpty()) {
-                sb.append(" ")
+                sb.append(' ')
             }
             sb.append("class ")
 
@@ -810,7 +810,7 @@ class KtPsiFactory private constructor(
         private fun closeParams() {
             if (target == Target.FUNCTION || target == Target.CONSTRUCTOR) {
                 assert(state == State.FIRST_PARAM || state == State.REST_PARAMS)
-                sb.append(")")
+                sb.append(')')
             }
 
             state = State.TYPE_CONSTRAINTS
@@ -819,8 +819,8 @@ class KtPsiFactory private constructor(
         private fun placeKeyword() {
             assert(state == State.MODIFIERS)
 
-            if (sb.isNotEmpty() && !sb.endsWith(" ")) {
-                sb.append(" ")
+            if (sb.isNotEmpty() && !sb.endsWith(' ')) {
+                sb.append(' ')
             }
             val keyword = when (target) {
                 Target.FUNCTION -> "fun"
@@ -857,7 +857,7 @@ class KtPsiFactory private constructor(
         fun receiver(@NonNls receiverType: String): CallableBuilder {
             assert(state == State.RECEIVER)
 
-            sb.append(receiverType).append(".")
+            sb.append(receiverType).append('.')
             state = State.NAME
 
             return this
@@ -870,7 +870,7 @@ class KtPsiFactory private constructor(
             sb.append(name)
             state = when (target) {
                 Target.FUNCTION, Target.CONSTRUCTOR -> {
-                    sb.append("(")
+                    sb.append('(')
                     State.FIRST_PARAM
                 }
                 else ->

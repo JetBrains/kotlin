@@ -103,7 +103,7 @@ private fun PrettyPrinter.appendTypeInfo(typeBean: KotlinTypeBean) {
             append(typeBean.classId.asFqNameString())
             val arguments = typeBean.arguments
             if (arguments.isNotEmpty()) {
-                append("<")
+                append('<')
                 arguments.forEachIndexed { index, arg ->
                     if (index > 0) append(", ")
                     if (arg.projectionKind != KtProjectionKind.NONE) {
@@ -113,23 +113,23 @@ private fun PrettyPrinter.appendTypeInfo(typeBean: KotlinTypeBean) {
                         appendTypeInfo(arg.type!!)
                     }
                 }
-                append(">")
+                append('>')
             }
             if (typeBean.nullable) {
-                append("?")
+                append('?')
             }
 
             val abbreviatedType = typeBean.abbreviatedType
             if (abbreviatedType != null) {
                 append(" (abbreviatedType: ")
                 appendTypeInfo(abbreviatedType)
-                append(")")
+                append(')')
             }
         }
         is KotlinTypeParameterTypeBean -> {
             append(typeBean.typeParameterName)
             if (typeBean.nullable) {
-                append("?")
+                append('?')
             }
             if (typeBean.definitelyNotNull) {
                 append(" & Any")
@@ -172,13 +172,13 @@ class KotlinContractRenderer(
         holdsInEffect.argumentsCondition.accept(this, data)
         printer.append(" HoldsIn(")
         holdsInEffect.valueParameterReference.accept(this, data)
-        printer.append(")")
+        printer.append(')')
     }
 
     override fun visitReturnsEffectDeclaration(returnsEffect: KtReturnsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
         printer.append("Returns(")
         returnsEffect.value.accept(this, data)
-        printer.append(")")
+        printer.append(')')
     }
 
     override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
@@ -218,7 +218,7 @@ class KotlinContractRenderer(
         valueParameterReference: KtValueParameterReference<KotlinTypeBean, Nothing?>,
         data: Nothing?,
     ) {
-        printer.append("param(").append(valueParameterReference.parameterIndex.toString()).append(")")
+        printer.append("param(").append(valueParameterReference.parameterIndex.toString()).append(')')
     }
 
 
@@ -228,6 +228,6 @@ class KotlinContractRenderer(
     ) {
         printer.append("ReturnsResultOf(")
         returnsResultOfEffect.valueParameterReference.accept(this, data)
-        printer.append(")")
+        printer.append(')')
     }
 }

@@ -67,11 +67,11 @@ abstract class DescriptorRenderer {
 
         object DEFAULT : ValueParametersHandler {
             override fun appendBeforeValueParameters(parameterCount: Int, builder: StringBuilder) {
-                builder.append("(")
+                builder.append('(')
             }
 
             override fun appendAfterValueParameters(parameterCount: Int, builder: StringBuilder) {
-                builder.append(")")
+                builder.append(')')
             }
 
             override fun appendBeforeValueParameter(

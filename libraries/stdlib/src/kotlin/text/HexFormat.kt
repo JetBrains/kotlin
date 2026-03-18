@@ -266,7 +266,7 @@ public class HexFormat internal constructor(
             sb.append(indent).append("groupSeparator = \"").append(groupSeparator).appendLine("\",")
             sb.append(indent).append("byteSeparator = \"").append(byteSeparator).appendLine("\",")
             sb.append(indent).append("bytePrefix = \"").append(bytePrefix).appendLine("\",")
-            sb.append(indent).append("byteSuffix = \"").append(byteSuffix).append("\"")
+            sb.append(indent).append("byteSuffix = \"").append(byteSuffix).append('"')
             return sb
         }
 

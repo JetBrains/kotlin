@@ -32,9 +32,9 @@ public class XmlMessageRenderer implements MessageRenderer {
         String tagName = severity.getPresentableName();
         out.append("<").append(tagName);
         if (location != null) {
-            out.append(" path=\"").append(e(location.getPath())).append("\"");
-            out.append(" line=\"").append(location.getLine()).append("\"");
-            out.append(" column=\"").append(location.getColumn()).append("\"");
+            out.append(" path=\"").append(e(location.getPath())).append('"');
+            out.append(" line=\"").append(location.getLine()).append('"');
+            out.append(" column=\"").append(location.getColumn()).append('"');
         }
         out.append(">");
 

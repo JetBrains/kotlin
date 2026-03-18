@@ -96,7 +96,7 @@ fun getModificationsToPerform(
     fun getModificationsForIteration(newSuffix: String, touchSuffix: String, deleteSuffix: String): List<Modification> {
 
         fun splitToModuleNameAndFileName(fileName: String): Pair<String?, String> {
-            val underscore = fileName.indexOf("_")
+            val underscore = fileName.indexOf('_')
 
             if (underscore != -1) {
                 var moduleName = fileName.substring(0, underscore)

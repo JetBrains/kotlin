@@ -67,12 +67,12 @@ abstract class Kotlinp(protected val settings: Settings) {
 
     protected fun Printer.appendAnnotations(annotations: List<KmAnnotation>, onePerLine: Boolean = true, useSiteTarget: String? = null) {
         annotations.forEach { annotation ->
-            append("@")
+            append('@')
             if (useSiteTarget != null) {
-                append(useSiteTarget).append(":")
+                append(useSiteTarget).append(':')
             }
             renderAnnotation(annotation, this)
-            if (onePerLine) appendLine() else append(" ")
+            if (onePerLine) appendLine() else append(' ')
         }
     }
 

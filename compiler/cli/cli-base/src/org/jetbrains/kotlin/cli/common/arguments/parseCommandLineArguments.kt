@@ -220,7 +220,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             when {
                 // Unknown -X argument
                 arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.value.unknownExtraFlags.add(arg)
-                arg.startsWith("-") -> errors.value.unknownArgs.add(arg)
+                arg.startsWith('-') -> errors.value.unknownArgs.add(arg)
                 else -> freeArgs.add(arg)
             }
             continue

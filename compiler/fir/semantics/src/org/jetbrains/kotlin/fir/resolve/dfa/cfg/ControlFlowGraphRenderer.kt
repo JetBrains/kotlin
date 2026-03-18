@@ -180,7 +180,7 @@ private class ControlFlowGraphRenderer(
                         }
                     }
                 } else if (variable is SyntheticVariable) {
-                    append(" = '").append(variable.fir.render().renderHtmlLike()).append("'")
+                    append(" = '").append(variable.fir.render().renderHtmlLike()).append('\'')
                 }
 
                 val implications = getImplications(variable).orEmpty()

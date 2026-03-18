@@ -41,14 +41,14 @@ abstract class PlainTextMessageRenderer @JvmOverloads constructor(private val co
         val path = if (location != null) getPath(location) else null
         if (path != null) {
             result.append(path)
-            result.append(":")
+            result.append(':')
             if (line > 0) {
-                result.append(line).append(":")
+                result.append(line).append(':')
                 if (column > 0) {
-                    result.append(column).append(":")
+                    result.append(column).append(':')
                 }
             }
-            result.append(" ")
+            result.append(' ')
         }
 
         if (this.colorEnabled) {
@@ -87,7 +87,7 @@ abstract class PlainTextMessageRenderer @JvmOverloads constructor(private val co
             } else if (lineEnd == line && columnEnd > column) {
                 result.append("^".repeat(columnEnd - column))
             } else {
-                result.append("^")
+                result.append('^')
             }
         }
 

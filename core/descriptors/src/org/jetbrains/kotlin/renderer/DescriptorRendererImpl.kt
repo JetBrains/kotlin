@@ -254,7 +254,7 @@ internal class DescriptorRendererImpl(
         }
 
         if (type.isMarkedNullable) {
-            append("?")
+            append('?')
         }
 
         if (type.isDefinitelyNotNullType) {
@@ -360,16 +360,16 @@ internal class DescriptorRendererImpl(
                     receiverType.hasModifiersOrAnnotations() ||
                     receiverType is DefinitelyNotNullType
             if (surroundReceiver) {
-                append("(")
+                append('(')
             }
             renderNormalizedType(receiverType)
             if (surroundReceiver) {
-                append(")")
+                append(')')
             }
-            append(".")
+            append('.')
         }
 
-        append("(")
+        append('(')
 
         if (type.isBuiltinExtensionFunctionalType && type.arguments.size <= 1) {
             append("???")
@@ -388,12 +388,12 @@ internal class DescriptorRendererImpl(
             }
         }
 
-        append(") ").append(arrow()).append(" ")
+        append(") ").append(arrow()).append(' ')
         renderNormalizedType(type.getReturnTypeFromFunctionType())
 
-        if (needParenthesis) append(")")
+        if (needParenthesis) append(')')
 
-        if (isNullable) append("?")
+        if (isNullable) append('?')
     }
 
     private fun KotlinType.hasModifiersOrAnnotations() =
@@ -451,7 +451,7 @@ internal class DescriptorRendererImpl(
         return buildString {
             append('@')
             if (target != null) {
-                append(target.renderName + ":")
+                append(target.renderName).append(':')
             }
             val annotationType = annotation.type
             append(renderType(annotationType))

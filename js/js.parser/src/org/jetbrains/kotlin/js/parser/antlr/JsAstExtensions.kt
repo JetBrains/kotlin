@@ -47,10 +47,10 @@ internal val Token.stopPosition: CodePosition
 
 internal fun unwrapStringLiteral(literalValue: String): String {
     literalValue.run {
-        if (startsWith("'") && endsWith("'"))
+        if (startsWith('\'') && endsWith('\''))
             return removeSurrounding("'")
 
-        if (startsWith("\"") && endsWith("\""))
+        if (startsWith('"') && endsWith('"'))
             return removeSurrounding("\"")
 
         return this

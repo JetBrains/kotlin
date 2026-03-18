@@ -151,7 +151,7 @@ fun hasIllegallyPositionedUnderscore(text: String, isFloatingPoint: Boolean): Bo
         listOf(text.substring(start, end))
     }
 
-    return parts.any { it != null && (it.startsWith("_") || it.endsWith("_")) }
+    return parts.any { it != null && (it.startsWith('_') || it.endsWith('_')) }
 }
 
 /**

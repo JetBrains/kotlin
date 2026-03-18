@@ -296,7 +296,7 @@ object Aggregates : TemplateGroupBase() {
                 annotation("""@Suppress("INAPPLICABLE_JVM_NAME")""")
             }
             annotation("""@kotlin.jvm.JvmName("sumOf$typeShortName")""") // should not be needed if inline return type is mangled
-            if (selectorType.startsWith("U")) {
+            if (selectorType.startsWith('U')) {
                 since("1.5")
             }
 

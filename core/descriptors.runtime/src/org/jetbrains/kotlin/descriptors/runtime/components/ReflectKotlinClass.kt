@@ -264,18 +264,18 @@ private object ReflectClassStructure {
 private object SignatureSerializer {
     fun methodDesc(method: Method): String {
         val sb = StringBuilder()
-        sb.append("(")
+        sb.append('(')
         for (parameterType in method.parameterTypes) {
             sb.append(parameterType.desc)
         }
-        sb.append(")")
+        sb.append(')')
         sb.append(method.returnType.desc)
         return sb.toString()
     }
 
     fun constructorDesc(constructor: Constructor<*>): String {
         val sb = StringBuilder()
-        sb.append("(")
+        sb.append('(')
         for (parameterType in constructor.parameterTypes) {
             sb.append(parameterType.desc)
         }

@@ -475,7 +475,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                     convertedText !is Long -> return reportIncorrectConstant(DiagnosticKind.IllegalConstExpression)
 
                     hasUnsignedLongSuffix(text) -> {
-                        if (text.endsWith("l")) {
+                        if (text.endsWith('l')) {
                             diagnostic = DiagnosticKind.WrongLongSuffix
                             number = null
                         } else {
@@ -484,7 +484,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                         ConstantValueKind.UnsignedLong
                     }
                     hasLongSuffix(text) -> {
-                        if (text.endsWith("l")) {
+                        if (text.endsWith('l')) {
                             diagnostic = DiagnosticKind.WrongLongSuffix
                             number = null
                         } else {
