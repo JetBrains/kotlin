@@ -86,11 +86,6 @@ abstract class DokkaBuildProperties @Inject constructor(
     val integrationTestDokkaVersionOverride: Provider<String> =
         dokkaProperty("integration_test.dokkaVersionOverride") { it }
 
-    /** Control whether integration tests should use the `org.jetbrains.dokka.analysis.enableExperimentalKDocResolution` flag. */
-    val integrationTestEnableExperimentalKDocResolution: Provider<Boolean> =
-        dokkaProperty("integration_test.enableExperimentalKDocResolution", String::toBoolean)
-            .orElse(false)
-
     val androidSdkDir: Provider<File> =
         providers
             // first try finding a local.properties file in any parent directory
