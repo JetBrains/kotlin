@@ -141,3 +141,13 @@ interface MidClassic : NRBase {
 interface NRLeaf : MidClassic {
     fun leaf(): Unit
 }
+
+// KT-84710
+@JsExport
+public interface WithDefaultSuspend {
+    public fun regularWithDefault(): String = "OK"
+    public suspend fun suspendWithDefault(): String = "OK"
+}
+
+@JsExport
+public class WithDefaultSuspendImpl : WithDefaultSuspend

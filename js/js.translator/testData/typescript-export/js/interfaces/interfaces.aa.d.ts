@@ -181,5 +181,22 @@ declare namespace JS_TESTS {
                 readonly "foo.NRLeaf": unique symbol;
             } & foo.MidClassic["__doNotUseOrImplementIt"];
         }
+        interface WithDefaultSuspend {
+            regularWithDefault(): string;
+            suspendWithDefault(): Promise<string>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.WithDefaultSuspend": unique symbol;
+            };
+        }
+        class WithDefaultSuspendImpl implements foo.WithDefaultSuspend {
+            constructor();
+            readonly __doNotUseOrImplementIt: foo.WithDefaultSuspend["__doNotUseOrImplementIt"];
+        }
+        namespace WithDefaultSuspendImpl {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => WithDefaultSuspendImpl;
+            }
+        }
     }
 }

@@ -8,6 +8,8 @@ import ImplementorOfInterfaceWithDefaultArguments = JS_TESTS.foo.ImplementorOfIn
 import SomeSealedInterface = JS_TESTS.foo.SomeSealedInterface
 import NoRuntimeSimpleInterface = JS_TESTS.foo.NoRuntimeSimpleInterface
 import NRBase = JS_TESTS.foo.NRBase
+import WithDefaultSuspend = JS_TESTS.foo.WithDefaultSuspend;
+import WithDefaultSuspendImpl = JS_TESTS.foo.WithDefaultSuspendImpl;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -15,7 +17,7 @@ function assert(condition: boolean) {
     }
 }
 
-function box(): string {
+async function box(): Promise<string> {
     assert(processInterface(new TestInterfaceImpl("bar")) === "Owner TestInterfaceImpl has value 'bar'")
     assert(processInterface(new ChildTestInterfaceImpl()) === "Owner TestInterfaceImpl has value 'Test'")
 
@@ -45,6 +47,10 @@ function box(): string {
 
     const nrBase: NRBase = { b: "base" }
     assert(nrBase.b === "base")
+
+    const withDefaultSuspend: WithDefaultSuspend = new WithDefaultSuspendImpl()
+    assert(withDefaultSuspend.regularWithDefault() === "OK")
+    assert(await withDefaultSuspend.suspendWithDefault() === "OK")
 
     return "OK";
 }
