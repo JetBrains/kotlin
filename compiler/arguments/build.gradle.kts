@@ -28,7 +28,7 @@ standardPublicJars()
 
 dependencies {
     api(kotlinStdlib())
-    implementation(kotlin("reflect"))
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     implementation(libs.kotlinx.serialization.json)
 

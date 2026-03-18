@@ -33,6 +33,18 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-reflect</artifactId>
+      <version>1.6.10</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.jetbrains.kotlinx</groupId>
       <artifactId>kotlinx-serialization-json-jvm</artifactId>
       <version>1.7.3</version>
