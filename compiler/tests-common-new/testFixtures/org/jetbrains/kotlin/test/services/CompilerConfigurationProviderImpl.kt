@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.enableIrNestedOffsetsChecks
+import org.jetbrains.kotlin.config.enableIrTypeParameterScopeChecks
 import org.jetbrains.kotlin.config.enableIrVarargTypesChecks
 import org.jetbrains.kotlin.config.enableIrVisibilityChecks
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -124,6 +125,8 @@ fun createCompilerConfiguration(
     configuration.verifyIr = IrVerificationMode.ERROR
     configuration.enableIrVisibilityChecks = !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module, testServices)
     configuration.enableIrVarargTypesChecks = !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module, testServices)
+    configuration.enableIrTypeParameterScopeChecks =
+        !CodegenTestDirectives.DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS.isApplicableTo(module, testServices)
 
     configuration.enableIrNestedOffsetsChecks = CodegenTestDirectives.ENABLE_IR_NESTED_OFFSETS_CHECKS in module.directives &&
             !CodegenTestDirectives.DISABLE_IR_NESTED_OFFSETS_CHECKS.isApplicableTo(module, testServices)
