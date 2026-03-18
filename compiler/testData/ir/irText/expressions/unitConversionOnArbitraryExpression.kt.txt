@@ -1,0 +1,30 @@
+fun produceFun(): Function0<String> {
+  return local fun <anonymous>(): String {
+    return ""
+  }
+
+}
+
+fun testCombinedSuspendUnit(fn: Function0<Int>) {
+  useSuspendUnit(fn = { // BLOCK
+    local suspend fun Function0<Unit>.suspendConversion0() {
+      $callee.invoke()
+    }
+
+    ::suspendConversion0/*($callee = fn /*as Function0<Unit> */) */
+  })
+}
+
+fun testNonVal() {
+  useUnit(fn = produceFun() /*as Function0<Unit> */)
+}
+
+fun testSimple(fn: Function0<String>) {
+  useUnit(fn = fn /*as Function0<Unit> */)
+}
+
+fun useSuspendUnit(fn: SuspendFunction0<Unit>) {
+}
+
+fun useUnit(fn: Function0<Unit>) {
+}

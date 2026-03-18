@@ -1,0 +1,11 @@
+fun interface KRunnable {
+  abstract fun run()
+
+}
+
+fun test(fn: Function0<String>) {
+  useKRunnable(r = fn /*as Function0<Unit> */ /*-> KRunnable */)
+}
+
+fun useKRunnable(r: KRunnable) {
+}
