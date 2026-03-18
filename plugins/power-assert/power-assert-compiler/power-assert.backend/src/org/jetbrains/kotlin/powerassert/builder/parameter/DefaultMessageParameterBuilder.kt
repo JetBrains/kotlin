@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.powerassert.diagram.IrDiagramVariable
 
@@ -53,14 +54,14 @@ class DefaultMessageParameterBuilder(
                 } else {
                     val invoke = messageParameter.type.classOrNull!!.functions
                         .single { !it.owner.isFakeOverride } // TODO best way to find single access method?
-                    irCall(invoke).apply { dispatchReceiver = messageArgument }
+                    irCall(invoke, type = context.irBuiltIns.anyType.makeNullable()).apply { dispatchReceiver = messageArgument }
                 }
             }
             // Kotlin Lambda or SAMs conversion lambda
             is IrFunctionExpression, is IrTypeOperatorCall -> {
                 val invoke = messageParameter.type.classOrNull!!.functions
                     .single { !it.owner.isFakeOverride } // TODO best way to find single access method?
-                irCall(invoke).apply { dispatchReceiver = messageArgument }
+                irCall(invoke, type = context.irBuiltIns.anyType.makeNullable()).apply { dispatchReceiver = messageArgument }
             }
             else -> null
         }

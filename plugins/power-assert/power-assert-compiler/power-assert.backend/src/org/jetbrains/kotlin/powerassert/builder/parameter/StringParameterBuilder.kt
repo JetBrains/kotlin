@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.powerassert.diagram.IrDiagramVariable
 import org.jetbrains.kotlin.powerassert.diagram.SourceFile
@@ -52,7 +53,7 @@ class StringParameterBuilder(
                     val invoke = messageParameter.type.classOrNull!!.functions
                         .filter { !it.owner.isFakeOverride } // TODO best way to find single access method?
                         .single()
-                    irCall(invoke).apply { dispatchReceiver = messageArgument }
+                    irCall(invoke, type = context.irBuiltIns.anyType.makeNullable()).apply { dispatchReceiver = messageArgument }
                 }
             }
             // Kotlin Lambda or SAMs conversion lambda
@@ -60,7 +61,7 @@ class StringParameterBuilder(
                 val invoke = messageParameter.type.classOrNull!!.functions
                     .filter { !it.owner.isFakeOverride } // TODO best way to find single access method?
                     .single()
-                irCall(invoke).apply { dispatchReceiver = messageArgument }
+                irCall(invoke, type = context.irBuiltIns.anyType.makeNullable()).apply { dispatchReceiver = messageArgument }
             }
             else -> null
         }

@@ -29,7 +29,9 @@ class PowerAssertGetExplanationTransformer(
                 else -> {
                     val callee = builtIns.function0invoke
                     IrCallImpl(
-                        expression.startOffset, expression.endOffset, callee.returnType, callee.symbol,
+                        expression.startOffset, expression.endOffset,
+                        type = builtIns.callExplanationType,
+                        symbol = callee.symbol,
                         typeArgumentsCount = callee.typeParameters.size,
                         origin = null
                     ).apply {
