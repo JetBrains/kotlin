@@ -269,7 +269,7 @@ internal class StubBasedFirMemberDeserializer(
                 replaceAnnotations(c.annotationDeserializer.loadAnnotations(getter))
             }
 
-            replaceDeprecationsProvider(getDeprecationsProvider(c.session))
+            replaceDeprecationsProvider(getDeprecationsProviderForStubAccessor(c.session))
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
     }
@@ -338,7 +338,7 @@ internal class StubBasedFirMemberDeserializer(
                 replaceAnnotations(c.annotationDeserializer.loadAnnotations(setter))
             }
 
-            replaceDeprecationsProvider(getDeprecationsProvider(c.session))
+            replaceDeprecationsProvider(getDeprecationsProviderForStubAccessor(c.session))
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
     }

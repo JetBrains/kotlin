@@ -13,10 +13,10 @@ class MyClass(
 
 fun main() {
     val my = MyClass(42)
-    my.prop
-    my.prop = 13
-    my.otherProp = 13
-    my.otherProp
+    my.<!DEPRECATION!>prop<!>
+    my.<!DEPRECATION!>prop<!> = 13
+    my.<!DEPRECATION!>otherProp<!> = 13
+    my.<!DEPRECATION!>otherProp<!>
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetAll, assignment, classDeclaration, init, integerLiteral,
