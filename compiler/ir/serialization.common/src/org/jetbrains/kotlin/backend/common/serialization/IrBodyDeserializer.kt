@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement.VarargElementCase
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
@@ -90,7 +88,8 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
 import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonPre_2_4_0 as ProtoMemberAccessCommonPre_2_4_0
 
 class IrBodyDeserializer(
-    private val builtIns: IrBuiltIns,
+    private val unitType: IrType,
+    private val nothingType: IrType,
     private val irFactory: IrFactory,
     private val libraryFile: IrLibraryFile,
     private val declarationDeserializer: IrDeclarationDeserializer,
@@ -382,7 +381,7 @@ class IrBodyDeserializer(
         val call = IrDelegatingConstructorCallImplRaw(
             start,
             end,
-            builtIns.unitType,
+            unitType,
             symbol,
             null,
         )
@@ -402,7 +401,7 @@ class IrBodyDeserializer(
         val call = IrEnumConstructorCallImplRaw(
             start,
             end,
-            builtIns.unitType,
+            unitType,
             symbol,
             null,
         )
@@ -577,7 +576,7 @@ class IrBodyDeserializer(
         end: Int
     ): IrInstanceInitializerCall {
         val symbol = deserializeTypedSymbol<IrClassSymbol>(proto.symbol, CLASS_SYMBOL)
-        return IrInstanceInitializerCallImpl(start, end, symbol, builtIns.unitType)
+        return IrInstanceInitializerCallImpl(start, end, symbol, unitType)
     }
 
     private fun deserializeIrLocalDelegatedPropertyReference(
@@ -632,7 +631,7 @@ class IrBodyDeserializer(
             fallbackSymbolKind = /* just the first possible option */ FUNCTION_SYMBOL
         )
         val value = deserializeExpression(proto.value, start)
-        return IrReturnImpl(start, end, builtIns.nothingType, symbol, value)
+        return IrReturnImpl(start, end, nothingType, symbol, value)
     }
 
     private fun deserializeSetField(proto: ProtoSetField, start: Int, end: Int): IrSetField {
@@ -645,14 +644,14 @@ class IrBodyDeserializer(
         val value = deserializeExpression(proto.value, start)
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
-        return IrSetFieldImpl(start, end, symbol, receiver, value, builtIns.unitType, origin, superQualifier)
+        return IrSetFieldImpl(start, end, symbol, receiver, value, unitType, origin, superQualifier)
     }
 
     private fun deserializeSetValue(proto: ProtoSetValue, start: Int, end: Int): IrSetValue {
         val symbol = deserializeTypedSymbol<IrValueSymbol>(proto.symbol, fallbackSymbolKind = null)
         val value = deserializeExpression(proto.value, start)
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
-        return IrSetValueImpl(start, end, builtIns.unitType, symbol, value, origin)
+        return IrSetValueImpl(start, end, unitType, symbol, value, origin)
     }
 
     private fun deserializeSpreadElement(proto: ProtoSpreadElement, parentStart: Int): IrSpreadElement {
@@ -674,7 +673,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeThrow(proto: ProtoThrow, start: Int, end: Int): IrThrowImpl {
-        return IrThrowImpl(start, end, builtIns.nothingType, deserializeExpression(proto.value, start))
+        return IrThrowImpl(start, end, nothingType, deserializeExpression(proto.value, start))
     }
 
     private fun deserializeTry(proto: ProtoTry, start: Int, end: Int, type: IrType): IrTryImpl {
