@@ -13,6 +13,7 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy.WithDaemon.Companion.JVM_ARGUMENTS
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
@@ -108,12 +109,13 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             ).also { compilationOperationBuilder ->
                 compilationOperationBuilder.compilerArguments.applyArgumentStrings(workArguments.compilerArgs.toList())
                 compilationOperationBuilder[KOTLINSCRIPT_EXTENSIONS] = workArguments.kotlinScriptExtensions
-                compilationOperationBuilder[COMPILER_ARGUMENTS_LOG_LEVEL] =
+                compilationOperationBuilder[BaseCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL] =
                     workArguments.compilerArgumentsLogLevel.toBtaCompilerArgumentsLogLevel()
                 if (metrics is BuildMetricsReporterImpl) {
                     @Suppress("DEPRECATION_ERROR")
                     compilationOperationBuilder[BuildOperation.createCustomOption("XX_KGP_METRICS_COLLECTOR")] = true
                 }
+                @Suppress("DEPRECATION")
                 compilationOperationBuilder[GENERATE_COMPILER_REF_INDEX] = workArguments.compilerExecutionSettings.generateCompilerRefIndex
 
                 val icEnv = workArguments.incrementalCompilationEnvironment
@@ -162,7 +164,6 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     }
                 }
                 KotlinCompilerExecutionStrategy.IN_PROCESS -> kotlinToolchains.createInProcessExecutionPolicy()
-                else -> error("The \"$executionStrategy\" execution strategy is not supported by the Build Tools API")
             }
 
             return metrics.measure(RUN_COMPILATION) {
@@ -285,7 +286,6 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     KotlinCompilerExecutionStrategy.IN_PROCESS,
                     log
                 ) to KotlinCompilerExecutionStrategy.IN_PROCESS
-                else -> error("The \"$executionStrategy\" execution strategy is not supported by the Build Tools API")
             }
             log.info(effectiveExecutionStrategy.asFinishLogMessage)
 

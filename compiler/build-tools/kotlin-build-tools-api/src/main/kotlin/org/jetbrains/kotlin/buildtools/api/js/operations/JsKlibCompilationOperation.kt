@@ -10,10 +10,15 @@ import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.CancellableBuildOperation
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
+import org.jetbrains.kotlin.buildtools.api.js.IncrementalModuleEntry
+import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.js.JsIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import java.nio.file.Path
 
 /**
@@ -40,6 +45,16 @@ public interface JsKlibCompilationOperation : BaseCompilationOperation, Cancella
 
     @OptIn(ExperimentalCompilerArgument::class)
     public val compilerArguments: JsArguments
+
+    /**
+     * Creates the configuration object for history-based incremental compilation (IC) in JS projects.
+     * TODO
+     */
+    public fun historyBasedIcConfigurationBuilder(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        modulesInformation: List<IncrementalModuleEntry>,
+    ): JsHistoryBasedIncrementalCompilationConfiguration.Builder
 
     /**
      * A builder for configuring and instantiating the [JsKlibCompilationOperation].
@@ -106,4 +121,8 @@ public interface JsKlibCompilationOperation : BaseCompilationOperation, Cancella
                 "Obtain an instance of a mutable builder for the operation from the appropriate `Toolchain` instead."
     )
     public operator fun <V> set(key: Option<V>, value: V)
+
+    public companion object {
+        public val INCREMENTAL_COMPILATION: Option<JsIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION")
+    }
 }
