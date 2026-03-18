@@ -131,7 +131,7 @@ class NonLinkingIrInlineFunctionDeserializer(
             parent = dummyFileSymbol.owner,
             settings = IrDeserializationSettings(
                 deserializeFunctionBodies = DeserializeFunctionBodies.ONLY_INLINE,
-                useNullableAnyAsAnnotationConstructorCallType = true,
+                nullableAnyAsAnnotationConstructorCallType = irBuiltIns.anyNType,
             ),
             symbolDeserializer = symbolDeserializer,
             onDeserializedClass = { _, _ -> },

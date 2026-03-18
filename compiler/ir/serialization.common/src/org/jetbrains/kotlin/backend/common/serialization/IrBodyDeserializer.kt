@@ -304,8 +304,8 @@ class IrBodyDeserializer(
     }
 
     fun deserializeAnnotation(proto: ProtoAnnotation, parentStart: Int?): IrAnnotation {
-        return if (settings.useNullableAnyAsAnnotationConstructorCallType)
-            deserializeAnnotation(proto, builtIns.anyNType, parentStart)
+        return if (settings.nullableAnyAsAnnotationConstructorCallType != null)
+            deserializeAnnotation(proto, settings.nullableAnyAsAnnotationConstructorCallType, parentStart)
         else {
             val irType = IrAnnotationType()
             deserializeAnnotation(proto, irType, parentStart).also { irType.irConstructorCall = it }
