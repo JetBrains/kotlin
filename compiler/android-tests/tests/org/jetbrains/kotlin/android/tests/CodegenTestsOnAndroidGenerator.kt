@@ -367,6 +367,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                         !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module, services),
                     )
                     keyConfiguration.put(
+                        CommonConfigurationKeys.ENABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS,
+                        !CodegenTestDirectives.DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS.isApplicableTo(module, services),
+                    )
+                    keyConfiguration.put(
                         CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS,
                         !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module, services),
                     )
