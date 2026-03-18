@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.IrVarargCheckers
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
+import org.jetbrains.kotlin.ir.validation.checkers.type.IrTypeParameterScopeChecker
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.targetPlatform
@@ -155,6 +156,7 @@ val IrCheckersDisabledByTestDirectives = mapOf<ValueDirective<TargetBackend>, St
     CodegenTestDirectives.DISABLE_IR_FIELD_VISIBILITY_CHECK to IrFieldVisibilityChecker::class.java.simpleName,
     CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS to IrVarargCheckers::class.java.simpleName,
     CodegenTestDirectives.DISABLE_IR_NESTED_OFFSETS_CHECKS to IrNestedOffsetRangeChecker::class.java.simpleName,
+    CodegenTestDirectives.DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS to IrTypeParameterScopeChecker::class.java.simpleName,
 )
 
 val IrCheckersEnabledByTestDirectives = mapOf<SimpleDirective, String>(
