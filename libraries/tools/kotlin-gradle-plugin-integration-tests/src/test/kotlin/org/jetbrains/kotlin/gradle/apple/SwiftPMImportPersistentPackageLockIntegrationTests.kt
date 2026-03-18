@@ -583,6 +583,7 @@ class SwiftPMImportPersistentPackageLockIntegrationTests : KGPBaseTest() {
                  */
                 projectPath.resolve("Package.resolved").deleteIfExists()
 
+                // FIXME: KT-85078 This clean step shouldn't be required
                 build(
                     "clean"
                 )
