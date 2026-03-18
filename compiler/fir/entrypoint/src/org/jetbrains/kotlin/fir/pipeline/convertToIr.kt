@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallTypeArgument
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallValueArgumentCountChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
+import org.jetbrains.kotlin.ir.validation.checkers.type.IrTypeParameterScopeChecker
 import org.jetbrains.kotlin.ir.validation.validateIr
 import org.jetbrains.kotlin.ir.validation.withBasicFirstStageChecks
 import org.jetbrains.kotlin.ir.validation.withVarargChecks
@@ -510,8 +511,8 @@ private class Fir2IrPipeline(
                     IrCallValueArgumentCountChecker,
                     IrCrossFileFieldUsageChecker,
                     IrValueAccessScopeChecker,
-                    IrScopeChecker(IrScopeCheckerContext()),
-                    //IrTypeParameterScopeChecker // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305),
+//                   IrScopeChecker(IrScopeCheckerContext()),
+                    IrTypeParameterScopeChecker,
                 )
                 .applyIf(fir2IrConfiguration.irVerificationSettings.enableIrVisibilityChecks) { // KT-80071
                     // User code may use @Suppress("INVISIBLE_REFERENCE") or similar, and at this point we do allow that,
