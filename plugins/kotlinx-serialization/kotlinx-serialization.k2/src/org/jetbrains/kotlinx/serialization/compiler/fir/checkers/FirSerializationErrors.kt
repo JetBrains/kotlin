@@ -67,6 +67,10 @@ object FirSerializationErrors : KtDiagnosticsContainer() {
 
     val PROTOBUF_PROTO_NUM_DUPLICATED by warning2<KtAnnotationEntry, String, String>()
 
+    val PROTO_UNKNOWN_FIELDS_MULTIPLE_ANNOTATIONS by error2<KtAnnotationEntry, String, String>()
+    val PROTO_UNKNOWN_FIELDS_WRONG_TYPE by error3<KtAnnotationEntry, String, String, String>()
+    val PROTO_UNKNOWN_FIELDS_MISSING_DEFAULT by error2<KtElement, String, String>()
+
     val JSON_FORMAT_REDUNDANT_DEFAULT by warning0<KtElement>()
     val JSON_FORMAT_REDUNDANT by warning0<KtElement>()
 

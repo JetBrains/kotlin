@@ -37,6 +37,8 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.LO
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SAVE_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESC_FIELD_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoOneOfAnnotationFqName
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoUnknownFieldsAnnotationFqName
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoUnknownFieldHolderClassId
 
 val SERIALIZABLE_PROPERTIES: WritableSlice<ClassDescriptor, SerializableProperties> = Slices.createSimpleSlice()
 
@@ -65,6 +67,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         val props = buildSerializableProperties(descriptor, context.trace) ?: return
         checkCorrectTransientAnnotationIsUsed(descriptor, props.serializableProperties, context.trace)
         checkProtobufProperties(props.serializableProperties, context.trace)
+        checkProtoUnknownFields(descriptor, declaration, context.trace)
         checkTransients(declaration, context.trace)
         analyzePropertiesSerializers(context.trace, descriptor, props.serializableProperties)
         checkInheritedAnnotations(descriptor, declaration, context.trace)
@@ -517,6 +520,47 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                     duplicateFieldsNames
                 )
             )
+        }
+    }
+
+    private fun checkProtoUnknownFields(
+        descriptor: ClassDescriptor,
+        declaration: KtDeclaration,
+        trace: BindingTrace,
+    ) {
+        val properties = descriptor.unsubstitutedMemberScope
+            .getContributedDescriptors()
+            .filterIsInstance<PropertyDescriptor>()
+
+        val annotatedProps = properties.filter {
+            it.annotations.hasAnnotation(protoUnknownFieldsAnnotationFqName)
+        }
+
+        if (annotatedProps.size > 1) {
+            val firstAnnEntry = annotatedProps.first().findAnnotationDeclaration(protoUnknownFieldsAnnotationFqName)
+            if (firstAnnEntry != null) {
+                val allNames = annotatedProps.joinToString(", ") { it.name.asString() }
+                trace.report(SerializationErrors.PROTO_UNKNOWN_FIELDS_MULTIPLE_ANNOTATIONS.on(firstAnnEntry, descriptor.name.asString(), allNames))
+            }
+        }
+
+        val prop = annotatedProps.firstOrNull() ?: return
+        val annEntry = prop.findAnnotationDeclaration(protoUnknownFieldsAnnotationFqName)
+            ?: (prop.findPsi() as? KtAnnotationEntry)
+            ?: return
+
+        val actualClassId = prop.type.constructor.declarationDescriptor?.classId
+        if (actualClassId != protoUnknownFieldHolderClassId) {
+            trace.report(SerializationErrors.PROTO_UNKNOWN_FIELDS_WRONG_TYPE.on(annEntry, descriptor.name.asString(), prop.name.asString(), prop.type.constructor.declarationDescriptor?.name?.asString() ?: prop.type.toString()))
+            return
+        }
+
+        if (!prop.type.isMarkedNullable) {
+            val ktDeclaration = prop.findPsi() as? KtDeclaration
+            val hasDefault = ktDeclaration?.let { declarationHasInitializer(it) } ?: false
+            if (!hasDefault) {
+                trace.report(SerializationErrors.PROTO_UNKNOWN_FIELDS_MISSING_DEFAULT.on(ktDeclaration ?: declaration, descriptor.name.asString(), prop.name.asString()))
+            }
         }
     }
 
