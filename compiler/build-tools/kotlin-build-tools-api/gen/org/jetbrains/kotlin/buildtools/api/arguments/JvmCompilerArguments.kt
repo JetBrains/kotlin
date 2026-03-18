@@ -341,7 +341,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
 
     /**
      * Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
-     * The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–25.
+     * The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–26.
      * This also sets the value of '-jvm-target' to be equal to the selected JDK version.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -834,7 +834,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("JVM_DEFAULT", KotlinReleaseVersion(2, 2, 0))
 
     /**
-     * The target version of the generated JVM bytecode (1.8 and 9–25), with 1.8 as the default.
+     * The target version of the generated JVM bytecode (1.8 and 9–26), with 1.8 as the default.
      */
     @JvmField
     public val JVM_TARGET: JvmCompilerArgument<JvmTarget?> =

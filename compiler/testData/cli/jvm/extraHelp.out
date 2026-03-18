@@ -43,7 +43,7 @@ where advanced options include:
   -Xjava-package-prefix      Package prefix for Java files.
   -Xjava-source-roots=<path> Paths to directories with Java source files.
   -Xjdk-release=<version>    Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
-                             The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–25.
+                             The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–26.
                              This also sets the value of '-jvm-target' to be equal to the selected JDK version.
   -Xjspecify-annotations=ignore|strict|warn
                              Specify the behavior of 'jspecify' annotations.

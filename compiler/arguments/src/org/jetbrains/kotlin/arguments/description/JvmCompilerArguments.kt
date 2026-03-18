@@ -146,8 +146,9 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
                     "with ${JvmTarget.CURRENT_DEFAULT_VERSION} as the default.",
             valueInVersions = mapOf(
                 KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v2_2_20 to
-                        "The target version of the generated JVM bytecode (1.8 and 9-24), " +
-                        "with ${JvmTarget.CURRENT_DEFAULT_VERSION} as the default.",
+                        "The target version of the generated JVM bytecode (1.8 and 9-24), with 1.8 as the default.",
+                KotlinReleaseVersion.v2_3_0..KotlinReleaseVersion.v2_3_20 to
+                        "The target version of the generated JVM bytecode (1.8 and 9–25), with 1.8 as the default.",
             )
         )
 
@@ -643,6 +644,10 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
                 KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v2_2_20 to
                         """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
 The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9-24.
+This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
+                KotlinReleaseVersion.v2_3_0..KotlinReleaseVersion.v2_3_20 to
+                        """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
+The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–25.
 This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
             )
         )

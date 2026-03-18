@@ -151,6 +151,13 @@ enum class JvmTarget(
             stabilizedVersion = KotlinReleaseVersion.v2_3_0,
         )
     ),
+    jvm_26(
+        targetName = "26",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
+            stabilizedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    ),
     ;
 
     companion object {

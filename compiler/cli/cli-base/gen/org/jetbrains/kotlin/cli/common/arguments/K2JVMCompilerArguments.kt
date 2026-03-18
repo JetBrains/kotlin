@@ -251,7 +251,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         value = "-Xjdk-release",
         valueDescription = "<version>",
         description = """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
-The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–25.
+The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–26.
 This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
     )
     var jdkRelease: String? = null
@@ -779,7 +779,7 @@ The default value is 'inline'.""",
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",
-        description = "The target version of the generated JVM bytecode (1.8 and 9–25), with 1.8 as the default.",
+        description = "The target version of the generated JVM bytecode (1.8 and 9–26), with 1.8 as the default.",
     )
     var jvmTarget: String? = null
         set(value) {

@@ -13,7 +13,7 @@ where possible options include:
                                                               This is the default behavior since language version 2.2.
                              -jvm-default=no-compatibility    Generate default methods for non-abstract interface declarations. Do not generate 'DefaultImpls' classes.
                              -jvm-default=disable             Do not generate JVM default methods. This is the default behavior up to language version 2.1.
-  -jvm-target <version>      The target version of the generated JVM bytecode (1.8 and 9–25), with 1.8 as the default.
+  -jvm-target <version>      The target version of the generated JVM bytecode (1.8 and 9–26), with 1.8 as the default.
   -module-name <name>        Name of the generated '.kotlin_module' file.
   -no-jdk                    Don't automatically include the Java runtime in the classpath.
   -no-reflect                Don't automatically include the Kotlin reflection dependency in the classpath.
