@@ -15,6 +15,7 @@ import com.intellij.psi.javadoc.PsiSnippetDocTag
 import com.intellij.psi.javadoc.PsiSnippetDocTagBody
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.analysis.java.util.from
+import org.jetbrains.dokka.analysis.java.util.getLocation
 import org.jetbrains.dokka.analysis.java.util.lowercase
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.utilities.DokkaLogger
@@ -56,13 +57,13 @@ internal class DefaultSnippetToHtmlConverter(
 
     private class SnippetLogger(
         private val logger: DokkaLogger,
-        fileName: String?
+        snippetLocation: String?
     ) {
         private val prefix = buildString {
             append("@snippet")
-            if (!fileName.isNullOrBlank()) {
+            if (!snippetLocation.isNullOrBlank()) {
                 append(" (")
-                append(fileName)
+                append(snippetLocation)
                 append(")")
             }
             append(": ")
@@ -85,7 +86,7 @@ internal class DefaultSnippetToHtmlConverter(
     override fun convertSnippet(
         snippet: PsiSnippetDocTag
     ): String {
-        val logger = SnippetLogger(dokkaLogger, snippet.containingFile?.name)
+        val logger = SnippetLogger(dokkaLogger, getLocation(snippet))
 
         val value = snippet.valueElement ?: run {
             return "<pre><code>${logAndReturnUnresolvedSnippet(logger)}</code></pre>"

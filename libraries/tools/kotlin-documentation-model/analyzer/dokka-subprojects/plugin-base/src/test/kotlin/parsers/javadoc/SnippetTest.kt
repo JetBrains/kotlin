@@ -1149,10 +1149,12 @@ class SnippetTest : BaseAbstractTest() {
 
                 val warnMessage = logger.warnMessages.first()
 
+                val path = modules.first().sourceSets.first().sourceRoots.first().invariantSeparatorsPath
+
                 assertEquals(
-                    warnMessage,
+                    warnMessage.replace(path, "PATH"),
                     """
-                        @snippet (Test.java): inline and external snippets are not the same in the hybrid snippet (after formatting and escaping are applied).
+                        @snippet (file:///PATH/main/java/example/Test.java:4:4): inline and external snippets are not the same in the hybrid snippet (after formatting and escaping are applied).
                         diff:
                         line 2:
                         inline: 'System.out.println(&quot;second line is different&quot;)'
