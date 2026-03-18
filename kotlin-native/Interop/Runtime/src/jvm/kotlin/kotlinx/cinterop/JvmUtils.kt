@@ -20,13 +20,11 @@ package kotlinx.cinterop
 
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.utils.rethrow
-import java.io.File
 import java.lang.System
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.Path
 import java.nio.file.InvalidPathException
-import java.security.MessageDigest
 
 private fun decodeFromUtf8(bytes: ByteArray) = String(bytes)
 internal fun encodeToUtf8(str: String) = str.toByteArray()
@@ -109,12 +107,6 @@ inline fun <reified R : Number> Number.invalidNarrowing(): R {
     throw Error("unable to narrow ${this.javaClass.simpleName} \"${this}\" to ${R::class.java.simpleName}")
 }
 
-// Ported from ClassLoader::initializePath.
-private fun initializePath() =
-        System.getProperty("java.library.path", "")
-                .split(File.pathSeparatorChar)
-                .map { if (it == "") "." else it }
-
 // Track the libraries that we have already loaded.
 private var loadedLibraries = mutableSetOf<String>()
 
@@ -194,12 +186,9 @@ private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDae
 fun loadKonanLibrary(name: String) {
     val runFromDaemon = System.getProperty("kotlin.native.tool.runFromDaemon") == "true"
     val fullLibraryName = System.mapLibraryName(name)
-    val paths = initializePath()
-    for (dir in paths) {
-        if (tryLoadKonanLibrary(dir, fullLibraryName, runFromDaemon)) return
-    }
+    // Search for konan libraries should be performed not within `java.library.path`, but in konanHome
     val defaultNativeLibsDir = "${KotlinNativePaths.homePath.absolutePath}/konan/nativelib"
     if (tryLoadKonanLibrary(defaultNativeLibsDir, fullLibraryName, runFromDaemon))
         return
-    error("Lib $fullLibraryName was not found in $defaultNativeLibsDir and ${paths.joinToString { it }}")
+    error("Lib $fullLibraryName was not found in $defaultNativeLibsDir")
 }
