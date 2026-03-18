@@ -8,26 +8,29 @@ package org.jetbrains.kotlin.gradle.apple
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.kotlin
+import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
+
 import org.jetbrains.kotlin.gradle.testbase.TestProject
+import org.jetbrains.kotlin.gradle.testbase.assertFileExists
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.runProcess
 import java.io.Closeable
 import java.io.File
-import kotlin.io.path.createTempFile
 import java.nio.file.Path
+import java.util.concurrent.Semaphore
+import kotlin.concurrent.thread
 import kotlin.io.path.createDirectories
-import kotlin.io.path.deleteIfExists
-import kotlin.io.path.exists
+import kotlin.io.path.createFile
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
-import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 @Suppress("INVISIBLE_REFERENCE")
 const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME =
@@ -175,6 +178,124 @@ internal fun TestProject.initDefaultKmp(extra: KotlinMultiplatformExtension.() -
         }
     }
 }
+
+internal data class LockFileTestFixture(
+    val project: TestProject,
+    val cacheDirFile: File,
+    val reposRoot: Path,
+    val daemon: GitDaemon,
+    val projectDirectoryPackageResolved: Path = project.projectPath.resolve("Package.resolved"),
+)
+
+internal data class RepoRef(
+    val name: String,
+    val url: String,
+) : java.io.Serializable
+
+internal fun TestProject.withLockFileFixture(
+    block: LockFileTestFixture.() -> Unit,
+) {
+    val cacheDirFile = projectPath.resolve("customXcodePackageCache").toFile()
+    val reposRoot = projectPath.resolve("spmRepos").apply { createDirectories() }
+    val daemon = GitDaemon(
+        reposRoot,
+        logFile = projectPath.resolve("gitDaemonLogs.log").apply { createFile() }.toFile(),
+    )
+
+    daemon.useWithFailure {
+        start()
+        LockFileTestFixture(
+            project = this@withLockFileFixture,
+            cacheDirFile = cacheDirFile,
+            reposRoot = reposRoot,
+            daemon = this,
+        ).block()
+    }
+}
+
+
+internal fun TestProject.initSwiftPmProject(
+    cacheDirFile: File,
+    extra: KotlinMultiplatformExtension.() -> Unit,
+) {
+    initDefaultKmp {
+        project.tasks
+            .withType(FetchSyntheticImportProjectPackages::class.java)
+            .configureEach { task ->
+                task.xcodePackageCacheDir.set(cacheDirFile)
+                task.additionalXcodeArgs.set(listOf("-packageFingerprintPolicy", "warn"))
+            }
+
+        project.tasks
+            .withType(ConvertSyntheticSwiftPMImportProjectIntoDefFile::class.java)
+            .configureEach { task ->
+                task.xcodePackageCacheDir.set(cacheDirFile)
+                task.additionalXcodeArgs.set(listOf("-packageFingerprintPolicy", "warn"))
+            }
+
+        extra()
+    }
+}
+
+internal fun LockFileTestFixture.createRepo(
+    name: String,
+    tags: List<String>,
+): Path {
+    return createSwiftPmGitRepoWithTags(
+        reposRoot = reposRoot,
+        packageName = name,
+        tags = tags,
+    )
+}
+
+internal fun LockFileTestFixture.repoRef(name: String): RepoRef =
+    RepoRef(name = name, url = daemon.urlFor(name))
+
+internal fun LockFileTestFixture.repoDir(name: String): Path =
+    reposRoot.resolve(name)
+
+internal fun LockFileTestFixture.releaseTag(
+    repoName: String,
+    tag: String,
+) {
+    val repoDir = repoDir(repoName)
+
+    addSwiftPmGitTag(
+        repoDir = repoDir,
+        tag = tag,
+        files = mapOf(
+            "Sources/$repoName/${repoName}_${tag.replace('.', '_')}.swift" to
+                    "public struct ${repoName}_${tag.replace('.', '_')} { public static let v = \"$tag\" }\n"
+        )
+    )
+}
+
+internal fun BuildResult.assertResolvedVersions(
+    projectDirPackageResolved: Path,
+    expectedPins: List<Pair<RepoRef, String>>,
+) {
+    assertFileExists(projectDirPackageResolved, "Root Package.resolved should be generated")
+
+    val actual = parsePackageResolved(projectDirPackageResolved.readText())
+
+    val expected = SwiftPmPackageResolved(
+        pins = expectedPins.map { (repo, version) ->
+            SwiftPmPin(
+                identity = repo.name.lowercase(),
+                kind = "remoteSourceControl",
+                location = repo.url,
+                state = SwiftPmPinState(
+                    revision = "<ignored>",
+                    version = version,
+                )
+            )
+        },
+        version = 2,
+    )
+
+    assertEquals(expected, actual.ignoreRevisions())
+}
+
 
 // Package.resolved DTO
 
@@ -350,12 +471,12 @@ fun describeSwiftPackage(packagePath: Path): SwiftPackageDescription {
 
 internal class GitDaemon(
     private val baseDir: Path,
+    private val logFile : File,
     private val host: String = "127.0.0.1",
     private var port: Int = 0,
 ) : Closeable {
 
     private var process: Process? = null
-    private val logFile: Path = createTempFile("git-daemon", ".log")
 
     fun start(): GitDaemon {
         if (port == 0) {
@@ -365,17 +486,17 @@ internal class GitDaemon(
         val pb = ProcessBuilder(
             "git",
             "daemon",
+            "--verbose",
             "--reuseaddr",
             "--export-all",
             "--base-path=${baseDir.toAbsolutePath()}",
             "--listen=$host",
             "--port=$port",
             baseDir.toAbsolutePath().toString(),
-        )
-            .redirectErrorStream(true)
-            .redirectOutput(logFile.toFile())
+        ).redirectErrorStream(true)
 
         process = pb.start()
+        waitUntilReady()
 
         return this
     }
@@ -391,13 +512,43 @@ internal class GitDaemon(
         }
     }
 
+    private var logDumpThread: Thread? = null
+    fun waitUntilReady() {
+        val process = this.process
+        if(process == null) error("...")
+        if(!process.isAlive) error("Git daemon process is not alive")
+
+        val sema = Semaphore(0)
+        logDumpThread = thread {
+            logFile.writer().use { fileWriteStream ->
+                process.inputStream.reader().useLines {
+                    it.forEach { line ->
+                        if (line.contains("Ready to rumble")) {
+                            sema.release()
+                        }
+                        fileWriteStream.appendLine(line)
+                        fileWriteStream.flush()
+                    }
+                }
+            }
+        }
+        sema.acquire()
+
+        return
+    }
+
+    fun log(message: String) {
+        logFile.appendText(message + System.lineSeparator())
+    }
+
     fun dumpDaemonLogsToString(): String =
-        if (logFile.exists()) logFile.readText() else ""
+        if (logFile.exists()) logFile.readText() else "<log file missing>"
 
     override fun close() {
         process?.destroy()
+        logDumpThread?.join(10_000)
+        if (logDumpThread?.isAlive == true) error("Failed to stop git daemon log dump thread")
         process = null
-        logFile.deleteIfExists()
     }
 
     private fun findFreePort(): Int =

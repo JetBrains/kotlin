@@ -10,6 +10,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
@@ -79,6 +80,25 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     protected val ldDump = xcodebuildSdk.flatMap { sdk ->
         layout.buildDirectory.dir("kotlin/swiftImportLdDump/${sdk}")
     }
+
+    /**
+     * Optional SwiftPM repository cache override.
+     * Passed to `xcodebuild` as:
+     *   -packageCachePath <dir>
+     * Used in tests to avoid collisions with the global cache
+     * at `~/Library/Caches/org.swift.swiftpm/repositories`.
+     */
+    @get:Internal
+    abstract val xcodePackageCacheDir: Property<File>
+
+    /**
+     * Additional arguments to pass to `xcodebuild` when resolving SwiftPM dependencies.
+     * Generally used in test to:
+     * To avoid cache collisions between test runs, we generate a unique package name (and therefore URL) for each execution.
+     * e.g "Revision ... for TestPackageA version 1.0.0 does not match previously recorded value ..."
+     */
+    @get:Internal
+    abstract val additionalXcodeArgs: ListProperty<String>
 
     @get:Internal
     abstract val swiftPMDependenciesCheckout: DirectoryProperty
@@ -167,7 +187,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
         execOps.exec { exec ->
             exec.workingDir(projectRoot)
-            exec.commandLine(
+            val args = mutableListOf(
                 "xcodebuild", "build",
                 "-scheme", GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
                 "-destination", "generic/platform=${xcodebuildPlatform.get()}",
@@ -186,6 +206,18 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 // This will force the .dylib to be created instead of the framework. Do we actually want to account for this?
                 // "-IDEPackageSupportCreateDylibsForDynamicProducts=YES"
             )
+
+            if (xcodePackageCacheDir.isPresent) {
+                args.add("-packageCachePath")
+                args.add(xcodePackageCacheDir.get().path)
+            }
+
+            if(additionalXcodeArgs.isPresent) {
+                args.addAll(additionalXcodeArgs.get())
+            }
+
+            exec.commandLine(args)
+
             exec.environment(KOTLIN_CLANG_ARGS_DUMP_FILE_ENV, clangArgsDump)
             exec.environment(KOTLIN_LD_ARGS_DUMP_FILE_ENV, ldArgsDump)
 

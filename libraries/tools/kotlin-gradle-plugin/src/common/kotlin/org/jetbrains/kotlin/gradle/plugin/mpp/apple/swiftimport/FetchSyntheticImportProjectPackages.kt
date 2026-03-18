@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.IgnoreEmptyDirectories
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
@@ -70,6 +71,14 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     @get:Internal
     abstract val xcodePackageCacheDir: Property<File>
 
+    /**
+     * Additional arguments to pass to `xcodebuild` when resolving SwiftPM dependencies.
+     * Generally used in test to:
+     * To avoid cache collisions between test runs, we generate a unique package name (and therefore URL) for each execution.
+     * e.g "Revision ... for TestPackageA version 1.0.0 does not match previously recorded value ..."
+     */
+    @get:Internal
+    abstract val additionalXcodeArgs: ListProperty<String>
 
     @get:Internal
     protected val swiftPMDependenciesCheckoutLogs: DirectoryProperty = project.objects.directoryProperty().convention(
@@ -112,6 +121,10 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
             if (xcodePackageCacheDir.isPresent) {
                 args.add("-packageCachePath")
                 args.add(xcodePackageCacheDir.get().path)
+            }
+
+            if(additionalXcodeArgs.isPresent) {
+                args.addAll(additionalXcodeArgs.get())
             }
 
             it.commandLine(args)
