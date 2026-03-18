@@ -189,16 +189,15 @@ internal class BtaImplGenerator(
             // generate impl mirror of arguments
             val argumentTypeParameter = when (argument.valueType) {
                 is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
+                    val origin = argument.valueType.origin
                     val type = argument.valueType.kType
-                    val classifier = type.classifier as? KClass<*> ?: error("Type is not a KClass: $type")
-                    when {
-                        classifier.java.isEnum -> {
-                            val classifier = type.classifier as KClass<*>
+                    when (origin) {
+                        is EnumType<*> -> {
+                            val classifier = type.classifier as? KClass<*> ?: error("Type is not a KClass: $type")
                             classifier.toBtaEnumClassName()
                         }
-                        classifier.isCustomType -> {
-                            val classifier = type.classifier as KClass<*>
-                            classifier.toBtaCustomClassName()
+                        is ProfileCompilerCommandType -> {
+                            ProfileCompilerCommand::class.toBtaCustomClassName()
                         }
                         else -> {
                             type.asTypeName()
@@ -343,12 +342,12 @@ internal class BtaImplGenerator(
                     )
                 )
             }
-            type.isCustomType -> {
+            argument.valueType.origin.isCustomType -> {
                 add(
                     maybeGetNullabilitySign(argument) + ".%M()",
                     MemberName(
                         packageName = targetPackage,
-                        simpleName = "toArgumentString",
+                        simpleName = "toArgumentValue",
                         isExtension = true
                     )
                 )
@@ -436,7 +435,7 @@ internal class BtaImplGenerator(
                 add(maybeGetNullabilitySign(argument))
                 add(".let { %M(it) }", MemberName(KOTLIN_IO_PATH, "Path"))
             }
-            type.isCustomType -> {
+            argument.valueType.origin.isCustomType -> {
                 add(
                     maybeGetNullabilitySign(argument) + ".%M()",
                     MemberName(

@@ -9,6 +9,9 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.types.EnumType
+import org.jetbrains.kotlin.arguments.dsl.types.ProfileCompilerCommand
+import org.jetbrains.kotlin.arguments.dsl.types.ProfileCompilerCommandType
 import org.jetbrains.kotlin.arguments.dsl.types.WithStringRepresentation
 import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -143,13 +146,13 @@ internal class BtaApiGenerator(
             val argumentTypeParameter = when (argument.valueType) {
                 is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
                     val argumentType = argument.valueType.kType
-                    val type = argumentType.classifier as? KClass<*> ?: error("Type is not a KClass: $argumentType")
-                    when {
-                        type.java.isEnum -> {
+                    when (argument.valueType.origin) {
+                        is EnumType<*> -> {
+                            val type = argumentType.classifier as? KClass<*> ?: error("Type is not a KClass: $argumentType")
                             generatedEnumType(type)
                         }
-                        type.isCustomType -> {
-                            generatedCustomType(type)
+                        is ProfileCompilerCommandType -> {
+                            generatedCustomType(ProfileCompilerCommand::class)
                         }
                         else -> {
                             argumentType.asTypeName()
@@ -221,7 +224,7 @@ internal class BtaApiGenerator(
 
     fun <T> generateEnumTypeBuilder(
         sourceEnum: Collection<T>,
-    ): TypeSpec.Builder where T : Enum<*>, T : WithStringRepresentation{
+    ): TypeSpec.Builder where T : Enum<*>, T : WithStringRepresentation {
         val className = sourceEnum.first()::class.toBtaEnumClassName()
         return TypeSpec.enumBuilder(className).apply {
             property<String>("stringValue") {

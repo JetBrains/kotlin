@@ -36,7 +36,7 @@ internal fun <T> CommonToolArguments.getUsingReflection(propertyName: String): T
 internal fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath
 
 @OptIn(ExperimentalCompilerArgument::class)
-internal fun ProfileCompilerCommand.toArgumentString(): String =
+internal fun ProfileCompilerCommand.toArgumentValue(): String =
     "${profilerPath.absolutePathStringOrThrow()}${File.pathSeparator}$command${File.pathSeparator}${outputDir.absolutePathStringOrThrow()}"
 
 @OptIn(ExperimentalCompilerArgument::class)
