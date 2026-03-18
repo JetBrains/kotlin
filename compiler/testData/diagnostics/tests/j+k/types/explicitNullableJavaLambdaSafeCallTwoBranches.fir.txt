@@ -1,0 +1,42 @@
+FILE: Test.kt
+    public final fun <R> nullableMaterialize(): R|R?| {
+        ^nullableMaterialize Null(null)
+    }
+    public final fun <I, O> R|I|.exec(block: R|I.() -> O|): R|O| {
+        ^exec R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|O|>|(this@R|/exec|)
+    }
+    public final fun test(x: R|kotlin/String?|): R|kotlin/Unit| {
+        lval a: R|kotlin/String?| = Q|Use|.R|/Use.eval*s|<R|kotlin/String?|>(<L> = SAM(eval@fun <anonymous>(): R|kotlin/String?| <inline=NoInline>  {
+            ^ R|<local>/x|?.{ $subj$.R|/exec|<R|kotlin/String|, R|kotlin/String?|>(<L> = exec@fun R|kotlin/String|.<anonymous>(): R|kotlin/String?| <inline=NoInline>  {
+                ^ when () {
+                    CMP(>, this@R|special/anonymous|.R|kotlin/String.length|.R|kotlin/Int.compareTo|(Int(0))) ->  {
+                        this@R|special/anonymous|
+                    }
+                    else ->  {
+                        Null(null)
+                    }
+                }
+
+            }
+            ) }
+        }
+        ))
+        lval b: R|kotlin/String!| = Q|Use|.R|/Use.eval*s|<R|kotlin/String!|>(<L> = SAM(eval@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+            ^ R|<local>/x|?.{ $subj$.R|/exec|<R|kotlin/String|, R|kotlin/String|>(<L> = exec@fun R|kotlin/String|.<anonymous>(): R|kotlin/String| <inline=NoInline>  {
+                ^ when () {
+                    CMP(>, this@R|special/anonymous|.R|kotlin/String.length|.R|kotlin/Int.compareTo|(Int(0))) ->  {
+                        String(ok)
+                    }
+                    else ->  {
+                        String(fallback)
+                    }
+                }
+
+            }
+            ) } ?: String(fallback)
+        }
+        ))
+        lval c: R|kotlin/String?| = R|<local>/a|
+        lval d: R|kotlin/String| = R|<local>/b|
+        lval bad: R|kotlin/String| = R|<local>/a|
+    }

@@ -1,0 +1,26 @@
+FILE: main.kt
+    public final typealias N = R|kotlin/String?|
+    public final typealias S = R|kotlin/String|
+    public final fun aliasInSam(): R|kotlin/Unit| {
+        Q|Use|.R|/Use.run*s|<R|{N=} kotlin/String?|>(<L> = SAM(run@fun <anonymous>(it: R|{N=} kotlin/String?|): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/it|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+        }
+        ))
+    }
+    public final fun aliasInGenericFunction(): R|kotlin/Unit| {
+        lval x: R|{N=} kotlin/String?| = Q|JavaUtil|.R|/JavaUtil.id*s|<R|{N=} kotlin/String?|>(String(abc))
+        R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+    }
+    public final fun aliasSmartCastAfterCall(x: R|{N=} kotlin/String?|): R|kotlin/Unit| {
+        lval y: R|{N=} kotlin/String?| = Q|JavaUtil|.R|/JavaUtil.id*s|<R|{N=} kotlin/String?|>(R|<local>/x|)
+        when () {
+            !=(R|<local>/y|, Null(null)) ->  {
+                R|<local>/y|.R|kotlin/String.length|
+            }
+        }
+
+    }
+    public final fun nonNullAliasBaseline(): R|kotlin/Unit| {
+        lval x: R|{S=} kotlin/String!| = Q|JavaUtil|.R|/JavaUtil.id*s|<R|{S=} kotlin/String!|>(String(abc))
+        R|<local>/x|.R|kotlin/String.length|
+    }
